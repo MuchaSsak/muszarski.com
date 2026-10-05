@@ -113,6 +113,16 @@ can get, before starting the next. Never move to slice Y while slice X has a fai
 | 7–10 | How I work → AI workflow → Stack + credentials → Contact (form + `/api/contact`) | — |
 | 11+ | Pages: case studies (one each) → `/work/` → `/cv/` + PDF → blog (index, post) + "Latest writing" → `/my-life/` → legal → 404 | S5 |
 
+**Rebrand gate [user] 2026-10-05:** the owner rejected the Drafting Table look after slices 0-1 ("ugly", "not enough
+creative effort"; "pstrykweb's landing is better at this point"). The floor: a direction must clearly beat the pstrykweb.pl
+landing (study it first: `context/pstryk-turborepo/apps/pstrykweb.pl`, patterns only). Before any slice continues:
+1. Research hard for visual ambition (Awwwards skill, Mobbin, registry, the strongest dev portfolios, motion/3D references),
+   not for safety.
+2. Produce 3-4 genuinely different directions as **rendered, animated comps** of the hero + one project section (real
+   type, colour, motion, 3D/shader where it serves), screenshots at 390 + 1440, light/dark where relevant.
+3. The owner picks or mixes. Only then: new `design.md`, new tokens/type, rebuild slices 0 (visual layer) → 1 → 2.
+   The engineering foundation stays: Turborepo, Astro, Lingui, routes, gates, tests, launch gate.
+
 **The loop for every slice** (repeat until every check passes and one more pass finds nothing worth fixing):
 1. **Research** the section (Mobbin, Awwwards, registry, `design-references.md`): a short plan naming the adopted patterns.
 2. **Build** with real content where it exists; every placeholder logged (`placeholders.md`).

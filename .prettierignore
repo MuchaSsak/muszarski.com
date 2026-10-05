@@ -1,0 +1,12 @@
+dist
+.astro
+.cache
+.turbo
+node_modules
+bun.lock
+context
+.claude
+*.po
+apps/web/src/styles/fonts.css
+apps/web/src/lib/fonts.gen.ts
+assets

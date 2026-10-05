@@ -28,7 +28,7 @@ are judged on type, measure and rhythm instead.
 | Type | Display tracking −0.02 to −0.05 em; body normal; mono labels uppercase at +0.04–0.08 em | [research]; labels [assumption] |
 | Type | Headline: one statement of ~3–7 words, `text-wrap: balance`, no orphans in en / pl / es (pl runs longest) | [research] |
 | Type | Fluid `clamp()` with a real max; ratio ≈ 1.25 at phone, ≈ 1.333 at desktop; no size off the scale | `design.md` |
-| Type | Only the faces `design.md` freezes (draft: Archivo display + body, IBM Plex Mono labels, Source Serif 4 as the blog-prose alternate); mono never sets a paragraph; any other face is a Typography miss | `design.md` |
+| Type | Only the faces `design.md` froze (slice 0): Archivo 400/600 body + UI, Archivo Expanded 800 display, IBM Plex Mono 400 labels; Source Serif 4 only if the blog slice adds it; mono never sets a paragraph; any other face is a Typography miss | `design.md` |
 | Type | Tabular numerals for dates, metrics, sheet and revision numbers; locale-correct quotes (pl „…”), never straight `"` | `design.md`, [assumption] |
 | Color | Tokens only (`--paper`, `--paper-raised`, `--ink`, `--ink-muted`, `--line`, `--grid`, `--accent`, `--project-*`); no ad-hoc hex; no pure `#000`/`#fff` surface | `design.md`, [research] |
 | Color | The canvas sits at one end of the lightness scale: light paper OKLCH L 0.93–0.97, dark stock L 0.12–0.22 | `design.md` |

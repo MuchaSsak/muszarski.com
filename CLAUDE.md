@@ -27,11 +27,17 @@ non-negotiables: read only the pages your task needs. Paths are plain text on pu
 | Analytics, Umami, events, tracking, funnels, KPIs, CV downloads | `.claude/project-info/site/analytics.md` |
 | SEO, Google, Search Console, Bing, IndexNow, metadata, meta tags, titles, JSON-LD, structured data, OG images, sitemap, robots, domain, ranking, blog topics | `.claude/project-info/site/seo.md` |
 | Design, art direction, Drafting Table, colours, typography, motion, animation, illustrations, dark mode, project themes, 3D signature moment | `.claude/project-info/design/design.md` |
+| Design score, design quality rubric, score a view, weakest point, anti-slop, instant fail, agency quality | `.claude/project-info/design/design-quality.md` |
 | Inspiration, references, examples, Awwwards, Mobbin, layout patterns, sheet composition, registry components | `.claude/project-info/design/design-references.md` |
 | Assets, images, videos, recordings, screenshots, photos, fonts, licences, media sourcing | `.claude/project-info/design/assets.md` |
 | Legal, privacy policy, terms, regulamin, GDPR, RODO, cookies, consent, processors, copyright, rights, permission, instructor photos | `.claude/project-info/legal/compliance-and-data.md` |
 | Stack, Astro, framework, versions, hosting, Vercel, Cloudflare, env vars, commands, build, deploy, spikes, three.js bundle, PDF generation, contact endpoint, Resend, Turnstile, video encoding | `.claude/project-info/tech/technologies.md` |
 | Code style, folders, git, commits, testing bar, do-not list | `.claude/project-info/tech/conventions.md` |
+| Monorepo, Turborepo, bun, workspaces, packages, apps/web, packages/shared, Vercel root directory, deploy check | `.claude/project-info/tech/usage/turborepo.md` |
+| Writing Astro pages and components, BaseLayout, Tailwind classes, tokens in code, scoped theme, CSP, robots, specimen | `.claude/project-info/tech/usage/astro.md` |
+| Writing translatable copy, add a translation, translate a string, Lingui macros, catalogs, .po files, extract, typo helper, no-break space, orphans | `.claude/project-info/tech/usage/lingui.md` |
+| Screenshots, visual QA loop, e2e gates, Playwright, axe, layout sweep, run Lighthouse, accept proof, VISUAL-QA | `.claude/project-info/tech/usage/visual-qa.md` |
+| Measured numbers, run notes, command timings, how long build or e2e takes, slice costs, budget left | `.claude/project-info/memory/run-notes.md` (+ `.claude/project-info/memory/slice-costs.md`) |
 | Research evidence, statistics, sources, why we decided X | `.claude/project-info/research/2026-10-05-synthesis.md` |
 | Placeholders, dummy data, fake links, temporary media, not real, wrap up, finish, go to prod, production launch | `.claude/project-info/placeholders.md` (+ `.claude/project-info/open-questions.md`) |
 | Anything unresolved, unknowns, blockers, owner to-dos, questions for the owner | `.claude/project-info/open-questions.md` |
@@ -63,4 +69,6 @@ non-negotiables: read only the pages your task needs. Paths are plain text on pu
 | --- | --- |
 | Lint the wiki | `node .claude/hooks/wiki-check.mjs` |
 | Test prompt routing | `node .claude/hooks/wiki-context.mjs --test "<prompt>"` |
-| dev / test / lint / build | target commands in `.claude/project-info/tech/technologies.md` (scaffolded in Phase 1) |
+| Install / dev | `bun install` · `bun run dev` |
+| Typecheck + lint + unit | `bun run check` |
+| Build / e2e / Lighthouse | `bun run build` · `bun run e2e` · `bun run lhci` (all commands: `.claude/project-info/tech/technologies.md` § Commands) |

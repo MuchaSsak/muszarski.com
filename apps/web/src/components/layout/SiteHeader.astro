@@ -1,0 +1,442 @@
+---
+/**
+ * The header as a drawing's title block (design.md § Art direction, structure.md § Navigation and footer):
+ * framed cells of name + role, plain-word navigation, sheet number + revision, language, theme, the split
+ * CV CTA and Contact (primary). Sticky. ≥ 768 px it hangs from the top edge inside the shell; below it is a
+ * full-width bar. Below 1024 px the navigation, language and theme move into the "Menu" popover (0 KB JS);
+ * below 420 px the CV CTA drops its PDF half (the menu carries it), below 360 px the mark gives way to the name.
+ */
+import { type Locale } from "@package/shared/locales";
+import { t } from "lingui-for-astro/macro";
+
+import CvSplit from "~/components/layout/CvSplit.astro";
+import LocaleLinks from "~/components/layout/LocaleLinks.astro";
+import LocaleSwitch from "~/components/layout/LocaleSwitch.astro";
+import ThemeToggle from "~/components/layout/ThemeToggle.astro";
+import { cvPdfHref, SITE } from "~/data/site";
+import { BUILD_INFO } from "~/lib/build-info";
+import { chromeLinks } from "~/lib/nav";
+import { type LocalizedPath } from "~/lib/routes";
+
+interface Props {
+  path: LocalizedPath;
+  locales?: readonly Locale[] | undefined;
+  /** The drawing-set sheet number of this page (design.md: A-00 home, W-01… flagships). */
+  sheet?: string | undefined;
+  /** Which main-nav item is the current section. */
+  current?: "work" | "blog" | undefined;
+}
+
+const { path, locales, sheet, current } = Astro.props;
+const locale = Astro.locals.locale;
+const links = chromeLinks(locale);
+const blogSuffix = links.blogLocale === locale ? "" : " (EN)";
+const nav = [
+  { id: "work", href: links.work, label: t`Work` },
+  { id: "how-i-work", href: links.howIWork, label: t`How I work` },
+  { id: "blog", href: links.blog, label: t`Blog` + blogSuffix, hreflang: links.blogLocale === locale ? undefined : links.blogLocale },
+] as const;
+const role = t`Full-stack product engineer`;
+---
+
+<header class="site-header" data-site-header>
+  <div class="tb">
+    <a href={links.home} class="tb-cell tb-name">
+      <svg class="tb-mark" viewBox="0 0 32 32" width="30" height="30" aria-hidden="true" focusable="false">
+        <rect x="1.5" y="1.5" width="29" height="29" rx="1" fill="none" stroke="currentColor" stroke-width="2.5"></rect>
+        <path d="M6 23V9l4.5 8L15 9v14M17 23V9l4.5 8L26 9v14" fill="none" stroke="currentColor" stroke-width="2.4"></path>
+      </svg>
+      <span class="tb-name-text">
+        <span class="tb-name-line font-display">{SITE.name}</span>
+        <span class="tb-role label">{role}</span>
+      </span>
+    </a>
+
+    <nav class="tb-cell tb-nav" aria-label={t`Main`}>
+      <ul role="list">
+        {
+          nav.map((item) => (
+            <li>
+              <a href={item.href} hreflang={"hreflang" in item ? item.hreflang : undefined} class="label" aria-current={current === item.id ? "page" : undefined}>
+                {item.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+
+    {
+      sheet && (
+        <p class="tb-cell tb-sheet label">
+          <span>
+            <span class="tb-sheet-key">{t`Sheet`}</span> {sheet}
+          </span>
+          <span>
+            <span class="tb-sheet-key">{t`Rev`}</span> <time datetime={BUILD_INFO.date}>{BUILD_INFO.date}</time>
+          </span>
+        </p>
+      )
+    }
+
+    <div class="tb-cell tb-tools">
+      <LocaleSwitch path={path} locales={locales} />
+      <span class="tb-rule" aria-hidden="true"></span>
+      <ThemeToggle />
+    </div>
+
+    <div class="tb-cell tb-actions">
+      <CvSplit source="header" narrow />
+      <a href={links.contact} class="tb-contact label" data-umami-event="cta" data-umami-event-id="contact" data-umami-event-source="header">
+        {t`Contact`}
+      </a>
+      <button type="button" class="tb-menu label" popovertarget="site-menu">{t`Menu`}</button>
+    </div>
+  </div>
+
+  <div id="site-menu" popover class="site-menu">
+    <div class="site-menu-head">
+      <p class="label text-ink-muted">{t`Menu`}</p>
+      <button type="button" class="site-menu-close label" popovertarget="site-menu" popovertargetaction="hide">{t`Close`}</button>
+    </div>
+    <nav aria-label={t`Main`}>
+      <ul role="list" class="site-menu-nav">
+        {
+          [...nav, { id: "my-life", href: links.myLife, label: t`My life` }].map((item) => (
+            <li>
+              <a href={item.href} aria-current={current === item.id ? "page" : undefined}>
+                {item.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+    <a
+      href={cvPdfHref(locale)}
+      download
+      class="site-menu-pdf label"
+      data-umami-event="cv_download"
+      data-umami-event-source="menu"
+      data-umami-event-locale={locale}>{t`Download CV (PDF)`} <span aria-hidden="true">↓</span></a
+    >
+    <div class="site-menu-row">
+      <LocaleLinks path={path} locales={locales} class="site-menu-locales" />
+      <ThemeToggle />
+    </div>
+  </div>
+</header>
+
+<style>
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 40;
+    height: var(--header-h);
+  }
+
+  /* The title block: a framed row of cells. Full-width bar on phones, a tab hanging from the top edge ≥ 768. */
+  .tb {
+    display: flex;
+    align-items: stretch;
+    height: 100%;
+    background: var(--paper-raised);
+    border-bottom: var(--stroke-outline) solid var(--ink);
+  }
+  @media (min-width: 48rem) {
+    .tb {
+      max-width: calc(var(--container-shell) - 2 * var(--gutter));
+      margin-inline: max(var(--gutter), (100% - var(--container-shell)) / 2 + var(--gutter));
+      border: var(--stroke-outline) solid var(--ink);
+      border-top: 0;
+    }
+  }
+
+  .tb-cell {
+    display: flex;
+    align-items: center;
+  }
+  .tb-cell + .tb-cell {
+    border-left: var(--stroke-detail) solid var(--ink);
+  }
+
+  .tb-name {
+    flex: 1 1 auto;
+    min-width: 0;
+    gap: 0.625rem;
+    padding-inline: 0.75rem;
+    text-decoration: none;
+  }
+  .tb-mark {
+    flex: none;
+    color: var(--ink);
+  }
+  .tb-name-text {
+    display: grid;
+    min-width: 0;
+  }
+  .tb-name-line {
+    font-size: 0.8125rem;
+    line-height: 1.05;
+    font-weight: 800;
+    letter-spacing: 0.01em;
+    text-transform: uppercase;
+    /* Phones: the two words stack like title-block lettering. */
+    max-width: 9ch;
+  }
+  .tb-role {
+    display: none;
+    color: var(--ink-muted);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .tb-name:hover .tb-name-line {
+    color: var(--accent);
+  }
+
+  .tb-nav,
+  .tb-sheet,
+  .tb-tools {
+    display: none;
+  }
+
+  .tb-actions {
+    flex: none;
+    gap: 0.375rem;
+    padding-inline: 0.5rem;
+  }
+  .tb-contact,
+  .tb-menu {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.5rem;
+    padding-inline: 0.75rem;
+    border-radius: 2px;
+    text-decoration: none;
+    cursor: pointer;
+    transition:
+      background-color var(--dur-fast) var(--ease-out),
+      color var(--dur-fast) var(--ease-out);
+  }
+  .tb-contact {
+    background: var(--accent);
+    color: var(--on-accent);
+    border: var(--stroke-outline) solid var(--accent);
+  }
+  .tb-contact:hover {
+    background: var(--ink);
+    border-color: var(--ink);
+    color: var(--paper-raised);
+  }
+  .tb-menu {
+    color: var(--ink);
+    border: var(--stroke-outline) solid var(--ink);
+    background: transparent;
+  }
+  .tb-menu:hover {
+    background: var(--ink);
+    color: var(--paper-raised);
+  }
+  /* Narrow phones: tighter cells; under 360 px the name stands alone (no mark). */
+  @media (max-width: 26.1875rem) {
+    .tb-name {
+      gap: 0.5rem;
+      padding-inline: 0.625rem;
+    }
+    .tb-actions {
+      gap: 0.25rem;
+      padding-inline: 0.375rem;
+    }
+    .tb-contact,
+    .tb-menu {
+      padding-inline: 0.625rem;
+    }
+  }
+  @media (max-width: 22.4375rem) {
+    .tb-mark {
+      display: none;
+    }
+    .tb-name-line {
+      font-size: 0.75rem;
+    }
+    .tb-contact,
+    .tb-menu {
+      padding-inline: 0.5rem;
+    }
+  }
+
+  @media (min-width: 48rem) {
+    .tb-name-line {
+      font-size: 0.9375rem;
+      max-width: none;
+      white-space: nowrap;
+    }
+    .tb-role {
+      display: block;
+    }
+  }
+  /* 1024-1279: the navigation needs the room (es/pl labels run long): the name stacks again and the
+     role returns at 1280. */
+  @media (min-width: 64rem) and (max-width: 79.9375rem) {
+    .tb-role {
+      display: none;
+    }
+    .tb-name-line {
+      font-size: 0.8125rem;
+      white-space: normal;
+      max-width: 9ch;
+    }
+  }
+
+  @media (min-width: 64rem) {
+    .tb-nav,
+    .tb-tools {
+      display: flex;
+    }
+    .tb-menu {
+      display: none;
+    }
+    .tb-name {
+      flex: none;
+      padding-inline: 1rem 1.25rem;
+    }
+    .tb-nav {
+      flex: 1 1 auto;
+      padding-inline: 0.5rem;
+    }
+    .tb-nav ul {
+      display: flex;
+      gap: 0.25rem;
+    }
+    .tb-nav a {
+      display: inline-flex;
+      align-items: center;
+      white-space: nowrap;
+      min-height: 2.5rem;
+      padding-inline: 0.75rem;
+      text-decoration: none;
+      border-radius: 2px;
+      background-image: linear-gradient(var(--accent), var(--accent));
+      background-repeat: no-repeat;
+      background-position: 0.75rem calc(100% - 0.5rem);
+      background-size: 0 2px;
+      transition:
+        background-size var(--dur-base) var(--ease-out),
+        color var(--dur-fast) var(--ease-out);
+    }
+    .tb-nav a:hover,
+    .tb-nav a[aria-current="page"] {
+      color: var(--accent);
+      background-size: calc(100% - 1.5rem) 2px;
+    }
+    .tb-tools {
+      flex: none;
+      gap: 0;
+      padding-inline: 0.25rem;
+    }
+    .tb-rule {
+      align-self: stretch;
+      width: 0;
+      margin-block: 0.75rem;
+      border-left: var(--stroke-construction) solid var(--line);
+    }
+    .tb-actions {
+      gap: 0.5rem;
+      padding-inline: 0.75rem;
+    }
+  }
+
+  @media (min-width: 90rem) {
+    .tb-sheet {
+      display: grid;
+      align-content: center;
+      gap: 0.125rem;
+      padding-inline: 1rem;
+      color: var(--ink-muted);
+      white-space: nowrap;
+    }
+    .tb-sheet-key {
+      display: inline-block;
+      min-width: 3.25rem;
+      color: var(--ink);
+    }
+  }
+
+  /* The mobile menu: a sheet sliding under the bar. */
+  .site-menu {
+    position: fixed;
+    inset: auto 0 auto 0;
+    top: var(--header-h);
+    width: 100%;
+    max-width: none;
+    max-height: calc(100svh - var(--header-h));
+    margin: 0;
+    padding: 1rem var(--gutter) 1.5rem;
+    overflow: auto;
+    background: var(--paper-raised);
+    color: var(--ink);
+    border: 0;
+    border-bottom: var(--stroke-outline) solid var(--ink);
+  }
+  .site-menu-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .site-menu-close {
+    min-height: 2.75rem;
+    padding-inline: 0.75rem;
+    border: var(--stroke-detail) solid var(--ink);
+    border-radius: 2px;
+    cursor: pointer;
+  }
+  .site-menu-nav {
+    margin-top: 0.5rem;
+    border-top: var(--stroke-detail) solid var(--ink);
+  }
+  .site-menu-nav a {
+    display: flex;
+    align-items: center;
+    min-height: 3.5rem;
+    border-bottom: var(--stroke-detail) solid var(--line);
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: var(--text-xl);
+    text-decoration: none;
+  }
+  .site-menu-nav a:hover,
+  .site-menu-nav a[aria-current="page"] {
+    color: var(--accent);
+  }
+  .site-menu-pdf {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 3rem;
+    margin-top: 1rem;
+    padding-inline: 0.75rem;
+    border: var(--stroke-outline) solid var(--ink);
+    border-radius: 2px;
+    text-decoration: none;
+  }
+  .site-menu-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-top: 1rem;
+  }
+  .site-menu-row :global(.site-menu-locales) {
+    display: flex;
+    gap: 0.25rem;
+  }
+  .site-menu-row :global(.site-menu-locales a) {
+    gap: 0.5rem;
+  }
+  @media (min-width: 64rem) {
+    .site-menu {
+      display: none;
+    }
+  }
+</style>

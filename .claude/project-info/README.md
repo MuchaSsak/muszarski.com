@@ -12,7 +12,7 @@ project-info/
 ├─ content/    WHAT THE SITE SAYS: content model, project index, one dossier per project
 ├─ site/       HOW IT IS ORGANISED + FOUND: structure, SEO, i18n, analytics
 ├─ design/     HOW IT LOOKS: design system, references, quality rubric, assets
-├─ tech/       HOW IT IS BUILT: technologies, conventions, usage/ library (Phase 1)
+├─ tech/       HOW IT IS BUILT: technologies, conventions, usage/ library
 ├─ legal/      compliance facts behind the legal pages
 ├─ memory/     measured numbers (Lighthouse, weights, timings)
 └─ research/   raw dated research (unrouted; conclusions live in the pages above)
@@ -50,22 +50,30 @@ site/:
 design/:
 - `design.md` - Drafting Table art direction, signature moment, per-project themes, tokens, motion, imagery, do/don't
 - `assets.md` - sourcing policy, asset folders (what is in git), inventory with rights, missing media
+- `design-quality.md` - the 0–10 rubric for a rendered view: craft rules, a11y gates, instant fails, score bands, quick diagnostic
 - `design-references.md` - the sheet system, per-flagship compositions, per-section and per-page patterns, registry components, anti-patterns
 
 tech/:
 - `technologies.md` - stack + versions, hosting options, env var names, commands, spikes S0–S5, decisions
 - `conventions.md` - code style, folders, git, testing bar, do-not list
+- `usage/turborepo.md` - the monorepo: layout, bun commands, Vercel settings, the pre-push deploy check
+- `usage/astro.md` - how pages, components, Tailwind tokens, CSP and robots are written in `apps/web`
+- `usage/lingui.md` - writing copy, the extract → translate → test → build loop, `typo()`
+- `usage/visual-qa.md` - the evaluate step: gates, screenshots, scoring, accepting proof
 
 legal/:
 - `compliance-and-data.md` - GDPR scope, data touchpoints, device storage (PKE 399), processors, required legal pages, rights to showcased work, INF names
 
 research/ (raw, unrouted): start with `research/2026-10-05-synthesis.md`; reusable measurement scripts in `research/tools/`.
 
+memory/:
+- `run-notes.md` - measured command timings and tool gotchas (read at the start of coding tasks)
+- `slice-costs.md` - what each closed slice spent of the JS / font / LCP budgets
+
 ## Not written yet
 
-- `design/design-quality.md`, `tech/usage/*.md`, `memory/run-notes.md`: Phase 1, ported from the pstryk templates in the order of
-  `research/2026-10-05-pstryk-templates-skills-port.md` § 6. The `code`, `wiki-lint` and `lighthouse-qa` skills get patched for Astro and this layout then
 - `content/credentials.md`: when the owner sends credentials (open-questions Q10)
+- more `tech/usage/*.md` as stacks arrive (motion/GSAP, three/OGL, Resend + Turnstile), each in the slice that needs it
 
 ## Rules
 

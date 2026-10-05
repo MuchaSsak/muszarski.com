@@ -99,13 +99,17 @@ Messenger) · back to work / contact. Secondary nav item; not in the hero path.
 ## Navigation and footer
 
 - **Header on mobile:** name, CV and Contact stay visible; the rest goes behind a labelled "Menu" button
-  (never an icon alone). Below ~390 px the CV control is a single "CV" button and "↓ PDF" moves into the menu
-  and `/cv/` [assumption 2026-10-05]; slice 1 verifies it fits at 320 px.
+  (never an icon alone; a native popover, 0 KB JS). Measured in slice 1 (2026-10-05, all locales):
+  - < 1024 px: navigation, language and theme move into the menu (+ My life, the PDF link)
+  - < 420 px: the CV control is a single "CV" button; "↓ PDF" lives in the menu
+  - < 360 px: the MM mark gives way to the name (stacked, 12 px); fits at 320 px
+  - 1024-1279 px: the name stacks and the role hides, so es/pl navigation fits; the sheet + revision cell shows from 1440 px
+  - `e2e/chrome.spec.ts` checks every cell for spill at 8 widths x 3 locales
 - **Contact panel:** the same content as the home contact section; opens from any page; Esc closes;
   focus is trapped and returned.
 - **Footer columns** (this list owns the footer links; ~15 links):
   - Work (the 4 flagships + All projects)
-  - Site (Blog, CV, My life, How this site was built, RSS)
+  - Site (Blog, CV, My life, How this site was built → `/work/how-this-site-was-built/` [assumption 2026-10-05], RSS)
   - Elsewhere (GitHub, LinkedIn, npm…; `rel="me"`)
   - Legal (Privacy, Terms)
   - plus the locale switch and the build-time revision row (`design-references.md` § Per home section, Footer row)

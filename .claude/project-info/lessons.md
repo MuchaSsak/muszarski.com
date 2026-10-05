@@ -19,6 +19,10 @@
 - PstrykWeb on the site = public info only (landing URL, public konfigurator, his solo role, tech visible from outside). Never AI generation, the pipeline, internal tools or counts until the owner opens it up (`pstrykweb.md` § Public disclosure) - 2026-10-05.
 - Owner-stated numbers can be off (the brief said ~6 years; it is ~4, since 2022). When an owner fact and a public source disagree, show both and ask; never pick one - 2026-10-05.
 
+- The owner rejected the first on-screen look (Drafting Table, slices 0-1) as ugly and low-effort. A tidy, safe, minimal system is
+  NOT "done": visuals must be ambitious and astonishing first, then made practical. Show several bold rendered directions and let
+  the owner choose BEFORE building slices; never freeze a visual system the owner hasn't seen and approved - 2026-10-05.
+
 ### Privacy of inputs
 - `context/` is private and gitignored (the pstryk code, klepacz.pdf). Copy patterns, not files; never quote the memo verbatim or name its author in committed files - 2026-10-05.
 - Research screenshots of third-party sites stay local (`research/inspirations/img/` is gitignored); the repo may go public - 2026-10-05.
@@ -31,3 +35,8 @@
 - A muted loop starting during page load cost 270–480 ms TBT in the pstryk lab; start loops on visibility + first interaction - 2026-10-05.
 - Routing: a generic phrase in one row ("case study") outscores a project name and cuts the dossier; put shared task words in every row they apply to and re-run `wiki-context.mjs --test` (Polish stems live in `routing-synonyms.json`) - 2026-10-05.
 - The wiki is foldered (product/ content/ site/ design/ tech/ legal/ memory/); the hooks need README, log, lessons and working-agreement at the root; keep basenames unique - 2026-10-05.
+- The Write tool decodes `\uXXXX` escapes into raw characters (a raw no-break space landed in source); write invisible characters from a script with `chr()`, or keep them out of source - 2026-10-05.
+- Shell heredocs through the Bash tool lose backslashes (regexes break); write multi-line scripts with the Write tool, then run them - 2026-10-05.
+- Python on Windows writes CRLF: always `open(..., "w", newline="\n")`; `.gitattributes` forces LF in git - 2026-10-05.
+- Git Bash rewrites URL-path arguments (`/en/` -> `P:/Git/en/`): prefix such commands with `MSYS_NO_PATHCONV=1` - 2026-10-05.
+- Astro 7 runs one `astro preview` per project: e2e, shots and Lighthouse share port 4322 and reuse a running server - 2026-10-05.

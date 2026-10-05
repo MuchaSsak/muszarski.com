@@ -1,0 +1,266 @@
+---
+/**
+ * The footer as the drawing set's revision block (structure.md § Navigation and footer, design-references.md
+ * § Footer): a last-chance contact line, the 4 labelled link columns (this list owns the footer links),
+ * the language links and a build-time revision row. The theme toggle stays in the header.
+ */
+import { type Locale } from "@package/shared/locales";
+import { t } from "lingui-for-astro/macro";
+
+import CvSplit from "~/components/layout/CvSplit.astro";
+import LocaleLinks from "~/components/layout/LocaleLinks.astro";
+import { visibleFlagships } from "~/data/projects";
+import { PROFILES, SITE } from "~/data/site";
+import { BUILD_INFO } from "~/lib/build-info";
+import { chromeLinks } from "~/lib/nav";
+import { type LocalizedPath } from "~/lib/routes";
+import { typo } from "~/lib/typography";
+
+interface Props {
+  path: LocalizedPath;
+  locales?: readonly Locale[] | undefined;
+}
+
+const { path, locales } = Astro.props;
+const locale = Astro.locals.locale;
+const links = chromeLinks(locale);
+const english = links.blogLocale === locale ? "" : " (EN)";
+const year = BUILD_INFO.date.slice(0, 4);
+
+const columns = [
+  {
+    id: "work",
+    title: t`Work`,
+    items: [
+      ...visibleFlagships().map((project) => ({ label: project.name, href: links.project(project.slug) })),
+      { label: t`All projects`, href: links.work },
+    ],
+  },
+  {
+    id: "site",
+    title: t`Site`,
+    items: [
+      { label: t`Blog` + english, href: links.blog },
+      { label: t`CV`, href: links.cv },
+      { label: t`My life`, href: links.myLife },
+      { label: t`How this site was built`, href: links.thisSite },
+      { label: t`RSS` + english, href: links.rss },
+    ],
+  },
+  {
+    id: "elsewhere",
+    title: t`Elsewhere`,
+    items: PROFILES.map((profile) => ({ label: profile.label, href: profile.href, outbound: profile.id })),
+  },
+  {
+    id: "legal",
+    title: t`Legal`,
+    items: [
+      { label: t`Privacy policy`, href: links.privacy },
+      { label: t`Terms`, href: links.terms },
+    ],
+  },
+] as const;
+---
+
+<footer class="site-footer shell">
+  <div class="rb">
+    <section class="rb-contact">
+      <p class="label text-ink-muted">X-01 · {t`Contact`}</p>
+      <!-- PLACEHOLDER: draft line; the owner rewrites it in his voice (placeholders.md P6). -->
+      <h2 id="footer-contact-title" class="font-display text-2xl rb-contact-title font-extrabold">
+        {typo(locale, t`Let's talk about what you're building.`)}
+      </h2>
+      <div class="rb-contact-actions">
+        <a href={links.contact} class="rb-contact-cta label" data-umami-event="cta" data-umami-event-id="contact" data-umami-event-source="footer">
+          {t`Contact`} <span aria-hidden="true">→</span>
+        </a>
+        <CvSplit source="footer" />
+      </div>
+    </section>
+
+    <nav class="rb-columns" aria-label={t`Footer`}>
+      {
+        columns.map((column) => (
+          <div class="rb-column">
+            <h3 class="label rb-column-title">{column.title}</h3>
+            <ul role="list">
+              {column.items.map((item) =>
+                "outbound" in item ? (
+                  <li>
+                    <a href={item.href} rel="me" data-umami-event="outbound" data-umami-event-target={item.outbound}>
+                      {item.label}
+                      <span class="rb-ext" aria-hidden="true">
+                        ↗
+                      </span>
+                    </a>
+                  </li>
+                ) : (
+                  <li>
+                    <a href={item.href}>{item.label}</a>
+                  </li>
+                ),
+              )}
+            </ul>
+          </div>
+        ))
+      }
+    </nav>
+
+    <div class="rb-rev">
+      <LocaleLinks path={path} locales={locales} class="rb-locales" />
+      <p class="label rb-rev-line">
+        <span>{t`Rev`} <time datetime={BUILD_INFO.date}>{BUILD_INFO.date}</time></span>
+        {BUILD_INFO.sha && <span class="tabular normal-case">{BUILD_INFO.sha}</span>}
+        <span>
+          {t`Built with`} <a href="https://astro.build/" data-umami-event="outbound" data-umami-event-target="astro">Astro</a>
+        </span>
+        <span>© {year} {SITE.name}</span>
+      </p>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    margin-top: clamp(4rem, 10vw, 8rem);
+    padding-bottom: var(--gutter);
+  }
+  .rb {
+    background: var(--paper-raised);
+    border: var(--stroke-outline) solid var(--ink);
+  }
+  .rb-contact {
+    display: grid;
+    gap: 1rem;
+    padding: clamp(1.25rem, 4vw, 2.5rem);
+    border-bottom: var(--stroke-detail) solid var(--ink);
+  }
+  .rb-contact-title {
+    max-width: 22ch;
+    /* "Porozmawiajmy" is one long word: cap the size by the viewport so it fits at 320 px. */
+    font-size: min(var(--text-2xl), 8.4vw);
+  }
+  .rb-contact-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem;
+    margin-top: 0.5rem;
+  }
+  .rb-contact-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    min-height: 2.75rem;
+    padding-inline: 1.125rem;
+    background: var(--accent);
+    color: var(--on-accent);
+    border: var(--stroke-outline) solid var(--accent);
+    border-radius: 2px;
+    text-decoration: none;
+    transition:
+      background-color var(--dur-fast) var(--ease-out),
+      border-color var(--dur-fast) var(--ease-out);
+  }
+  .rb-contact-cta:hover {
+    background: var(--ink);
+    border-color: var(--ink);
+    color: var(--paper-raised);
+  }
+  .rb-contact-actions :global(.cv-split a) {
+    min-height: 2.75rem;
+  }
+  @media (min-width: 64rem) {
+    .rb-contact {
+      grid-template-columns: 1fr auto;
+      align-items: end;
+    }
+    .rb-contact > .label {
+      grid-column: 1 / -1;
+    }
+    .rb-contact-actions {
+      margin-top: 0;
+    }
+  }
+
+  .rb-columns {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .rb-column {
+    padding: 1.25rem clamp(1rem, 3vw, 2rem) 1.5rem;
+    border-bottom: var(--stroke-detail) solid var(--ink);
+  }
+  .rb-column:nth-child(odd) {
+    border-right: var(--stroke-detail) solid var(--ink);
+  }
+  @media (min-width: 64rem) {
+    .rb-columns {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+    .rb-column {
+      border-right: var(--stroke-detail) solid var(--ink);
+    }
+    .rb-column:last-child {
+      border-right: 0;
+    }
+  }
+  .rb-column-title {
+    color: var(--ink-muted);
+  }
+  .rb-column ul {
+    display: grid;
+    margin-top: 0.75rem;
+  }
+  .rb-column a {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    min-height: 2.25rem;
+    text-decoration: none;
+    text-underline-offset: 4px;
+  }
+  .rb-column a:hover {
+    color: var(--accent);
+    text-decoration: underline;
+    text-decoration-thickness: 2px;
+  }
+  .rb-ext {
+    font-size: 0.8em;
+    color: var(--ink-muted);
+  }
+
+  .rb-rev {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem 1.5rem;
+    padding: 0.5rem clamp(0.5rem, 2.5vw, 1.5rem);
+  }
+  .rb-rev :global(.rb-locales) {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem;
+  }
+  .rb-rev :global(.rb-locales a) {
+    gap: 0.5rem;
+    min-height: 2.75rem;
+  }
+  .rb-rev-line {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem 1.25rem;
+    color: var(--ink-muted);
+    padding-inline: 0.75rem;
+  }
+  .rb-rev-line a {
+    color: var(--ink);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+  .rb-rev-line a:hover {
+    color: var(--accent);
+  }
+</style>

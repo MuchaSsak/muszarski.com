@@ -81,7 +81,7 @@
   /* The H1 (LCP): Archivo Expanded is ~0.65 em per letter, so 40 px is the floor that fits "Full-stack" at 320 px. */
   --text-display: clamp(2.5rem, 1.8356rem + 3.238vw, 4.75rem);
   --text-display--line-height: 0.98;
-  --text-display--letter-spacing: -0.015em;
+  --text-display--letter-spacing: -0.02em;
 
   --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
   --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
@@ -116,6 +116,14 @@
   --stroke-construction: 0.75px;
   --grid-major: 40px;
   --grid-minor: 8px;
+  /* The sticky title block's height; anchors and focus scroll clear of it. */
+  --header-h: 3.5rem;
+}
+
+@media (min-width: 64rem) {
+  :root {
+    --header-h: 3.75rem;
+  }
 }
 
 @layer base {
@@ -124,7 +132,8 @@
     text-size-adjust: 100%;
     /* We ship every weight we use; never fake a bold. */
     font-synthesis-weight: none;
-    scrollbar-gutter: stable;
+    /* Anchors and keyboard focus land clear of the sticky title block (WCAG 2.4.11). */
+    scroll-padding-top: calc(var(--header-h) + 1rem);
   }
 
   body {
@@ -134,8 +143,8 @@
     background-image:
       linear-gradient(to right, var(--grid) 1px, transparent 1px),
       linear-gradient(to bottom, var(--grid) 1px, transparent 1px),
-      linear-gradient(to right, color-mix(in oklab, var(--grid) 40%, transparent) 1px, transparent 1px),
-      linear-gradient(to bottom, color-mix(in oklab, var(--grid) 40%, transparent) 1px, transparent 1px);
+      linear-gradient(to right, color-mix(in oklab, var(--grid) 30%, transparent) 1px, transparent 1px),
+      linear-gradient(to bottom, color-mix(in oklab, var(--grid) 30%, transparent) 1px, transparent 1px);
     background-size:
       var(--grid-major) var(--grid-major),
       var(--grid-major) var(--grid-major),
@@ -153,6 +162,8 @@
   h2,
   h3 {
     text-wrap: balance;
+    /* Last resort only: a word wider than its box breaks instead of overflowing (long Polish words). */
+    overflow-wrap: break-word;
   }
 
   p,

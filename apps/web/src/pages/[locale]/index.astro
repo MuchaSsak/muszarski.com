@@ -8,14 +8,17 @@ import { t } from "lingui-for-astro/macro";
 import BaseLayout from "~/components/layout/BaseLayout.astro";
 import { SITE } from "~/data/site";
 import { localeStaticPaths } from "~/lib/routes";
+import { typo } from "~/lib/typography";
 
 export const getStaticPaths = localeStaticPaths;
+
+const locale = Astro.locals.locale;
 
 const title = t`Full-stack Developer · TypeScript, React, three.js`;
 const description = t`Mateusz Muszarski, a full-stack product engineer from Poland. Web and mobile products in TypeScript, React and Node.js, from the business problem to the shipped app.`;
 ---
 
-<BaseLayout title={title} description={description} home>
+<BaseLayout title={title} description={description} home sheet="A-00">
   <section class="shell pt-[clamp(3rem,10vh,8rem)] pb-24" aria-labelledby="hero-title">
     <p class="label text-ink-muted">A-00 · {SITE.name}</p>
     <h1 id="hero-title" class="font-display text-display mt-4 max-w-[14ch] font-extrabold">
@@ -23,7 +26,7 @@ const description = t`Mateusz Muszarski, a full-stack product engineer from Pola
     </h1>
     <!-- PLACEHOLDER: draft subline from brand.md; the owner rewrites it (placeholders.md P6). -->
     <p class="text-lg text-ink-muted mt-6 max-w-[38ch]">
-      {t`I turn a business problem into a shipped web or mobile product, and I tell you early what it will cost and what can wait.`}
+      {typo(locale, t`I turn a business problem into a shipped web or mobile product, and I tell you early what it will cost and what can wait.`)}
     </p>
   </section>
 </BaseLayout>

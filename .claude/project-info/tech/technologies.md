@@ -8,10 +8,11 @@
 
 | Layer | Choice | Version | Why | Source |
 | --- | --- | --- | --- | --- |
+| Monorepo | **Turborepo** + bun workspaces: `apps/web` + `packages/shared` (`usage/turborepo.md`) | turbo 2.11.7, bun 1.3.14 | the owner's choice, same shape as his pstryk repo | [user] 2026-10-05 |
 | Framework | Astro, `output: "static"`, `trailingSlash: "always"` | 7.3.5 | 0 KB JS by default; owner's own bench: Astro 100 / LCP 1.66 s vs Next 95 / 2.92 s (measured on an internal project: never quoted on the site) | [user] 2026-10-05, [research] |
 | Components | React TSX via `@astrojs/react` (server-rendered; hydrate only islands) | 7.0.0 + react 19.3.0 | all sections are TSX (a React signal in the repo) | [research] |
 | Language | TypeScript strict (+ `@astrojs/check`) | **~6.0.3** (+ 0.9.10) | `@astrojs/check` does not accept TS 7 | [research] |
-| i18n | Lingui: core/react/cli/vite-plugin (`macroTransform: true`), format-po; `lingui-for-astro` for macros in `.astro` files | 6.9.0; 0.7.1 | owner requirement; spike passed (macros in `.astro` + `.tsx`, 3 locales, PL plurals); details `site/i18n.md` | [user], [research: spike] |
+| i18n | Lingui: core/react/cli/vite-plugin (`macroTransform: true`), format-po; `lingui-for-astro` for macros in `.astro` files | 6.9.0; 0.7.1 | owner requirement; S0 passed on the real scaffold 2026-10-05; `.po` compiled on import (no committed compiled catalog); details `site/i18n.md`, `usage/lingui.md` | [user], [research: spike] |
 | Content | `@astrojs/mdx` per-locale collections; `@astrojs/sitemap`; `@astrojs/rss` | 8.0.2; 3.7.4; 4.0.19 | case studies, posts, legal per locale | [research] |
 | Styling | Tailwind CSS + `@tailwindcss/vite` | 4.3.3 | same as the pstrykweb.pl landing | [research] |
 | Signature 3D | **vanilla three** (default) or **OGL** in an Astro `<script>` island, behind a custom `client:after-load` directive (load + idle + capability probe) | three 0.186.1 / ogl 1.0.11 | measured gz: R3F + React 302 KB (the whole budget) vs three 126 KB vs OGL 14 KB. R3F only if the moment grows into several scenes | [research: § 3.1] |
@@ -37,28 +38,33 @@
 
 ## Repo layout
 
-Target folders: `conventions.md` § Folder rules. Created in Phase 1.
+Turborepo (`usage/turborepo.md`): `apps/web/` (the site; folders in `conventions.md` § Folder rules) and
+`packages/shared/` (the locale list). Scaffolded 2026-10-05 (slice 0).
 
-## Commands (set when Phase 1 scaffolds; target shape)
+## Commands (bun; repo root forwards to `apps/web`)
 
 | Do | Run |
 | --- | --- |
-| dev | `npm run dev` (astro dev) |
-| typecheck / lint / unit | `npm run check` (astro check + eslint + vitest) |
-| i18n | `npm run i18n:extract` · `npm run i18n:compile` (`--strict`) |
-| build | `npm run build` (compile catalogs → astro build → CV PDFs → SEO/link/launch gates) |
-| e2e + a11y | `npm run e2e` |
-| Lighthouse | `npm run lhci` |
-| media | `npm run video` · `npm run og` · `npm run fonts` |
+| install | `bun install` (CI/Vercel: `--frozen-lockfile`) |
+| dev | `bun run dev` (astro dev, 4321) |
+| typecheck / lint / unit | `bun run check` (astro check + eslint + vitest, via turbo) |
+| i18n | `bun run i18n:extract` (then fill pl/es; the build compiles `.po` and fails on a missing message) |
+| build | `bun run build` (astro build → launch gate; later: CV PDFs, SEO/link gates) |
+| preview | `bun run preview` (4322; one per project, shared by e2e/shots/Lighthouse) |
+| e2e + a11y | `bun run e2e` |
+| screenshots | `MSYS_NO_PATHCONV=1 node scripts/shots.mjs --paths /en/ --widths 390,1024,1920,2560` (apps/web) |
+| Lighthouse | `bun run lhci` (`scripts/lighthouse.mjs`, median of 3, budgets) |
+| fonts | `bun run fonts` (subsets + metric fallbacks; outputs committed) |
+| media (later) | `video` · `og` |
 | wiki | `node .claude/hooks/wiki-check.mjs` |
 
-Package manager: npm or bun (pstryk uses bun 1.3) [assumption: bun, decided at scaffold].
+Package manager: **bun 1.3.14** (decided at scaffold 2026-10-05 with the owner's Turborepo choice). Timings: `memory/run-notes.md`.
 
 ## Environment variables (names only)
 
 | Name | Purpose | Where | Required |
 | --- | --- | --- | --- |
-| `PUBLIC_SITE_URL` | canonical origin (final domain, Q5) | host env | yes |
+| `PUBLIC_SITE_URL` | canonical origin; default `https://matmuszarski.space` (`seo.md` § Domain); review deploys use their own `VERCEL_URL` | host env | no |
 | `PUBLIC_TURNSTILE_SITE_KEY` / `TURNSTILE_SECRET_KEY` | contact bot check | host env | yes |
 | `RESEND_API_KEY` / `CONTACT_TO_EMAIL` | contact delivery | host env | yes |
 | `PUBLIC_UMAMI_WEBSITE_ID` | analytics; unset = no script | host env | no |
@@ -75,8 +81,8 @@ tokens: 300 s, single use. Vercel Pro WAF: rate-limit rules included (the exact 
 
 | # | Spike | Pass |
 | --- | --- | --- |
-| S0 | Lingui wiring on the real scaffold (also `site/i18n.md`) | extract → strict compile → build, 3 locales, no catalog in island JS |
-| S1 | Deploy to the chosen host: macro build on Linux, `/api/contact`, rate limit, PDF in `astro:build:done` | green build, PDFs, content test, 429 after N POSTs |
+| S0 | Lingui wiring on the real scaffold (also `site/i18n.md`) | **passed 2026-10-05**: extract → build (compile on import, fails on a missing message), 3 locales; island catalogs re-checked in S5 |
+| S1 | Deploy to the chosen host: macro build on Linux, `/api/contact`, rate limit, PDF in `astro:build:done` | **part 1 passed 2026-10-05**: clean-clone `bun install --frozen-lockfile` + turbo build green, Linux native binary in `bun.lock`; first Vercel build when the owner connects the repo. Contact + 429 move to slice 10, PDF to the CV slice |
 | S2 | Signature moment: vanilla three vs OGL (vs R3F) with `client:after-load` | Lighthouse mobile ≥ 95, LCP < 2.0 s, TBT < 100 ms with 3D on (stricter than the site bar on purpose: headroom for the 3D) |
 | S3 | Cross-document VT card → case morph | smooth on Chrome Android + iOS 18.2+; Firefox clean |
 | S4 | Real devices (non-Pro iPhone + mid Android) | codec fallback, Low Power Mode poster, PDF `download` file name |
@@ -91,5 +97,8 @@ tokens: 300 s, single use. Vercel Pro WAF: rate-limit rules included (the exact 
 | 2026-10-05 | Native cross-document View Transitions | ClientRouter + persisted canvas | 0 KB; one signature moment needs no persistent canvas [research] |
 | 2026-10-05 | CV PDF from a print route via Playwright | react-pdf, Typst (plan B) | one template, tagged output [research] |
 | 2026-10-05 | No Lenis | Lenis desktop-only | native scroll, anchors, a11y [research] |
+| 2026-10-05 | Turborepo on bun (`apps/web`, `packages/shared`) | one package | owner's choice, room for more apps/scripts [user] |
+| 2026-10-05 | Static font cuts (Archivo 400/600, Archivo Expanded 800, Plex Mono 400 = 47.2 KB) | the variable Archivo (52 KB alone) | 4 small files, only the H1 face preloaded [measured] |
+| 2026-10-05 | `.po` compiled on import by `@lingui/vite-plugin` | committed compiled catalogs | one source of truth; the build still fails on a missing message |
 | 2026-10-05 | Vercel Pro, functions in fra1 | Cloudflare Workers ($0), Vercel Hobby | owner's choice; commercial use + DPA [user] |
 | 2026-10-05 | Correction: Lingui on Next 16.3 works with `@lingui/swc-plugin` 6.6.0 (6.7.0 is the broken build) | — | issue #253; doesn't change the Astro choice [research] |

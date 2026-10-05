@@ -10,7 +10,8 @@ import { PUBLIC_UMAMI_SCRIPT_URL, PUBLIC_UMAMI_WEBSITE_ID } from "astro:env/clie
 import { LAUNCH_BUILD, PUBLIC_GOOGLE_SITE_VERIFICATION } from "astro:env/server";
 import { t } from "lingui-for-astro/macro";
 
-import ShellHeader from "~/components/layout/ShellHeader.astro";
+import SiteFooter from "~/components/layout/SiteFooter.astro";
+import SiteHeader from "~/components/layout/SiteHeader.astro";
 import ThemeScript from "~/components/layout/ThemeScript.astro";
 import { SITE } from "~/data/site";
 import { FONT_FILES } from "~/lib/fonts.gen";
@@ -27,9 +28,13 @@ interface Props {
   home?: boolean;
   /** Indexable at launch? Legal pages are noindex,follow (seo.md). */
   noindex?: boolean;
+  /** The drawing-set sheet number shown in the title block (design.md § Art direction). */
+  sheet?: string;
+  /** The main-nav item this page belongs to. */
+  current?: "work" | "blog";
 }
 
-const { title, description, path = "", locales = LOCALES, home = false, noindex = false } = Astro.props;
+const { title, description, path = "", locales = LOCALES, home = false, noindex = false, sheet, current } = Astro.props;
 const locale = Astro.locals.locale;
 const site = Astro.site ?? new URL("http://localhost:4321");
 const canonical = path === null ? null : new URL(pathTo(locale, path), site).href;
@@ -76,9 +81,10 @@ const umamiDomain = new URL(site).hostname;
   </head>
   <body>
     <a href="#main" class="sr-only-focusable bg-accent text-on-accent label fixed top-3 left-3 z-50 px-4 py-3">{t`Skip to content`}</a>
-    <ShellHeader path={path ?? ""} locales={locales} />
+    <SiteHeader path={path ?? ""} locales={locales} sheet={sheet} current={current} />
     <main id="main" tabindex="-1" class="outline-none">
       <slot />
     </main>
+    <SiteFooter path={path ?? ""} locales={locales} />
   </body>
 </html>

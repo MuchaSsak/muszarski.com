@@ -15,7 +15,7 @@
 
 | Event | When | Properties |
 | --- | --- | --- |
-| `cv_download` | a PDF download starts | `source` (header/hero/contact/cv-page/menu), `locale` |
+| `cv_download` | a PDF download starts | `source` (header/hero/contact/cv-page/menu/footer), `locale` |
 | `cv_view` | `/cv/` page view (pageview) | — |
 | `contact_open` | contact panel opened | `source` |
 | `contact_submit` | form sent successfully | `topic` (hiring/project/other/none) |
@@ -27,6 +27,11 @@
 | `theme_toggle` | theme changed by hand | `to` |
 | `motion_pause` | pause-motion control used | — |
 | `cta` | any other CTA in `structure.md` § CTA inventory (See work, All projects, Open to projects, How this site was built) | `id`, `source` |
+
+Wired so far (no-ops until `PUBLIC_UMAMI_WEBSITE_ID` is set):
+- slice 0: `locale_switch` (Umami data attributes on the locale links, 0 JS), `theme_toggle` (`umami.track` in the toggle script)
+- slice 1: `cta` id=contact / id=cv (header, footer), `cv_download` (header, menu, footer), `outbound` (GitHub, LinkedIn,
+  npm, astro) - all data attributes
 
 ## Funnels and KPIs
 

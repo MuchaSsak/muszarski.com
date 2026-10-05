@@ -14,9 +14,10 @@
   directive is chosen consciously (`visible` / `idle` / `media`), never `load` by default [research].
 - **Design tokens only:** colours, spacing and motion come from tokens (`design.md`); a project's look is a
   theme object, never ad-hoc CSS.
-- **Import alias:** a single one (`~/` → `src/`), no deep relatives [assumption, set at scaffold].
+- **Import aliases:** `~/` → `apps/web/src/`, shared code via `@package/shared/*`; no `@/`, no deep relatives (set at scaffold 2026-10-05).
+- **Line endings:** LF everywhere (`.gitattributes`); no raw invisible characters in source (use escapes or `typo()`).
 
-## Folder rules (target layout; created in Phase 1)
+## Folder rules (inside `apps/web/`; the monorepo: `usage/turborepo.md`)
 
 | Path | Holds |
 | --- | --- |
@@ -24,11 +25,14 @@
 | `src/components/` | `layout/`, `ui/`, `home/`, `work/`, `blog/`, `cv/`, `islands/` (hydrated only) |
 | `src/content/` | collections: `projects/`, `blog/`, `legal/` (per locale) |
 | `src/data/` | site facts, CV, credentials, skills, life items |
-| `src/locales/` | Lingui catalogs |
-| `public/` | robots.txt, llms.txt, favicons. CV PDFs are build output at `/files/` (generated in `astro:build:done`, never committed) |
+| `src/locales/` | Lingui catalogs (`.po`, compiled on import) + their alignment test |
+| `src/lib/` | routes (the one path builder), i18n, typography, generated font manifest |
+| `src/styles/` | `global.css` (tokens) + generated `fonts.css` |
+| `e2e/` | Playwright gates (`usage/visual-qa.md`); `routes.ts` lists every page |
+| `public/` | favicons, `fonts/` (subset woff2 + OFL licence files). robots.txt is generated (`src/pages/robots.txt.ts`). CV PDFs are build output at `/files/` (generated in `astro:build:done`, never committed) |
 | `scripts/` | build gates (SEO, links, launch, CV sync), media encoding, OG images |
-| `assets/` | source assets + `references/` (never shipped), `assets.md` |
-| `screenshots/` | accepted visual-QA proof (`working-agreement.md` § 2) |
+| `assets/` (repo root) | source assets + `references/` (never shipped), `assets.md` |
+| `screenshots/` (repo root) | accepted visual-QA proof (`working-agreement.md` § 2); scratch in `.work/` (gitignored) |
 
 ## Error handling and logging
 

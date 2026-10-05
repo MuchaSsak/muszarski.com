@@ -1,22 +1,29 @@
 # Design system
 
+> **REJECTED BY THE OWNER 2026-10-05, after seeing slices 0-1 on screen:** "this looks so ugly", "completely rebuild
+> and rebrand", "you aren't putting in the creative effort and visual". Everything visual below (Drafting Table, paper/
+> cyanotype tokens, Archivo + Plex Mono, title block, revision block) is the REJECTED direction, kept only as history.
+> Do not build on it. The next step is a full rebrand (`working-agreement.md` § 9, Rebrand gate).
+
 > Owns the art direction, tokens, components, motion, imagery and design do/don't. References that
 > inspired it: `design-references.md`. Sections and pages: `structure.md`. Scoring a view: `design-quality.md`
 > (Phase 1). Decided by the owner 2026-10-05: **Drafting Table** + **code-drawn SVG + shader illustrations**.
-> Base tokens and type below are **Phase 0 drafts** with computed contrast [assumption]. Slice 0 of Phase 1
-> (`working-agreement.md` § 9) puts them on screen, adjusts them once and freezes them (`placeholders.md` P14).
+> Base tokens and type below were **frozen in slice 0 (2026-10-05)** after review on screen in light + dark at 390-2560
+> (the `/specimen/` sheet in review builds). Unit tests keep the AA ratios and the two dark blocks in sync.
 
 ## Art direction: "Drafting Table"
 
 - **Mental model:** the site is an engineer's drafting table, and every page is a **sheet** in one
   drawing set. The decoration is itself proof of shipping: diagrams, dimensions and part callouts of
   real projects, not a costume [research: art-direction-themes #1 + #2].
-- **Title block:** the box in the corner of an engineering drawing. It always shows name, role,
-  availability, sheet number, revision/date, and the Contact + CV actions. On desktop it is the header
-  styled as a title block; on mobile, a compact bar.
+- **Title block:** the box in the corner of an engineering drawing. Built in slice 1 as the sticky header: framed cells of
+  mark + name + role, plain-word navigation, sheet number + revision (build date), language, theme, the split CV CTA and
+  Contact. ≥ 768 px it hangs from the top edge inside the shell; below, a full-width bar. Availability lives in the hero
+  and the contact section, so the bar stays one row in every locale [assumption 2026-10-05].
 - **Sheet numbers:** A-00 home · W-01…W-04 flagships · C-01 CV · B-xx blog posts · L-01 my life · X-01 contact.
   Shown as labels only; navigation stays plain words.
-- **The table itself:** a faint mm/dot grid on paper. Rulers with mm ticks at the viewport edges (desktop
+- **The table itself:** a faint grid on paper: major lines every 40 px in `--grid`, minor lines every 8 px at 30% of
+  `--grid` (frozen in slice 0). Rulers with mm ticks at the viewport edges (desktop
   only, decorative, `aria-hidden`). Never behind body text at a contrast that hurts reading.
 - **Light theme = drafting paper:** warm off-white stock, graphite ink.
 - **Dark theme = cyanotype blueprint:** Prussian-blue stock, white/cyan ink. Both are real drafting media,
@@ -56,7 +63,7 @@
   OKLCH L 0.93–0.97; dark sets: L 0.12–0.22; `--ink` ≥ 7:1 on its paper in both.
 - **Guardrail:** themes must stay inside the paper/ink system. A project is never allowed its own layout grid or nav.
 
-## Color tokens (draft 2026-10-05; WCAG ratios computed, not yet seen on screen)
+## Color tokens (frozen 2026-10-05, slice 0; `apps/web/src/styles/global.css`)
 
 | Token | Light: drafting paper | Dark: cyanotype | Use | Contrast (light / dark) |
 | --- | --- | --- | --- | --- |
@@ -73,22 +80,28 @@
 - Informative drawings (architecture, diagrams) use `--ink` (≥ 3:1, WCAG 1.4.11); `--line` is decoration only.
 - One accent per view. Project sheets swap `--paper`/`--ink`/`--accent`; the chrome (title block, nav) keeps the base tokens.
 - **Theme switch:** default from `prefers-color-scheme`; the toggle sets `data-theme` on `<html>`; the choice is a
-  per-viewer convenience in `localStorage`, set before first paint (no flash).
+  per-viewer convenience in `localStorage`, set before first paint (no flash). Built in slice 0: a ~1 KB vanilla script,
+  `aria-pressed`, a cross-fade View Transition (instant under reduced motion), `theme-color` updated, works with storage blocked.
+- **Scoped stock:** `.theme-light` / `.theme-dark` pin a stock on any element (the space sheet stays dark in light mode).
 
-## Typography (draft candidates; all OFL with latin-ext for pl + es; verified in slice 0)
+## Typography (frozen 2026-10-05, slice 0; OFL, subset to Latin + Latin-1 + Polish + the punctuation we use)
 
-| Role | First choice | Alternate | Why |
+| Role | Face (static cut) | File | Why |
 | --- | --- | --- | --- |
-| Display (H1, section titles) | **Archivo** (variable `wdth` 62–125): Expanded ExtraBold for the H1 | Familjen Grotesk | wide grotesk = engineering-plate lettering, not a default face |
-| Labels (title block, dimensions, sheet numbers, chips) | **IBM Plex Mono** 400/500 | JetBrains Mono | technical lettering; Plex has an engineering heritage |
-| Body + UI | **Archivo** normal width 400/600 | Source Serif 4 for blog prose only | one family keeps the bytes low |
+| Display (H1, section titles) | **Archivo Expanded** 800 (Archivo `wdth` 125, `wght` 800), preloaded | 11.8 KB | wide grotesk = engineering-plate lettering, not a default face |
+| Labels (title block, dimensions, sheet numbers, chips) | **IBM Plex Mono** 400, uppercase + 0.06em tracking | 12.4 KB | technical lettering; Plex has an engineering heritage |
+| Body + UI | **Archivo** 400 / 600 | 11.9 / 11.1 KB | one family keeps the bytes low |
+| Blog prose (later, if needed) | Source Serif 4 | — | decided in the blog slice |
+
+- Total **47.2 KB** in 4 files (`bun run fonts`, `apps/web/scripts/fonts.mjs`); metric-matched fallbacks (Arial / Arial Bold /
+  Courier New with size-adjust and ascent/descent overrides) keep CLS at 0. Weights not shipped are never synthesized.
 
 - **Blocked faces** (read as defaults or as AI-slop, research): Inter, Roboto, Poppins, Montserrat, Space Grotesk,
   Geist, Instrument Serif, Playfair, the serif-italic accent word.
-- **Budget:** fonts ≤ 100 KB total (target ~85 KB: Archivo 3 static cuts + Plex Mono 1 cut), self-hosted, subset
-  latin + latin-ext, only the H1 face preloaded, `font-display: swap` with a metric-matched fallback (no CLS).
-- **Scale:** fluid `clamp()`, ratio ≈ 1.25 on phones, ≈ 1.333 on desktop; body 17–18 px, line length 60–75 ch;
-  tabular numerals for dates and metrics.
+- **Budget:** fonts ≤ 100 KB total (shipped 47.2 KB), self-hosted, only the H1 face preloaded, `font-display: swap`.
+- **Scale:** fluid `clamp()` from 390 to 1440 px, ratio ≈ 1.25 on phones, ≈ 1.333 on desktop; body 17–18 px, line length
+  60–75 ch (`max-w-prose` = 68ch); tabular numerals for dates and metrics. Steps: label 13 · sm 15 · base 17–18 · lg 21–24 ·
+  xl 27–32 · 2xl 33–43 · 3xl 42–57 · display 40–76 px (40 px is the floor that fits "Full-stack" at 320 px).
 
 ## Spacing, grid, breakpoints
 

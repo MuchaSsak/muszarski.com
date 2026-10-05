@@ -1,0 +1,65 @@
+---
+/**
+ * The three locale links (autonym + code), used by the header popover and the mobile menu.
+ * Keeps the page when it exists in the target locale (`switchPath`); counted as `locale_switch`.
+ */
+import { AUTONYMS, type Locale, LOCALES } from "@package/shared/locales";
+
+import { type LocalizedPath, switchPath } from "~/lib/routes";
+
+interface Props {
+  path: LocalizedPath;
+  locales?: readonly Locale[] | undefined;
+  fallback?: LocalizedPath;
+  class?: string;
+}
+
+const { path, locales = LOCALES, fallback = "", class: className } = Astro.props;
+const locale = Astro.locals.locale;
+---
+
+<ul role="list" class:list={["locale-links", className]}>
+  {
+    LOCALES.map((to) => (
+      <li>
+        <a
+          href={switchPath(path, to, fallback, locales)}
+          hreflang={to}
+          lang={to}
+          aria-current={to === locale ? "true" : undefined}
+          data-umami-event="locale_switch"
+          data-umami-event-from={locale}
+          data-umami-event-to={to}
+        >
+          <span>{AUTONYMS[to]}</span>
+          <span class="label code">{to}</span>
+        </a>
+      </li>
+    ))
+  }
+</ul>
+
+<style>
+  .locale-links a {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    min-height: 2.75rem;
+    padding-inline: 0.75rem;
+    border-radius: 2px;
+    text-decoration: none;
+  }
+  .locale-links a:hover {
+    color: var(--accent);
+  }
+  .locale-links a[aria-current="true"] {
+    font-weight: 600;
+  }
+  .locale-links .code {
+    color: var(--ink-muted);
+  }
+  .locale-links a[aria-current="true"] .code {
+    color: var(--accent);
+  }
+</style>

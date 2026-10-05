@@ -8,16 +8,58 @@ msgstr ""
 "Language: es\n"
 "X-Review-Status: unreviewed (AI translation)\n"
 
+#: src/components/layout/SiteFooter.astro:36
+msgid "All projects"
+msgstr "Todos los proyectos"
+
+#: src/components/layout/SiteFooter.astro:43
+#: src/components/layout/SiteHeader.astro:37
+msgid "Blog"
+msgstr "Blog"
+
+#: src/components/layout/SiteFooter.astro:116
+msgid "Built with"
+msgstr "Hecho con"
+
+#: src/components/layout/SiteHeader.astro:100
+msgid "Close"
+msgstr "Cerrar"
+
+#: src/components/layout/SiteFooter.astro:69
+#: src/components/layout/SiteFooter.astro:76
+#: src/components/layout/SiteHeader.astro:91
+msgid "Contact"
+msgstr "Contacto"
+
+#: src/components/layout/CvSplit.astro:26
+#: src/components/layout/SiteFooter.astro:44
+msgid "CV"
+msgstr "CV"
+
 #: src/components/layout/ThemeToggle.astro:10
 #: src/components/layout/ThemeToggle.astro:11
 msgid "Dark theme"
 msgstr "Tema oscuro"
 
-#: src/pages/[locale]/index.astro:14
+#: src/components/layout/CvSplit.astro:32
+#: src/components/layout/SiteHeader.astro:121
+msgid "Download CV (PDF)"
+msgstr "Descargar CV (PDF)"
+
+#: src/components/layout/SiteFooter.astro:52
+msgid "Elsewhere"
+msgstr "En la red"
+
+#: src/components/layout/SiteFooter.astro:82
+msgid "Footer"
+msgstr "Pie de página"
+
+#: src/pages/[locale]/index.astro:17
 msgid "Full-stack Developer · TypeScript, React, three.js"
 msgstr "Desarrollador full stack · TypeScript, React, three.js"
 
-#: src/pages/[locale]/index.astro:22
+#: src/components/layout/SiteHeader.astro:39
+#: src/pages/[locale]/index.astro:25
 msgid "Full-stack product engineer"
 msgstr "Ingeniero de producto full stack"
 
@@ -25,27 +67,88 @@ msgstr "Ingeniero de producto full stack"
 msgid "Go to the home page"
 msgstr "Ir a la página de inicio"
 
-#: src/pages/[locale]/index.astro:26
+#: src/components/layout/SiteHeader.astro:36
+msgid "How I work"
+msgstr "Cómo trabajo"
+
+#: src/components/layout/SiteFooter.astro:46
+msgid "How this site was built"
+msgstr "Cómo se hizo este sitio"
+
+#: src/pages/[locale]/index.astro:29
 msgid "I turn a business problem into a shipped web or mobile product, and I tell you early what it will cost and what can wait."
 msgstr "Convierto un problema de negocio en un producto web o móvil terminado, y te digo desde el principio cuánto costará y qué puede esperar."
 
-#: src/components/layout/LocaleSwitch.astro:23
+#: src/components/layout/LocaleSwitch.astro:24
 msgid "Language: {current}"
 msgstr "Idioma: {current}"
 
-#: src/pages/[locale]/index.astro:15
+#: src/components/layout/SiteFooter.astro:57
+msgid "Legal"
+msgstr "Legal"
+
+#: src/components/layout/SiteFooter.astro:72
+msgid "Let's talk about what you're building."
+msgstr "Hablemos de lo que estás construyendo."
+
+#: src/components/layout/SiteHeader.astro:55
+#: src/components/layout/SiteHeader.astro:102
+msgid "Main"
+msgstr "Principal"
+
+#: src/pages/[locale]/index.astro:18
 msgid "Mateusz Muszarski, a full-stack product engineer from Poland. Web and mobile products in TypeScript, React and Node.js, from the business problem to the shipped app."
 msgstr "Mateusz Muszarski, ingeniero de producto full stack de Polonia. Productos web y móviles con TypeScript, React y Node.js, del problema de negocio a la app publicada."
+
+#: src/components/layout/SiteHeader.astro:93
+#: src/components/layout/SiteHeader.astro:99
+msgid "Menu"
+msgstr "Menú"
+
+#: src/components/layout/SiteFooter.astro:45
+#: src/components/layout/SiteHeader.astro:105
+msgid "My life"
+msgstr "Mi vida"
 
 #: src/pages/404.astro:14
 #: src/pages/404.astro:17
 msgid "Page not found"
 msgstr "Página no encontrada"
 
-#: src/components/layout/BaseLayout.astro:78
+#: src/components/layout/SiteFooter.astro:59
+msgid "Privacy policy"
+msgstr "Política de privacidad"
+
+#: src/components/layout/SiteFooter.astro:113
+#: src/components/layout/SiteHeader.astro:76
+msgid "Rev"
+msgstr "Rev."
+
+#: src/components/layout/SiteFooter.astro:47
+msgid "RSS"
+msgstr "RSS"
+
+#: src/components/layout/SiteHeader.astro:73
+msgid "Sheet"
+msgstr "Hoja"
+
+#: src/components/layout/SiteFooter.astro:41
+msgid "Site"
+msgstr "Sitio"
+
+#: src/components/layout/BaseLayout.astro:83
 msgid "Skip to content"
 msgstr "Saltar al contenido"
+
+#: src/components/layout/SiteFooter.astro:60
+msgid "Terms"
+msgstr "Términos"
 
 #: src/pages/404.astro:14
 msgid "This page does not exist."
 msgstr "Esta página no existe."
+
+#: src/components/layout/SiteFooter.astro:33
+#: src/components/layout/SiteHeader.astro:35
+msgid "Work"
+msgstr "Proyectos"
