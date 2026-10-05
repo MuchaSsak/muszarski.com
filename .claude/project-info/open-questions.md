@@ -9,7 +9,7 @@
 | 2 | City for local SEO and the JSON-LD address (city or region only?) | `seo.md` titles, hero, schema | owner | "Pomorskie, Poland" | merged into Q27 |
 | 3 | Target job titles; contract (B2B / UoP); mode (remote / hybrid / on-site, relocation?); start date | hero availability, quick facts, CV | owner | "Full-stack developer · B2B or UoP · remote/hybrid · available now" [assumption] | open |
 | 4 | Deadline for the job hunt / launch | v1 scope cut | owner | none; build in vertical slices | open |
-| 5 | Domain: keep `matmuszarski.space` or move to a name domain (availability via SEO research) | canonical URLs, Search Console, OG | owner | decide after the availability check | deferred by owner 2026-10-05: placeholder domain, `placeholders.md` P1 |
+| 5 | Domain: keep `matmuszarski.space` or move to a name domain (availability via SEO research) | canonical URLs, Search Console, OG | owner | — | **partly answered** [user] 2026-10-05: `matmuszarski.space` for now (`seo.md` § Domain). Open: a name domain later? Renew before 2027-03-17 |
 | 6 | Real client testimonials (name, role, written consent)? | proof elements | owner | no testimonials shown | open |
 | 7 | Photos of the owner (my-life, Person image, maybe hero) | F13, schema image, OG | owner | my-life + schema only; the hero uses a drawing | open |
 | 8 | Locale URL segments `/en/` or pstryk-style `/eng/`? | routing, hreflang | owner | `/en/` | answered 2026-10-05: `/en/` |
@@ -27,7 +27,7 @@
 | 20 | Blog posts at launch: how many, which topics | F12, SEO | owner + Claude | 2–3 from `seo.md` topic plan | open |
 | 21 | PstrykWeb: who owns it; what may be shown (code, screenshots, metrics) | its case study | owner | not shown until answered | open |
 | 22 | Light + dark theme both? | F18, design tokens | owner | both (paper / cyanotype) [assumption] | open |
-| 23 | Old site: redirect, keep, or revive the space scene as `/explore` later? | domain, F24 | owner | 308 to the new home if the domain changes | open |
+| 23 | Old site: redirect, keep, or revive the space scene as `/explore` later? | domain, F24 | owner | — | **partly answered** [user] 2026-10-05: kept live at 3d-space-folio.vercel.app; the new site takes its domain. Open: `/explore` later |
 | 24 | "Open to projects": what kind of work; show rates? | contact copy | owner | "selected freelance projects", no rates | open |
 | 25 | **Seniority story:** coding since 2022 (~4 years), confirmed 2026-10-05. Still open: still at technikum (which ZSE, which year), matura / graduation date, years of paid work (since when?) | hero, CV, LinkedIn, SEO entity, availability | owner | "Building software since 2022" | partly answered 2026-10-05 |
 | 26 | **Display name + handles:** "Mateusz Muszarski" everywhere, `alternateName` MuchaSsak, drop "Matt"/"Matthew"? | SEO entity, all profiles | owner | yes to all [assumption] | open |

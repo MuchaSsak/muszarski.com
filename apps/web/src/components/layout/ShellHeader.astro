@@ -1,0 +1,30 @@
+---
+/**
+ * Foundation header (slice 0): the name home link + locale switch + theme toggle. Slice 1 rebuilds it
+ * as the title block with the navigation and the split CV CTA (structure.md § Header).
+ */
+import { type Locale } from "@package/shared/locales";
+
+import LocaleSwitch from "~/components/layout/LocaleSwitch.astro";
+import ThemeToggle from "~/components/layout/ThemeToggle.astro";
+import { SITE } from "~/data/site";
+import { type LocalizedPath, pathTo } from "~/lib/routes";
+
+interface Props {
+  path: LocalizedPath;
+  locales?: readonly Locale[];
+}
+
+const { path, locales } = Astro.props;
+const locale = Astro.locals.locale;
+---
+
+<header class="shell flex min-h-18 items-center justify-between gap-4">
+  <a href={pathTo(locale)} class="font-display text-sm tracking-tight uppercase no-underline hover:text-accent">
+    {SITE.name}
+  </a>
+  <div class="flex items-center gap-2">
+    <LocaleSwitch path={path} locales={locales} />
+    <ThemeToggle />
+  </div>
+</header>

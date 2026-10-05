@@ -14,7 +14,7 @@
 - **The identity is split:**
   - names: "Mateusz" / "Matt" / "Matthew"
   - handles: MuchaSsak / muchassakkk / mat.muszarski
-  - hosts: matmuszarski.space, plus muszarski.space (lapsed, still linked from the GitHub README)
+  - hosts: matmuszarski.space (the new site from now on), plus muszarski.space (lapsed, still linked from the GitHub README)
   - seniority: now consistent: "since 2022" (owner confirmed 2026-10-05; the brief's "~6 years" was wrong)
 - **Fixing consistency is lever #1 and costs nothing** (owner actions: open-questions Q25–Q28).
 
@@ -119,9 +119,13 @@ Every post links one case study and one pillar.
 
 ## Domain (open-questions Q5)
 
+- **Decided for now [user] 2026-10-05:** the new site launches on **`matmuszarski.space`**. The old space site moved to
+  `3d-space-folio.vercel.app`, so the domain's indexed content gets replaced, not redirected (the old site was one URL).
+  Renew it before it expires (2027-03-17). A name domain stays an option; if it comes, the migration below applies.
+
 - **All candidates are unregistered (2026-10-05):** mateuszmuszarski .com/.pl/.dev/.me, muszarski .com/.pl/.dev,
   matmuszarski .com/.dev/.pl.
-- **Recommended:** `mateuszmuszarski.com` (or `.dev`) as primary + `.pl` as a 308.
+- **Earlier recommendation (research):** `mateuszmuszarski.com` (or `.dev`) as primary + `.pl` as a 308.
 - **The current domain has little equity:** `matmuszarski.space` was registered 2026-03-17 and expires 2027-03-17.
 - **Migration** (research § 7.3):
   1. renew the old domain to ≥ 2028-03

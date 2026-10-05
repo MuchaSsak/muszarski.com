@@ -12,8 +12,8 @@
 | Craft | **13 hand-written GLSL shader programs** | [research: counted in repo] |
 | Year / licence / stars | 2025 · MIT · 8★ | [research] |
 | Git history | one import (2025-09-02) + 14 owner commits up to 2026-03-26. The real build time can't be recovered | [research] |
-| Code | https://github.com/MuchaSsak/matmuszarski.space (public) | [user] |
-| Live | https://matmuszarski.vercel.app/ (+ matmuszarski.space) | [user] |
+| Code | https://github.com/MuchaSsak/3d-space-portfolio (public; was `MuchaSsak/matmuszarski.space`) | [user] 2026-10-05 |
+| Live | https://3d-space-folio.vercel.app/ (moved off `matmuszarski.space`, which now belongs to the new site; the 2026-10-05 measurements below were taken on the same app at matmuszarski.vercel.app) | [user] 2026-10-05 |
 | Role / team | solo | [user] |
 
 ## Measured flaws (the honest "before" for case study #0) [research, 2026-10-05]
@@ -54,5 +54,5 @@
 
 ## Open (project-specific)
 
-Keep the old domain live or 308 it (Q5, Q23) · what he'd do differently (write it as the bridge to #0) · research
+Domain settled for now: the space site lives on at 3d-space-folio.vercel.app, the new site takes matmuszarski.space [user] 2026-10-05 · what he'd do differently (write it as the bridge to #0) · research
 open questions § "Open questions for the owner".

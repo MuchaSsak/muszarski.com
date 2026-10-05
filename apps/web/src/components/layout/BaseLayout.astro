@@ -1,0 +1,84 @@
+---
+/**
+ * Every page's document: head (SEO, hreflang, theme, fonts, analytics), skip link, header, main.
+ * Wiki: site/seo.md § Metadata rules, site/i18n.md, design/design.md § Theme switch.
+ */
+import "~/styles/global.css";
+
+import { type Locale, LOCALES, OG_LOCALES } from "@package/shared/locales";
+import { PUBLIC_UMAMI_SCRIPT_URL, PUBLIC_UMAMI_WEBSITE_ID } from "astro:env/client";
+import { LAUNCH_BUILD, PUBLIC_GOOGLE_SITE_VERIFICATION } from "astro:env/server";
+import { t } from "lingui-for-astro/macro";
+
+import ShellHeader from "~/components/layout/ShellHeader.astro";
+import ThemeScript from "~/components/layout/ThemeScript.astro";
+import { SITE } from "~/data/site";
+import { FONT_FILES } from "~/lib/fonts.gen";
+import { alternates, type LocalizedPath, localesOf, pathTo } from "~/lib/routes";
+
+interface Props {
+  /** The page part of the title; the home page passes `home` and gets "Name – title". */
+  title: string;
+  description: string;
+  /** The locale-free path of this page ("" = home); null = no canonical or hreflang (404). */
+  path?: LocalizedPath | null;
+  /** Locales this page exists in (default: all). */
+  locales?: readonly Locale[];
+  home?: boolean;
+  /** Indexable at launch? Legal pages are noindex,follow (seo.md). */
+  noindex?: boolean;
+}
+
+const { title, description, path = "", locales = LOCALES, home = false, noindex = false } = Astro.props;
+const locale = Astro.locals.locale;
+const site = Astro.site ?? new URL("http://localhost:4321");
+const canonical = path === null ? null : new URL(pathTo(locale, path), site).href;
+const links = path === null ? [] : alternates(site, path, locales);
+const otherLocales = path === null ? [] : localesOf(path, locales).filter((other) => other !== locale);
+// The separator is typography, not copy: it stays out of the catalogs.
+const fullTitle = home ? `${SITE.name} – ${title}` : `${title} – ${SITE.name}`;
+// Every build but the launch is noindex (scripts/launch.mjs); legal pages stay out of the index.
+const robots = !LAUNCH_BUILD ? "noindex, nofollow" : noindex ? "noindex, follow" : "index, follow, max-image-preview:large";
+const preloads = FONT_FILES.filter((font) => font.preload);
+const umamiDomain = new URL(site).hostname;
+---
+
+<!doctype html>
+<html lang={locale} dir="ltr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <ThemeScript />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <meta name="robots" content={robots} />
+    {canonical && <link rel="canonical" href={canonical} />}
+    {links.map((link) => <link rel="alternate" hreflang={link.hreflang} href={link.href} />)}
+    {preloads.map((font) => <link rel="preload" href={font.href} as="font" type="font/woff2" crossorigin />)}
+    <meta name="color-scheme" content="light dark" />
+    <meta name="theme-color" content="#f2efe6" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#0c2240" media="(prefers-color-scheme: dark)" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={SITE.name} />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    {canonical && <meta property="og:url" content={canonical} />}
+    <meta property="og:locale" content={OG_LOCALES[locale]} />
+    {otherLocales.map((other) => <meta property="og:locale:alternate" content={OG_LOCALES[other]} />)}
+    {PUBLIC_GOOGLE_SITE_VERIFICATION && <meta name="google-site-verification" content={PUBLIC_GOOGLE_SITE_VERIFICATION} />}
+    {
+      PUBLIC_UMAMI_WEBSITE_ID && (
+        <script is:inline defer src={PUBLIC_UMAMI_SCRIPT_URL} data-website-id={PUBLIC_UMAMI_WEBSITE_ID} data-domains={umamiDomain} />
+      )
+    }
+    <slot name="head" />
+  </head>
+  <body>
+    <a href="#main" class="sr-only-focusable bg-accent text-on-accent label fixed top-3 left-3 z-50 px-4 py-3">{t`Skip to content`}</a>
+    <ShellHeader path={path ?? ""} locales={locales} />
+    <main id="main" tabindex="-1" class="outline-none">
+      <slot />
+    </main>
+  </body>
+</html>

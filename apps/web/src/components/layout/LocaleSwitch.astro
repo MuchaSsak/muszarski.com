@@ -1,0 +1,116 @@
+---
+/**
+ * Language switcher (wiki: site/i18n.md § Switcher): a native popover (0 KB JS, light-dismiss and Esc
+ * for free), autonyms + code, no flags, keeps the current page; a locale without this page falls back
+ * to `fallback`. Clicks are counted by Umami's data attributes (`locale_switch`, analytics.md).
+ */
+import { AUTONYMS, type Locale, LOCALES } from "@package/shared/locales";
+import { t } from "lingui-for-astro/macro";
+
+import { type LocalizedPath, switchPath } from "~/lib/routes";
+
+interface Props {
+  path: LocalizedPath;
+  locales?: readonly Locale[];
+  fallback?: LocalizedPath;
+}
+
+const { path, locales = LOCALES, fallback = "" } = Astro.props;
+const locale = Astro.locals.locale;
+const current = AUTONYMS[locale];
+---
+
+<button type="button" class="locale-trigger label" popovertarget="locale-menu" aria-label={t`Language: ${current}`}>
+  <span aria-hidden="true">{locale}</span>
+  <svg viewBox="0 0 12 12" width="10" height="10" aria-hidden="true" focusable="false">
+    <path d="M2 4.5 6 8.5l4-4" fill="none" stroke="currentColor" stroke-width="1.5"></path>
+  </svg>
+</button>
+<div id="locale-menu" popover class="locale-menu">
+  <ul role="list">
+    {
+      LOCALES.map((to) => (
+        <li>
+          <a
+            href={switchPath(path, to, fallback, locales)}
+            hreflang={to}
+            lang={to}
+            aria-current={to === locale ? "true" : undefined}
+            data-umami-event="locale_switch"
+            data-umami-event-from={locale}
+            data-umami-event-to={to}
+          >
+            <span>{AUTONYMS[to]}</span>
+            <span class="label code">{to}</span>
+          </a>
+        </li>
+      ))
+    }
+  </ul>
+</div>
+
+<style>
+  .locale-trigger {
+    anchor-name: --locale-trigger;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    min-height: 2.75rem;
+    padding-inline: 0.75rem;
+    color: var(--ink);
+    border: var(--stroke-detail) solid var(--line);
+    border-radius: 2px;
+    cursor: pointer;
+    transition:
+      color var(--dur-fast) var(--ease-out),
+      border-color var(--dur-fast) var(--ease-out);
+  }
+  .locale-trigger:hover {
+    color: var(--accent);
+    border-color: currentColor;
+  }
+  .locale-menu {
+    /* Fallback placement under the header's right edge; anchored where supported. */
+    position: fixed;
+    inset: auto;
+    top: 4.5rem;
+    right: var(--gutter);
+    margin: 0;
+    min-width: 12rem;
+    padding: 0.375rem;
+    background: var(--paper-raised);
+    color: var(--ink);
+    border: var(--stroke-outline) solid var(--ink);
+    border-radius: 2px;
+    box-shadow: 4px 4px 0 0 var(--grid);
+  }
+  @supports (position-anchor: --locale-trigger) {
+    .locale-menu {
+      position-anchor: --locale-trigger;
+      top: calc(anchor(bottom) + 0.5rem);
+      right: anchor(right);
+    }
+  }
+  .locale-menu a {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    min-height: 2.75rem;
+    padding-inline: 0.75rem;
+    border-radius: 2px;
+    text-decoration: none;
+  }
+  .locale-menu a:hover {
+    color: var(--accent);
+  }
+  .locale-menu a[aria-current="true"] {
+    font-weight: 600;
+  }
+  .locale-menu a[aria-current="true"] .code {
+    color: var(--accent);
+  }
+  .code {
+    color: var(--ink-muted);
+  }
+</style>

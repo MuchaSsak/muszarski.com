@@ -1,0 +1,56 @@
+{
+  "name": "@package/web",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22.19.0"
+  },
+  "scripts": {
+    "dev": "astro dev --port 4321",
+    "build": "astro build && node ./scripts/launch-gate.mjs",
+    "preview": "astro preview --port 4322",
+    "typecheck": "astro check",
+    "lint": "eslint .",
+    "test": "vitest run",
+    "i18n:extract": "lingui extract --clean",
+    "e2e": "playwright test",
+    "lhci": "node ./scripts/lighthouse.mjs",
+    "shots": "node ./scripts/shots.mjs",
+    "fonts": "node ./scripts/fonts.mjs"
+  },
+  "dependencies": {
+    "@astrojs/mdx": "8.0.2",
+    "@astrojs/react": "7.0.0",
+    "@astrojs/sitemap": "3.7.4",
+    "@lingui/core": "6.9.0",
+    "@lingui/react": "6.9.0",
+    "@package/shared": "workspace:*",
+    "@tailwindcss/vite": "4.3.3",
+    "astro": "7.3.5",
+    "lingui-for-astro": "0.7.1",
+    "react": "19.3.0",
+    "react-dom": "19.3.0",
+    "sharp": "^0.35.5",
+    "tailwindcss": "4.3.3"
+  },
+  "devDependencies": {
+    "@astrojs/check": "0.9.10",
+    "@axe-core/playwright": "^4.13.0",
+    "@lingui/cli": "6.9.0",
+    "@lingui/conf": "6.9.0",
+    "@lingui/format-po": "6.9.0",
+    "@lingui/native-tools": "0.1.5",
+    "@lingui/vite-plugin": "6.9.0",
+    "@playwright/test": "1.63.0",
+    "@types/node": "^26.6.4",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "chrome-launcher": "^1.2.2",
+    "fontkit": "^2.0.4",
+    "lighthouse": "^13.5.0",
+    "subset-font": "^2.9.0",
+    "typescript": "~6.0.3",
+    "vitest": "^5.0.3"
+  }
+}

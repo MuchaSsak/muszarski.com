@@ -11,7 +11,8 @@ and to rank for his name, his role and his location. [user]
 
 ## Problem and why now
 
-- **The old site** is `matmuszarski.space` [web: github.com/MuchaSsak], a fully immersive three.js space scene:
+- **The old site** was `matmuszarski.space` [web: github.com/MuchaSsak], a fully immersive three.js space scene (moved to
+  3d-space-folio.vercel.app on 2026-10-05; the new site takes over `matmuszarski.space` [user]):
   - linear scroll, so contact and certifications took a long time to reach
   - disabled on mobile
   - outdated content [user]

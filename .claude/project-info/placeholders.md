@@ -20,7 +20,7 @@
 
 | # | What is not real | Where it lives | Real value comes from | At launch | Q |
 | --- | --- | --- | --- | --- | --- |
-| P1 | Site domain: `https://mateuszmuszarski.com` used as the canonical origin | `PUBLIC_SITE_URL` default, sitemap, JSON-LD, OG | owner buys a domain | set the env var, verify in Search Console, 308 the old domain | 5 |
+| P1 | ~~Site domain~~ **resolved** [user] 2026-10-05: `https://matmuszarski.space` ("for now", `seo.md` § Domain); `apps/web/scripts/launch.mjs` | — | — | attach the domain to the new Vercel project only at launch; Search Console | 5 |
 | P2 | Seniority line: "since 2022" is real; years of paid work and student status are not yet | hero, CV, LinkedIn copy | owner | fill + same words on LinkedIn/GitHub | 25 |
 | P3 | City line "Pomorskie, Poland" | hero, CV, `Person.address` | owner | replace | 27 |
 | P4 | Availability line (role, B2B/UoP, remote/hybrid, start date) | hero, contact, CV | owner | replace | 3 |

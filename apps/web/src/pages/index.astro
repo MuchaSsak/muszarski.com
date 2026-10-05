@@ -1,0 +1,40 @@
+---
+/**
+ * `/` → `/en/`. Vercel answers with a 308 at the edge (vercel.json); this page is only the fallback
+ * for hosts that serve dist/ as-is (astro preview, a static server): noindex + meta refresh +
+ * canonical, on the same paper colour so there is no white flash.
+ */
+const target = "/en/";
+const canonical = new URL(target, Astro.site ?? "http://localhost:4321").href;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex" />
+    <meta http-equiv="refresh" content={`0; url=${target}`} />
+    <link rel="canonical" href={canonical} />
+    <title>Mateusz Muszarski</title>
+    <style is:inline>
+      html {
+        background: #f2efe6;
+        color: #1e2226;
+        font-family: system-ui, sans-serif;
+      }
+      @media (prefers-color-scheme: dark) {
+        html {
+          background: #0c2240;
+          color: #eef4fb;
+        }
+      }
+      a {
+        color: inherit;
+      }
+    </style>
+  </head>
+  <body>
+    <p><a href={target}>Mateusz Muszarski</a></p>
+  </body>
+</html>

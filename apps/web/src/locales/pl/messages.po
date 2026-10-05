@@ -1,0 +1,50 @@
+msgid ""
+msgstr ""
+"POT-Creation-Date: 2026-10-05 18:49+0200\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: @lingui/cli\n"
+"Language: pl\n"
+
+#: src/components/layout/ThemeToggle.astro:10
+#: src/components/layout/ThemeToggle.astro:11
+msgid "Dark theme"
+msgstr "Ciemny motyw"
+
+#: src/pages/[locale]/index.astro:14
+msgid "Full-stack Developer · TypeScript, React, three.js"
+msgstr "Programista full stack · TypeScript, React, three.js"
+
+#: src/pages/[locale]/index.astro:22
+msgid "Full-stack product engineer"
+msgstr "Full-stack product engineer"
+
+#: src/pages/404.astro:19
+msgid "Go to the home page"
+msgstr "Przejdź na stronę główną"
+
+#: src/pages/[locale]/index.astro:26
+msgid "I turn a business problem into a shipped web or mobile product, and I tell you early what it will cost and what can wait."
+msgstr "Zamieniam problem biznesowy w gotowy produkt webowy lub mobilny i od początku mówię Ci, ile to będzie kosztować i co może poczekać."
+
+#: src/components/layout/LocaleSwitch.astro:23
+msgid "Language: {current}"
+msgstr "Język: {current}"
+
+#: src/pages/[locale]/index.astro:15
+msgid "Mateusz Muszarski, a full-stack product engineer from Poland. Web and mobile products in TypeScript, React and Node.js, from the business problem to the shipped app."
+msgstr "Mateusz Muszarski, programista full stack z Polski. Produkty webowe i mobilne w TypeScript, React i Node.js, od problemu biznesowego do wdrożonej aplikacji."
+
+#: src/pages/404.astro:14
+#: src/pages/404.astro:17
+msgid "Page not found"
+msgstr "Nie znaleziono strony"
+
+#: src/components/layout/BaseLayout.astro:78
+msgid "Skip to content"
+msgstr "Przejdź do treści"
+
+#: src/pages/404.astro:14
+msgid "This page does not exist."
+msgstr "Ta strona nie istnieje."

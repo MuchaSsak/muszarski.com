@@ -1,0 +1,135 @@
+---
+/**
+ * Design-token specimen (slice 0: tokens + fonts on screen, then frozen; design/design.md). Internal QA
+ * page, English only, never in the sitemap and NOT built at launch, so its strings skip Lingui.
+ * Both stocks render side by side via `.theme-light` / `.theme-dark`.
+ */
+import "~/styles/global.css";
+
+import { LAUNCH_BUILD } from "astro:env/server";
+
+import ThemeScript from "~/components/layout/ThemeScript.astro";
+import ThemeToggle from "~/components/layout/ThemeToggle.astro";
+import { FONT_FILES } from "~/lib/fonts.gen";
+
+export const getStaticPaths = () => (LAUNCH_BUILD ? [] : [{ params: { specimen: "specimen" } }]);
+
+const SWATCHES = [
+  { token: "paper", light: "#F2EFE6", dark: "#0C2240", use: "page stock" },
+  { token: "paper-raised", light: "#FAF8F2", dark: "#122E55", use: "sheets, panels, inputs" },
+  { token: "ink", light: "#1E2226", dark: "#EEF4FB", use: "text, informative lines", ratio: "13.9 / 14.4" },
+  { token: "ink-muted", light: "#565B61", dark: "#A9BED8", use: "secondary text", ratio: "6.0 / 8.4" },
+  { token: "line", light: "#B9B4A8", dark: "#3D5F8C", use: "decorative strokes only", ratio: "1.8 / 2.4" },
+  { token: "grid", light: "#DEDAD0", dark: "#15335C", use: "mm grid, rulers", ratio: "1.21 / 1.26" },
+  { token: "accent", light: "#B3321F", dark: "#FF8F7A", use: "CTAs, focus, stamps", ratio: "5.4 / 7.2" },
+  { token: "on-accent", light: "#FFFFFF", dark: "#0C2240", use: "text on accent", ratio: "6.2 / 7.2" },
+];
+const STEPS = [
+  { name: "display", cls: "font-display text-display font-extrabold", sample: "Full-stack product engineer" },
+  { name: "3xl", cls: "font-display text-3xl font-extrabold", sample: "Selected work" },
+  { name: "2xl", cls: "font-display text-2xl font-extrabold", sample: "PstrykWeb · Linkoglot" },
+  { name: "xl", cls: "text-xl font-semibold", sample: "How I work with a client" },
+  { name: "lg", cls: "text-lg", sample: "I turn a business problem into a shipped product." },
+  { name: "base", cls: "text-base", sample: "Zażółć gęślą jaźń. ¿Qué tal el diseño? Ñandú, pingüino, café." },
+  { name: "sm", cls: "text-sm", sample: "Secondary text, captions, credits 2022–2026" },
+  { name: "label", cls: "label", sample: "Sheet W-01 · Rev. B · 390 × 844" },
+];
+const fontBytes = FONT_FILES.reduce((sum, font) => sum + font.bytes, 0);
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex, nofollow" />
+    <ThemeScript />
+    <title>Token specimen</title>
+    {FONT_FILES.filter((f) => f.preload).map((f) => <link rel="preload" href={f.href} as="font" type="font/woff2" crossorigin />)}
+  </head>
+  <body>
+    <header class="shell flex min-h-18 items-center justify-between">
+      <p class="label">Specimen · design tokens (draft → frozen in slice 0)</p>
+      <ThemeToggle />
+    </header>
+    <main class="shell grid gap-16 pb-24">
+      <section aria-labelledby="colours">
+        <h1 id="colours" class="font-display text-2xl font-extrabold">Colour</h1>
+        <div class="mt-6 grid gap-6 lg:grid-cols-2">
+          {
+            ["theme-light", "theme-dark"].map((scope) => (
+              <div class:list={[scope, "border-ink bg-paper text-ink border-2 p-5"]}>
+                <p class="label text-ink-muted">{scope === "theme-light" ? "Light · drafting paper" : "Dark · cyanotype"}</p>
+                <ul role="list" class="mt-4 grid gap-2">
+                  {SWATCHES.map((s) => (
+                    <li class="grid grid-cols-[3rem_1fr_auto] items-center gap-3">
+                      <span class="border-ink block h-10 border" style={`background: var(--${s.token})`} />
+                      <span>
+                        <span class="block font-semibold">--{s.token}</span>
+                        <span class="text-ink-muted text-sm">{s.use}</span>
+                      </span>
+                      <span class="label text-ink-muted text-right">
+                        {scope === "theme-light" ? s.light : s.dark}
+                        {s.ratio && <span class="block">{s.ratio}</span>}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+                <div class="mt-6 flex flex-wrap items-center gap-4">
+                  <a href="#colours" class="bg-accent text-on-accent label inline-flex min-h-11 items-center px-5 no-underline">Contact</a>
+                  <a href="#colours" class="border-ink label inline-flex min-h-11 items-center border-2 px-5 no-underline">CV · ↓ PDF</a>
+                  <a href="#colours" class="decoration-accent underline decoration-2 underline-offset-4">A text link</a>
+                </div>
+                <p class="bg-paper-raised border-line mt-6 border p-4">
+                  Body text on <code class="font-mono">--paper-raised</code>, <span class="text-ink-muted">muted text</span>,
+                  <span class="text-accent">accent text</span>.
+                </p>
+              </div>
+            ))
+          }
+        </div>
+      </section>
+
+      <section aria-labelledby="type">
+        <h2 id="type" class="font-display text-2xl font-extrabold">Type</h2>
+        <p class="text-ink-muted mt-2 text-sm">
+          Archivo 400/600 · Archivo Expanded 800 · IBM Plex Mono 400 · {FONT_FILES.length} files, {(fontBytes / 1024).toFixed(1)} KB total
+        </p>
+        <dl class="mt-6 grid gap-6">
+          {
+            STEPS.map((step) => (
+              <div class="border-line grid gap-2 border-t pt-4 md:grid-cols-[6rem_1fr]">
+                <dt class="label text-ink-muted">{step.name}</dt>
+                <dd class={step.cls}>{step.sample}</dd>
+              </div>
+            ))
+          }
+        </dl>
+        <div class="mt-10 grid gap-8 lg:grid-cols-2">
+          <p class="max-w-prose">
+            Prose at the 68ch measure. Każdy projekt zaczynam od problemu biznesowego, a nie od frameworka. Diseño con
+            restricciones claras: presupuesto, plazos y lo que puede esperar. Numbers stay tabular: <span class="tabular"
+              >2022 · 118 · 1 024</span
+            >.
+          </p>
+          <p class="max-w-prose font-semibold">
+            Semibold 600 for UI and emphasis. Ą Ć Ę Ł Ń Ó Ś Ź Ż ą ć ę ł ń ó ś ź ż · á é í ó ú ü ñ ¿ ¡ · „cudzysłów” “quotes” ← → ↓ ↗
+          </p>
+        </div>
+      </section>
+
+      <section aria-labelledby="lines">
+        <h2 id="lines" class="font-display text-2xl font-extrabold">Line weights</h2>
+        <svg class="text-ink mt-6 w-full max-w-3xl" viewBox="0 0 600 140" role="img" aria-label="Line weight samples">
+          <g fill="none" stroke="currentColor">
+            <line x1="0" y1="20" x2="600" y2="20" stroke-width="2" vector-effect="non-scaling-stroke"></line>
+            <line x1="0" y1="55" x2="600" y2="55" stroke-width="1" vector-effect="non-scaling-stroke"></line>
+            <line x1="0" y1="90" x2="600" y2="90" stroke-width="1" stroke-dasharray="8 5" vector-effect="non-scaling-stroke"></line>
+            <line x1="0" y1="125" x2="600" y2="125" stroke-width="0.75" stroke-dasharray="24 4 3 4" vector-effect="non-scaling-stroke" class="text-line" stroke="var(--line)"></line>
+          </g>
+        </svg>
+        <p class="label text-ink-muted mt-2">outline 2 px · detail 1 px · hidden 1 px dashed · centre 0.75 px chain (decorative --line)</p>
+      </section>
+    </main>
+  </body>
+</html>

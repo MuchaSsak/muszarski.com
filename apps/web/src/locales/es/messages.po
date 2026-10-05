@@ -1,0 +1,51 @@
+msgid ""
+msgstr ""
+"POT-Creation-Date: 2026-10-05 18:49+0200\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: @lingui/cli\n"
+"Language: es\n"
+"X-Review-Status: unreviewed (AI translation)\n"
+
+#: src/components/layout/ThemeToggle.astro:10
+#: src/components/layout/ThemeToggle.astro:11
+msgid "Dark theme"
+msgstr "Tema oscuro"
+
+#: src/pages/[locale]/index.astro:14
+msgid "Full-stack Developer · TypeScript, React, three.js"
+msgstr "Desarrollador full stack · TypeScript, React, three.js"
+
+#: src/pages/[locale]/index.astro:22
+msgid "Full-stack product engineer"
+msgstr "Ingeniero de producto full stack"
+
+#: src/pages/404.astro:19
+msgid "Go to the home page"
+msgstr "Ir a la página de inicio"
+
+#: src/pages/[locale]/index.astro:26
+msgid "I turn a business problem into a shipped web or mobile product, and I tell you early what it will cost and what can wait."
+msgstr "Convierto un problema de negocio en un producto web o móvil terminado, y te digo desde el principio cuánto costará y qué puede esperar."
+
+#: src/components/layout/LocaleSwitch.astro:23
+msgid "Language: {current}"
+msgstr "Idioma: {current}"
+
+#: src/pages/[locale]/index.astro:15
+msgid "Mateusz Muszarski, a full-stack product engineer from Poland. Web and mobile products in TypeScript, React and Node.js, from the business problem to the shipped app."
+msgstr "Mateusz Muszarski, ingeniero de producto full stack de Polonia. Productos web y móviles con TypeScript, React y Node.js, del problema de negocio a la app publicada."
+
+#: src/pages/404.astro:14
+#: src/pages/404.astro:17
+msgid "Page not found"
+msgstr "Página no encontrada"
+
+#: src/components/layout/BaseLayout.astro:78
+msgid "Skip to content"
+msgstr "Saltar al contenido"
+
+#: src/pages/404.astro:14
+msgid "This page does not exist."
+msgstr "Esta página no existe."

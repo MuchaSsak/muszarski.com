@@ -1,0 +1,22 @@
+---
+/**
+ * Foundation 404 (English). The 404 slice (working-agreement.md § 9, 11+) adds the per-locale swap by
+ * first path segment and the drawing (site/i18n.md § 404, requirements.md F21).
+ */
+import { t } from "lingui-for-astro/macro";
+
+import BaseLayout from "~/components/layout/BaseLayout.astro";
+import { pathTo } from "~/lib/routes";
+
+const locale = Astro.locals.locale;
+---
+
+<BaseLayout title={t`Page not found`} description={t`This page does not exist.`} path={null}>
+  <section class="shell pt-24 pb-24">
+    <p class="label text-ink-muted">404</p>
+    <h1 class="font-display text-3xl mt-4 font-extrabold">{t`Page not found`}</h1>
+    <p class="mt-6 text-lg">
+      <a href={pathTo(locale)} class="underline decoration-accent decoration-2 underline-offset-4 hover:text-accent">{t`Go to the home page`}</a>
+    </p>
+  </section>
+</BaseLayout>

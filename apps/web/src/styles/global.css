@@ -1,0 +1,228 @@
+/*
+ * Design tokens + base styles (wiki: design/design.md). Light = drafting paper, dark = cyanotype.
+ * Components use the Tailwind utilities mapped below (bg-paper, text-ink, border-line...), never raw
+ * colours. A project sheet re-skins itself by redefining --paper / --ink / --accent on its element.
+ * The dark block is written twice (system preference + explicit toggle); tokens.test.ts keeps them equal.
+ * `.theme-light` / `.theme-dark` pin one stock on any element (a dark project sheet in light mode, the specimen).
+ */
+@import "tailwindcss";
+@import "./fonts.css";
+
+:root,
+.theme-light {
+  color-scheme: light;
+  --paper: #f2efe6;
+  --paper-raised: #faf8f2;
+  --ink: #1e2226;
+  --ink-muted: #565b61;
+  --line: #b9b4a8;
+  --grid: #dedad0;
+  --accent: #b3321f;
+  --on-accent: #ffffff;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --paper: #0c2240;
+    --paper-raised: #122e55;
+    --ink: #eef4fb;
+    --ink-muted: #a9bed8;
+    --line: #3d5f8c;
+    --grid: #15335c;
+    --accent: #ff8f7a;
+    --on-accent: #0c2240;
+  }
+}
+
+:root[data-theme="dark"],
+.theme-dark {
+  color-scheme: dark;
+  --paper: #0c2240;
+  --paper-raised: #122e55;
+  --ink: #eef4fb;
+  --ink-muted: #a9bed8;
+  --line: #3d5f8c;
+  --grid: #15335c;
+  --accent: #ff8f7a;
+  --on-accent: #0c2240;
+}
+
+@theme {
+  /* Only the design tokens exist: Tailwind's default palette and breakpoints are dropped. */
+  --color-*: initial;
+  --breakpoint-*: initial;
+  --breakpoint-sm: 30rem; /* 480 */
+  --breakpoint-md: 48rem; /* 768 */
+  --breakpoint-lg: 64rem; /* 1024 */
+  --breakpoint-xl: 90rem; /* 1440 */
+  --breakpoint-2xl: 120rem; /* 1920 */
+
+  --container-shell: 90rem; /* the content shell: nothing smears across a 2560 screen */
+  --container-prose: 68ch;
+
+  /* Fluid type, linear from 390 px to 1440 px: ratio ~1.25 on phones, ~1.333 on desktop, body 17 -> 18 px. */
+  --text-*: initial;
+  --text-label: 0.8125rem;
+  --text-label--line-height: 1.35;
+  --text-label--letter-spacing: 0.06em;
+  --text-sm: 0.9375rem;
+  --text-sm--line-height: 1.5;
+  --text-base: clamp(1.0625rem, 1.0393rem + 0.0952vw, 1.125rem);
+  --text-base--line-height: 1.6;
+  --text-lg: clamp(1.3281rem, 1.2643rem + 0.2619vw, 1.5rem);
+  --text-lg--line-height: 1.45;
+  --text-xl: clamp(1.66rem, 1.5337rem + 0.5181vw, 2rem);
+  --text-xl--line-height: 1.25;
+  --text-2xl: clamp(2.075rem, 1.855rem + 0.9019vw, 2.6667rem);
+  --text-2xl--line-height: 1.12;
+  --text-3xl: clamp(2.5938rem, 2.2364rem + 1.4657vw, 3.5556rem);
+  --text-3xl--line-height: 1.05;
+  /* The H1 (LCP): Archivo Expanded is ~0.65 em per letter, so 40 px is the floor that fits "Full-stack" at 320 px. */
+  --text-display: clamp(2.5rem, 1.8356rem + 3.238vw, 4.75rem);
+  --text-display--line-height: 0.98;
+  --text-display--letter-spacing: -0.015em;
+
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+@theme inline {
+  --color-paper: var(--paper);
+  --color-paper-raised: var(--paper-raised);
+  --color-ink: var(--ink);
+  --color-ink-muted: var(--ink-muted);
+  --color-line: var(--line);
+  --color-grid: var(--grid);
+  --color-accent: var(--accent);
+  --color-on-accent: var(--on-accent);
+  --color-transparent: transparent;
+  --color-current: currentColor;
+
+  --font-sans: "Archivo", "Archivo Fallback", system-ui, sans-serif;
+  --font-display: "Archivo Expanded", "Archivo Expanded Fallback", "Archivo", sans-serif;
+  --font-mono: "IBM Plex Mono", "IBM Plex Mono Fallback", ui-monospace, monospace;
+}
+
+:root {
+  /* Spacing follows Tailwind's 4 px step; these name the layout rhythm. */
+  --gutter: clamp(1rem, 0.5rem + 2.5vw, 3rem);
+  --dur-fast: 200ms;
+  --dur-base: 400ms;
+  --dur-slow: 900ms;
+  /* Drafting line weights: never thinner, hairlines vanish on 1x screens. */
+  --stroke-outline: 2px;
+  --stroke-detail: 1px;
+  --stroke-construction: 0.75px;
+  --grid-major: 40px;
+  --grid-minor: 8px;
+}
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+    /* We ship every weight we use; never fake a bold. */
+    font-synthesis-weight: none;
+    scrollbar-gutter: stable;
+  }
+
+  body {
+    min-height: 100svh;
+    background-color: var(--paper);
+    /* The drafting table: a major grid every 40 px over a fainter 8 px grid (decorative, <= 1.3:1). */
+    background-image:
+      linear-gradient(to right, var(--grid) 1px, transparent 1px),
+      linear-gradient(to bottom, var(--grid) 1px, transparent 1px),
+      linear-gradient(to right, color-mix(in oklab, var(--grid) 40%, transparent) 1px, transparent 1px),
+      linear-gradient(to bottom, color-mix(in oklab, var(--grid) 40%, transparent) 1px, transparent 1px);
+    background-size:
+      var(--grid-major) var(--grid-major),
+      var(--grid-major) var(--grid-major),
+      var(--grid-minor) var(--grid-minor),
+      var(--grid-minor) var(--grid-minor);
+    color: var(--ink);
+    font-family: var(--font-sans);
+    font-size: var(--text-base);
+    line-height: var(--text-base--line-height);
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1,
+  h2,
+  h3 {
+    text-wrap: balance;
+  }
+
+  p,
+  li,
+  dd {
+    text-wrap: pretty;
+  }
+
+  ::selection {
+    background-color: var(--accent);
+    color: var(--on-accent);
+  }
+
+  :focus-visible {
+    outline: var(--stroke-outline) solid var(--accent);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+
+  [hidden] {
+    display: none !important;
+  }
+}
+
+@layer utilities {
+  .shell {
+    width: 100%;
+    max-width: var(--container-shell);
+    margin-inline: auto;
+    padding-inline: var(--gutter);
+  }
+
+  .label {
+    font-family: var(--font-mono);
+    font-size: var(--text-label);
+    line-height: var(--text-label--line-height);
+    letter-spacing: var(--text-label--letter-spacing);
+    text-transform: uppercase;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .tabular {
+    font-variant-numeric: tabular-nums;
+  }
+
+  .sr-only-focusable:not(:focus-visible) {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+}
+
+/* Cross-document View Transitions (0 KB JS); browsers without them navigate instantly. */
+@media (prefers-reduced-motion: no-preference) {
+  @view-transition {
+    navigation: auto;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  ::before,
+  ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
