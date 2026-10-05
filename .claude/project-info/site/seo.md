@@ -95,8 +95,7 @@ Success signal: Google autocomplete starts completing "mateusz muszarski" to "�
   scaled low-value translation is spam.
 - **At ~20 pages the risk is quality, not a penalty:** a stiff Spanish page undercuts "attention to detail".
 - **Owner decision:** 3 locales [user]. Mitigation:
-  - scope es to home, CV and the case studies
-  - blog posts in en/pl only
+  - es covers every page except the blog (posts en/pl only; `i18n.md` § Locale coverage)
   - a visible "Translated with AI" line until reviewed (open-questions Q19)
 
 ## Content plan (blog, 1–2 posts/month, update in place with "Updated" dates)
@@ -107,7 +106,7 @@ Launch set, in priority order:
 3. Lingui vs i18next (2026).
 4. Claude Code skills vs hooks vs MCP.
 5. PL: "Claude Code po polsku".
-6. Astro vs Next.js for a portfolio (the owner's benchmark).
+6. Astro vs Next.js for a portfolio (benchmark re-run on a public demo; the internal PstrykWeb numbers are never published).
 
 Pillars:
 - AI-assisted dev with Claude Code
@@ -122,7 +121,7 @@ Every post links one case study and one pillar.
 
 - **All candidates are unregistered (2026-10-05):** mateuszmuszarski .com/.pl/.dev/.me, muszarski .com/.pl/.dev,
   matmuszarski .com/.dev/.pl.
-- **Recommended:** `mateuszmuszarski.com` (or `.dev`) as primary + `.pl` as a 301.
+- **Recommended:** `mateuszmuszarski.com` (or `.dev`) as primary + `.pl` as a 308.
 - **The current domain has little equity:** `matmuszarski.space` was registered 2026-03-17 and expires 2027-03-17.
 - **Migration** (research § 7.3):
   1. renew the old domain to ≥ 2028-03

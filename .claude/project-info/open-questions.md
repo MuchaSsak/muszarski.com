@@ -6,7 +6,7 @@
 | # | Question | Blocks | Who | Default if unanswered | Status |
 | --- | --- | --- | --- | --- | --- |
 | 1 | **Project inventory:** flagships (3–5) + archive; outcome, role, year, links, real metrics with sources, recordings for loops, theme ideas, rights/permission per client project | F03–F06, F11, case studies, CV | owner | placeholders, clearly marked | open (owner sending) |
-| 2 | City for local SEO and the JSON-LD address (city or region only?) | `seo.md` titles, hero, schema | owner | "Pomorskie, Poland" | open |
+| 2 | City for local SEO and the JSON-LD address (city or region only?) | `seo.md` titles, hero, schema | owner | "Pomorskie, Poland" | merged into Q27 |
 | 3 | Target job titles; contract (B2B / UoP); mode (remote / hybrid / on-site, relocation?); start date | hero availability, quick facts, CV | owner | "Full-stack developer · B2B or UoP · remote/hybrid · available now" [assumption] | open |
 | 4 | Deadline for the job hunt / launch | v1 scope cut | owner | none; build in vertical slices | open |
 | 5 | Domain: keep `matmuszarski.space` or move to a name domain (availability via SEO research) | canonical URLs, Search Console, OG | owner | decide after the availability check | deferred by owner 2026-10-05: placeholder domain, `placeholders.md` P1 |
@@ -27,7 +27,7 @@
 | 20 | Blog posts at launch: how many, which topics | F12, SEO | owner + Claude | 2–3 from `seo.md` topic plan | open |
 | 21 | PstrykWeb: who owns it; what may be shown (code, screenshots, metrics) | its case study | owner | not shown until answered | open |
 | 22 | Light + dark theme both? | F18, design tokens | owner | both (paper / cyanotype) [assumption] | open |
-| 23 | Old site: redirect, keep, or revive the space scene as `/explore` later? | domain, F24 | owner | 301 to the new home if the domain changes | open |
+| 23 | Old site: redirect, keep, or revive the space scene as `/explore` later? | domain, F24 | owner | 308 to the new home if the domain changes | open |
 | 24 | "Open to projects": what kind of work; show rates? | contact copy | owner | "selected freelance projects", no rates | open |
 | 25 | **Seniority story:** coding since 2022 (~4 years), confirmed 2026-10-05. Still open: still at technikum (which ZSE, which year), matura / graduation date, years of paid work (since when?) | hero, CV, LinkedIn, SEO entity, availability | owner | "Building software since 2022" | partly answered 2026-10-05 |
 | 26 | **Display name + handles:** "Mateusz Muszarski" everywhere, `alternateName` MuchaSsak, drop "Matt"/"Matthew"? | SEO entity, all profiles | owner | yes to all [assumption] | open |
@@ -35,7 +35,7 @@
 | 28 | **JDG "MATEUSZ MUSZARSKI - ENROLLO"** (public register): mention it (B2B-ready), is Enrollo a project to show, and is the JDG the data controller for the site? | legal pages, CV, `/work/` | owner | not mentioned until answered | open |
 | 29 | AI training bots (GPTBot, Google-Extended, ClaudeBot) in robots.txt: allow or block? (search bots always allowed) | `seo.md` | owner | allow [assumption] | open |
 | 30 | **CV button:** "navigate + auto-download" is unreliable on iOS (needs a direct tap). OK to use a split CTA: "CV" → `/cv/` + a "↓ PDF" that downloads directly? | F11, header | owner | split CTA [research] | answered 2026-10-05: split CTA |
-| 31 | English at `/<locale>/` (your pstryk pattern, root 308 → `/en/`) vs English at `/` unprefixed (SEO research: root = entity home, the WebSite site-name markup sits at the domain root) | `i18n.md`, `seo.md` | owner | `/en/` (owner pattern) | answered 2026-10-05: `/en/` prefix |
+| 31 | English at `/<locale>/` (your pstryk pattern, root 308 → `/en/`) vs English at `/` unprefixed (SEO research: root = entity home, the WebSite site-name markup sits at the domain root) | `i18n.md`, `seo.md` | owner | `/en/` (owner pattern) | answered 2026-10-05: `/en/` prefix (same decision as Q8) |
 | 32 | PstrykWeb: may the site say the client sites are **AI-generated** (the old Cetuspro landing says "not an automatic generator")? | PstrykWeb case study, AI section | owner + Cetuspro | not said | answered 2026-10-05: no, not for now. The site shows public PstrykWeb info only (dossier § Public disclosure); revisit when the owner opens it up |
 | 33 | Profile clean-up (owner actions): fix the GitHub README link to the lapsed muszarski.space, LinkedIn headline, npm author/homepage, Play developer site → new domain | SEO P0 | owner | — | open |
 | 34 | Analytics position under PKE art. 399: (a) consent prompt for statistics, (b) banner-less with disclosure + opt-out + DNT/GPC (pstryk choice), (c) no client-side analytics | privacy policy, `analytics.md` | owner | (b) [assumption] | open |

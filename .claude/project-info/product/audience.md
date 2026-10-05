@@ -39,7 +39,7 @@ offers in PL) [research]. 3D is shown as craft, not as the job title.
 | "Process: estimates, scope, risks?" | project hygiene, not ceremonies: one scope page (must/nice), estimate vs actual, a risk list, one decision record | How I work; one artifact per case study |
 | "Never worked in someone else's codebase" (**weakest point**) | integrating with Cetuspro's existing processes; **1–2 merged PRs to others' OSS repos** (owner action, Q35) | case-study block "Working in an existing system"; GitHub row |
 | "Client-facing communication?" | PstrykWeb for local businesses (client work); freelance clients; one named testimonial if possible (Q6) | case study "What they asked vs what they needed" |
-| "Will he leave for his own startup?" | startups framed as paid-for lessons (cost thinking); honest status ("Linkoglot: live, pre-traction"); a "What I'm looking for: a long-term product team" line | hero availability; About |
+| "Will he leave for his own startup?" | startups framed as paid-for lessons (cost thinking); honest status ("Linkoglot: live, pre-traction"); a "What I'm looking for: a long-term product team" line | hero availability; How I work |
 | "How senior is he really?" | scope instead of titles; dates and production status; no self-titled "Senior"; apply to Mid + Senior | hero proof line; cards "Scope: …" |
 | "No degree" | don't raise it; INF.02/03/04 + courses on one credentials line | CV + one row |
 | "AI-dependent?" | dated pre-AI repos + three.js maths; Clockful AI-only *by instruction*, with what he verified and where AI was wrong; a public Claude Code setup with *why each gate exists*; a "hard part" he explains line by line | AI workflow; Clockful case study |

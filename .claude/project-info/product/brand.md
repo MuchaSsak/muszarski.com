@@ -10,7 +10,7 @@
 | Display name | **Mateusz Muszarski** everywhere; `alternateName` MuchaSsak; drop "Matt"/"Matthew" | [research: seo], pending owner OK (Q26) |
 | Role words | "Full-stack" always present (searchable); "product engineer" as the positioning | [research: hiring § 2] |
 | Location line | Unknown → placeholder "Pomorskie, Poland" (Q27) | — |
-| Seniority line | Unknown → placeholder (Q25) | — |
+| Seniority line | "Building software since 2022" (~4 years); years of paid work still open (Q25) | [user] 2026-10-05 |
 | Business | JDG "MATEUSZ MUSZARSKI - ENROLLO" in public registers; how to present it: Q28 | [research: seo § 1.3] |
 
 ## Positioning (default = option A; options B and C in `research/2026-10-05-software-house-hiring.md` § 7.1)

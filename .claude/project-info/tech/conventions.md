@@ -25,7 +25,7 @@
 | `src/content/` | collections: `projects/`, `blog/`, `legal/` (per locale) |
 | `src/data/` | site facts, CV, credentials, skills, life items |
 | `src/locales/` | Lingui catalogs |
-| `public/` | robots.txt, llms.txt, favicons, `files/` (CV PDFs) |
+| `public/` | robots.txt, llms.txt, favicons. CV PDFs are build output at `/files/` (generated in `astro:build:done`, never committed) |
 | `scripts/` | build gates (SEO, links, launch, CV sync), media encoding, OG images |
 | `assets/` | source assets + `references/` (never shipped), `assets.md` |
 | `screenshots/` | accepted visual-QA proof (`working-agreement.md` § 2) |
@@ -38,7 +38,7 @@
 
 ## Testing bar
 
-Unit (vitest) for data and gates (CV hash, sitemap, slugs). Playwright e2e for flows (`requirements.md`
+Unit (vitest) for data and gates (CV PDF content test, sitemap, slugs). Playwright e2e for flows (`requirements.md`
 § Key flows) plus the a11y/contrast/layout gates. Lighthouse on every route that a change can move.
 
 ## Git

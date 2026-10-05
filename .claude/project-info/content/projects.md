@@ -4,7 +4,7 @@
 > one's dossier lives. Each project's facts, story, theme, rights and shot list live ONLY in its dossier
 > `content/projects/<slug>.md`. Field shapes: `content-model.md`. Look: `design.md` § Per-project themes.
 
-## Flagships (home page chapters, in order) [user] 2026-10-05
+## Flagships (home page chapters) [user] 2026-10-05; order [assumption]
 
 | # | Project | Dossier | What it is | Media kind | Public links |
 | --- | --- | --- | --- | --- | --- |
@@ -21,7 +21,7 @@
 
 ## Archive (the `/work/` index lists everything)
 
-Suggested from the 26 public repos (`research/2026-10-05-project-space-clockful-archive.md` § D, [opinion]). **The owner confirms**
+Suggested from the 26 repos public at research time (25 since language-ai went private) (`research/2026-10-05-project-space-clockful-archive.md` § D, [opinion]). **The owner confirms**
 which to show and which private ones to add (Enrollo, others: Q41) [user].
 
 | Show (suggested) | Tag | Why |

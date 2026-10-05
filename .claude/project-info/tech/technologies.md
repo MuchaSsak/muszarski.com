@@ -8,18 +8,18 @@
 
 | Layer | Choice | Version | Why | Source |
 | --- | --- | --- | --- | --- |
-| Framework | Astro, `output: "static"`, `trailingSlash: "always"` | 7.3.5 | 0 KB JS by default; owner's own bench: Astro 100 / LCP 1.66 s vs Next 95 / 2.92 s | [user] 2026-10-05, [research] |
+| Framework | Astro, `output: "static"`, `trailingSlash: "always"` | 7.3.5 | 0 KB JS by default; owner's own bench: Astro 100 / LCP 1.66 s vs Next 95 / 2.92 s (measured on an internal project: never quoted on the site) | [user] 2026-10-05, [research] |
 | Components | React TSX via `@astrojs/react` (server-rendered; hydrate only islands) | 7.0.0 + react 19.3.0 | all sections are TSX (a React signal in the repo) | [research] |
 | Language | TypeScript strict (+ `@astrojs/check`) | **~6.0.3** (+ 0.9.10) | `@astrojs/check` does not accept TS 7 | [research] |
-| i18n | Lingui: core/react/cli/vite-plugin (`macroTransform: true`), format-po; optional `lingui-for-astro` | 6.9.0; 0.7.1 | owner requirement; spike passed (macros in `.astro` + `.tsx`, 3 locales, PL plurals); details `site/i18n.md` | [user], [research: spike] |
+| i18n | Lingui: core/react/cli/vite-plugin (`macroTransform: true`), format-po; `lingui-for-astro` for macros in `.astro` files | 6.9.0; 0.7.1 | owner requirement; spike passed (macros in `.astro` + `.tsx`, 3 locales, PL plurals); details `site/i18n.md` | [user], [research: spike] |
 | Content | `@astrojs/mdx` per-locale collections; `@astrojs/sitemap`; `@astrojs/rss` | 8.0.2; 3.7.4; 4.0.19 | case studies, posts, legal per locale | [research] |
 | Styling | Tailwind CSS + `@tailwindcss/vite` | 4.3.3 | same as the pstrykweb.pl landing | [research] |
 | Signature 3D | **vanilla three** (default) or **OGL** in an Astro `<script>` island, behind a custom `client:after-load` directive (load + idle + capability probe) | three 0.186.1 / ogl 1.0.11 | measured gz: R3F + React 302 KB (the whole budget) vs three 126 KB vs OGL 14 KB. R3F only if the moment grows into several scenes | [research: § 3.1] |
 | Motion | CSS first; GSAP lazily after LCP if needed; `motion` vanilla only if needed | gsap 3.15.0; motion 13.5.x (14.0 too fresh) | | [research] |
 | Page transitions | native cross-document View Transitions (`@view-transition`, `view-transition-name` for card → case) | 0 KB | Chrome 126+, Safari 18.2+; Firefox navigates without animation | [research: § 3.3] |
 | Smooth scroll | none (no Lenis) | — | native scroll; Lenis breaks anchors | [research] |
-| CV PDF | Playwright `page.pdf()` from `/<locale>/cv/print/` on `astro:build:done` (+ `@sparticuz/chromium` on Vercel) | playwright 1.63.0 | tagged PDF, 67 KB, the same components and data as `/cv/`; plan B Typst | [research: § 4] |
-| Contact | `src/pages/api/contact.ts` (`prerender = false`) + Turnstile `siteverify` + Resend; honeypot + min fill time; one host rate-limit rule | resend 6.32.0 | works without JS (POST → 303); no DB | [research: § 5] |
+| CV PDF | Playwright `page.pdf()` from `/<locale>/cv/print/` on `astro:build:done` (+ `@sparticuz/chromium` on Vercel) | playwright 1.63.0 | tagged PDF, 67 KB, the same components and data as `/cv/`; build output, never committed; a pdfjs content test fails the build when the PDF text ≠ the CV data; plan B Typst | [research: § 4] |
+| Contact | `src/pages/api/contact.ts` → `/api/contact/` (trailing slash, `i18n.md`; `prerender = false`) + Turnstile `siteverify` + Resend; honeypot + min fill time; one host rate-limit rule | resend 6.32.0 | works without JS (POST → 303); no DB | [research: § 5] |
 | Analytics | Umami Cloud Hobby (EU), script 2.3 KB gz, `data-domains` = prod host | — | cookieless; reads one localStorage opt-out key | [research: § 6] |
 | Media | `astro:assets` AVIF/WebP; loops AV1 (CRF 44–48) + optional HEVC + **H.264 fallback**; ffmpeg 8.1 | — | AV1 55–64% smaller; iPhone AV1 only on A17 Pro+ | [research: § 7] |
 | Testing | vitest; Playwright e2e + axe; Lighthouse script; pdfjs-dist PDF content test | — | gates in `working-agreement.md` § 2 | [research] |
@@ -33,7 +33,7 @@
 | Cloudflare Workers (static assets + 1 Worker) | $0 | free and tolerates a freelance CTA; `@astrojs/cloudflare` 14.3.3; Turnstile is Cloudflare's; costs a port of redirects/headers |
 
 - **Decided:** Vercel Pro ($20/month). It allows the "open to projects" line, and Vercel's DPA covers only Pro and Enterprise (`legal/compliance-and-data.md`).
-- **Setup:** set the serverless function region to an EU region (`fra1`); add one WAF rate-limit rule on `/api/contact`.
+- **Setup:** set the serverless function region to an EU region (`fra1`); add one WAF rate-limit rule on `/api/contact/`.
 
 ## Repo layout
 
@@ -69,7 +69,7 @@ Package manager: npm or bun (pstryk uses bun 1.3) [assumption: bun, decided at s
 ## External services and limits
 
 Resend free: 3,000/month, 100/day. Umami Hobby: 100K events/month, 1 site, 6-month retention. Turnstile
-tokens: 300 s, single use. Vercel Hobby WAF: 1 rate-limit rule. Node ≥ 22.19 on the build host (Lingui native tools).
+tokens: 300 s, single use. Vercel Pro WAF: rate-limit rules included (the exact count: check the Vercel docs in S1). Node ≥ 22.19 on the build host (Lingui native tools).
 
 ## Spikes before the build (pass conditions in research § 8.2)
 
@@ -77,7 +77,7 @@ tokens: 300 s, single use. Vercel Hobby WAF: 1 rate-limit rule. Node ≥ 22.19 o
 | --- | --- | --- |
 | S0 | Lingui wiring on the real scaffold (also `site/i18n.md`) | extract → strict compile → build, 3 locales, no catalog in island JS |
 | S1 | Deploy to the chosen host: macro build on Linux, `/api/contact`, rate limit, PDF in `astro:build:done` | green build, PDFs, content test, 429 after N POSTs |
-| S2 | Signature moment: vanilla three vs OGL (vs R3F) with `client:after-load` | Lighthouse mobile ≥ 95, LCP < 2.0 s, TBT < 100 ms with 3D on |
+| S2 | Signature moment: vanilla three vs OGL (vs R3F) with `client:after-load` | Lighthouse mobile ≥ 95, LCP < 2.0 s, TBT < 100 ms with 3D on (stricter than the site bar on purpose: headroom for the 3D) |
 | S3 | Cross-document VT card → case morph | smooth on Chrome Android + iOS 18.2+; Firefox clean |
 | S4 | Real devices (non-Pro iPhone + mid Android) | codec fallback, Low Power Mode poster, PDF `download` file name |
 | S5 | Lingui islands catalog + `lingui-translate-ai` on real copy | island HTML has no foreign strings; a missing PL string fails CI |

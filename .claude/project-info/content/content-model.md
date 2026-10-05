@@ -3,7 +3,7 @@
 > The shapes of everything the site renders, so content is data and pages are templates. Owns:
 > project, case-study, CV, credential, blog and life-item fields, plus the CV sync rule. Where each
 > renders: `structure.md`. Look per project: `design.md` § Per-project themes. Values for real projects come
-> from the owner. Until then: placeholders, tracked in `open-questions.md` (Q1).
+> from the owner. Until then: placeholders, tracked in `placeholders.md` (Q1).
 
 ## Project (one file per project, in a content collection; per-locale text)
 
@@ -11,7 +11,7 @@
 | --- | --- | --- |
 | `slug` | kebab-case, the same in every locale [assumption] | URL `/<locale>/work/<slug>/` |
 | `title`, `outcome` | string; `outcome` = one line of result, not features | the card headline is the outcome |
-| `context` | `client` · `product` (own startup) · `oss` · `side` · `course` | shown as a tag, e.g. "Client work" / "Own product" |
+| `context` | `client` · `internship` · `product` (own startup) · `oss` · `side` · `course` | shown as a tag, e.g. "Client work" / "Own product" |
 | `role`, `team` | string; team default "solo" | credits table on the case study |
 | `year`, `status` | number; `live` · `archived` · `in-progress` | |
 | `stack` | ≤ 5 chips (ids from the skills list) | drives the skill filter (F08) |
@@ -22,8 +22,8 @@
 | `media.stills` | images with alt text | for reduced motion, OG, print |
 | `theme` | `{ paper, ink, accent, motif, typeAccent?, motion? }` | tokens only, no free CSS (`design.md`) |
 | `nda` | `L0`–`L5` (ladder in `research/2026-10-05-synthesis.md` §4) | label shown on the card |
-| `rights` | `{ holder, permission: yes/no/pending, note }` | **never shown**; a project with `permission ≠ yes` and `context=client` can't go live (launch gate) |
-| `featured` | `1`–`5` (flagship order) or `false` (archive) | |
+| `rights` | `{ holder, status: ok · check · no, note }` | **never shown**; a project with `status ≠ ok` and `context` = client or internship can't go live (launch gate) |
+| `featured` | `1`–`4` today (max 5; flagship order) or `false` (archive) | |
 
 **Case-study body (MDX per locale).**
 - Headings are written as questions [research: showcase].
@@ -42,8 +42,9 @@
 ## CV (ONE source → `/cv/` page AND the PDF)
 
 - **The rule:** `cv` data is the single source. The `/<locale>/cv/` page and `mateusz-muszarski-cv-<locale>.pdf`
-  are both generated from it. **Never edit one without regenerating the other.** A check fails the build
-  when the PDF's recorded data hash ≠ the current data hash (mechanism: `technologies.md`) [user] 2026-10-05.
+  are both generated from it. **Never edit one without regenerating the other.** The build renders both
+  from the data in the same run, and a pdfjs content test fails the build when the PDF text ≠ the CV data
+  (mechanism: `technologies.md` § Stack, CV PDF row) [user] 2026-10-05.
 - **Sections:** header (name, title, location, email, links, availability) · summary ·
   experience (freelance / own products / client projects, each with outcomes) · selected projects ·
   skills (grouped) · education + qualifications (INF.02/.03/.04) · certifications · volunteering +

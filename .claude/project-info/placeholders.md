@@ -32,7 +32,7 @@
 | P10 | Rights statuses `check` (PstrykWeb, Clockful) | project dossiers | Cetuspro + Neoteric emails | set `ok` or remove the project | 21, 32 |
 | P11 | Credentials: dates, verify URLs, Erasmus+/ESC/hackathon details | credentials data, CV | owner | replace | 10 |
 | P12 | Spanish (es) copy: AI-translated, unreviewed | catalogs + es content files | a fluent reviewer | review, or keep the visible "Translated with AI" line by explicit owner choice | 19 |
-| P13 | Legal pages: drafts, not lawyer-reviewed; postal address; mailbox provider; Umami region | `/privacy/`, `/terms/` | owner + lawyer | review; fill Unknowns | 15, 16, 36 |
+| P13 | Legal pages: drafts, not lawyer-reviewed; postal address; mailbox provider; Umami plan confirmation (Q17) | `/privacy/`, `/terms/` | owner + lawyer | review; fill Unknowns | 15, 16, 17, 36 |
 | P14 | Design tokens + fonts are Phase 0 drafts (contrast computed, never seen on screen) | `design/design.md` | slice 0 on screen | adjust once, freeze, add licence files | — |
 | P15 | Owner photo (Person image, my-life) | schema, `/my-life/` | owner | replace | 7 |
 | P16 | Project facts not yet supplied (years, metrics, decisions, "what I'd do differently") | dossiers, case studies | owner | replace or drop the claim | 1 |

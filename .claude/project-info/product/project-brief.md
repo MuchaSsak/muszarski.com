@@ -91,7 +91,7 @@ and to rank for his name, his role and his location. [user]
 
 | Risk | Mitigation |
 | --- | --- |
-| Project inventory not supplied → no proof | placeholders tracked in `open-questions.md`; the launch gate blocks placeholders |
+| Project inventory not supplied → no proof | placeholders tracked in `placeholders.md`; the launch gate blocks placeholders |
 | Per-project themes drift into a collage | one skeleton with theme tokens per project (`design.md`) |
 | The WebGL moment hurts LCP or TBT | lazy island after LCP, capability tiers, budgets enforced by Lighthouse |
 | Recruiter objection "always solo" | evidence of teamwork and communication (`audience.md`) |

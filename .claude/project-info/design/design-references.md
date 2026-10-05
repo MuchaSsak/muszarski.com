@@ -20,9 +20,9 @@
 
 | Fixed on every project sheet | Varies per project (tokens only) |
 | --- | --- |
-| frame (2 px + 0.5 px double border, registration marks, optional 8 mm grid at 6%) | `--paper`: OKLCH L 0.93–0.97, chroma ≤ 0.04 |
+| frame (2 px + 0.75 px double border, registration marks, optional 8 mm grid at 6%) | `--paper`: light set OKLCH L 0.93–0.97, chroma ≤ 0.04; dark set L 0.12–0.22 (`design.md` § Per-project themes) |
 | title block (`SHEET 0n/04` · name · context tag · role · year · REV · scale bar), bottom-right; full width under the drawing at 390 | `--ink`: brand hue, OKLCH L 0.22–0.32 (≥ 7:1 on its paper) |
-| line weights 2 / 1 / 0.5 px; one mono + one text face | `--accent`: strokes ≥ 2 px, arrowheads, proof chip, focus only, never body text |
+| line weights per `design.md` § Imagery (2 / 1 / 0.75 px); one mono + one text face | `--accent`: strokes ≥ 2 px, arrowheads, proof chip, focus only, never body text |
 | media slot 16:10 desktop / 4:5 at 390; CTA order: Case study → live action → secondary | `--motif`: one code-drawn isometric (30°) SVG object |
 
 - **Frames are code** (`<DrawnBrowser>`, `<DrawnPhone>`, `<DrawnMonitor>`, ~2–4 KB SVG in `currentColor`). Video sits in an HTML layer over the
@@ -37,7 +37,7 @@
 | --- | --- | --- | --- |
 | PstrykWeb (`both`) | 2 views of the public parts only: browser (konfigurator) + overlapping phone (konfigurator flow). No pipeline drawing (dossier § Public disclosure) | Live site ↗ (after the rights OK) | isometric stack of pages / "pstryk" toggle |
 | Linkoglot (`phone`) | the phone front-on at 90% height with a dimension line + 2 circular DETAIL callouts | desktop: QR stamp (build-time SVG) + badges; phone: the visitor's OS badge first | viewfinder snapping an object into a flashcard |
-| Neoteric Clockful (`desktop`) | browser + numbered balloon callouts ①②③ = parts list of what he built | Code ↗; title-block cell `DEPLOYMENT: none (internship)` | isometric clock face with gear teeth |
+| Neoteric Clockful (`desktop`) | browser + numbered balloon callouts ①②③ = parts list of what he built | "Code private · walkthrough on request" (repo private, Q40; never a dead Code ↗); title-block cell `DEPLOYMENT: none (internship)` | isometric clock face with gear teeth |
 | Space portfolio (`live`) | drawn monitor with the loop; dimension label "desktop · WebGL2 · ~N MB"; a "Why it was rebuilt" note | fine pointer: Launch on desktop ↗; coarse: "Desktop-only experience" + Copy link. **No WebGL on home** | orbit ellipses as compass construction lines |
 
 ## Per home section (order + rhythm: `site/structure.md`)
@@ -45,11 +45,11 @@
 | Section | Adopt | From |
 | --- | --- | --- |
 | Hero | H1 + one value sentence as text; 4–5 fact pills readable in 3 s; full bio one tap away; proof strip generated at build time; ~0.85 svh so sheet 01 peeks; its own mobile layout | ped.ro, Stripe (0.76 hero), Railway, Metalab |
-| Engineering economics | a **decision ledger** (situation → decision + rejected → business effect + how measured → case link); 4 time-boxed phases each with an exit artefact; principles with receipt chips | Evil Martians (verb + metric + scale + time), Wild, Linear Method |
+| How I work (engineering economics) | a **decision ledger** (situation → decision + rejected → business effect + how measured → case link); 4 time-boxed phases each with an exit artefact; principles with receipt chips | Evil Martians (verb + metric + scale + time), Wild, Linear Method |
 | AI workflow ("process drawing") | a hairline flow: brief → wiki/context → plan (skill) → build (agent + MCPs) → **verify (tests · Playwright · Lighthouse)** → review → ship, each node linked to an artefact; real task strings; one "AI mistake I caught"; receipts (commits, % reviewed, Lighthouse); optional click-to-play chaptered session | Amp, Factory, Simon Willison colophon, Linear, Cloudflare |
 | Credentials ("parts list & revisions") | a highlights strip of 4 + a ledger `YEAR · ITEM · ISSUER · TYPE · PROOF` with filter chips + counts; the proof is `Verify ↗` / `Certificate ↗` / `Repo ↗` / `On request` | basement, Büro, Craft |
-| Contact ("contact slip") | a dashed tear-off slip: Copy email (+ mailto, aria-live), Book 20 min ↗ (a link, never an embed on load: Cal is 2.3 MB), CV PDF EN/PL; response-time promise + local time; a 3-field form (email · message · reason chips Hiring/Project/Other), honeypot + Turnstile | Biograph, Charma, United Carriers, Shader |
-| Footer ("revision block") | last-chance contact; ≤ 10 crawlable links; `rel="me"`; locale + theme; a build-time revision row (`REV date · commit · Lighthouse · built with Astro · source · llms.txt`) | Maggie Appleton, Josh Comeau, Vercel status |
+| Contact ("contact slip") | a dashed tear-off slip: Copy email (+ mailto, aria-live), Book 20 min ↗ only if Q12 = yes (a link, never an embed: Cal is 2.3 MB), the split CV CTA (one PDF per locale, Q18); response-time promise + local time; a 3-field form (email · message · reason chips Hiring/Project/Other), honeypot + Turnstile | Biograph, Charma, United Carriers, Shader |
+| Footer ("revision block") | last-chance contact; the 4 labelled link columns of `structure.md` § Footer; `rel="me"`; locale switch (the theme toggle stays in the header); a build-time revision row (`REV date · commit · Lighthouse · built with Astro · source · llms.txt`) | Maggie Appleton, Josh Comeau, Vercel status |
 
 ## Per page (layout specs: subpages research)
 

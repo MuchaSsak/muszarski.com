@@ -14,7 +14,7 @@
 - **Title block:** the box in the corner of an engineering drawing. It always shows name, role,
   availability, sheet number, revision/date, and the Contact + CV actions. On desktop it is the header
   styled as a title block; on mobile, a compact bar.
-- **Sheet numbers:** A-00 home · W-01…W-05 projects · C-01 CV · B-xx blog posts · L-01 my life · X-01 contact.
+- **Sheet numbers:** A-00 home · W-01…W-04 flagships · C-01 CV · B-xx blog posts · L-01 my life · X-01 contact.
   Shown as labels only; navigation stays plain words.
 - **The table itself:** a faint mm/dot grid on paper. Rulers with mm ticks at the viewport edges (desktop
   only, decorative, `aria-hidden`). Never behind body text at a contrast that hurts reading.
@@ -51,6 +51,9 @@
   video ("drawing → shipped"). Reduced motion: the final state, no animation.
 - **Card → case study:** a View Transition morphs the sheet's frame and title block into the case-study hero.
   Browsers without it navigate instantly.
+- **Dark mode:** each project sets a light and a dark token set (in its dossier); dark mode uses the dark set. A
+  project whose subject is dark (the space portfolio) uses its dark stock in both themes. Light sets: `--paper`
+  OKLCH L 0.93–0.97; dark sets: L 0.12–0.22; `--ink` ≥ 7:1 on its paper in both.
 - **Guardrail:** themes must stay inside the paper/ink system. A project is never allowed its own layout grid or nav.
 
 ## Color tokens (draft 2026-10-05; WCAG ratios computed, not yet seen on screen)
@@ -91,7 +94,7 @@
 
 - A spacing scale on a 4 px base, aligned to the drawing grid.
 - **Breakpoints:** 390 (phone), 768, 1024, 1440, 1920; content shell capped (no ultrawide smear at 2560).
-- **Heights:** the hero is one viewport (with the first sheet peeking); bands are content-height. Not every
+- **Heights:** the hero is ~0.85 svh so sheet 01 peeks (`structure.md` § Rhythm); bands are content-height. Not every
   section is 100vh (`structure.md`).
 
 ## Components (to build; registry candidates in `design-references.md`)
@@ -111,7 +114,8 @@
 
 ## Imagery
 
-- **Illustrations:** code-drawn SVG (line weights 0.75 / 1.5 / 3 px; drafting line types: continuous,
+- **Illustrations:** code-drawn SVG (line weights: outline 2 px · detail 1 px · construction 0.75 px, never thinner because
+  hairlines vanish on 1× screens; `vector-effect: non-scaling-stroke`; drafting line types: continuous,
   dashed hidden, chain centre lines; hatching for sections) and shaders (paper grain, ink bleed). They are
   fully owned, re-tinted per project, tiny.
 - **Product media:** real recordings of the real UI only. Muted loops + posters per `content-model.md`.

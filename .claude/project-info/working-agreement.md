@@ -35,7 +35,7 @@
   - other locales; free user input
   - 320 px phones without horizontal overflow
   - keyboard and screen reader
-- **Nothing fake presented as real.** Placeholders and sample data are tracked in `open-questions.md`
+- **Nothing fake presented as real.** Placeholders and sample data are tracked in `placeholders.md`
   and block any "done" / "ready for production" claim; a launch gate enforces it.
 - **Research before design** [user] 2026-10-05:
   - check Mobbin, Awwwards (skill), the component registry (`search-registry-items`), Playwright
@@ -106,7 +106,7 @@ can get, before starting the next. Never move to slice Y while slice X has a fai
 
 | # | Slice | Spikes |
 | --- | --- | --- |
-| 0 | Foundation: scaffold, tokens + fonts on screen (`design.md` drafts → frozen), theme switch, i18n, layout shell, deploy | S0, S1 |
+| 0 | Foundation: scaffold, tokens + fonts on screen (`design.md` drafts → frozen), theme switch, i18n, layout shell, deploy; port `design-quality.md` + the skills first (README § Not written yet) | S0, S1 |
 | 1 | Header (title block, split CV CTA) + footer | — |
 | 2 | Hero + the signature drawing | S2 |
 | 3–6 | Flagship sheets, one slice per project: PstrykWeb → Linkoglot → Clockful → space | S3, S4 |

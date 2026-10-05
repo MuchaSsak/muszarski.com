@@ -1,7 +1,7 @@
 # Analytics
 
-> Owns what we measure and how. The tool is Umami (cookieless) [user] 2026-10-05. Cloud vs self-host:
-> Q17. Legal facts (consent, privacy text): `compliance-and-data.md`. CTAs: `structure.md` § CTA inventory.
+> Owns what we measure and how. The tool is Umami (cookieless) [user] 2026-10-05: Umami Cloud Hobby, EU region
+> [research default; the owner confirms in Q17]. Legal facts (consent, privacy text): `compliance-and-data.md`. CTAs: `structure.md` § CTA inventory.
 
 ## Questions we need answered
 
@@ -15,10 +15,10 @@
 
 | Event | When | Properties |
 | --- | --- | --- |
-| `cv_download` | a PDF download starts | `source` (header/hero/contact/cv-page/auto), `locale` |
+| `cv_download` | a PDF download starts | `source` (header/hero/contact/cv-page/menu), `locale` |
 | `cv_view` | `/cv/` page view (pageview) | — |
 | `contact_open` | contact panel opened | `source` |
-| `contact_submit` | form sent successfully | `topic` (job/project/other) |
+| `contact_submit` | form sent successfully | `topic` (hiring/project/other/none) |
 | `contact_error` | form error shown | `kind` (validation/turnstile/network/429/5xx) |
 | `copy_email` | email copied | `source` |
 | `case_open` | a case study opened from a chapter or archive | `project` (slug) |
@@ -26,6 +26,7 @@
 | `locale_switch` | locale changed | `from`, `to` |
 | `theme_toggle` | theme changed by hand | `to` |
 | `motion_pause` | pause-motion control used | — |
+| `cta` | any other CTA in `structure.md` § CTA inventory (See work, All projects, Open to projects, How this site was built) | `id`, `source` |
 
 ## Funnels and KPIs
 
@@ -38,4 +39,4 @@
 - **Umami script:** loaded `defer` after content. Never on the LCP path. Never blocking.
 - **Gating:** no consent gating unless the legal research says it's needed (`compliance-and-data.md`).
 - **Search:** Google Search Console + Bing Webmaster Tools for queries and indexing (`seo.md`).
-- **Retention:** Umami defaults (record here once the plan is picked).
+- **Retention:** 6 months (Umami Cloud Hobby, `technologies.md` § limits).
