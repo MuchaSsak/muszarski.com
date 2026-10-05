@@ -1,0 +1,76 @@
+---
+/**
+ * Pause / play every loop on the site (WCAG 2.2.2 for motion longer than 5 s; requirements.md F19). Every copy of
+ * the button stays in sync; the choice is stored (ThemeScript applies it before first paint). `icon` = a square icon
+ * button with a label for assistive tech; `text` = the label written out. Hidden-but-sized until the script runs.
+ */
+import { t } from "lingui-for-astro/macro";
+
+import Icon from "~/components/ui/Icon.astro";
+
+interface Props {
+  variant?: "icon" | "text";
+  class?: string | undefined;
+}
+
+const { variant = "text", class: className } = Astro.props;
+const pause = t`Pause motion`;
+const play = t`Play motion`;
+---
+
+<button
+  type="button"
+  class:list={["btn btn-line motion-toggle", { "btn-icon": variant === "icon" }, className]}
+  data-motion-toggle
+  data-variant={variant}
+  data-pause={pause}
+  data-play={play}
+  aria-pressed="false"
+  aria-label={variant === "icon" ? pause : undefined}
+  title={variant === "icon" ? pause : undefined}
+>
+  <Icon name="tbf:player-pause" class="mt-pause" />
+  <Icon name="tbf:player-play" class="mt-play" />
+  {variant === "text" && <span data-motion-label>{pause}</span>}
+</button>
+
+<style>
+  .motion-toggle:not([data-ready]) {
+    visibility: hidden;
+  }
+  .motion-toggle :global(.mt-play),
+  .motion-toggle[aria-pressed="true"] :global(.mt-pause) {
+    display: none;
+  }
+  .motion-toggle[aria-pressed="true"] :global(.mt-play) {
+    display: block;
+  }
+</style>
+
+<script>
+  import { motionStill, onMotion, prefersReducedMotion, setPaused } from "~/scripts/motion";
+
+  const buttons = [...document.querySelectorAll<HTMLButtonElement>("[data-motion-toggle]")];
+  const sync = () => {
+    const paused = document.documentElement.classList.contains("still");
+    for (const button of buttons) {
+      const label = paused ? button.dataset.play! : button.dataset.pause!;
+      button.setAttribute("aria-pressed", String(paused));
+      if (button.dataset.variant === "icon") {
+        button.setAttribute("aria-label", label);
+        button.title = label;
+      } else button.querySelector("[data-motion-label]")!.textContent = label;
+    }
+  };
+  for (const button of buttons) {
+    button.addEventListener("click", () => {
+      setPaused(!document.documentElement.classList.contains("still"));
+      window.umami?.track("motion_toggle", { paused: String(motionStill()) });
+    });
+    // Under reduced motion nothing moves, so there is nothing to pause.
+    if (prefersReducedMotion()) button.hidden = true;
+    button.dataset.ready = "";
+  }
+  onMotion(sync);
+  sync();
+</script>

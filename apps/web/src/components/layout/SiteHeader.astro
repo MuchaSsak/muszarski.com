@@ -1,442 +1,383 @@
 ---
 /**
- * The header as a drawing's title block (design.md § Art direction, structure.md § Navigation and footer):
- * framed cells of name + role, plain-word navigation, sheet number + revision, language, theme, the split
- * CV CTA and Contact (primary). Sticky. ≥ 768 px it hangs from the top edge inside the shell; below it is a
- * full-width bar. Below 1024 px the navigation, language and theme move into the "Menu" popover (0 KB JS);
- * below 420 px the CV CTA drops its PDF half (the menu carries it), below 360 px the mark gives way to the name.
+ * The header (structure.md § Navigation, requirements.md F01; design.md § Header). Sticky. On the home page it sits
+ * on the hero field with the "M—M" mark; once the hero name scrolls away it turns into the navy bar and the mark
+ * rolls into the full name. Other pages start in the bar state.
+ *
+ * ≥ 1180 px: mark · Work · How I work · AI · Blog · language codes · theme · CV | PDF · Contact.
+ * Below: mark · CV · Contact · Menu; the rest (and My life, the PDF, pause motion) lives in the full-screen menu
+ * (a native popover: 0 KB JS for open/close, Esc and light dismiss for free). Button type condenses on phones
+ * (Anybody's width axis) so CV and Contact stay visible down to 320 px.
  */
 import { type Locale } from "@package/shared/locales";
 import { t } from "lingui-for-astro/macro";
 
 import CvSplit from "~/components/layout/CvSplit.astro";
-import LocaleLinks from "~/components/layout/LocaleLinks.astro";
-import LocaleSwitch from "~/components/layout/LocaleSwitch.astro";
-import ThemeToggle from "~/components/layout/ThemeToggle.astro";
+import LocaleCodes from "~/components/layout/LocaleCodes.astro";
+import MotionToggle from "~/components/layout/MotionToggle.astro";
+import ThemeCycle from "~/components/layout/ThemeCycle.astro";
+import Icon from "~/components/ui/Icon.astro";
 import { cvPdfHref, SITE } from "~/data/site";
-import { BUILD_INFO } from "~/lib/build-info";
 import { chromeLinks } from "~/lib/nav";
 import { type LocalizedPath } from "~/lib/routes";
 
 interface Props {
   path: LocalizedPath;
   locales?: readonly Locale[] | undefined;
-  /** The drawing-set sheet number of this page (design.md: A-00 home, W-01… flagships). */
-  sheet?: string | undefined;
   /** Which main-nav item is the current section. */
   current?: "work" | "blog" | undefined;
+  /** The home page: the header starts transparent on the hero field. */
+  home?: boolean | undefined;
 }
 
-const { path, locales, sheet, current } = Astro.props;
+const { path, locales, current, home = false } = Astro.props;
 const locale = Astro.locals.locale;
 const links = chromeLinks(locale);
 const blogSuffix = links.blogLocale === locale ? "" : " (EN)";
 const nav = [
   { id: "work", href: links.work, label: t`Work` },
   { id: "how-i-work", href: links.howIWork, label: t`How I work` },
-  { id: "blog", href: links.blog, label: t`Blog` + blogSuffix, hreflang: links.blogLocale === locale ? undefined : links.blogLocale },
+  { id: "ai", href: links.ai, label: t`AI` },
+  {
+    id: "blog",
+    href: links.blog,
+    label: t`Blog` + blogSuffix,
+    hreflang: links.blogLocale === locale ? undefined : links.blogLocale,
+  },
 ] as const;
-const role = t`Full-stack product engineer`;
+const name = SITE.name;
+const homeLabel = t`${name}, home`;
 ---
 
-<header class="site-header" data-site-header>
-  <div class="tb">
-    <a href={links.home} class="tb-cell tb-name">
-      <svg class="tb-mark" viewBox="0 0 32 32" width="30" height="30" aria-hidden="true" focusable="false">
-        <rect x="1.5" y="1.5" width="29" height="29" rx="1" fill="none" stroke="currentColor" stroke-width="2.5"></rect>
-        <path d="M6 23V9l4.5 8L15 9v14M17 23V9l4.5 8L26 9v14" fill="none" stroke="currentColor" stroke-width="2.4"></path>
-      </svg>
-      <span class="tb-name-text">
-        <span class="tb-name-line font-display">{SITE.name}</span>
-        <span class="tb-role label">{role}</span>
-      </span>
-    </a>
+<header class:list={["site-header", { stuck: !home }]} data-site-header data-home={home ? "" : undefined}>
+  <a href={links.home} class="mark">
+    <span class="sr-only">{homeLabel}</span>
+    <span class="m-s" aria-hidden="true">
+      M—M
+    </span>
+    <span class="m-l" aria-hidden="true">
+      {SITE.name.split(" ").map((word) => (
+        <span>{word} </span>
+      ))}
+    </span>
+  </a>
 
-    <nav class="tb-cell tb-nav" aria-label={t`Main`}>
-      <ul role="list">
-        {
-          nav.map((item) => (
-            <li>
-              <a href={item.href} hreflang={"hreflang" in item ? item.hreflang : undefined} class="label" aria-current={current === item.id ? "page" : undefined}>
-                {item.label}
-              </a>
-            </li>
-          ))
-        }
-      </ul>
-    </nav>
+  <nav class="main" aria-label={t`Main`}>
+    <ul role="list">
+      {nav.map((item) => (
+        <li>
+          <a
+            href={item.href}
+            class="draw-line"
+            hreflang={"hreflang" in item ? item.hreflang : undefined}
+            aria-current={current === item.id ? "page" : undefined}
+          >
+            {item.label}
+          </a>
+        </li>
+      ))}
+    </ul>
+  </nav>
 
-    {
-      sheet && (
-        <p class="tb-cell tb-sheet label">
-          <span>
-            <span class="tb-sheet-key">{t`Sheet`}</span> {sheet}
-          </span>
-          <span>
-            <span class="tb-sheet-key">{t`Rev`}</span> <time datetime={BUILD_INFO.date}>{BUILD_INFO.date}</time>
-          </span>
-        </p>
-      )
-    }
+  <LocaleCodes path={path} locales={locales} class="h-loc" />
+  <ThemeCycle class="h-theme" />
 
-    <div class="tb-cell tb-tools">
-      <LocaleSwitch path={path} locales={locales} />
-      <span class="tb-rule" aria-hidden="true"></span>
-      <ThemeToggle />
-    </div>
-
-    <div class="tb-cell tb-actions">
-      <CvSplit source="header" narrow />
-      <a href={links.contact} class="tb-contact label" data-umami-event="cta" data-umami-event-id="contact" data-umami-event-source="header">
-        {t`Contact`}
-      </a>
-      <button type="button" class="tb-menu label" popovertarget="site-menu">{t`Menu`}</button>
-    </div>
-  </div>
-
-  <div id="site-menu" popover class="site-menu">
-    <div class="site-menu-head">
-      <p class="label text-ink-muted">{t`Menu`}</p>
-      <button type="button" class="site-menu-close label" popovertarget="site-menu" popovertargetaction="hide">{t`Close`}</button>
-    </div>
-    <nav aria-label={t`Main`}>
-      <ul role="list" class="site-menu-nav">
-        {
-          [...nav, { id: "my-life", href: links.myLife, label: t`My life` }].map((item) => (
-            <li>
-              <a href={item.href} aria-current={current === item.id ? "page" : undefined}>
-                {item.label}
-              </a>
-            </li>
-          ))
-        }
-      </ul>
-    </nav>
+  <div class="actions">
+    <CvSplit source="header" narrow />
     <a
-      href={cvPdfHref(locale)}
-      download
-      class="site-menu-pdf label"
-      data-umami-event="cv_download"
-      data-umami-event-source="menu"
-      data-umami-event-locale={locale}>{t`Download CV (PDF)`} <span aria-hidden="true">↓</span></a
+      href={links.contact}
+      class="btn btn-acc"
+      data-umami-event="cta"
+      data-umami-event-id="contact"
+      data-umami-event-source="header"
     >
-    <div class="site-menu-row">
-      <LocaleLinks path={path} locales={locales} class="site-menu-locales" />
-      <ThemeToggle />
-    </div>
+      {t`Contact`}
+    </a>
+    <button type="button" class="btn btn-line menu-btn" popovertarget="site-menu">
+      <Icon name="tb:menu-2" />
+      <span>{t`Menu`}</span>
+    </button>
   </div>
 </header>
 
+<div id="site-menu" popover class="site-menu field-bar">
+  <div class="sm-top">
+    <span class="kick">{t`Menu`}</span>
+    <button
+      type="button"
+      class="btn btn-line btn-icon"
+      popovertarget="site-menu"
+      popovertargetaction="hide"
+      aria-label={t`Close menu`}
+    >
+      <Icon name="tb:x" />
+    </button>
+  </div>
+  <nav aria-label={t`Main`}>
+    <ul role="list" class="sm-nav">
+      {[
+        ...nav,
+        { id: "my-life", href: links.myLife, label: t`My life` },
+        { id: "contact", href: links.contact, label: t`Contact` },
+      ].map((item, i) => (
+        <li style={`--i:${i}`}>
+          <a href={item.href} aria-current={current === item.id ? "page" : undefined} data-close-menu>
+            {item.label}
+          </a>
+        </li>
+      ))}
+    </ul>
+  </nav>
+  <div class="sm-row">
+    <a
+      href={cvPdfHref(locale)}
+      download
+      class="btn btn-line"
+      data-umami-event="cv_download"
+      data-umami-event-source="menu"
+      data-umami-event-locale={locale}
+    >
+      <Icon name="tb:download" />
+      {t`Download CV (PDF)`}
+    </a>
+    <ThemeCycle />
+    <MotionToggle />
+  </div>
+  <LocaleCodes path={path} locales={locales} class="sm-loc" />
+</div>
+
 <style>
   .site-header {
+    --sbg: var(--hero-bg);
+    --sfg: var(--hero-fg);
     position: sticky;
     top: 0;
     z-index: 40;
-    height: var(--header-h);
-  }
-
-  /* The title block: a framed row of cells. Full-width bar on phones, a tab hanging from the top edge ≥ 768. */
-  .tb {
-    display: flex;
-    align-items: stretch;
-    height: 100%;
-    background: var(--paper-raised);
-    border-bottom: var(--stroke-outline) solid var(--ink);
-  }
-  @media (min-width: 48rem) {
-    .tb {
-      max-width: calc(var(--container-shell) - 2 * var(--gutter));
-      margin-inline: max(var(--gutter), (100% - var(--container-shell)) / 2 + var(--gutter));
-      border: var(--stroke-outline) solid var(--ink);
-      border-top: 0;
-    }
-  }
-
-  .tb-cell {
     display: flex;
     align-items: center;
+    gap: 1.375rem;
+    min-height: var(--header-h);
+    padding: 0.625rem var(--pad-x);
+    background: var(--sbg);
+    color: var(--sfg);
+    transition:
+      background-color var(--dur-base),
+      color var(--dur-base);
   }
-  .tb-cell + .tb-cell {
-    border-left: var(--stroke-detail) solid var(--ink);
+  .site-header.stuck {
+    --sbg: var(--bar-bg);
+    --sfg: var(--bar-fg);
   }
 
-  .tb-name {
-    flex: 1 1 auto;
-    min-width: 0;
-    gap: 0.625rem;
-    padding-inline: 0.75rem;
-    text-decoration: none;
-  }
-  .tb-mark {
-    flex: none;
-    color: var(--ink);
-  }
-  .tb-name-text {
+  /* The mark: "M—M" wide, rolling into the condensed full name once stuck. */
+  .mark {
     display: grid;
-    min-width: 0;
-  }
-  .tb-name-line {
-    font-size: 0.8125rem;
-    line-height: 1.05;
-    font-weight: 800;
-    letter-spacing: 0.01em;
-    text-transform: uppercase;
-    /* Phones: the two words stack like title-block lettering. */
-    max-width: 9ch;
-  }
-  .tb-role {
-    display: none;
-    color: var(--ink-muted);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-  .tb-name:hover .tb-name-line {
-    color: var(--accent);
-  }
-
-  .tb-nav,
-  .tb-sheet,
-  .tb-tools {
-    display: none;
-  }
-
-  .tb-actions {
     flex: none;
-    gap: 0.375rem;
-    padding-inline: 0.5rem;
+    text-decoration: none;
+    font-weight: 900;
+    font-size: 1.375rem;
+    line-height: 1;
+    text-transform: uppercase;
+    overflow: hidden;
+    padding-block: 0.25rem;
   }
-  .tb-contact,
-  .tb-menu {
+  .mark > span {
+    grid-area: 1 / 1;
+    white-space: nowrap;
+    transition:
+      opacity var(--dur-base) var(--ease-out),
+      transform 0.45s var(--ease-out);
+  }
+  .m-s {
+    font-stretch: 150%;
+  }
+  .m-l {
+    font-stretch: 72%;
+    opacity: 0;
+    transform: translateY(60%);
+  }
+  .stuck .m-s {
+    opacity: 0;
+    transform: translateY(-60%);
+  }
+  .stuck .m-l {
+    opacity: 1;
+    transform: none;
+  }
+
+  .main {
+    margin-left: auto;
+  }
+  .main ul {
+    display: flex;
+    gap: 1.5rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    font-weight: 700;
+    font-size: 0.9375rem;
+    font-stretch: 118%;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+  }
+  .main a {
     display: inline-flex;
     align-items: center;
+    min-height: 2.75rem;
+    background-position: 0 calc(100% - 0.55rem);
+  }
+
+  .actions {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+  }
+  .site-header :global(.btn) {
     min-height: 2.5rem;
     padding-inline: 0.75rem;
-    border-radius: 2px;
-    text-decoration: none;
-    cursor: pointer;
-    transition:
-      background-color var(--dur-fast) var(--ease-out),
-      color var(--dur-fast) var(--ease-out);
+    font-size: 0.8125rem;
   }
-  .tb-contact {
-    background: var(--accent);
-    color: var(--on-accent);
-    border: var(--stroke-outline) solid var(--accent);
+  .menu-btn {
+    display: none;
   }
-  .tb-contact:hover {
-    background: var(--ink);
-    border-color: var(--ink);
-    color: var(--paper-raised);
+
+  @media (max-width: 73.6875rem) {
+    .main,
+    .site-header :global(.h-loc),
+    .site-header :global(.h-theme) {
+      display: none;
+    }
+    .menu-btn {
+      display: inline-flex;
+    }
+    .actions {
+      margin-left: auto;
+    }
   }
-  .tb-menu {
-    color: var(--ink);
-    border: var(--stroke-outline) solid var(--ink);
-    background: transparent;
-  }
-  .tb-menu:hover {
-    background: var(--ink);
-    color: var(--paper-raised);
-  }
-  /* Narrow phones: tighter cells; under 360 px the name stands alone (no mark). */
-  @media (max-width: 26.1875rem) {
-    .tb-name {
+
+  /* Phones: condensed button type keeps mark + CV + Contact + Menu on one row at 320 px. */
+  @media (max-width: 29.9375rem) {
+    .site-header {
       gap: 0.5rem;
-      padding-inline: 0.625rem;
     }
-    .tb-actions {
-      gap: 0.25rem;
-      padding-inline: 0.375rem;
+    .mark {
+      font-size: 1.125rem;
     }
-    .tb-contact,
-    .tb-menu {
+    /* The full name stacks in two short lines so it fits next to CV + Contact + Menu. */
+    .m-l {
+      font-size: 0.875rem;
+      line-height: 0.95;
+      align-self: center;
+    }
+    .m-l > span {
+      display: block;
+    }
+    .actions {
+      gap: 0.375rem;
+    }
+    .site-header :global(.btn) {
       padding-inline: 0.625rem;
+      font-stretch: 82%;
+      letter-spacing: 0.01em;
+    }
+    .menu-btn :global(.ico) {
+      display: none;
     }
   }
   @media (max-width: 22.4375rem) {
-    .tb-mark {
-      display: none;
-    }
-    .tb-name-line {
-      font-size: 0.75rem;
-    }
-    .tb-contact,
-    .tb-menu {
+    .site-header :global(.btn) {
       padding-inline: 0.5rem;
+      font-stretch: 72%;
     }
   }
 
-  @media (min-width: 48rem) {
-    .tb-name-line {
-      font-size: 0.9375rem;
-      max-width: none;
-      white-space: nowrap;
-    }
-    .tb-role {
-      display: block;
-    }
-  }
-  /* 1024-1279: the navigation needs the room (es/pl labels run long): the name stacks again and the
-     role returns at 1280. */
-  @media (min-width: 64rem) and (max-width: 79.9375rem) {
-    .tb-role {
-      display: none;
-    }
-    .tb-name-line {
-      font-size: 0.8125rem;
-      white-space: normal;
-      max-width: 9ch;
-    }
-  }
-
-  @media (min-width: 64rem) {
-    .tb-nav,
-    .tb-tools {
-      display: flex;
-    }
-    .tb-menu {
-      display: none;
-    }
-    .tb-name {
-      flex: none;
-      padding-inline: 1rem 1.25rem;
-    }
-    .tb-nav {
-      flex: 1 1 auto;
-      padding-inline: 0.5rem;
-    }
-    .tb-nav ul {
-      display: flex;
-      gap: 0.25rem;
-    }
-    .tb-nav a {
-      display: inline-flex;
-      align-items: center;
-      white-space: nowrap;
-      min-height: 2.5rem;
-      padding-inline: 0.75rem;
-      text-decoration: none;
-      border-radius: 2px;
-      background-image: linear-gradient(var(--accent), var(--accent));
-      background-repeat: no-repeat;
-      background-position: 0.75rem calc(100% - 0.5rem);
-      background-size: 0 2px;
-      transition:
-        background-size var(--dur-base) var(--ease-out),
-        color var(--dur-fast) var(--ease-out);
-    }
-    .tb-nav a:hover,
-    .tb-nav a[aria-current="page"] {
-      color: var(--accent);
-      background-size: calc(100% - 1.5rem) 2px;
-    }
-    .tb-tools {
-      flex: none;
-      gap: 0;
-      padding-inline: 0.25rem;
-    }
-    .tb-rule {
-      align-self: stretch;
-      width: 0;
-      margin-block: 0.75rem;
-      border-left: var(--stroke-construction) solid var(--line);
-    }
-    .tb-actions {
-      gap: 0.5rem;
-      padding-inline: 0.75rem;
-    }
-  }
-
-  @media (min-width: 90rem) {
-    .tb-sheet {
-      display: grid;
-      align-content: center;
-      gap: 0.125rem;
-      padding-inline: 1rem;
-      color: var(--ink-muted);
-      white-space: nowrap;
-    }
-    .tb-sheet-key {
-      display: inline-block;
-      min-width: 3.25rem;
-      color: var(--ink);
-    }
-  }
-
-  /* The mobile menu: a sheet sliding under the bar. */
+  /* The menu: a full-screen poster of big condensed links. */
   .site-menu {
     position: fixed;
-    inset: auto 0 auto 0;
-    top: var(--header-h);
+    inset: 0;
     width: 100%;
+    height: 100%;
     max-width: none;
-    max-height: calc(100svh - var(--header-h));
+    max-height: none;
     margin: 0;
-    padding: 1rem var(--gutter) 1.5rem;
-    overflow: auto;
-    background: var(--paper-raised);
-    color: var(--ink);
+    padding: 0.875rem var(--gutter) 2rem;
     border: 0;
-    border-bottom: var(--stroke-outline) solid var(--ink);
+    overflow: auto;
+    overscroll-behavior: contain;
   }
-  .site-menu-head {
+  .site-menu::backdrop {
+    background: rgb(0 0 0 / 0.4);
+  }
+  .sm-top {
     display: flex;
     align-items: center;
     justify-content: space-between;
   }
-  .site-menu-close {
-    min-height: 2.75rem;
-    padding-inline: 0.75rem;
-    border: var(--stroke-detail) solid var(--ink);
-    border-radius: 2px;
-    cursor: pointer;
+  .sm-nav {
+    display: grid;
+    gap: 0.25rem;
+    margin: 1.75rem 0 0;
+    padding: 0;
+    list-style: none;
   }
-  .site-menu-nav {
-    margin-top: 0.5rem;
-    border-top: var(--stroke-detail) solid var(--ink);
-  }
-  .site-menu-nav a {
-    display: flex;
-    align-items: center;
-    min-height: 3.5rem;
-    border-bottom: var(--stroke-detail) solid var(--line);
-    font-family: var(--font-display);
-    font-weight: 800;
-    font-size: var(--text-xl);
+  .sm-nav a {
+    display: inline-block;
+    font-weight: 900;
+    font-size: clamp(2.75rem, 12vw, 6rem);
+    line-height: 0.95;
+    font-stretch: 70%;
+    text-transform: uppercase;
     text-decoration: none;
+    transition:
+      font-stretch var(--dur-slow) var(--ease-out),
+      color var(--dur-fast);
   }
-  .site-menu-nav a:hover,
-  .site-menu-nav a[aria-current="page"] {
+  .sm-nav a:is(:hover, :focus-visible) {
+    font-stretch: 110%;
     color: var(--accent);
   }
-  .site-menu-pdf {
+  .sm-nav a[aria-current] {
+    color: var(--accent);
+  }
+  .site-menu:popover-open .sm-nav li {
+    animation: sm-in 0.55s var(--ease-out) both;
+    animation-delay: calc(var(--i) * 45ms);
+  }
+  @keyframes sm-in {
+    from {
+      opacity: 0;
+      transform: translateY(0.75rem);
+      font-stretch: 50%;
+    }
+  }
+  .sm-row {
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
-    justify-content: space-between;
-    min-height: 3rem;
+    gap: 0.625rem;
+    margin-top: 1.75rem;
+  }
+  .site-menu :global(.sm-loc) {
     margin-top: 1rem;
-    padding-inline: 0.75rem;
-    border: var(--stroke-outline) solid var(--ink);
-    border-radius: 2px;
-    text-decoration: none;
+    font-size: 1rem;
   }
-  .site-menu-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 1rem;
-    margin-top: 1rem;
-  }
-  .site-menu-row :global(.site-menu-locales) {
-    display: flex;
-    gap: 0.25rem;
-  }
-  .site-menu-row :global(.site-menu-locales a) {
-    gap: 0.5rem;
-  }
-  @media (min-width: 64rem) {
+  @media (min-width: 73.75rem) {
     .site-menu {
       display: none;
     }
   }
 </style>
+
+<script>
+  const header = document.querySelector<HTMLElement>("[data-site-header]");
+  const heroName = document.querySelector("[data-hero-name]");
+  if (header?.hasAttribute("data-home") && heroName) {
+    // The bar state starts when the hero name has scrolled under the header.
+    new IntersectionObserver(([e]) => header.classList.toggle("stuck", !e!.isIntersecting && e!.boundingClientRect.top < 0), {
+      rootMargin: "-64px 0px 0px 0px",
+    }).observe(heroName);
+  }
+  // Same-page anchors in the menu close it (the popover stays open otherwise).
+  const menu = document.getElementById("site-menu");
+  menu?.querySelectorAll("[data-close-menu]").forEach((a) => a.addEventListener("click", () => menu.hidePopover()));
+</script>

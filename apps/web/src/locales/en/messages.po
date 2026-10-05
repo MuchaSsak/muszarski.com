@@ -7,58 +7,76 @@ msgstr ""
 "X-Generator: @lingui/cli\n"
 "Language: en\n"
 
-#: src/components/layout/SiteFooter.astro:36
+#: src/components/layout/SiteHeader.astro:44
+msgid "{name}, home"
+msgstr "{name}, home"
+
+#: src/components/layout/SiteHeader.astro:40
+msgid "AI"
+msgstr "AI"
+
+#: src/components/layout/SiteFooter.astro:41
 msgid "All projects"
 msgstr "All projects"
 
-#: src/components/layout/SiteFooter.astro:43
-#: src/components/layout/SiteHeader.astro:37
+#: src/components/layout/SiteFooter.astro:48
+#: src/components/layout/SiteHeader.astro:41
 msgid "Blog"
 msgstr "Blog"
 
-#: src/components/layout/SiteFooter.astro:116
+#: src/components/home/Hero.astro:54
+msgid "Both app stores"
+msgstr "Both app stores"
+
+#: src/components/layout/SiteFooter.astro:115
 msgid "Built with"
 msgstr "Built with"
 
-#: src/components/layout/SiteHeader.astro:100
-msgid "Close"
-msgstr "Close"
+#: src/components/layout/ThemeCycle.astro:17
+msgid "Change theme"
+msgstr "Change theme"
 
-#: src/components/layout/SiteFooter.astro:69
-#: src/components/layout/SiteFooter.astro:76
-#: src/components/layout/SiteHeader.astro:91
+#: src/components/layout/SiteHeader.astro:90
+msgid "Close menu"
+msgstr "Close menu"
+
+#: src/components/layout/ThemeCycle.astro:16
+msgid "Cobalt"
+msgstr "Cobalt"
+
+#: src/components/layout/SiteFooter.astro:77
+#: src/components/layout/SiteHeader.astro:78
+#: src/components/layout/SiteHeader.astro:97
 msgid "Contact"
 msgstr "Contact"
 
 #: src/components/layout/CvSplit.astro:26
-#: src/components/layout/SiteFooter.astro:44
+#: src/components/layout/SiteFooter.astro:49
 msgid "CV"
 msgstr "CV"
 
-#: src/components/layout/ThemeToggle.astro:10
-#: src/components/layout/ThemeToggle.astro:11
-msgid "Dark theme"
-msgstr "Dark theme"
+#: src/components/home/Hero.astro:47
+msgid "Download CV"
+msgstr "Download CV"
 
 #: src/components/layout/CvSplit.astro:32
-#: src/components/layout/SiteHeader.astro:121
+#: src/components/layout/SiteHeader.astro:117
 msgid "Download CV (PDF)"
 msgstr "Download CV (PDF)"
 
-#: src/components/layout/SiteFooter.astro:52
+#: src/components/layout/SiteFooter.astro:57
 msgid "Elsewhere"
 msgstr "Elsewhere"
 
-#: src/components/layout/SiteFooter.astro:82
+#: src/components/layout/SiteFooter.astro:81
 msgid "Footer"
 msgstr "Footer"
 
-#: src/pages/[locale]/index.astro:17
+#: src/pages/[locale]/index.astro:15
 msgid "Full-stack Developer · TypeScript, React, three.js"
 msgstr "Full-stack Developer · TypeScript, React, three.js"
 
-#: src/components/layout/SiteHeader.astro:39
-#: src/pages/[locale]/index.astro:25
+#: src/components/home/Hero.astro:27
 msgid "Full-stack product engineer"
 msgstr "Full-stack product engineer"
 
@@ -66,88 +84,131 @@ msgstr "Full-stack product engineer"
 msgid "Go to the home page"
 msgstr "Go to the home page"
 
-#: src/components/layout/SiteHeader.astro:36
+#: src/components/layout/SiteHeader.astro:39
 msgid "How I work"
 msgstr "How I work"
 
-#: src/components/layout/SiteFooter.astro:46
+#: src/components/layout/SiteFooter.astro:51
 msgid "How this site was built"
 msgstr "How this site was built"
 
-#: src/pages/[locale]/index.astro:29
+#: src/components/home/Hero.astro:30
 msgid "I turn a business problem into a shipped web or mobile product, and I tell you early what it will cost and what can wait."
 msgstr "I turn a business problem into a shipped web or mobile product, and I tell you early what it will cost and what can wait."
 
-#: src/components/layout/LocaleSwitch.astro:24
-msgid "Language: {current}"
-msgstr "Language: {current}"
+#: src/components/layout/ThemeCycle.astro:16
+msgid "Ink"
+msgstr "Ink"
 
-#: src/components/layout/SiteFooter.astro:57
+#: src/components/layout/LocaleCodes.astro:23
+msgid "Language"
+msgstr "Language"
+
+#: src/components/layout/SiteFooter.astro:62
 msgid "Legal"
 msgstr "Legal"
 
-#: src/components/layout/SiteFooter.astro:72
+#: src/components/layout/SiteFooter.astro:75
 msgid "Let's talk about what you're building."
 msgstr "Let's talk about what you're building."
 
-#: src/components/layout/SiteHeader.astro:55
-#: src/components/layout/SiteHeader.astro:102
+#: src/components/layout/SiteHeader.astro:53
+#: src/components/layout/SiteHeader.astro:94
 msgid "Main"
 msgstr "Main"
 
-#: src/pages/[locale]/index.astro:18
+#: src/components/layout/SiteFooter.astro:113
+msgid "Marks: Simple Icons (CC0). Icons: Tabler (MIT). Font: Anybody (SIL OFL)."
+msgstr "Marks: Simple Icons (CC0). Icons: Tabler (MIT). Font: Anybody (SIL OFL)."
+
+#: src/pages/[locale]/index.astro:16
 msgid "Mateusz Muszarski, a full-stack product engineer from Poland. Web and mobile products in TypeScript, React and Node.js, from the business problem to the shipped app."
 msgstr "Mateusz Muszarski, a full-stack product engineer from Poland. Web and mobile products in TypeScript, React and Node.js, from the business problem to the shipped app."
 
-#: src/components/layout/SiteHeader.astro:93
-#: src/components/layout/SiteHeader.astro:99
+#: src/components/layout/SiteHeader.astro:82
+#: src/components/layout/SiteHeader.astro:89
 msgid "Menu"
 msgstr "Menu"
 
-#: src/components/layout/SiteFooter.astro:45
-#: src/components/layout/SiteHeader.astro:105
+#: src/components/layout/SiteFooter.astro:50
+#: src/components/layout/SiteHeader.astro:97
 msgid "My life"
 msgstr "My life"
 
-#: src/pages/404.astro:14
-#: src/pages/404.astro:17
+#: src/components/home/Sticker.astro:14
+msgid "Open to work"
+msgstr "Open to work"
+
+#: src/pages/404.astro:15
+#: src/pages/404.astro:18
 msgid "Page not found"
 msgstr "Page not found"
 
-#: src/components/layout/SiteFooter.astro:59
+#: src/components/layout/ThemeCycle.astro:16
+msgid "Paper"
+msgstr "Paper"
+
+#: src/components/layout/MotionToggle.astro:17
+msgid "Pause motion"
+msgstr "Pause motion"
+
+#: src/components/layout/MotionToggle.astro:18
+msgid "Play motion"
+msgstr "Play motion"
+
+#: src/components/home/Sticker.astro:14
+msgid "Poland, CET"
+msgstr "Poland, CET"
+
+#: src/components/layout/SiteFooter.astro:64
 msgid "Privacy policy"
 msgstr "Privacy policy"
 
-#: src/components/layout/SiteFooter.astro:113
-#: src/components/layout/SiteHeader.astro:76
-msgid "Rev"
-msgstr "Rev"
+#: src/components/home/Sticker.astro:14
+msgid "Remote"
+msgstr "Remote"
 
-#: src/components/layout/SiteFooter.astro:47
+#: src/components/layout/SiteFooter.astro:52
 msgid "RSS"
 msgstr "RSS"
 
-#: src/components/layout/SiteHeader.astro:73
-msgid "Sheet"
-msgstr "Sheet"
+#: src/components/home/Hero.astro:35
+msgid "See the work"
+msgstr "See the work"
 
-#: src/components/layout/SiteFooter.astro:41
+#: src/components/home/Sticker.astro:32
+msgid "Shipping since"
+msgstr "Shipping since"
+
+#: src/components/layout/SiteFooter.astro:46
 msgid "Site"
 msgstr "Site"
 
-#: src/components/layout/BaseLayout.astro:83
+#: src/components/layout/BaseLayout.astro:79
 msgid "Skip to content"
 msgstr "Skip to content"
 
-#: src/components/layout/SiteFooter.astro:60
+#: src/components/home/Hero.astro:52
+msgid "Solo, end to end"
+msgstr "Solo, end to end"
+
+#: src/components/layout/SiteFooter.astro:65
 msgid "Terms"
 msgstr "Terms"
 
-#: src/pages/404.astro:14
+#: src/pages/404.astro:15
 msgid "This page does not exist."
 msgstr "This page does not exist."
 
-#: src/components/layout/SiteFooter.astro:33
-#: src/components/layout/SiteHeader.astro:35
+#: src/components/home/ToolBand.astro:32
+msgid "Tools I ship with"
+msgstr "Tools I ship with"
+
+#: src/components/home/Hero.astro:53
+msgid "Web + mobile"
+msgstr "Web + mobile"
+
+#: src/components/layout/SiteFooter.astro:38
+#: src/components/layout/SiteHeader.astro:38
 msgid "Work"
 msgstr "Work"

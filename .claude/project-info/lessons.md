@@ -39,11 +39,22 @@
 - The review artifact is shared by link: put nothing on it that the site couldn't show (internal PstrykWeb stack, client
   names); ask those things in chat - 2026-10-05.
 
+- Keep every version of the work (comps, old app looks, review pages) for the build-story case study: tag milestones
+  `history/*`, archive old shots, index them in `comps/HISTORY.md`; never delete a superseded look - 2026-10-05.
+- A visible label must start the control's accessible name (WCAG 2.5.3): use visually hidden text after the visible text
+  ("PL Polski"), not an `aria-label` that replaces it; Lighthouse a11y flags the mismatch - 2026-10-05.
+
 ### Privacy of inputs
 - `context/` is private and gitignored (the pstryk code, klepacz.pdf). Copy patterns, not files; never quote the memo verbatim or name its author in committed files - 2026-10-05.
 - Research screenshots of third-party sites stay local (`research/inspirations/img/` is gitignored); the repo may go public - 2026-10-05.
 
 ### Tools and environment
+- Run prettier from the repo root (`bunx prettier --write <paths>`): run from `apps/web` it ignored the root config
+  (130 cols) and re-wrapped untouched files at 80 - 2026-10-05.
+- fontkit can't instance a variable WOFF2 (`getVariation` throws in cmap); measure from the TTF source and ship the
+  WOFF2 - 2026-10-05.
+- A grid-stacked hidden label still sets the grid's width (the header mark's invisible full name pushed CV/Contact
+  off a 320 px screen); size such stacks for the visible state or stack the hidden text - 2026-10-05.
 - Splicing HTML with string offsets: compute the offsets AFTER every other edit to the same string, then render-check;
   offsets taken first put the new body inside the stylesheet (blank page) - 2026-10-05.
 - Heredocs through the Bash tool also break on quote-heavy content ("unexpected EOF"): write scripts with Write, then run

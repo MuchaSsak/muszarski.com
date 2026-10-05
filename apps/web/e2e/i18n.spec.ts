@@ -12,26 +12,26 @@ for (const route of LOCALIZED) {
     await expect(page).toHaveTitle(/^Mateusz Muszarski – /);
     const canonical = await page.locator('link[rel="canonical"]').getAttribute("href");
     expect(new URL(canonical!).pathname).toBe(route);
-    const hreflangs = await page.locator('link[rel="alternate"][hreflang]').evaluateAll((links) =>
-      links.map((link) => `${link.getAttribute("hreflang")} ${new URL(link.getAttribute("href")!).pathname}`),
-    );
+    const hreflangs = await page
+      .locator('link[rel="alternate"][hreflang]')
+      .evaluateAll((links) =>
+        links.map((link) => `${link.getAttribute("hreflang")} ${new URL(link.getAttribute("href")!).pathname}`),
+      );
     expect(hreflangs).toEqual(["en /en/", "pl /pl/", "es /es/", "x-default /en/"]);
     await expect(page.locator('meta[name="robots"]')).toHaveAttribute("content", /noindex/);
     await expect(page.locator("h1")).toHaveCount(1);
   });
 
   test(`switcher ${route}`, async ({ page }) => {
+    await page.setViewportSize({ width: 1440, height: 900 });
     await page.goto(route);
-    const trigger = page.locator(".locale-trigger");
-    await trigger.focus();
-    await page.keyboard.press("Enter");
-    const menu = page.locator("#locale-menu");
-    await expect(menu).toBeVisible();
-    await expect(menu.locator('a[aria-current="true"]')).toHaveAttribute("hreflang", locale);
-    const hrefs = await menu.locator("a").evaluateAll((links) => links.map((link) => link.getAttribute("href")));
-    expect(hrefs).toEqual(["/en/", "/pl/", "/es/"]);
-    await page.keyboard.press("Escape");
-    await expect(menu).toBeHidden();
+    const codes = page.locator(".site-header .h-loc");
+    await expect(codes).toHaveAttribute("aria-label", /\S/);
+    await expect(codes.locator('a[aria-current="true"]')).toHaveAttribute("hreflang", locale);
+    const links = await codes
+      .locator("a")
+      .evaluateAll((all) => all.map((a) => `${a.getAttribute("href")} ${a.textContent!.replace(/\s+/g, " ").trim()}`));
+    expect(links).toEqual(["/en/ EN English", "/pl/ PL Polski", "/es/ ES Español"]);
   });
 }
 

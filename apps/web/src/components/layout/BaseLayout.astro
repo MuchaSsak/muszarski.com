@@ -1,7 +1,7 @@
 ---
 /**
  * Every page's document: head (SEO, hreflang, theme, fonts, analytics), skip link, header, main.
- * Wiki: site/seo.md § Metadata rules, site/i18n.md, design/design.md § Theme switch.
+ * Wiki: site/seo.md § Metadata rules, site/i18n.md, design/design.md § Themes, § Motion.
  */
 import "~/styles/global.css";
 
@@ -28,13 +28,11 @@ interface Props {
   home?: boolean;
   /** Indexable at launch? Legal pages are noindex,follow (seo.md). */
   noindex?: boolean;
-  /** The drawing-set sheet number shown in the title block (design.md § Art direction). */
-  sheet?: string;
   /** The main-nav item this page belongs to. */
   current?: "work" | "blog";
 }
 
-const { title, description, path = "", locales = LOCALES, home = false, noindex = false, sheet, current } = Astro.props;
+const { title, description, path = "", locales = LOCALES, home = false, noindex = false, current } = Astro.props;
 const locale = Astro.locals.locale;
 const site = Astro.site ?? new URL("http://localhost:4321");
 const canonical = path === null ? null : new URL(pathTo(locale, path), site).href;
@@ -53,16 +51,18 @@ const umamiDomain = new URL(site).hostname;
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#2433ff" />
     <ThemeScript />
     <title>{fullTitle}</title>
     <meta name="description" content={description} />
     <meta name="robots" content={robots} />
     {canonical && <link rel="canonical" href={canonical} />}
-    {links.map((link) => <link rel="alternate" hreflang={link.hreflang} href={link.href} />)}
-    {preloads.map((font) => <link rel="preload" href={font.href} as="font" type="font/woff2" crossorigin />)}
-    <meta name="color-scheme" content="light dark" />
-    <meta name="theme-color" content="#f2efe6" media="(prefers-color-scheme: light)" />
-    <meta name="theme-color" content="#0c2240" media="(prefers-color-scheme: dark)" />
+    {links.map((link) => (
+      <link rel="alternate" hreflang={link.hreflang} href={link.href} />
+    ))}
+    {preloads.map((font) => (
+      <link rel="preload" href={font.href} as="font" type="font/woff2" crossorigin />
+    ))}
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content={SITE.name} />
@@ -70,21 +70,54 @@ const umamiDomain = new URL(site).hostname;
     <meta property="og:description" content={description} />
     {canonical && <meta property="og:url" content={canonical} />}
     <meta property="og:locale" content={OG_LOCALES[locale]} />
-    {otherLocales.map((other) => <meta property="og:locale:alternate" content={OG_LOCALES[other]} />)}
+    {otherLocales.map((other) => (
+      <meta property="og:locale:alternate" content={OG_LOCALES[other]} />
+    ))}
     {PUBLIC_GOOGLE_SITE_VERIFICATION && <meta name="google-site-verification" content={PUBLIC_GOOGLE_SITE_VERIFICATION} />}
-    {
-      PUBLIC_UMAMI_WEBSITE_ID && (
-        <script is:inline defer src={PUBLIC_UMAMI_SCRIPT_URL} data-website-id={PUBLIC_UMAMI_WEBSITE_ID} data-domains={umamiDomain} />
-      )
-    }
+    {PUBLIC_UMAMI_WEBSITE_ID && (
+      <script
+        is:inline
+        defer
+        src={PUBLIC_UMAMI_SCRIPT_URL}
+        data-website-id={PUBLIC_UMAMI_WEBSITE_ID}
+        data-domains={umamiDomain}
+      />
+    )}
     <slot name="head" />
   </head>
   <body>
-    <a href="#main" class="sr-only-focusable bg-accent text-on-accent label fixed top-3 left-3 z-50 px-4 py-3">{t`Skip to content`}</a>
-    <SiteHeader path={path ?? ""} locales={locales} sheet={sheet} current={current} />
+    <a href="#main" class="skip sr-only-focusable">{t`Skip to content`}</a>
+    <div class="grain" aria-hidden="true"></div>
+    <SiteHeader path={path ?? ""} locales={locales} current={current} home={home} />
     <main id="main" tabindex="-1" class="outline-none">
       <slot />
     </main>
     <SiteFooter path={path ?? ""} locales={locales} />
+    <script>
+      import "~/scripts/motion";
+    </script>
   </body>
 </html>
+
+<style is:global>
+  .skip {
+    position: fixed;
+    top: 0.75rem;
+    left: 0.75rem;
+    z-index: 60;
+    padding: 0.75rem 1rem;
+    background: var(--accent);
+    color: var(--on-accent);
+    font-weight: 800;
+  }
+  /* Print grain over every field: one fixed, pre-rasterised noise tile, no repaint on scroll. */
+  .grain {
+    position: fixed;
+    inset: 0;
+    z-index: 50;
+    pointer-events: none;
+    opacity: 0.13;
+    mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+  }
+</style>

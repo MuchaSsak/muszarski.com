@@ -52,9 +52,10 @@ Turborepo (`usage/turborepo.md`): `apps/web/` (the site; folders in `conventions
 | build | `bun run build` (astro build → launch gate; later: CV PDFs, SEO/link gates) |
 | preview | `bun run preview` (4322; one per project, shared by e2e/shots/Lighthouse) |
 | e2e + a11y | `bun run e2e` |
-| screenshots | `MSYS_NO_PATHCONV=1 node scripts/shots.mjs --paths /en/ --widths 390,1024,1920,2560` (apps/web) |
+| screenshots | `MSYS_NO_PATHCONV=1 node scripts/shots.mjs --paths /en/ --widths 390,1024,1920,2560 --themes cobalt,paper,ink` (apps/web) |
 | Lighthouse | `bun run lhci` (`scripts/lighthouse.mjs`, median of 3, budgets) |
-| fonts | `bun run fonts` (subsets + metric fallbacks; outputs committed) |
+| fonts | `bun run fonts` (Anybody subset + metric fallbacks + `fit-metrics.gen.ts`; outputs committed) |
+| icons | `bun run icons` (the listed Simple Icons / Tabler icons → `src/lib/icons.gen.ts`; committed) |
 | media (later) | `video` · `og` |
 | wiki | `node .claude/hooks/wiki-check.mjs` |
 
@@ -98,7 +99,8 @@ tokens: 300 s, single use. Vercel Pro WAF: rate-limit rules included (the exact 
 | 2026-10-05 | CV PDF from a print route via Playwright | react-pdf, Typst (plan B) | one template, tagged output [research] |
 | 2026-10-05 | No Lenis | Lenis desktop-only | native scroll, anchors, a11y [research] |
 | 2026-10-05 | Turborepo on bun (`apps/web`, `packages/shared`) | one package | owner's choice, room for more apps/scripts [user] |
-| 2026-10-05 | Static font cuts (Archivo 400/600, Archivo Expanded 800, Plex Mono 400 = 47.2 KB) | the variable Archivo (52 KB alone) | 4 small files, only the H1 face preloaded [measured] |
+| 2026-10-05 | ~~Static Archivo + Plex cuts~~ → **one variable Anybody** (`wdth` 50-150, `wght` 400-900, 49.5 KB, preloaded) | static cuts per role | Poster needs the width axis for fitted lines and the letter accordion; one file is smaller than four cuts [measured] |
+| 2026-10-05 | Fitted type sized at build time (`~/lib/fit.ts`, `cqi` + `font-stretch`) | a JS fit on load (the comps) | the H1 is the LCP: final size with no JS and no shift; LH mobile 100, CLS 0 [measured] |
 | 2026-10-05 | `.po` compiled on import by `@lingui/vite-plugin` | committed compiled catalogs | one source of truth; the build still fails on a missing message |
 | 2026-10-05 | Vercel Pro, functions in fra1 | Cloudflare Workers ($0), Vercel Hobby | owner's choice; commercial use + DPA [user] |
 | 2026-10-05 | Correction: Lingui on Next 16.3 works with `@lingui/swc-plugin` 6.6.0 (6.7.0 is the broken build) | — | issue #253; doesn't change the Astro choice [research] |

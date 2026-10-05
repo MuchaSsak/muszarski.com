@@ -1,12 +1,12 @@
 ---
 /**
- * The split CV CTA (requirements.md F11, structure.md § CTA inventory): "CV" opens the web CV,
- * "↓ PDF" downloads this locale's PDF directly (no auto-download: iOS). Events: `cta` id=cv and
- * `cv_download` with the source (analytics.md). `narrow` drops the PDF half below 420 px (the header,
- * where the menu carries the PDF then).
+ * The split CV CTA (requirements.md F11, structure.md § CTA inventory): "CV" opens the web CV, "PDF" downloads this
+ * locale's PDF directly (no auto-download: iOS). Events: `cta` id=cv and `cv_download` with the source
+ * (analytics.md). `narrow` drops the PDF half on small phones (the header, where the menu carries the PDF then).
  */
 import { t } from "lingui-for-astro/macro";
 
+import Icon from "~/components/ui/Icon.astro";
 import { cvPdfHref } from "~/data/site";
 import { chromeLinks } from "~/lib/nav";
 
@@ -22,55 +22,39 @@ const links = chromeLinks(locale);
 ---
 
 <span class:list={["cv-split", { narrow }, className]}>
-  <a href={links.cv} class="cv-split-page label" data-umami-event="cta" data-umami-event-id="cv" data-umami-event-source={source}>
+  <a
+    href={links.cv}
+    class="btn btn-line cv-split-page"
+    data-umami-event="cta"
+    data-umami-event-id="cv"
+    data-umami-event-source={source}
+  >
     {t`CV`}
   </a>
   <a
     href={cvPdfHref(locale)}
     download
-    class="cv-split-pdf label"
+    class="btn btn-line cv-split-pdf"
     aria-label={t`Download CV (PDF)`}
     data-umami-event="cv_download"
     data-umami-event-source={source}
     data-umami-event-locale={locale}
   >
-    <span aria-hidden="true">↓ PDF</span>
+    <Icon name="tb:download" class="nudge-down" />
+    <span aria-hidden="true">PDF</span>
   </a>
 </span>
 
 <style>
   .cv-split {
     display: inline-flex;
-    align-items: stretch;
-    border: var(--stroke-outline) solid var(--ink);
-    border-radius: 2px;
-    background: var(--paper-raised);
-  }
-  .cv-split a {
-    display: inline-flex;
-    align-items: center;
-    min-height: 2.5rem;
-    padding-inline: 0.875rem;
-    text-decoration: none;
-    color: var(--ink);
-    transition:
-      color var(--dur-fast) var(--ease-out),
-      background-color var(--dur-fast) var(--ease-out);
-  }
-  .cv-split a:hover {
-    background: var(--ink);
-    color: var(--paper-raised);
   }
   .cv-split-pdf {
-    border-left: var(--stroke-detail) solid var(--ink);
-    white-space: nowrap;
+    margin-left: -2px;
   }
-  @media (max-width: 26.1875rem) {
+  @media (max-width: 29.9375rem) {
     .narrow .cv-split-pdf {
       display: none;
-    }
-    .narrow a {
-      padding-inline: 0.625rem;
     }
   }
 </style>

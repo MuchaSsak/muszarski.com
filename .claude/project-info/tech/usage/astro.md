@@ -21,19 +21,21 @@
   Anything that needs JS must be usable or hidden-without-shifting when JS is off (`visibility: hidden` until ready).
 - Facts (name, links, dates) come from `src/data/site.ts`; copy comes from Lingui. No inline facts, no inline copy.
 
-## Styling (Tailwind 4)
+## Styling (Tailwind 4 + scoped CSS)
 
-- Only design tokens exist: the default palette, breakpoints and type scale are reset in `@theme`. Colours: `paper`, `paper-raised`,
-  `ink`, `ink-muted`, `line` (decorative only), `grid`, `accent`, `on-accent` (`bg-paper`, `text-ink-muted`, `border-line`...).
-- Type: `text-label · sm · base · lg · xl · 2xl · 3xl · display` (fluid, 390 → 1440); faces `font-sans` (Archivo 400/600),
-  `font-display` (Archivo Expanded 800, use `font-extrabold`), `font-mono` (IBM Plex Mono 400). Helpers: `.label` (mono caps),
-  `.shell` (capped 90rem + gutter), `.tabular`.
-- Breakpoints: `sm` 480 · `md` 768 · `lg` 1024 · `xl` 1440 · `2xl` 1920.
-- A sheet that needs another stock sets `.theme-light` / `.theme-dark` or its own `--paper` / `--ink` / `--accent` on the element.
-- Line weights: `--stroke-outline` 2 px, `--stroke-detail` 1 px, `--stroke-construction` 0.75 px; SVG strokes use
-  `vector-effect: non-scaling-stroke`.
-- Motion: `--ease-out`, `--ease-in-out`, `--dur-fast/base/slow` (200/400/900 ms). The global reduced-motion rule shortens every
-  transition to 0.01 ms (read colours in tests with a poll).
+- Poster tokens live in `global.css` (`design.md` § Themes and fields). A section takes a field class
+  (`field-hero · field-alt · field-deep · field-bar · field-accent`) and `sec` (full-bleed field, content capped at 1920 via
+  `--pad-x`); children read `--sbg` / `--sfg` and `--accent` / `--on-accent`. Tailwind colours: `sbg`, `sfg`, `accent`,
+  `on-accent` only.
+- Components style themselves in scoped `<style>` blocks; shared pieces are global: `.btn` (+ `btn-line · btn-acc · btn-inv ·
+  btn-icon`), `.kick`, `.ico`, `.draw-line`, `.rise` (first-screen CSS entrance), `.rv` (reveal below the fold).
+- Type: one face (`font-sans` = Anybody). Hierarchy through `font-stretch` (the `wdth` axis) and weight, never another family.
+  Fitted lines: `<Fit lines={[...]} as="h2" base={[66, 96]} />`; add any new character to `DISPLAY` in `scripts/fonts.mjs`.
+- Icons: `<Icon name="si:react" />` / `tb:*` / `tbf:*`; add a name to `scripts/icons.mjs`, run `bun run icons`.
+- Breakpoints: `sm` 480 · `md` 768 · `lg` 1024 · `xl` 1440 · `2xl` 1920; the header collapses below 1180 (73.75rem).
+- Motion: `--ease-out`, `--ease-pop`, `--dur-fast/base/slow` (200/350/800 ms). JS loops import `~/scripts/motion`
+  (`motionStill`, `onMotion`); CSS loops pause through `.off` / `.still`. The reduced-motion rule shortens every transition
+  to 0.01 ms (read colours in tests with a poll).
 
 ## Head, CSP, SEO
 

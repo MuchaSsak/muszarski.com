@@ -1,16 +1,22 @@
 ---
 /**
- * Applies the reader's stored theme before first paint (no flash). The choice is a per-viewer
- * convenience in localStorage; without it the system preference wins (design.md § Theme switch).
- * Storage can throw (private mode, blocked site data), so every access is guarded.
+ * Runs before first paint (no flash): marks JS as available, applies the reader's stored theme (Paper or Ink;
+ * Cobalt is the default and needs no attribute) and their paused-motion choice, and paints the browser chrome
+ * in the hero colour. Both choices are per-viewer conveniences in localStorage; storage can throw (private
+ * mode, blocked site data), so every access is guarded (design.md § Themes, § Motion).
  */
 ---
 
 <script is:inline>
   (() => {
+    const root = document.documentElement;
+    root.classList.add("js");
     try {
       const theme = localStorage.getItem("theme");
-      if (theme === "light" || theme === "dark") document.documentElement.dataset.theme = theme;
+      if (theme === "paper" || theme === "ink") root.dataset.theme = theme;
+      if (localStorage.getItem("motion") === "still") root.classList.add("still");
     } catch {}
+    const meta = document.querySelector('meta[name="theme-color"]');
+    if (meta) meta.content = { paper: "#f1ede2", ink: "#0b0c11" }[root.dataset.theme] || "#2433ff";
   })();
 </script>

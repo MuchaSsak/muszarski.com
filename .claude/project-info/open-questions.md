@@ -26,7 +26,7 @@
 | 19 | A native Spanish reviewer? | es quality | owner | none; es marked unreviewed | open |
 | 20 | Blog posts at launch: how many, which topics | F12, SEO | owner + Claude | 2–3 from `seo.md` topic plan | open |
 | 21 | PstrykWeb: who owns it; what may be shown (code, screenshots, metrics) | its case study | owner | not shown until answered | open |
-| 22 | Light + dark theme both? | F18, design tokens | owner | both (paper / cyanotype) [assumption] | open |
+| 22 | Light + dark theme both? | F18, design tokens | owner | **answered by the rebrand:** Cobalt default + Paper / Ink switch (round 3, no objection) | resolved 2026-10-05 |
 | 23 | Old site: redirect, keep, or revive the space scene as `/explore` later? | domain, F24 | owner | — | **partly answered** [user] 2026-10-05: kept live at 3d-space-folio.vercel.app; the new site takes its domain. Open: `/explore` later |
 | 24 | "Open to projects": what kind of work; show rates? | contact copy | owner | "selected freelance projects", no rates | open |
 | 25 | **Seniority story:** coding since 2022 (~4 years), confirmed 2026-10-05. Still open: still at technikum (which ZSE, which year), matura / graduation date, years of paid work (since when?) | hero, CV, LinkedIn, SEO entity, availability | owner | "Building software since 2022" | partly answered 2026-10-05 |

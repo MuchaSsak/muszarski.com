@@ -1,34 +1,38 @@
 import { expect, type Page, test } from "@playwright/test";
 
-/** Theme switch (design.md § Theme switch): system default, toggle, stored choice before first paint. */
-const DARK_PAPER = "rgb(12, 34, 64)";
-const LIGHT_PAPER = "rgb(242, 239, 230)";
-const bodyBg = () => getComputedStyle(document.body).backgroundColor;
+/** Themes (design.md § Themes): Cobalt by default, the switch cycles Paper → Ink → Cobalt, stored before first paint. */
+const BG = { cobalt: "rgb(36, 51, 255)", paper: "rgb(241, 237, 226)", ink: "rgb(11, 12, 17)" };
 // Colours settle after a 0.01 ms reduced-motion transition, so read them with a poll.
-const settle = (page: Page) => expect.poll(() => page.evaluate(bodyBg));
+const bodyBg = (page: Page) => expect.poll(() => page.evaluate(() => getComputedStyle(document.body).backgroundColor));
 
-test("follows the system preference by default", async ({ page }) => {
-  await page.emulateMedia({ colorScheme: "dark" });
-  await page.goto("/en/");
-  await settle(page).toBe(DARK_PAPER);
-  await expect(page.locator(".tb-tools [data-theme-toggle]")).toHaveAttribute("aria-pressed", "true");
+test.use({ viewport: { width: 1440, height: 900 } });
+
+test("Cobalt by default, whatever the system preference", async ({ page }) => {
+  for (const colorScheme of ["light", "dark"] as const) {
+    await page.emulateMedia({ colorScheme });
+    await page.goto("/en/");
+    await bodyBg(page).toBe(BG.cobalt);
+  }
 });
 
-test("toggle switches, persists, and the stored theme applies before first paint", async ({ page }) => {
-  await page.emulateMedia({ colorScheme: "light", reducedMotion: "reduce" });
+test("the switch cycles, persists, and the stored theme applies before first paint", async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
   await page.goto("/en/");
-  const toggle = page.locator(".tb-tools [data-theme-toggle]");
-  await expect(toggle).toHaveAttribute("aria-pressed", "false");
-  await toggle.click();
-  await expect(toggle).toHaveAttribute("aria-pressed", "true");
-  await settle(page).toBe(DARK_PAPER);
+  const cycle = page.locator(".site-header [data-theme-cycle]");
+  await expect(cycle).toHaveAttribute("aria-label", "Change theme: Cobalt");
+  await cycle.click();
+  await bodyBg(page).toBe(BG.paper);
+  await expect(cycle).toHaveAttribute("aria-label", "Change theme: Paper");
 
   await page.goto("/pl/", { waitUntil: "domcontentloaded" });
-  expect(await page.evaluate(() => document.documentElement.dataset.theme)).toBe("dark");
-  await settle(page).toBe(DARK_PAPER);
+  expect(await page.evaluate(() => document.documentElement.dataset.theme)).toBe("paper");
+  await bodyBg(page).toBe(BG.paper);
 
-  await page.locator(".tb-tools [data-theme-toggle]").click();
-  await settle(page).toBe(LIGHT_PAPER);
+  await page.locator(".site-header [data-theme-cycle]").click();
+  await bodyBg(page).toBe(BG.ink);
+  await page.locator(".site-header [data-theme-cycle]").click();
+  await bodyBg(page).toBe(BG.cobalt);
+  expect(await page.evaluate(() => localStorage.getItem("theme"))).toBeNull();
 });
 
 test("still works when storage is blocked", async ({ page }) => {
@@ -41,9 +45,9 @@ test("still works when storage is blocked", async ({ page }) => {
   });
   const errors: string[] = [];
   page.on("pageerror", (error) => errors.push(String(error)));
-  await page.emulateMedia({ colorScheme: "light", reducedMotion: "reduce" });
+  await page.emulateMedia({ reducedMotion: "reduce" });
   await page.goto("/en/");
-  await page.locator(".tb-tools [data-theme-toggle]").click();
-  await settle(page).toBe(DARK_PAPER);
+  await page.locator(".site-header [data-theme-cycle]").click();
+  await bodyBg(page).toBe(BG.paper);
   expect(errors).toEqual([]);
 });

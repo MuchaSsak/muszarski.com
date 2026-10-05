@@ -1,17 +1,20 @@
 ---
 /**
- * The footer as the drawing set's revision block (structure.md § Navigation and footer, design-references.md
- * § Footer): a last-chance contact line, the 4 labelled link columns (this list owns the footer links),
- * the language links and a build-time revision row. The theme toggle stays in the header.
+ * The footer (structure.md § Navigation and footer, requirements.md F10; design.md § Footer): a last-chance contact
+ * line, the 4 link columns (this list owns the footer links), the language codes, credits for the marks, icons and
+ * font, a pause-motion button, the build revision, and the surname fitted edge to edge as the poster's last line.
  */
 import { type Locale } from "@package/shared/locales";
 import { t } from "lingui-for-astro/macro";
 
-import CvSplit from "~/components/layout/CvSplit.astro";
-import LocaleLinks from "~/components/layout/LocaleLinks.astro";
+import LocaleCodes from "~/components/layout/LocaleCodes.astro";
+import MotionToggle from "~/components/layout/MotionToggle.astro";
+import Fit from "~/components/ui/Fit.astro";
+import Icon from "~/components/ui/Icon.astro";
 import { visibleFlagships } from "~/data/projects";
 import { PROFILES, SITE } from "~/data/site";
 import { BUILD_INFO } from "~/lib/build-info";
+import { type IconName } from "~/lib/icons.gen";
 import { chromeLinks } from "~/lib/nav";
 import { type LocalizedPath } from "~/lib/routes";
 import { typo } from "~/lib/typography";
@@ -26,6 +29,8 @@ const locale = Astro.locals.locale;
 const links = chromeLinks(locale);
 const english = links.blogLocale === locale ? "" : " (EN)";
 const year = BUILD_INFO.date.slice(0, 4);
+const PROFILE_ICONS: Record<string, IconName> = { github: "si:github", linkedin: "tb:brand-linkedin", npm: "si:npm" };
+const surname = SITE.name.split(" ").at(-1)!;
 
 const columns = [
   {
@@ -33,7 +38,7 @@ const columns = [
     title: t`Work`,
     items: [
       ...visibleFlagships().map((project) => ({ label: project.name, href: links.project(project.slug) })),
-      { label: t`All projects`, href: links.work },
+      { label: t`All projects`, href: links.workIndex },
     ],
   },
   {
@@ -63,204 +68,153 @@ const columns = [
 ] as const;
 ---
 
-<footer class="site-footer shell">
-  <div class="rb">
-    <section class="rb-contact">
-      <p class="label text-ink-muted">X-01 · {t`Contact`}</p>
+<footer class="sec field-bar site-footer">
+  <div class="cols">
+    <div class="say-col">
       <!-- PLACEHOLDER: draft line; the owner rewrites it in his voice (placeholders.md P6). -->
-      <h2 id="footer-contact-title" class="font-display text-2xl rb-contact-title font-extrabold">
-        {typo(locale, t`Let's talk about what you're building.`)}
-      </h2>
-      <div class="rb-contact-actions">
-        <a href={links.contact} class="rb-contact-cta label" data-umami-event="cta" data-umami-event-id="contact" data-umami-event-source="footer">
-          {t`Contact`} <span aria-hidden="true">→</span>
-        </a>
-        <CvSplit source="footer" />
-      </div>
-    </section>
-
-    <nav class="rb-columns" aria-label={t`Footer`}>
-      {
-        columns.map((column) => (
-          <div class="rb-column">
-            <h3 class="label rb-column-title">{column.title}</h3>
-            <ul role="list">
-              {column.items.map((item) =>
-                "outbound" in item ? (
-                  <li>
-                    <a href={item.href} rel="me" data-umami-event="outbound" data-umami-event-target={item.outbound}>
-                      {item.label}
-                      <span class="rb-ext" aria-hidden="true">
-                        ↗
-                      </span>
-                    </a>
-                  </li>
-                ) : (
-                  <li>
-                    <a href={item.href}>{item.label}</a>
-                  </li>
-                ),
-              )}
-            </ul>
-          </div>
-        ))
-      }
-    </nav>
-
-    <div class="rb-rev">
-      <LocaleLinks path={path} locales={locales} class="rb-locales" />
-      <p class="label rb-rev-line">
-        <span>{t`Rev`} <time datetime={BUILD_INFO.date}>{BUILD_INFO.date}</time></span>
-        {BUILD_INFO.sha && <span class="tabular normal-case">{BUILD_INFO.sha}</span>}
-        <span>
-          {t`Built with`} <a href="https://astro.build/" data-umami-event="outbound" data-umami-event-target="astro">Astro</a>
-        </span>
-        <span>© {year} {SITE.name}</span>
-      </p>
+      <p class="say">{typo(locale, t`Let's talk about what you're building.`)}</p>
+      <a
+        href={links.contact}
+        class="btn btn-acc"
+        data-umami-event="cta"
+        data-umami-event-id="contact"
+        data-umami-event-source="footer"
+      >
+        {t`Contact`}
+        <Icon name="tb:arrow-right" class="nudge" />
+      </a>
     </div>
+    <nav class="link-cols" aria-label={t`Footer`}>
+      {columns.map((column) => (
+        <div>
+          <h2 class="kick col-title">{column.title}</h2>
+          <ul role="list">
+            {column.items.map((item) =>
+              "outbound" in item ? (
+                <li>
+                  <a href={item.href} rel="me" data-umami-event="outbound" data-umami-event-target={item.outbound}>
+                    {PROFILE_ICONS[item.outbound] && <Icon name={PROFILE_ICONS[item.outbound]!} />}
+                    {item.label}
+                  </a>
+                </li>
+              ) : (
+                <li>
+                  <a href={item.href}>{item.label}</a>
+                </li>
+              ),
+            )}
+          </ul>
+        </div>
+      ))}
+    </nav>
   </div>
+
+  <div class="row">
+    <LocaleCodes path={path} locales={locales} class="f-loc" />
+    <MotionToggle />
+    <p class="meta">
+      <span>
+        © {year} {SITE.name}
+      </span>
+      <span>{t`Marks: Simple Icons (CC0). Icons: Tabler (MIT). Font: Anybody (SIL OFL).`}</span>
+      <span>
+        {t`Built with`}{" "}
+        <a href="https://astro.build/" data-umami-event="outbound" data-umami-event-target="astro">
+          Astro
+        </a>
+        · <time datetime={BUILD_INFO.date}>{BUILD_INFO.date}</time>
+        {BUILD_INFO.sha && <span class="tabular">{BUILD_INFO.sha}</span>}
+      </span>
+    </p>
+  </div>
+
+  <Fit lines={[surname]} base={[100, 100]} motion="calm" decorative class="f-name" />
 </footer>
 
 <style>
   .site-footer {
-    margin-top: clamp(4rem, 10vw, 8rem);
-    padding-bottom: var(--gutter);
+    padding-bottom: 0;
+    overflow: clip;
   }
-  .rb {
-    background: var(--paper-raised);
-    border: var(--stroke-outline) solid var(--ink);
-  }
-  .rb-contact {
+  .cols {
     display: grid;
-    gap: 1rem;
-    padding: clamp(1.25rem, 4vw, 2.5rem);
-    border-bottom: var(--stroke-detail) solid var(--ink);
+    grid-template-columns: minmax(0, 2fr) minmax(0, 4fr);
+    gap: 1.75rem;
   }
-  .rb-contact-title {
-    max-width: 22ch;
-    /* "Porozmawiajmy" is one long word: cap the size by the viewport so it fits at 320 px. */
-    font-size: min(var(--text-2xl), 8.4vw);
+  .link-cols {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 1.75rem;
   }
-  .rb-contact-actions {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 0.75rem;
-    margin-top: 0.5rem;
+  .say {
+    margin: 0 0 1rem;
+    max-width: 14ch;
+    font-weight: 800;
+    font-size: clamp(1.5rem, 2vw, 2rem);
+    line-height: 1;
+    font-stretch: 80%;
+    text-transform: uppercase;
   }
-  .rb-contact-cta {
+  .col-title {
+    margin: 0 0 0.75rem;
+  }
+  ul {
+    display: grid;
+    gap: 0.25rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  ul a {
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
-    min-height: 2.75rem;
-    padding-inline: 1.125rem;
-    background: var(--accent);
-    color: var(--on-accent);
-    border: var(--stroke-outline) solid var(--accent);
-    border-radius: 2px;
+    min-height: 2rem;
     text-decoration: none;
-    transition:
-      background-color var(--dur-fast) var(--ease-out),
-      border-color var(--dur-fast) var(--ease-out);
   }
-  .rb-contact-cta:hover {
-    background: var(--ink);
-    border-color: var(--ink);
-    color: var(--paper-raised);
+  ul a :global(.ico) {
+    width: 1.125rem;
+    height: 1.125rem;
   }
-  .rb-contact-actions :global(.cv-split a) {
-    min-height: 2.75rem;
-  }
-  @media (min-width: 64rem) {
-    .rb-contact {
-      grid-template-columns: 1fr auto;
-      align-items: end;
-    }
-    .rb-contact > .label {
-      grid-column: 1 / -1;
-    }
-    .rb-contact-actions {
-      margin-top: 0;
-    }
-  }
-
-  .rb-columns {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-  .rb-column {
-    padding: 1.25rem clamp(1rem, 3vw, 2rem) 1.5rem;
-    border-bottom: var(--stroke-detail) solid var(--ink);
-  }
-  .rb-column:nth-child(odd) {
-    border-right: var(--stroke-detail) solid var(--ink);
-  }
-  @media (min-width: 64rem) {
-    .rb-columns {
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-    }
-    .rb-column {
-      border-right: var(--stroke-detail) solid var(--ink);
-    }
-    .rb-column:last-child {
-      border-right: 0;
-    }
-  }
-  .rb-column-title {
-    color: var(--ink-muted);
-  }
-  .rb-column ul {
-    display: grid;
-    margin-top: 0.75rem;
-  }
-  .rb-column a {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.375rem;
-    min-height: 2.25rem;
-    text-decoration: none;
+  ul a:hover {
+    text-decoration: underline;
     text-underline-offset: 4px;
   }
-  .rb-column a:hover {
-    color: var(--accent);
-    text-decoration: underline;
-    text-decoration-thickness: 2px;
-  }
-  .rb-ext {
-    font-size: 0.8em;
-    color: var(--ink-muted);
-  }
-
-  .rb-rev {
+  .row {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    justify-content: space-between;
-    gap: 0.5rem 1.5rem;
-    padding: 0.5rem clamp(0.5rem, 2.5vw, 1.5rem);
+    gap: 0.75rem 1.5rem;
+    margin-top: clamp(2rem, 4vw, 3.5rem);
+    padding-block: 0.875rem;
+    border-top: 2px solid currentColor;
+    font-size: 0.8125rem;
+    font-weight: 600;
   }
-  .rb-rev :global(.rb-locales) {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.25rem;
+  .row :global(.motion-toggle) {
+    min-height: 2.25rem;
+    padding-inline: 0.75rem;
+    font-size: 0.75rem;
   }
-  .rb-rev :global(.rb-locales a) {
-    gap: 0.5rem;
-    min-height: 2.75rem;
-  }
-  .rb-rev-line {
+  .meta {
     display: flex;
     flex-wrap: wrap;
     gap: 0.25rem 1.25rem;
-    color: var(--ink-muted);
-    padding-inline: 0.75rem;
+    margin: 0 0 0 auto;
   }
-  .rb-rev-line a {
-    color: var(--ink);
-    text-decoration: underline;
-    text-underline-offset: 3px;
-  }
-  .rb-rev-line a:hover {
+  .site-footer :global(.f-name) {
+    margin-top: 0.5rem;
     color: var(--accent);
+  }
+  @media (max-width: 62.5rem) {
+    .cols {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .link-cols {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .meta {
+      margin-left: 0;
+    }
   }
 </style>

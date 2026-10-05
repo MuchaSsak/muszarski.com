@@ -1,0 +1,160 @@
+---
+/**
+ * Hero (requirements.md F02, structure.md § Home 1; design.md § Hero). The name is the poster: fitted edge to edge at
+ * build time, so the H1 is the LCP and renders final without JS. Under it, a rule and three columns: the role, one
+ * line of positioning, and the CTAs with three icon facts. The sticker spins slowly (pauses offscreen, on the pause
+ * button and under reduced motion). Everything under the name enters with CSS only (`.rise`): no JS on the LCP path.
+ */
+import { t } from "lingui-for-astro/macro";
+
+import Sticker from "~/components/home/Sticker.astro";
+import Fit from "~/components/ui/Fit.astro";
+import Icon from "~/components/ui/Icon.astro";
+import { cvPdfHref, SITE } from "~/data/site";
+import { typo } from "~/lib/typography";
+
+const locale = Astro.locals.locale;
+const [first, last] = SITE.name.split(" ") as [string, string];
+---
+
+<section class="sec field-hero hero" id="top" aria-labelledby="hero-title">
+  <div data-hero-name>
+    <Fit as="h1" id="hero-title" lines={[first, last]} />
+  </div>
+  <div class="rule" aria-hidden="true"></div>
+  <div class="info">
+    <Sticker />
+    <p class="role rise" style="--d:1">{t`Full-stack product engineer`}</p>
+    <!-- PLACEHOLDER: draft subline from brand.md; the owner rewrites it (placeholders.md P6). -->
+    <p class="lede rise" style="--d:2">
+      {typo(
+        locale,
+        t`I turn a business problem into a shipped web or mobile product, and I tell you early what it will cost and what can wait.`,
+      )}
+    </p>
+    <div class="cta-col rise" style="--d:3">
+      <div class="ctas">
+        <a class="btn btn-inv" href="#work" data-umami-event="cta" data-umami-event-id="see-work" data-umami-event-source="hero">
+          {t`See the work`}
+          <Icon name="tb:arrow-down" class="nudge-down" />
+        </a>
+        <a
+          class="btn btn-line"
+          href={cvPdfHref(locale)}
+          download
+          data-umami-event="cv_download"
+          data-umami-event-source="hero"
+          data-umami-event-locale={locale}
+        >
+          <Icon name="tb:file-cv" />
+          {t`Download CV`}
+          <small>PDF</small>
+        </a>
+      </div>
+      <ul class="facts" role="list">
+        <li>
+          <Icon name="tb:user" />
+          {t`Solo, end to end`}
+        </li>
+        <li>
+          <Icon name="tb:device-mobile" />
+          {t`Web + mobile`}
+        </li>
+        <li>
+          <Icon name="si:apple" />
+          <Icon name="si:googleplay" />
+          {t`Both app stores`}
+        </li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<style>
+  .hero {
+    overflow-x: clip;
+    padding-top: clamp(0.5rem, 2vw, 1.5rem);
+    padding-bottom: clamp(2.25rem, 4vw, 3.75rem);
+  }
+  .rule {
+    height: 3px;
+    margin-top: clamp(0.875rem, 1.6vw, 1.5rem);
+    background: currentColor;
+    transform-origin: left;
+    animation: draw 1.1s var(--ease-out) 0.15s both;
+  }
+  @keyframes draw {
+    from {
+      transform: scaleX(0);
+    }
+  }
+  .info {
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    gap: 1.5rem;
+    margin-top: clamp(1.25rem, 2.4vw, 2.25rem);
+    align-items: start;
+  }
+  .role {
+    grid-column: span 4;
+    margin: 0;
+    max-width: 11ch;
+    font-weight: 800;
+    font-size: clamp(1.875rem, 3.4vw, 3.375rem);
+    line-height: 0.92;
+    font-stretch: 62%;
+    text-transform: uppercase;
+  }
+  .lede {
+    grid-column: span 4;
+    margin: 0;
+    max-width: 34ch;
+    font-size: clamp(1.125rem, 1.35vw, 1.3125rem);
+    line-height: 1.45;
+  }
+  .cta-col {
+    grid-column: span 4;
+    display: grid;
+    justify-items: start;
+    gap: 0.875rem;
+  }
+  .ctas {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+  .facts {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1.125rem;
+    margin: 0.25rem 0 0;
+    padding: 0;
+    list-style: none;
+    font-size: 0.8125rem;
+    font-weight: 800;
+    font-stretch: 120%;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+  .facts li {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .facts :global(.ico) {
+    width: 1.25rem;
+    height: 1.25rem;
+  }
+
+  @media (max-width: 56.25rem) {
+    .role,
+    .lede,
+    .cta-col {
+      grid-column: 1 / -1;
+    }
+    .info {
+      position: relative;
+      gap: 1.125rem;
+    }
+  }
+</style>

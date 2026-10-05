@@ -3,11 +3,12 @@
  * Visual-QA screenshots (working-agreement.md § 2, design-quality.md). Needs a running `astro preview`.
  *
  *   node scripts/shots.mjs [--base http://localhost:4322] [--paths /en/,/pl/] [--widths 390,1024,1920]
- *                          [--themes light,dark] [--full] [--reduced] [--accept]
+ *                          [--themes cobalt,paper,ink] [--settle 1800] [--full] [--reduced] [--accept]
  *
  * Writes repo-root screenshots/.work/<route>/<width>-<theme>.png (gitignored scratch). With --accept, the
  * 1920 and 390 shots are also saved as webp to screenshots/<route>/ (the committed proof).
- * Prints horizontal overflow per shot so a broken layout can't hide behind a nice crop.
+ * Prints horizontal overflow per shot so a broken layout can't hide behind a nice crop. Themes are the stored
+ * choice (design.md § Themes); `--settle` waits for the entrance animations before the shot.
  */
 import { mkdirSync } from "node:fs";
 import { dirname, join } from "node:path";
@@ -25,7 +26,8 @@ const opt = (name, fallback) => {
 const base = opt("base", "http://localhost:4322");
 const paths = opt("paths", "/en/").split(",");
 const widths = opt("widths", "390,1024,1920").split(",").map(Number);
-const themes = opt("themes", "light,dark").split(",");
+const themes = opt("themes", "cobalt,paper,ink").split(",");
+const settle = Number(opt("settle", "1800"));
 const full = argv.includes("--full");
 const reduced = argv.includes("--reduced");
 const accept = argv.includes("--accept");
@@ -38,12 +40,13 @@ for (const theme of themes) {
     const page = await browser.newPage({
       viewport: { width, height },
       deviceScaleFactor: width < 700 ? 2 : 1,
-      colorScheme: theme,
       reducedMotion: reduced ? "reduce" : "no-preference",
     });
+    if (theme !== "cobalt") await page.addInitScript((t) => localStorage.setItem("theme", t), theme);
     for (const path of paths) {
       await page.goto(base + path, { waitUntil: "networkidle" });
       await page.evaluate(() => document.fonts.ready);
+      await page.waitForTimeout(reduced ? 200 : settle);
       const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
       const dir = join(REPO, "screenshots", ".work", slug(path));
       mkdirSync(dir, { recursive: true });
@@ -53,7 +56,9 @@ for (const theme of themes) {
       if (accept && (width === 1920 || width === 390) && !reduced) {
         const out = join(REPO, "screenshots", slug(path));
         mkdirSync(out, { recursive: true });
-        await sharp(file).webp({ quality: 72 }).toFile(join(out, `${width}-${theme}.webp`));
+        await sharp(file)
+          .webp({ quality: 72 })
+          .toFile(join(out, `${width}-${theme}.webp`));
       }
       console.log(`${slug(path)} ${name}${overflow > 0 ? ` OVERFLOW ${overflow}px` : ""}`);
     }

@@ -1,173 +1,115 @@
-# Design system
+# Design system: Poster
 
-> **REJECTED BY THE OWNER 2026-10-05, after seeing slices 0-1 on screen:** "this looks so ugly", "completely rebuild
-> and rebrand", "you aren't putting in the creative effort and visual". Everything visual below (Drafting Table, paper/
-> cyanotype tokens, Archivo + Plex Mono, title block, revision block) is the REJECTED direction, kept only as history.
-> Do not build on it. The next step is a full rebrand (`working-agreement.md` § 9, Rebrand gate).
->
-> **Rebrand directions built 2026-10-05, awaiting the owner's pick:** four live comps in `comps/` (`comps/README.md`),
-> reviewed on a private artifact page. 1 Orbit (particle planet that re-forms into each project's device; recommended),
-> 2 Poster (variable-width name set edge to edge, flat colour fields), 3 Toybox (ray-marched clay toys = facts),
-> 4 Exhibit (night gallery, shader spotlights, museum placards). Evidence: `research/2026-10-05-rebrand-ambition.md`.
-> When the owner picks, this page is rewritten for that direction.
->
-> **Owner's pick 2026-10-05: Poster** ("my favourite i think is Poster, it really has professional vibe") [user]. Round 2 built it
-> out to the whole home page (`comps/poster-full.html`: hero, 4 chapters with their own colour fields and product visuals,
-> How I work, AI workflow, credentials, contact, footer; themes Cobalt / Paper / Ink, fonts Anybody / Roboto Flex). Waiting
-> on 3 answers (theme model, font, cuts) on the review page; then this page is rewritten for Poster.
->
-> **Round 3 (2026-10-05), from the owner's notes** [user]: "too much text blending", tools not legible, "more icons and less
-> overwhelming text", videos for every project, How I work rebuilt around product thinking, the AI section about the system
-> (wiki, MCPs, skills, automation) because typecheck/lint "is the floor", credentials with expanding previews that load media
-> only when needed, a message-first contact, PstrykWeb as #1, "a lot of micro animations or loops", and every hover usable
-> without a cursor on phones. Built in `comps/poster-r3.html`: monochrome tool marks with names (Simple Icons, CC0), a reel
-> per project (platform frame, chapter chips that seek and fill, play/pause, expand; "Video soon" stand-ins), a 7-stop
-> product loop (code is one stop), a 7-step AI pipeline with real repo counts, a Stack grid with project filter, expanding
-> credential cards, message-first contact with a self-filling reply field, a global pause-motion button. Theme/font kept
-> Cobalt + Anybody (no objection). Waiting on 4 answers (Q43-Q46); then this page is rewritten for Poster.
+> Owns the art direction, tokens, type, components, motion, imagery and design do/don't. Scoring a view:
+> `design-quality.md`. Sections and pages: `structure.md`. Media and licences: `assets.md`.
+> **History:** the owner rejected the first look (Drafting Table, slices 0-1) on 2026-10-05, picked **Poster** from four
+> live directions, and refined it over rounds 2 and 3 (`comps/poster-r3.html` is the reference comp). Every version is
+> kept (`comps/HISTORY.md`). Production build started 2026-10-05 [user: "lets finally start coding"]: header, hero and
+> tool band are built; the comp is a mock-up to improve on, not a spec to copy pixel for pixel [user].
 
-> Owns the art direction, tokens, components, motion, imagery and design do/don't. References that
-> inspired it: `design-references.md`. Sections and pages: `structure.md`. Scoring a view: `design-quality.md`
-> (Phase 1). Decided by the owner 2026-10-05: **Drafting Table** + **code-drawn SVG + shader illustrations**.
-> Base tokens and type below were **frozen in slice 0 (2026-10-05)** after review on screen in light + dark at 390-2560
-> (the `/specimen/` sheet in review builds). Unit tests keep the AA ratios and the two dark blocks in sync.
+## Art direction
 
-## Art direction: "Drafting Table"
+- **Mental model:** the site is a series of printed posters. Each section is one flat colour field; the type is fitted
+  edge to edge; depth is a hard offset shadow; a fine print grain sits over everything [user picked, round 1].
+- **Signature moment (F20):** the fitted name in the hero. It renders final from the server (no JS on the LCP path);
+  after load the letters breathe as an accordion that follows the pointer and idles as a slow wave. No WebGL in the
+  hero; 3D lives only inside the space chapter's own media.
+- **Less text, more to see** [user, round 3]: tools as one-colour marks with names, facts as icon tiles, products as
+  video, one line of copy where a paragraph was.
+- **Alive, cheaply** [user]: many small loops and micro-interactions, each pausing offscreen, on the pause button and
+  under reduced motion; none on the load path.
+- **Same on every device** [user]: phones get the same content and a premium feel; every hover has a tap, focus or
+  scroll twin; layouts are tweaked per platform where UX gains.
 
-- **Mental model:** the site is an engineer's drafting table, and every page is a **sheet** in one
-  drawing set. The decoration is itself proof of shipping: diagrams, dimensions and part callouts of
-  real projects, not a costume [research: art-direction-themes #1 + #2].
-- **Title block:** the box in the corner of an engineering drawing. Built in slice 1 as the sticky header: framed cells of
-  mark + name + role, plain-word navigation, sheet number + revision (build date), language, theme, the split CV CTA and
-  Contact. ≥ 768 px it hangs from the top edge inside the shell; below, a full-width bar. Availability lives in the hero
-  and the contact section, so the bar stays one row in every locale [assumption 2026-10-05].
-- **Sheet numbers:** A-00 home · W-01…W-04 flagships · C-01 CV · B-xx blog posts · L-01 my life · X-01 contact.
-  Shown as labels only; navigation stays plain words.
-- **The table itself:** a faint grid on paper: major lines every 40 px in `--grid`, minor lines every 8 px at 30% of
-  `--grid` (frozen in slice 0). Rulers with mm ticks at the viewport edges (desktop
-  only, decorative, `aria-hidden`). Never behind body text at a contrast that hurts reading.
-- **Light theme = drafting paper:** warm off-white stock, graphite ink.
-- **Dark theme = cyanotype blueprint:** Prussian-blue stock, white/cyan ink. Both are real drafting media,
-  so dark mode is part of the concept, not an afterthought [assumption, Q22].
+## Themes and fields
 
-## Signature moment (one, F20)
+Cobalt is the brand and the default for everyone (not tied to the system light/dark setting). The theme switch cycles
+Cobalt → Paper → Ink; the choice is stored per viewer and applied before first paint (`ThemeScript.astro`) [user kept
+Cobalt + the Paper/Ink toggle, round 3, no objection]. Tokens: `apps/web/src/styles/global.css`; `tokens.test.ts`
+checks AA for every field in every theme.
 
-- **What:** an **exploded-view hero.** An axonometric line drawing of "what I build" (UI, API, data, AI agents
-  as stacked parts) assembles along dimension lines once the H1 has painted. Pointer moves separate the
-  layers slightly; each part has a callout ("Part 01 → <project>") that is a real link.
-- **High/Mid tier:** WebGL with an ink-line shader and paper grain, in **vanilla three or OGL** (spike S2,
-  `technologies.md`). Not R3F: React + R3F is ~302 KB gz, the whole JS budget.
-- **Low/Reduced:** the same drawing as static inline SVG, fully assembled.
-- **Never:** blocks input, autoplays sound, or loads before LCP.
-
-## Per-project themes (one skeleton, own skin)
-
-- **One shared sheet layout:** title block (project name, outcome, context, role, year), device drawing with
-  media, part list (stack), proof stamp, links. Comparable and scannable.
-- **Each project sets tokens only:** `paper` (stock colour/texture: vellum, kraft, graph, black board…),
-  `ink`, `accent`, `motif` (a code-drawn SVG drawn from the project's subject), optionally `typeAccent` and a
-  `motion` flavour. Fields: `content-model.md` § Project.
-- **Device frames are technical drawings:** orthographic outlines with dimension lines ("390 × 844"). The muted
-  loop plays inside the frame.
-- **Layout by `media.kind`:**
-  - `phone`: portrait frame beside the copy
-  - `desktop`: wide browser frame above or beside the copy
-  - `both`: browser + overlapping phone
-  - `live`: framed canvas, opt-in
-  - At ≤ 768 px every kind stacks: frame, then copy.
-- **Reveal:** as a sheet enters the viewport, its drawing inks in (stroke-draw), then resolves into the real UI
-  video ("drawing → shipped"). Reduced motion: the final state, no animation.
-- **Card → case study:** a View Transition morphs the sheet's frame and title block into the case-study hero.
-  Browsers without it navigate instantly.
-- **Dark mode:** each project sets a light and a dark token set (in its dossier); dark mode uses the dark set. A
-  project whose subject is dark (the space portfolio) uses its dark stock in both themes. Light sets: `--paper`
-  OKLCH L 0.93–0.97; dark sets: L 0.12–0.22; `--ink` ≥ 7:1 on its paper in both.
-- **Guardrail:** themes must stay inside the paper/ink system. A project is never allowed its own layout grid or nav.
-
-## Color tokens (frozen 2026-10-05, slice 0; `apps/web/src/styles/global.css`)
-
-| Token | Light: drafting paper | Dark: cyanotype | Use | Contrast (light / dark) |
+| Field (`.field-*`) | Cobalt | Paper | Ink | Used for |
 | --- | --- | --- | --- | --- |
-| `--paper` | `#F2EFE6` warm cartridge | `#0C2240` Prussian blue | page stock | — |
-| `--paper-raised` | `#FAF8F2` | `#122E55` | sheets, panels, inputs | — |
-| `--ink` | `#1E2226` graphite | `#EEF4FB` white ink | text, informative lines | 13.9 / 14.4 on paper |
-| `--ink-muted` | `#565B61` | `#A9BED8` | secondary text | 6.0 / 8.4 on paper; 6.5 / 7.1 raised |
-| `--line` | `#B9B4A8` | `#3D5F8C` | **decorative** strokes only (construction lines) | 1.8 / 2.4 (never for meaning) |
-| `--grid` | `#DEDAD0` | `#15335C` | mm grid, rulers | 1.21 / 1.26 (target ≤ 1.3) |
-| `--accent` | `#B3321F` red pencil | `#FF8F7A` red pencil on blue | CTAs, focus, stamps, revision marks | 5.4 / 7.2 on paper (text-safe) |
-| `--on-accent` | `#FFFFFF` | `#0C2240` | text on accent fills | 6.2 / 7.2 |
-| `--project-*` | per project (dossiers) | per project | sheet stock / ink / accent | checked per dossier |
+| hero | `#2433FF` / `#EEF0FF` | `#F1EDE2` / `#111114` | `#0B0C11` / `#EEF0FF` | hero, header at rest |
+| alt | `#EEF0FF` / `#0A0D33` | `#FBFAF6` / `#111114` | `#16171E` / `#EEF0FF` | How I work, credentials |
+| deep | `#2433FF` / `#EEF0FF` | `#111114` / `#F1EDE2` | `#2433FF` / `#EEF0FF` | AI |
+| bar | `#0A0D33` / `#EEF0FF` | `#111114` / `#F1EDE2` | `#0B0C11` / `#EEF0FF` | header when stuck, tool band, menu, footer |
+| accent | `#FF4FB8` / `#0A0D33` | `#FF4A1C` / `#111114` | `#FF4FB8` / `#0A0D33` | contact section, CTAs, sticker |
 
-- Informative drawings (architecture, diagrams) use `--ink` (≥ 3:1, WCAG 1.4.11); `--line` is decoration only.
-- One accent per view. Project sheets swap `--paper`/`--ink`/`--accent`; the chrome (title block, nav) keeps the base tokens.
-- **Theme switch:** default from `prefers-color-scheme`; the toggle sets `data-theme` on `<html>`; the choice is a
-  per-viewer convenience in `localStorage`, set before first paint (no flash). Built in slice 0: a ~1 KB vanilla script,
-  `aria-pressed`, a cross-fade View Transition (instant under reduced motion), `theme-color` updated, works with storage blocked.
-- **Scoped stock:** `.theme-light` / `.theme-dark` pin a stock on any element (the space sheet stays dark in light mode).
+- Components read `--sbg` / `--sfg` (the field they sit on) and `--accent` / `--on-accent`, never a raw colour.
+- **Project skins** (one per chapter, all themes): PstrykWeb yellow `#FFD23F` on navy, Linkoglot orange `#FF5B1F`,
+  Clockful lime `#C9F24A`, Space `#07081C` with ice text; each has a `--pop` colour for its shadows. Defined when the
+  chapter slices land.
+- Content caps at 1920 px (`--container-poster`), centred with `--pad-x`; fields bleed full width.
 
-## Typography (frozen 2026-10-05, slice 0; OFL, subset to Latin + Latin-1 + Polish + the punctuation we use)
+## Typography
 
-| Role | Face (static cut) | File | Why |
-| --- | --- | --- | --- |
-| Display (H1, section titles) | **Archivo Expanded** 800 (Archivo `wdth` 125, `wght` 800), preloaded | 11.8 KB | wide grotesk = engineering-plate lettering, not a default face |
-| Labels (title block, dimensions, sheet numbers, chips) | **IBM Plex Mono** 400, uppercase + 0.06em tracking | 12.4 KB | technical lettering; Plex has an engineering heritage |
-| Body + UI | **Archivo** 400 / 600 | 11.9 / 11.1 KB | one family keeps the bytes low |
-| Blog prose (later, if needed) | Source Serif 4 | — | decided in the blog slice |
+- **One face: Anybody** (OFL, variable `wdth` 50-150, `wght` 400-900), self-hosted, one 49.5 KB file, preloaded
+  (`bun run fonts`). Metric-matched Arial fallbacks per weight band keep the swap shift-free.
+- **The width axis is the hierarchy:** fitted display at 900; role lines condensed (`font-stretch` 62%); kickers and
+  buttons wide (115-125%) uppercase; body at 100%, 17-19 px, line-height 1.5, ≤ 34-68 ch.
+- **Fitted type (`Fit.astro` + `~/lib/fit.ts`):** the widest line at the base width (66 under 700 px of host, 96 above)
+  sets the size; every other line takes the `wdth` that makes it exactly as wide. Advances and kerning of Anybody 900
+  are linear in `wdth`, measured at 50 and 150 by `scripts/fonts.mjs` into `fit-metrics.gen.ts`, so the CSS is exact:
+  `font-size` in `cqi` of the host + `font-stretch` per line. Unknown characters fail the build.
+- **Letter accordion (enhancement):** after load + idle, each line splits into letters (one hidden copy speaks for
+  screen readers), each letter is measured once at 50 and 150, and frames run on that linear model: letters near the
+  pointer widen, a slow sine wave idles otherwise, the slope-weighted mean is subtracted so the line stays flush. No
+  layout reads per frame; off when offscreen, paused or reduced motion.
 
-- Total **47.2 KB** in 4 files (`bun run fonts`, `apps/web/scripts/fonts.mjs`); metric-matched fallbacks (Arial / Arial Bold /
-  Courier New with size-adjust and ascent/descent overrides) keep CLS at 0. Weights not shipped are never synthesized.
+## Components (built)
 
-- **Blocked faces** (read as defaults or as AI-slop, research): Inter, Roboto, Poppins, Montserrat, Space Grotesk,
-  Geist, Instrument Serif, Playfair, the serif-italic accent word.
-- **Budget:** fonts ≤ 100 KB total (shipped 47.2 KB), self-hosted, only the H1 face preloaded, `font-display: swap`.
-- **Scale:** fluid `clamp()` from 390 to 1440 px, ratio ≈ 1.25 on phones, ≈ 1.333 on desktop; body 17–18 px, line length
-  60–75 ch (`max-w-prose` = 68ch); tabular numerals for dates and metrics. Steps: label 13 · sm 15 · base 17–18 · lg 21–24 ·
-  xl 27–32 · 2xl 33–43 · 3xl 42–57 · display 40–76 px (40 px is the floor that fits "Full-stack" at 320 px).
+| Component | File | Notes |
+| --- | --- | --- |
+| Header | `layout/SiteHeader.astro` | sticky; on home starts on the hero field with "M—M", turns into the bar and rolls the mark into the full name once the hero name scrolls away (IntersectionObserver). ≥ 1180: Work · How I work · AI · Blog · EN PL ES · theme · CV/PDF · Contact. Below: mark · CV · Contact · Menu; phones condense button type (`wdth` 72-82) so all fit at 320 |
+| Menu | same file | native popover, full-screen bar field, giant condensed links that widen on hover/focus and stagger in; CV PDF, theme, pause motion, language codes |
+| Hero | `home/Hero.astro` | fitted name (H1 = LCP), 3 px rule that draws in, three columns: role · one-line lede · CTAs (See the work, Download CV) + icon facts. Entrances are CSS (`.rise`) |
+| Sticker | `home/Sticker.astro` | accent disc, ring text fitted to the circle at build time per locale, "Shipping since 2022", slow spin; over the name's last letter on desktop, beside the role on phones |
+| Tool band | `home/ToolBand.astro` | bar-field marquee of one-colour marks + names, edge to edge; one row from first paint (no shift), copy appended by JS; never stops on hover and has no button of its own [user 2026-10-05]: the site-wide Pause motion (menu, footer) covers WCAG 2.2.2; wraps without JS or under reduced motion |
+| Footer | `layout/SiteFooter.astro` | say-line + Contact, 4 link columns, codes, pause, credits (marks, icons, font), build revision, the surname fitted in accent |
+| Buttons | `global.css` `.btn` | square, uppercase, wide; `btn-line` / `btn-acc` / `btn-inv`; 3 px offset shadow on hover (fine pointers), press on tap |
+| Icons | `ui/Icon.astro`, `bun run icons` | inline SVG from a generated list: Simple Icons marks (`si:`), Tabler outline (`tb:`) and filled (`tbf:`) |
+| Theme switch | `layout/ThemeCycle.astro` | shows the current theme's name; cross-fade View Transition |
+| Pause motion | `layout/MotionToggle.astro` + `scripts/motion.ts` | every copy in sync; stored; hidden under reduced motion |
 
-## Spacing, grid, breakpoints
-
-- A spacing scale on a 4 px base, aligned to the drawing grid.
-- **Breakpoints:** 390 (phone), 768, 1024, 1440, 1920; content shell capped (no ultrawide smear at 2560).
-- **Heights:** the hero is ~0.85 svh so sheet 01 peeks (`structure.md` § Rhythm); bands are content-height. Not every
-  section is 100vh (`structure.md`).
-
-## Components (to build; registry candidates in `design-references.md`)
-
-- **Chrome:** title-block header, contact panel, locale switch (autonyms), theme toggle, pause-motion control.
-- **Sheet system:** sheet (project chapter), device drawing (phone/browser), dimension line, part callout,
-  stamp (proof chip), skill chip (filter), credential row, timeline (teamwork).
-- **Pages:** case-study blocks (TL;DR, decision table, architecture drawing), prose (blog), CV sheet, legal
-  document (TOC + numbered clauses), toast, form fields.
+**To build (later slices):** chapter stack with a reel per project (platform frame, seek chips, play/pause, expand),
+PstrykWeb #1 badge + order loop, the 7-stop product loop, the AI pipeline, expanding credential cards, message-first
+contact, toast. Patterns: `comps/poster-r3.html`. The Stack section is cut [user 2026-10-05: recruiters don't need a
+whole section for it]; tools show in the band and in each chapter.
 
 ## Motion
 
-- **Vocabulary:** ink-in (stroke-draw), assemble (parts along dimension lines), stamp, slide-in sheet. Durations
-  200–900 ms, ease-out; nothing loops forever without a pause control (WCAG 2.2.2).
-- **Library:** CSS + GSAP for the timeline-heavy parts; three/OGL only in the signature island [research].
-- **Reduced motion:** show the final state instantly; video → poster + play button; WebGL → static SVG.
+- **Vocabulary:** rise (fade + 20 px up), draw (scaleX rules), pop (sticker), spin, marquee, letter accordion, hard
+  shadow on hover, stagger in the menu. Ease-out `cubic-bezier(.2,.75,.1,1)`, pop `cubic-bezier(.3,1.6,.5,1)`;
+  200-900 ms.
+- **Rules:** the H1 never fades or moves on load; first-screen entrances are CSS; `.rv` reveals below the fold only
+  hide once the script runs (`html.rv-ready`), so a failed script hides nothing. Sections get `.off` offscreen (CSS
+  loops pause); `html.still` pauses everything (WCAG 2.2.2); reduced motion shows the final state.
+- **Cost:** page JS 3.0 KB gz (fit 1.7, motion 0.5, pause 0.4, band 0.3); no per-frame layout reads.
 
 ## Imagery
 
-- **Illustrations:** code-drawn SVG (line weights: outline 2 px · detail 1 px · construction 0.75 px, never thinner because
-  hairlines vanish on 1× screens; `vector-effect: non-scaling-stroke`; drafting line types: continuous,
-  dashed hidden, chain centre lines; hatching for sections) and shaders (paper grain, ink bleed). They are
-  fully owned, re-tinted per project, tiny.
-- **Product media:** real recordings of the real UI only. Muted loops + posters per `content-model.md`.
-- **Photos:** the owner's own (my-life, schema). No stock people. No AI-generated people or fake screenshots.
+- **Tool marks:** Simple Icons, one colour (`currentColor`), unaltered, always with the name; nominative use only.
+- **Product media:** real recordings of the real UI only; "Video soon" stand-ins are logged placeholders.
+- **Photos:** the owner's own. No stock or AI people, no fake screenshots.
+- **Grain:** one fixed SVG-noise layer at 13% overlay; never lowers text below AA (axe checks all themes).
 
 ## Accessibility
 
-- WCAG 2.2 AA. Visible focus (accent), 24 px targets, focus never under the sticky title block.
-- Drawings are `aria-hidden` unless informative; architecture drawings get a text alternative.
-- Every canvas has DOM links/text for its hotspots. Pinch-zoom is never disabled.
+- WCAG 2.2 AA in all three themes (axe in e2e). Visible 3 px focus; nothing under the sticky header.
+- A visible label starts the accessible name (2.5.3): the mark reads "Mateusz Muszarski, home", codes read "PL Polski".
+- Fitted and split text exposes one accessible name; decorative copies (`decorative`) are `aria-hidden`.
+- Targets ≥ 40 px in the header, ≥ 44 px elsewhere on touch.
 
 ## Do / Don't
 
 | Do | Don't |
 | --- | --- |
-| Real drafting conventions (title block, dimensions, part numbers) used with restraint | Costume blueprints: grid everywhere, unreadable cyan text |
-| One signature moment, executed perfectly | Effects on every section |
-| Text first, drawing second (LCP = H1) | Canvas or video as the first paint |
-| Per-project tokens inside one system | A different layout or nav per project |
-| Plain-word navigation; sheet numbers as labels | Clever nav that needs decoding |
-| Avoid the clichés: custom cursor, magnetic everything, name marquee, "Hello" preloader, text scramble, typewriter hero, skill bars, floating 3D laptop, purple AI gradients, glassmorphism | — |
+| One face, the width axis for hierarchy | A second display family, faux bold, tracking hacks |
+| Flat fields, hard offset shadows, grain | Gradients, glows, glassmorphism, blur shadows |
+| Fit at build time, animate after load | Fit with JS on the LCP path, fade the H1 |
+| Marks with names, in context | A wall of coloured logos without names |
+| Many small loops, all pausable and offscreen-aware | Loops that run unseen or ignore the pause button |
+| Same content on phones, tap twins for every hover | Hover-only reveals, cursor effects, scroll-jacking |
+| Native cursor always; a contextual label next to it over media is the open idea (owner asked about a custom cursor 2026-10-05) | Replacing or hiding the cursor, a follower blob |
+| Avoid: custom cursor, magnetic everything, "Hello" preloader, text scramble, typewriter hero, skill bars, floating 3D laptop, purple AI gradients | — |

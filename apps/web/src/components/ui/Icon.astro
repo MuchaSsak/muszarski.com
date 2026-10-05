@@ -1,0 +1,37 @@
+---
+/**
+ * One icon, inlined (no sprite, no request). Names come from `bun run icons` (scripts/icons.mjs):
+ * `si:*` tool marks (Simple Icons, CC0; one colour, unaltered, nominative use) and `tb:*` UI icons (Tabler, MIT).
+ * Decorative by default; pass `label` when the icon is the only content of a control.
+ */
+import { type IconName, ICONS } from "~/lib/icons.gen";
+
+interface Props {
+  name: IconName;
+  class?: string | undefined;
+  label?: string | undefined;
+}
+
+const { name, class: className, label } = Astro.props;
+const icon = ICONS[name];
+const paint = icon.stroke
+  ? ({
+      fill: "none",
+      stroke: "currentColor",
+      "stroke-width": "1.8",
+      "stroke-linecap": "round",
+      "stroke-linejoin": "round",
+    } as const)
+  : ({ fill: "currentColor" } as const);
+---
+
+<svg
+  class:list={["ico", className]}
+  viewBox={icon.viewBox}
+  focusable="false"
+  aria-hidden={label ? undefined : "true"}
+  role={label ? "img" : undefined}
+  aria-label={label}
+  {...paint}
+  set:html={icon.body}
+/>

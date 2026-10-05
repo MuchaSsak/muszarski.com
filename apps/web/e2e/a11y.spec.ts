@@ -3,11 +3,15 @@ import { expect, test } from "@playwright/test";
 
 import { ROUTES } from "./routes";
 
-/** WCAG 2.2 AA via axe, in light AND dark (design-quality.md § Accessibility floor). */
-for (const colorScheme of ["light", "dark"] as const) {
+/**
+ * WCAG 2.2 AA via axe in every theme (design-quality.md § Accessibility floor). Reduced motion, so entrance
+ * animations don't leave half-faded text for the contrast check.
+ */
+for (const theme of ["cobalt", "paper", "ink"] as const) {
   for (const route of ROUTES) {
-    test(`axe ${colorScheme} ${route}`, async ({ page }) => {
-      await page.emulateMedia({ colorScheme });
+    test(`axe ${theme} ${route}`, async ({ page }) => {
+      if (theme !== "cobalt") await page.addInitScript((t) => localStorage.setItem("theme", t), theme);
+      await page.emulateMedia({ reducedMotion: "reduce" });
       await page.goto(route);
       await page.evaluate(() => document.fonts.ready);
       const results = await new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa"]).analyze();

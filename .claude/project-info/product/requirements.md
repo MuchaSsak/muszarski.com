@@ -25,7 +25,7 @@
 | F05 | Case study `/work/<slug>/` | must | Case-study spine (`content-model.md`); credits table; NDA label; prev/next; OG image per locale | todo |
 | F06 | How I work (business thinking) | must | 3–4 principles, each with a receipt from a real project (decision → trade-off → result) linking to its case study. No unproven adjectives | todo |
 | F07 | AI workflow | must | A process drawing: brief → wiki/context → plan (skill) → build (agent + MCPs) → verify (tests · Playwright · Lighthouse) → review → ship, with the tools (wiki, skills, MCP, hooks, gates) as annotations (`design-references.md`); proof links (npm package, public repo); the message "AI speeds code, I own decisions and verification". PstrykWeb is not used here (public info only) | todo |
-| F08 | Stack + credentials | must | Grouped skill chips (no bars) that filter projects, with counts (filter = should). Credentials with Verify links; learning path with instructor names; teamwork timeline (Erasmus+, ESC, hackathons). Not 100vh | todo |
+| F08 | Credentials (+ tools) | must | Credentials with Verify links; learning path with instructor names; teamwork (Erasmus+, ESC, hackathons); expanding cards, media on open. Tools: the band under the hero + per chapter (the Stack section is cut [user] 2026-10-05). Not 100vh | todo |
 | F09 | Contact (section + panel) | must | Fields: email + message (required) + topic chips Hiring / Project / Other (optional; "Open to projects" preselects Project). No name field [assumption 2026-10-05]. Turnstile; delivered to the owner via Resend (never a stub). Inline success/error states. Works without JS (plain POST). Also: copy-email, links, quick facts (role, contract, location, start date, languages) | todo |
 | F10 | Footer | must | The 4 link columns in `structure.md` § Footer (incl. RSS and "how this site was built"), locale switch, build-time revision row, ©. The theme toggle stays in the header | todo |
 | F11 | `/cv/` + PDF | must | One data source renders the page AND the PDF per locale. Build fails if the PDF is stale. Every CV CTA is a split button: "CV" → `/cv/`, "↓ PDF" → direct download (no auto-download: iOS) [user] 2026-10-05. Print CSS | todo |
@@ -35,9 +35,9 @@
 | F15 | i18n en / pl / es | must | `/<locale>/` everywhere except blog posts (en + pl only: `i18n.md` § Locale coverage), root redirect, switcher keeps the page, hreflang + x-default, Lingui catalogs; es marked unreviewed (`i18n.md`) | todo |
 | F16 | SEO machinery | must | Per `seo.md`: titles/meta, canonical, Person `@id` JSON-LD graph, sitemap index, robots, OG per page × locale, Search Console + Bing + IndexNow, `/llms.txt` | todo |
 | F17 | Analytics | must | Umami cookieless; events in `analytics.md`; no PII | todo |
-| F18 | Light/dark theme | should | Light = drafting paper, dark = cyanotype. Follows the system; the toggle persists (storage in try/catch) [assumption] | todo |
+| F18 | Themes | should | Cobalt (default) / Paper / Ink, cycled by one switch; the choice persists (storage in try/catch), applied before first paint [user kept, round 3] | done 2026-10-05 |
 | F19 | Motion safety | must | `prefers-reduced-motion` honoured everywhere; pause control for any motion > 5 s (WCAG 2.2.2) | todo |
-| F20 | Signature WebGL moment | must | Lazy island after LCP; capability tiers High/Mid/Low/Reduced; poster fallback; chunk ≤ ~300 KB gz | spike |
+| F20 | Signature moment | must | Poster: the fitted name, final from the server (LCP), letter accordion after load; no WebGL in the hero (`design.md`) | done 2026-10-05 |
 | F21 | 404 page | should | Helpful links (work, contact, home) + a small drawing | todo |
 | F22 | ⌘K palette | could | Accelerator only; every action also reachable by normal UI | todo |
 | F23 | Case study #0 "how this site was built" | should | Budgets, tiers, a11y, Lighthouse CI, AI workflow, Astro choice | todo |

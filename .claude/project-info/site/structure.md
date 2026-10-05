@@ -30,12 +30,12 @@
 
 | # | Section | Must prove / do | CTA |
 | --- | --- | --- | --- |
-| 0 | Header (sticky) | name → home · Work (`/work/`) · How I work (`#how-i-work`) · Blog · CV (split) · **Contact** · locale · theme. My life sits in the footer + mobile menu [assumption 2026-10-05] | Contact (primary), CV |
-| 1 | Hero | who, role, where, availability, proof strip; the signature drawing (F20) assembles after LCP | See work (primary) · Contact |
+| 0 | Header (sticky) | M—M mark → home · Work (`#work`) · How I work (`#how-i-work`) · AI (`#ai`) · Blog · language codes · theme · CV (split) · **Contact**. My life sits in the footer + mobile menu. Built 2026-10-05 (`design.md` § Components) | Contact (primary), CV |
+| 1 | Hero | the fitted name (H1, the signature moment F20), role, one-line positioning, icon facts, the availability sticker; then the tool band (marks + names). Built 2026-10-05 | See the work (primary) · Download CV |
 | 2 | Selected work | the 4 flagship chapters (`content/projects.md`), each in its own theme; then "All projects →" | Case study · Live · Code · All projects |
 | 3 | How I work | product thinking: principles with receipts (F06) | links into case studies |
 | 4 | AI workflow | the system and its verification gates (F07) | "How this site was built" (F23) |
-| 5 | Stack + credentials | skill chips filter the work; credentials; learning; teamwork timeline (F08) | Verify links · full CV |
+| 5 | Credentials | expanding cards that load media on open; learning; teamwork (F08). **The Stack section is cut** [user 2026-10-05: "they dont care THAT MUCH to have a whole section dedicated just for this"]: tools show in the band and per chapter | Verify links · full CV |
 | 6 | Latest writing (optional) | 2–3 posts for internal links | Blog |
 | 7 | Contact | form + direct links + quick facts (F09); the "open to projects" line | Send · Copy email · CV · LinkedIn |
 | 8 | Footer | F10 | — |
@@ -98,13 +98,12 @@ Messenger) · back to work / contact. Secondary nav item; not in the hero path.
 
 ## Navigation and footer
 
-- **Header on mobile:** name, CV and Contact stay visible; the rest goes behind a labelled "Menu" button
-  (never an icon alone; a native popover, 0 KB JS). Measured in slice 1 (2026-10-05, all locales):
-  - < 1024 px: navigation, language and theme move into the menu (+ My life, the PDF link)
-  - < 420 px: the CV control is a single "CV" button; "↓ PDF" lives in the menu
-  - < 360 px: the MM mark gives way to the name (stacked, 12 px); fits at 320 px
-  - 1024-1279 px: the name stacks and the role hides, so es/pl navigation fits; the sheet + revision cell shows from 1440 px
-  - `e2e/chrome.spec.ts` checks every cell for spill at 8 widths x 3 locales
+- **Header on mobile:** mark, CV and Contact stay visible; the rest goes behind a labelled "Menu" button (a native
+  popover, 0 KB JS for open/close). Built 2026-10-05 (Poster):
+  - < 1180 px: navigation, language codes and theme move into the full-screen menu (+ My life, Contact, the PDF, pause motion)
+  - < 480 px: the CV control is a single "CV" button (the PDF lives in the menu); button type condenses (`wdth` 82, 72 under
+    360 px); the stuck full name stacks in two lines
+  - `e2e/chrome.spec.ts` checks every header control for spill and overlap at 8 widths x 3 locales
 - **Contact panel:** the same content as the home contact section; opens from any page; Esc closes;
   focus is trapped and returned.
 - **Footer columns** (this list owns the footer links; ~15 links):

@@ -1,51 +1,65 @@
 /*
- * Design tokens + base styles (wiki: design/design.md). Light = drafting paper, dark = cyanotype.
- * Components use the Tailwind utilities mapped below (bg-paper, text-ink, border-line...), never raw
- * colours. A project sheet re-skins itself by redefining --paper / --ink / --accent on its element.
- * The dark block is written twice (system preference + explicit toggle); tokens.test.ts keeps them equal.
- * `.theme-light` / `.theme-dark` pin one stock on any element (a dark project sheet in light mode, the specimen).
+ * Poster design system (wiki: design/design.md). The page is a stack of printed posters: flat colour fields,
+ * one variable face (Anybody) fitted edge to edge, hard shadows, no gradients.
+ *
+ * Themes: Cobalt (default, no attribute), Paper and Ink (`data-theme` on <html>, set before first paint by
+ * ThemeScript). A theme only redefines the field tokens; components read `--sbg` / `--sfg` (the field they sit on)
+ * and `--accent` / `--on-accent`, never a raw palette colour. tokens.test.ts checks every field pairing for AA.
  */
 @import "tailwindcss";
 @import "./fonts.css";
 
-:root,
-.theme-light {
-  color-scheme: light;
-  --paper: #f2efe6;
-  --paper-raised: #faf8f2;
-  --ink: #1e2226;
-  --ink-muted: #565b61;
-  --line: #b9b4a8;
-  --grid: #dedad0;
-  --accent: #b3321f;
-  --on-accent: #ffffff;
-}
+:root {
+  /* palette: raw colours, used only to define fields and project skins */
+  --cobalt: #2433ff;
+  --ice: #eef0ff;
+  --pink: #ff4fb8;
+  --orange: #ff5b1f;
+  --navy: #0a0d33;
+  --yellow: #ffd23f;
+  --lime: #c9f24a;
+  --space: #07081c;
 
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    color-scheme: dark;
-    --paper: #0c2240;
-    --paper-raised: #122e55;
-    --ink: #eef4fb;
-    --ink-muted: #a9bed8;
-    --line: #3d5f8c;
-    --grid: #15335c;
-    --accent: #ff8f7a;
-    --on-accent: #0c2240;
-  }
-}
-
-:root[data-theme="dark"],
-.theme-dark {
+  /* Cobalt fields */
   color-scheme: dark;
-  --paper: #0c2240;
-  --paper-raised: #122e55;
-  --ink: #eef4fb;
-  --ink-muted: #a9bed8;
-  --line: #3d5f8c;
-  --grid: #15335c;
-  --accent: #ff8f7a;
-  --on-accent: #0c2240;
+  --hero-bg: #2433ff;
+  --hero-fg: #eef0ff;
+  --alt-bg: #eef0ff;
+  --alt-fg: #0a0d33;
+  --deep-bg: #2433ff;
+  --deep-fg: #eef0ff;
+  --bar-bg: #0a0d33;
+  --bar-fg: #eef0ff;
+  --accent: #ff4fb8;
+  --on-accent: #0a0d33;
+}
+
+:root[data-theme="paper"] {
+  color-scheme: light;
+  --hero-bg: #f1ede2;
+  --hero-fg: #111114;
+  --alt-bg: #fbfaf6;
+  --alt-fg: #111114;
+  --deep-bg: #111114;
+  --deep-fg: #f1ede2;
+  --bar-bg: #111114;
+  --bar-fg: #f1ede2;
+  --accent: #ff4a1c;
+  --on-accent: #111114;
+}
+
+:root[data-theme="ink"] {
+  color-scheme: dark;
+  --hero-bg: #0b0c11;
+  --hero-fg: #eef0ff;
+  --alt-bg: #16171e;
+  --alt-fg: #eef0ff;
+  --deep-bg: #2433ff;
+  --deep-fg: #eef0ff;
+  --bar-bg: #0b0c11;
+  --bar-fg: #eef0ff;
+  --accent: #ff4fb8;
+  --on-accent: #0a0d33;
 }
 
 @theme {
@@ -57,104 +71,63 @@
   --breakpoint-lg: 64rem; /* 1024 */
   --breakpoint-xl: 90rem; /* 1440 */
   --breakpoint-2xl: 120rem; /* 1920 */
-
-  --container-shell: 90rem; /* the content shell: nothing smears across a 2560 screen */
+  --container-poster: 120rem; /* content cap: the field colour runs full width, the type stops at 1920 */
   --container-prose: 68ch;
 
-  /* Fluid type, linear from 390 px to 1440 px: ratio ~1.25 on phones, ~1.333 on desktop, body 17 -> 18 px. */
   --text-*: initial;
-  --text-label: 0.8125rem;
-  --text-label--line-height: 1.35;
-  --text-label--letter-spacing: 0.06em;
   --text-sm: 0.9375rem;
-  --text-sm--line-height: 1.5;
-  --text-base: clamp(1.0625rem, 1.0393rem + 0.0952vw, 1.125rem);
-  --text-base--line-height: 1.6;
-  --text-lg: clamp(1.3281rem, 1.2643rem + 0.2619vw, 1.5rem);
+  --text-sm--line-height: 1.45;
+  --text-base: clamp(1.0625rem, 1.02rem + 0.18vw, 1.1875rem);
+  --text-base--line-height: 1.5;
+  --text-lg: clamp(1.125rem, 1.04rem + 0.36vw, 1.3125rem);
   --text-lg--line-height: 1.45;
-  --text-xl: clamp(1.66rem, 1.5337rem + 0.5181vw, 2rem);
-  --text-xl--line-height: 1.25;
-  --text-2xl: clamp(2.075rem, 1.855rem + 0.9019vw, 2.6667rem);
-  --text-2xl--line-height: 1.12;
-  --text-3xl: clamp(2.5938rem, 2.2364rem + 1.4657vw, 3.5556rem);
-  --text-3xl--line-height: 1.05;
-  /* The H1 (LCP): Archivo Expanded is ~0.65 em per letter, so 40 px is the floor that fits "Full-stack" at 320 px. */
-  --text-display: clamp(2.5rem, 1.8356rem + 3.238vw, 4.75rem);
-  --text-display--line-height: 0.98;
-  --text-display--letter-spacing: -0.02em;
 
-  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
-  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --ease-out: cubic-bezier(0.2, 0.75, 0.1, 1);
+  --ease-pop: cubic-bezier(0.3, 1.6, 0.5, 1);
 }
 
 @theme inline {
-  --color-paper: var(--paper);
-  --color-paper-raised: var(--paper-raised);
-  --color-ink: var(--ink);
-  --color-ink-muted: var(--ink-muted);
-  --color-line: var(--line);
-  --color-grid: var(--grid);
+  --color-sbg: var(--sbg);
+  --color-sfg: var(--sfg);
   --color-accent: var(--accent);
   --color-on-accent: var(--on-accent);
   --color-transparent: transparent;
   --color-current: currentColor;
-
-  --font-sans: "Archivo", "Archivo Fallback", system-ui, sans-serif;
-  --font-display: "Archivo Expanded", "Archivo Expanded Fallback", "Archivo", sans-serif;
-  --font-mono: "IBM Plex Mono", "IBM Plex Mono Fallback", ui-monospace, monospace;
+  --font-sans: "Anybody", "Anybody Fallback", "Arial Narrow", Arial, sans-serif;
 }
 
 :root {
-  /* Spacing follows Tailwind's 4 px step; these name the layout rhythm. */
-  --gutter: clamp(1rem, 0.5rem + 2.5vw, 3rem);
+  --gutter: clamp(1rem, 3.9vw, 3.5rem);
+  /* side padding that also centres the 1920 cap on ultrawide screens */
+  --pad-x: max(var(--gutter), (100% - var(--container-poster)) / 2 + var(--gutter));
   --dur-fast: 200ms;
-  --dur-base: 400ms;
-  --dur-slow: 900ms;
-  /* Drafting line weights: never thinner, hairlines vanish on 1x screens. */
-  --stroke-outline: 2px;
-  --stroke-detail: 1px;
-  --stroke-construction: 0.75px;
-  --grid-major: 40px;
-  --grid-minor: 8px;
-  /* The sticky title block's height; anchors and focus scroll clear of it. */
-  --header-h: 3.5rem;
-}
-
-@media (min-width: 64rem) {
-  :root {
-    --header-h: 3.75rem;
-  }
+  --dur-base: 350ms;
+  --dur-slow: 800ms;
+  --header-h: 4.25rem;
+  /* the field the body sits on, until a section sets its own */
+  --sbg: var(--hero-bg);
+  --sfg: var(--hero-fg);
 }
 
 @layer base {
   html {
     -webkit-text-size-adjust: 100%;
     text-size-adjust: 100%;
-    /* We ship every weight we use; never fake a bold. */
-    font-synthesis-weight: none;
-    /* Anchors and keyboard focus land clear of the sticky title block (WCAG 2.4.11). */
-    scroll-padding-top: calc(var(--header-h) + 1rem);
+    background: var(--hero-bg);
+    /* Anchors and keyboard focus land clear of the sticky header (WCAG 2.4.11). */
+    scroll-padding-top: calc(var(--header-h) + 0.5rem);
   }
 
   body {
     min-height: 100svh;
-    background-color: var(--paper);
-    /* The drafting table: a major grid every 40 px over a fainter 8 px grid (decorative, <= 1.3:1). */
-    background-image:
-      linear-gradient(to right, var(--grid) 1px, transparent 1px),
-      linear-gradient(to bottom, var(--grid) 1px, transparent 1px),
-      linear-gradient(to right, color-mix(in oklab, var(--grid) 30%, transparent) 1px, transparent 1px),
-      linear-gradient(to bottom, color-mix(in oklab, var(--grid) 30%, transparent) 1px, transparent 1px);
-    background-size:
-      var(--grid-major) var(--grid-major),
-      var(--grid-major) var(--grid-major),
-      var(--grid-minor) var(--grid-minor),
-      var(--grid-minor) var(--grid-minor);
-    color: var(--ink);
+    overflow-x: clip;
+    background: var(--hero-bg);
+    color: var(--hero-fg);
     font-family: var(--font-sans);
     font-size: var(--text-base);
     line-height: var(--text-base--line-height);
-    text-rendering: optimizeLegibility;
+    font-weight: 400;
+    font-stretch: 100%;
     -webkit-font-smoothing: antialiased;
   }
 
@@ -162,7 +135,6 @@
   h2,
   h3 {
     text-wrap: balance;
-    /* Last resort only: a word wider than its box breaks instead of overflowing (long Polish words). */
     overflow-wrap: break-word;
   }
 
@@ -172,15 +144,18 @@
     text-wrap: pretty;
   }
 
+  a {
+    color: inherit;
+  }
+
   ::selection {
-    background-color: var(--accent);
+    background: var(--accent);
     color: var(--on-accent);
   }
 
   :focus-visible {
-    outline: var(--stroke-outline) solid var(--accent);
+    outline: 3px solid currentColor;
     outline-offset: 3px;
-    border-radius: 2px;
   }
 
   [hidden] {
@@ -188,23 +163,147 @@
   }
 }
 
-@layer utilities {
-  .shell {
-    width: 100%;
-    max-width: var(--container-shell);
-    margin-inline: auto;
-    padding-inline: var(--gutter);
+@layer components {
+  /* A field: one flat colour block. Children read --sbg / --sfg. */
+  .field-hero {
+    --sbg: var(--hero-bg);
+    --sfg: var(--hero-fg);
+  }
+  .field-alt {
+    --sbg: var(--alt-bg);
+    --sfg: var(--alt-fg);
+  }
+  .field-deep {
+    --sbg: var(--deep-bg);
+    --sfg: var(--deep-fg);
+  }
+  .field-bar {
+    --sbg: var(--bar-bg);
+    --sfg: var(--bar-fg);
+  }
+  .field-accent {
+    --sbg: var(--accent);
+    --sfg: var(--on-accent);
+  }
+  :is(.field-hero, .field-alt, .field-deep, .field-bar, .field-accent) {
+    background: var(--sbg);
+    color: var(--sfg);
   }
 
-  .label {
-    font-family: var(--font-mono);
-    font-size: var(--text-label);
-    line-height: var(--text-label--line-height);
-    letter-spacing: var(--text-label--letter-spacing);
+  /* A poster section: full-bleed field, content capped and centred. */
+  .sec {
+    position: relative;
+    padding: clamp(1.75rem, 3vw, 2.75rem) var(--pad-x) clamp(4rem, 8vw, 7.5rem);
+  }
+
+  /* Kicker: the small wide caps line above a title, in bars and labels. */
+  .kick {
+    font-weight: 800;
+    font-size: 0.875rem;
+    line-height: 1.25;
+    letter-spacing: 0.04em;
     text-transform: uppercase;
-    font-variant-numeric: tabular-nums;
+    font-stretch: 125%;
   }
 
+  /* Buttons: square, uppercase, a hard offset shadow on hover (pointer devices) and a press on tap. */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.625rem;
+    min-height: 2.875rem;
+    padding: 0 1.25rem;
+    border: 0;
+    border-radius: 0;
+    font: inherit;
+    font-weight: 800;
+    font-size: 0.9375rem;
+    line-height: 1;
+    font-stretch: 115%;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    text-decoration: none;
+    white-space: nowrap;
+    color: inherit;
+    background: none;
+    cursor: pointer;
+    transition:
+      transform var(--dur-base) var(--ease-out),
+      box-shadow var(--dur-base) var(--ease-out),
+      background-color var(--dur-fast),
+      color var(--dur-fast);
+    -webkit-tap-highlight-color: transparent;
+  }
+  .btn .ico {
+    width: 1.25rem;
+    height: 1.25rem;
+    transition: transform var(--dur-base) var(--ease-out);
+  }
+  .btn small {
+    font-size: 0.6875rem;
+    font-weight: 600;
+  }
+  .btn-line {
+    box-shadow: inset 0 0 0 2px currentColor;
+  }
+  .btn-acc {
+    background: var(--accent);
+    color: var(--on-accent);
+  }
+  .btn-inv {
+    background: var(--sfg);
+    color: var(--sbg);
+  }
+  .btn-icon {
+    width: 2.875rem;
+    padding: 0;
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .btn:hover {
+      transform: translate(-3px, -3px);
+    }
+    .btn:hover .nudge {
+      transform: translateX(4px);
+    }
+    .btn:hover .nudge-down {
+      transform: translateY(3px);
+    }
+    .btn-line:hover {
+      box-shadow:
+        inset 0 0 0 2px currentColor,
+        3px 3px 0 0 currentColor;
+    }
+    .btn-acc:hover {
+      box-shadow: 3px 3px 0 0 var(--sfg);
+    }
+    .btn-inv:hover {
+      box-shadow: 3px 3px 0 0 var(--accent);
+    }
+  }
+  .btn:active {
+    transform: translate(1px, 1px);
+    box-shadow: none;
+  }
+
+  .ico {
+    width: 1em;
+    height: 1em;
+    flex: none;
+  }
+
+  /* Underline that draws in on hover/focus and stays for the current item. */
+  .draw-line {
+    text-decoration: none;
+    background: linear-gradient(currentColor, currentColor) 0 100% / 0 2px no-repeat;
+    transition: background-size var(--dur-base) var(--ease-out);
+  }
+  .draw-line:is(:hover, :focus-visible, [aria-current]) {
+    background-size: 100% 2px;
+  }
+}
+
+@layer utilities {
   .tabular {
     font-variant-numeric: tabular-nums;
   }
@@ -218,6 +317,42 @@
     clip-path: inset(50%);
     white-space: nowrap;
   }
+}
+
+/* Reveal on first view. `html.rv-ready` is set by the motion script once its observer runs (it adds .in), so a
+   failed script never hides content; under reduced motion or paused motion everything is simply there. The first
+   screen never uses .rv: it enters with the CSS `rise` animation instead (no JS on the LCP path). */
+.rv-ready:not(.still) .rv {
+  transition:
+    opacity 0.7s var(--ease-out),
+    transform 0.8s var(--ease-out);
+  transition-delay: calc(var(--d, 0) * 70ms);
+}
+.rv-ready:not(.still) .rv:not(.in) {
+  opacity: 0;
+  transform: translateY(1.5rem);
+}
+
+.rise {
+  animation: rise 0.9s var(--ease-out) both;
+  animation-delay: calc(120ms + var(--d, 0) * 90ms);
+}
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(1.25rem);
+  }
+}
+
+/* Motion: loops pause offscreen (.off on the section), on the pause button (html.still, WCAG 2.2.2) and under
+   reduced motion. */
+.off *,
+.off *::before,
+.off *::after,
+.still *,
+.still *::before,
+.still *::after {
+  animation-play-state: paused !important;
 }
 
 /* Cross-document View Transitions (0 KB JS); browsers without them navigate instantly. */

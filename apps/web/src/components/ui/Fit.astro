@@ -1,0 +1,306 @@
+---
+/**
+ * Fitted poster type (design.md § Typography): every line runs edge to edge of its host. Sizes come from the font's
+ * metrics at build time (`~/lib/fit`), as `cqi` + `font-stretch`, so the type renders final with no JS and no shift.
+ *
+ * After load, an enhancement turns each line into a letter accordion: letters near the pointer (or a slow idle wave)
+ * widen while the rest narrow, and the line stays flush. It measures each letter once and then runs on a linear model
+ * (width is linear in `wdth`), so frames write styles and never read layout. It stops offscreen, on the pause button
+ * and under reduced motion.
+ */
+import { fitLines } from "~/lib/fit";
+
+interface Props {
+  as?: "h1" | "h2" | "p" | "div";
+  lines: string[];
+  /** The `wdth` the widest line is set at: [host < 700 px, host >= 700 px]. Lower = taller type. */
+  base?: [number, number];
+  /** "wave": idle wave + pointer; "calm": pointer only; "still": never moves. */
+  motion?: "wave" | "calm" | "still";
+  /** Decorative copy of text that exists elsewhere (hidden from assistive tech). */
+  decorative?: boolean;
+  id?: string | undefined;
+  class?: string | undefined;
+}
+
+const { as: Tag = "p", lines, base = [66, 96], motion = "wave", decorative = false, id, class: className } = Astro.props;
+const locale = Astro.locals.locale;
+const narrow = fitLines(lines, base[0], locale);
+const wide = fitLines(lines, base[1], locale);
+---
+
+<div class:list={["fit-host", className]}>
+  <Tag
+    class="fit"
+    id={id}
+    data-fit={motion === "still" ? undefined : motion}
+    aria-hidden={decorative ? "true" : undefined}
+    style={`--fs-n:${narrow.size};--fs-w:${wide.size}`}
+  >
+    {lines.map((line, i) => (
+      <Fragment>
+        {i > 0 && " "}
+        <span class="line" style={`--w-n:${narrow.wdth[i]}%;--w-w:${wide.wdth[i]}%`}>
+          {line}
+        </span>
+      </Fragment>
+    ))}
+  </Tag>
+</div>
+
+<style>
+  .fit-host {
+    container-type: inline-size;
+  }
+  .fit {
+    margin: 0;
+    font-weight: 900;
+    line-height: 0.8;
+    text-transform: uppercase;
+    font-size: calc(var(--fs-n) * 1cqi);
+  }
+  .line {
+    display: block;
+    width: max-content;
+    white-space: nowrap;
+    font-stretch: var(--w-n);
+  }
+  @container (min-width: 700px) {
+    .fit {
+      font-size: calc(var(--fs-w) * 1cqi);
+    }
+    .line {
+      font-stretch: var(--w-w);
+    }
+  }
+  .fit :global(.ch) {
+    display: inline-block;
+  }
+  .fit :global(.fit-sr) {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+</style>
+
+<script>
+  import { motionStill, onMotion } from "~/scripts/motion";
+
+  const LO = 50;
+  const HI = 150;
+  const NBSP = String.fromCharCode(160);
+  const clamp = (v: number, a: number, b: number) => Math.max(a, Math.min(b, v));
+
+  /** One letter: width(x) = a + s * (x - LO) in px, at the current font size. */
+  interface Char {
+    el: HTMLSpanElement;
+    a: number;
+    s: number;
+    cur: number;
+    shown: number;
+  }
+  interface Line {
+    el: HTMLElement;
+    text: string;
+    chars: Char[];
+    base: number;
+    W: number;
+    S: number;
+    delta: number;
+  }
+  interface Block {
+    el: HTMLElement;
+    host: HTMLElement;
+    calm: boolean;
+    lines: Line[];
+    visible: boolean;
+    phase: number;
+    start: number;
+    width: number;
+  }
+
+  const blocks: Block[] = [];
+  const pointer = { x: 0, y: 0, active: false };
+  let raf = 0;
+
+  const widths = (chars: Char[]) => chars.map((c) => c.el.getBoundingClientRect().width);
+  const setAll = (chars: Char[], x: number) => chars.forEach((c) => (c.el.style.fontStretch = `${x}%`));
+
+  /** (Re)split every line into letters and fit the linear model; the line keeps its rendered width. */
+  function build(block: Block) {
+    for (const line of block.lines) line.el.textContent = line.text;
+    const lineWidths = block.lines.map((line) => line.el.getBoundingClientRect().width);
+    block.lines.forEach((line, li) => {
+      line.el.textContent = "";
+      line.chars = [...line.text].map((char) => {
+        const el = document.createElement("span");
+        el.className = "ch";
+        el.textContent = char === " " ? NBSP : char;
+        line.el.append(el);
+        return { el, a: 0, s: 0, cur: 0, shown: 0 };
+      });
+      line.W = lineWidths[li]!;
+    });
+    const all = block.lines.flatMap((line) => line.chars);
+    setAll(all, LO);
+    const lo = widths(all);
+    setAll(all, HI);
+    const hi = widths(all);
+    all.forEach((c, i) => {
+      c.a = lo[i]!;
+      c.s = Math.max(0.0001, (hi[i]! - lo[i]!) / (HI - LO));
+    });
+    for (const line of block.lines) {
+      line.S = line.chars.reduce((sum, c) => sum + c.s, 0);
+      const A = line.chars.reduce((sum, c) => sum + c.a, 0);
+      line.base = clamp(LO + (line.W - A) / line.S, LO, HI);
+      line.delta = 0;
+      line.chars.forEach((c) => (c.cur = c.shown = line.base));
+      setAll(line.chars, line.base);
+    }
+    block.width = block.host.clientWidth;
+  }
+
+  function frame(now: number) {
+    raf = 0;
+    const still = motionStill();
+    const t = now / 1000;
+    let busy = false;
+    for (const block of blocks) {
+      if (!block.visible) continue;
+      const r = block.el.getBoundingClientRect();
+      const near = !still && pointer.active && pointer.y > r.top - 140 && pointer.y < r.bottom + 140;
+      const wave = !still && !block.calm;
+      const ramp = Math.min(1, (now - block.start) / 1600);
+      if (wave || near) busy = true;
+      block.lines.forEach((line, li) => {
+        const focus = near ? pointer.x - r.left : line.W * (0.5 + 0.46 * Math.sin(t * 0.55 + li * 1.9 + block.phase));
+        const amp = (near ? 78 : wave ? 46 : 0) * ramp;
+        const sigma = line.W * (near ? 0.11 : 0.15);
+        let x = 0;
+        const g = line.chars.map((c) => {
+          const w = c.a + c.s * (c.cur - LO);
+          const center = x + w / 2;
+          x += w;
+          return Math.exp(-((center - focus) ** 2) / (2 * sigma * sigma));
+        });
+        // Subtracting the slope-weighted mean keeps the total width constant (width is linear in wdth).
+        const k = line.chars.reduce((sum, c, i) => sum + c.s * g[i]!, 0) / line.S;
+        let total = 0;
+        line.chars.forEach((c, i) => {
+          const target = clamp(line.base + amp * (g[i]! - k) + line.delta, LO, HI);
+          if (Math.abs(target - c.cur) > 0.05) busy = true;
+          c.cur += (target - c.cur) * 0.12;
+          total += c.a + c.s * (c.cur - LO);
+        });
+        // Clamping at the axis ends breaks that balance; a slow correction pulls the line back to flush.
+        line.delta = clamp(line.delta + ((line.W - total) / line.S) * 0.6, -40, 40);
+      });
+    }
+    for (const block of blocks) {
+      if (!block.visible) continue;
+      for (const line of block.lines) {
+        for (const c of line.chars) {
+          if (Math.abs(c.cur - c.shown) < 0.02) continue;
+          c.el.style.fontStretch = `${c.cur.toFixed(2)}%`;
+          c.shown = c.cur;
+        }
+      }
+    }
+    if (busy) schedule();
+  }
+
+  const schedule = () => {
+    if (!raf && blocks.length) raf = requestAnimationFrame(frame);
+  };
+
+  async function start() {
+    if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    await document.fonts.ready;
+    const els = [...document.querySelectorAll<HTMLElement>("[data-fit]")];
+    els.forEach((el, i) => {
+      const lines = [...el.querySelectorAll<HTMLElement>(".line")].map((line) => ({
+        el: line,
+        text: (line.textContent ?? "").trim(),
+        chars: [],
+        base: 100,
+        W: 0,
+        S: 1,
+        delta: 0,
+      }));
+      // Letters split into boxes read badly to some screen readers: one hidden copy of the text speaks instead.
+      if (el.getAttribute("aria-hidden") !== "true") {
+        const sr = document.createElement("span");
+        sr.className = "fit-sr";
+        sr.textContent = lines.map((line) => line.text).join(" ");
+        el.prepend(sr);
+        lines.forEach((line) => line.el.setAttribute("aria-hidden", "true"));
+      }
+      const block: Block = {
+        el,
+        host: el.parentElement!,
+        calm: el.dataset.fit === "calm",
+        lines,
+        visible: false,
+        phase: i * 1.37,
+        start: performance.now(),
+        width: 0,
+      };
+      build(block);
+      blocks.push(block);
+    });
+
+    const io = new IntersectionObserver((entries) => {
+      for (const e of entries) {
+        const block = blocks.find((b) => b.el === e.target);
+        if (block) block.visible = e.isIntersecting;
+      }
+      schedule();
+    });
+    blocks.forEach((block) => io.observe(block.el));
+
+    let resizeTimer = 0;
+    const ro = new ResizeObserver(() => {
+      clearTimeout(resizeTimer);
+      resizeTimer = window.setTimeout(() => {
+        for (const block of blocks) if (block.host.clientWidth !== block.width) build(block);
+        schedule();
+      }, 150);
+    });
+    blocks.forEach((block) => ro.observe(block.host));
+
+    addEventListener(
+      "pointermove",
+      (e) => {
+        if (e.pointerType !== "mouse" && !e.buttons) return;
+        pointer.x = e.clientX;
+        pointer.y = e.clientY;
+        pointer.active = true;
+        schedule();
+      },
+      { passive: true },
+    );
+    addEventListener("pointerup", (e) => {
+      if (e.pointerType !== "mouse") pointer.active = false;
+    });
+    document.documentElement.addEventListener("pointerleave", () => (pointer.active = false));
+    onMotion(() => {
+      // Back from a pause: ramp the wave in again instead of jumping.
+      const now = performance.now();
+      blocks.forEach((block) => (block.start = now));
+      schedule();
+    });
+    schedule();
+  }
+
+  // An enhancement: never on the load path.
+  const idle = () =>
+    "requestIdleCallback" in window
+      ? requestIdleCallback(() => void start(), { timeout: 1500 })
+      : setTimeout(() => void start(), 300);
+  if (document.readyState === "complete") idle();
+  else addEventListener("load", idle, { once: true });
+</script>

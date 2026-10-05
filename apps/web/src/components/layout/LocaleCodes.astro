@@ -1,0 +1,67 @@
+---
+/**
+ * The compact language switch: the three codes in a row, the current one underlined (site/i18n.md § Switcher).
+ * Each link reads "PL Polski" to assistive tech (the visible code first, WCAG 2.5.3, then the autonym), keeps the page when it exists in
+ * the target locale (`switchPath`) and is counted as `locale_switch` (analytics.md).
+ */
+import { AUTONYMS, type Locale, LOCALES } from "@package/shared/locales";
+import { t } from "lingui-for-astro/macro";
+
+import { type LocalizedPath, switchPath } from "~/lib/routes";
+
+interface Props {
+  path: LocalizedPath;
+  locales?: readonly Locale[] | undefined;
+  fallback?: LocalizedPath;
+  class?: string | undefined;
+}
+
+const { path, locales = LOCALES, fallback = "", class: className } = Astro.props;
+const locale = Astro.locals.locale;
+---
+
+<ul role="list" class:list={["locale-codes", className]} aria-label={t`Language`}>
+  {LOCALES.map((to) => (
+    <li>
+      <a
+        href={switchPath(path, to, fallback, locales)}
+        hreflang={to}
+        lang={to}
+        class="draw-line"
+        aria-current={to === locale ? "true" : undefined}
+        data-umami-event="locale_switch"
+        data-umami-event-from={locale}
+        data-umami-event-to={to}
+      >
+        {to.toUpperCase()}
+        <span class="sr-only"> {AUTONYMS[to]}</span>
+      </a>
+    </li>
+  ))}
+</ul>
+
+<style>
+  .locale-codes {
+    display: flex;
+    gap: 0.25rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    font-weight: 700;
+    font-size: 0.8125rem;
+    font-stretch: 118%;
+    letter-spacing: 0.04em;
+  }
+  .locale-codes a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.75rem;
+    min-width: 2rem;
+    justify-content: center;
+    background-position: 50% calc(100% - 0.6rem);
+    background-size: 0 2px;
+  }
+  .locale-codes a:is(:hover, :focus-visible, [aria-current]) {
+    background-size: 1.1rem 2px;
+  }
+</style>
