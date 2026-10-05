@@ -25,6 +25,8 @@
 
 - Show visual options as live comps (`comps/*.html`, real type, colour, motion) on a private artifact page the owner can
   open on desktop AND phone; stills alone hide the motion that sells a direction - 2026-10-05.
+- HARD RULE: only fonts and assets licensed for free commercial use (OFL, Apache, MIT, CC0, CC BY with credit) or the owner's
+  own; unknown licence = not used, in comps too. Check before adding, record it in `assets.md` - 2026-10-05.
 
 ### Privacy of inputs
 - `context/` is private and gitignored (the pstryk code, klepacz.pdf). Copy patterns, not files; never quote the memo verbatim or name its author in committed files - 2026-10-05.

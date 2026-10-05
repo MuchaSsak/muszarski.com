@@ -14,6 +14,9 @@
 
 ## Sourcing policy
 
+- **Hard rule [user] 2026-10-05:** only fonts and assets whose licence allows **free commercial use** (SIL OFL, Apache 2.0,
+  MIT, CC0, CC BY with the credit shown where the asset appears) or the owner's own work. A licence that can't be verified
+  means the asset is not used. This covers comps, the site, the CV PDF and OG images. Record the licence in the inventory.
 - **Allowed:**
   - the owner's own recordings and screenshots of his own products
   - code-drawn SVG and shaders made for this site
@@ -36,8 +39,11 @@
 | --- | --- | --- | --- | --- | --- |
 | `projects/pstrykweb/landing-home-{390,1440}-{viewport,full}.jpg`, `app-konfigurator-start-{390,1440}-viewport.jpg`, `raw/landing-home-{390,1440}-scroll.webm` | captures of live pstrykweb.pl (the OLD Cetuspro landing) + konfigurator start | Playwright 2026-10-05 | Cetuspro; contains stock people + third-party thumbnails | **reference only, never publish** | P7 |
 | `projects/linkoglot/store-ios-01…06.jpg`, `store-play-01…06.png`, `icon-{ios,play}.png`, `store-ios-preview.mp4` (+ poster), `store-page-{ios,play}-{390,1440}.png`, `landing-1440.png` | store listing media + page captures | App Store / Google Play / linkoglot.eu, 2026-10-05 | owner (his app) | interim placeholders | P8; preview only 332×720 |
-| `projects/space-portfolio/tmp-desktop-1440-00…12-*.png`, `tmp-phone-390-0{0,1}-*.png`, `raw/tmp-desktop-1440-*.{webm,mp4}` (100 s journey + two 20 s clips) | captures of matmuszarski.vercel.app | Playwright 2026-10-05 | owner; third-party textures inside → check the licences (space dossier) | interim placeholders | P9 |
+| `projects/space-portfolio/tmp-desktop-1440-00…12-*.png`, `tmp-phone-390-0{0,1}-*.png`, `raw/tmp-desktop-1440-*.{webm,mp4}` (100 s journey + two 20 s clips) | captures of matmuszarski.vercel.app | Playwright 2026-10-05 | owner; planet textures Solar System Scope **CC BY 4.0** (commercial OK with credit); the lens-dirt texture has **no recorded source** → verify or re-record without it before any public use | interim placeholders | P9 |
 | `projects/neoteric-clockful/tmp-mock-data-{desktop-1440,phone-390}-*.png`, `raw/tmp-mock-data-desktop-1440-walkthrough-13s.mp4` | the app run locally **with mock data** | Playwright 2026-10-05 | code: owner/Neoteric (rights check); data: fake | interim placeholders | P9; no real user data |
+
+| `comps/media/lk-camera.{mp4,jpg}`, `lk-icon.png`, `space-clip.mp4` (960 px, 20 s), `space-poster.jpg` | encoded copies for the rebrand comps (gitignored) | from the rows above | as above; the comp shows the CC BY credit under the space clip | comps only | P8, P9 |
+| fonts in `comps/*.html` (Anybody, Roboto Flex, Mona Sans, Martian Mono, Recursive, Bodoni Moda, Hanken Grotesk, Schibsted Grotesk) | Google Fonts | fonts.google.com | SIL OFL 1.1 | any, incl. commercial | self-host with the licence file when one ships |
 
 ## Missing / needed (→ `open-questions.md`, `placeholders.md`)
 

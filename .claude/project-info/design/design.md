@@ -10,6 +10,11 @@
 > 2 Poster (variable-width name set edge to edge, flat colour fields), 3 Toybox (ray-marched clay toys = facts),
 > 4 Exhibit (night gallery, shader spotlights, museum placards). Evidence: `research/2026-10-05-rebrand-ambition.md`.
 > When the owner picks, this page is rewritten for that direction.
+>
+> **Owner's pick 2026-10-05: Poster** ("my favourite i think is Poster, it really has professional vibe") [user]. Round 2 built it
+> out to the whole home page (`comps/poster-full.html`: hero, 4 chapters with their own colour fields and product visuals,
+> How I work, AI workflow, credentials, contact, footer; themes Cobalt / Paper / Ink, fonts Anybody / Roboto Flex). Waiting
+> on 3 answers (theme model, font, cuts) on the review page; then this page is rewritten for Poster.
 
 > Owns the art direction, tokens, components, motion, imagery and design do/don't. References that
 > inspired it: `design-references.md`. Sections and pages: `structure.md`. Scoring a view: `design-quality.md`

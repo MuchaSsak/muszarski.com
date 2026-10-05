@@ -10,12 +10,17 @@ raw WebGL2. Nothing here is imported by `apps/web`; the picked direction is rebu
 | `poster.html` | 2 Poster | the name justified edge to edge by a variable font's width axis; letters breathe around the cursor |
 | `toybox.html` | 3 Toybox | ray-marched clay toys with soft shadows; each toy is a fact, the phone stands on a toy plinth |
 | `exhibit.html` | 4 Exhibit | a night gallery: oxblood wall, shader spotlights, dust, cursor torch, museum placards |
-| `index.html` | review page | published as a private artifact (the link is in `.claude/project-info/log.md`) |
+| `poster-full.html` | round 2: Poster, the owner's pick | the whole home page: 4 project chapters (own colour + product visual), How I work, AI workflow, credentials, contact, footer; themes Cobalt / Paper / Ink and fonts Anybody / Roboto Flex via the bottom bar, `?theme=&type=` or `#paper-flex` |
+| `index.html` | review page | published as an artifact (the link is in `.claude/project-info/log.md`); round 2 on top, round 1 below |
 
 - **View locally:** `python -m http.server 4391 --bind 127.0.0.1` inside `comps/`, then open `http://127.0.0.1:4391/`.
   `media/` is gitignored (the owner's Linkoglot store preview + icon, copied from `assets/projects/linkoglot/`).
 - **Shoot:** `node comps/shoot.mjs orbit poster toybox exhibit [--widths=1440,390] [--t=5] [--reduced=1]` with that server
-  running; `?shot&t=<s>` freezes the animation clock. Scratch shots go to `shots/.work/` (gitignored); the accepted
+  running; `?shot&t=<s>` freezes the animation clock. `poster-full` adds `--sections` (one shot per `[data-shot]` section),
+  `--q=theme=paper` and `--tag=paper` for variants. Scratch shots go to `shots/.work/` (gitignored); the accepted
   webp shots sit in `shots/`.
 - **Placeholders in the comps:** "open to work", "Poland, CET" / "remote" wording, the CV size (70 KB), dead nav links,
-  the 332 px Linkoglot clip. None of it is a decision.
+  the 332 px Linkoglot clip, the email `hello@matmuszarski.space`, the demo form, credential details, the Cetuspro / Neoteric
+  labels (pending permission). None of it is a decision.
+- **Licences (hard rule):** all comp fonts are Google Fonts under SIL OFL; media is the owner's own. The space clip's planet
+  textures are CC BY 4.0 (credited under the clip); its lens-dirt texture is unverified (`design/assets.md`).

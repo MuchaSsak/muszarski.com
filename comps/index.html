@@ -3,8 +3,8 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Martian+Mono:wght@400..600&family=Schibsted+Grotesk:wght@400..900&display=swap">
 <style>
-/* Review sheet for four live comps: a quiet frame so the comps carry the colour. Each direction is a numbered row
-   (the number is real: it is what the owner replies with), screenshots left, the facts right. */
+/* Review sheet for the rebrand comps: a quiet frame so the comps carry the colour. Round 2 (the picked direction, built
+   out to the whole home page) leads as a guided tour, shot left and the idea right; round 1 (the four directions) follows. */
 :root {
   --bg: #f3f2ee;
   --surface: #ffffff;
@@ -25,20 +25,61 @@ body { background: var(--bg); color: var(--fg); font: 400 17px/1.55 var(--sans);
 a { color: var(--accent); }
 :focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 4px; }
 .wrap { max-width: 1200px; margin: 0 auto; }
-.meta { font: 500 12px/1.5 var(--mono); letter-spacing: .04em; color: var(--fg-2); }
+.meta { margin: 0; font: 500 12px/1.5 var(--mono); letter-spacing: .04em; color: var(--fg-2); }
 header.top { padding-block: clamp(32px, 6vw, 72px) 28px; display: grid; gap: 14px; }
 h1 { margin: 0; font-size: clamp(36px, 6vw, 72px); line-height: .98; font-weight: 800; letter-spacing: -0.03em; text-wrap: balance; }
 .intro { margin: 0; max-width: 62ch; font-size: clamp(17px, 1.5vw, 20px); color: var(--fg-2); }
 .pick { display: grid; gap: 6px; margin-top: 10px; padding: 18px 20px; border-radius: 14px; background: var(--pick); max-width: 820px; }
 .pick b { font-size: 18px; }
 .pick p { margin: 0; }
+.open { align-self: flex-start; display: inline-flex; align-items: center; gap: 10px; min-height: 46px; padding: 0 20px; border-radius: 999px; background: var(--fg); color: var(--bg);
+  font-weight: 700; text-decoration: none; }
+.open:hover { opacity: .88; }
+.chip { display: inline-flex; align-items: center; min-height: 40px; padding: 0 14px; border-radius: 999px; border: 1px solid var(--line); background: var(--surface); color: var(--fg);
+  font-weight: 600; font-size: 15px; text-decoration: none; }
+.chip:hover { border-color: var(--fg-2); }
+.chip .sw { margin-right: 8px; }
+.go { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-top: 6px; }
+.go .lbl { font: 500 11px/1 var(--mono); letter-spacing: .06em; text-transform: uppercase; color: var(--fg-2); margin-left: 8px; }
+h2 { margin: 0; font-size: clamp(30px, 3.4vw, 44px); line-height: 1; font-weight: 800; letter-spacing: -0.02em; text-wrap: balance; }
+h3 { margin: 0; font-size: 21px; line-height: 1.2; font-weight: 800; letter-spacing: -0.01em; }
+.block { padding-block: clamp(36px, 5vw, 64px); border-top: 1px solid var(--line); display: grid; gap: 22px; }
+.block > .lead { margin: 0; max-width: 64ch; color: var(--fg-2); }
+.num { margin: 0; font: 600 13px/1 var(--mono); color: var(--fg-2); }
+
+/* round 2: the tour, one row per section of the page */
+.tour { display: grid; gap: 0; border: 1px solid var(--line); border-radius: 12px; overflow: hidden; background: var(--surface); }
+.stop { display: grid; grid-template-columns: minmax(0, 8fr) minmax(0, 4fr); border-top: 1px solid var(--line); }
+.stop:first-child { border-top: 0; }
+.stop img { display: block; width: 100%; height: auto; }
+.stop .note { min-width: 0; display: flex; flex-direction: column; gap: 8px; padding: 20px 22px; border-left: 1px solid var(--line); }
+.stop .note p { margin: 0; font-size: 15.5px; }
+.stop .tag { font: 500 11px/1.4 var(--mono); letter-spacing: .06em; text-transform: uppercase; color: var(--fg-2); }
+.stop .live { font-size: 14px; color: var(--fg-2); }
+.rail { display: grid; grid-auto-flow: column; grid-auto-columns: clamp(180px, 22vw, 220px); gap: 14px; overflow-x: auto; padding-bottom: 10px; scroll-snap-type: x proximity; align-items: start; }
+.rail figure { margin: 0; scroll-snap-align: start; display: grid; gap: 8px; }
+.rail img { display: block; width: 100%; height: auto; border-radius: 10px; border: 1px solid var(--line); }
+.rail figcaption, .trio figcaption { font: 500 11px/1.4 var(--mono); letter-spacing: .05em; text-transform: uppercase; color: var(--fg-2); }
+.trio { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+.duo { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+.trio figure, .duo figure { margin: 0; display: grid; gap: 8px; align-content: start; }
+.trio img, .duo img { display: block; width: 100%; height: auto; border-radius: 10px; border: 1px solid var(--line); }
+.trio figcaption b, .duo figcaption b { color: var(--fg); font-weight: 600; }
+.ask { display: grid; gap: 14px; padding: 22px; border-radius: 14px; background: var(--pick); }
+.ask ol { margin: 0; padding-left: 22px; display: grid; gap: 12px; }
+.ask li p { margin: 2px 0 0; color: var(--fg-2); font-size: 15.5px; }
+.ask > p { margin: 0; }
+.cols { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 32px; }
+.cols ul { margin: 0; padding-left: 18px; }
+.cols li + li { margin-top: 6px; }
+
+/* round 1: the four directions */
 .dir { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: clamp(20px, 3vw, 44px); padding-block: clamp(36px, 5vw, 64px); border-top: 1px solid var(--line); }
 .shots { display: grid; grid-template-columns: minmax(0, 1fr) clamp(96px, 16%, 150px); gap: 12px; align-items: start; min-width: 0; }
 .shots img { display: block; width: 100%; height: auto; border-radius: 10px; border: 1px solid var(--line); background: var(--surface); }
 .shots .col { display: grid; gap: 12px; }
 .info { min-width: 0; display: flex; flex-direction: column; gap: 14px; }
-.num { font: 600 13px/1 var(--mono); color: var(--fg-2); }
-h2 { margin: 0; font-size: clamp(30px, 3.4vw, 44px); line-height: 1; font-weight: 800; letter-spacing: -0.02em; }
+.dir h2 { font-size: clamp(26px, 2.8vw, 36px); }
 .tagline { margin: 0; font-size: 20px; font-weight: 600; }
 .desc { margin: 0; color: var(--fg); }
 dl { margin: 0; display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 8px 16px; font-size: 15px; }
@@ -46,36 +87,157 @@ dt { font: 500 11px/1.9 var(--mono); letter-spacing: .06em; text-transform: uppe
 dd { margin: 0; }
 .sw { display: inline-flex; gap: 4px; vertical-align: middle; margin-right: 8px; }
 .sw i { width: 16px; height: 16px; border-radius: 4px; border: 1px solid var(--line); }
-.open { align-self: flex-start; display: inline-flex; align-items: center; gap: 10px; min-height: 46px; padding: 0 20px; border-radius: 999px; background: var(--fg); color: var(--bg);
-  font-weight: 700; text-decoration: none; }
-.open:hover { opacity: .88; }
-section.same { border-top: 1px solid var(--line); padding-block: 40px 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 32px; }
-section.same h3 { margin: 0 0 10px; font-size: 20px; }
-section.same ul { margin: 0; padding-left: 18px; color: var(--fg); }
-section.same li + li { margin-top: 6px; }
-.answer { margin-top: 36px; padding: 20px; border-radius: 14px; border: 1px solid var(--line); background: var(--surface); }
-.answer p { margin: 0; }
+.picked { align-self: flex-start; padding: 4px 10px; border-radius: 999px; background: var(--pick); font: 600 12px/1.4 var(--mono); }
 @media (max-width: 860px) {
-  .dir { grid-template-columns: 1fr; }
-  section.same { grid-template-columns: 1fr; }
+  .dir, .stop, .cols { grid-template-columns: 1fr; }
+  .stop .note { border-left: 0; border-top: 1px solid var(--line); }
+  .trio { grid-template-columns: 1fr; }
 }
+@media (max-width: 560px) { .duo { grid-template-columns: 1fr; } }
 </style>
 
 <div class="wrap">
   <header class="top">
-    <p class="meta">matmuszarski.space · rebrand · 5 Oct 2026</p>
-    <h1>Four directions. Pick one, or mix.</h1>
-    <p class="intro">Each one is a live comp of the hero and one project section (Linkoglot), built with real type, colour and motion. Open them on desktop and on your phone: they move, and on desktop they react to the cursor.</p>
-    <div class="pick">
-      <b>My pick: 1, Orbit</b>
-      <p>It is the only one where the signature carries the whole page. The particles that form the planet re-form into each project's device as you scroll: the phone for Linkoglot, a browser for PstrykWeb, a monitor for Clockful, and back into space for the old site. It shows your three.js side without a 3D world to learn, your name is still the first thing painted, and it costs about 5 KB of script and one draw call.</p>
+    <p class="meta">matmuszarski.space · rebrand · round 2 · 5 Oct 2026</p>
+    <h1>Poster, built out to the whole home page.</h1>
+    <p class="intro">You picked Poster, so here it is from the first screen to the footer: all four projects, How I work, the AI workflow, credentials, contact and the footer. Open it on desktop and on your phone. The bar at the bottom switches the theme and the font.</p>
+    <div class="go">
+      <a class="open" href="poster-full.html">Open the full page</a>
+      <span class="lbl">Or straight to</span>
+      <a class="chip" href="poster-full.html#paper"><span class="sw"><i style="background:#f1ede2"></i></span>Paper</a>
+      <a class="chip" href="poster-full.html#ink"><span class="sw"><i style="background:#0b0c11"></i></span>Ink</a>
+      <a class="chip" href="poster-full.html#flex">Roboto Flex</a>
     </div>
   </header>
+
+  <section class="block" aria-labelledby="tour">
+    <p class="num">Round 2 · the tour</p>
+    <h2 id="tour">Every section, top to bottom</h2>
+    <p class="lead">Desktop shots at 1440 px. One rule runs through the whole page: every headline is set edge to edge and its letters breathe. Each project then gets its own colour and its own way of showing the product. Live, the projects stack: each one slides over the previous one as you scroll.</p>
+    <div class="tour">
+      <div class="stop">
+        <img src="shots/full-1440-hero.webp" width="1200" height="548" alt="Hero: MATEUSZ MUSZARSKI set edge to edge in white on cobalt, a pink rotating sticker, the role, one line and two buttons">
+        <div class="note"><span class="tag">Hero</span><h3>The name is the picture</h3><p>The letters set themselves on load and widen around the cursor. Below it, a running strip of proof: both stores, Cetuspro, 118 tests, 13 shaders, 30 locales.</p><p class="live">After the hero scrolls away, the header's M—M turns into your full name.</p></div>
+      </div>
+      <div class="stop">
+        <img src="shots/full-1440-pstrykweb.webp" width="1200" height="734" alt="PstrykWeb chapter: yellow field, PSTRYKWEB across the top, a browser window with a simple website and an order form card with a pointer on its button" loading="lazy">
+        <div class="note"><span class="tag">01 · PstrykWeb · yellow</span><h3>A form, a click, a website</h3><p>An order form card; a pointer presses "Order website" and the site builds itself in the browser behind it. It shows only what is public: websites for local businesses, ordered through one online form.</p><p class="live">Drawn with code, so there are no client screenshots.</p></div>
+      </div>
+      <div class="stop">
+        <img src="shots/full-1440-linkoglot.webp" width="1200" height="800" alt="Linkoglot chapter: orange field, LINKOGLOT behind a tilted phone playing the camera mode, a pink flashcard reading la maceta" loading="lazy">
+        <div class="note"><span class="tag">02 · Linkoglot · orange</span><h3>The phone breaks the billboard</h3><p>The section from round 1, now one chapter of four. The app video plays only while it is on screen.</p></div>
+      </div>
+      <div class="stop">
+        <img src="shots/full-1440-clockful.webp" width="1200" height="1053" alt="Clockful chapter: lime field, CLOCKFUL, a huge thin running timer 00:41:12 and four big numbers: 118 tests, 5/5 tables with row-level security, 15 requirements, about 9 days" loading="lazy">
+        <div class="note"><span class="tag">03 · Clockful · lime</span><h3>The timer is the poster</h3><p>A live timer whose digits roll like an odometer, with a working Stop button. It is the app's core loop. Under it are the receipts: 118 tests, row-level security on 5 of 5 tables, 15 requirements, about 9 days.</p></div>
+      </div>
+      <div class="stop">
+        <img src="shots/full-1440-space.webp" width="1200" height="834" alt="Space folio chapter: dark starfield with orbit lines, a monitor playing the old space site, a paper receipt listing Lighthouse mobile 34, desktop 60, 13.8 MB, and SPACE FOLIO in outline letters" loading="lazy">
+        <div class="note"><span class="tag">04 · Space folio · night</span><h3>The honest receipt</h3><p>The old site plays in a monitor, with planets on their orbits behind it. A paper receipt prints its real Lighthouse numbers (mobile 34, desktop 60, 13.8 MB before the start button) and links to why you rebuilt it.</p><p class="live">On a phone the button reads "Desktop only · copy link".</p></div>
+      </div>
+      <div class="stop">
+        <img src="shots/full-1440-how.webp" width="1200" height="832" alt="How I work: HOW I WORK edge to edge, then four ruled rows, each a principle in condensed capitals with a receipt beside it" loading="lazy">
+        <div class="note"><span class="tag">How I work</span><h3>Four principles, each with a receipt</h3><p>Your four proof pillars, each one backed by a fact from a project. Hovering a row inverts it and widens the words.</p></div>
+      </div>
+      <div class="stop">
+        <img src="shots/full-1440-ai.webp" width="1200" height="808" alt="AI workflow: DELEGATE. VERIFY. in huge white letters on cobalt, a five-step track, and a paper board where seven gates are stamped PASS" loading="lazy">
+        <div class="note"><span class="tag">AI workflow</span><h3>Delegate. Verify.</h3><p>A five-step loop, then a board where each gate gets stamped PASS one by one as it comes into view: types, lint, tests, screenshots, accessibility, Lighthouse, your review. Three receipts below: Clockful, this site, lingui-translate-ai.</p></div>
+      </div>
+      <div class="stop">
+        <img src="shots/full-1440-credentials.webp" width="1200" height="743" alt="Credentials: CREDENTIALS edge to edge, then eight ticket stubs: INF.02, INF.03, INF.04, Three.js Journey, JS and React courses, Erasmus+, Hackathons, Marketing and UX" loading="lazy">
+        <div class="note"><span class="tag">Stack + credentials</span><h3>Ticket stubs</h3><p>A two-row strip of your stack runs above. The credentials are tickets with a tear line: the state qualifications in navy, the courses in pink, the teamwork in outline. On a phone they become a swipe rail.</p></div>
+      </div>
+      <div class="stop">
+        <img src="shots/full-1440-contact.webp" width="1200" height="679" alt="Contact: pink field, LET'S TALK huge on the left, an email field, a message field and a send button on the right, then copy email, LinkedIn, GitHub and CV buttons" loading="lazy">
+        <div class="note"><span class="tag">Contact</span><h3>Two fields and send</h3><p>Email and message, nothing else. Copy email, LinkedIn, GitHub and the CV sit right under the form.</p></div>
+      </div>
+      <div class="stop">
+        <img src="shots/full-1440-footer.webp" width="1200" height="425" alt="Footer: navy, four link columns, a revision row, and MUSZARSKI in pink across the full width" loading="lazy">
+        <div class="note"><span class="tag">Footer</span><h3>Signed like a poster</h3><p>The four link columns, the language switch and the build revision, then your surname across the full width.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="block" aria-labelledby="phone">
+    <p class="num">Round 2 · on a phone</p>
+    <h2 id="phone">The same page at 390 px</h2>
+    <p class="lead">The same content as desktop, in one column. Contact and CV stay in the header. Swipe the row to see more.</p>
+    <div class="rail">
+      <figure><img src="shots/full-390-hero.webp" width="390" height="605" alt="Hero on a phone" loading="lazy"><figcaption>Hero</figcaption></figure>
+      <figure><img src="shots/full-390-pstrykweb.webp" width="390" height="1104" alt="PstrykWeb on a phone" loading="lazy"><figcaption>PstrykWeb</figcaption></figure>
+      <figure><img src="shots/full-390-linkoglot.webp" width="390" height="1303" alt="Linkoglot on a phone" loading="lazy"><figcaption>Linkoglot</figcaption></figure>
+      <figure><img src="shots/full-390-clockful.webp" width="390" height="1056" alt="Clockful on a phone" loading="lazy"><figcaption>Clockful</figcaption></figure>
+      <figure><img src="shots/full-390-space.webp" width="390" height="1178" alt="Space folio on a phone" loading="lazy"><figcaption>Space folio</figcaption></figure>
+      <figure><img src="shots/full-390-how.webp" width="390" height="986" alt="How I work on a phone" loading="lazy"><figcaption>How I work</figcaption></figure>
+      <figure><img src="shots/full-390-ai.webp" width="390" height="1753" alt="AI workflow on a phone" loading="lazy"><figcaption>AI workflow</figcaption></figure>
+      <figure><img src="shots/full-390-credentials.webp" width="390" height="486" alt="Credentials as a swipe rail on a phone" loading="lazy"><figcaption>Credentials</figcaption></figure>
+      <figure><img src="shots/full-390-contact.webp" width="390" height="1248" alt="Contact on a phone" loading="lazy"><figcaption>Contact</figcaption></figure>
+      <figure><img src="shots/full-390-footer.webp" width="390" height="710" alt="Footer on a phone" loading="lazy"><figcaption>Footer</figcaption></figure>
+    </div>
+  </section>
+
+  <section class="block" aria-labelledby="themes">
+    <p class="num">Round 2 · theme and font</p>
+    <h2 id="themes">Three themes, two fonts</h2>
+    <p class="lead">The project chapters keep their own colours in every theme; the theme changes the hero, the sections between the projects and the footer.</p>
+    <div class="trio">
+      <figure><img src="shots/full-1440-hero.webp" width="1200" height="548" alt="Cobalt theme hero" loading="lazy"><figcaption><b>Cobalt</b> · the signature, loud and memorable</figcaption></figure>
+      <figure><img src="shots/full-paper-1440-hero.webp" width="1200" height="548" alt="Paper theme hero: near-black name on warm paper, orange-red sticker" loading="lazy"><figcaption><b>Paper</b> · light, Swiss, the calmest</figcaption></figure>
+      <figure><img src="shots/full-ink-1440-hero.webp" width="1200" height="548" alt="Ink theme hero: white name on near-black, pink sticker" loading="lazy"><figcaption><b>Ink</b> · dark</figcaption></figure>
+    </div>
+    <div class="duo">
+      <figure><img src="shots/full-paper-1440-ai.webp" width="1200" height="808" alt="AI workflow section in the Paper theme: black field" loading="lazy"><figcaption><b>Paper</b> · AI workflow</figcaption></figure>
+      <figure><img src="shots/full-ink-1440-how.webp" width="1200" height="832" alt="How I work section in the Ink theme: dark field, white type" loading="lazy"><figcaption><b>Ink</b> · How I work</figcaption></figure>
+    </div>
+    <div class="duo">
+      <figure><img src="shots/full-1440-clockful.webp" width="1200" height="1053" alt="Clockful set in Anybody" loading="lazy"><figcaption><b>Anybody</b> · characterful, the one you liked</figcaption></figure>
+      <figure><img src="shots/full-flex-1440-clockful.webp" width="1200" height="1054" alt="Clockful set in Roboto Flex: plainer, more neutral letters" loading="lazy"><figcaption><b>Roboto Flex</b> · neutral, more corporate</figcaption></figure>
+    </div>
+  </section>
+
+  <section class="block" aria-labelledby="decide">
+    <p class="num">Round 2 · your call</p>
+    <h2 id="decide">Three answers and I start building</h2>
+    <div class="ask">
+      <ol>
+        <li><b>Theme.</b> My pick: Cobalt for every first visit, with Paper and Ink in the theme toggle; the site remembers the choice.<p>Or: Paper and Ink follow your system's light or dark setting, and Cobalt is only the brand colour.</p></li>
+        <li><b>Font.</b> My pick: Anybody. It has the character that gives Poster its professional edge; Roboto Flex is safer and plainer.</li>
+        <li><b>Anything to cut, swap or push further?</b><p>For example: a different project order, another colour for a chapter, less motion, or "the AI board is too much".</p></li>
+      </ol>
+      <p>A short reply is enough, for example "1 yes, 2 yes, 3 nothing". After that I write the new design system and rebuild the header, footer and hero in the real site, one section at a time.</p>
+    </div>
+    <div class="cols">
+      <div>
+        <h3>What the comp does not prove yet</h3>
+        <ul>
+          <li>Not tested on a real phone, only in emulated 390 and 1440 px screens.</li>
+          <li>No Lighthouse run on the comp; the real build gets one per section.</li>
+          <li>The headline fitting runs in the browser here. In the real site it moves to build time, so nothing jumps while fonts load.</li>
+        </ul>
+      </div>
+      <div>
+        <h3>Not real yet</h3>
+        <ul>
+          <li>"Open to work", "Poland, CET", "remote" and the languages line wait for your wording.</li>
+          <li>The email address, the CV size and the links are placeholders, and the form sends nothing.</li>
+          <li>"Client work · Cetuspro" and "Internship · Neoteric" wait for their permission.</li>
+          <li>Credential dates, verify links and course names are still to come from you.</li>
+          <li>The project videos are temporary: the 332 px App Store preview and a capture of the old space site (its planet textures are Solar System Scope, CC BY 4.0; its lens-dirt texture still needs a licence check).</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="block" aria-labelledby="r1">
+    <p class="num">Round 1 · 5 Oct 2026</p>
+    <h2 id="r1">The four directions</h2>
+    <p class="lead">Each one is a live comp of the hero and one project section (Linkoglot). I recommended Orbit; you picked Poster. They stay here for reference, and parts of them can still be mixed in.</p>
+  </section>
 
   <section class="dir" aria-labelledby="d1">
     <div class="shots">
       <div class="col">
-        <img src="shots/orbit-1440-hero.webp" width="1200" height="750" alt="Orbit at 1440 px: the name in a wide grotesk over a particle planet with a ring">
+        <img src="shots/orbit-1440-hero.webp" width="1200" height="750" alt="Orbit at 1440 px: the name in a wide grotesk over a particle planet with a ring" loading="lazy">
         <img src="shots/orbit-1440-work.webp" width="1200" height="750" alt="Orbit work section: Linkoglot title beside a phone outlined in glowing particles" loading="lazy">
       </div>
       <div class="col">
@@ -111,6 +273,7 @@ section.same li + li { margin-top: 6px; }
     </div>
     <div class="info">
       <p class="num">Direction 2</p>
+      <span class="picked">Your pick · built out in round 2</span>
       <h2 id="d2">Poster</h2>
       <p class="tagline">Your name, set like a poster.</p>
       <p class="desc">The name fills the width edge to edge in one variable font. Letters widen around the cursor like an accordion while the line stays exactly flush. Each project gets its own flat colour field and a billboard word.</p>
@@ -120,7 +283,7 @@ section.same li + li { margin-top: 6px; }
         <dt>Per project</dt><dd>A new colour field and its name as the billboard</dd>
         <dt>Cost</dt><dd>No WebGL, about 2 KB of JS; letters move by transform only, so nothing shifts the layout</dd>
       </dl>
-      <a class="open" href="poster.html">Open Poster</a>
+      <a class="open" href="poster.html">Open round 1 Poster</a>
     </div>
   </section>
 
@@ -175,27 +338,4 @@ section.same li + li { margin-top: 6px; }
       <a class="open" href="exhibit.html">Open Exhibit</a>
     </div>
   </section>
-
-  <section class="same">
-    <div>
-      <h3>The same in all four</h3>
-      <ul>
-        <li>The engineering underneath stays: Astro, the three languages, the tests and Lighthouse at 100.</li>
-        <li>Your name is the first thing painted; every 3D layer starts after it, has a still fallback and respects reduced motion.</li>
-        <li>Contact and CV stay one tap away on a phone.</li>
-      </ul>
-    </div>
-    <div>
-      <h3>Not real yet in the comps</h3>
-      <ul>
-        <li>"Open to work", "Poland, CET" and "remote" are wording placeholders until you confirm them.</li>
-        <li>The CV size (70 KB) is a guess, and the menu links go nowhere.</li>
-        <li>The Linkoglot clip is the 332 px App Store preview; the real site gets a sharp recording.</li>
-      </ul>
-    </div>
-  </section>
-
-  <div class="answer">
-    <p><b>How to answer:</b> reply with a number. A mix works too, for example "Exhibit, with the Poster type". Once you pick, I write the new design system and rebuild the header, footer and hero in it.</p>
-  </div>
 </div>

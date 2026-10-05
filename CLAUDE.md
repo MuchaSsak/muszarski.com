@@ -52,6 +52,8 @@ non-negotiables: read only the pages your task needs. Paths are plain text on pu
 - **Copy:** every user-facing string goes through Lingui (en source). es is marked unreviewed. Long-form text lives in per-locale files (`.claude/project-info/site/i18n.md`).
 - **Truth:** no invented facts, metrics, testimonials or credentials. Placeholders are allowed while building: disclose each one briefly in chat, mark it `PLACEHOLDER` in code/data and log it in `.claude/project-info/placeholders.md`. On "finish / wrap up / go to prod", clear that register first.
 - **Rights:** client or internship work is shown only with a rights status of `ok` in its dossier (`.claude/project-info/content/projects.md`).
+- **Licences (owner's hard rule):** every font, image, texture, icon, sound and library is free for commercial use (OFL, Apache, MIT,
+  CC0, CC BY with its credit shown) or the owner's own work. Unknown licence = not used (`.claude/project-info/design/assets.md`).
 - **Privacy of inputs:** `context/` is private. Never commit it, copy its files or quote the memo (`.claude/project-info/lessons.md`).
 - Never read real `.env` files or secrets; name env vars, never values.
 

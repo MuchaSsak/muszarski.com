@@ -1,0 +1,1005 @@
+<!doctype html>
+<html lang="en" data-theme="cobalt" data-type="anybody">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Poster · Full home</title>
+<script>
+  // Variant before first paint: ?theme=cobalt|paper|ink &type=anybody|flex, or hash tokens (#paper, #ink-flex) where a
+  // host strips the query; ?shot freezes for screenshots.
+  (() => {
+    const q = new URLSearchParams(location.search), d = document.documentElement;
+    const h = location.hash.slice(1).split("-");
+    if (q.has("shot")) d.classList.add("shot");
+    const th = q.get("theme") || h.find((t) => ["cobalt", "paper", "ink"].includes(t));
+    const ty = q.get("type") || h.find((t) => ["anybody", "flex"].includes(t));
+    if (["cobalt", "paper", "ink"].includes(th)) d.dataset.theme = th;
+    if (["anybody", "flex"].includes(ty)) d.dataset.type = ty;
+  })();
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anybody:wdth,wght@50..150,100..900&family=Roboto+Flex:opsz,wdth,wght@8..144,25..151,100..1000&display=swap">
+<style>
+/* POSTER, FULL HOME. The page is a run of printed posters. Every headline is set edge to edge in one variable face and
+   justified by its WIDTH axis; letters breathe around the cursor while the line stays flush. Each project chapter is its
+   own colour field and slides over the previous one like a stack of posters. Themes: Cobalt (signature), Paper (light),
+   Ink (dark). Faces: Anybody (characterful) or Roboto Flex (neutral). */
+:root {
+  --cobalt: #2433ff; --ice: #eef0ff; --pink: #ff4fb8; --orange: #ff5b1f; --navy: #0a0d33;
+  --yellow: #ffd23f; --lime: #c9f24a; --space: #07081c;
+  --hero-bg: var(--cobalt); --hero-fg: var(--ice);
+  --alt-bg: var(--ice); --alt-fg: var(--navy);
+  --deep-bg: var(--cobalt); --deep-fg: var(--ice);
+  --bar-bg: var(--navy); --bar-fg: var(--ice);
+  --accent: var(--pink); --on-accent: var(--navy);
+  --sans: "Anybody", "Arial Narrow", Arial, sans-serif;
+  --ease: cubic-bezier(0.2, 0.75, 0.1, 1);
+  --gutter: clamp(16px, 3.9vw, 56px);
+  color-scheme: dark;
+}
+[data-theme="paper"] {
+  --hero-bg: #f1ede2; --hero-fg: #111114; --alt-bg: #fbfaf6; --alt-fg: #111114; --deep-bg: #111114; --deep-fg: #f1ede2;
+  --bar-bg: #111114; --bar-fg: #f1ede2; --accent: #ff4a1c; --on-accent: #111114; color-scheme: light;
+}
+[data-theme="ink"] {
+  --hero-bg: #0b0c11; --hero-fg: #eef0ff; --alt-bg: #16171e; --alt-fg: #eef0ff; --deep-bg: #2433ff; --deep-fg: #eef0ff;
+  --bar-bg: #0b0c11; --bar-fg: #eef0ff; --accent: #ff4fb8; --on-accent: #0a0d33;
+}
+[data-type="flex"] { --sans: "Roboto Flex", "Arial Narrow", Arial, sans-serif; }
+
+* { box-sizing: border-box; }
+html { background: var(--hero-bg); scroll-padding-top: 76px; }
+body { margin: 0; font: 400 18px/1.5 var(--sans); font-variation-settings: "wdth" 100; color: var(--hero-fg); background: var(--hero-bg);
+  overflow-x: clip; -webkit-font-smoothing: antialiased; }
+a { color: inherit; }
+::selection { background: var(--accent); color: var(--on-accent); }
+:focus-visible { outline: 3px solid currentColor; outline-offset: 3px; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.skip { position: absolute; left: -999px; }
+.skip:focus { left: 8px; top: 8px; z-index: 99; background: var(--accent); color: var(--on-accent); padding: 8px 12px; }
+.grain { position: fixed; inset: 0; z-index: 50; pointer-events: none; opacity: 0.13; mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>"); }
+
+/* every block is a field: --sbg / --sfg drive its colours, buttons read them */
+.sec { position: relative; background: var(--sbg); color: var(--sfg); padding: clamp(28px, 3vw, 44px) var(--gutter) clamp(64px, 8vw, 120px); }
+.s-hero { --sbg: var(--hero-bg); --sfg: var(--hero-fg); }
+.s-alt { --sbg: var(--alt-bg); --sfg: var(--alt-fg); }
+.s-deep { --sbg: var(--deep-bg); --sfg: var(--deep-fg); }
+.s-accent { --sbg: var(--accent); --sfg: var(--on-accent); }
+.s-bar { --sbg: var(--bar-bg); --sfg: var(--bar-fg); }
+.c-pw { --sbg: var(--yellow); --sfg: var(--navy); --pop: var(--cobalt); }
+.c-lk { --sbg: var(--orange); --sfg: var(--navy); --pop: var(--pink); }
+.c-cf { --sbg: var(--lime); --sfg: var(--navy); --pop: var(--cobalt); }
+.c-sp { --sbg: var(--space); --sfg: var(--ice); --pop: var(--pink); }
+
+.kick, .bar { font-weight: 800; font-size: 14px; line-height: 1.25; letter-spacing: .04em; text-transform: uppercase; font-variation-settings: "wdth" 125; }
+.bar { display: grid; grid-template-columns: 1fr auto 1fr; gap: 16px; align-items: baseline; padding-bottom: 12px; border-bottom: 3px solid currentColor; }
+.bar p { margin: 0; }
+.bar p:nth-child(2) { text-align: center; }
+.bar p:last-child { text-align: right; }
+
+/* fitted type */
+.fit { position: relative; margin: 0; font-size: 11vw; font-weight: 900; line-height: .8; text-transform: uppercase; white-space: nowrap; width: max-content; }
+.fit .line { display: block; white-space: nowrap; width: max-content; }
+.ch { display: inline-block; will-change: transform; }
+.ch i { font-style: normal; }
+.fit-host { position: relative; margin-top: clamp(16px, 2vw, 28px); }
+
+/* buttons */
+.btn { display: inline-flex; align-items: center; gap: 10px; min-height: 46px; padding: 0 20px; border: 0; border-radius: 0; font: 800 15px/1 var(--sans);
+  font-variation-settings: "wdth" 115; text-transform: uppercase; letter-spacing: .03em; text-decoration: none; cursor: pointer; color: inherit; background: none;
+  transition: transform .35s var(--ease), box-shadow .35s var(--ease); }
+.btn:hover { transform: translate(-3px, -3px); }
+.btn small { font-size: 11px; font-weight: 600; opacity: .75; }
+.btn-line { box-shadow: inset 0 0 0 2px currentColor; }
+.btn-line:hover { box-shadow: inset 0 0 0 2px currentColor, 3px 3px 0 0 currentColor; }
+.btn-acc { background: var(--accent); color: var(--on-accent); }
+.btn-acc:hover { box-shadow: 3px 3px 0 0 var(--sfg); }
+.btn-inv { background: var(--sfg); color: var(--sbg); }
+.btn-inv:hover { box-shadow: 3px 3px 0 0 var(--pop, var(--accent)); }
+.split { display: inline-flex; }
+.split .btn + .btn { margin-left: -2px; }
+
+/* header */
+header.site { --sbg: var(--hero-bg); --sfg: var(--hero-fg); position: sticky; top: 0; z-index: 30; display: flex; align-items: center; gap: 22px;
+  padding: 14px var(--gutter); background: var(--sbg); color: var(--sfg); transition: background .3s, color .3s; }
+header.site.stuck { --sbg: var(--bar-bg); --sfg: var(--bar-fg); }
+.mark { display: grid; text-decoration: none; font-weight: 900; font-size: 22px; line-height: 1; text-transform: uppercase; }
+.mark > span { grid-area: 1 / 1; transition: opacity .35s var(--ease), transform .45s var(--ease); white-space: nowrap; }
+.mark .m-s { font-variation-settings: "wdth" 150; }
+.mark .m-l { font-variation-settings: "wdth" 72; opacity: 0; transform: translateY(60%); }
+.stuck .mark .m-s { opacity: 0; transform: translateY(-60%); }
+.stuck .mark .m-l { opacity: 1; transform: none; }
+nav.main { display: flex; gap: 26px; margin-left: auto; font-weight: 700; font-size: 15px; text-transform: uppercase; letter-spacing: .03em; font-variation-settings: "wdth" 118; }
+nav.main a, .loc a { text-decoration: none; background: linear-gradient(currentColor, currentColor) 0 100% / 0 2px no-repeat; transition: background-size .35s var(--ease); padding: 6px 0; }
+nav.main a:hover, .loc a:hover, .loc a[aria-current] { background-size: 100% 2px; }
+.loc { display: flex; gap: 10px; font-weight: 700; font-size: 13px; font-variation-settings: "wdth" 118; }
+.tbtn { min-height: 40px; padding: 0 12px; font-size: 13px; }
+.actions { display: flex; gap: 10px; align-items: center; }
+.menu-btn { display: none; }
+
+/* mobile menu (native popover) */
+#menu { position: fixed; inset: 0; width: 100%; height: 100%; max-width: none; max-height: none; margin: 0; border: 0; padding: 18px var(--gutter) 32px;
+  background: var(--bar-bg); color: var(--bar-fg); --sbg: var(--bar-bg); --sfg: var(--bar-fg); }
+#menu::backdrop { background: rgb(0 0 0 / .4); }
+#menu .m-top { display: flex; justify-content: space-between; align-items: center; }
+#menu nav { margin-top: 28px; display: grid; gap: 4px; }
+#menu nav a { font-weight: 900; font-size: clamp(44px, 13vw, 96px); line-height: .95; text-transform: uppercase; text-decoration: none; font-variation-settings: "wdth" 70; }
+#menu .m-row { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 28px; align-items: center; }
+
+/* hero */
+.hero { overflow-x: clip; padding-top: clamp(8px, 2vw, 24px); padding-bottom: clamp(36px, 4vw, 60px); }
+.hero .fit-host { margin-top: 0; }
+.rule { height: 3px; background: currentColor; margin: clamp(14px, 1.6vw, 24px) 0 0; }
+.info { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 24px; margin-top: clamp(20px, 2.4vw, 36px); align-items: start; }
+.role { grid-column: span 4; margin: 0; font-weight: 800; font-size: clamp(30px, 3.4vw, 54px); line-height: .92; font-variation-settings: "wdth" 62; text-transform: uppercase; }
+.lede { grid-column: span 4; margin: 0; max-width: 34ch; font-size: clamp(18px, 1.35vw, 21px); line-height: 1.45; }
+.cta-col { grid-column: span 4; display: flex; flex-direction: column; align-items: flex-start; gap: 12px; }
+.facts { display: flex; flex-wrap: wrap; gap: 6px 18px; margin: 10px 0 0; padding: 0; list-style: none; font-size: 13px; font-weight: 700; font-variation-settings: "wdth" 125; text-transform: uppercase; letter-spacing: .04em; }
+.facts li::before { content: "■ "; color: var(--accent); }
+.sticker { position: absolute; z-index: 2; width: clamp(110px, 12vw, 180px); aspect-ratio: 1; right: clamp(8px, 7vw, 120px); top: clamp(24px, 1vw, 44px); color: var(--on-accent); }
+.sticker svg { width: 100%; height: 100%; animation: spin 22s linear infinite; }
+.sticker circle { fill: var(--accent); }
+.sticker text { fill: var(--on-accent); }
+.sticker:hover svg { animation-play-state: paused; }
+.sticker .core { position: absolute; inset: 27%; display: grid; place-items: center; text-align: center; font-weight: 900; font-size: clamp(22px, 2.6vw, 40px); line-height: .9; font-variation-settings: "wdth" 70; }
+.sticker .core small { display: block; font-size: .32em; font-weight: 700; font-variation-settings: "wdth" 120; letter-spacing: .06em; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* proof band (marquee) */
+.band { padding: 16px 0; overflow: hidden; }
+.band-track { display: flex; width: max-content; animation: marq 46s linear infinite; }
+.band ul { display: flex; gap: 40px; margin: 0; padding: 0 40px 0 0; list-style: none; }
+.band li { display: flex; align-items: center; gap: 40px; white-space: nowrap; font-weight: 800; font-size: clamp(16px, 1.4vw, 20px); text-transform: uppercase; letter-spacing: .03em; font-variation-settings: "wdth" 112; }
+.band li::after { content: "✦"; color: var(--accent); }
+@keyframes marq { to { transform: translateX(-50%); } }
+
+/* chapters: a stack of posters. Each sticks when its bottom meets the viewport, the next slides over it. */
+.chapter { position: sticky; top: var(--stick, 0px); overflow: clip; }
+.chapter + .chapter { box-shadow: 0 -16px 40px -22px rgb(0 0 0 / .4); }
+.chapter:nth-child(1) { z-index: 1; } .chapter:nth-child(2) { z-index: 2; } .chapter:nth-child(3) { z-index: 3; } .chapter:nth-child(4) { z-index: 4; }
+.shot .chapter { position: relative; }
+.tag-chip { align-self: flex-start; display: inline-flex; align-items: center; gap: 10px; margin: 0; padding: 10px 14px; background: var(--ice); color: var(--navy); transform: rotate(-5deg);
+  font-weight: 800; font-size: 13px; text-transform: uppercase; letter-spacing: .04em; font-variation-settings: "wdth" 120; box-shadow: 6px 6px 0 var(--navy); }
+.tag-chip img { width: 30px; height: 30px; }
+.outcome { margin: 0; font-weight: 800; font-size: clamp(26px, 2.5vw, 40px); line-height: 1.02; letter-spacing: -0.01em; font-variation-settings: "wdth" 88; }
+.proves { margin: 0; padding: 0; list-style: none; font-size: 17px; line-height: 1.4; }
+.proves li { padding: 10px 0; border-bottom: 2px solid color-mix(in srgb, currentColor 25%, transparent); }
+.proves li:first-child { padding-top: 0; }
+.proves b { font-weight: 800; }
+.links { display: flex; flex-wrap: wrap; gap: 10px; }
+.stack { margin: 0; font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; font-variation-settings: "wdth" 120; }
+.status { margin: 0; font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; }
+.ch-info { display: flex; flex-direction: column; gap: 22px; min-width: 0; }
+@supports (animation-timeline: view()) {
+  .chapter .fit { animation: slide linear both; animation-timeline: view(); animation-range: entry 0% exit 60%; }
+  @keyframes slide { from { transform: translateX(2.5%); } to { transform: translateX(-2.5%); } }
+}
+
+/* 01 PstrykWeb: an order form, a click, a website */
+.pw-grid { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: clamp(28px, 4vw, 72px); margin-top: calc(var(--fit-h, 200px) * -0.42); }
+.pw-grid .ch-info { padding-top: calc(var(--fit-h, 200px) * 0.42 + clamp(24px, 2.6vw, 40px)); }
+.pw-stage { position: relative; z-index: 1; padding: 0 0 70px 7%; }
+.browser { container-type: inline-size; background: #fff; color: var(--navy); box-shadow: 0 0 0 3px var(--navy), 16px 16px 0 3px var(--navy); }
+.b-top { display: flex; align-items: center; gap: 1.2cqw; height: 5.4cqw; padding: 0 2cqw; background: var(--navy); }
+.b-top i { width: 1.6cqw; height: 1.6cqw; border-radius: 50%; background: var(--pink); }
+.b-top i:nth-child(2) { background: var(--yellow); } .b-top i:nth-child(3) { background: var(--ice); }
+.b-url { margin-left: 3cqw; width: 38%; height: 2.4cqw; border-radius: 9px; background: rgb(255 255 255 / .18); }
+.b-site { display: grid; grid-template-columns: 1.15fr 1fr; grid-template-areas: "nav nav" "h1 img" "h2 img" "btn img" "cards cards"; gap: 2.2cqw 3.4cqw; padding: 3cqw 4cqw 4cqw; }
+.w { background: var(--navy); transform-origin: left; }
+.w-nav { grid-area: nav; height: 2.6cqw; background: linear-gradient(90deg, var(--navy) 0 14%, transparent 14% 52%, #c9cbe6 52% 60%, transparent 60% 64%, #c9cbe6 64% 72%, transparent 72% 76%, #c9cbe6 76% 84%, transparent 84% 88%, var(--cobalt) 88%); }
+.w-h1 { grid-area: h1; height: 5cqw; align-self: end; margin-top: 3cqw; }
+.w-h2 { grid-area: h2; height: 5cqw; width: 78%; }
+.w-btn { grid-area: btn; height: 4.6cqw; width: 36%; background: var(--cobalt); }
+.w-img { grid-area: img; aspect-ratio: 4 / 3.2; background: var(--cobalt); position: relative; overflow: hidden; }
+.w-img::before { content: ""; position: absolute; width: 22%; aspect-ratio: 1; border-radius: 50%; background: var(--yellow); right: 16%; top: 16%; }
+.w-img::after { content: ""; position: absolute; inset: 45% -10% 0 -10%; background: var(--navy); clip-path: polygon(0 100%, 30% 20%, 52% 70%, 72% 35%, 100% 100%); }
+.w-cards { grid-area: cards; display: grid; grid-template-columns: repeat(3, 1fr); gap: 2.4cqw; margin-top: 1.6cqw; }
+.w-cards .w { height: 12cqw; background: #e3e5f7; box-shadow: inset 0 -3cqw 0 #c9cbe6; }
+.order { position: absolute; left: 0; bottom: 0; width: clamp(200px, 21vw, 290px); padding: 16px 16px 18px; background: var(--navy); color: var(--ice); transform: rotate(-4deg);
+  box-shadow: 10px 10px 0 var(--cobalt); font-size: 13px; }
+.order .o-k { margin: 0 0 10px; font-weight: 800; font-size: 12px; letter-spacing: .06em; text-transform: uppercase; font-variation-settings: "wdth" 125; color: var(--yellow); }
+.order .o-f { display: block; margin: 4px 0 10px; padding: 8px 10px; box-shadow: inset 0 0 0 2px rgb(238 240 255 / .4); font-size: 13px; color: rgb(238 240 255 / .7); }
+.order .o-l { font-weight: 700; font-size: 11px; text-transform: uppercase; letter-spacing: .05em; }
+.o-chips { display: flex; gap: 6px; margin: 4px 0 14px; }
+.o-chips span { padding: 5px 9px; font-size: 11px; font-weight: 700; text-transform: uppercase; box-shadow: inset 0 0 0 2px rgb(238 240 255 / .4); }
+.o-chips .on { background: var(--yellow); color: var(--navy); box-shadow: none; }
+.o-btn { position: relative; display: block; white-space: nowrap; padding: 11px 12px; background: var(--pink); color: var(--navy); font-weight: 900; font-size: 13px; text-transform: uppercase; letter-spacing: .04em;
+  font-variation-settings: "wdth" 115; box-shadow: 4px 4px 0 var(--ice); }
+.cursor { position: absolute; z-index: 2; width: 30px; right: 18%; bottom: -14px; filter: drop-shadow(2px 3px 0 rgb(10 13 51 / .5)); }
+@media (prefers-reduced-motion: no-preference) {
+  html:not(.shot) .pw-stage .w { animation: build 8s var(--ease) infinite; animation-delay: calc(var(--i, 0) * 0.11s); }
+  html:not(.shot) .o-btn { animation: press 8s linear infinite; }
+  html:not(.shot) .cursor { animation: cur 8s var(--ease) infinite; }
+}
+@keyframes build { 0%, 26% { transform: scaleX(0); opacity: 0; } 34%, 92% { transform: none; opacity: 1; } 100% { transform: none; opacity: 0; } }
+@keyframes press { 0%, 21% { transform: none; box-shadow: 4px 4px 0 var(--ice); } 23% { transform: translate(4px, 4px); box-shadow: 0 0 0 var(--ice); } 27%, 100% { transform: none; box-shadow: 4px 4px 0 var(--ice); } }
+@keyframes cur { 0% { transform: translate(180px, 120px); opacity: 0; } 6% { opacity: 1; } 20% { transform: none; } 23% { transform: scale(.82); } 26% { transform: none; } 40% { transform: translate(-30px, 90px); opacity: 1; } 46%, 100% { transform: translate(-30px, 90px); opacity: 0; } }
+
+/* 02 Linkoglot: the phone breaks the billboard */
+.board { display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); gap: clamp(24px, 3vw, 56px); margin-top: calc(var(--fit-h, 200px) * -0.58); }
+.board .side { padding-top: calc(var(--fit-h, 200px) * 0.58 + clamp(20px, 2.4vw, 40px)); }
+.stage { position: relative; display: flex; justify-content: center; padding-bottom: 20px; }
+.phone { position: relative; width: clamp(220px, 21vw, 300px); aspect-ratio: 280 / 600; border-radius: 34px; overflow: hidden; background: #000;
+  box-shadow: 0 0 0 9px var(--navy), 18px 22px 0 9px rgb(10 13 51 / 0.9); transform: rotate(-5deg); }
+.phone video { width: 100%; height: 100%; object-fit: cover; display: block; }
+.flash { position: absolute; z-index: 2; right: -34%; bottom: 10%; width: clamp(170px, 15vw, 220px); padding: 14px 16px 16px; background: var(--pink); color: var(--navy); transform: rotate(7deg); box-shadow: 8px 8px 0 var(--navy); }
+.flash span { display: block; font-size: 11px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; font-variation-settings: "wdth" 125; }
+.flash b { display: block; margin-top: 6px; font-size: clamp(28px, 2.6vw, 38px); line-height: .95; font-weight: 900; font-variation-settings: "wdth" 80; }
+.flash em { font-style: normal; font-size: 14px; }
+@supports (animation-timeline: view()) {
+  .phone { animation: tilt linear both; animation-timeline: view(); animation-range: entry 10% cover 50%; }
+  @keyframes tilt { from { transform: rotate(-14deg) translateY(80px); } to { transform: rotate(-5deg); } }
+}
+
+/* 03 Clockful: the timer is the poster */
+.cf-clock { margin-top: clamp(18px, 2.4vw, 36px); padding-top: 12px; border-top: 3px solid currentColor; }
+.cf-head { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 22px; }
+.cf-head .rec { display: inline-flex; align-items: center; gap: 8px; }
+.cf-head .rec::before { content: ""; width: 12px; height: 12px; border-radius: 50%; background: var(--pink); box-shadow: 0 0 0 2px var(--navy); }
+.paused .cf-head .rec::before { background: transparent; }
+@media (prefers-reduced-motion: no-preference) { html:not(.shot) .c-cf:not(.paused) .rec::before { animation: blink 1s steps(2, jump-none) infinite; } }
+@keyframes blink { 50% { opacity: .2; } }
+.cf-head .btn { margin-left: auto; min-height: 40px; }
+.timer { display: flex; width: max-content; margin: clamp(10px, 1.4vw, 20px) 0 0; --lh: .76em; --top: .09em; font-size: 20vw; line-height: var(--lh); font-weight: 250; font-variation-settings: "wdth" 100, "wght" 250; }
+.dg { display: inline-block; height: var(--lh); overflow: hidden; width: var(--dw, .6em); text-align: center; }
+.dg .strip { display: block; transition: transform .7s var(--ease); }
+.dg .strip span { display: block; height: 1em; line-height: 1; }
+.colon { display: inline-block; width: var(--cw, .3em); height: var(--lh); overflow: hidden; text-align: center; line-height: 1; }
+.colon span { display: block; transform: translateY(calc(-1 * var(--top))); }
+.stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 24px; margin: clamp(24px, 3vw, 44px) 0 0; padding: 0; list-style: none; }
+.stats li { padding-top: 14px; border-top: 3px solid currentColor; display: grid; gap: 8px; align-content: start; }
+.stats b { font-weight: 900; font-size: clamp(54px, 6.4vw, 104px); line-height: .82; font-variation-settings: "wdth" 58; }
+.stats span { font-size: 15px; line-height: 1.35; font-weight: 600; }
+.cf-foot { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: clamp(24px, 4vw, 72px); margin-top: clamp(36px, 4vw, 64px); align-items: end; }
+.cf-foot .ch-info { gap: 16px; }
+
+/* 04 Space folio: dark sheet, orbits, a monitor, an honest receipt */
+.c-sp { padding-bottom: clamp(24px, 3vw, 40px); }
+.stars { position: absolute; z-index: 0; inset: 0; pointer-events: none; opacity: .85;
+  background-image: radial-gradient(1.6px 1.6px at 20px 30px, #fff 50%, transparent 52%), radial-gradient(1.1px 1.1px at 120px 80px, #fff 50%, transparent 52%),
+    radial-gradient(1.3px 1.3px at 60px 150px, #cfd3ff 50%, transparent 52%), radial-gradient(2.2px 2.2px at 160px 120px, #ffd23f 50%, transparent 52%);
+  background-size: 180px 180px, 230px 230px, 140px 140px, 410px 410px; }
+.orbits { position: absolute; z-index: 0; inset: 0; width: 100%; height: 100%; pointer-events: none; opacity: .6; }
+.orbits ellipse { fill: none; stroke: rgb(238 240 255 / .22); stroke-width: 1.5; stroke-dasharray: 2 7; }
+.c-sp > :not(.stars, .orbits) { position: relative; z-index: 1; }
+.sp-grid { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: clamp(28px, 4vw, 72px); align-items: center; margin-top: clamp(28px, 3vw, 48px); }
+.monitor { padding: 14px 14px 16px; background: #15173a; border-radius: 16px; box-shadow: 0 0 0 2px rgb(238 240 255 / .18), 18px 18px 0 0 var(--pink); }
+.screen { aspect-ratio: 16 / 9; overflow: hidden; border-radius: 6px; background: #000; }
+.screen video { width: 100%; height: 100%; object-fit: cover; display: block; }
+.foot-stand { width: 22%; height: 46px; margin: 0 auto; background: linear-gradient(#15173a, #0e1030); clip-path: polygon(22% 0, 78% 0, 100% 100%, 0 100%); }
+.dim { display: flex; align-items: center; gap: 12px; margin: 14px 0 0; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; font-variation-settings: "wdth" 120; opacity: .8; }
+.dim::before, .dim::after { content: ""; flex: 1; height: 2px; background: currentColor; opacity: .5; }
+.credit { margin: 6px 0 0; font-size: 11px; opacity: .6; text-align: center; }
+.c-sp .tag-chip { background: var(--pink); }
+.receipt { position: relative; display: grid; gap: 6px; width: min(100%, 340px); margin-top: 6px; padding: 16px 18px 18px; background: var(--ice); color: var(--navy); text-decoration: none;
+  transform: rotate(2.5deg); font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: .04em; font-variation-settings: "wdth" 85; transition: transform .35s var(--ease); }
+.receipt:hover { transform: rotate(0deg) translateY(-4px); }
+.receipt::after { content: ""; position: absolute; left: 0; right: 0; bottom: -9px; height: 10px;
+  background: linear-gradient(-45deg, transparent 6px, var(--ice) 6px) 0 0 / 12px 10px repeat-x, linear-gradient(45deg, transparent 6px, var(--ice) 6px) 0 0 / 12px 10px repeat-x; }
+.receipt .r-l { display: flex; gap: 8px; align-items: baseline; }
+.receipt .r-l::after { content: ""; order: 1; flex: 1; border-bottom: 2px dotted rgb(10 13 51 / .4); }
+.receipt .r-l b { order: 2; font-weight: 900; font-size: 18px; }
+.receipt .r-h { padding-bottom: 6px; border-bottom: 2px dashed rgb(10 13 51 / .35); font-weight: 800; }
+.receipt .r-t { padding-top: 6px; border-top: 2px dashed rgb(10 13 51 / .35); font-weight: 900; }
+.c-sp .fit-host { margin-top: clamp(40px, 5vw, 80px); }
+.c-sp .fit { color: transparent; -webkit-text-stroke: 2px var(--ice); }
+@media (pointer: coarse) { .fine-only { display: none !important; } }
+@media (pointer: fine) { .coarse-only { display: none !important; } }
+
+/* after the chapters */
+.more { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px 32px; padding-top: 22px; padding-bottom: 22px; z-index: 5; }
+.more p { margin: 0; max-width: 70ch; }
+
+/* how I work */
+.rows { margin: clamp(20px, 2.4vw, 36px) 0 0; padding: 0; list-style: none; border-top: 3px solid currentColor; }
+.row { display: grid; grid-template-columns: minmax(56px, 1fr) minmax(0, 6fr) minmax(0, 4fr); gap: 24px; align-items: baseline; padding: 22px 14px; border-bottom: 3px solid currentColor;
+  transition: background .35s var(--ease), color .35s var(--ease); }
+.row .n { font-weight: 900; font-size: clamp(36px, 4vw, 64px); line-height: .8; font-variation-settings: "wdth" 50; }
+.row .st { margin: 0; font-weight: 900; font-size: clamp(28px, 3.5vw, 58px); line-height: .92; text-transform: uppercase; font-variation-settings: "wdth" 62; transition: font-variation-settings .6s var(--ease); }
+.row .rc { margin: 0; font-size: 17px; line-height: 1.45; }
+.row .rc b { display: block; font-size: 12px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; font-variation-settings: "wdth" 125; color: var(--accent); margin-bottom: 4px; }
+[data-theme="cobalt"] .s-alt .row .rc b { color: var(--cobalt); }
+.row:hover { background: var(--sfg); color: var(--sbg); }
+.row:hover .st { font-variation-settings: "wdth" 92; }
+
+/* AI workflow */
+.ai-grid { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: clamp(32px, 4.5vw, 80px); margin-top: clamp(20px, 2.4vw, 36px); align-items: start; }
+.ai-l .fit-host { margin-top: 0; }
+.ai-l .lede { margin-top: clamp(22px, 2.4vw, 36px); max-width: 42ch; font-size: clamp(18px, 1.45vw, 22px); }
+.track { position: relative; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 8px; margin: 32px 0 0; padding: 0; list-style: none; }
+.track li { position: relative; z-index: 1; padding: 10px 8px 12px; box-shadow: inset 0 0 0 2px currentColor; background: var(--sbg); font-weight: 800; font-size: 14px; text-transform: uppercase; letter-spacing: .03em; font-variation-settings: "wdth" 105; }
+.track li span { display: block; font-size: 11px; opacity: .7; }
+.track li.g { background: var(--accent); color: var(--on-accent); box-shadow: none; }
+.gateboard { --sbg: var(--ice); --sfg: var(--navy); background: var(--ice); color: var(--navy); padding: 22px 24px 18px; transform: rotate(1.4deg); box-shadow: 14px 14px 0 0 var(--accent); }
+.gateboard h3 { margin: 0 0 6px; }
+.gateboard ul { margin: 0; padding: 0; list-style: none; }
+.gateboard li { display: flex; align-items: baseline; gap: 10px; padding: 9px 0; border-bottom: 2px dashed rgb(10 13 51 / .25); font-weight: 700; font-size: 16px; }
+.gateboard li::after { content: ""; order: 1; flex: 1; border-bottom: 2px dotted rgb(10 13 51 / .35); }
+.gateboard li i { order: 2; font-style: normal; font-weight: 900; font-size: 13px; letter-spacing: .08em; padding: 3px 8px; color: var(--cobalt); box-shadow: inset 0 0 0 2px currentColor; transform: rotate(-7deg);
+  transition: transform .45s cubic-bezier(.3, 1.6, .5, 1), opacity .2s; transition-delay: calc(var(--i) * .32s + .2s); }
+.gateboard:not(.run) li i { opacity: 0; transform: rotate(-7deg) scale(2.4); }
+.gateboard .done { margin: 12px 0 0; font-weight: 900; font-size: 15px; text-transform: uppercase; letter-spacing: .04em; }
+.proofs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; margin: clamp(40px, 5vw, 72px) 0 0; padding: 0; list-style: none; }
+.proofs li { display: flex; flex-direction: column; gap: 10px; padding: 20px 20px 22px; box-shadow: inset 0 0 0 3px currentColor; transition: transform .35s var(--ease), box-shadow .35s var(--ease); }
+.proofs li:hover { transform: translate(-4px, -4px); box-shadow: inset 0 0 0 3px currentColor, 6px 6px 0 0 currentColor; }
+.proofs h3 { margin: 0; font-weight: 900; font-size: clamp(24px, 2vw, 32px); line-height: .95; text-transform: uppercase; font-variation-settings: "wdth" 110; }
+.proofs p { margin: 0; font-size: 16px; line-height: 1.45; }
+.proofs a { margin-top: auto; font-weight: 800; font-size: 14px; text-transform: uppercase; letter-spacing: .03em; }
+
+/* stack band + credentials */
+.stackband { padding: clamp(18px, 2vw, 28px) 0; overflow: hidden; display: grid; gap: 6px; }
+.stackband .band-track { animation-duration: 60s; }
+.stackband .rev { animation-direction: reverse; }
+.stackband ul { gap: 28px; padding-right: 28px; }
+.stackband li { gap: 28px; font-size: clamp(38px, 5.6vw, 88px); line-height: 1; letter-spacing: 0; font-weight: 900; font-variation-settings: "wdth" 60; }
+.stackband li:nth-child(even) { font-weight: 300; font-variation-settings: "wdth" 140, "wght" 300; }
+.creds { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 18px; margin: clamp(24px, 3vw, 44px) 0 0; padding: 0; list-style: none; }
+.cred { position: relative; display: flex; flex-direction: column; gap: 10px; min-height: 230px; padding: 20px 20px 22px; background: var(--sfg); color: var(--sbg); transition: transform .4s var(--ease);
+  -webkit-mask: radial-gradient(circle 11px at 0 calc(100% - 47px), #0000 98%, #000) left / 51% 100% no-repeat, radial-gradient(circle 11px at 100% calc(100% - 47px), #0000 98%, #000) right / 51% 100% no-repeat;
+          mask: radial-gradient(circle 11px at 0 calc(100% - 47px), #0000 98%, #000) left / 51% 100% no-repeat, radial-gradient(circle 11px at 100% calc(100% - 47px), #0000 98%, #000) right / 51% 100% no-repeat; }
+.cred:hover { transform: rotate(-2deg) translateY(-6px); }
+.cred.k-acc { background: var(--accent); color: var(--on-accent); }
+.cred.k-line { background: transparent; color: inherit; box-shadow: inset 0 0 0 3px currentColor; }
+.cred .ck { font-size: 12px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; font-variation-settings: "wdth" 125; opacity: .8; }
+.cred b { font-weight: 900; font-size: clamp(30px, 2.6vw, 44px); line-height: .9; text-transform: uppercase; font-variation-settings: "wdth" 96; }
+.cred b.wide { font-variation-settings: "wdth" 128; }
+.cred p { margin: 0; font-size: 15px; line-height: 1.4; }
+.cred .cut { margin-top: auto; padding-top: 12px; border-top: 2px dashed currentColor; font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: .05em; }
+
+/* contact */
+.contact-grid { display: grid; grid-template-columns: minmax(0, 6fr) minmax(0, 6fr); gap: clamp(32px, 5vw, 96px); margin-top: clamp(20px, 2.4vw, 36px); align-items: start; }
+.contact-grid .fit-host { margin-top: 0; }
+.contact .lede { margin-top: 24px; max-width: 36ch; font-size: clamp(19px, 1.5vw, 23px); }
+.qf { display: grid; gap: 4px; margin: 26px 0 0; padding: 0; list-style: none; font-weight: 700; font-size: 14px; text-transform: uppercase; letter-spacing: .04em; font-variation-settings: "wdth" 120; }
+.qf li::before { content: "■ "; }
+form.msg { display: grid; gap: 16px; }
+form.msg label { display: grid; gap: 6px; }
+form.msg input, form.msg textarea { width: 100%; padding: 14px 16px; border: 0; border-radius: 0; background: transparent; color: inherit; font: 500 20px/1.35 var(--sans);
+  font-variation-settings: "wdth" 100; box-shadow: inset 0 0 0 3px currentColor; }
+form.msg textarea { min-height: 150px; resize: vertical; }
+form.msg ::placeholder { color: currentColor; opacity: .55; }
+form.msg input:focus, form.msg textarea:focus { outline: none; box-shadow: inset 0 0 0 5px currentColor; }
+.f-row { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 18px; }
+.f-row small { font-size: 13px; max-width: 34ch; }
+.direct { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 30px; padding-top: 22px; border-top: 3px solid currentColor; }
+.toast { position: fixed; z-index: 70; left: 50%; bottom: 72px; transform: translate(-50%, 20px); padding: 12px 18px; background: var(--navy); color: var(--ice); font-weight: 700; font-size: 14px;
+  opacity: 0; pointer-events: none; transition: opacity .3s, transform .4s var(--ease); box-shadow: 5px 5px 0 var(--pink); }
+.toast.on { opacity: 1; transform: translate(-50%, 0); }
+
+/* footer */
+footer.sec { padding-bottom: 0; overflow: clip; }
+.foot-cols { display: grid; grid-template-columns: minmax(0, 2fr) repeat(4, minmax(0, 1fr)); gap: 28px; }
+.foot-cols h3 { margin: 0 0 12px; }
+.foot-cols ul { margin: 0; padding: 0; list-style: none; display: grid; gap: 8px; font-size: 16px; }
+.foot-cols ul a { text-decoration: none; }
+.foot-cols ul a:hover { text-decoration: underline; text-underline-offset: 4px; }
+.foot-cols .say { margin: 0 0 16px; font-weight: 800; font-size: clamp(24px, 2vw, 32px); line-height: 1; font-variation-settings: "wdth" 80; text-transform: uppercase; }
+.foot-row { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 10px 24px; margin-top: clamp(32px, 4vw, 56px); padding: 14px 0; border-top: 2px solid currentColor; font-size: 13px; font-weight: 600; }
+footer .fit-host { margin-top: 8px; }
+footer .fit { color: var(--accent); }
+
+/* comp controls (not part of the design) */
+.comp { position: fixed; z-index: 60; left: 50%; bottom: 14px; transform: translateX(-50%); display: flex; align-items: center; gap: 2px; padding: 4px; border-radius: 999px;
+  background: rgb(0 0 0 / .8); color: #fff; font: 500 12px/1 system-ui, sans-serif; backdrop-filter: blur(6px); white-space: nowrap; }
+.comp button, .comp a { appearance: none; border: 0; background: none; color: #fff; padding: 9px 11px; border-radius: 999px; cursor: pointer; text-decoration: none; font: inherit; }
+.comp [aria-pressed="true"] { background: #fff; color: #000; }
+.comp .sep { width: 1px; height: 18px; margin: 0 4px; background: rgb(255 255 255 / .3); }
+.shot .comp { display: none; }
+
+/* responsive */
+@media (max-width: 1180px) {
+  nav.main, header .loc, header .tbtn { display: none; }
+  .menu-btn { display: inline-flex; }
+  .actions { margin-left: auto; }
+}
+@media (max-width: 1000px) {
+  .creds { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .foot-cols { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .foot-cols > :first-child { grid-column: 1 / -1; }
+}
+@media (max-width: 900px) {
+  .role, .lede, .cta-col { grid-column: span 12; }
+  .pw-grid, .board, .sp-grid, .cf-foot, .ai-grid, .contact-grid { grid-template-columns: minmax(0, 1fr); }
+  .pw-grid { margin-top: 24px; }
+  .pw-grid .ch-info, .board .side { padding-top: 0; }
+  .pw-stage { order: -1; }
+  .board { margin-top: calc(var(--fit-h, 120px) * -0.35); }
+  .stage { order: -1; }
+  .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .row { grid-template-columns: minmax(0, 1fr); gap: 10px; }
+  .proofs { grid-template-columns: minmax(0, 1fr); }
+  .track { grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 4px; }
+  .track li { font-size: 11px; padding: 8px 5px 10px; font-variation-settings: "wdth" 80; }
+}
+@media (max-width: 640px) {
+  header.site { padding-top: 10px; padding-bottom: 10px; gap: 8px; }
+  .mark { font-size: 19px; }
+  .actions { gap: 6px; }
+  .btn { padding: 0 13px; min-height: 44px; font-size: 13px; }
+  header .split .pdf { display: none; }
+  .info { gap: 18px; }
+  .hero { padding-bottom: 64px; }
+  .sticker { width: 96px; right: 14px; top: auto; bottom: -30px; }
+  .bar { grid-template-columns: 1fr auto; font-size: 12px; }
+  .bar p:nth-child(2) { display: none; }
+  .tag-chip { font-size: 11px; }
+  .order { left: auto; right: 0; width: 176px; padding: 10px 10px 12px; font-size: 11px; transform: rotate(3deg); box-shadow: 7px 7px 0 var(--cobalt); }
+  .order .o-k { font-size: 10px; margin-bottom: 6px; }
+  .order .o-l { font-size: 9px; }
+  .order .o-f { padding: 5px 7px; margin: 3px 0 6px; font-size: 11px; }
+  .o-chips { margin-bottom: 10px; }
+  .o-chips span { padding: 4px 6px; font-size: 9px; }
+  .o-btn { padding: 8px 9px; font-size: 11px; }
+  .pw-stage { padding: 0 34px 150px 0; }
+  .cursor { width: 24px; }
+  .flash { right: -6px; bottom: 6%; width: 132px; padding: 10px 12px 12px; }
+  .flash b { font-size: 24px; }
+  .flash em { font-size: 12px; }
+  .phone { width: 210px; box-shadow: 0 0 0 7px var(--navy), 12px 14px 0 7px rgb(10 13 51 / 0.9); }
+  .cf-head { font-size: 11px; }
+  .stats { gap: 18px; }
+  .stats span { font-size: 13px; }
+  .monitor { padding: 8px 8px 10px; border-radius: 10px; box-shadow: 0 0 0 2px rgb(238 240 255 / .18), 10px 10px 0 0 var(--pink); }
+  .foot-stand { height: 28px; }
+  .c-sp .fit { -webkit-text-stroke-width: 1.5px; }
+  .orbits { opacity: .45; }
+  .row { padding: 18px 4px; }
+  .creds { grid-template-columns: none; grid-auto-flow: column; grid-auto-columns: 80%; gap: 12px; overflow-x: auto; scroll-snap-type: x mandatory;
+    margin-inline: calc(-1 * var(--gutter)); padding: 0 var(--gutter) 14px; scroll-padding-inline: var(--gutter); scrollbar-width: thin; }
+  .cred { scroll-snap-align: start; min-height: 250px; }
+  .foot-cols { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 24px 16px; }
+  .comp { font-size: 11px; bottom: 10px; }
+  .comp button, .comp a { padding: 8px 7px; }
+  .comp .long { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}
+.shot .sticker svg, .shot .band-track { animation: none; }
+.shot header.site { position: relative; }
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<div class="grain" aria-hidden="true"></div>
+
+<header class="site">
+  <a class="mark" href="#top" aria-label="Mateusz Muszarski, home"><span class="m-s">M—M</span><span class="m-l">Mateusz Muszarski</span></a>
+  <nav class="main" aria-label="Main"><a href="#work">Work</a><a href="#how-i-work">How I work</a><a href="#ai">AI workflow</a><a href="#">Blog</a></nav>
+  <div class="loc" aria-label="Language"><a href="#" aria-current="true">EN</a><a href="#">PL</a><a href="#">ES</a></div>
+  <button class="btn btn-line tbtn" type="button" data-cycle-theme aria-label="Change theme">◐ <span>Cobalt</span></button>
+  <div class="actions">
+    <span class="split"><a class="btn btn-line" href="#">CV</a><a class="btn btn-line pdf" href="#">↓ PDF</a></span>
+    <a class="btn btn-acc" href="#contact">Contact</a>
+    <button class="btn btn-line menu-btn" type="button" popovertarget="menu">Menu</button>
+  </div>
+</header>
+
+<div id="menu" popover>
+  <div class="m-top"><span class="kick">Menu</span><button class="btn btn-line" type="button" popovertarget="menu" popovertargetaction="hide">Close</button></div>
+  <nav aria-label="Mobile"><a href="#work">Work</a><a href="#how-i-work">How I work</a><a href="#ai">AI workflow</a><a href="#">Blog</a><a href="#">My life</a><a href="#contact">Contact</a></nav>
+  <div class="m-row"><a class="btn btn-line" href="#">↓ CV PDF</a><button class="btn btn-line" type="button" data-cycle-theme>◐ <span>Cobalt</span></button></div>
+  <div class="m-row loc" aria-label="Language"><a href="#" aria-current="true">EN</a><a href="#">PL</a><a href="#">ES</a></div>
+</div>
+
+<main id="main">
+  <section class="sec s-hero hero" id="top" aria-labelledby="h1" data-shot="hero">
+    <div class="fit-host">
+      <h1 class="fit name" id="h1" data-fit="lines" data-sr="Mateusz Muszarski, full-stack product engineer"><span class="line">Mateusz</span><span class="line">Muszarski</span></h1>
+    </div>
+    <div class="sticker" aria-hidden="true">
+      <svg viewBox="0 0 200 200"><circle cx="100" cy="100" r="96"/>
+        <path id="ring" d="M100,100 m-74,0 a74,74 0 1,1 148,0 a74,74 0 1,1 -148,0" fill="none"/>
+        <text font-family="Anybody, sans-serif" font-weight="800" font-size="17" letter-spacing="3" style="font-variation-settings:'wdth' 120">
+          <textPath href="#ring">OPEN TO WORK ✦ POLAND, CET ✦ REMOTE ✦</textPath></text></svg>
+      <div class="core"><span>2022<small>SHIPPING SINCE</small></span></div>
+    </div>
+    <div class="rule" aria-hidden="true"></div>
+    <div class="info">
+      <p class="role">Full-stack<br>product engineer</p>
+      <p class="lede">I turn a business problem into a shipped web or mobile product, and I tell you early what it will cost and what can wait.</p>
+      <div class="cta-col">
+        <a class="btn btn-inv" href="#work">See the work ↓</a>
+        <a class="btn btn-line" href="#">Download CV <small>PDF · 70 KB</small></a>
+        <ul class="facts"><li>Solo, end to end</li><li>Web + mobile</li><li>App Store + Google Play</li></ul>
+      </div>
+    </div>
+  </section>
+
+  <div class="sec s-bar band" aria-label="Proof">
+    <div class="band-track">
+      <ul><li>Shipped solo to the App Store and Google Play</li><li>Client work for Cetuspro</li><li>118 automated tests on an internship build</li><li>13 hand-written GLSL shaders</li><li>30 locales with my own npm tool</li></ul>
+      <ul aria-hidden="true"><li>Shipped solo to the App Store and Google Play</li><li>Client work for Cetuspro</li><li>118 automated tests on an internship build</li><li>13 hand-written GLSL shaders</li><li>30 locales with my own npm tool</li></ul>
+    </div>
+  </div>
+
+  <div class="chapters" id="work">
+    <!-- 01 PstrykWeb -->
+    <section class="sec chapter c-pw" id="pstrykweb" aria-labelledby="t-pw" data-shot="pstrykweb">
+      <div class="bar"><p>01 / 04 · Selected work</p><p>Client work · Cetuspro</p><p>Built solo</p></div>
+      <div class="fit-host"><h2 class="fit" id="t-pw" data-fit="word">PstrykWeb</h2></div>
+      <div class="pw-grid">
+        <div class="ch-info">
+          <p class="outcome">Built PstrykWeb for Cetuspro, solo: bespoke websites for local businesses, ordered through one online form.</p>
+          <ul class="proves">
+            <li><b>Client work:</b> a commercial product for a software house and its customers.</li>
+            <li><b>Public konfigurator:</b> the order form anyone can try today.</li>
+          </ul>
+          <p class="stack">Next.js · TypeScript · Vercel</p>
+          <div class="links"><a class="btn btn-inv" href="#">Read the case study →</a><a class="btn btn-line" href="#">Konfigurator ↗</a></div>
+          <p class="status">● Konfigurator live</p>
+        </div>
+        <div class="pw-stage" aria-hidden="true">
+          <div class="browser">
+            <div class="b-top"><i></i><i></i><i></i><span class="b-url"></span></div>
+            <div class="b-site">
+              <div class="w w-nav" style="--i:0"></div>
+              <div class="w w-h1" style="--i:1"></div>
+              <div class="w w-h2" style="--i:2"></div>
+              <div class="w w-btn" style="--i:3"></div>
+              <div class="w w-img" style="--i:2"></div>
+              <div class="w-cards"><div class="w" style="--i:4"></div><div class="w" style="--i:5"></div><div class="w" style="--i:6"></div></div>
+            </div>
+          </div>
+          <div class="order">
+            <p class="o-k">Order a website</p>
+            <span class="o-l">Business name</span><span class="o-f">Your business</span>
+            <span class="o-l">What you do</span><span class="o-f">A sentence or two</span>
+            <span class="o-l">Style</span>
+            <div class="o-chips"><span class="on">Bold</span><span>Calm</span><span>Classic</span></div>
+            <span class="o-btn">Order website →</span>
+            <svg class="cursor" viewBox="0 0 24 24"><path d="M3 2l7.5 19 2.6-7.4L21 11z" fill="#fff" stroke="#0a0d33" stroke-width="1.6" stroke-linejoin="round"/></svg>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 02 Linkoglot -->
+    <section class="sec chapter c-lk" id="linkoglot" aria-labelledby="t-lk" data-shot="linkoglot">
+      <div class="bar"><p>02 / 04 · Selected work</p><p>Own product</p><p>2026</p></div>
+      <div class="fit-host"><h2 class="fit" id="t-lk" data-fit="word">Linkoglot</h2></div>
+      <div class="board">
+        <div class="side ch-info">
+          <p class="tag-chip"><img src="media/lk-icon.png" alt="" width="30" height="30">Own product · solo · 2026</p>
+          <p class="outcome">Shipped a subscription AI language app to the App Store and Google Play. Solo. In 30 languages.</p>
+          <p class="stack">Expo · React Native · Supabase · RevenueCat · Lingui</p>
+        </div>
+        <div class="stage">
+          <div class="phone"><video muted loop playsinline preload="metadata" poster="media/lk-camera.jpg" aria-label="Linkoglot camera mode: point at an object to learn its name"><source src="media/lk-camera.mp4" type="video/mp4"></video></div>
+          <div class="flash" aria-hidden="true"><span>Snapped → flashcard</span><b>la maceta</b><em>the flowerpot · Spanish</em></div>
+        </div>
+        <div class="side ch-info">
+          <ul class="proves">
+            <li><b>Camera to study set:</b> snap a photo, get flashcards and quizzes.</li>
+            <li><b>Business model:</b> free trial, then monthly or yearly plans via RevenueCat.</li>
+            <li><b>30 locales</b> from my own npm tool, lingui-translate-ai.</li>
+          </ul>
+          <div class="links"><a class="btn btn-inv" href="#">Read the case study →</a><a class="btn btn-line" href="#">App Store ↗</a><a class="btn btn-line" href="#">Google Play ↗</a></div>
+          <p class="status">● Live · pre-traction</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 03 Clockful -->
+    <section class="sec chapter c-cf" id="clockful" aria-labelledby="t-cf" data-shot="clockful">
+      <div class="bar"><p>03 / 04 · Selected work</p><p>Internship · Neoteric</p><p>2026</p></div>
+      <div class="fit-host"><h2 class="fit" id="t-cf" data-fit="word">Clockful</h2></div>
+      <div class="cf-clock">
+        <div class="cf-head kick"><span class="rec">Running</span><span>Demo timer · the app's core loop</span><button class="btn btn-inv" type="button" data-timer-toggle>Stop</button></div>
+        <p class="timer" data-timer role="timer" aria-label="Demo timer"></p>
+      </div>
+      <ul class="stats">
+        <li><b>118</b><span>automated tests: 49 Vitest, 69 Playwright</span></li>
+        <li><b>5/5</b><span>tables behind row-level security, 12 policies</span></li>
+        <li><b>15</b><span>requirements in the spec</span></li>
+        <li><b>~9</b><span>days from spec to hand-in (estimate from the dates)</span></li>
+      </ul>
+      <div class="cf-foot">
+        <div class="ch-info">
+          <p class="outcome">A role-based time tracker built with AI agents under a deadline, and verified at every step.</p>
+          <p class="stack">Next.js · Supabase · Postgres RLS · TanStack Query · Playwright</p>
+          <p class="status">● Code private · no public deployment</p>
+        </div>
+        <div class="links"><a class="btn btn-inv" href="#">Read the case study →</a><a class="btn btn-line" href="#contact">Ask for a walkthrough</a></div>
+      </div>
+    </section>
+
+    <!-- 04 Space folio -->
+    <section class="sec chapter c-sp" id="space" aria-labelledby="t-sp" data-shot="space">
+      <div class="stars" aria-hidden="true"></div>
+      <svg class="orbits" viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+        <g transform="translate(420 420) rotate(-12)">
+          <ellipse rx="180" ry="62"/><ellipse rx="330" ry="112"/><ellipse rx="500" ry="170"/><ellipse rx="700" ry="238"/>
+          <circle r="22" fill="#ffd23f"/>
+          <circle data-orbit="180,62,0.32,0.4" r="6" fill="#eef0ff"/>
+          <circle data-orbit="330,112,0.21,2.2" r="10" fill="#ff4fb8"/>
+          <circle data-orbit="500,170,0.14,4.1" r="13" fill="#2433ff" stroke="#eef0ff" stroke-width="2"/>
+          <circle data-orbit="700,238,0.09,1.2" r="9" fill="#ffd23f"/>
+        </g>
+      </svg>
+      <div class="bar"><p>04 / 04 · Selected work</p><p>Personal · creative</p><p>2025</p></div>
+      <div class="sp-grid">
+        <div class="sp-stage">
+          <div class="monitor"><div class="screen"><video muted loop playsinline preload="metadata" poster="media/space-poster.jpg" aria-label="The space portfolio: flying from Mars to Jupiter"><source src="media/space-clip.mp4" type="video/mp4"></video></div></div>
+          <div class="foot-stand" aria-hidden="true"></div>
+          <p class="dim">desktop · WebGL2 · ~14 MB</p>
+          <p class="credit">Planet textures: Solar System Scope, CC BY 4.0</p>
+        </div>
+        <div class="ch-info">
+          <p class="tag-chip">Personal · creative · 2025</p>
+          <p class="outcome">A portfolio you fly through: Earth to Neptune in a 12-stop WebGL camera journey.</p>
+          <ul class="proves">
+            <li><b>13 GLSL shader programs,</b> written by hand.</li>
+            <li><b>Camera choreography</b> with GSAP, plus postprocessing.</li>
+          </ul>
+          <p class="stack">three.js · React Three Fiber · GLSL · GSAP · Vite</p>
+          <div class="links">
+            <a class="btn btn-acc fine-only" href="#">Launch on desktop ↗</a>
+            <button class="btn btn-acc coarse-only" type="button" data-copy="https://3d-space-folio.vercel.app/">Desktop only · copy link</button>
+            <a class="btn btn-line" href="#">Code ↗</a>
+          </div>
+          <a class="receipt" href="#">
+            <span class="r-h">Lighthouse · 2026-10-05</span>
+            <span class="r-l">Mobile performance<b>34</b></span>
+            <span class="r-l">Desktop performance<b>60</b></span>
+            <span class="r-l">Before the start button<b>13.8 MB</b></span>
+            <span class="r-t">So I rebuilt it. Read how →</span>
+          </a>
+        </div>
+      </div>
+      <div class="fit-host"><h2 class="fit" id="t-sp" data-fit="word">Space folio</h2></div>
+    </section>
+  </div>
+
+  <div class="sec s-bar more" data-shot="more">
+    <p><b>Also shipped:</b> lingui-translate-ai, an npm CLI that translates Lingui catalogs with LLMs. It grew out of Linkoglot.</p>
+    <a class="btn btn-acc" href="#">All projects →</a>
+  </div>
+
+  <section class="sec s-alt how" id="how-i-work" aria-labelledby="t-how" data-shot="how">
+    <div class="bar"><p>How I work</p><p>Four principles</p><p>Each with a receipt</p></div>
+    <div class="fit-host"><h2 class="fit" id="t-how" data-fit="word" data-calm>How I work</h2></div>
+    <ol class="rows">
+      <li class="row"><span class="n">01</span><p class="st">I build for the business result.</p><p class="rc"><b>Receipt</b>Linkoglot runs a free trial, then monthly or yearly plans through RevenueCat.</p></li>
+      <li class="row"><span class="n">02</span><p class="st">I build the whole thing.</p><p class="rc"><b>Receipt</b>PstrykWeb, built solo for Cetuspro. Linkoglot, solo, through App Store and Google Play review.</p></li>
+      <li class="row"><span class="n">03</span><p class="st">I use AI as leverage, and I verify it.</p><p class="rc"><b>Receipt</b>Clockful: 118 automated tests and row-level security on every table.</p></li>
+      <li class="row"><span class="n">04</span><p class="st">I make the work visible.</p><p class="rc"><b>Receipt</b>Every case study names what I cut, what I'd change and what isn't measured yet.</p></li>
+    </ol>
+  </section>
+
+  <section class="sec s-deep ai" id="ai" aria-labelledby="t-ai" data-shot="ai">
+    <div class="bar"><p>AI workflow</p><p>Delegate · verify · explain</p><p>Since 2025</p></div>
+    <div class="ai-grid">
+      <div class="ai-l">
+        <div class="fit-host"><h2 class="fit" id="t-ai" data-fit="lines" data-sr="Delegate, then verify"><span class="line">Delegate.</span><span class="line">Verify.</span></h2></div>
+        <p class="lede">I plan the work, delegate the build to AI agents and let nothing ship until it passes the gates. I can explain every line that ships.</p>
+        <ol class="track" aria-label="The loop">
+          <li><span>01</span>Spec</li><li><span>02</span>Plan</li><li><span>03</span>Delegate</li><li class="g"><span>04</span>Gates</li><li><span>05</span>Ship</li>
+        </ol>
+      </div>
+      <div class="gateboard" data-gates>
+        <h3 class="kick">Every change runs the gates</h3>
+        <ul>
+          <li style="--i:0">Typecheck<i>PASS</i></li>
+          <li style="--i:1">Lint<i>PASS</i></li>
+          <li style="--i:2">Unit + end-to-end tests<i>PASS</i></li>
+          <li style="--i:3">Screenshots, 390 to 1440 px<i>PASS</i></li>
+          <li style="--i:4">Accessibility (axe)<i>PASS</i></li>
+          <li style="--i:5">Lighthouse mobile ≥ 90<i>PASS</i></li>
+          <li style="--i:6">My review<i>PASS</i></li>
+        </ul>
+        <p class="done">Then it ships.</p>
+      </div>
+    </div>
+    <ul class="proofs">
+      <li><span class="kick">Internship</span><h3>Clockful</h3><p>Built only with AI agents, under a deadline: 15 requirements, 118 automated tests, row-level security on all 5 tables.</p><a href="#clockful">See the chapter ↑</a></li>
+      <li><span class="kick">This site</span><h3>How this site was built</h3><p>A project wiki, session hooks and the gates above, so every AI session starts with the same rules.</p><a href="#">Read the write-up →</a></li>
+      <li><span class="kick">Open source</span><h3>lingui-translate-ai</h3><p>My npm CLI (v1.1.0) that translates Lingui catalogs with LLMs. It took Linkoglot to 30 locales.</p><a href="#">npm ↗</a></li>
+    </ul>
+  </section>
+
+  <div class="sec s-bar band stackband" aria-label="Stack">
+    <div class="band-track"><ul><li>TypeScript</li><li>React</li><li>React Native</li><li>Next.js</li><li>Astro</li><li>Node.js</li><li>Supabase</li></ul><ul aria-hidden="true"><li>TypeScript</li><li>React</li><li>React Native</li><li>Next.js</li><li>Astro</li><li>Node.js</li><li>Supabase</li></ul></div>
+    <div class="band-track rev" aria-hidden="true"><ul><li>Postgres</li><li>three.js</li><li>GLSL</li><li>Expo</li><li>Tailwind</li><li>Playwright</li><li>Claude Code</li></ul><ul><li>Postgres</li><li>three.js</li><li>GLSL</li><li>Expo</li><li>Tailwind</li><li>Playwright</li><li>Claude Code</li></ul></div>
+  </div>
+
+  <section class="sec s-alt creds-sec" id="credentials" aria-labelledby="t-cr" data-shot="credentials">
+    <div class="bar"><p>Credentials</p><p>Qualifications · training · teams</p><p>Verify links on the CV</p></div>
+    <div class="fit-host"><h2 class="fit" id="t-cr" data-fit="word" data-calm>Credentials</h2></div>
+    <ul class="creds">
+      <li class="cred"><span class="ck">State qualification · CKE</span><b class="wide">INF.02</b><p>Computer systems, peripherals and local networks.</p><span class="cut">Verify ↗</span></li>
+      <li class="cred"><span class="ck">State qualification · CKE</span><b class="wide">INF.03</b><p>Websites, web applications and databases.</p><span class="cut">Verify ↗</span></li>
+      <li class="cred"><span class="ck">State qualification · CKE</span><b class="wide">INF.04</b><p>Designing, programming and testing applications.</p><span class="cut">Verify ↗</span></li>
+      <li class="cred k-acc"><span class="ck">Course · Bruno Simon</span><b>Three.js Journey</b><p>WebGL, shaders and 3D for the web.</p><span class="cut">Certificate ↗</span></li>
+      <li class="cred k-acc"><span class="ck">Courses · Jonas Schmedtmann</span><b>JS · React</b><p>JavaScript and React, from the fundamentals up.</p><span class="cut">Certificates ↗</span></li>
+      <li class="cred k-line"><span class="ck">Teamwork · Europe · ESC</span><b>Erasmus+</b><p>Youth exchanges and volunteering: working with people from other countries.</p><span class="cut">Details on the CV</span></li>
+      <li class="cred k-line"><span class="ck">Teamwork · pressure</span><b>Hackathons</b><p>Solving a hard problem in a team, against the clock.</p><span class="cut">Details on the CV</span></li>
+      <li class="cred k-line"><span class="ck">Beyond code</span><b>Marketing, UX</b><p>Short courses in marketing, psychology and UX.</p><span class="cut">Details on the CV</span></li>
+    </ul>
+  </section>
+
+  <section class="sec s-accent contact" id="contact" aria-labelledby="t-ct" data-shot="contact">
+    <div class="bar"><p>Contact</p><p>One email is enough</p><p>Poland · CET</p></div>
+    <div class="contact-grid">
+      <div>
+        <div class="fit-host"><h2 class="fit" id="t-ct" data-fit="lines" data-sr="Let's talk"><span class="line">Let's</span><span class="line">talk</span></h2></div>
+        <p class="lede">A role, a project or a question. Write two lines; I answer with a yes, a no or a question.</p>
+        <ul class="qf"><li>Open to full-time roles and contracts</li><li>Remote, Poland (CET)</li><li>English and Polish</li></ul>
+      </div>
+      <div>
+        <form class="msg" data-form>
+          <label><span class="kick">Your email</span><input type="email" name="email" required autocomplete="email" placeholder="you@company.com"></label>
+          <label><span class="kick">Message</span><textarea name="message" required placeholder="We're hiring for… / I need… / Quick question:"></textarea></label>
+          <div class="f-row"><button class="btn btn-inv" type="submit">Send message →</button><small>Your email is used only to reply. Privacy policy.</small></div>
+        </form>
+        <div class="direct">
+          <button class="btn btn-line" type="button" data-copy="hello@matmuszarski.space">Copy email</button>
+          <a class="btn btn-line" href="#">LinkedIn ↗</a><a class="btn btn-line" href="#">GitHub ↗</a>
+          <span class="split"><a class="btn btn-line" href="#">CV</a><a class="btn btn-line" href="#">↓ PDF</a></span>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="sec s-bar" data-shot="footer">
+  <div class="foot-cols">
+    <div><p class="say">Building something?<br>Let's talk.</p><a class="btn btn-acc" href="#contact">Contact</a></div>
+    <div><h3 class="kick">Work</h3><ul><li><a href="#pstrykweb">PstrykWeb</a></li><li><a href="#linkoglot">Linkoglot</a></li><li><a href="#clockful">Neoteric Clockful</a></li><li><a href="#space">Space folio</a></li><li><a href="#">All projects</a></li></ul></div>
+    <div><h3 class="kick">Site</h3><ul><li><a href="#">Blog</a></li><li><a href="#">CV</a></li><li><a href="#">My life</a></li><li><a href="#">How this site was built</a></li><li><a href="#">RSS</a></li></ul></div>
+    <div><h3 class="kick">Elsewhere</h3><ul><li><a href="#">GitHub</a></li><li><a href="#">LinkedIn</a></li><li><a href="#">npm</a></li></ul></div>
+    <div><h3 class="kick">Legal</h3><ul><li><a href="#">Privacy</a></li><li><a href="#">Terms</a></li></ul><div class="loc" style="margin-top:18px" aria-label="Language"><a href="#" aria-current="true">EN</a><a href="#">PL</a><a href="#">ES</a></div></div>
+  </div>
+  <div class="foot-row"><span>© 2026 Mateusz Muszarski</span><span>Built with Astro · rev 343c75c · 2026-10-05</span></div>
+  <div class="fit-host"><p class="fit" data-fit="word" aria-hidden="true">Muszarski</p></div>
+</footer>
+
+<div class="toast" role="status" aria-live="polite"></div>
+
+<nav class="comp" aria-label="Comp variants">
+  <a href="./" aria-label="All directions">←<span class="long">&nbsp;All</span></a><span class="sep"></span>
+  <button type="button" data-theme-btn="cobalt">Cobalt</button><button type="button" data-theme-btn="paper">Paper</button><button type="button" data-theme-btn="ink">Ink</button><span class="sep"></span>
+  <button type="button" data-type-btn="anybody">Anybody</button><button type="button" data-type-btn="flex">Flex</button>
+</nav>
+
+<script>
+(() => {
+  const doc = document.documentElement;
+  const q = new URLSearchParams(location.search);
+  const shot = q.has("shot");
+  const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const forcedT = q.has("t") ? parseFloat(q.get("t")) : null;
+  const still = reduce || forcedT !== null;
+  const NBSP = String.fromCharCode(160);
+  const AX = { anybody: [50, 150], flex: [25, 151] };
+  const FAM = { anybody: "Anybody", flex: "Roboto Flex" };
+  const range = () => AX[doc.dataset.type] || AX.anybody;
+  const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+  const fvs = (w) => `"wdth" ${w.toFixed(2)}, "wght" 900`;
+  const width = (el) => el.getBoundingClientRect().width;
+
+  // ---- fitted type: split every [data-fit] line into letter boxes (.ch) that each hold one glyph (i)
+  const blocks = [...document.querySelectorAll("[data-fit]")].map((el, bi) => {
+    const multi = el.dataset.fit === "lines";
+    const sr = el.dataset.sr || (multi ? "" : el.textContent.trim());
+    const lineEls = multi ? [...el.querySelectorAll(".line")] : [el];
+    const lines = lineEls.map((line) => {
+      const text = line.textContent.trim();
+      line.textContent = "";
+      if (multi) line.setAttribute("aria-hidden", "true");
+      const chars = [...text].map((c) => {
+        const box = document.createElement("span"); box.className = "ch"; box.setAttribute("aria-hidden", "true");
+        const g = document.createElement("i"); g.textContent = c === " " ? NBSP : c; box.append(g); line.append(box);
+        return { el: box, g };
+      });
+      return { el: line, chars, wdth: 100, delta: 0, W: 0, slopeSum: 1 };
+    });
+    if (sr && el.getAttribute("aria-hidden") !== "true") { const s = document.createElement("span"); s.className = "sr"; s.textContent = sr; el.prepend(s); }
+    return { el, lines, calm: el.hasAttribute("data-calm"), phase: bi * 1.37, settled: false, section: el.closest("section, footer") };
+  });
+
+  // Fit: one font size per block so its widest line fills the host at the base width, then each line solves its own
+  // WIDTH axis to land flush. Letter boxes are locked; only transforms move letters afterwards (no layout shift).
+  let first = true;
+  function fit() {
+    const [lo0, hi0] = range();
+    const narrow = innerWidth < 700;
+    for (const b of blocks) {
+      const host = b.el.parentElement, ps = getComputedStyle(host);
+      const W = host.clientWidth - parseFloat(ps.paddingLeft) - parseFloat(ps.paddingRight);
+      const base = clamp(parseFloat(b.el.dataset.base || (narrow ? 66 : 96)), lo0, hi0);
+      b.el.style.fontSize = "100px";
+      for (const l of b.lines) {
+        l.el.style.fontVariationSettings = fvs(base);
+        for (const c of l.chars) { c.g.style.fontVariationSettings = ""; c.el.style.transform = ""; c.el.style.width = ""; }
+      }
+      const widest = Math.max(...b.lines.map((l) => width(l.el)));
+      b.el.style.fontSize = (100 * W) / widest + "px";
+      for (const l of b.lines) {
+        let lo = lo0, hi = hi0;
+        for (let i = 0; i < 18; i++) { const mid = (lo + hi) / 2; l.el.style.fontVariationSettings = fvs(mid); width(l.el) > W ? (hi = mid) : (lo = mid); }
+        l.el.style.fontVariationSettings = fvs(lo);
+        const setAll = (w) => l.chars.forEach((c) => (c.g.style.fontVariationSettings = fvs(w)));
+        setAll(lo0); const a = l.chars.map((c) => width(c.g));
+        setAll(hi0); const z = l.chars.map((c) => width(c.g));
+        setAll(lo); const m = l.chars.map((c) => width(c.g));
+        const intro = first && !still;
+        l.chars.forEach((c, i) => { c.base = m[i]; c.slope = Math.max(0.01, (z[i] - a[i]) / (hi0 - lo0)); c.cur = intro ? lo0 : lo; });
+        if (intro) setAll(lo0);
+        l.wdth = lo; l.W = W; l.delta = 0;
+        let x = 0; for (const c of l.chars) { c.el.style.width = c.base + "px"; c.x = x + c.base / 2; x += c.base; }
+        l.slopeSum = l.chars.reduce((s, c) => s + c.slope, 0);
+      }
+      b.settled = false;
+      if (b.section?.classList.contains("chapter")) b.section.style.setProperty("--fit-h", b.el.getBoundingClientRect().height + "px");
+    }
+    fitTimer();
+    first = false;
+    stick();
+  }
+
+  const pointer = { x: -1, y: -1, active: false };
+  addEventListener("pointermove", (e) => { if (e.pointerType === "mouse" || e.buttons) { pointer.x = e.clientX; pointer.y = e.clientY; pointer.active = true; } }, { passive: true });
+  addEventListener("pointerup", (e) => { if (e.pointerType !== "mouse") pointer.active = false; });
+  document.addEventListener("pointerleave", () => (pointer.active = false));
+
+  // One step of the accordion: letters near the focus widen, the rest narrow; the delta term keeps the line flush.
+  function step(t, ease) {
+    const [lo0, hi0] = range(), k0 = (hi0 - lo0) / 100;
+    const live = [];
+    for (const b of blocks) {
+      const r = b.el.getBoundingClientRect();
+      if (r.bottom < -50 || r.top > innerHeight + 50 || r.width === 0) continue;
+      const near = pointer.active && pointer.y > r.top - 140 && pointer.y < r.bottom + 140;
+      if (b.calm && !near && b.settled) continue;
+      let maxd = 0;
+      b.lines.forEach((l, li) => {
+        const px = near ? pointer.x - r.left : l.W * (0.5 + 0.46 * Math.sin(t * 0.55 + li * 1.9 + b.phase));
+        const amp = (near ? 78 : b.calm ? 0 : 46) * k0, sig = l.W * (near ? 0.11 : 0.15);
+        const g = l.chars.map((c) => Math.exp(-((c.x - px) ** 2) / (2 * sig * sig)));
+        let num = 0; l.chars.forEach((c, i) => (num += c.slope * g[i]));
+        const k = num / l.slopeSum;
+        l.chars.forEach((c, i) => {
+          const target = clamp(l.wdth + amp * (g[i] - k) + l.delta, lo0, hi0);
+          maxd = Math.max(maxd, Math.abs(target - c.cur));
+          c.cur += (target - c.cur) * ease;
+          c.g.style.fontVariationSettings = fvs(c.cur);
+        });
+        live.push(l);
+      });
+      b.settled = maxd < 0.05;
+    }
+    for (const l of live) {
+      let shift = 0, total = 0;
+      const ws = l.chars.map((c) => width(c.g));
+      l.chars.forEach((c, i) => { c.el.style.transform = `translateX(${shift.toFixed(2)}px)`; shift += ws[i] - c.base; total += ws[i]; });
+      l.delta = clamp(l.delta + ((l.W - total) / l.slopeSum) * 0.6, -40, 40);
+    }
+  }
+
+  // ---- Clockful: a rolling odometer timer, fitted to the column width
+  const timerEl = document.querySelector("[data-timer]");
+  const cf = document.querySelector(".c-cf");
+  const digits = [];
+  const START = 41 * 60 + 7;
+  let running = true, acc = 0, lastNow = null;
+  [..."00:00:00"].forEach((ch) => {
+    if (ch === ":") { const s = document.createElement("span"); s.className = "colon"; s.setAttribute("aria-hidden", "true"); s.innerHTML = "<span>:</span>"; timerEl.append(s); return; }
+    const d = document.createElement("span"); d.className = "dg"; d.setAttribute("aria-hidden", "true");
+    const strip = document.createElement("span"); strip.className = "strip";
+    for (let n = 0; n < 10; n++) { const s = document.createElement("span"); s.textContent = n; strip.append(s); }
+    d.append(strip); timerEl.append(d); digits.push(strip);
+  });
+  const sr = document.createElement("span"); sr.className = "sr"; timerEl.append(sr);
+  function showTime(sec) {
+    const s = Math.floor(sec), str = [Math.floor(s / 3600), Math.floor(s / 60) % 60, s % 60].map((v) => String(v).padStart(2, "0")).join("");
+    [...str].forEach((n, i) => (digits[i].style.transform = `translateY(calc(${-n}em - var(--top)))`));
+    if (s % 60 === 0 || !sr.textContent) sr.textContent = `${str.slice(0, 2)}:${str.slice(2, 4)}`;
+  }
+  function fitTimer() {
+    const host = timerEl.parentElement;
+    const probe = document.createElement("span");
+    probe.style.cssText = "position:absolute;visibility:hidden;font-size:100px;white-space:nowrap";
+    timerEl.append(probe);
+    let dw = 0; for (let n = 0; n < 10; n++) { probe.textContent = n; dw = Math.max(dw, width(probe)); }
+    probe.textContent = ":"; const cw = width(probe) * 1.1;
+    probe.remove();
+    timerEl.style.setProperty("--dw", dw / 100 + "em");
+    timerEl.style.setProperty("--cw", cw / 100 + "em");
+    // crop the 1em digit cells to the glyphs' ink box (vertical metrics from canvas), so no neighbour digit peeks in
+    const ctx = document.createElement("canvas").getContext("2d");
+    ctx.font = `250 100px "${FAM[doc.dataset.type] || "Anybody"}"`;
+    const mt = ctx.measureText("0123456789");
+    const fa = mt.fontBoundingBoxAscent, fd = mt.fontBoundingBoxDescent;
+    const top = (100 - fa - fd) / 2 + fa - mt.actualBoundingBoxAscent;
+    const ink = mt.actualBoundingBoxAscent + mt.actualBoundingBoxDescent;
+    timerEl.style.setProperty("--top", (top - 3) / 100 + "em");
+    timerEl.style.setProperty("--lh", (ink + 6) / 100 + "em");
+    timerEl.style.fontSize = (100 * host.clientWidth) / (6 * dw + 2 * cw) + "px";
+  }
+  document.querySelector("[data-timer-toggle]").addEventListener("click", (e) => {
+    running = !running; cf.classList.toggle("paused", !running);
+    e.currentTarget.textContent = running ? "Stop" : "Start";
+    cf.querySelector(".rec").textContent = running ? "Running" : "Paused";
+  });
+
+  // ---- Space: planets on their ellipses
+  const planets = [...document.querySelectorAll("[data-orbit]")].map((el) => { const [rx, ry, sp, ph] = el.dataset.orbit.split(",").map(Number); return { el, rx, ry, sp, ph }; });
+  function orbits(t) { for (const p of planets) { const a = p.ph + t * p.sp; p.el.setAttribute("cx", (p.rx * Math.cos(a)).toFixed(1)); p.el.setAttribute("cy", (p.ry * Math.sin(a)).toFixed(1)); } }
+
+  // ---- chapters: stick when the bottom meets the viewport, so the next poster slides over the whole previous one
+  const chapters = [...document.querySelectorAll(".chapter")];
+  function stick() {
+    if (shot) return;
+    const hh = document.querySelector("header.site").offsetHeight;
+    for (const c of chapters) c.style.setProperty("--stick", Math.min(hh, innerHeight - c.offsetHeight) + "px");
+  }
+
+  // ---- header: the mark becomes the full name once the hero name has scrolled away
+  const header = document.querySelector("header.site");
+  new IntersectionObserver(([e]) => header.classList.toggle("stuck", !e.isIntersecting && e.boundingClientRect.top < 0), { rootMargin: "-60px 0px 0px 0px" })
+    .observe(document.querySelector(".hero .fit"));
+
+  // ---- loops play only when visible
+  const vio = new IntersectionObserver((es) => es.forEach((e) => (e.isIntersecting && !still ? e.target.play().catch(() => {}) : e.target.pause())), { threshold: 0.25 });
+  document.querySelectorAll("video").forEach((v) => vio.observe(v));
+
+  // ---- gate stamps run once the board is in view
+  const gates = document.querySelector("[data-gates]");
+  if (still) gates.classList.add("run");
+  else new IntersectionObserver(([e], o) => { if (e.isIntersecting) { gates.classList.add("run"); o.disconnect(); } }, { threshold: 0.45 }).observe(gates);
+
+  // ---- small things: copy, demo form, menu links, toast
+  const toast = document.querySelector(".toast");
+  let tt; const say = (m) => { toast.textContent = m; toast.classList.add("on"); clearTimeout(tt); tt = setTimeout(() => toast.classList.remove("on"), 2200); };
+  document.querySelectorAll("[data-copy]").forEach((b) => b.addEventListener("click", async () => {
+    try { await navigator.clipboard.writeText(b.dataset.copy); say("Copied " + b.dataset.copy); } catch { say(b.dataset.copy); }
+  }));
+  document.querySelector("[data-form]").addEventListener("submit", (e) => { e.preventDefault(); say("Demo only: nothing was sent"); });
+  const menu = document.getElementById("menu");
+  menu.querySelectorAll("nav a").forEach((a) => a.addEventListener("click", () => menu.hidePopover()));
+
+  // ---- variants (comp only)
+  const themes = ["cobalt", "paper", "ink"], names = { cobalt: "Cobalt", paper: "Paper", ink: "Ink" };
+  const setParam = (k, v) => { try { const u = new URL(location.href); u.searchParams.set(k, v); u.hash = ""; history.replaceState(null, "", u); } catch {} };
+  function applyTheme(th, write) {
+    doc.dataset.theme = th;
+    document.querySelectorAll("[data-theme-btn]").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.themeBtn === th)));
+    document.querySelectorAll("[data-cycle-theme] span").forEach((s) => (s.textContent = names[th]));
+    if (write) setParam("theme", th);
+  }
+  async function applyType(ty, write) {
+    doc.dataset.type = ty;
+    document.querySelectorAll("[data-type-btn]").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.typeBtn === ty)));
+    if (write) setParam("type", ty);
+    await document.fonts.load(`900 100px "${FAM[ty]}"`, "MATEUSZ");
+    await document.fonts.load(`250 100px "${FAM[ty]}"`, "0123456789:");
+    fit();
+  }
+  document.querySelectorAll("[data-theme-btn]").forEach((b) => b.addEventListener("click", () => applyTheme(b.dataset.themeBtn, true)));
+  document.querySelectorAll("[data-cycle-theme]").forEach((b) => b.addEventListener("click", () => applyTheme(themes[(themes.indexOf(doc.dataset.theme) + 1) % 3], true)));
+  document.querySelectorAll("[data-type-btn]").forEach((b) => b.addEventListener("click", () => applyType(b.dataset.typeBtn, true)));
+  applyTheme(doc.dataset.theme, false);
+
+  // ---- run
+  function frame(now) {
+    const t = now / 1000;
+    step(t, 0.12);
+    orbits(t);
+    if (lastNow !== null && running) acc += (now - lastNow) / 1000;
+    lastNow = now;
+    showTime(START + acc);
+    requestAnimationFrame(frame);
+  }
+  applyType(doc.dataset.type, false).then(() => {
+    if (forcedT !== null) { for (let i = 0; i < 60; i++) step(forcedT, 1); orbits(forcedT); showTime(START + forcedT); return; }
+    if (reduce) { orbits(2); showTime(START); return; }
+    requestAnimationFrame(frame);
+    let rt; addEventListener("resize", () => { clearTimeout(rt); rt = setTimeout(fit, 120); });
+  });
+})();
+</script>
+</body>
+</html>
