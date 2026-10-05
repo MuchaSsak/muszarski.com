@@ -10,3 +10,4 @@ context
 apps/web/src/styles/fonts.css
 apps/web/src/lib/fonts.gen.ts
 assets
+comps

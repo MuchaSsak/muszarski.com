@@ -121,6 +121,7 @@ landing (study it first: `context/pstryk-turborepo/apps/pstrykweb.pl`, patterns 
 2. Produce 3-4 genuinely different directions as **rendered, animated comps** of the hero + one project section (real
    type, colour, motion, 3D/shader where it serves), screenshots at 390 + 1440, light/dark where relevant.
 3. The owner picks or mixes. Only then: new `design.md`, new tokens/type, rebuild slices 0 (visual layer) → 1 → 2.
+   Status 2026-10-05: steps 1-2 done (`research/2026-10-05-rebrand-ambition.md`, `comps/`); step 3 waits for the owner.
    The engineering foundation stays: Turborepo, Astro, Lingui, routes, gates, tests, launch gate.
 
 **The loop for every slice** (repeat until every check passes and one more pass finds nothing worth fixing):

@@ -6,6 +6,7 @@
 > - `research/2026-10-05-subpages-patterns.md` (45 shots, 10 notes)
 > - `research/2026-10-05-ui-patterns-galleries.md`, `-awwwards-dev-portfolios.md`, `-art-direction-themes.md`
 > - per-source notes in `research/inspirations/*.md` (screenshots local only)
+> - rebrand pass (ambition, not safety): `research/2026-10-05-rebrand-ambition.md` (41 sites; shots local only)
 >
 > Research informs; nothing is copied 1:1.
 

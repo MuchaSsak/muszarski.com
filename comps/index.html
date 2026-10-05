@@ -1,0 +1,201 @@
+<title>Muszarski Rebrand Directions</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Martian+Mono:wght@400..600&family=Schibsted+Grotesk:wght@400..900&display=swap">
+<style>
+/* Review sheet for four live comps: a quiet frame so the comps carry the colour. Each direction is a numbered row
+   (the number is real: it is what the owner replies with), screenshots left, the facts right. */
+:root {
+  --bg: #f3f2ee;
+  --surface: #ffffff;
+  --fg: #16161a;
+  --fg-2: #5b5b66;
+  --line: #dddbd3;
+  --accent: #3d3bd6;
+  --pick: #e8e6ff;
+  --sans: "Schibsted Grotesk", "Helvetica Neue", Arial, sans-serif;
+  --mono: "Martian Mono", ui-monospace, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) { --bg: #111114; --surface: #1a1a1f; --fg: #eeeef2; --fg-2: #a3a3b0; --line: #2c2c34; --accent: #a5a4ff; --pick: #23224a; color-scheme: dark; }
+}
+:root[data-theme="dark"] { --bg: #111114; --surface: #1a1a1f; --fg: #eeeef2; --fg-2: #a3a3b0; --line: #2c2c34; --accent: #a5a4ff; --pick: #23224a; color-scheme: dark; }
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--fg); font: 400 17px/1.55 var(--sans); padding-inline: clamp(16px, 4vw, 48px); padding-block: 0 64px; }
+a { color: var(--accent); }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 4px; }
+.wrap { max-width: 1200px; margin: 0 auto; }
+.meta { font: 500 12px/1.5 var(--mono); letter-spacing: .04em; color: var(--fg-2); }
+header.top { padding-block: clamp(32px, 6vw, 72px) 28px; display: grid; gap: 14px; }
+h1 { margin: 0; font-size: clamp(36px, 6vw, 72px); line-height: .98; font-weight: 800; letter-spacing: -0.03em; text-wrap: balance; }
+.intro { margin: 0; max-width: 62ch; font-size: clamp(17px, 1.5vw, 20px); color: var(--fg-2); }
+.pick { display: grid; gap: 6px; margin-top: 10px; padding: 18px 20px; border-radius: 14px; background: var(--pick); max-width: 820px; }
+.pick b { font-size: 18px; }
+.pick p { margin: 0; }
+.dir { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: clamp(20px, 3vw, 44px); padding-block: clamp(36px, 5vw, 64px); border-top: 1px solid var(--line); }
+.shots { display: grid; grid-template-columns: minmax(0, 1fr) clamp(96px, 16%, 150px); gap: 12px; align-items: start; min-width: 0; }
+.shots img { display: block; width: 100%; height: auto; border-radius: 10px; border: 1px solid var(--line); background: var(--surface); }
+.shots .col { display: grid; gap: 12px; }
+.info { min-width: 0; display: flex; flex-direction: column; gap: 14px; }
+.num { font: 600 13px/1 var(--mono); color: var(--fg-2); }
+h2 { margin: 0; font-size: clamp(30px, 3.4vw, 44px); line-height: 1; font-weight: 800; letter-spacing: -0.02em; }
+.tagline { margin: 0; font-size: 20px; font-weight: 600; }
+.desc { margin: 0; color: var(--fg); }
+dl { margin: 0; display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 8px 16px; font-size: 15px; }
+dt { font: 500 11px/1.9 var(--mono); letter-spacing: .06em; text-transform: uppercase; color: var(--fg-2); }
+dd { margin: 0; }
+.sw { display: inline-flex; gap: 4px; vertical-align: middle; margin-right: 8px; }
+.sw i { width: 16px; height: 16px; border-radius: 4px; border: 1px solid var(--line); }
+.open { align-self: flex-start; display: inline-flex; align-items: center; gap: 10px; min-height: 46px; padding: 0 20px; border-radius: 999px; background: var(--fg); color: var(--bg);
+  font-weight: 700; text-decoration: none; }
+.open:hover { opacity: .88; }
+section.same { border-top: 1px solid var(--line); padding-block: 40px 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 32px; }
+section.same h3 { margin: 0 0 10px; font-size: 20px; }
+section.same ul { margin: 0; padding-left: 18px; color: var(--fg); }
+section.same li + li { margin-top: 6px; }
+.answer { margin-top: 36px; padding: 20px; border-radius: 14px; border: 1px solid var(--line); background: var(--surface); }
+.answer p { margin: 0; }
+@media (max-width: 860px) {
+  .dir { grid-template-columns: 1fr; }
+  section.same { grid-template-columns: 1fr; }
+}
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <p class="meta">matmuszarski.space · rebrand · 5 Oct 2026</p>
+    <h1>Four directions. Pick one, or mix.</h1>
+    <p class="intro">Each one is a live comp of the hero and one project section (Linkoglot), built with real type, colour and motion. Open them on desktop and on your phone: they move, and on desktop they react to the cursor.</p>
+    <div class="pick">
+      <b>My pick: 1, Orbit</b>
+      <p>It is the only one where the signature carries the whole page. The particles that form the planet re-form into each project's device as you scroll: the phone for Linkoglot, a browser for PstrykWeb, a monitor for Clockful, and back into space for the old site. It shows your three.js side without a 3D world to learn, your name is still the first thing painted, and it costs about 5 KB of script and one draw call.</p>
+    </div>
+  </header>
+
+  <section class="dir" aria-labelledby="d1">
+    <div class="shots">
+      <div class="col">
+        <img src="shots/orbit-1440-hero.webp" width="1200" height="750" alt="Orbit at 1440 px: the name in a wide grotesk over a particle planet with a ring">
+        <img src="shots/orbit-1440-work.webp" width="1200" height="750" alt="Orbit work section: Linkoglot title beside a phone outlined in glowing particles" loading="lazy">
+      </div>
+      <div class="col">
+        <img src="shots/orbit-390-hero.webp" width="390" height="844" alt="Orbit on a phone" loading="lazy">
+        <img src="shots/orbit-390-work.webp" width="390" height="844" alt="Orbit work section on a phone" loading="lazy">
+      </div>
+    </div>
+    <div class="info">
+      <p class="num">Direction 1</p>
+      <h2 id="d1">Orbit</h2>
+      <p class="tagline">The planet becomes the product.</p>
+      <p class="desc">A planet of 52,000 GPU particles sits behind your name, lit like a sunset, with a ring passing behind the type. Scroll to the work and the same particles fly into the outline of the Linkoglot phone.</p>
+      <dl>
+        <dt>Type</dt><dd>Mona Sans (wide cut), Martian Mono for labels</dd>
+        <dt>Colour</dt><dd><span class="sw"><i style="background:#05061a"></i><i style="background:#ffb35c"></i><i style="background:#ff6a4a"></i><i style="background:#8c97ff"></i></span>Midnight indigo, amber light, periwinkle shadow</dd>
+        <dt>Per project</dt><dd>The particles re-form into that project's device</dd>
+        <dt>Cost</dt><dd>Raw WebGL2, about 5 KB of JS, one draw call; 20,000 particles on phones; a CSS planet if WebGL is off</dd>
+      </dl>
+      <a class="open" href="orbit.html">Open Orbit</a>
+    </div>
+  </section>
+
+  <section class="dir" aria-labelledby="d2">
+    <div class="shots">
+      <div class="col">
+        <img src="shots/poster-1440-hero.webp" width="1200" height="750" alt="Poster at 1440 px: the name in huge white capitals on cobalt with a pink round sticker" loading="lazy">
+        <img src="shots/poster-1440-work.webp" width="1200" height="750" alt="Poster work section: LINKOGLOT across an orange field, a tilted phone overlapping it" loading="lazy">
+      </div>
+      <div class="col">
+        <img src="shots/poster-390-hero.webp" width="390" height="844" alt="Poster on a phone" loading="lazy">
+        <img src="shots/poster-390-work.webp" width="390" height="844" alt="Poster work section on a phone" loading="lazy">
+      </div>
+    </div>
+    <div class="info">
+      <p class="num">Direction 2</p>
+      <h2 id="d2">Poster</h2>
+      <p class="tagline">Your name, set like a poster.</p>
+      <p class="desc">The name fills the width edge to edge in one variable font. Letters widen around the cursor like an accordion while the line stays exactly flush. Each project gets its own flat colour field and a billboard word.</p>
+      <dl>
+        <dt>Type</dt><dd>Anybody, a variable font whose width runs from 50 to 150</dd>
+        <dt>Colour</dt><dd><span class="sw"><i style="background:#2433ff"></i><i style="background:#ff5b1f"></i><i style="background:#ff4fb8"></i><i style="background:#0a0d33"></i></span>Cobalt, signal orange, a hot-pink sticker</dd>
+        <dt>Per project</dt><dd>A new colour field and its name as the billboard</dd>
+        <dt>Cost</dt><dd>No WebGL, about 2 KB of JS; letters move by transform only, so nothing shifts the layout</dd>
+      </dl>
+      <a class="open" href="poster.html">Open Poster</a>
+    </div>
+  </section>
+
+  <section class="dir" aria-labelledby="d3">
+    <div class="shots">
+      <div class="col">
+        <img src="shots/toybox-1440-hero.webp" width="1200" height="750" alt="Toybox at 1440 px: the name in a friendly heavy face beside soft 3D toy blocks" loading="lazy">
+        <img src="shots/toybox-1440-work.webp" width="1200" height="750" alt="Toybox work section: the Linkoglot phone standing on a blue toy plinth" loading="lazy">
+      </div>
+      <div class="col">
+        <img src="shots/toybox-390-hero.webp" width="390" height="844" alt="Toybox on a phone" loading="lazy">
+        <img src="shots/toybox-390-work.webp" width="390" height="844" alt="Toybox work section on a phone" loading="lazy">
+      </div>
+    </div>
+    <div class="info">
+      <p class="num">Direction 3</p>
+      <h2 id="d3">Toybox</h2>
+      <p class="tagline">My building blocks.</p>
+      <p class="desc">Soft clay toys, rendered live in one shader with real soft shadows. Each toy stands for a fact: since 2022, solo, web and mobile, both stores. Touch a fact and its toy jumps. In the work section the phone stands on a toy plinth.</p>
+      <dl>
+        <dt>Type</dt><dd>Recursive: its casual axis for headings, its mono axis for labels</dd>
+        <dt>Colour</dt><dd><span class="sw"><i style="background:#c4dbff"></i><i style="background:#ffe48a"></i><i style="background:#ff5a3c"></i><i style="background:#2e5bff"></i><i style="background:#45cf9f"></i></span>Sky, butter, tomato, cobalt, mint</dd>
+        <dt>Per project</dt><dd>The same toys, rearranged around that product</dd>
+        <dt>Cost</dt><dd>About 4 KB of JS, but the heaviest GPU work of the four; phones would get a lower render scale or a pre-rendered loop</dd>
+      </dl>
+      <a class="open" href="toybox.html">Open Toybox</a>
+    </div>
+  </section>
+
+  <section class="dir" aria-labelledby="d4">
+    <div class="shots">
+      <div class="col">
+        <img src="shots/exhibit-1440-hero.webp" width="1200" height="750" alt="Exhibit at 1440 px: the name in Bodoni on an oxblood wall under spotlights, with a museum placard" loading="lazy">
+        <img src="shots/exhibit-1440-work.webp" width="1200" height="750" alt="Exhibit work section: the phone on a plinth under a beam of light, with a placard" loading="lazy">
+      </div>
+      <div class="col">
+        <img src="shots/exhibit-390-hero.webp" width="390" height="844" alt="Exhibit on a phone" loading="lazy">
+        <img src="shots/exhibit-390-work.webp" width="390" height="844" alt="Exhibit work section on a phone" loading="lazy">
+      </div>
+    </div>
+    <div class="info">
+      <p class="num">Direction 4</p>
+      <h2 id="d4">Exhibit</h2>
+      <p class="tagline">Works, exhibited.</p>
+      <p class="desc">A gallery at night: oxblood walls, spotlights and drifting dust, rendered live, and your cursor is a torch. Each project is a room, with the product on a plinth under a beam and a museum placard written in true facts ("Medium: React Native, Supabase").</p>
+      <dl>
+        <dt>Type</dt><dd>Bodoni Moda, Hanken Grotesk</dd>
+        <dt>Colour</dt><dd><span class="sw"><i style="background:#3a0f16"></i><i style="background:#f6eadb"></i><i style="background:#dcae62"></i></span>Oxblood, ivory, brass</dd>
+        <dt>Per project</dt><dd>A room, a beam and its own placard</dd>
+        <dt>Cost</dt><dd>One full-screen shader, about 2 KB of JS, cheap on phones</dd>
+      </dl>
+      <a class="open" href="exhibit.html">Open Exhibit</a>
+    </div>
+  </section>
+
+  <section class="same">
+    <div>
+      <h3>The same in all four</h3>
+      <ul>
+        <li>The engineering underneath stays: Astro, the three languages, the tests and Lighthouse at 100.</li>
+        <li>Your name is the first thing painted; every 3D layer starts after it, has a still fallback and respects reduced motion.</li>
+        <li>Contact and CV stay one tap away on a phone.</li>
+      </ul>
+    </div>
+    <div>
+      <h3>Not real yet in the comps</h3>
+      <ul>
+        <li>"Open to work", "Poland, CET" and "remote" are wording placeholders until you confirm them.</li>
+        <li>The CV size (70 KB) is a guess, and the menu links go nowhere.</li>
+        <li>The Linkoglot clip is the 332 px App Store preview; the real site gets a sharp recording.</li>
+      </ul>
+    </div>
+  </section>
+
+  <div class="answer">
+    <p><b>How to answer:</b> reply with a number. A mix works too, for example "Exhibit, with the Poster type". Once you pick, I write the new design system and rebuild the header, footer and hero in it.</p>
+  </div>
+</div>

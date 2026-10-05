@@ -1,0 +1,373 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Toybox · Direction 3</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Recursive:slnt,wght,CASL,CRSV,MONO@-15..0,300..1000,0..1,0..1,0..1&display=swap">
+<style>
+/* TOYBOX: "my building blocks". Soft clay toys (an arch, a ball, a cube, a stack of discs, a ring) ray-marched live in one
+   shader, sitting on the page with real soft shadows. Every block is a fact about the owner; touching a fact lifts its block.
+   Sky + four toy colours; Recursive, whose CASUAL axis gives a hand-made voice and whose MONO axis gives the code labels. */
+:root {
+  --sky: #c4dbff;
+  --sky-2: #e6efff;
+  --navy: #141a3a;
+  --navy-2: #3b4270;
+  --tomato: #ff5a3c;
+  --sun: #ffc93c;
+  --cobalt: #2e5bff;
+  --mint: #45cf9f;
+  --cream: #fff4e2;
+  --butter: #ffe48a;
+  --font: "Recursive", "Trebuchet MS", sans-serif;
+  --ease: cubic-bezier(0.34, 1.4, 0.5, 1);
+  --ease-out: cubic-bezier(0.2, 0.7, 0.1, 1);
+  --gutter: clamp(16px, 4vw, 56px);
+  color-scheme: light;
+}
+* { box-sizing: border-box; }
+html { background: var(--sky); }
+body { margin: 0; font: 400 18px/1.55 var(--font); font-variation-settings: "CASL" 0.15, "MONO" 0; color: var(--navy); overflow-x: clip;
+  background: linear-gradient(180deg, var(--sky) 0, var(--sky-2) 900px, var(--sky-2) 100%); -webkit-font-smoothing: antialiased; }
+a { color: inherit; }
+::selection { background: var(--sun); color: var(--navy); }
+:focus-visible { outline: 3px solid var(--cobalt); outline-offset: 3px; border-radius: 8px; }
+.skip { position: absolute; left: -999px; }
+.skip:focus { left: 8px; top: 8px; z-index: 9; background: var(--navy); color: #fff; padding: 8px 12px; }
+.mono { font-variation-settings: "MONO" 1, "CASL" 0; }
+
+header.site { position: relative; z-index: 3; display: flex; align-items: center; gap: 24px; padding: 16px var(--gutter); }
+.brand { display: flex; align-items: center; gap: 10px; text-decoration: none; font-weight: 800; font-variation-settings: "CASL" 1; font-size: 19px; }
+.brand i { display: inline-block; width: 26px; height: 26px; border-radius: 9px; background: var(--tomato); box-shadow: inset -4px -5px 0 rgb(0 0 0 / 0.12), inset 3px 3px 0 rgb(255 255 255 / 0.35); }
+.brand i + i { width: 18px; height: 18px; border-radius: 50%; background: var(--sun); margin-left: -6px; align-self: flex-end; }
+nav.main { display: flex; gap: 6px; margin-left: auto; font-weight: 600; font-size: 15px; }
+nav.main a { text-decoration: none; padding: 10px 14px; border-radius: 999px; transition: background .25s var(--ease-out); }
+nav.main a:hover { background: rgb(255 255 255 / 0.6); }
+.actions { display: flex; gap: 10px; align-items: center; margin-left: 12px; }
+.lang { font-size: 13px; font-weight: 700; text-decoration: none; padding: 10px; font-variation-settings: "MONO" 1; }
+.btn { display: inline-flex; align-items: center; gap: 10px; min-height: 48px; padding: 0 22px; border-radius: 16px; border: 0; cursor: pointer; text-decoration: none;
+  font: 750 16px/1 var(--font); font-variation-settings: "CASL" 0.6; transition: transform .35s var(--ease), box-shadow .35s var(--ease); }
+.btn:hover { transform: translateY(-3px); }
+.btn:active { transform: translateY(1px); }
+.btn-navy { background: var(--navy); color: #fff; box-shadow: 0 5px 0 #000a2a, 0 14px 30px -10px rgb(20 26 58 / 0.5); }
+.btn-navy:hover { box-shadow: 0 8px 0 #000a2a, 0 20px 36px -12px rgb(20 26 58 / 0.5); }
+.btn-tomato { background: var(--tomato); color: var(--navy); box-shadow: 0 5px 0 #c63a20; }
+.btn-tomato:hover { box-shadow: 0 8px 0 #c63a20; }
+.btn-soft { background: #fff; color: var(--navy); box-shadow: 0 5px 0 rgb(20 26 58 / 0.18); }
+.btn-soft:hover { box-shadow: 0 8px 0 rgb(20 26 58 / 0.18); }
+.btn small { font-size: 12px; font-weight: 500; opacity: .7; font-variation-settings: "MONO" 1; }
+.menu { display: none; }
+
+.hero { position: relative; overflow-x: clip; display: grid; grid-template-columns: minmax(0, 6fr) minmax(0, 6fr); align-items: center; gap: 24px;
+  min-height: min(calc(100svh - 80px), 860px); padding: 8px var(--gutter) 56px; }
+.hero-copy { position: relative; z-index: 2; }
+.eyebrow { display: inline-flex; align-items: center; gap: 10px; margin: 0 0 22px; padding: 8px 14px 8px 10px; border-radius: 999px; background: rgb(255 255 255 / 0.7);
+  font-size: 13px; font-weight: 600; font-variation-settings: "MONO" 1; }
+.eyebrow b { width: 10px; height: 10px; border-radius: 50%; background: var(--mint); box-shadow: 0 0 0 4px rgb(69 207 159 / 0.25); }
+h1 { margin: 0; font-weight: 900; font-size: clamp(54px, 7.4vw, 118px); line-height: .9; letter-spacing: -0.035em; font-variation-settings: "CASL" 1, "MONO" 0; text-wrap: balance; }
+.role { display: inline-block; margin-top: 18px; padding: 6px 16px 9px; border-radius: 14px; background: var(--cobalt); color: #fff; transform: rotate(-2deg);
+  font-size: clamp(22px, 2.4vw, 34px); font-weight: 800; letter-spacing: -0.01em; font-variation-settings: "CASL" 0.6; box-shadow: 0 5px 0 #1b3bc0; }
+.lede { max-width: 33ch; margin: 26px 0 0; font-size: clamp(18px, 1.4vw, 21px); color: var(--navy-2); }
+.ctas { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 30px; }
+.blocks { display: flex; flex-wrap: wrap; gap: 10px; margin: 30px 0 0; padding: 0; list-style: none; }
+.blocks li button { display: inline-flex; align-items: center; gap: 9px; min-height: 40px; padding: 0 14px 0 8px; border: 0; border-radius: 12px; background: #fff; cursor: pointer;
+  font: 600 14px/1 var(--font); font-variation-settings: "MONO" 1; color: var(--navy); box-shadow: 0 3px 0 rgb(20 26 58 / 0.14); transition: transform .3s var(--ease); }
+.blocks li button:hover, .blocks li button:focus-visible { transform: translateY(-3px) rotate(-1deg); }
+.blocks li button i { width: 22px; height: 22px; border-radius: 7px; box-shadow: inset -3px -3px 0 rgb(0 0 0 / 0.14), inset 2px 2px 0 rgb(255 255 255 / 0.4); }
+.scene { position: relative; align-self: stretch; min-height: 560px; }
+.scene canvas { position: absolute; inset: -6% -10% -4% -6%; width: 116%; height: 110%; }
+.no-gl .scene { background: radial-gradient(circle at 50% 60%, var(--sun) 0 14%, transparent 15%), radial-gradient(ellipse 30% 6% at 50% 82%, rgb(20 26 58 / 0.18), transparent); }
+
+/* work */
+.work { position: relative; background: var(--butter); padding: clamp(80px, 9vw, 140px) var(--gutter) clamp(80px, 9vw, 140px); border-radius: 48px 48px 0 0; overflow: clip; }
+.work-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: clamp(24px, 4vw, 56px); }
+.chip { display: inline-flex; align-items: center; gap: 8px; padding: 8px 14px; border-radius: 999px; background: #fff; font-size: 13px; font-weight: 600; font-variation-settings: "MONO" 1; }
+.project { display: grid; grid-template-columns: minmax(0, 6fr) minmax(0, 5fr); gap: clamp(28px, 4vw, 72px); align-items: center; }
+.stage { position: relative; aspect-ratio: 1 / 1.02; min-width: 0; }
+.stage canvas { position: absolute; left: -8%; top: -4%; width: 116%; height: 108%; }
+.phone { position: absolute; left: 50%; width: 31%; aspect-ratio: 280 / 600; transform: translateX(-50%); border-radius: 30px; overflow: hidden; background: #000;
+  box-shadow: 0 0 0 9px #ff7a2e, 0 0 0 10px #e2531a, inset 0 0 0 1px #000, 0 22px 40px -12px rgb(120 50 0 / 0.55), -10px 30px 50px -20px rgb(20 26 58 / 0.35); }
+.phone video { width: 100%; height: 100%; object-fit: cover; display: block; }
+.phone::after { content: ""; position: absolute; inset: 0; border-radius: inherit; box-shadow: inset 6px 8px 0 rgb(255 255 255 / 0.08); pointer-events: none; }
+.bubble { position: absolute; z-index: 2; padding: 12px 16px; border-radius: 18px; background: #fff; box-shadow: 0 5px 0 rgb(20 26 58 / 0.14); font-size: 14px; line-height: 1.3; }
+.bubble b { display: block; font-size: 24px; font-weight: 900; font-variation-settings: "CASL" 1; }
+.bubble span { font-size: 11px; font-weight: 600; font-variation-settings: "MONO" 1; color: var(--tomato); text-transform: uppercase; letter-spacing: .04em; }
+.bubble-1 { right: 4%; top: 16%; transform: rotate(4deg); }
+.bubble-2 { left: 2%; top: 30%; transform: rotate(-5deg); }
+.tag { display: inline-flex; align-items: center; gap: 10px; margin: 0; font-size: 13px; font-weight: 600; font-variation-settings: "MONO" 1; }
+.tag img { width: 34px; height: 34px; border-radius: 10px; box-shadow: 0 3px 0 rgb(0 0 0 / 0.15); }
+h2 { margin: 16px 0 0; font-size: clamp(60px, 8vw, 128px); line-height: .88; font-weight: 900; letter-spacing: -0.04em; font-variation-settings: "CASL" 1; }
+.outcome { margin: 22px 0 0; max-width: 24ch; font-size: clamp(22px, 2vw, 30px); line-height: 1.22; font-weight: 650; font-variation-settings: "CASL" 0.4; }
+.feats { display: flex; flex-wrap: wrap; gap: 8px; margin: 24px 0 0; padding: 0; list-style: none; }
+.feats li { padding: 9px 14px; border-radius: 12px; font-size: 14px; font-weight: 600; background: rgb(255 255 255 / 0.75); }
+.stack { margin: 18px 0 0; font-size: 13px; font-variation-settings: "MONO" 1; color: var(--navy-2); }
+.project .ctas { margin-top: 28px; }
+.status { margin: 18px 0 0; font-size: 13px; font-weight: 600; font-variation-settings: "MONO" 1; color: var(--navy-2); }
+
+.compbar { position: fixed; z-index: 60; right: 16px; bottom: 16px; display: flex; gap: 4px; padding: 4px; border-radius: 999px; background: rgb(0 0 0 / 0.75); font: 500 12px/1 system-ui, sans-serif; }
+.compbar a { padding: 9px 12px; border-radius: 999px; color: #fff; text-decoration: none; }
+.compbar a[aria-current] { background: #fff; color: #000; }
+.shot .compbar { display: none; }
+
+@media (max-width: 1100px) { nav.main { display: none; } .actions { margin-left: auto; } }
+@media (max-width: 860px) {
+  .hero { grid-template-columns: 1fr; min-height: auto; }
+  .scene { order: -1; min-height: 0; height: 74vw; margin: -8px -16px 0; }
+  .scene canvas { inset: 0; width: 100%; height: 100%; }
+  .project { grid-template-columns: 1fr; }
+}
+@media (max-width: 640px) {
+  header.site { padding-top: 10px; padding-bottom: 10px; gap: 8px; }
+  .brand span, .lang { display: none; }
+  .actions { gap: 6px; }
+  .btn { min-height: 44px; padding: 0 14px; font-size: 14px; border-radius: 14px; }
+  .actions .btn small { display: none; }
+  .menu { display: inline-flex; }
+  h1 { font-size: 15.5vw; }
+  .work { border-radius: 32px 32px 0 0; }
+  .bubble { padding: 9px 12px; font-size: 12px; }
+  .bubble b { font-size: 19px; }
+  .phone { width: 34%; border-radius: 22px; box-shadow: 0 0 0 6px #ff7a2e, 0 0 0 7px #e2531a, 0 18px 30px -10px rgb(120 50 0 / 0.55); }
+}
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="site">
+  <a class="brand" href="#"><i aria-hidden="true"></i><i aria-hidden="true"></i><span>Mateusz Muszarski</span></a>
+  <nav class="main" aria-label="Main"><a href="#work">Work</a><a href="#">How I work</a><a href="#">Writing</a><a href="#">My life</a></nav>
+  <div class="actions">
+    <a class="lang" href="#">EN</a>
+    <a class="btn btn-soft" href="#">CV <small>PDF</small></a>
+    <a class="btn btn-tomato" href="#">Contact</a>
+    <button class="btn btn-soft menu" type="button">Menu</button>
+  </div>
+</header>
+
+<main id="main">
+  <section class="hero" aria-labelledby="h1">
+    <div class="hero-copy">
+      <p class="eyebrow"><b aria-hidden="true"></b>Full-stack developer · Poland · open to work</p>
+      <h1 id="h1">Mateusz Muszarski</h1>
+      <p class="role">Full-stack product engineer</p>
+      <p class="lede">I turn a business problem into a shipped web or mobile product, and I tell you early what it will cost and what can wait.</p>
+      <div class="ctas">
+        <a class="btn btn-navy" href="#work">See the work</a>
+        <a class="btn btn-soft" href="#">Download CV <small>PDF · 70 KB</small></a>
+      </div>
+      <ul class="blocks" aria-label="Building blocks">
+        <li><button type="button" data-hi="0"><i style="background:var(--tomato)"></i>Building since 2022</button></li>
+        <li><button type="button" data-hi="1"><i style="background:var(--sun);border-radius:50%"></i>Solo, end to end</button></li>
+        <li><button type="button" data-hi="2"><i style="background:var(--cobalt)"></i>Web + mobile</button></li>
+        <li><button type="button" data-hi="3"><i style="background:var(--mint);border-radius:50% / 30%"></i>App Store + Play</button></li>
+      </ul>
+    </div>
+    <div class="scene" aria-hidden="true"><canvas data-scene="0"></canvas></div>
+  </section>
+
+  <section class="work" id="work" aria-labelledby="lk">
+    <div class="work-head"><span class="chip">Selected work</span><span class="chip">01 / 04</span></div>
+    <article class="project">
+      <div class="stage" data-shot-focus>
+        <canvas data-scene="1" aria-hidden="true"></canvas>
+        <div class="phone" data-phone><video muted loop playsinline autoplay preload="metadata" poster="media/lk-camera.jpg" aria-label="Linkoglot camera mode: point at an object to learn its name"><source src="media/lk-camera.mp4" type="video/mp4"></video></div>
+        <div class="bubble bubble-1"><span>Snapped</span><b>la maceta</b>the flowerpot</div>
+        <div class="bubble bubble-2"><span>Locales</span><b>30</b>one app</div>
+      </div>
+      <div>
+        <p class="tag"><img src="media/lk-icon.png" alt="" width="34" height="34">Own product · solo · 2026</p>
+        <h2 id="lk">Linkoglot</h2>
+        <p class="outcome">Shipped a subscription AI language app to the App Store and Google Play, solo, in 30 languages.</p>
+        <ul class="feats"><li>Snap a photo → flashcards</li><li>Voice conversations</li><li>Free trial → subscription</li></ul>
+        <p class="stack">Expo · React Native · Supabase · RevenueCat · Lingui</p>
+        <div class="ctas"><a class="btn btn-navy" href="#">Read the case study</a><a class="btn btn-soft" href="#">App Store ↗</a><a class="btn btn-soft" href="#">Google Play ↗</a></div>
+        <p class="status">● Live · pre-traction</p>
+      </div>
+    </article>
+  </section>
+</main>
+
+<nav class="compbar" aria-label="Directions">
+  <a href="./">All</a><a href="orbit.html">1</a><a href="poster.html">2</a><a href="toybox.html" aria-current="page">3 Toybox</a><a href="exhibit.html">4</a>
+</nav>
+
+<script>
+(() => {
+  const doc = document.documentElement;
+  if (location.search.includes("shot")) doc.classList.add("shot");
+  const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const params = new URLSearchParams(location.search);
+  const forcedT = params.has("t") ? parseFloat(params.get("t")) : null;
+
+  const FS = `#version 300 es
+  precision highp float;
+  uniform vec2 uRes; uniform float uTime; uniform vec2 uPtr; uniform float uScene; uniform vec4 uHi; uniform vec3 uCam; uniform vec3 uTa; uniform float uFocal;
+  out vec4 o;
+  #define S(x) pow(x, vec3(2.2))
+  mat2 rot(float a){ float c=cos(a), s=sin(a); return mat2(c,-s,s,c); }
+  float sdBox(vec3 p, vec3 b, float r){ vec3 q=abs(p)-b+r; return length(max(q,0.))+min(max(q.x,max(q.y,q.z)),0.)-r; }
+  float sdCyl(vec3 p, float h, float r, float rr){ vec2 d=vec2(length(p.xz)-r+rr, abs(p.y)-h+rr); return min(max(d.x,d.y),0.)+length(max(d,0.))-rr; }
+  float sdTor(vec3 p, vec2 t){ vec2 q=vec2(length(p.xz)-t.x,p.y); return length(q)-t.y; }
+  float ssub(float a, float b, float k){ float h=clamp(.5-.5*(b+a)/k,0.,1.); return mix(b,-a,h)+k*h*(1.-h); }
+  float arch(vec3 p){ float b=sdBox(p, vec3(.92,.62,.34), .14); float c=length(p.xy-vec2(0.,-.62))-.5; return ssub(c, b, .1); }
+  // scene: x = distance, y = material
+  vec2 opU(vec2 a, vec2 b){ return a.x<b.x?a:b; }
+  vec2 map(vec3 p){
+    float t = uTime;
+    vec2 r = vec2(p.y + 10., -1.);
+    if (uScene < .5) {
+      float bob = .05*sin(t*1.3);
+      vec3 q = p - vec3(-.15, .62, -.1); q.xz *= rot(.38);                       // tomato arch
+      r = opU(r, vec2(arch(q), 0.));
+      float roll = clamp(uPtr.x, -1., 1.)*.5;
+      vec3 sp = vec3(-.15 + roll*cos(.38), 1.66 + .02*sin(t*2.) + uHi.y*.35, -.1 - roll*sin(.38)*-1.);
+      r = opU(r, vec2(length(p - sp) - .42, 1.));                               // sun ball on the arch
+      q = p - vec3(1.35, .47 + bob*.6 + uHi.z*.4, .55); q.xz *= rot(.5 + t*.18); q.xy *= rot(.08*sin(t));
+      r = opU(r, vec2(sdBox(q, vec3(.45), .15), 2.));                           // cobalt cube
+      q = p - vec3(-1.55, .22 + uHi.w*.4, .75);
+      r = opU(r, vec2(sdCyl(q, .22, .46, .1), 3.));                             // mint disc stack
+      q = p - vec3(-1.55, .62 + uHi.w*.55, .75); q.xz *= rot(t*.3);
+      r = opU(r, vec2(sdCyl(q, .17, .33, .08), 3.));
+      q = p - vec3(.55, .13 + uHi.x*.4, 1.35); q.xy *= rot(.0); q.xz *= rot(.6);
+      r = opU(r, vec2(sdTor(q, vec2(.3, .12)), 4.));                            // cream ring
+      q = p - vec3(.7, .2 + uHi.x*.3, 1.1 - 1.6); q.xz *= rot(-.3);
+      r = opU(r, vec2(sdBox(q, vec3(.2,.2,.2), .08), 0.));                      // a small tomato cube behind
+    } else {
+      vec3 q = p - vec3(0., .26, .1);
+      r = opU(r, vec2(sdBox(q, vec3(1.3, .26, .78), .2), 2.));                  // cobalt plinth
+      q = p - vec3(-1.5, .62, -.7); q.xz *= rot(.55);
+      r = opU(r, vec2(arch(q), 0.));                                           // tomato arch behind
+      r = opU(r, vec2(length(p - vec3(1.5 + .04*sin(t*1.1), .4, 1.05)) - .4, 1.)); // sun ball
+      q = p - vec3(-1.62, .2, 1.0);
+      r = opU(r, vec2(sdCyl(q, .2, .42, .09), 3.));
+      q = p - vec3(-1.62, .56, 1.0); q.xz *= rot(t*.3);
+      r = opU(r, vec2(sdCyl(q, .16, .3, .07), 3.));                             // mint stack
+      q = p - vec3(1.7, .12, -.5); q.xz *= rot(.4);
+      r = opU(r, vec2(sdTor(q, vec2(.3,.12)), 4.));                             // cream ring
+    }
+    return r;
+  }
+  vec3 nor(vec3 p){ const vec2 e=vec2(1.,-1.)*.0007; return normalize(e.xyy*map(p+e.xyy).x+e.yyx*map(p+e.yyx).x+e.yxy*map(p+e.yxy).x+e.xxx*map(p+e.xxx).x); }
+  float shadow(vec3 ro, vec3 rd){ float res=1., t=.03; for(int i=0;i<36;i++){ float h=map(ro+rd*t).x; res=min(res, 9.*h/t); t+=clamp(h,.02,.3); if(res<.002||t>6.) break; } return clamp(res,0.,1.); }
+  float occ(vec3 p, vec3 n){ float o=0., s=1.; for(int i=0;i<5;i++){ float h=.015+.16*float(i)/4.; o+=(h-map(p+h*n).x)*s; s*=.9; } return clamp(1.-2.6*o,0.,1.); }
+  vec3 albedo(float m){
+    if (m < .5) return S(vec3(1., .353, .235));
+    if (m < 1.5) return S(vec3(1., .79, .235));
+    if (m < 2.5) return S(vec3(.18, .357, 1.));
+    if (m < 3.5) return S(vec3(.27, .81, .62));
+    return S(vec3(1., .957, .886));
+  }
+  void main(){
+    vec2 uv = (gl_FragCoord.xy - .5*uRes) / uRes.y;
+    vec3 ro = uCam, ta = uTa;
+    vec3 ww = normalize(ta-ro), uu = normalize(cross(ww, vec3(0.,1.,0.))), vv = cross(uu, ww);
+    vec3 rd = normalize(uv.x*uu + uv.y*vv + uFocal*ww);
+    vec3 L = normalize(vec3(-.55, .95, .5));
+    float tp = rd.y < 0. ? -ro.y/rd.y : 1e5;
+    float t = .5; vec2 h = vec2(1e5, -1.); bool hit = false;
+    for (int i=0;i<110;i++){ vec3 p = ro+rd*t; h = map(p); if (h.x < .0007*t) { hit = true; break; } t += h.x; if (t > tp || t > 30.) break; }
+    if (hit && t < tp) {
+      vec3 p = ro+rd*t, n = nor(p);
+      vec3 al = albedo(h.y);
+      float dif = clamp((dot(n,L)+.25)/1.25, 0., 1.);
+      float sh = shadow(p+n*.004, L);
+      float ao = occ(p, n);
+      float sky = .5+.5*n.y, bou = clamp(.5-.5*n.y, 0., 1.);
+      vec3 col = al*dif*mix(.35, 1., sh)*vec3(1.25,1.15,1.02)*1.05;
+      col += al*sky*S(vec3(.75,.84,1.))*.5*ao;
+      col += al*bou*S(vec3(1.,.9,.75))*.35*ao;
+      float fre = pow(clamp(1.+dot(n,rd),0.,1.), 3.);
+      col += fre*S(vec3(.85,.9,1.))*.28*ao;
+      col += pow(clamp(dot(reflect(rd,n),L),0.,1.), 20.)*sh*.22;
+      col = pow(col, vec3(.4545));
+      o = vec4(col, 1.);
+    } else if (tp < 1e4) {
+      vec3 p = ro+rd*tp;
+      float sh = shadow(p+vec3(0.,.002,0.), L);
+      float ao = occ(p, vec3(0.,1.,0.));
+      float fade = smoothstep(4.6, 2.2, length(p.xz*vec2(.8,1.)));
+      float a = (1. - sh*ao) * .34 * fade;
+      vec3 sc = uScene < .5 ? vec3(.08,.12,.35) : vec3(.42,.25,.02);
+      o = vec4(sc*a, a);
+    } else { o = vec4(0.); }
+  }`;
+  const VS = `#version 300 es
+  in vec2 p; void main(){ gl_Position = vec4(p,0.,1.); }`;
+
+  const pointer = { x: 0, tx: 0 };
+  addEventListener("pointermove", (e) => { if (e.pointerType === "mouse") pointer.tx = (e.clientX / innerWidth) * 2 - 1; });
+  const hi = [0, 0, 0, 0], hiT = [0, 0, 0, 0];
+  document.querySelectorAll("[data-hi]").forEach((b) => {
+    const i = +b.dataset.hi;
+    const on = () => (hiT[i] = 1), off = () => (hiT[i] = 0);
+    b.addEventListener("pointerenter", on); b.addEventListener("pointerleave", off); b.addEventListener("focus", on); b.addEventListener("blur", off);
+    b.addEventListener("click", () => { hiT[i] = 1; setTimeout(off, 700); });
+  });
+
+  const scenes = [...document.querySelectorAll("canvas[data-scene]")].map((canvas) => {
+    const gl = canvas.getContext("webgl2", { antialias: false, premultipliedAlpha: true, alpha: true });
+    if (!gl) { doc.classList.add("no-gl"); return null; }
+    const mk = (t, s) => { const sh = gl.createShader(t); gl.shaderSource(sh, s); gl.compileShader(sh); if (!gl.getShaderParameter(sh, gl.COMPILE_STATUS)) throw new Error(gl.getShaderInfoLog(sh)); return sh; };
+    const prog = gl.createProgram(); gl.attachShader(prog, mk(gl.VERTEX_SHADER, VS)); gl.attachShader(prog, mk(gl.FRAGMENT_SHADER, FS)); gl.linkProgram(prog); gl.useProgram(prog);
+    const buf = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, buf); gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 3, -1, -1, 3]), gl.STATIC_DRAW);
+    const loc = gl.getAttribLocation(prog, "p"); gl.enableVertexAttribArray(loc); gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
+    const U = {}; ["uRes", "uTime", "uPtr", "uScene", "uHi", "uCam", "uTa", "uFocal"].forEach((k) => (U[k] = gl.getUniformLocation(prog, k)));
+    return { canvas, gl, U, scene: +canvas.dataset.scene, visible: true };
+  }).filter(Boolean);
+
+  const camFor = (s, t) => {
+    if (s.scene === 0) { const yaw = 0.42 + pointer.x * 0.22 + Math.sin(t * 0.25) * 0.05; return { ro: [Math.sin(yaw) * 7.4, 3.0, Math.cos(yaw) * 7.4], ta: [0, 0.78, 0.15] }; }
+    const yaw = 0.18 + pointer.x * 0.05; return { ro: [Math.sin(yaw) * 7.2, 3.3, Math.cos(yaw) * 7.2], ta: [0, 1.25, 0] };
+  };
+  // Seat the DOM phone on the plinth: project the plinth's top-front edge with the same camera as the shader
+  function seatPhone(s, t) {
+    const phone = document.querySelector("[data-phone]"); if (!phone || s.scene !== 1) return;
+    const { ro, ta } = camFor(s, t);
+    const sub = (a, b) => [a[0] - b[0], a[1] - b[1], a[2] - b[2]], dot = (a, b) => a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
+    const norm = (a) => { const l = Math.hypot(...a); return a.map((v) => v / l); }, cross = (a, b) => [a[1] * b[2] - a[2] * b[1], a[2] * b[0] - a[0] * b[2], a[0] * b[1] - a[1] * b[0]];
+    const ww = norm(sub(ta, ro)), uu = norm(cross(ww, [0, 1, 0])), vv = cross(uu, ww);
+    const P = [0, 0.52, 0.35], d = sub(P, ro);
+    const H = s.canvas.clientHeight, W = s.canvas.clientWidth;
+    const f = focal(s);
+    const y = (dot(d, vv) / dot(d, ww)) * f * H, x = (dot(d, uu) / dot(d, ww)) * f * H;
+    phone.style.top = s.canvas.offsetTop + H / 2 - y - phone.offsetHeight + "px";
+    phone.style.left = s.canvas.offsetLeft + W / 2 + x + "px";
+  }
+
+  // keep the whole toy set in frame whatever the canvas shape
+  function focal(s) { const a = s.canvas.clientWidth / s.canvas.clientHeight; return 2.4 * Math.min(1, a / (s.scene ? 1.5 : 1.32)); }
+  const io = new IntersectionObserver((es) => es.forEach((e) => { const s = scenes.find((x) => x.canvas === e.target); if (s) s.visible = e.isIntersecting; }));
+  scenes.forEach((s) => io.observe(s.canvas));
+  function size(s) {
+    const dpr = Math.min(devicePixelRatio, 1.5) * (innerWidth < 700 ? 0.8 : 0.9);
+    const w = Math.round(s.canvas.clientWidth * dpr), h = Math.round(s.canvas.clientHeight * dpr);
+    if (s.canvas.width !== w || s.canvas.height !== h) { s.canvas.width = w; s.canvas.height = h; s.gl.viewport(0, 0, w, h); }
+  }
+  function draw(s, t) {
+    size(s);
+    const { gl, U } = s, { ro, ta } = camFor(s, t);
+    gl.uniform2f(U.uRes, s.canvas.width, s.canvas.height); gl.uniform1f(U.uTime, t); gl.uniform2f(U.uPtr, pointer.x, 0); gl.uniform1f(U.uScene, s.scene);
+    gl.uniform4f(U.uHi, hi[0], hi[1], hi[2], hi[3]); gl.uniform3f(U.uCam, ...ro); gl.uniform3f(U.uTa, ...ta); gl.uniform1f(U.uFocal, focal(s));
+    gl.clearColor(0, 0, 0, 0); gl.clear(gl.COLOR_BUFFER_BIT); gl.drawArrays(gl.TRIANGLES, 0, 3);
+    seatPhone(s, t);
+  }
+  const t0 = performance.now();
+  function frame(now) {
+    const t = forcedT ?? (now - t0) / 1000;
+    pointer.x += (pointer.tx - pointer.x) * 0.06;
+    for (let i = 0; i < 4; i++) { const k = hiT[i] > hi[i] ? 0.25 : 0.1; hi[i] += (hiT[i] - hi[i]) * k; }
+    scenes.forEach((s) => s.visible && draw(s, t));
+    if (!reduce && forcedT === null) requestAnimationFrame(frame);
+  }
+  document.fonts.ready.then(() => {
+    if (reduce || forcedT !== null) { scenes.forEach((s) => draw(s, forcedT ?? 3)); addEventListener("resize", () => scenes.forEach((s) => draw(s, forcedT ?? 3))); }
+    else requestAnimationFrame(frame);
+  });
+})();
+</script>
+</body>
+</html>

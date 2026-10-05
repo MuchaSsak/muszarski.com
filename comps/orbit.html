@@ -1,0 +1,494 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Orbit · Direction 1</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Martian+Mono:wdth,wght@75..112.5,300..600&family=Mona+Sans:wdth,wght@75..125,200..900&display=swap">
+<style>
+/* ORBIT: a planet of ~22k GPU particles sits behind the name; scrolling to the work turns the same particles into the
+   phone that frames the product. Midnight indigo, a sunset duotone (amber light, periwinkle shadow), wide grotesk. */
+:root {
+  --void: #05061a;
+  --deep: #0b0d2c;
+  --ink: #eef0ff;
+  --ink-2: #a8acd8;
+  --line: rgb(168 176 255 / 0.16);
+  --amber: #ffb35c;
+  --coral: #ff6a4a;
+  --peri: #8c97ff;
+  --display: "Mona Sans", "Helvetica Neue", Arial, sans-serif;
+  --mono: "Martian Mono", ui-monospace, "Cascadia Mono", monospace;
+  --ease: cubic-bezier(0.2, 0.7, 0.1, 1);
+  --gutter: clamp(16px, 4vw, 56px);
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html { background: var(--void); }
+body {
+  margin: 0;
+  color: var(--ink);
+  font: 400 17px/1.6 var(--display);
+  font-variation-settings: "wdth" 100;
+  background:
+    radial-gradient(60% 50% at 72% 30%, rgb(60 66 170 / 0.28), transparent 70%),
+    radial-gradient(40% 35% at 10% 90%, rgb(255 106 74 / 0.08), transparent 70%),
+    var(--void);
+  -webkit-font-smoothing: antialiased;
+  overflow-x: clip;
+}
+a { color: inherit; }
+::selection { background: var(--amber); color: var(--void); }
+:focus-visible { outline: 2px solid var(--amber); outline-offset: 3px; border-radius: 4px; }
+.skip { position: absolute; left: -999px; top: 8px; }
+.skip:focus { left: 8px; z-index: 10; background: var(--amber); color: var(--void); padding: 8px 12px; }
+
+canvas.fx, canvas.stars { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+canvas.stars { z-index: 0; opacity: 0.7; }
+canvas.fx { z-index: 1; }
+header.site, main { position: relative; z-index: 2; }
+
+/* header */
+header.site {
+  position: sticky; top: 0;
+  display: flex; align-items: center; gap: 24px;
+  padding: 14px var(--gutter);
+  background: linear-gradient(rgb(5 6 26 / 0.78), rgb(5 6 26 / 0.5));
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-bottom: 1px solid rgb(168 176 255 / 0.08);
+}
+.brand { display: flex; align-items: center; gap: 10px; text-decoration: none; font-weight: 650; font-variation-settings: "wdth" 112; letter-spacing: -0.01em; }
+.brand-mark { width: 26px; height: 26px; border-radius: 50%; position: relative;
+  background: radial-gradient(circle at 35% 35%, #fff3e0, var(--amber) 45%, var(--coral) 75%, transparent 76%); }
+.brand-mark::after { content: ""; position: absolute; inset: 9px -6px; border: 1.5px solid var(--peri); border-radius: 50%; transform: rotate(-18deg); }
+nav.main { display: flex; gap: 26px; margin-left: auto; font-size: 15px; }
+nav.main a { text-decoration: none; color: var(--ink-2); transition: color .25s var(--ease); }
+nav.main a:hover { color: var(--ink); }
+.actions { display: flex; align-items: center; gap: 10px; margin-left: 28px; }
+.lang { font: 500 12px/1 var(--mono); color: var(--ink-2); padding: 10px 8px; text-decoration: none; letter-spacing: .06em; }
+.btn { display: inline-flex; align-items: center; gap: 10px; min-height: 44px; padding: 0 20px; border-radius: 999px; font: 600 15px/1 var(--display);
+  font-variation-settings: "wdth" 108; text-decoration: none; cursor: pointer; border: 0; transition: transform .3s var(--ease), background .3s var(--ease), box-shadow .3s var(--ease); }
+.btn:hover { transform: translateY(-2px); }
+.btn-solid { background: var(--amber); color: #1a0e00; box-shadow: 0 0 0 0 rgb(255 179 92 / 0.0); }
+.btn-solid:hover { box-shadow: 0 10px 40px -8px rgb(255 179 92 / 0.6); }
+.btn-ghost { background: rgb(140 151 255 / 0.1); color: var(--ink); box-shadow: inset 0 0 0 1px rgb(168 176 255 / 0.35); }
+.btn-ghost:hover { background: rgb(140 151 255 / 0.18); }
+.btn small { font: 500 11px/1 var(--mono); color: inherit; opacity: .7; letter-spacing: .04em; }
+.menu { display: none; }
+
+/* hero */
+.hero { position: relative; min-height: min(100svh, 980px); display: grid; grid-template-rows: 1fr auto; padding: 0 var(--gutter); }
+.hero, .work { overflow-x: clip; }
+.hero-orb { position: absolute; right: -17vw; top: 50%; width: min(76vw, 1180px); aspect-ratio: 1; transform: translateY(-50%); pointer-events: none; }
+.hero-orb::before { content: ""; position: absolute; inset: 12%; border-radius: 50%; filter: blur(40px);
+  background: radial-gradient(circle at 32% 32%, rgb(255 179 92 / 0.28), rgb(255 106 74 / 0.1) 45%, rgb(140 151 255 / 0.06) 62%, transparent 72%); }
+.no-gl .hero-orb { background: radial-gradient(circle at 38% 36%, #fff3e0 0, var(--amber) 22%, var(--coral) 42%, rgb(140 151 255 / 0.25) 62%, transparent 63%); filter: blur(1px); }
+.hero-copy { position: relative; align-self: center; max-width: 900px; padding: 72px 0 40px; }
+.hero-copy::before { content: ""; position: absolute; z-index: -1; left: -12%; right: 18%; top: 30%; bottom: -4%; pointer-events: none;
+  background: radial-gradient(closest-side, rgb(5 6 26 / 0.82), rgb(5 6 26 / 0.5) 60%, transparent); }
+.eyebrow { display: flex; align-items: center; gap: 12px; margin: 0 0 28px; font: 500 12px/1.4 var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--ink-2); }
+.eyebrow .live { width: 8px; height: 8px; border-radius: 50%; background: #5df2a6; box-shadow: 0 0 0 4px rgb(93 242 166 / 0.15); }
+h1 { margin: 0; font-weight: 800; letter-spacing: -0.035em; line-height: 0.9; }
+.h1-name { display: block; font-size: clamp(54px, 9.4vw, 152px); font-variation-settings: "wdth" 125; text-wrap: balance;
+  text-shadow: 0 2px 30px rgb(5 6 26 / 0.65); }
+.h1-role { display: block; margin-top: 18px; font-size: clamp(24px, 3.1vw, 50px); font-weight: 300; letter-spacing: -0.02em; line-height: 1.05;
+  font-variation-settings: "wdth" 80; color: var(--amber); }
+.lede { max-width: 34ch; margin: 28px 0 0; font-size: clamp(18px, 1.45vw, 22px); line-height: 1.5; color: var(--ink-2); text-shadow: 0 1px 18px rgb(5 6 26 / 0.9); }
+.lede strong { color: var(--ink); font-weight: 600; }
+.ctas { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 36px; }
+.telemetry { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); margin: 0; border-top: 1px solid var(--line); }
+.telemetry div { padding: 18px 20px 26px 0; }
+.telemetry div + div { padding-left: 20px; border-left: 1px solid var(--line); }
+.telemetry dt { font: 500 11px/1.4 var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--ink-2); }
+.telemetry dd { margin: 6px 0 0; font-size: 19px; font-weight: 600; font-variation-settings: "wdth" 110; font-variant-numeric: tabular-nums; }
+
+/* work */
+.work { position: relative; padding: clamp(96px, 14vw, 200px) var(--gutter) clamp(96px, 12vw, 180px); }
+.work-head { display: flex; justify-content: space-between; align-items: baseline; border-bottom: 1px solid var(--line); padding-bottom: 14px; margin-bottom: clamp(40px, 6vw, 96px); }
+.label { margin: 0; font: 500 12px/1.4 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--ink-2); }
+.project { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); grid-template-areas: "head stage" "body stage"; column-gap: clamp(32px, 5vw, 80px); row-gap: 0; }
+.project-head { grid-area: head; align-self: end; }
+.project-body { grid-area: body; align-self: start; }
+.stage { grid-area: stage; }
+.tag { display: inline-flex; gap: 10px; align-items: center; margin: 0; font: 500 12px/1.4 var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--amber); }
+.tag img { width: 28px; height: 28px; border-radius: 7px; }
+h2 { margin: 18px 0 0; font-size: clamp(64px, 11vw, 176px); line-height: .86; font-weight: 800; letter-spacing: -0.045em; font-variation-settings: "wdth" 125; }
+.outcome { max-width: 26ch; margin: 28px 0 0; font-size: clamp(22px, 2.1vw, 32px); line-height: 1.25; font-weight: 500; letter-spacing: -0.01em; font-variation-settings: "wdth" 104; }
+.proof { display: flex; flex-wrap: wrap; gap: 8px; list-style: none; margin: 28px 0 0; padding: 0; }
+.proof li { padding: 8px 14px; border-radius: 999px; font-size: 14px; background: rgb(255 179 92 / 0.08); box-shadow: inset 0 0 0 1px rgb(255 179 92 / 0.3); }
+.stack { margin: 22px 0 0; font: 400 13px/1.6 var(--mono); color: var(--ink-2); letter-spacing: .02em; }
+.project .ctas { margin-top: 32px; }
+.status { display: inline-flex; align-items: center; gap: 8px; font: 500 12px/1 var(--mono); color: var(--ink-2); letter-spacing: .06em; text-transform: uppercase; }
+.status::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: #5df2a6; }
+
+.stage { position: relative; display: grid; place-items: center; min-height: 700px; }
+.stage::before { content: ""; position: absolute; width: 120%; aspect-ratio: 1; border-radius: 50%; background: radial-gradient(closest-side, rgb(255 106 74 / 0.22), rgb(255 179 92 / 0.06) 55%, transparent 72%); }
+.phone { position: relative; width: 280px; aspect-ratio: 280 / 600; border-radius: 38px; overflow: hidden; background: #000;
+  box-shadow: 0 40px 120px -20px rgb(255 106 74 / 0.45), 0 0 0 1px rgb(255 255 255 / 0.06); }
+.phone video, .phone img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.no-gl .phone { box-shadow: 0 0 0 10px #15172f, 0 0 0 11px rgb(255 179 92 / .5), 0 40px 120px -20px rgb(255 106 74 / 0.45); }
+.card { position: absolute; left: -4%; bottom: 14%; width: 210px; padding: 14px 16px; border-radius: 16px; color: #1a1206;
+  background: linear-gradient(160deg, #fff6e8, #ffe2bd); box-shadow: 0 24px 60px -16px rgb(0 0 0 / 0.6); transform: rotate(-6deg);
+  font-size: 14px; line-height: 1.35; }
+.card b { display: block; font-size: 22px; font-variation-settings: "wdth" 115; letter-spacing: -0.01em; }
+.card span { font: 500 10px/1.4 var(--mono); letter-spacing: .08em; text-transform: uppercase; color: #9a4a10; }
+.card-2 { left: auto; right: -2%; bottom: auto; top: 16%; width: 170px; transform: rotate(5deg); background: linear-gradient(160deg, #20244f, #151839); color: var(--ink);
+  box-shadow: 0 24px 60px -16px rgb(0 0 0 / 0.8), inset 0 0 0 1px rgb(168 176 255 / 0.25); }
+.card-2 span { color: var(--peri); }
+.reveal { opacity: 1; transform: none; transition: opacity .9s var(--ease), transform .9s var(--ease); }
+.js .reveal.pending { opacity: 0; transform: translateY(24px); }
+
+/* comp chrome (not part of the design) */
+.compbar { position: fixed; z-index: 20; right: 16px; bottom: 16px; display: flex; gap: 4px; padding: 4px; border-radius: 999px; background: rgb(0 0 0 / 0.7);
+  backdrop-filter: blur(8px); font: 500 12px/1 system-ui, sans-serif; }
+.compbar a { padding: 9px 12px; border-radius: 999px; color: #fff; text-decoration: none; }
+.compbar a[aria-current] { background: #fff; color: #000; }
+.shot .compbar { display: none; }
+
+@media (max-width: 1100px) {
+  nav.main { display: none; }
+  .actions { margin-left: auto; }
+}
+@media (max-width: 860px) {
+  .project { grid-template-columns: 1fr; grid-template-areas: "head" "stage" "body"; }
+  .stage { min-height: 600px; margin: 24px 0; }
+}
+@media (max-width: 640px) {
+  header.site { gap: 8px; padding-top: 10px; padding-bottom: 10px; }
+  .brand-name { display: none; }
+  .lang { display: none; }
+  .actions { gap: 6px; }
+  .btn { padding: 0 14px; font-size: 14px; }
+  .btn small { display: none; }
+  .menu { display: inline-flex; }
+  .hero { min-height: auto; }
+  .hero-orb { right: -44vw; top: 30px; width: 126vw; transform: none; }
+  .hero-copy { padding: 62vw 0 32px; }
+  .eyebrow { margin-bottom: 18px; font-size: 11px; }
+  .h1-name { font-size: 13.6vw; font-variation-settings: "wdth" 118; }
+  .telemetry { grid-template-columns: 1fr 1fr; }
+  .telemetry div:nth-child(3) { padding-left: 0; border-left: 0; }
+  .telemetry div:nth-child(n+3) { border-top: 1px solid var(--line); }
+  .phone { width: 220px; border-radius: 30px; }
+  .stage { min-height: 540px; }
+  .card { left: -4px; bottom: 6%; width: 156px; padding: 10px 12px; font-size: 12px; }
+  .card b { font-size: 18px; }
+  .card-2 { left: auto; right: -4px; top: 4%; width: 132px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; animation: none !important; }
+}
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<canvas class="stars" aria-hidden="true"></canvas>
+<canvas class="fx" aria-hidden="true"></canvas>
+
+<header class="site">
+  <a class="brand" href="#"><span class="brand-mark" aria-hidden="true"></span><span class="brand-name">Mateusz Muszarski</span></a>
+  <nav class="main" aria-label="Main">
+    <a href="#work">Work</a><a href="#">How I work</a><a href="#">Writing</a><a href="#">My life</a>
+  </nav>
+  <div class="actions">
+    <a class="lang" href="#">EN</a>
+    <a class="btn btn-ghost" href="#">CV <small>PDF</small></a>
+    <a class="btn btn-solid" href="#">Contact</a>
+    <button class="btn btn-ghost menu" type="button">Menu</button>
+  </div>
+</header>
+
+<main id="main">
+  <section class="hero" aria-labelledby="h1">
+    <div class="hero-orb" data-orb aria-hidden="true"></div>
+    <div class="hero-copy">
+      <p class="eyebrow"><span class="live" aria-hidden="true"></span>Full-stack developer · Poland, CET · open to work</p>
+      <h1 id="h1"><span class="h1-name">Mateusz Muszarski</span><span class="h1-role">Full-stack product engineer</span></h1>
+      <p class="lede">I turn a business problem into a <strong>shipped web or mobile product</strong>, and I tell you early what it will cost and what can wait.</p>
+      <div class="ctas">
+        <a class="btn btn-solid" href="#work">See the work</a>
+        <a class="btn btn-ghost" href="#">Download CV <small>PDF · 70 KB</small></a>
+      </div>
+    </div>
+    <dl class="telemetry">
+      <div><dt>Building since</dt><dd>2022</dd></div>
+      <div><dt>Shipped solo</dt><dd>App Store + Google Play</dd></div>
+      <div><dt>Locales in one app</dt><dd>30</dd></div>
+      <div><dt>Works</dt><dd>Remote · Poland</dd></div>
+    </dl>
+  </section>
+
+  <section class="work" id="work" aria-labelledby="work-h">
+    <div class="work-head"><p class="label" id="work-h">Selected work</p><p class="label">01 / 04</p></div>
+    <article class="project">
+      <div class="project-head reveal">
+        <p class="tag"><img src="media/lk-icon.png" alt="" width="28" height="28">Own product · solo · 2026</p>
+        <h2>Linkoglot</h2>
+      </div>
+      <div class="project-body reveal">
+        <p class="outcome">Shipped a subscription AI language app to the App Store and Google Play, solo, in 30 languages.</p>
+        <ul class="proof"><li>Snap a photo, get flashcards</li><li>Voice conversations</li><li>Free trial → subscription</li></ul>
+        <p class="stack">Expo · React Native · Supabase · RevenueCat · Lingui</p>
+        <div class="ctas">
+          <a class="btn btn-solid" href="#">Read the case study</a>
+          <a class="btn btn-ghost" href="#">App Store ↗</a>
+          <a class="btn btn-ghost" href="#">Google Play ↗</a>
+        </div>
+        <p class="status" style="margin-top:22px">Live · pre-traction</p>
+      </div>
+      <div class="stage" data-shot-focus>
+        <div class="phone" data-phone>
+          <video muted loop playsinline autoplay preload="metadata" poster="media/lk-camera.jpg" aria-label="Linkoglot camera mode: point at an object to learn its name">
+            <source src="media/lk-camera.mp4" type="video/mp4">
+          </video>
+        </div>
+        <div class="card"><span>Snapped → flashcard</span><b>la maceta</b>the flowerpot · Spanish</div>
+        <div class="card card-2"><span>Locales</span><b>30</b>translated with my npm tool, lingui-translate-ai</div>
+      </div>
+    </article>
+  </section>
+</main>
+
+<nav class="compbar" aria-label="Directions">
+  <a href="./">All</a><a href="orbit.html" aria-current="page">1 Orbit</a><a href="poster.html">2</a><a href="toybox.html">3</a><a href="exhibit.html">4</a>
+</nav>
+
+<script>
+(() => {
+  const doc = document.documentElement;
+  doc.classList.add("js");
+  if (location.search.includes("shot")) doc.classList.add("shot");
+  const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  // Reveal on scroll (content is visible without JS; JS only adds the entrance)
+  const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) { e.target.classList.remove("pending"); io.unobserve(e.target); } }), { threshold: 0.15 });
+  document.querySelectorAll(".reveal").forEach((el) => { if (!reduce && el.getBoundingClientRect().top > innerHeight) { el.classList.add("pending"); io.observe(el); } });
+
+  // Stars: drawn once per resize
+  const sc = document.querySelector("canvas.stars");
+  const drawStars = () => {
+    const d = Math.min(devicePixelRatio, 2); sc.width = innerWidth * d; sc.height = innerHeight * d;
+    const x = sc.getContext("2d"); x.scale(d, d);
+    let seed = 7; const r = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+    for (let i = 0; i < (innerWidth * innerHeight) / 2600; i++) {
+      const s = r() < 0.06 ? 1.4 : 0.7; x.globalAlpha = 0.25 + r() * 0.6;
+      x.fillStyle = r() < 0.2 ? "#ffd8a8" : "#c9cfff"; x.beginPath(); x.arc(r() * innerWidth, r() * innerHeight, s * r() + 0.3, 0, 7); x.fill();
+    }
+  };
+  drawStars(); addEventListener("resize", drawStars);
+
+  // ---- WebGL2 particles ----
+  const canvas = document.querySelector("canvas.fx");
+  const gl = canvas.getContext("webgl2", { antialias: false, alpha: true, premultipliedAlpha: true, powerPreference: "high-performance" });
+  if (!gl) { doc.classList.add("no-gl"); return; }
+
+  const mobile = innerWidth < 768;
+  const N = mobile ? 20000 : 52000;
+  const sphere = new Float32Array(N * 3), phone = new Float32Array(N * 2), rnd = new Float32Array(N * 4);
+  const TAU = Math.PI * 2, GA = Math.PI * (3 - Math.sqrt(5));
+  const nS = Math.floor(N * 0.58), nR = Math.floor(N * 0.34);
+
+  // phone reference geometry (px): the screen is 280 x 600, radius 38; particles draw the bezel band around it
+  const W0 = 280, H0 = 600, R0 = 38;
+  function rrPoint(s, hw, hh, r) {
+    const sx = 2 * (hw - r), sy = 2 * (hh - r), arc = (Math.PI / 2) * r, L = 2 * sx + 2 * sy + 4 * arc;
+    s = ((s % L) + L) % L;
+    const segs = [
+      [sx, (t) => [-hw + r + t, -hh, 0, -1]],
+      [arc, (t) => { const a = -Math.PI / 2 + t / r; return [hw - r + Math.cos(a) * r, -hh + r + Math.sin(a) * r, Math.cos(a), Math.sin(a)]; }],
+      [sy, (t) => [hw, -hh + r + t, 1, 0]],
+      [arc, (t) => { const a = t / r; return [hw - r + Math.cos(a) * r, hh - r + Math.sin(a) * r, Math.cos(a), Math.sin(a)]; }],
+      [sx, (t) => [hw - r - t, hh, 0, 1]],
+      [arc, (t) => { const a = Math.PI / 2 + t / r; return [-hw + r + Math.cos(a) * r, hh - r + Math.sin(a) * r, Math.cos(a), Math.sin(a)]; }],
+      [sy, (t) => [-hw, hh - r - t, -1, 0]],
+      [arc, (t) => { const a = Math.PI + t / r; return [-hw + r + Math.cos(a) * r, -hh + r + Math.sin(a) * r, Math.cos(a), Math.sin(a)]; }],
+    ];
+    for (const [len, f] of segs) { if (s <= len) return f(s); s -= len; }
+    return segs[0][1](0);
+  }
+  const perim = (hw, hh, r) => 4 * (hw - r) + 4 * (hh - r) + TAU * r;
+
+  for (let i = 0; i < N; i++) {
+    const a = Math.random(), b = Math.random(), c = Math.random(), d = Math.random();
+    let x, y, z, kind;
+    if (i < nS) {
+      const u = a * 2 - 1, th = b * TAU, s = Math.sqrt(1 - u * u), rad = 1 - Math.pow(c, 3) * 0.06;
+      x = s * Math.cos(th) * rad; y = u * rad; z = s * Math.sin(th) * rad; kind = 0;
+    } else if (i < nS + nR) {
+      const ang = a * TAU; let rr = 1.38 + Math.pow(b, 0.9) * 0.9;
+      if (rr > 1.78 && rr < 1.86) rr += 0.1; // a Cassini-like gap
+      if (rr > 2.1 && c < 0.5) rr = 1.4 + c * 0.3; // keep the outer edge thin
+      x = Math.cos(ang) * rr; z = Math.sin(ang) * rr; y = (c - 0.5) * 0.018; kind = 1;
+      // tilt the ring
+      const t1 = 0.38, t2 = -0.22;
+      let y1 = y * Math.cos(t1) - z * Math.sin(t1), z1 = y * Math.sin(t1) + z * Math.cos(t1); y = y1; z = z1;
+      let x2 = x * Math.cos(t2) - y * Math.sin(t2), y2 = x * Math.sin(t2) + y * Math.cos(t2); x = x2; y = y2;
+    } else {
+      const u = a * 2 - 1, th = b * TAU, s = Math.sqrt(1 - u * u), rad = 1.06 + Math.pow(c, 2.5) * 1.6;
+      x = s * Math.cos(th) * rad; y = u * rad; z = s * Math.sin(th) * rad; kind = 2;
+    }
+    sphere.set([x, y, z], i * 3);
+
+    // phone target
+    const q = Math.random();
+    let px, py;
+    if (q < 0.5) { // bezel band
+      const off = 1 + Math.random() * 9, hw = W0 / 2 + off, hh = H0 / 2 + off, r = R0 + off;
+      [px, py] = rrPoint(Math.random() * perim(hw, hh, r), hw, hh, r);
+    } else if (q < 0.66) { // crisp outer edge
+      const hw = W0 / 2 + 11, hh = H0 / 2 + 11, r = R0 + 11;
+      [px, py] = rrPoint(Math.random() * perim(hw, hh, r), hw, hh, r);
+    } else if (q < 0.71) { // side buttons
+      const side = Math.random() < 0.7 ? -1 : 1, seg = Math.random();
+      px = side * (W0 / 2 + 13 + Math.random() * 2);
+      py = side < 0 ? (seg < 0.5 ? -150 + seg * 2 * 46 : -80 + (seg - 0.5) * 2 * 46) : -120 + seg * 80;
+    } else { // halo dust around the device
+      const hw = W0 / 2 + 11, hh = H0 / 2 + 11, r = R0 + 11;
+      const [ex, ey, nx, ny] = rrPoint(Math.random() * perim(hw, hh, r), hw, hh, r);
+      const dist = 6 + Math.pow(Math.random(), 2.2) * 150;
+      px = ex + nx * dist + (Math.random() - 0.5) * 10; py = ey + ny * dist + (Math.random() - 0.5) * 10;
+    }
+    phone.set([px, py], i * 2);
+    rnd.set([b, Math.random(), Math.random(), kind], i * 4);
+  }
+
+  const vs = `#version 300 es
+  precision highp float;
+  in vec3 aSphere; in vec2 aPhone; in vec4 aRnd;
+  uniform float uTime, uMorph, uIntro, uAspect, uScale, uDpr, uSize;
+  uniform vec2 uCenter, uPointer, uTilt; uniform vec4 uPhone; uniform float uPointerOn;
+  out vec3 vCol; out float vA;
+  mat3 rx(float a){ float c=cos(a), s=sin(a); return mat3(1.,0.,0., 0.,c,s, 0.,-s,c); }
+  mat3 ry(float a){ float c=cos(a), s=sin(a); return mat3(c,0.,-s, 0.,1.,0., s,0.,c); }
+  float h(float n){ return fract(sin(n)*43758.5453); }
+  void main(){
+    float kind = aRnd.w;
+    vec3 p = aSphere;
+    // breathing surface
+    float n = sin(p.x*3.1 + uTime*.55 + aRnd.x*6.28) * sin(p.y*3.7 - uTime*.42) * sin(p.z*2.9 + uTime*.5);
+    p *= 1. + (kind < .5 ? .022 : .05) * n;
+    // ring particles orbit faster than the planet spins
+    float spin = uTime * (kind > .5 && kind < 1.5 ? .11 + .05/length(p.xz) : .06);
+    mat3 R = rx(.32 + uTilt.y) * ry(spin + uTilt.x);
+    vec3 q = R * p;
+    // intro: particles condense from a wide cloud
+    float di = aRnd.y * .5;
+    float it = smoothstep(di, di + .5, uIntro);
+    it = 1. - pow(1. - it, 3.);
+    q = mix(q * (2.6 + aRnd.z * 3.), q, it);
+    float camZ = 3.4, z = camZ - q.z;
+    vec2 proj = q.xy / z * 2.35;
+    vec2 sp = uCenter + vec2(proj.x / uAspect, proj.y) * uScale;
+
+    vec2 ph = uPhone.xy + vec2(aPhone.x * uPhone.z, -aPhone.y * uPhone.w);
+    float d = aRnd.y * .42;
+    float m = smoothstep(d, d + .58, uMorph);
+    m = m * m * (3. - 2. * m);
+    vec2 pos = mix(sp, ph, m);
+    float ang = aRnd.z * 6.2831;
+    pos += sin(m * 3.14159) * vec2(cos(ang) / uAspect, sin(ang)) * (.18 + .3 * aRnd.x);
+
+    // pointer repulsion (screen space, aspect-corrected)
+    vec2 dp = pos - uPointer; dp.x *= uAspect;
+    float dl = length(dp);
+    float f = uPointerOn * exp(-dl * dl / .018) * .085;
+    pos += (dp / max(dl, 1e-4)) * f * vec2(1. / uAspect, 1.);
+    gl_Position = vec4(pos, 0., 1.);
+
+    // light: a sun from the upper left, periwinkle bounce in the shadow
+    vec3 nrm = normalize(q);
+    vec3 L = normalize(vec3(-.7, .5, .5));
+    float lam = dot(nrm, L);
+    vec3 warmW = vec3(1., .93, .82), amber = vec3(1., .66, .3), coral = vec3(1., .36, .24), peri = vec3(.5, .55, 1.);
+    // latitude bands, fixed to the planet (p, not q), wobbling with a little noise
+    float band = .5 + .5 * sin(p.y * 15. + sin(p.x * 4. + p.z * 3.) * 1.4);
+    vec3 surf = mix(amber, coral, band * .75);
+    vec3 lit = mix(surf * .9, warmW, smoothstep(.55, 1., lam) * (1. - band * .5));
+    vec3 col = mix(peri * .16, lit * 1.25, smoothstep(-.12, .32, lam));
+    float rim = pow(1. - abs(nrm.z), 4.);
+    col += peri * rim * .9;
+    float a = 1.;
+    if (kind < .5) a = mix(.06, 1., smoothstep(-.15, .12, q.z)) * mix(.55, 1., smoothstep(-.2, .4, lam) + rim);
+    if (kind > .5 && kind < 1.5) {                                      // ring: dusty, darker where the planet shades it
+      float rr = length(p.xz);
+      col = mix(vec3(1., .8, .55), vec3(.62, .6, 1.), smoothstep(1.5, 2.2, rr)) * (.8 + .4 * aRnd.x);
+      float behind = step(q.z, 0.) * step(length(q.xy), 1.0);
+      float shade = smoothstep(.2, -.4, dot(normalize(vec3(q.x, 0., q.z)), normalize(vec3(L.x, 0., L.z)))) * step(length(q.xy), 1.1);
+      a = mix(.85, .0, behind) * mix(1., .35, shade);
+    }
+    if (kind > 1.5) { col = mix(peri, amber, aRnd.x); a = .35 + .4 * aRnd.z; }
+    // the phone glows in the product's colours, with a light running round the frame
+    float g = clamp(.5 - aPhone.y / 700., 0., 1.);
+    vec3 pc = mix(vec3(1., .27, .22), vec3(1., .72, .25), g);
+    float runner = atan(aPhone.y, aPhone.x);
+    float pulse = pow(.5 + .5 * cos(runner - uTime * 1.3), 18.);
+    pc += vec3(1.) * pulse * .9;
+    col = mix(col, pc, m);
+    a = mix(a, .85, m);
+    float persp = mix(camZ / z, 1., m);
+    gl_PointSize = (1.3 + aRnd.x * 2.4) * uDpr * uSize * persp * (kind > 1.5 ? .8 : 1.);
+    vCol = col; vA = a * mix(.35, 1., it);
+  }`;
+  const fs = `#version 300 es
+  precision mediump float;
+  in vec3 vCol; in float vA; out vec4 o;
+  void main(){
+    vec2 c = gl_PointCoord - .5; float d = length(c);
+    float a = smoothstep(.5, .0, d); a *= a;
+    o = vec4(vCol * a * vA, a * vA);
+  }`;
+  const sh = (t, s) => { const o = gl.createShader(t); gl.shaderSource(o, s); gl.compileShader(o); if (!gl.getShaderParameter(o, gl.COMPILE_STATUS)) throw new Error(gl.getShaderInfoLog(o)); return o; };
+  const prog = gl.createProgram();
+  gl.attachShader(prog, sh(gl.VERTEX_SHADER, vs)); gl.attachShader(prog, sh(gl.FRAGMENT_SHADER, fs)); gl.linkProgram(prog);
+  if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) { console.error(gl.getProgramInfoLog(prog)); doc.classList.add("no-gl"); return; }
+  gl.useProgram(prog);
+  const vao = gl.createVertexArray(); gl.bindVertexArray(vao);
+  const attr = (name, data, size) => { const b = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, b); gl.bufferData(gl.ARRAY_BUFFER, data, gl.STATIC_DRAW);
+    const loc = gl.getAttribLocation(prog, name); gl.enableVertexAttribArray(loc); gl.vertexAttribPointer(loc, size, gl.FLOAT, false, 0, 0); };
+  attr("aSphere", sphere, 3); attr("aPhone", phone, 2); attr("aRnd", rnd, 4);
+  const U = {}; ["uTime","uMorph","uIntro","uAspect","uScale","uDpr","uSize","uCenter","uPointer","uTilt","uPhone","uPointerOn"].forEach((k) => (U[k] = gl.getUniformLocation(prog, k)));
+  gl.enable(gl.BLEND); gl.blendFunc(gl.ONE, gl.ONE);
+
+  const dpr = Math.min(devicePixelRatio, mobile ? 1.75 : 2);
+  const resize = () => { canvas.width = innerWidth * dpr; canvas.height = innerHeight * dpr; gl.viewport(0, 0, canvas.width, canvas.height); };
+  resize(); addEventListener("resize", resize);
+
+  const orbEl = document.querySelector("[data-orb]"), phoneEl = document.querySelector("[data-phone]");
+  const pointer = { x: 0, y: 0, tx: 0, ty: 0, on: 0, ton: 0 };
+  addEventListener("pointermove", (e) => { if (e.pointerType !== "mouse") return; pointer.tx = (e.clientX / innerWidth) * 2 - 1; pointer.ty = 1 - (e.clientY / innerHeight) * 2; pointer.ton = 1; });
+  document.addEventListener("pointerleave", () => (pointer.ton = 0));
+
+  let morph = 0, visible = true, t0 = performance.now();
+  const shot = new URLSearchParams(location.search);
+  const forcedT = shot.has("t") ? parseFloat(shot.get("t")) : null;
+  function frame(now) {
+    const t = forcedT ?? (reduce ? 20 : (now - t0) / 1000);
+    const vw = innerWidth, vh = innerHeight;
+    const o = orbEl.getBoundingClientRect(), p = phoneEl.getBoundingClientRect();
+    // morph: begins as the phone enters, completes when it is two-thirds up the screen
+    const target = Math.min(1, Math.max(0, (vh * 1.05 - (p.top + p.height * 0.25)) / (vh * 0.62)));
+    morph = reduce || forcedT !== null ? target : morph + (target - morph) * 0.08;
+    pointer.x += (pointer.tx - pointer.x) * 0.08; pointer.y += (pointer.ty - pointer.y) * 0.08; pointer.on += (pointer.ton - pointer.on) * 0.05;
+    const radiusPx = o.width * 0.36;
+    gl.clearColor(0, 0, 0, 0); gl.clear(gl.COLOR_BUFFER_BIT);
+    gl.uniform1f(U.uTime, t); gl.uniform1f(U.uMorph, morph); gl.uniform1f(U.uIntro, reduce ? 1 : Math.min(1, t / 2.4));
+    gl.uniform1f(U.uAspect, vw / vh); gl.uniform1f(U.uScale, ((radiusPx * 2) / vh) / (2.35 / 3.4));
+    gl.uniform1f(U.uDpr, dpr); gl.uniform1f(U.uSize, Math.max(0.9, Math.min(1.6, radiusPx / 230)));
+    gl.uniform2f(U.uCenter, ((o.left + o.width / 2) / vw) * 2 - 1, 1 - ((o.top + o.height / 2) / vh) * 2);
+    gl.uniform2f(U.uPointer, pointer.x, pointer.y); gl.uniform1f(U.uPointerOn, pointer.on);
+    gl.uniform2f(U.uTilt, pointer.x * 0.25 * pointer.on + window.scrollY * 0.0006, -pointer.y * 0.12 * pointer.on);
+    const s = p.width / W0;
+    gl.uniform4f(U.uPhone, ((p.left + p.width / 2) / vw) * 2 - 1, 1 - ((p.top + p.height / 2) / vh) * 2, (2 * s) / vw, (2 * s) / vh);
+    gl.drawArrays(gl.POINTS, 0, N);
+    if (!reduce && forcedT === null && visible) requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+  if (reduce || forcedT !== null) { addEventListener("scroll", () => requestAnimationFrame(frame), { passive: true }); addEventListener("resize", () => requestAnimationFrame(frame)); }
+  document.addEventListener("visibilitychange", () => { visible = !document.hidden; if (visible && !reduce && forcedT === null) requestAnimationFrame(frame); });
+})();
+</script>
+</body>
+</html>

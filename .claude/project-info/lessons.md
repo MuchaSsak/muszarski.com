@@ -23,6 +23,9 @@
   NOT "done": visuals must be ambitious and astonishing first, then made practical. Show several bold rendered directions and let
   the owner choose BEFORE building slices; never freeze a visual system the owner hasn't seen and approved - 2026-10-05.
 
+- Show visual options as live comps (`comps/*.html`, real type, colour, motion) on a private artifact page the owner can
+  open on desktop AND phone; stills alone hide the motion that sells a direction - 2026-10-05.
+
 ### Privacy of inputs
 - `context/` is private and gitignored (the pstryk code, klepacz.pdf). Copy patterns, not files; never quote the memo verbatim or name its author in committed files - 2026-10-05.
 - Research screenshots of third-party sites stay local (`research/inspirations/img/` is gitignored); the repo may go public - 2026-10-05.

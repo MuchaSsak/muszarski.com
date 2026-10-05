@@ -1,0 +1,331 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Poster · Direction 2</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anybody:ital,wdth,wght@0,50..150,100..900;1,50..150,100..900&display=swap">
+<style>
+/* POSTER: the page is a run of printed posters. The name is set edge to edge in one variable face; every line is
+   justified by its WIDTH axis, and the letters breathe like an accordion around the cursor while the line stays flush.
+   Flat cobalt, signal orange, a hot-pink sticker. No images in the hero: the type is the picture. */
+:root {
+  --cobalt: #2433ff;
+  --ice: #eef0ff;
+  --pink: #ff4fb8;
+  --orange: #ff5b1f;
+  --navy: #0a0d33;
+  --sans: "Anybody", "Arial Narrow", Arial, sans-serif;
+  --ease: cubic-bezier(0.2, 0.75, 0.1, 1);
+  --gutter: clamp(16px, 3.9vw, 56px);
+  color-scheme: light;
+}
+* { box-sizing: border-box; }
+html { background: var(--cobalt); }
+body { margin: 0; font: 400 18px/1.5 var(--sans); font-variation-settings: "wdth" 100; color: var(--ice); background: var(--cobalt); overflow-x: clip; -webkit-font-smoothing: antialiased; }
+a { color: inherit; }
+::selection { background: var(--pink); color: var(--navy); }
+:focus-visible { outline: 3px solid var(--pink); outline-offset: 3px; }
+.skip { position: absolute; left: -999px; }
+.skip:focus { left: 8px; top: 8px; z-index: 9; background: var(--pink); color: var(--navy); padding: 8px 12px; }
+.grain { position: fixed; inset: 0; z-index: 50; pointer-events: none; opacity: 0.16; mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>"); }
+
+/* header */
+header.site { position: relative; z-index: 3; display: flex; align-items: center; gap: 28px; padding: 18px var(--gutter); }
+.mark { font-weight: 900; font-size: 22px; letter-spacing: -0.02em; text-decoration: none; font-variation-settings: "wdth" 150; }
+nav.main { display: flex; gap: 28px; margin-left: auto; font-weight: 600; font-variation-settings: "wdth" 120; font-size: 15px; text-transform: uppercase; letter-spacing: .02em; }
+nav.main a { text-decoration: none; background: linear-gradient(currentColor, currentColor) 0 100% / 0 2px no-repeat; transition: background-size .35s var(--ease); padding: 6px 0; }
+nav.main a:hover { background-size: 100% 2px; }
+.actions { display: flex; gap: 10px; margin-left: 24px; }
+.btn { display: inline-flex; align-items: center; gap: 10px; min-height: 46px; padding: 0 22px; border-radius: 0; font: 800 15px/1 var(--sans); font-variation-settings: "wdth" 115;
+  text-transform: uppercase; letter-spacing: .03em; text-decoration: none; cursor: pointer; border: 0; transition: transform .35s var(--ease), box-shadow .35s var(--ease); }
+.btn:hover { transform: translate(-3px, -3px); }
+.btn-pink { background: var(--pink); color: var(--navy); box-shadow: 0 0 0 0 var(--navy); }
+.btn-pink:hover { box-shadow: 3px 3px 0 0 var(--navy); }
+.btn-line { box-shadow: inset 0 0 0 2px currentColor; }
+.btn-ice { background: var(--ice); color: var(--cobalt); }
+.btn-ice:hover { box-shadow: 3px 3px 0 0 var(--pink); }
+.btn-navy { background: var(--navy); color: var(--orange); }
+.btn-navy:hover { box-shadow: 3px 3px 0 0 var(--ice); }
+.btn small { font-size: 11px; font-weight: 600; opacity: .75; }
+.menu { display: none; }
+
+/* hero */
+.hero { position: relative; overflow-x: clip; padding: clamp(8px, 2vw, 28px) var(--gutter) clamp(40px, 5vw, 72px); }
+.name { position: relative; margin: 0; font-weight: 900; line-height: 0.8; letter-spacing: 0; text-transform: uppercase; }
+.name .line { display: block; white-space: nowrap; width: max-content; }
+.ch { display: inline-block; will-change: transform; }
+.ch i { font-style: normal; }
+.name .role-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.rule { height: 3px; background: var(--ice); margin: clamp(14px, 1.6vw, 24px) 0 0; transform-origin: left; }
+.info { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 24px; margin-top: clamp(20px, 2.4vw, 36px); align-items: start; }
+.role { grid-column: span 4; margin: 0; font-weight: 800; font-size: clamp(30px, 3.4vw, 54px); line-height: .92; font-variation-settings: "wdth" 62; text-transform: uppercase; }
+.lede { grid-column: span 4; margin: 0; max-width: 34ch; font-size: clamp(18px, 1.35vw, 21px); line-height: 1.45; }
+.cta-col { grid-column: span 4; display: flex; flex-direction: column; align-items: flex-start; gap: 12px; }
+.facts { display: flex; flex-wrap: wrap; gap: 6px 18px; margin: 10px 0 0; padding: 0; list-style: none; font-size: 13px; font-weight: 700; font-variation-settings: "wdth" 125; text-transform: uppercase; letter-spacing: .04em; }
+.facts li::before { content: "■ "; color: var(--pink); }
+
+.sticker { position: absolute; z-index: 2; width: clamp(110px, 12vw, 180px); aspect-ratio: 1; right: clamp(8px, 7vw, 120px); top: clamp(40px, 1vw, 60px); color: var(--navy); }
+.sticker svg { width: 100%; height: 100%; animation: spin 22s linear infinite; }
+.sticker:hover svg { animation-play-state: paused; }
+.sticker .core { position: absolute; inset: 27%; display: grid; place-items: center; text-align: center; font-weight: 900; font-size: clamp(22px, 2.6vw, 40px); line-height: .9; font-variation-settings: "wdth" 70; }
+.sticker .core small { display: block; font-size: .32em; font-weight: 700; font-variation-settings: "wdth" 120; letter-spacing: .06em; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* work */
+.work { position: relative; background: var(--orange); color: var(--navy); padding: clamp(28px, 3vw, 44px) var(--gutter) clamp(64px, 8vw, 120px); overflow: clip; }
+.work-bar { display: flex; justify-content: space-between; align-items: baseline; padding-bottom: 12px; border-bottom: 3px solid var(--navy);
+  font-weight: 800; font-variation-settings: "wdth" 125; text-transform: uppercase; letter-spacing: .04em; font-size: 14px; }
+.work-bar p { margin: 0; }
+.billboard { position: relative; margin-top: clamp(18px, 2vw, 30px); }
+.word { margin: 0; font-weight: 900; text-transform: uppercase; line-height: .78; white-space: nowrap; width: max-content; }
+.word-wrap { position: relative; }
+.board { display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); gap: clamp(24px, 3vw, 56px); margin-top: calc(var(--word-h, 200px) * -0.58); }
+.side { padding-top: calc(var(--word-h, 200px) * 0.58 + clamp(20px, 2.4vw, 40px)); display: flex; flex-direction: column; gap: 22px; min-width: 0; }
+.side-r { align-items: flex-start; }
+.stage { position: relative; display: flex; justify-content: center; pointer-events: none; padding-bottom: 20px; }
+.phone { position: relative; pointer-events: auto; width: clamp(220px, 21vw, 300px); aspect-ratio: 280 / 600; border-radius: 34px; overflow: hidden; background: #000;
+  box-shadow: 0 0 0 9px var(--navy), 18px 22px 0 9px rgb(10 13 51 / 0.9); transform: rotate(-5deg); }
+.phone video { width: 100%; height: 100%; object-fit: cover; display: block; }
+.flash { position: absolute; z-index: 2; right: -34%; bottom: 10%; width: clamp(170px, 15vw, 220px); padding: 14px 16px 16px; background: var(--pink); color: var(--navy);
+  transform: rotate(7deg); box-shadow: 8px 8px 0 var(--navy); }
+.flash span { display: block; font-size: 11px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; font-variation-settings: "wdth" 125; }
+.flash b { display: block; margin-top: 6px; font-size: clamp(28px, 2.6vw, 38px); line-height: .95; font-weight: 900; font-variation-settings: "wdth" 80; }
+.flash em { font-style: normal; font-size: 14px; }
+.tag-chip { align-self: flex-start; padding: 10px 14px; background: var(--ice); color: var(--navy); transform: rotate(-6deg);
+  font-weight: 800; font-size: 13px; text-transform: uppercase; letter-spacing: .04em; font-variation-settings: "wdth" 120; box-shadow: 6px 6px 0 var(--navy); display: flex; align-items: center; gap: 10px; }
+.tag-chip img { width: 30px; height: 30px; }
+.outcome { margin: 0; font-weight: 800; font-size: clamp(26px, 2.6vw, 40px); line-height: 1; letter-spacing: -0.01em; font-variation-settings: "wdth" 88; }
+.proves { margin: 0; padding: 0; list-style: none; font-size: 17px; line-height: 1.4; }
+.proves li { padding: 10px 0; border-bottom: 2px solid rgb(10 13 51 / 0.25); }
+.proves li:first-child { padding-top: 0; }
+.proves b { font-weight: 800; }
+.links { display: flex; flex-wrap: wrap; gap: 10px; }
+.stack { margin: 0 0 6px; font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; font-variation-settings: "wdth" 120; }
+.status { margin-top: 8px; font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; }
+
+@supports (animation-timeline: view()) {
+  .word { animation: slide linear both; animation-timeline: view(); animation-range: entry 0% exit 60%; }
+  .phone { animation: tilt linear both; animation-timeline: view(); animation-range: entry 10% cover 50%; }
+  @keyframes slide { from { transform: translateX(2.5%); } to { transform: translateX(-2.5%); } }
+  @keyframes tilt { from { transform: rotate(-14deg) translateY(80px); } to { transform: rotate(-5deg); } }
+}
+
+.compbar { position: fixed; z-index: 60; right: 16px; bottom: 16px; display: flex; gap: 4px; padding: 4px; border-radius: 999px; background: rgb(0 0 0 / 0.75); font: 500 12px/1 system-ui, sans-serif; }
+.compbar a { padding: 9px 12px; border-radius: 999px; color: #fff; text-decoration: none; }
+.compbar a[aria-current] { background: #fff; color: #000; }
+.shot .compbar { display: none; }
+
+@media (max-width: 1100px) { nav.main { display: none; } .actions { margin-left: auto; } }
+@media (max-width: 900px) {
+  .role, .lede, .cta-col { grid-column: span 12; }
+  .board { grid-template-columns: 1fr; }
+  .side { padding-top: 0; }
+  .stage { order: -1; }
+}
+@media (max-width: 640px) {
+  header.site { padding-top: 12px; padding-bottom: 12px; gap: 8px; }
+  .actions { gap: 6px; }
+  .btn { padding: 0 14px; min-height: 44px; font-size: 13px; }
+  .actions .btn small { display: none; }
+  .menu { display: inline-flex; }
+  .info { gap: 18px; }
+  .hero { padding-bottom: 68px; }
+  .sticker { width: 96px; right: 14px; top: auto; bottom: -26px; }
+  .work { padding-top: 48px; }
+  .tag-chip { font-size: 11px; }
+  .flash { right: -6px; bottom: 6%; width: 132px; padding: 10px 12px 12px; }
+  .flash b { font-size: 24px; }
+  .flash em { font-size: 12px; }
+  .phone { width: 210px; box-shadow: 0 0 0 7px var(--navy), 12px 14px 0 7px rgb(10 13 51 / 0.9); }
+}
+@media (prefers-reduced-motion: reduce) {
+  * { animation: none !important; transition: none !important; }
+}
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<div class="grain" aria-hidden="true"></div>
+<header class="site">
+  <a class="mark" href="#">M—M</a>
+  <nav class="main" aria-label="Main"><a href="#work">Work</a><a href="#">How I work</a><a href="#">Writing</a><a href="#">My life</a><a href="#">EN</a></nav>
+  <div class="actions">
+    <a class="btn btn-line" href="#">CV <small>PDF</small></a>
+    <a class="btn btn-pink" href="#">Contact</a>
+    <button class="btn btn-line menu" type="button">Menu</button>
+  </div>
+</header>
+
+<main id="main">
+  <section class="hero" aria-labelledby="h1">
+    <h1 class="name" id="h1" data-fit="name">
+      <span class="line" aria-hidden="true">Mateusz</span>
+      <span class="line" aria-hidden="true">Muszarski</span>
+      <span class="role-sr">Mateusz Muszarski, full-stack product engineer</span>
+    </h1>
+    <div class="sticker" aria-hidden="true">
+      <svg viewBox="0 0 200 200"><circle cx="100" cy="100" r="96" fill="#ff4fb8"/>
+        <path id="ring" d="M100,100 m-74,0 a74,74 0 1,1 148,0 a74,74 0 1,1 -148,0" fill="none"/>
+        <text font-family="Anybody, sans-serif" font-weight="800" font-size="17" letter-spacing="3" fill="#0a0d33" style="font-variation-settings:'wdth' 120">
+          <textPath href="#ring">OPEN TO WORK ✦ POLAND, CET ✦ REMOTE ✦</textPath></text></svg>
+      <div class="core"><span>2022<small>SHIPPING SINCE</small></span></div>
+    </div>
+    <div class="rule" aria-hidden="true"></div>
+    <div class="info">
+      <p class="role">Full-stack<br>product engineer</p>
+      <p class="lede">I turn a business problem into a shipped web or mobile product, and I tell you early what it will cost and what can wait.</p>
+      <div class="cta-col">
+        <a class="btn btn-ice" href="#work">See the work ↓</a>
+        <a class="btn btn-line" href="#">Download CV <small>PDF · 70 KB</small></a>
+        <ul class="facts"><li>Solo, end to end</li><li>Web + mobile</li><li>App Store + Google Play</li></ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="work" id="work" aria-labelledby="lk">
+    <div class="work-bar"><p>Selected work</p><p>01 / 04</p></div>
+    <div class="billboard" data-shot-focus>
+      <div class="word-wrap"><h2 class="word" id="lk" data-fit="word">Linkoglot</h2></div>
+      <div class="board">
+      <div class="side side-l">
+        <div class="tag-chip"><img src="media/lk-icon.png" alt="" width="30" height="30">Own product · solo · 2026</div>
+        <p class="outcome">Shipped a subscription AI language app to the App Store and Google Play. Solo. In 30 languages.</p>
+        <p class="stack">Expo · React Native · Supabase · RevenueCat · Lingui</p>
+      </div>
+      <div class="stage">
+        <div class="phone"><video muted loop playsinline autoplay preload="metadata" poster="media/lk-camera.jpg" aria-label="Linkoglot camera mode: point at an object to learn its name"><source src="media/lk-camera.mp4" type="video/mp4"></video></div>
+        <div class="flash"><span>Snapped → flashcard</span><b>la maceta</b><em>the flowerpot · Spanish</em></div>
+      </div>
+      <div class="side side-r">
+      <ul class="proves">
+        <li><b>Camera to study set:</b> snap a photo, get flashcards and quizzes.</li>
+        <li><b>Business model:</b> free trial, then monthly or yearly plans via RevenueCat.</li>
+        <li><b>30 locales</b> from my own npm tool, lingui-translate-ai.</li>
+      </ul>
+      <div class="links">
+        <a class="btn btn-navy" href="#">Read the case study →</a>
+        <a class="btn btn-line" href="#">App Store ↗</a>
+        <a class="btn btn-line" href="#">Google Play ↗</a>
+      </div>
+      <p class="status">● Live · pre-traction</p>
+      </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<nav class="compbar" aria-label="Directions">
+  <a href="./">All</a><a href="orbit.html">1</a><a href="poster.html" aria-current="page">2 Poster</a><a href="toybox.html">3</a><a href="exhibit.html">4</a>
+</nav>
+
+<script>
+(() => {
+  const doc = document.documentElement;
+  if (location.search.includes("shot")) doc.classList.add("shot");
+  const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const params = new URLSearchParams(location.search);
+  const forcedT = params.has("t") ? parseFloat(params.get("t")) : null;
+
+  // Split each fitted line into letter boxes (.ch) holding one glyph (i). The h1 keeps one accessible name (.role-sr).
+  const blocks = [...document.querySelectorAll("[data-fit]")].map((el) => {
+    const word = el.dataset.fit === "word";
+    const lines = word ? [el] : [...el.querySelectorAll(".line")];
+    return { el, word, lines: lines.map((line) => {
+      const text = line.textContent.trim();
+      if (word) line.setAttribute("aria-label", text);
+      line.textContent = "";
+      const chars = [...text].map((c) => {
+        const box = document.createElement("span"); box.className = "ch"; box.setAttribute("aria-hidden", "true");
+        const g = document.createElement("i"); g.textContent = c; box.append(g); line.append(box);
+        return { el: box, g };
+      });
+      return { el: line, chars, wdth: 100, delta: 0 };
+    }) };
+  });
+
+  const fvs = (w) => `"wdth" ${w.toFixed(2)}, "wght" 900`;
+  const width = (el) => el.getBoundingClientRect().width;
+
+  // Fit: one font size per block so the longest line fills the box at the base width; every line then solves its own
+  // WIDTH axis to land exactly flush. Letter boxes are then locked, and only transforms move letters (no layout shift).
+  function fit() {
+    for (const b of blocks) {
+      const ps = getComputedStyle(b.el.parentElement);
+      const W = b.el.parentElement.clientWidth - parseFloat(ps.paddingLeft) - parseFloat(ps.paddingRight);
+      const base = innerWidth < 700 ? (b.word ? 72 : 62) : 96;
+      b.el.style.fontSize = "100px";
+      for (const l of b.lines) {
+        l.el.style.fontVariationSettings = fvs(base);
+        for (const c of l.chars) { c.g.style.fontVariationSettings = ""; c.el.style.transform = ""; c.el.style.width = ""; }
+      }
+      const widest = Math.max(...b.lines.map((l) => width(l.el)));
+      b.el.style.fontSize = (100 * W) / widest + "px";
+      for (const l of b.lines) {
+        let lo = 50, hi = 150;
+        for (let i = 0; i < 18; i++) { const mid = (lo + hi) / 2; l.el.style.fontVariationSettings = fvs(mid); width(l.el) > W ? (hi = mid) : (lo = mid); }
+        l.wdth = lo; l.el.style.fontVariationSettings = fvs(lo); l.W = W; l.delta = 0;
+        for (const c of l.chars) {
+          c.g.style.fontVariationSettings = fvs(50); c.w50 = width(c.g);
+          c.g.style.fontVariationSettings = fvs(150); c.w150 = width(c.g);
+          c.g.style.fontVariationSettings = fvs(lo); c.base = width(c.g);
+          c.slope = Math.max(0.01, (c.w150 - c.w50) / 100); c.cur = lo;
+        }
+        let x = 0; for (const c of l.chars) { c.el.style.width = c.base + "px"; c.x = x + c.base / 2; x += c.base; }
+        l.slopeSum = l.chars.reduce((a, c) => a + c.slope, 0);
+      }
+      if (b.word) document.querySelector(".billboard").style.setProperty("--word-h", b.el.getBoundingClientRect().height + "px");
+    }
+  }
+
+  const pointer = { x: -1, y: -1, active: false };
+  addEventListener("pointermove", (e) => { if (e.pointerType === "mouse") { pointer.x = e.clientX; pointer.y = e.clientY; pointer.active = true; } });
+  document.addEventListener("pointerleave", () => (pointer.active = false));
+
+  // One step of the accordion: letters near the focus widen, the rest narrow; a feedback term (delta) keeps the line flush.
+  function step(t, ease) {
+    const live = [];
+    for (const b of blocks) {
+      const r = b.el.getBoundingClientRect();
+      if (r.bottom < -50 || r.top > innerHeight + 50) continue;
+      const near = pointer.active && pointer.y > r.top - 160 && pointer.y < r.bottom + 160;
+      for (const [li, l] of b.lines.entries()) {
+        const left = r.left;
+        const px = near ? pointer.x - left : l.W * (0.5 + 0.46 * Math.sin(t * 0.55 + li * 1.9 + (b.word ? 2 : 0)));
+        const amp = near ? 78 : 46, sig = l.W * (near ? 0.11 : 0.15);
+        const g = l.chars.map((c) => Math.exp(-((c.x - px) ** 2) / (2 * sig * sig)));
+        let num = 0; l.chars.forEach((c, i) => (num += c.slope * g[i]));
+        const k = num / l.slopeSum;
+        l.chars.forEach((c, i) => {
+          const target = Math.max(50, Math.min(150, l.wdth + amp * (g[i] - k) + l.delta));
+          c.cur += (target - c.cur) * ease;
+          c.g.style.fontVariationSettings = fvs(c.cur);
+        });
+        live.push(l);
+      }
+    }
+    // one layout for all reads, then transforms only
+    for (const l of live) {
+      let shift = 0, total = 0;
+      const ws = l.chars.map((c) => width(c.g));
+      l.chars.forEach((c, i) => { c.el.style.transform = `translateX(${shift.toFixed(2)}px)`; shift += ws[i] - c.base; total += ws[i]; });
+      l.delta = Math.max(-40, Math.min(40, l.delta + ((l.W - total) / l.slopeSum) * 0.6));
+    }
+  }
+
+  function loop(now) { step(now / 1000, 0.12); requestAnimationFrame(loop); }
+
+  document.fonts.ready.then(() => {
+    fit();
+    if (reduce) return;
+    if (forcedT !== null) { for (let i = 0; i < 60; i++) step(forcedT, 1); return; }
+    requestAnimationFrame(loop);
+    let rt; addEventListener("resize", () => { clearTimeout(rt); rt = setTimeout(fit, 120); });
+  });
+})();
+</script>
+</body>
+</html>

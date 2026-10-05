@@ -4,6 +4,12 @@
 > and rebrand", "you aren't putting in the creative effort and visual". Everything visual below (Drafting Table, paper/
 > cyanotype tokens, Archivo + Plex Mono, title block, revision block) is the REJECTED direction, kept only as history.
 > Do not build on it. The next step is a full rebrand (`working-agreement.md` § 9, Rebrand gate).
+>
+> **Rebrand directions built 2026-10-05, awaiting the owner's pick:** four live comps in `comps/` (`comps/README.md`),
+> reviewed on a private artifact page. 1 Orbit (particle planet that re-forms into each project's device; recommended),
+> 2 Poster (variable-width name set edge to edge, flat colour fields), 3 Toybox (ray-marched clay toys = facts),
+> 4 Exhibit (night gallery, shader spotlights, museum placards). Evidence: `research/2026-10-05-rebrand-ambition.md`.
+> When the owner picks, this page is rewritten for that direction.
 
 > Owns the art direction, tokens, components, motion, imagery and design do/don't. References that
 > inspired it: `design-references.md`. Sections and pages: `structure.md`. Scoring a view: `design-quality.md`

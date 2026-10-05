@@ -1,0 +1,301 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Exhibit · Direction 4</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..900;1,6..96,400..900&family=Hanken+Grotesk:wght@400..800&display=swap">
+<style>
+/* EXHIBIT: the portfolio as a gallery at night. Oxblood walls, plaster grain, warm spotlights rendered live in one shader;
+   the visitor's cursor is a torch and dust drifts in the beams. Each project is a room: an object on a plinth under a beam,
+   with a museum placard ("Medium: React Native, Supabase") written in true facts. Bodoni for the wall, a grotesk for labels. */
+:root {
+  --wall: #3a0f16;
+  --wall-2: #1c070b;
+  --ivory: #f6eadb;
+  --muted: #cfaea6;
+  --brass: #dcae62;
+  --light: #ffe3b8;
+  --serif: "Bodoni Moda", "Didot", "Bodoni 72", Georgia, serif;
+  --sans: "Hanken Grotesk", "Helvetica Neue", Arial, sans-serif;
+  --ease: cubic-bezier(0.22, 0.7, 0.1, 1);
+  --gutter: clamp(16px, 4vw, 56px);
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html { background: var(--wall-2); }
+body { margin: 0; color: var(--ivory); font: 400 18px/1.6 var(--sans); background: var(--wall-2); overflow-x: clip; -webkit-font-smoothing: antialiased; }
+a { color: inherit; }
+::selection { background: var(--brass); color: var(--wall-2); }
+:focus-visible { outline: 2px solid var(--brass); outline-offset: 4px; }
+.skip { position: absolute; left: -999px; }
+.skip:focus { left: 8px; top: 8px; z-index: 9; background: var(--brass); color: var(--wall-2); padding: 8px 12px; }
+canvas.wall { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
+.no-gl canvas.wall { display: none; }
+.no-gl body { background: radial-gradient(50% 40% at 50% 20%, #6a1d24, var(--wall) 50%, var(--wall-2)); }
+header.site, main { position: relative; z-index: 1; }
+.sc { font-family: var(--sans); font-size: 12px; font-weight: 600; letter-spacing: .18em; text-transform: uppercase; }
+
+header.site { display: flex; align-items: center; gap: 28px; padding: 22px var(--gutter); }
+.brand { font: 500 20px/1 var(--serif); font-variation-settings: "opsz" 24; text-decoration: none; letter-spacing: .01em; }
+.brand em { font-style: italic; color: var(--brass); }
+nav.main { display: flex; gap: 30px; margin: 0 auto; }
+nav.main a { text-decoration: none; color: var(--muted); transition: color .3s var(--ease); }
+nav.main a:hover { color: var(--ivory); }
+.actions { display: flex; gap: 12px; align-items: center; }
+.btn { display: inline-flex; align-items: center; gap: 10px; min-height: 46px; padding: 0 22px; border-radius: 2px; text-decoration: none; cursor: pointer; border: 0;
+  font: 600 13px/1 var(--sans); letter-spacing: .14em; text-transform: uppercase; transition: background .35s var(--ease), color .35s var(--ease), box-shadow .35s var(--ease); }
+.btn-ivory { background: var(--ivory); color: var(--wall-2); }
+.btn-ivory:hover { background: var(--light); box-shadow: 0 0 40px -6px rgb(255 227 184 / 0.6); }
+.btn-line { color: var(--ivory); box-shadow: inset 0 0 0 1px rgb(246 234 219 / 0.45); }
+.btn-line:hover { box-shadow: inset 0 0 0 1px var(--ivory); background: rgb(246 234 219 / 0.06); }
+.btn small { font-size: 10px; letter-spacing: .1em; opacity: .7; }
+.menu { display: none; }
+
+.hero { position: relative; min-height: min(calc(100svh - 90px), 900px); display: grid; grid-template-rows: auto 1fr auto; padding: clamp(24px, 4vw, 56px) var(--gutter) clamp(32px, 4vw, 56px); }
+.spot-a { position: absolute; left: 50%; top: 34%; width: 1px; height: 1px; }
+.kicker { display: flex; justify-content: center; gap: 18px; color: var(--muted); margin: 0; }
+.kicker span + span::before { content: "·"; margin-right: 18px; color: var(--brass); }
+h1 { align-self: center; margin: 0; text-align: center; font-family: var(--serif); font-weight: 500; font-variation-settings: "opsz" 96; line-height: .86; letter-spacing: -0.025em;
+  font-size: clamp(64px, 11.2vw, 184px); text-wrap: balance;
+  background: radial-gradient(circle 320px at var(--mx, 50%) var(--my, 40%), #fffaf0 0%, var(--ivory) 45%, #e8d6c4 100%);
+  -webkit-background-clip: text; background-clip: text; color: transparent; }
+h1 em { font-style: italic; font-weight: 400; }
+h1 .role { display: block; margin-top: clamp(20px, 2.4vw, 34px); font: 600 clamp(12px, 1vw, 14px)/1.4 var(--sans); letter-spacing: .32em; text-transform: uppercase; color: var(--brass); -webkit-text-fill-color: var(--brass); }
+.hero-foot { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 40px; align-items: end; }
+.lede { max-width: 36ch; margin: 0; font-size: clamp(18px, 1.35vw, 21px); color: var(--ivory); }
+.ctas { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 26px; }
+.placard { justify-self: end; width: min(100%, 380px); padding: 20px 22px 22px; background: #f3ece2; color: #2a1a16; box-shadow: 0 30px 60px -20px rgb(0 0 0 / 0.7), 0 2px 0 rgb(0 0 0 / 0.2);
+  font-size: 14px; line-height: 1.5; }
+.placard h3 { margin: 0; font: 600 17px/1.25 var(--sans); }
+.placard .dates { margin: 2px 0 10px; color: #6b5550; }
+.placard dl { margin: 0; display: grid; grid-template-columns: auto 1fr; gap: 3px 12px; }
+.placard dt { color: #6b5550; }
+.placard dd { margin: 0; }
+.placard .note { margin: 12px 0 0; padding-top: 10px; border-top: 1px solid #d8cbbd; font-style: italic; font-family: var(--serif); font-size: 15px; }
+
+/* work */
+.work { position: relative; padding: clamp(110px, 12vw, 200px) var(--gutter) clamp(90px, 10vw, 160px); }
+.room { display: flex; align-items: center; gap: 16px; color: var(--muted); margin: 0 0 clamp(36px, 5vw, 72px); }
+.room::after { content: ""; flex: 1; height: 1px; background: linear-gradient(90deg, rgb(220 174 98 / 0.5), transparent); }
+.project { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); gap: clamp(32px, 6vw, 110px); align-items: center; }
+.exhibit { position: relative; display: flex; flex-direction: column; align-items: center; padding-top: 40px; }
+.phone { position: relative; z-index: 1; width: clamp(200px, 19vw, 270px); aspect-ratio: 280 / 600; border-radius: 34px; overflow: hidden; background: #000;
+  box-shadow: 0 0 0 8px #0d0d0f, 0 0 0 9px #3b3434, 0 40px 60px -20px rgb(0 0 0 / 0.8); }
+.phone video { width: 100%; height: 100%; object-fit: cover; display: block; }
+.phone::after { content: ""; position: absolute; inset: 0; background: linear-gradient(110deg, rgb(255 240 220 / 0.12) 0 18%, transparent 30%); pointer-events: none; }
+.plinth { position: relative; width: clamp(260px, 26vw, 380px); height: clamp(150px, 15vw, 210px); margin-top: -2px;
+  background: linear-gradient(180deg, #efe4d6 0, #e3d4c2 14px, #cdb9a4 14px, #b49c86 60%, #8f7765 100%); clip-path: polygon(6% 0, 94% 0, 100% 14px, 100% 100%, 0 100%, 0 14px);
+  box-shadow: 0 30px 60px -10px rgb(0 0 0 / 0.6); }
+.plinth::after { content: ""; position: absolute; inset: 14px 0 0; background: linear-gradient(90deg, rgb(0 0 0 / 0.18), transparent 30%, transparent 70%, rgb(0 0 0 / 0.28)); }
+.plinth-shadow { position: absolute; bottom: -24px; width: 120%; height: 40px; background: radial-gradient(closest-side, rgb(0 0 0 / 0.55), transparent); }
+h2 { margin: 0; font: 400 clamp(64px, 9.5vw, 160px)/.86 var(--serif); font-variation-settings: "opsz" 96; letter-spacing: -0.03em; font-style: italic; }
+.lead { margin: 22px 0 0; max-width: 28ch; font: 400 clamp(22px, 2vw, 30px)/1.25 var(--serif); font-variation-settings: "opsz" 30; }
+.label { margin-top: 30px; padding: 20px 22px 22px; max-width: 520px; background: #f3ece2; color: #2a1a16; font-size: 15px; line-height: 1.55; box-shadow: 0 30px 60px -20px rgb(0 0 0 / 0.7); }
+.label h3 { margin: 0; font: 700 17px/1.2 var(--sans); }
+.label h3 span { font-weight: 400; }
+.label .medium { margin: 4px 0 12px; color: #6b5550; }
+.label p { margin: 0 0 10px; }
+.label .status { margin: 12px 0 0; padding-top: 10px; border-top: 1px solid #d8cbbd; display: flex; justify-content: space-between; font-size: 13px; color: #6b5550; }
+.project .ctas { margin-top: 26px; }
+.tag-icon { display: inline-flex; align-items: center; gap: 12px; margin-bottom: 18px; color: var(--brass); }
+.tag-icon img { width: 30px; height: 30px; border-radius: 8px; }
+
+.compbar { position: fixed; z-index: 60; right: 16px; bottom: 16px; display: flex; gap: 4px; padding: 4px; border-radius: 999px; background: rgb(0 0 0 / 0.75); font: 500 12px/1 system-ui, sans-serif; letter-spacing: 0; text-transform: none; }
+.compbar a { padding: 9px 12px; border-radius: 999px; color: #fff; text-decoration: none; }
+.compbar a[aria-current] { background: #fff; color: #000; }
+.shot .compbar { display: none; }
+
+@media (max-width: 1100px) { nav.main { display: none; } .actions { margin-left: auto; } }
+@media (max-width: 860px) {
+  .hero-foot { grid-template-columns: 1fr; }
+  .placard { justify-self: start; }
+  .project { grid-template-columns: 1fr; }
+}
+@media (max-width: 640px) {
+  header.site { padding-top: 12px; padding-bottom: 12px; gap: 8px; }
+  .brand { font-size: 17px; }
+  .actions { gap: 6px; }
+  .btn { padding: 0 14px; min-height: 44px; font-size: 12px; letter-spacing: .1em; }
+  .actions .btn small { display: none; }
+  .menu { display: inline-flex; }
+  .actions .btn-line:not(.menu) { display: none; }
+  .kicker { flex-direction: column; align-items: center; gap: 4px; }
+  .kicker span + span::before { display: none; }
+  h1 { font-size: 17.5vw; padding: 40px 0 36px; }
+  .hero { min-height: auto; }
+}
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<canvas class="wall" aria-hidden="true"></canvas>
+<header class="site">
+  <a class="brand" href="#">M. <em>Muszarski</em></a>
+  <nav class="main sc" aria-label="Main"><a href="#work">Work</a><a href="#">How I work</a><a href="#">Writing</a><a href="#">My life</a><a href="#">EN</a></nav>
+  <div class="actions">
+    <a class="btn btn-line" href="#">CV <small>PDF</small></a>
+    <a class="btn btn-ivory" href="#">Contact</a>
+    <button class="btn btn-line menu" type="button">Menu</button>
+  </div>
+</header>
+
+<main id="main">
+  <section class="hero" aria-labelledby="h1">
+    <span class="spot-a" data-spot aria-hidden="true"></span>
+    <p class="kicker sc"><span>Selected works 2022 – 2026</span><span>Poland, working remotely</span><span>Open to work</span></p>
+    <h1 id="h1">Mateusz <em>Muszarski</em><span class="role">Full-stack product engineer</span></h1>
+    <div class="hero-foot">
+      <div>
+        <p class="lede">I turn a business problem into a shipped web or mobile product, and I tell you early what it will cost and what can wait.</p>
+        <div class="ctas"><a class="btn btn-ivory" href="#work">See the work</a><a class="btn btn-line" href="#">Download CV <small>PDF · 70 KB</small></a></div>
+      </div>
+      <aside class="placard" aria-label="About the artist" data-spot2>
+        <h3>Mateusz Muszarski</h3>
+        <p class="dates">Poland · building software since 2022</p>
+        <dl>
+          <dt>Medium</dt><dd>TypeScript, React, React Native, Node.js</dd>
+          <dt>Practice</dt><dd>Web and mobile products, solo, end to end</dd>
+          <dt>Shown</dt><dd>App Store, Google Play, the open web</dd>
+        </dl>
+        <p class="note">Available for full-time roles and contracts.</p>
+      </aside>
+    </div>
+  </section>
+
+  <section class="work" id="work" aria-labelledby="lk">
+    <p class="room sc">Room 01 of 04 · Own products</p>
+    <article class="project">
+      <div class="exhibit" data-shot-focus>
+        <div class="phone" data-beam><video muted loop playsinline autoplay preload="metadata" poster="media/lk-camera.jpg" aria-label="Linkoglot camera mode: point at an object to learn its name"><source src="media/lk-camera.mp4" type="video/mp4"></video></div>
+        <div class="plinth" aria-hidden="true"></div>
+        <div class="plinth-shadow" aria-hidden="true"></div>
+      </div>
+      <div>
+        <p class="tag-icon sc"><img src="media/lk-icon.png" alt="" width="30" height="30">Own product · 2026</p>
+        <h2 id="lk">Linkoglot</h2>
+        <p class="lead">A subscription AI language app, shipped solo to the App Store and Google Play in 30 languages.</p>
+        <div class="label">
+          <h3>Linkoglot, <span>2026</span></h3>
+          <p class="medium">Expo, React Native, Supabase, RevenueCat, Lingui</p>
+          <p>Point the camera at a flowerpot and it becomes <i>la maceta</i>: a flashcard, a quiz, a voice conversation.</p>
+          <p>A free trial turns into a monthly or yearly plan. The 30 locales come from an npm tool I built for it, <i>lingui-translate-ai</i>.</p>
+          <p class="status"><span>Designed, built and shipped solo</span><span>Live · pre-traction</span></p>
+        </div>
+        <div class="ctas"><a class="btn btn-ivory" href="#">Read the case study</a><a class="btn btn-line" href="#">App Store ↗</a><a class="btn btn-line" href="#">Google Play ↗</a></div>
+      </div>
+    </article>
+  </section>
+</main>
+
+<nav class="compbar" aria-label="Directions">
+  <a href="./">All</a><a href="orbit.html">1</a><a href="poster.html">2</a><a href="toybox.html">3</a><a href="exhibit.html" aria-current="page">4 Exhibit</a>
+</nav>
+
+<script>
+(() => {
+  const doc = document.documentElement;
+  if (location.search.includes("shot")) doc.classList.add("shot");
+  const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const params = new URLSearchParams(location.search);
+  const forcedT = params.has("t") ? parseFloat(params.get("t")) : null;
+  const h1 = document.querySelector("h1");
+
+  const canvas = document.querySelector("canvas.wall");
+  const gl = canvas.getContext("webgl2", { antialias: false, alpha: false });
+  if (!gl) { doc.classList.add("no-gl"); return; }
+  const FS = `#version 300 es
+  precision highp float;
+  uniform vec2 uRes; uniform float uTime, uDpr, uOn, uPtrOn, uBeamTop;
+  uniform vec2 uPtr; uniform vec4 uSpot0, uSpot1, uBeam;
+  out vec4 o;
+  float hash(vec2 p){ p = fract(p*vec2(123.34, 456.21)); p += dot(p, p+45.32); return fract(p.x*p.y); }
+  float noise(vec2 p){ vec2 i=floor(p), f=fract(p); f=f*f*(3.-2.*f); return mix(mix(hash(i),hash(i+vec2(1,0)),f.x), mix(hash(i+vec2(0,1)),hash(i+vec2(1,1)),f.x), f.y); }
+  float fbm(vec2 p){ float v=0., a=.5; for(int i=0;i<5;i++){ v+=a*noise(p); p=p*2.03+vec2(1.7,9.2); a*=.5; } return v; }
+  float pool(vec2 px, vec4 s){ vec2 d=(px-s.xy)/vec2(s.z, s.z*1.12); float r=length(d); return s.w*(smoothstep(1.,.93,r)*.5 + smoothstep(1.,.3,r)*.25 + exp(-r*r*5.)*.45); }
+  float cone(vec2 px, vec2 tgt, float w, float top){ float along=(px.y-top)/max(tgt.y-top,1.); float hw=mix(w*.07, w, clamp(along,0.,1.3)); float ac=abs(px.x-tgt.x)/hw; return smoothstep(1.,.1,ac)*smoothstep(0.,.3,along)*smoothstep(1.2,.92,along); }
+  void main(){
+    vec2 css = uRes / uDpr;
+    vec2 px = vec2(gl_FragCoord.x, uRes.y - gl_FragCoord.y) / uDpr;
+    vec2 uv = px / css;
+    float pl = fbm(px*.011)*.65 + fbm(px*.05 + 3.)*.35;
+    vec3 dark = vec3(.075,.018,.028), wall = vec3(.25,.062,.085);
+    vec3 base = mix(dark, wall, .3 + .5*pl);
+    float haze0 = .75 + .5*fbm(vec2(px.x*.01, px.y*.004 - uTime*.07));
+    float L = pool(px, uSpot0) + pool(px, uSpot1);
+    float beam0 = cone(px, uSpot0.xy, uSpot0.z*.9, -80.) * uSpot0.w * .14 * haze0;
+    vec2 dt = (px - uPtr) / 230.; L += uPtrOn * exp(-dot(dt,dt)*2.) * .55;
+    // the beam over the plinth
+    float top = uBeamTop, along = (px.y - top) / max(uBeam.y - top, 1.);
+    float halfw = mix(uBeam.z*.1, uBeam.z*.95, clamp(along, 0., 1.3));
+    float across = abs(px.x - uBeam.x) / halfw;
+    float cone = smoothstep(1., .15, across) * smoothstep(0., .3, along) * smoothstep(1.35, 1.05, along);
+    float haze = .8 + .4*fbm(vec2(px.x*.012, px.y*.005 - uTime*.08));
+    float beam = uBeam.w * cone * .28 * haze;
+    L += pool(px, vec4(uBeam.x, uBeam.y + uBeam.z*.25, uBeam.z*1.25, uBeam.w*.85));
+    L *= uOn; beam = (beam + beam0) * uOn;
+    vec3 warm = vec3(1., .58, .38);
+    vec3 col = base * (.34 + L*3.1*warm) + vec3(1., .78, .55) * pow(max(L-.5, 0.), 2.) * .5;
+    col += vec3(1., .82, .6) * beam;
+    // dust in the light
+    float motes = 0.; vec2 cell = floor(px/70.);
+    for (int j=-1;j<=1;j++) for (int i=-1;i<=1;i++) {
+      vec2 c = cell + vec2(i,j); float h1 = hash(c), h2 = hash(c+17.3);
+      vec2 pos = (c + vec2(h1,h2))*70. + vec2(sin(uTime*.31 + h1*6.28)*22., cos(uTime*.23 + h2*6.28)*22. + uTime*4.*(h2-.5));
+      motes += smoothstep(1.8, 0., length(px-pos)) * (.35 + .65*h2) * step(.45, h1);
+    }
+    col += vec3(1., .9, .75) * motes * clamp(L*1.2 + beam*3., 0., 1.) * .8;
+    float v = smoothstep(1.3, .3, length((uv-.5)*vec2(1.05, 1.)));
+    col *= .62 + .38*v;
+    col += (hash(px + fract(uTime)*91.) - .5) * .025;
+    o = vec4(col, 1.);
+  }`;
+  const VS = `#version 300 es
+  in vec2 p; void main(){ gl_Position = vec4(p,0.,1.); }`;
+  const mk = (t, s) => { const sh = gl.createShader(t); gl.shaderSource(sh, s); gl.compileShader(sh); if (!gl.getShaderParameter(sh, gl.COMPILE_STATUS)) throw new Error(gl.getShaderInfoLog(sh)); return sh; };
+  const prog = gl.createProgram(); gl.attachShader(prog, mk(gl.VERTEX_SHADER, VS)); gl.attachShader(prog, mk(gl.FRAGMENT_SHADER, FS)); gl.linkProgram(prog); gl.useProgram(prog);
+  const buf = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, buf); gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 3, -1, -1, 3]), gl.STATIC_DRAW);
+  const loc = gl.getAttribLocation(prog, "p"); gl.enableVertexAttribArray(loc); gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
+  const U = {}; ["uRes", "uTime", "uDpr", "uOn", "uPtrOn", "uBeamTop", "uPtr", "uSpot0", "uSpot1", "uBeam"].forEach((k) => (U[k] = gl.getUniformLocation(prog, k)));
+  const dpr = Math.min(devicePixelRatio, 1.5) * (innerWidth < 700 ? 0.75 : 0.85);
+  const resize = () => { canvas.width = Math.round(innerWidth * dpr); canvas.height = Math.round(innerHeight * dpr); gl.viewport(0, 0, canvas.width, canvas.height); };
+  resize(); addEventListener("resize", resize);
+
+  const spotA = document.querySelector("[data-spot]"), spotB = document.querySelector("[data-spot2]"), beamEl = document.querySelector("[data-beam]");
+  const ptr = { x: innerWidth / 2, y: innerHeight * 0.4, tx: innerWidth / 2, ty: innerHeight * 0.4, on: 0, ton: 0 };
+  addEventListener("pointermove", (e) => { if (e.pointerType !== "mouse") return; ptr.tx = e.clientX; ptr.ty = e.clientY; ptr.ton = 1; });
+  document.addEventListener("pointerleave", () => (ptr.ton = 0));
+  let beamOn = 0;
+  const t0 = performance.now();
+  function frame(now) {
+    const t = forcedT ?? (now - t0) / 1000;
+    const vw = innerWidth, vh = innerHeight;
+    ptr.x += (ptr.tx - ptr.x) * 0.1; ptr.y += (ptr.ty - ptr.y) * 0.1; ptr.on += (ptr.ton - ptr.on) * 0.06;
+    const a = spotA.getBoundingClientRect(), b = spotB.getBoundingClientRect(), p = beamEl.getBoundingClientRect();
+    // lights switch on after load: a short gallery flicker, never blocking the text
+    const on = reduce ? 1 : Math.min(1, Math.max(0, (t - 0.15) / 0.9)) * (t < 1.1 ? 0.75 + 0.25 * Math.sin(t * 40.0) : 1);
+    const beamTarget = p.top < vh * 0.85 && p.bottom > 0 ? 1 : 0;
+    beamOn = reduce || forcedT !== null ? beamTarget : beamOn + (beamTarget - beamOn) * 0.05;
+    const R = Math.min(vw * 0.6, 820);
+    gl.uniform2f(U.uRes, canvas.width, canvas.height); gl.uniform1f(U.uTime, t); gl.uniform1f(U.uDpr, dpr); gl.uniform1f(U.uOn, on);
+    gl.uniform2f(U.uPtr, ptr.x, ptr.y); gl.uniform1f(U.uPtrOn, ptr.on);
+    const hr0 = h1.getBoundingClientRect();
+    gl.uniform4f(U.uSpot0, hr0.left + hr0.width / 2, hr0.top + hr0.height * 0.45, Math.min(R * 0.7, hr0.width * 0.38), 0.95);
+    gl.uniform4f(U.uSpot1, b.left + b.width / 2, b.top + b.height * 0.4, Math.max(b.width, 260) * 0.8, 0.5);
+    gl.uniform4f(U.uBeam, p.left + p.width / 2, p.top + p.height * 0.5, Math.max(p.width * 1.6, 300), beamOn);
+    gl.uniform1f(U.uBeamTop, p.top - Math.min(vh * 0.9, 720));
+    gl.drawArrays(gl.TRIANGLES, 0, 3);
+    const hr = h1.getBoundingClientRect();
+    h1.style.setProperty("--mx", ((ptr.on > 0.05 ? ptr.x : vw / 2) - hr.left) + "px");
+    h1.style.setProperty("--my", ((ptr.on > 0.05 ? ptr.y : a.top) - hr.top) + "px");
+    if (!reduce && forcedT === null) requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+  if (reduce || forcedT !== null) { addEventListener("scroll", () => requestAnimationFrame(frame), { passive: true }); addEventListener("resize", () => requestAnimationFrame(frame)); }
+})();
+</script>
+</body>
+</html>

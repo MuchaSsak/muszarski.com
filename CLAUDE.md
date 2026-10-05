@@ -3,7 +3,7 @@
 The personal site of Mateusz Muszarski, a Polish full-stack developer: a fast, accessible Astro site with
 one signature WebGL moment, project case studies, a blog, a web CV + PDF, in en / pl / es. Mental model:
 **content first, wow second.** Every page is real HTML in under 3 s with contact 1 click away; visuals
-(the "Drafting Table" drawings, 3D, video) layer on top and never block. The knowledge lives in the wiki
+(the rebrand direction the owner picks from `comps/`, 3D, video) layer on top and never block. The knowledge lives in the wiki
 at `.claude/project-info/` (map: `.claude/project-info/README.md`). This file is the router and the
 non-negotiables: read only the pages your task needs. Paths are plain text on purpose (no @imports).
 
@@ -26,7 +26,7 @@ non-negotiables: read only the pages your task needs. Paths are plain text on pu
 | Locales, translation, Lingui, Polish, Spanish, language switcher, hreflang, URL prefix, slugs | `.claude/project-info/site/i18n.md` |
 | Analytics, Umami, events, tracking, funnels, KPIs, CV downloads | `.claude/project-info/site/analytics.md` |
 | SEO, Google, Search Console, Bing, IndexNow, metadata, meta tags, titles, JSON-LD, structured data, OG images, sitemap, robots, domain, ranking, blog topics | `.claude/project-info/site/seo.md` |
-| Design, art direction, Drafting Table, colours, typography, motion, animation, illustrations, dark mode, project themes, 3D signature moment | `.claude/project-info/design/design.md` |
+| Design, art direction, rebrand, directions, comps, Orbit, Poster, Toybox, Exhibit, colours, typography, motion, animation, illustrations, dark mode, project themes, 3D signature moment | `.claude/project-info/design/design.md` |
 | Design score, design quality rubric, score a view, weakest point, anti-slop, instant fail, agency quality | `.claude/project-info/design/design-quality.md` |
 | Inspiration, references, examples, Awwwards, Mobbin, layout patterns, sheet composition, registry components | `.claude/project-info/design/design-references.md` |
 | Assets, images, videos, recordings, screenshots, photos, fonts, licences, media sourcing | `.claude/project-info/design/assets.md` |

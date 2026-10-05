@@ -14,6 +14,10 @@
 # Third-party site screenshots from research stay local (the repo may go public)
 /.claude/project-info/research/inspirations/img/
 
+# Rebrand comps: the owner's media copies and scratch shots stay local
+/comps/media/
+/comps/shots/.work/
+
 # Raw project media (screen recordings, captures) stay local; only encoded outputs are committed
 /assets/**/raw/
 # Temporary project captures (placeholders; PstrykWeb ones show third-party content)
