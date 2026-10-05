@@ -1,0 +1,118 @@
+inputs/
+workspaces/
+# The GitLab job builds inside its own checkout: `workspace/` is the per-job
+# scratch tree (payload, prompt, the whole generated repo) and `.seed/` is the
+# throwaway the push proof commits from. Neither belongs in this repo, and a
+# local reproduction of the pipeline would otherwise offer to commit gigabytes.
+/workspace
+/.seed
+rag_storage/
+LightRAG-main/
+RAG-Anything-main/
+/TODO.md
+# only the root level context for Claude Code, not React context/ folders
+/context/
+
+tmp.txt
+*.log
+
+.claude/session-state
+# personal Claude Code rules of whoever works here (loaded with CLAUDE.md; never committed)
+/CLAUDE.local.md
+.claude/scheduled_tasks.lock
+.claude/settings.local.json
+.claude/skills/session-handoff
+.claude/skills/stop-session
+
+# Learn more https://docs.github.com/en/get-started/getting-started-with-git/ignoring-files
+
+output.css
+# NOT `*.txt`: public/robots.txt and public/llms.txt must be tracked
+*.log
+tmp.json
+
+# Portfolio: third-party site screenshots from research stay local (the repo may go public)
+/.claude/project-info/research/inspirations/img/
+# Astro build cache
+.astro/
+/supabase/logs
+/supabase/snippets
+/supabase/.temp
+/supabase/.branches
+
+/scratchpad
+/.tokensave
+
+# dependencies
+node_modules/
+node_modules-*/
+node_modules_*/
+
+# Expo
+.expo/
+dist/
+web-build/
+build/
+expo-env.d.ts
+*-keystore-*.zip
+*-keystore-*.md
+
+# Native
+.kotlin/
+*.orig.*
+*.jks
+*.p8
+*.p12
+*.key
+*.mobileprovision
+
+# Metro
+.metro-health-check*
+
+# debug
+npm-debug.*
+yarn-debug.*
+yarn-error.*
+
+# macOS
+.DS_Store
+*.pem
+*.p8
+sign-jwt-apple-p8-key.js
+/logo
+
+/FLOW.md
+/.playwright-mcp
+/linkoglot
+/forwardly-ai
+
+# env files
+.env
+.env*.local
+.recovered.env
+recovered.env
+
+# typescript
+*.tsbuildinfo
+
+# generated native folders
+/apps/mobile/ios
+/apps/mobile/android
+
+# turbo
+.turbo/
+
+# bun (track bun.lock text lockfile; ignore the binary lockfile)
+bun.lockb
+
+.vercel
+
+# Python bytecode (the blog skill's scripts)
+__pycache__/
+*.pyc
+
+# Raw project media (screen recordings, captures) stay local; only encoded outputs are committed
+/assets/**/raw/
+
+# Temporary project captures (placeholders; PstrykWeb ones show third-party content). Finals get encoded into src/assets in Phase 1
+/assets/projects/

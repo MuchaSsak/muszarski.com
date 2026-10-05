@@ -1,0 +1,4 @@
+This skill sets up a `.claude/project-info/` wiki, a CLAUDE.md routing table, a lessons loop and the
+session hooks in OTHER projects. It is for operators, never for a generated client site's build:
+apps/api/docker/entrypoint.sh (drop_operator_skills) removes every skill folder holding this file when
+it provisions a build container. Keep the file.

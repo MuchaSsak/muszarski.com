@@ -1,0 +1,30 @@
+# Lessons: how to work in this project
+
+> Mistakes already paid for, as one-line rules. `.claude/hooks/session-start.mjs` injects the "Rules"
+> section into every session and after every compaction, so it stays short: no more than 60 rules,
+> merged and pruned. How to add, place and promote one: `working-agreement.md` § 7. Product facts
+> live in their own page, not here.
+
+## Rules
+
+### The user's way of working
+- Practicality ≥ wow: award sites are often impractical, slow or unusable. Every visual must be impressive within 3 s AND usable in 1 click on mobile; immersive layers are opt-in, never a gate - 2026-10-05.
+- Research before designing a section: Mobbin, Awwwards (skill), the component registry (`search-registry-items`), Playwright screenshots, Lighthouse, plus plain web research - 2026-10-05.
+- Prove the "product engineer" profile with evidence; never put the negative ("task executor", "klepacz", "not just a coder") in microcopy - 2026-10-05.
+- Never invent project facts, metrics, testimonials or credentials. Placeholders/guessed links ARE allowed while building: say so in one short line, mark `PLACEHOLDER`, add a row to `placeholders.md`; on "finish / wrap up / go to prod" clear the register first - 2026-10-05.
+- CV changed → regenerate BOTH the `/cv/` page and the PDF from the one data source; never edit one alone (`content-model.md` § CV) - 2026-10-05.
+- Legal pages are formal "lawyer grade" text, not the brand voice; noindex,follow; facts with cited statutes; recommend a lawyer review - 2026-10-05.
+- The owner can't verify Spanish: AI-translate es, mark it unreviewed, never claim it was reviewed - 2026-10-05.
+
+### Privacy of inputs
+- `context/` is private and gitignored (the pstryk code, klepacz.pdf). Copy patterns, not files; never quote the memo verbatim or name its author in committed files - 2026-10-05.
+- Research screenshots of third-party sites stay local (`research/inspirations/img/` is gitignored); the repo may go public - 2026-10-05.
+
+### Tools and environment
+- Windows: the Bash tool's `cd` persists and moves the working directory for later calls; use absolute paths - 2026-10-05.
+- WebSearch has a budget shared by parallel agents and runs out; prefer WebFetch of known URLs, then Playwright - 2026-10-05.
+- `.gitignore` was copied from pstryk with `*.txt`, which hides `robots.txt` and `llms.txt`; that rule is removed, don't re-add it - 2026-10-05.
+- Lingui on Next 16.3 needs `@lingui/swc-plugin` 6.6.0 (6.7.0 is broken); this site uses Astro, where Lingui 6.9 + `lingui-for-astro` passed a spike (pre-1.0, no MDX) - 2026-10-05.
+- A muted loop starting during page load cost 270–480 ms TBT in the pstryk lab; start loops on visibility + first interaction - 2026-10-05.
+- Routing: a generic phrase in one row ("case study") outscores a project name and cuts the dossier; put shared task words in every row they apply to and re-run `wiki-context.mjs --test` (Polish stems live in `routing-synonyms.json`) - 2026-10-05.
+- The wiki is foldered (product/ content/ site/ design/ tech/ legal/ memory/); the hooks need README, log, lessons and working-agreement at the root; keep basenames unique - 2026-10-05.
