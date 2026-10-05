@@ -28,11 +28,26 @@
 - HARD RULE: only fonts and assets licensed for free commercial use (OFL, Apache, MIT, CC0, CC BY with credit) or the owner's
   own; unknown licence = not used, in comps too. Check before adding, record it in `assets.md` - 2026-10-05.
 
+- Less text, more to see: show tools as one-colour marks WITH their names, facts as icon tiles, products as video; a
+  paragraph needs a reason to exist (owner: "sometimes less is more") - 2026-10-05.
+- Every hover has a tap, focus or scroll twin; phones get the same content and a premium feel, tweaked per platform where
+  that serves UX (owner: "they dont have cursors") - 2026-10-05.
+- AI section = the system (wiki, hooks, MCPs, skills, subagents, automation). Typecheck/lint/tests are "the floor": one
+  line, never the pitch - 2026-10-05.
+- Heavy media (video, credential previews) loads on intent or near-visibility, plays only when visible, pauses offscreen;
+  nothing heavy at page load - 2026-10-05.
+- The review artifact is shared by link: put nothing on it that the site couldn't show (internal PstrykWeb stack, client
+  names); ask those things in chat - 2026-10-05.
+
 ### Privacy of inputs
 - `context/` is private and gitignored (the pstryk code, klepacz.pdf). Copy patterns, not files; never quote the memo verbatim or name its author in committed files - 2026-10-05.
 - Research screenshots of third-party sites stay local (`research/inspirations/img/` is gitignored); the repo may go public - 2026-10-05.
 
 ### Tools and environment
+- Splicing HTML with string offsets: compute the offsets AFTER every other edit to the same string, then render-check;
+  offsets taken first put the new body inside the stylesheet (blank page) - 2026-10-05.
+- Heredocs through the Bash tool also break on quote-heavy content ("unexpected EOF"): write scripts with Write, then run
+  them - 2026-10-05.
 - Windows: the Bash tool's `cd` persists and moves the working directory for later calls; use absolute paths - 2026-10-05.
 - WebSearch has a budget shared by parallel agents and runs out; prefer WebFetch of known URLs, then Playwright - 2026-10-05.
 - `.gitignore` was copied from pstryk with `*.txt`, which hides `robots.txt` and `llms.txt`; that rule is removed, don't re-add it - 2026-10-05.

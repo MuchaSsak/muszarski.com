@@ -15,6 +15,16 @@
 > out to the whole home page (`comps/poster-full.html`: hero, 4 chapters with their own colour fields and product visuals,
 > How I work, AI workflow, credentials, contact, footer; themes Cobalt / Paper / Ink, fonts Anybody / Roboto Flex). Waiting
 > on 3 answers (theme model, font, cuts) on the review page; then this page is rewritten for Poster.
+>
+> **Round 3 (2026-10-05), from the owner's notes** [user]: "too much text blending", tools not legible, "more icons and less
+> overwhelming text", videos for every project, How I work rebuilt around product thinking, the AI section about the system
+> (wiki, MCPs, skills, automation) because typecheck/lint "is the floor", credentials with expanding previews that load media
+> only when needed, a message-first contact, PstrykWeb as #1, "a lot of micro animations or loops", and every hover usable
+> without a cursor on phones. Built in `comps/poster-r3.html`: monochrome tool marks with names (Simple Icons, CC0), a reel
+> per project (platform frame, chapter chips that seek and fill, play/pause, expand; "Video soon" stand-ins), a 7-stop
+> product loop (code is one stop), a 7-step AI pipeline with real repo counts, a Stack grid with project filter, expanding
+> credential cards, message-first contact with a self-filling reply field, a global pause-motion button. Theme/font kept
+> Cobalt + Anybody (no objection). Waiting on 4 answers (Q43-Q46); then this page is rewritten for Poster.
 
 > Owns the art direction, tokens, components, motion, imagery and design do/don't. References that
 > inspired it: `design-references.md`. Sections and pages: `structure.md`. Scoring a view: `design-quality.md`

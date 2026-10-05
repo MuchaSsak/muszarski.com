@@ -11,7 +11,7 @@
 /                                → 308 /en/                      (vercel.json; i18n.md)
 /<locale>/                       home                            locale ∈ en (default) · pl · es
 /<locale>/work/                  ALL projects index, filterable (F04) [user] 2026-10-05
-/<locale>/work/<slug>/           case study per flagship (F05)
+/<locale>/work/<slug>/           case study per flagship (F05); **owner 2026-10-05: case studies live in the blog** (Q43)
 /<locale>/blog/                  blog index (F12); en + pl only (i18n.md § Locale coverage)
 /<locale>/blog/<slug>/           post (slug per locale)
 /<locale>/cv/                    web CV, same data as the PDF (F11)

@@ -101,7 +101,9 @@ Success signal: Google autocomplete starts completing "mateusz muszarski" to "â€
 ## Content plan (blog, 1â€“2 posts/month, update in place with "Updated" dates)
 
 Launch set, in priority order:
-1. Case study #0: how this site scores 90+ on mobile.
+1. Case study #0: how this site scores 90+ on mobile. The owner wants the whole build process kept for it [user 2026-10-05]:
+   wiki-first planning, the rejected first look, comp rounds on an artifact, the owner's notes per round (`log.md` is the
+   timeline, `comps/` the evidence).
 2. Lighthouse on award-winning portfolios (original data from `research/`).
 3. Lingui vs i18next (2026).
 4. Claude Code skills vs hooks vs MCP.

@@ -26,10 +26,10 @@ non-negotiables: read only the pages your task needs. Paths are plain text on pu
 | Locales, translation, Lingui, Polish, Spanish, language switcher, hreflang, URL prefix, slugs | `.claude/project-info/site/i18n.md` |
 | Analytics, Umami, events, tracking, funnels, KPIs, CV downloads | `.claude/project-info/site/analytics.md` |
 | SEO, Google, Search Console, Bing, IndexNow, metadata, meta tags, titles, JSON-LD, structured data, OG images, sitemap, robots, domain, ranking, blog topics | `.claude/project-info/site/seo.md` |
-| Design, art direction, rebrand, directions, comps, Orbit, Poster, Toybox, Exhibit, colours, typography, motion, animation, illustrations, dark mode, project themes, 3D signature moment | `.claude/project-info/design/design.md` |
+| Design, art direction, rebrand, directions, comps, Orbit, Poster, Toybox, Exhibit, colours, typography, motion, animation, micro animations, hover, icons, logos, illustrations, dark mode, project themes, 3D signature moment | `.claude/project-info/design/design.md` |
 | Design score, design quality rubric, score a view, weakest point, anti-slop, instant fail, agency quality | `.claude/project-info/design/design-quality.md` |
 | Inspiration, references, examples, Awwwards, Mobbin, layout patterns, sheet composition, registry components | `.claude/project-info/design/design-references.md` |
-| Assets, images, videos, recordings, screenshots, photos, fonts, licences, media sourcing | `.claude/project-info/design/assets.md` |
+| Assets, images, videos, recordings, screenshots, photos, fonts, licences, logos, icons, tool marks, media sourcing | `.claude/project-info/design/assets.md` |
 | Legal, privacy policy, terms, regulamin, GDPR, RODO, cookies, consent, processors, copyright, rights, permission, instructor photos | `.claude/project-info/legal/compliance-and-data.md` |
 | Stack, Astro, framework, versions, hosting, Vercel, Cloudflare, env vars, commands, build, deploy, spikes, three.js bundle, PDF generation, contact endpoint, Resend, Turnstile, video encoding | `.claude/project-info/tech/technologies.md` |
 | Code style, folders, git, commits, testing bar, do-not list | `.claude/project-info/tech/conventions.md` |

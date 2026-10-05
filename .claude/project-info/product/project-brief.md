@@ -49,6 +49,8 @@ and to rank for his name, his role and his location. [user]
 | Ranking for role + location queries | top 10 for 2–3 target queries (`seo.md`) | Unknown | [assumption] |
 | Contacts, CV downloads, case-study reads | tracked in Umami (`analytics.md`); no numeric target yet | — | [assumption] |
 | Interviews from the site | Unknown | Unknown | open question |
+| Awwwards submission (secondary; hiring stays the priority) | submit once fully built and polished; the jury scores design,
+  usability, creativity and content (weights to re-check on awwwards.com before submitting) | after launch | [user] 2026-10-05 |
 
 ## Scope
 

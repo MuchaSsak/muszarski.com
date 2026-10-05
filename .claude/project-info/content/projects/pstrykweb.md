@@ -38,6 +38,9 @@ already public about PstrykWeb, plus innocent facts.
 | Code | private | [user] |
 | Years | from the repo log → research file | [research] |
 
+**Ranking [user] 2026-10-05:** #1, featured first: "top #1 latest and my favourite commercial project". The owner also
+asked for more explanation and a stack list; the public-info rule above still applies (Q45).
+
 ## Card candidates
 
 Public info only (see the rule above):

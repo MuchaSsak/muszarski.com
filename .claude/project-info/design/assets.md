@@ -43,6 +43,8 @@
 | `projects/neoteric-clockful/tmp-mock-data-{desktop-1440,phone-390}-*.png`, `raw/tmp-mock-data-desktop-1440-walkthrough-13s.mp4` | the app run locally **with mock data** | Playwright 2026-10-05 | code: owner/Neoteric (rights check); data: fake | interim placeholders | P9; no real user data |
 
 | `comps/media/lk-camera.{mp4,jpg}`, `lk-icon.png`, `space-clip.mp4` (960 px, 20 s), `space-poster.jpg` | encoded copies for the rebrand comps (gitignored) | from the rows above | as above; the comp shows the CC BY credit under the space clip | comps only | P8, P9 |
+| tool marks in `comps/poster-r3.html` (TypeScript, React, Next.js, Astro, Expo, Supabase, PostgreSQL, Tailwind, three.js, GSAP, Vercel, Claude, MCP, …) | brand silhouettes, one colour | Simple Icons 16.34.0 (npm `simple-icons`) | package CC0-1.0; the marks stay their owners' trademarks (Git's logo is CC BY 3.0, not used) | nominative only: name a tool he uses, unaltered, one colour, no endorsement implied | check each brand's guideline link (in the package data) before launch; LinkedIn is not in Simple Icons (Tabler's outline is used) |
+| UI icons in `comps/poster-r3.html` | outline icons | Tabler Icons 3.49.0 (npm `@tabler/icons`) | MIT | any, incl. commercial | keep the MIT notice with the bundle |
 | fonts in `comps/*.html` (Anybody, Roboto Flex, Mona Sans, Martian Mono, Recursive, Bodoni Moda, Hanken Grotesk, Schibsted Grotesk) | Google Fonts | fonts.google.com | SIL OFL 1.1 | any, incl. commercial | self-host with the licence file when one ships |
 
 ## Missing / needed (→ `open-questions.md`, `placeholders.md`)

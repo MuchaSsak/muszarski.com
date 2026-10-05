@@ -3,8 +3,8 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Martian+Mono:wght@400..600&family=Schibsted+Grotesk:wght@400..900&display=swap">
 <style>
-/* Review sheet for the rebrand comps: a quiet frame so the comps carry the colour. Round 2 (the picked direction, built
-   out to the whole home page) leads as a guided tour, shot left and the idea right; round 1 (the four directions) follows. */
+/* Review sheet for the rebrand comps: a quiet frame so the comps carry the colour. The newest round leads (what changed
+   per note, a guided tour, the phone rail, the questions); older rounds follow for comparison. */
 :root {
   --bg: #f3f2ee;
   --surface: #ffffff;
@@ -73,6 +73,17 @@ h3 { margin: 0; font-size: 21px; line-height: 1.2; font-weight: 800; letter-spac
 .cols ul { margin: 0; padding-left: 18px; }
 .cols li + li { margin-top: 6px; }
 
+.map { display: grid; gap: 0; border: 1px solid var(--line); border-radius: 12px; overflow: hidden; background: var(--surface); }
+.map > div { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); border-top: 1px solid var(--line); }
+.map > div:first-child { border-top: 0; }
+.map p, .map > div > div { margin: 0; padding: 14px 18px; font-size: 15.5px; }
+.intro ul, .lead ul, .map ul, .note ul, .ask ul { margin: 6px 0; padding-left: 20px; }
+.intro li + li, .lead li + li, .map li + li, .note li + li { margin-top: 2px; }
+.stop .note > div { font-size: 15.5px; }
+.map p:first-child { color: var(--fg-2); font-style: italic; border-right: 1px solid var(--line); }
+.stop .pair { display: grid; }
+@media (max-width: 860px) { .map > div { grid-template-columns: 1fr; } .map p:first-child { border-right: 0; padding-bottom: 0; } }
+
 /* round 1: the four directions */
 .dir { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: clamp(20px, 3vw, 44px); padding-block: clamp(36px, 5vw, 64px); border-top: 1px solid var(--line); }
 .shots { display: grid; grid-template-columns: minmax(0, 1fr) clamp(96px, 16%, 150px); gap: 12px; align-items: start; min-width: 0; }
@@ -98,133 +109,206 @@ dd { margin: 0; }
 
 <div class="wrap">
   <header class="top">
-    <p class="meta">matmuszarski.space · rebrand · round 2 · 5 Oct 2026</p>
-    <h1>Poster, built out to the whole home page.</h1>
-    <p class="intro">You picked Poster, so here it is from the first screen to the footer: all four projects, How I work, the AI workflow, credentials, contact and the footer. Open it on desktop and on your phone. The bar at the bottom switches the theme and the font.</p>
+    <p class="meta">matmuszarski.space · rebrand · round 3 · 5 Oct 2026</p>
+    <h1>Poster, round 3: less text, more to see.</h1>
+    <div class="intro">Your notes, applied to the whole home page:
+      <ul>
+        <li>tool logos you can read at a glance</li>
+        <li>a video player for every project</li>
+        <li>How I work rebuilt as a product loop</li>
+        <li>the AI section rebuilt around the real setup</li>
+        <li>credentials that open with a preview</li>
+        <li>a contact form that starts with the message</li>
+        <li>small loops everywhere</li>
+      </ul>
+      Every hover also works by tap, on phones.</div>
     <div class="go">
-      <a class="open" href="poster-full.html">Open the full page</a>
+      <a class="open" href="poster-r3.html">Open round 3</a>
       <span class="lbl">Or straight to</span>
-      <a class="chip" href="poster-full.html#paper"><span class="sw"><i style="background:#f1ede2"></i></span>Paper</a>
-      <a class="chip" href="poster-full.html#ink"><span class="sw"><i style="background:#0b0c11"></i></span>Ink</a>
-      <a class="chip" href="poster-full.html#flex">Roboto Flex</a>
+      <a class="chip" href="poster-r3.html#paper"><span class="sw"><i style="background:#f1ede2"></i></span>Paper</a>
+      <a class="chip" href="poster-r3.html#ink"><span class="sw"><i style="background:#0b0c11"></i></span>Ink</a>
     </div>
   </header>
 
+  <section class="block" aria-labelledby="notes">
+    <p class="num">Round 3 · your notes</p>
+    <h2 id="notes">What changed, note by note</h2>
+    <div class="map">
+      <div><p>"You can't easily tell which technologies I'm using… monochrome silhouettes?"</p><div>Tools now appear as one-colour logos, always with the name next to them:
+        <ul>
+          <li>a running band under the hero, with a pause button</li>
+          <li>logos on every project</li>
+          <li>a Stack section where coloured squares show which project used each tool; tap a project to light up its tools</li>
+        </ul></div></div>
+      <div><p>"More icons and less overwhelming text."</p><p>Fact lists became icon tiles, paragraphs became one-liners, and links got icons. The longest text left on the page is the hero sentence.</p></div>
+      <div><p>"Showcase projects with the videos… placeholder video components."</p><div>Each project gets a video player:
+        <ul>
+          <li>a frame that matches the platform: browser, phone or monitor</li>
+          <li>chapter chips that jump through the video and fill as it plays</li>
+          <li>play/pause and full-screen</li>
+        </ul>
+        Videos load only when you scroll near them and play only when half visible. PstrykWeb and Clockful show a drawn stand-in marked "Video soon" until you send recordings.</div></div>
+      <div><p>"Award PstrykWeb as #1, latest and my favourite commercial project… the Order website component only if nicely animated."</p><div>PstrykWeb gets:
+        <ul>
+          <li>a #1 badge on its screen: "Latest · my favourite · commercial"</li>
+          <li>a three-step "how it works" row</li>
+          <li>the order card as a 10-second loop: the form fills in, the cursor presses Order, the card flies off, and the site builds and gets a LIVE stamp</li>
+        </ul>
+        Once the real video exists, the card plays over its first seconds and then gets out of the way.</div></div>
+      <div><p>"Rebuild How I work… product engineer… business, conversions, clients."</p><p>"Product engineer" set huge, then a ring of seven stops: Client, Users, Conversion, Revenue, Code, Ship, Measure. A dot travels the ring, and each stop has a one-line idea and proof from a real project. Code is one stop of seven.</p></div>
+      <div><p>"Typechecks and lints are the floor… focus on automation, LLM wiki, MCPs, skills."</p><p>"Delegate. Automate." follows one real task through the setup this site is built with: a prompt, 3 hooks, 33 wiki pages, subagents, 3 MCP servers, 7 skills and 27 lessons. A small label travels along the steps and shows what each one adds. The checks are now one line: "That's the floor, not the pitch."</p></div>
+      <div><p>"Credentials: sneak previews, hover effects that expand and show pictures… without loading it all."</p><p>Cards open on hover, tap or Enter. Their video or image loads only when a card opens near the screen, and pauses when it closes. The state qualifications get three drawn stamps, and Three.js Journey plays your own space site.</p></div>
+      <div><p>"Do we even need YOUR EMAIL? Can't it be just message?"</p><p>The message box comes first and stands alone. A "Where do I reply?" field appears once you start writing. It takes an email, a phone number or LinkedIn, and fills itself if the message already contains one. Without any contact you couldn't answer, so the field stays, but it comes late and takes little effort.</p></div>
+      <div><p>"Mobile always, no cursors… premium on all platforms."</p><div>Everything that reacts to hover also works with a tap, the keyboard or scrolling. On phones:
+        <ul>
+          <li>the AI steps light up as you scroll past them</li>
+          <li>credentials become an accordion</li>
+          <li>video controls fit one row</li>
+        </ul></div></div>
+    </div>
+  </section>
+
   <section class="block" aria-labelledby="tour">
-    <p class="num">Round 2 · the tour</p>
+    <p class="num">Round 3 · the tour</p>
     <h2 id="tour">Every section, top to bottom</h2>
-    <p class="lead">Desktop shots at 1440 px. One rule runs through the whole page: every headline is set edge to edge and its letters breathe. Each project then gets its own colour and its own way of showing the product. Live, the projects stack: each one slides over the previous one as you scroll.</p>
+    <div class="lead">Desktop shots at 1440 px, with the motion stopped. On the live page:
+      <ul>
+        <li>the loops run</li>
+        <li>the dot travels the ring</li>
+        <li>the label moves along the AI steps</li>
+        <li>the projects stack as you scroll</li>
+      </ul></div>
     <div class="tour">
       <div class="stop">
-        <img src="shots/full-1440-hero.webp" width="1200" height="548" alt="Hero: MATEUSZ MUSZARSKI set edge to edge in white on cobalt, a pink rotating sticker, the role, one line and two buttons">
-        <div class="note"><span class="tag">Hero</span><h3>The name is the picture</h3><p>The letters set themselves on load and widen around the cursor. Below it, a running strip of proof: both stores, Cetuspro, 118 tests, 13 shaders, 30 locales.</p><p class="live">After the hero scrolls away, the header's M—M turns into your full name.</p></div>
+        <div class="pair"><img src="shots/r3-1440-hero.webp" width="1200" height="547" alt="Hero: MATEUSZ MUSZARSKI edge to edge on cobalt, the role, one line, two buttons and three icon facts"><img src="shots/r3-1440-logos.webp" width="1200" height="167" alt="A navy band of white tool logos with names: TypeScript, React, Next.js, Astro, Expo, Supabase, PostgreSQL" loading="lazy"></div>
+        <div class="note"><span class="tag">Hero + tool band</span><h3>Names you can scan</h3><p>The hero keeps its sentence, and the facts became icons. Right under it, the tools scroll past as logos with their names. A button pauses all motion on the page.</p></div>
       </div>
       <div class="stop">
-        <img src="shots/full-1440-pstrykweb.webp" width="1200" height="734" alt="PstrykWeb chapter: yellow field, PSTRYKWEB across the top, a browser window with a simple website and an order form card with a pointer on its button" loading="lazy">
-        <div class="note"><span class="tag">01 · PstrykWeb · yellow</span><h3>A form, a click, a website</h3><p>An order form card; a pointer presses "Order website" and the site builds itself in the browser behind it. It shows only what is public: websites for local businesses, ordered through one online form.</p><p class="live">Drawn with code, so there are no client screenshots.</p></div>
+        <img src="shots/r3-1440-pstrykweb.webp" width="1200" height="802" alt="PstrykWeb: yellow field, a #1 badge on a browser, an order card over a drawn website with a LIVE stamp, a three-step how-it-works row, stack logos" loading="lazy">
+        <div class="note"><span class="tag">01 · PstrykWeb · featured</span><h3>#1, with the order loop</h3><p>The #1 badge, the three steps, and public tech only: Next.js, React, TypeScript, Vercel. The chips under the browser fill in time with the loop: Fill, Order, Live.</p></div>
       </div>
       <div class="stop">
-        <img src="shots/full-1440-linkoglot.webp" width="1200" height="800" alt="Linkoglot chapter: orange field, LINKOGLOT behind a tilted phone playing the camera mode, a pink flashcard reading la maceta" loading="lazy">
-        <div class="note"><span class="tag">02 · Linkoglot · orange</span><h3>The phone breaks the billboard</h3><p>The section from round 1, now one chapter of four. The app video plays only while it is on screen.</p></div>
+        <img src="shots/r3-1440-linkoglot.webp" width="1200" height="835" alt="Linkoglot: orange field, the phone breaking the title, a flashcard sticker, chapter chips City Home Food Book Park under the phone" loading="lazy">
+        <div class="note"><span class="tag">02 · Linkoglot</span><h3>Chapters you can jump to</h3><p>City, Home, Food, Book, Park: tap one and the video jumps there. The flashcard flips between "la maceta" and "the flowerpot".</p></div>
       </div>
       <div class="stop">
-        <img src="shots/full-1440-clockful.webp" width="1200" height="1053" alt="Clockful chapter: lime field, CLOCKFUL, a huge thin running timer 00:41:12 and four big numbers: 118 tests, 5/5 tables with row-level security, 15 requirements, about 9 days" loading="lazy">
-        <div class="note"><span class="tag">03 · Clockful · lime</span><h3>The timer is the poster</h3><p>A live timer whose digits roll like an odometer, with a working Stop button. It is the app's core loop. Under it are the receipts: 118 tests, row-level security on 5 of 5 tables, 15 requirements, about 9 days.</p></div>
+        <img src="shots/r3-1440-clockful.webp" width="1200" height="863" alt="Clockful: lime field, a drawn dashboard with a live odometer timer, bars and an Employee/Admin switch, four big numbers with icons" loading="lazy">
+        <div class="note"><span class="tag">03 · Clockful</span><h3>The timer moves into the app</h3><div>A drawn dashboard stands in until the walkthrough recording. It holds:
+          <ul>
+            <li>the live timer, with a working Stop button</li>
+            <li>bars that grow</li>
+            <li>a role switch that flips between Employee and Admin</li>
+          </ul></div></div>
       </div>
       <div class="stop">
-        <img src="shots/full-1440-space.webp" width="1200" height="834" alt="Space folio chapter: dark starfield with orbit lines, a monitor playing the old space site, a paper receipt listing Lighthouse mobile 34, desktop 60, 13.8 MB, and SPACE FOLIO in outline letters" loading="lazy">
-        <div class="note"><span class="tag">04 · Space folio · night</span><h3>The honest receipt</h3><p>The old site plays in a monitor, with planets on their orbits behind it. A paper receipt prints its real Lighthouse numbers (mobile 34, desktop 60, 13.8 MB before the start button) and links to why you rebuilt it.</p><p class="live">On a phone the button reads "Desktop only · copy link".</p></div>
+        <img src="shots/r3-1440-space.webp" width="1200" height="802" alt="Space folio: monitor with chapter chips Mars, Sun flare, Jupiter, two icon facts, stack logos and the Lighthouse receipt" loading="lazy">
+        <div class="note"><span class="tag">04 · Space folio</span><h3>Same receipt, real player</h3><p>Mars, Sun flare and Jupiter are the chapters, and the video goes full-screen on tap. Stars twinkle and planets orbit.</p></div>
       </div>
       <div class="stop">
-        <img src="shots/full-1440-how.webp" width="1200" height="832" alt="How I work: HOW I WORK edge to edge, then four ruled rows, each a principle in condensed capitals with a receipt beside it" loading="lazy">
-        <div class="note"><span class="tag">How I work</span><h3>Four principles, each with a receipt</h3><p>Your four proof pillars, each one backed by a fact from a project. Hovering a row inverts it and widens the words.</p></div>
+        <img src="shots/r3-1440-how.webp" width="1200" height="1025" alt="How I work: PRODUCT ENGINEER huge, a ring of seven icon stops with Conversion active, and the proof from PstrykWeb" loading="lazy">
+        <div class="note"><span class="tag">How I work · rebuilt</span><h3>Code is one stop of seven</h3><p>While the ring is on screen, the dot moves to the next stop every few seconds. Tap any stop to take over. Each stop links to the project that proves it.</p></div>
       </div>
       <div class="stop">
-        <img src="shots/full-1440-ai.webp" width="1200" height="808" alt="AI workflow: DELEGATE. VERIFY. in huge white letters on cobalt, a five-step track, and a paper board where seven gates are stamped PASS" loading="lazy">
-        <div class="note"><span class="tag">AI workflow</span><h3>Delegate. Verify.</h3><p>A five-step loop, then a board where each gate gets stamped PASS one by one as it comes into view: types, lint, tests, screenshots, accessibility, Lighthouse, your review. Three receipts below: Clockful, this site, lingui-translate-ai.</p></div>
+        <img src="shots/r3-1440-ai.webp" width="1200" height="768" alt="AI: DELEGATE. AUTOMATE. on cobalt, seven steps with big numbers (3 hooks, 33 wiki pages, 3 MCP servers, 7 skills, 27 lessons) and a pink label over the active step" loading="lazy">
+        <div class="note"><span class="tag">AI · rebuilt</span><h3>One task through the real setup</h3><p>The numbers are counted from this repo today. The pink label shows what each step adds, such as "+ 4 wiki pages routed in" or "Mobbin · registry · browser". On phones the steps form a vertical run that lights up as you scroll.</p></div>
       </div>
       <div class="stop">
-        <img src="shots/full-1440-credentials.webp" width="1200" height="743" alt="Credentials: CREDENTIALS edge to edge, then eight ticket stubs: INF.02, INF.03, INF.04, Three.js Journey, JS and React courses, Erasmus+, Hackathons, Marketing and UX" loading="lazy">
-        <div class="note"><span class="tag">Stack + credentials</span><h3>Ticket stubs</h3><p>A two-row strip of your stack runs above. The credentials are tickets with a tear line: the state qualifications in navy, the courses in pink, the teamwork in outline. On a phone they become a swipe rail.</p></div>
+        <img src="shots/r3-1440-stack.webp" width="1200" height="648" alt="Stack: WHAT I SHIP WITH, project filter chips, five columns of tool logos with names and coloured project squares" loading="lazy">
+        <div class="note"><span class="tag">Stack · new</span><h3>What I ship with</h3><p>24 tools in five groups. The coloured squares show where each tool was used. Tap "Linkoglot" and its 7 tools light up while the rest fade.</p></div>
       </div>
       <div class="stop">
-        <img src="shots/full-1440-contact.webp" width="1200" height="679" alt="Contact: pink field, LET'S TALK huge on the left, an email field, a message field and a send button on the right, then copy email, LinkedIn, GitHub and CV buttons" loading="lazy">
-        <div class="note"><span class="tag">Contact</span><h3>Two fields and send</h3><p>Email and message, nothing else. Copy email, LinkedIn, GitHub and the CV sit right under the form.</p></div>
+        <img src="shots/r3-1440-credentials.webp" width="1200" height="785" alt="Credentials: six tall cards, the Three.js Journey card open with the space site video, the others collapsed with vertical titles" loading="lazy">
+        <div class="note"><span class="tag">Credentials</span><h3>Cards that open</h3><div>Cards open on hover on desktop and on tap on phones. An open card shows one of:
+          <ul>
+            <li>stamps</li>
+            <li>a video of your work</li>
+            <li>for now, a slot marked for your certificate or photo</li>
+          </ul></div></div>
       </div>
       <div class="stop">
-        <img src="shots/full-1440-footer.webp" width="1200" height="425" alt="Footer: navy, four link columns, a revision row, and MUSZARSKI in pink across the full width" loading="lazy">
-        <div class="note"><span class="tag">Footer</span><h3>Signed like a poster</h3><p>The four link columns, the language switch and the build revision, then your surname across the full width.</p></div>
+        <img src="shots/r3-1440-contact.webp" width="1200" height="628" alt="Contact: LET'S TALK, optional topic chips, one big message box, Send, and four icon tiles for email, LinkedIn, GitHub and CV" loading="lazy">
+        <div class="note"><span class="tag">Contact</span><h3>The message first</h3><p>One box. The reply field appears once you write and fills itself from the message. Topic chips are optional. Email, LinkedIn, GitHub and CV are icon tiles.</p></div>
       </div>
     </div>
   </section>
 
   <section class="block" aria-labelledby="phone">
-    <p class="num">Round 2 · on a phone</p>
+    <p class="num">Round 3 · on a phone</p>
     <h2 id="phone">The same page at 390 px</h2>
-    <p class="lead">The same content as desktop, in one column. Contact and CV stay in the header. Swipe the row to see more.</p>
+    <p class="lead">Swipe the row. Open the page on your phone to try the loops and the taps.</p>
     <div class="rail">
-      <figure><img src="shots/full-390-hero.webp" width="390" height="605" alt="Hero on a phone" loading="lazy"><figcaption>Hero</figcaption></figure>
-      <figure><img src="shots/full-390-pstrykweb.webp" width="390" height="1104" alt="PstrykWeb on a phone" loading="lazy"><figcaption>PstrykWeb</figcaption></figure>
-      <figure><img src="shots/full-390-linkoglot.webp" width="390" height="1303" alt="Linkoglot on a phone" loading="lazy"><figcaption>Linkoglot</figcaption></figure>
-      <figure><img src="shots/full-390-clockful.webp" width="390" height="1056" alt="Clockful on a phone" loading="lazy"><figcaption>Clockful</figcaption></figure>
-      <figure><img src="shots/full-390-space.webp" width="390" height="1178" alt="Space folio on a phone" loading="lazy"><figcaption>Space folio</figcaption></figure>
-      <figure><img src="shots/full-390-how.webp" width="390" height="986" alt="How I work on a phone" loading="lazy"><figcaption>How I work</figcaption></figure>
-      <figure><img src="shots/full-390-ai.webp" width="390" height="1753" alt="AI workflow on a phone" loading="lazy"><figcaption>AI workflow</figcaption></figure>
-      <figure><img src="shots/full-390-credentials.webp" width="390" height="486" alt="Credentials as a swipe rail on a phone" loading="lazy"><figcaption>Credentials</figcaption></figure>
-      <figure><img src="shots/full-390-contact.webp" width="390" height="1248" alt="Contact on a phone" loading="lazy"><figcaption>Contact</figcaption></figure>
-      <figure><img src="shots/full-390-footer.webp" width="390" height="710" alt="Footer on a phone" loading="lazy"><figcaption>Footer</figcaption></figure>
-    </div>
-  </section>
-
-  <section class="block" aria-labelledby="themes">
-    <p class="num">Round 2 · theme and font</p>
-    <h2 id="themes">Three themes, two fonts</h2>
-    <p class="lead">The project chapters keep their own colours in every theme; the theme changes the hero, the sections between the projects and the footer.</p>
-    <div class="trio">
-      <figure><img src="shots/full-1440-hero.webp" width="1200" height="548" alt="Cobalt theme hero" loading="lazy"><figcaption><b>Cobalt</b> · the signature, loud and memorable</figcaption></figure>
-      <figure><img src="shots/full-paper-1440-hero.webp" width="1200" height="548" alt="Paper theme hero: near-black name on warm paper, orange-red sticker" loading="lazy"><figcaption><b>Paper</b> · light, Swiss, the calmest</figcaption></figure>
-      <figure><img src="shots/full-ink-1440-hero.webp" width="1200" height="548" alt="Ink theme hero: white name on near-black, pink sticker" loading="lazy"><figcaption><b>Ink</b> · dark</figcaption></figure>
+      <figure><img src="shots/r3-390-hero.webp" width="390" height="604" alt="Hero on a phone" loading="lazy"><figcaption>Hero</figcaption></figure>
+      <figure><img src="shots/r3-390-pstrykweb.webp" width="390" height="1118" alt="PstrykWeb on a phone" loading="lazy"><figcaption>PstrykWeb</figcaption></figure>
+      <figure><img src="shots/r3-390-linkoglot.webp" width="390" height="1437" alt="Linkoglot on a phone" loading="lazy"><figcaption>Linkoglot</figcaption></figure>
+      <figure><img src="shots/r3-390-clockful.webp" width="390" height="1167" alt="Clockful on a phone" loading="lazy"><figcaption>Clockful</figcaption></figure>
+      <figure><img src="shots/r3-390-space.webp" width="390" height="1271" alt="Space folio on a phone" loading="lazy"><figcaption>Space folio</figcaption></figure>
+      <figure><img src="shots/r3-390-how.webp" width="390" height="956" alt="Product loop on a phone" loading="lazy"><figcaption>How I work</figcaption></figure>
+      <figure><img src="shots/r3-390-ai.webp" width="390" height="2007" alt="AI steps as a vertical run on a phone" loading="lazy"><figcaption>AI</figcaption></figure>
+      <figure><img src="shots/r3-390-stack.webp" width="390" height="1268" alt="Stack on a phone" loading="lazy"><figcaption>Stack</figcaption></figure>
+      <figure><img src="shots/r3-390-credentials.webp" width="390" height="1125" alt="Credentials as an accordion on a phone" loading="lazy"><figcaption>Credentials</figcaption></figure>
+      <figure><img src="shots/r3-390-contact.webp" width="390" height="1295" alt="Contact on a phone" loading="lazy"><figcaption>Contact</figcaption></figure>
     </div>
     <div class="duo">
-      <figure><img src="shots/full-paper-1440-ai.webp" width="1200" height="808" alt="AI workflow section in the Paper theme: black field" loading="lazy"><figcaption><b>Paper</b> · AI workflow</figcaption></figure>
-      <figure><img src="shots/full-ink-1440-how.webp" width="1200" height="832" alt="How I work section in the Ink theme: dark field, white type" loading="lazy"><figcaption><b>Ink</b> · How I work</figcaption></figure>
-    </div>
-    <div class="duo">
-      <figure><img src="shots/full-1440-clockful.webp" width="1200" height="1053" alt="Clockful set in Anybody" loading="lazy"><figcaption><b>Anybody</b> · characterful, the one you liked</figcaption></figure>
-      <figure><img src="shots/full-flex-1440-clockful.webp" width="1200" height="1054" alt="Clockful set in Roboto Flex: plainer, more neutral letters" loading="lazy"><figcaption><b>Roboto Flex</b> · neutral, more corporate</figcaption></figure>
+      <figure><img src="shots/r3-paper-1440-how.webp" width="1200" height="1025" alt="The product loop in the Paper theme" loading="lazy"><figcaption><b>Paper</b> · How I work</figcaption></figure>
+      <figure><img src="shots/r3-ink-1440-credentials.webp" width="1200" height="785" alt="Credentials in the Ink theme" loading="lazy"><figcaption><b>Ink</b> · Credentials</figcaption></figure>
     </div>
   </section>
 
   <section class="block" aria-labelledby="decide">
-    <p class="num">Round 2 · your call</p>
-    <h2 id="decide">Three answers and I start building</h2>
+    <p class="num">Round 3 · your call</p>
+    <h2 id="decide">Four answers, then I build</h2>
     <div class="ask">
       <ol>
-        <li><b>Theme.</b> My pick: Cobalt for every first visit, with Paper and Ink in the theme toggle; the site remembers the choice.<p>Or: Paper and Ink follow your system's light or dark setting, and Cobalt is only the brand colour.</p></li>
-        <li><b>Font.</b> My pick: Anybody. It has the character that gives Poster its professional edge; Roboto Flex is safer and plainer.</li>
-        <li><b>Anything to cut, swap or push further?</b><p>For example: a different project order, another colour for a chapter, less motion, or "the AI board is too much".</p></li>
+        <li><b>PstrykWeb stack.</b> You asked for the full stack list, but your public-info rule keeps the internal part off the site. Should I list it, or keep public tech only? (I sent you the names in chat.)<p>Right now it shows Next.js, React, TypeScript and Vercel.</p></li>
+        <li><b>Contact.</b> The message comes first, and a reply field appears once you write and fills itself from the message. Is that OK?<p>Without a reply field you'd get messages you can't answer.</p></li>
+        <li><b>Recordings.</b> I need three recordings from you. The chips on each player are the shot list.<ul>
+            <li>PstrykWeb: the public konfigurator, from filling it in to the result (about 20 s).</li>
+            <li>Clockful: timer, entries, reports, roles. This one needs Neoteric's OK.</li>
+            <li>Linkoglot: a full-size screen recording. Today's is the 332 px store preview.</li>
+          </ul></li>
+        <li><b>Credentials media.</b> Your certificates and your own photos (Erasmus+, hackathons) go in the open cards.<p>The Three.js Journey course video belongs to Bruno Simon, so it needs his written OK. Until then the card shows your own space site, built with what the course taught.</p></li>
       </ol>
-      <p>A short reply is enough, for example "1 yes, 2 yes, 3 nothing". After that I write the new design system and rebuild the header, footer and hero in the real site, one section at a time.</p>
+      <p>Theme and font: I kept Cobalt with a Paper/Ink toggle, and Anybody, since you didn't object. Say if you want something else.</p>
     </div>
     <div class="cols">
       <div>
         <h3>What the comp does not prove yet</h3>
         <ul>
-          <li>Not tested on a real phone, only in emulated 390 and 1440 px screens.</li>
-          <li>No Lighthouse run on the comp; the real build gets one per section.</li>
-          <li>The headline fitting runs in the browser here. In the real site it moves to build time, so nothing jumps while fonts load.</li>
+          <li>It hasn't been tested on a real phone, only on emulated 390 and 1440 px screens.</li>
+          <li>There's no Lighthouse run on the comp; the real build gets one per section.</li>
+          <li>The screenshot browser can't play these videos, so playback isn't in the shots. The order card over a real video needs the recording.</li>
         </ul>
       </div>
       <div>
         <h3>Not real yet</h3>
         <ul>
-          <li>"Open to work", "Poland, CET", "remote" and the languages line wait for your wording.</li>
-          <li>The email address, the CV size and the links are placeholders, and the form sends nothing.</li>
-          <li>"Client work · Cetuspro" and "Internship · Neoteric" wait for their permission.</li>
-          <li>Credential dates, verify links and course names are still to come from you.</li>
-          <li>The project videos are temporary: the 332 px App Store preview and a capture of the old space site (its planet textures are Solar System Scope, CC BY 4.0; its lens-dirt texture still needs a licence check).</li>
+          <li>The "Video soon" players for PstrykWeb and Clockful, and the photo and certificate slots in Credentials.</li>
+          <li>The email, the links and the CV size are placeholders, and the form sends nothing.</li>
+          <li>"Cetuspro" and "Neoteric" wait for their permission.</li>
+          <li>The AI numbers are counted from this repo today and get refreshed at build time.</li>
+          <li>The tool logos come from Simple Icons (CC0) and remain their brands' trademarks. They are shown in one colour, unaltered, only to name tools you use. I'll check each brand's guidelines before launch.</li>
+          <li>The other icons are from Tabler (MIT).</li>
         </ul>
       </div>
+    </div>
+  </section>
+
+  <section class="block" aria-labelledby="r2">
+    <p class="num">Round 2 · for comparison</p>
+    <h2 id="r2">Before and after</h2>
+    <p class="lead">Round 2 is still live. Below are the three sections that changed most: round 2 on the left, round 3 on the right.</p>
+    <div class="go"><a class="open" href="poster-full.html">Open round 2</a></div>
+    <div class="duo">
+      <figure><img src="shots/full-1440-how.webp" width="1200" height="832" alt="Round 2 How I work: four ruled rows of principles" loading="lazy"><figcaption><b>Round 2</b> · How I work</figcaption></figure>
+      <figure><img src="shots/r3-1440-how.webp" width="1200" height="1025" alt="Round 3: the product loop" loading="lazy"><figcaption><b>Round 3</b> · Product engineer loop</figcaption></figure>
+    </div>
+    <div class="duo">
+      <figure><img src="shots/full-1440-ai.webp" width="1200" height="808" alt="Round 2 AI: Delegate. Verify. with a board of PASS stamps" loading="lazy"><figcaption><b>Round 2</b> · Delegate. Verify.</figcaption></figure>
+      <figure><img src="shots/r3-1440-ai.webp" width="1200" height="768" alt="Round 3 AI: Delegate. Automate. with seven steps" loading="lazy"><figcaption><b>Round 3</b> · Delegate. Automate.</figcaption></figure>
+    </div>
+    <div class="duo">
+      <figure><img src="shots/full-1440-contact.webp" width="1200" height="679" alt="Round 2 contact with an email field" loading="lazy"><figcaption><b>Round 2</b> · Email and message</figcaption></figure>
+      <figure><img src="shots/r3-1440-contact.webp" width="1200" height="628" alt="Round 3 contact, message first" loading="lazy"><figcaption><b>Round 3</b> · The message first</figcaption></figure>
     </div>
   </section>
 
@@ -273,7 +357,7 @@ dd { margin: 0; }
     </div>
     <div class="info">
       <p class="num">Direction 2</p>
-      <span class="picked">Your pick · built out in round 2</span>
+      <span class="picked">Your pick · rounds 2 and 3</span>
       <h2 id="d2">Poster</h2>
       <p class="tagline">Your name, set like a poster.</p>
       <p class="desc">The name fills the width edge to edge in one variable font. Letters widen around the cursor like an accordion while the line stays exactly flush. Each project gets its own flat colour field and a billboard word.</p>

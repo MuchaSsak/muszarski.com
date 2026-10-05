@@ -43,6 +43,12 @@
 | F23 | Case study #0 "how this site was built" | should | Budgets, tiers, a11y, Lighthouse CI, AI workflow, Astro choice | todo |
 | F24 | `/explore` immersive hub | later | Opt-in; links to the same `/work/<slug>/` URLs | — |
 
+> **Round 3 comp (2026-10-05) proposes, pending the owner:** F06 as a 7-stop product loop (Client, Users, Conversion,
+> Revenue, Code, Ship, Measure; each stop with a receipt); F07 as one task through the real setup (hooks, wiki, subagents,
+> MCP, skills, lessons) with checks as one "floor" line; F08 as named monochrome tool marks + a project filter, and
+> credential cards that load media only when opened; F09 message-first: one textarea, then a "Where do I reply?" field
+> (email, phone or LinkedIn) that fills itself from the message (Q44). Every hover has a tap/focus/scroll twin.
+
 ## Key flows
 
 1. **Recruiter on mobile from LinkedIn:** lands on `/en/`.
