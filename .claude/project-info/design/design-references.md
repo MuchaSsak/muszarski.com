@@ -35,7 +35,7 @@
 
 | Sheet | Composition | Live action | Motif |
 | --- | --- | --- | --- |
-| PstrykWeb (`both`) | 3 views: browser (admin/konfigurator) + overlapping phone (generated site) + the pipeline drawn as a section-view flow (vertical at 390). Nodes are real text | Live site ↗ (after the rights OK) | isometric stack of pages + generation arrow / "pstryk" toggle |
+| PstrykWeb (`both`) | 2 views of the public parts only: browser (konfigurator) + overlapping phone (konfigurator flow). No pipeline drawing (dossier § Public disclosure) | Live site ↗ (after the rights OK) | isometric stack of pages / "pstryk" toggle |
 | Linkoglot (`phone`) | the phone front-on at 90% height with a dimension line + 2 circular DETAIL callouts | desktop: QR stamp (build-time SVG) + badges; phone: the visitor's OS badge first | viewfinder snapping an object into a flashcard |
 | Neoteric Clockful (`desktop`) | browser + numbered balloon callouts ①②③ = parts list of what he built | Code ↗; title-block cell `DEPLOYMENT: none (internship)` | isometric clock face with gear teeth |
 | Space portfolio (`live`) | drawn monitor with the loop; dimension label "desktop · WebGL2 · ~N MB"; a "Why it was rebuilt" note | fine pointer: Launch on desktop ↗; coarse: "Desktop-only experience" + Copy link. **No WebGL on home** | orbit ellipses as compass construction lines |

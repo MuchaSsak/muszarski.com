@@ -4,7 +4,26 @@
 > Fields: `content-model.md`. Raw research (architecture drawing spec, 11 owner questions):
 > `research/2026-10-05-project-pstrykweb.md`.
 
-## Facts
+## Public disclosure: public info only [user] 2026-10-05
+
+The owner's rule, until he says otherwise ("maybe one day we will disclose more"): the site shows only what is
+already public about PstrykWeb, plus innocent facts.
+- **The site may show:**
+  - the product as its public pages describe it: bespoke websites for local businesses, ordered through an online form
+  - the public links: the landing `pstrykweb.pl` and the public konfigurator (a code link only if one ever exists; the repo is private)
+  - his role: built it solo for Cetuspro (pending the OK, Q21)
+  - tech that is visible from outside (Next.js, Vercel)
+- **Not on the site (internal):**
+  - how the sites are made: AI generation, Claude Code / agents, the pipeline (queue, runner, gates, control plane)
+  - the internal tools: emails, review viewer, staff dashboard
+  - the unlaunched landing v2 and its measurements
+  - counts, costs, client names, prompts, hostnames
+- PstrykWeb is therefore **not** evidence for the AI-workflow section. That section rests on Clockful, this
+  site's own build and `lingui-translate-ai` (`brand.md` pillar 3).
+- The facts below stay in the wiki so the story can open up later. **Before this repo goes public (Q13)**, scrub this
+  dossier and `research/2026-10-05-project-pstrykweb.md`.
+
+## Facts (internal reference; the public subset is the rule above)
 
 | Fact | Value | Source |
 | --- | --- | --- |
@@ -21,29 +40,30 @@
 
 ## Card candidates
 
+Public info only (see the rule above):
 - **Outcome** (recommended first):
-  1. "A pipeline that turns an 8-minute form into a deployed, bespoke website for a local business."
-  2. "Built the system behind PstrykWeb alone, from the form to the deploy; 13 sites live so far."
-  3. "Automated website production with quality gates instead of templates."
-- **Proof chip:** "13 sites live, built by the pipeline" (alt: "Astro over Next: LCP 1.66 s vs 2.92 s, measured").
-- **Stack chips:** Claude Code · Deno · Supabase · Next.js · Docker (alt: Astro).
+  1. "Built PstrykWeb for Cetuspro solo: bespoke websites for local businesses, ordered through one online form."
+  2. "Solo developer of PstrykWeb, a website product for local businesses (Cetuspro)."
+- **Proof chip:** "Client work · built solo".
+- **Stack chips:** Next.js · TypeScript · Vercel.
 - **Context tag:** "Client work · Cetuspro" (pending OK).
+- **Links:** "Live ↗ pstrykweb.pl" (it currently shows Cetuspro's older landing, see the caveat in Facts) + the public konfigurator.
+- **Held back (internal):** the pipeline, AI, internal tools, "13 sites live", the v2 benchmarks.
 
 ## What it proves (→ `audience.md` pillars)
 
-- End-to-end ownership of a commercial system, solo.
-- AI engineering with quality control: agents behind gates, not "prompt and pray". This is the strongest
-  evidence for the AI-workflow section.
-- Business and conversion thinking: the konfigurator flow, a measured framework choice, a staff launch switch.
-- Working with a company's people (marketing team, PM, staff dashboard).
+- Public: a commercial product for a software house's clients, built solo.
+- Internal only, for when the story opens up: end-to-end ownership of the whole system, AI engineering with quality
+  gates, conversion thinking in the konfigurator flow, work with the marketing team.
 
 ## Rights and confidentiality (status: **check**; NDA level now L2, target L0)
 
 - **The contract:** Q21 and the legal research. Get a one-line email OK from Cetuspro.
 - **Needs the owner's and Cetuspro's OK:**
   - naming them, and saying he built it solo
-  - **saying the sites are AI-generated** (the old landing says "not an automatic generator", a marketing sensitivity)
   - numbers, screenshots, live client sites (none has consent)
+- **Not said for now (owner, 2026-10-05):** that the sites are AI-generated. The old landing also says "not an
+  automatic generator", a marketing sensitivity for Cetuspro (Q32).
 - **Must stay private:**
   - prompts, skills and rubric text
   - client names
@@ -52,16 +72,15 @@
 
 ## Presentation
 
-- **Media kind `both`:** one sheet, three views: browser (konfigurator / generated site), phone (konfigurator
-  flow), and the pipeline drawn as a production line.
+- **Media kind `both`:** one sheet, two views of the public parts: browser (the konfigurator) and phone (the
+  konfigurator flow). No pipeline drawing, no internal tools.
 - **Theme:** paper `#F5F1EA`, ink `#13201F`, accent teal `#2D7D78` (`#28726E` for small text). Dark: paper `#0E2B29`,
-  accent mint `#9FD8CB`. Contrast checked [research]. Motif: a drafted "pstryk" toggle switch + the
-  production-line drawing. Motion: snappy.
+  accent mint `#9FD8CB`. Contrast checked [research]. Motif: a drafted "pstryk" toggle switch. Motion: snappy.
 - **Temporary media** (`assets/projects/pstrykweb/`, raw scrolls in `raw/`): show the OLD landing, stock people and
-  third-party thumbnails. **Never publish.** The owner records finals: konfigurator flow, pipeline run, review
-  viewer, staff dashboard, one consented client site.
+  third-party thumbnails. **Never publish.** The owner records finals: the public konfigurator flow (+ one
+  consented client site, if Cetuspro OKs it). Internal tools are not recorded for the site.
 
 ## Open (project-specific)
 
-Contract wording + Cetuspro OK · may we say "AI-generated"? · which client sites can be shown (consent) · years ·
+Contract wording + Cetuspro OK · when to open up the AI story (not for now) · which client sites can be shown (consent) · years ·
 what he'd do differently · 11 more questions in the research file.

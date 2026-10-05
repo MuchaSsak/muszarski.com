@@ -17,6 +17,7 @@
 ## 2. Quality bar
 
 - **Do the whole ask**, including messages that arrive mid-task (fold them in, say so in one line).
+- **Phase 1 works in slices**, one at a time, each looped until finished (§ 9).
 - **Done means** (from the `code` skill [user] 2026-10-05):
   - typecheck (`astro check`) + lint + unit tests + e2e: commands in `technologies.md`
   - **UI:** Playwright screenshots at **390 / 1024 / 1920**, actually evaluated:
@@ -95,3 +96,36 @@
 | `.claude/hooks/session-start.mjs` (SessionStart) | at startup, resume, clear and after every compaction: this page's pointer, the lessons, the in-flight git state |
 | `.claude/hooks/wiki-context.mjs` (UserPromptSubmit) | the ≤ 5 routed pages for each prompt |
 | `.claude/hooks/wiki-check.mjs` (Stop + by hand) | code changed without the wiki: blocks the stop once; lints the wiki |
+
+## 9. Phase 1: one section at a time [user] 2026-10-05
+
+Build the site **one slice (a section or a page) at a time**, and finish each one, as close to production as it
+can get, before starting the next. Never move to slice Y while slice X has a failing check or a known polish item.
+
+**Order** (a spike rides along with the slice that needs it; `technologies.md` § Spikes):
+
+| # | Slice | Spikes |
+| --- | --- | --- |
+| 0 | Foundation: scaffold, tokens + fonts on screen (`design.md` drafts → frozen), theme switch, i18n, layout shell, deploy | S0, S1 |
+| 1 | Header (title block, split CV CTA) + footer | — |
+| 2 | Hero + the signature drawing | S2 |
+| 3–6 | Flagship sheets, one slice per project: PstrykWeb → Linkoglot → Clockful → space | S3, S4 |
+| 7–10 | How I work → AI workflow → Stack + credentials → Contact (form + `/api/contact`) | — |
+| 11+ | Pages: case studies (one each) → `/work/` → `/cv/` + PDF → blog (index, post) + "Latest writing" → `/my-life/` → legal → 404 | S5 |
+
+**The loop for every slice** (repeat until every check passes and one more pass finds nothing worth fixing):
+1. **Research** the section (Mobbin, Awwwards, registry, `design-references.md`): a short plan naming the adopted patterns.
+2. **Build** with real content where it exists; every placeholder logged (`placeholders.md`).
+3. **Evaluate:**
+   - screenshots 390 / 1024 / 1920 + the 2560 sweep, light + dark, reduced motion, en / pl / es (pl runs longest)
+   - axe AA, the keyboard path, visible focus
+   - Lighthouse mobile on the page: ≥ 90 (aim 95+), within the `requirements.md` budgets; record the slice's own
+     cost (JS KB, LCP/CLS delta) in `memory/` so later slices know what's left
+   - design score ≥ 8/10 (`design-quality.md`), with the weakest point named
+   - the slice's analytics events fire (`analytics.md`)
+4. **Fix** the weakest point, then evaluate again.
+5. **Close:** commit, then report in a few lines with the accepted screenshots and the numbers. The owner's feedback
+   reopens the slice before anything new starts.
+
+- A later slice that breaks an earlier one reopens the earlier one first.
+- "Done" for a slice = § 2 + a green loop. Placeholders are allowed only when logged.

@@ -8,7 +8,7 @@
 
 | # | Project | Dossier | What it is | Media kind | Public links |
 | --- | --- | --- | --- | --- | --- |
-| 1 | PstrykWeb | `content/projects/pstrykweb.md` | commercial website-generation product + pipeline, built solo for Cetuspro | `both` | pstrykweb.pl |
+| 1 | PstrykWeb | `content/projects/pstrykweb.md` | commercial website product for local businesses, built solo for Cetuspro (the site shows public info only: dossier § Public disclosure) | `both` | pstrykweb.pl |
 | 2 | Linkoglot | `content/projects/linkoglot.md` | own AI language-learning mobile app (App Store + Google Play) | `phone` | linkoglot.eu/Download |
 | 3 | Neoteric Clockful | `content/projects/neoteric-clockful.md` | internship time-tracking dashboard, built AI-only under a deadline | `desktop` | none (repo private) |
 | 4 | 3D space portfolio | `content/projects/space-portfolio.md` | the old immersive three.js site | `live` (desktop) | matmuszarski.vercel.app + repo |
@@ -37,7 +37,7 @@ which to show and which private ones to add (Enrollo, others: Q41) [user].
 | mesku.art | client | only if the domain comes back or a recording exists (no DNS today) |
 
 **Hide (suggested):**
-- not projects or superseded: MuchaSsak (profile config), language-ai (link it from the Linkoglot case study instead, after Q37),
+- not projects or superseded: MuchaSsak (profile config), language-ai (made private by the owner 2026-10-05),
   2d-space-folio, GRIND (unfinished; dead APK), supabase-auth, conventional-changelog
 - school or course work: learning-gems, christmas-2024 (could go under credentials as course work), techbook, home-budget
 - Discord bots: gc-bot, fungi-shroomer
@@ -46,7 +46,7 @@ which to show and which private ones to add (Enrollo, others: Q41) [user].
 **Housekeeping before launch** (Q39):
 - Fix the homepages that don't resolve: `muszarski.space`, `2d.muszarski.space`; `ludwig.muszarski.space` in a README.
 - mesku.art is down; GRIND's APK link returns 400.
-- 4 repos have no licence: malatro, language-ai, lndexecutivetaxi.com, MuchaSsak.
+- 3 public repos have no licence: malatro, lndexecutivetaxi.com, MuchaSsak (language-ai is private now).
 
 ## Rules
 

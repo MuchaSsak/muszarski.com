@@ -11,16 +11,16 @@ non-negotiables: read only the pages your task needs. Paths are plain text on pu
 
 | Task touches | Read |
 | --- | --- |
-| **How a session works here**: new chats, quality bar, definition of done, compaction, pausing, reports, lessons / memory | `.claude/project-info/working-agreement.md` (+ `.claude/project-info/lessons.md`) |
+| **How a session works here**: new chats, quality bar, definition of done, compaction, pausing, reports, lessons / memory, Phase 1 build order, one section at a time, slice, polish loop | `.claude/project-info/working-agreement.md` (+ `.claude/project-info/lessons.md`) |
 | Goals, scope, priorities, success metrics, deadline, what we are NOT building | `.claude/project-info/product/project-brief.md` |
 | Recruiters, hiring, software houses, audience, objections, seniority, solo concern, what employers check | `.claude/project-info/product/audience.md` |
 | Copy, microcopy, wording, voice, tone, headlines, H1, positioning, CTA labels, banned words | `.claude/project-info/product/brand.md` |
 | Features, acceptance criteria, user flows, recruiter flow, budgets, performance targets, Lighthouse score, accessibility, a11y | `.claude/project-info/product/requirements.md` |
 | Projects overview, flagships, showcase, chapters order, archive, all projects page | `.claude/project-info/content/projects.md` |
-| PstrykWeb case study, Cetuspro, pipeline, konfigurator, website generator, admin panel | `.claude/project-info/content/projects/pstrykweb.md` |
-| Linkoglot case study, mobile app, App Store, Google Play, flashcards, RevenueCat | `.claude/project-info/content/projects/linkoglot.md` |
-| Neoteric Clockful case study, internship, time tracking dashboard, roles permissions | `.claude/project-info/content/projects/neoteric-clockful.md` |
-| Space portfolio case study, old site, matmuszarski, three.js space, immersive | `.claude/project-info/content/projects/space-portfolio.md` |
+| PstrykWeb case study, card copy, outcome, Cetuspro, pipeline, konfigurator, website generator, admin panel | `.claude/project-info/content/projects/pstrykweb.md` |
+| Linkoglot case study, card copy, outcome, mobile app, App Store, Google Play, flashcards, RevenueCat | `.claude/project-info/content/projects/linkoglot.md` |
+| Neoteric Clockful case study, card copy, outcome, internship, time tracking dashboard, roles permissions | `.claude/project-info/content/projects/neoteric-clockful.md` |
+| Space portfolio case study, card copy, outcome, old site, matmuszarski, three.js space, immersive | `.claude/project-info/content/projects/space-portfolio.md` |
 | Content model, data fields, case study template, CV / resume / PDF sync, credentials, skills, blog frontmatter | `.claude/project-info/content/content-model.md` |
 | Pages, sitemap, home sections, hero, header, navigation, footer, contact form, CTA, my life page, blog layout, legal pages layout | `.claude/project-info/site/structure.md` |
 | Locales, translation, Lingui, Polish, Spanish, language switcher, hreflang, URL prefix, slugs | `.claude/project-info/site/i18n.md` |
@@ -53,6 +53,7 @@ non-negotiables: read only the pages your task needs. Paths are plain text on pu
 
 - Start: read the routed pages (the prompt hook lists them) and apply the lessons (the session card carries them).
 - Keep working through compactions until the task is done or the user says stop.
+- Phase 1: one section at a time, looped to near-prod before the next (`.claude/project-info/working-agreement.md` § 9).
 - Finish: verify → update the page + `log.md` → add lessons → commit per the working agreement → short report.
 - Details: `.claude/project-info/working-agreement.md`. Personal rules: `CLAUDE.local.md` (gitignored).
 

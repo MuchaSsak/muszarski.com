@@ -12,12 +12,12 @@
 | Context | own product, solo, a few months; hand-coded first, later a lot with AI | [user] |
 | Stores | App Store id 6768303316 (released 2026-07-21) · Google Play `com.linkoglot.app` (released 2026-07-10) · both v1.0.1 | [research: stores] |
 | Redirect | `linkoglot.eu/Download` → App Store on iPhone, Play for everyone else | [research] |
-| Model | free download + monthly/yearly subscription (Play in-app $2.49–$49.99 / 10,99–229,99 zł). **The store text never mentions a free trial**; only the website says "free to try" (Q38) | [research] |
+| Model | free download → **free trial** → monthly/yearly subscription (Play in-app $2.49–$49.99 / 10,99–229,99 zł). The trial is real [user 2026-10-05]; the store text doesn't mention it, the website says "free to try". Trial length Unknown (Q38) | [user], [research] |
 | Listing | Productivity (+Education) · 4+ / Everyone / PEGI 3 · 114.1 MB · **30 languages** | [research] |
 | Traction | effectively none: 10+ Play downloads, no US ratings. Never quote downloads or ratings | [user], [research] |
 | Stack (owner-stated) | Expo React Native, NativeWind, TanStack Query, Supabase, React Native Reusables, RevenueCat, Lingui | [user] |
 | Landing | **exists:** www.linkoglot.eu/en (Next.js, 30 locales, AI-credits price table). The owner said there was none (Q38) | [research] |
-| Code | the owner says private, **but the public repo `MuchaSsak/language-ai` is a stripped snapshot of it** (no auth or subscription; 70 UI languages vs 30 shipped). It puts AI keys client-side (`EXPO_PUBLIC_*`), has a font-maker's LICENSE and a blunt TODO.md → security check Q37 | [research] |
+| Code | private. The stripped public snapshot `MuchaSsak/language-ai` (AI keys client-side via `EXPO_PUBLIC_*`) was **made private by the owner on 2026-10-05**; key rotation and the shipped app's keys are still open (Q37) | [research], [user] |
 | Spin-off | its `scripts/translate-llm.js` grew into the npm package **`lingui-translate-ai`** (v1.1.0) | [research] |
 | Style note | the pstryk coding guidelines call Linkoglot "the matured style" | [repo: context/pstryk-turborepo] |
 
@@ -35,7 +35,7 @@
 ## What it proves
 
 - Shipped a real product to both stores: review processes, listings, subscription paywall.
-- Product + monetisation thinking (RevenueCat, monthly/yearly plans).
+- Product + monetisation thinking (RevenueCat: free trial → monthly/yearly plans).
 - AI features beyond chat: camera → study material; voice practice.
 - i18n at scale (30 locales) → his own npm tool (`lingui-translate-ai`).
 
@@ -59,5 +59,5 @@
 
 ## Open (project-specific)
 
-Q37 (repo security) · Q38 (landing link, trial wording) · decisions to tell (Expo vs bare, RevenueCat vs own
+Q37 (key rotation) · Q38 (landing link, trial length) · decisions to tell (Expo vs bare, RevenueCat vs own
 billing) · what he'd do differently · Q-L1…Q-L13 in the research file.

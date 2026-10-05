@@ -28,7 +28,7 @@ and to rank for his name, his role and his location. [user]
 
 | Fact | Source |
 | --- | --- |
-| About 6 years of coding [user]; public sources say "began coding in 2022" and "Student at Technikum" → one true line needed (open-questions Q25) | [user], [research: seo § 1.3] |
+| **~4 years of coding:** started in 2022, 2–3 months before starting technikum at ZSE. This corrects the earlier "~6 years" and matches the public "began coding in 2022". Student status and graduation: Q25 | [user] 2026-10-05, [research: seo § 1.3] |
 | Full-stack; solo on own products and freelance; commercial contract with Cetuspro (PstrykWeb); internship at Neoteric (Clockful) | [user] |
 | Public business register: JDG "MATEUSZ MUSZARSKI - ENROLLO", Starogard Gdański (Q28) | [research: seo § 1.3] |
 | Heavy on AI and automation: Claude Code MCPs, skills, hooks, LLM wiki | [user] |

@@ -18,8 +18,8 @@
 - **H1:** "Full-stack product engineer".
 - **Subline draft:** "I turn a business problem into a shipped web or mobile product, and I tell you early
   what it will cost and what can wait." This is a draft; the owner rewrites it in his own voice.
-- **Proof line** (above the fold, pending the Cetuspro OK): "Built PstrykWeb for Cetuspro end to end: AI-built websites for
-  local businesses, from the generation pipeline to the marketing team's admin panel."
+- **Proof line** (above the fold, pending the Cetuspro OK; public info only, `content/projects/pstrykweb.md`):
+  "Built PstrykWeb for Cetuspro, solo: bespoke websites for local businesses, ordered through one online form."
 - **Titles elsewhere:**
   - SEO / CV: "Full-Stack Developer (React, Node.js, TypeScript)"
   - LinkedIn headline mirrors the H1 + stack
@@ -27,9 +27,9 @@
 
 ## Four proof pillars (each maps to a site section; evidence per pillar: `audience.md`)
 
-1. **I build for the business result:** PstrykWeb conversion flow, Linkoglot monetisation.
-2. **I build the whole thing:** PstrykWeb end to end, Linkoglot on both stores.
-3. **I use AI as leverage, and I verify it:** the PstrykWeb gated pipeline, Clockful AI-only at Neoteric, a public Claude Code setup,
+1. **I build for the business result:** Linkoglot monetisation (free trial → subscription), PstrykWeb as client work.
+2. **I build the whole thing:** PstrykWeb built solo, Linkoglot on both stores.
+3. **I use AI as leverage, and I verify it:** Clockful AI-only at Neoteric (118 tests), this site's public Claude Code setup,
    `lingui-translate-ai`.
 4. **I make the work visible and predictable:** decisions with rejected options, "cut from v1", estimate vs actual.
 
@@ -66,8 +66,8 @@
 ## Claims never to make
 
 User or revenue numbers that don't exist · "Senior" by self-title · that Udemy certificates are accredited ·
-endorsement by instructors, Erasmus+/ESC or the EU (no EU flag next to his name) · "AI-generated" for
-PstrykWeb client sites until Cetuspro OKs it (Q32) · any metric without a source.
+endorsement by instructors, Erasmus+/ESC or the EU (no EU flag next to his name) · anything internal about
+PstrykWeb: AI generation, the pipeline, internal tools, counts (owner rule 2026-10-05, Q32) · any metric without a source.
 
 ## Legal tone
 

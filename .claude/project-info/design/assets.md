@@ -43,6 +43,6 @@
 
 - **Owner recordings per flagship:** shot lists in the research files (PstrykWeb, Linkoglot 11 shots, space, Clockful).
 - **Owner photo:** square ≥ 800 px, same as the GitHub/LinkedIn avatars (Q7).
-- **Fonts:** chosen in prototype S2 (pl + es subsets, licences).
+- **Fonts:** candidates in `design.md` § Typography (Archivo, IBM Plex Mono; OFL); files + licence files land in slice 0.
 - **Certificates:** scans or links (Q10).
 - **OG images:** generated at build (Phase 1).

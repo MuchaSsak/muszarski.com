@@ -15,7 +15,7 @@
   - names: "Mateusz" / "Matt" / "Matthew"
   - handles: MuchaSsak / muchassakkk / mat.muszarski
   - hosts: matmuszarski.space, plus muszarski.space (lapsed, still linked from the GitHub README)
-  - seniority: "began coding in 2022, technikum student" (public) vs "~6 years" (brief)
+  - seniority: now consistent: "since 2022" (owner confirmed 2026-10-05; the brief's "~6 years" was wrong)
 - **Fixing consistency is lever #1 and costs nothing** (owner actions: open-questions Q25–Q28).
 
 ## Target queries

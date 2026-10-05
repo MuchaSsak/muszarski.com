@@ -15,6 +15,9 @@
 - CV changed → regenerate BOTH the `/cv/` page and the PDF from the one data source; never edit one alone (`content-model.md` § CV) - 2026-10-05.
 - Legal pages are formal "lawyer grade" text, not the brand voice; noindex,follow; facts with cited statutes; recommend a lawyer review - 2026-10-05.
 - The owner can't verify Spanish: AI-translate es, mark it unreviewed, never claim it was reviewed - 2026-10-05.
+- Phase 1 builds one slice (section/page) at a time and loops it to near-prod (shots, axe, Lighthouse, design score) before the next; never start Y while X has an open item (`working-agreement.md` § 9) - 2026-10-05.
+- PstrykWeb on the site = public info only (landing URL, public konfigurator, his solo role, tech visible from outside). Never AI generation, the pipeline, internal tools or counts until the owner opens it up (`pstrykweb.md` § Public disclosure) - 2026-10-05.
+- Owner-stated numbers can be off (the brief said ~6 years; it is ~4, since 2022). When an owner fact and a public source disagree, show both and ask; never pick one - 2026-10-05.
 
 ### Privacy of inputs
 - `context/` is private and gitignored (the pstryk code, klepacz.pdf). Copy patterns, not files; never quote the memo verbatim or name its author in committed files - 2026-10-05.
