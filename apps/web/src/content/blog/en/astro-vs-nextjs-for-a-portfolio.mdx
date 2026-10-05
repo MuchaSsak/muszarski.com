@@ -1,0 +1,120 @@
+---
+title: "Astro vs Next.js for a portfolio or a landing page"
+description: "When Astro fits a portfolio or landing page and when Next.js is the right call, with HTTP Archive Core Web Vitals data and this site's measurements."
+translationKey: "astro-vs-next"
+published: 2026-10-05
+tags: [astro, performance, react]
+cover: compare
+related: [this-site, lingui-vs-i18next]
+sources:
+  - title: "Astro docs: Why Astro?"
+    url: "https://docs.astro.build/en/concepts/why-astro/"
+    accessed: 2026-10-05
+  - title: "Astro docs: Islands architecture"
+    url: "https://docs.astro.build/en/concepts/islands/"
+    accessed: 2026-10-05
+  - title: "Astro docs: On-demand rendering"
+    url: "https://docs.astro.build/en/guides/on-demand-rendering/"
+    accessed: 2026-10-05
+  - title: "Astro docs: Content collections"
+    url: "https://docs.astro.build/en/guides/content-collections/"
+    accessed: 2026-10-05
+  - title: "Astro docs: View transitions"
+    url: "https://docs.astro.build/en/guides/view-transitions/"
+    accessed: 2026-10-05
+  - title: "Next.js docs: Introduction"
+    url: "https://nextjs.org/docs"
+    accessed: 2026-10-05
+  - title: "Next.js docs: Server and Client Components"
+    url: "https://nextjs.org/docs/app/getting-started/server-and-client-components"
+    accessed: 2026-10-05
+  - title: "Next.js docs: Static exports"
+    url: "https://nextjs.org/docs/app/guides/static-exports"
+    accessed: 2026-10-05
+  - title: "Next.js docs: Authentication"
+    url: "https://nextjs.org/docs/app/guides/authentication"
+    accessed: 2026-10-05
+  - title: "HTTP Archive Tech Report: about the data"
+    url: "https://httparchive.org/reports/techreport/landing"
+    accessed: 2026-10-05
+  - title: "HTTP Archive Tech Report: Astro vs Next.js"
+    url: "https://httparchive.org/reports/techreport/tech?tech=Astro,Next.js"
+    accessed: 2026-10-05
+---
+
+For a portfolio or a landing page, Astro is the better default: it pre-renders every page to HTML and sends no JavaScript unless a component asks for it. Next.js is the better call when the site is really an application, with logins, per-user data and server-side mutations. This site is Astro and scores 100 on mobile Lighthouse with about 3 KB of JavaScript; Clockful, the time tracker I built during my internship at Neoteric, is Next.js.
+
+## What each framework says it is for
+
+Astro's docs are direct: "Astro is the web framework for building content-driven websites like blogs, marketing, and e-commerce." It describes itself as server-first, with zero JavaScript by default. The same page says other frameworks "excel at building more complex, application-like experiences in the browser: logged-in admin dashboards, inboxes, social networks, todo lists".
+
+Next.js describes itself as "a React framework for building full-stack web applications". In its App Router, layouts and pages are React Server Components by default, and you opt into client code with the `"use client"` directive.
+
+Those two descriptions answer most of the question. A portfolio is a content site with a contact form. A dashboard is an application.
+
+## How much JavaScript reaches the browser
+
+In Astro, every UI component, React included, is rendered to HTML and CSS, and its client JavaScript is stripped out. Interactivity is opt-in, per component, through islands: `client:load` hydrates at once, `client:idle` when the browser is idle, `client:visible` when the component scrolls into view. A page without islands ships no framework runtime.
+
+Next.js also renders on the server, and Server Components keep their code out of the bundle. The client still runs React, though. The docs describe the browser using the RSC payload to reconcile the server and client trees, hydrating Client Components, and prefetching payloads for client-side navigation. Everything a `"use client"` file imports joins the client bundle. That model pays off in an app with many screens and shared state. On a five-page portfolio it is overhead you have to manage.
+
+## Static output in both, at a different cost
+
+Astro's default is static. In the docs' words: "By default, your entire Astro site will be prerendered". If one route needs a server, such as a contact endpoint, you add an adapter and mark that page with `export const prerender = false`. Everything else stays static.
+
+Next.js can produce a static site too. With `output: 'export'`, `next build` writes one HTML file per route into an `out` folder. The docs list what you give up: cookies, rewrites, redirects, headers, Proxy, Incremental Static Regeneration, image optimization with the default loader, draft mode, Server Actions, and dynamic routes without `generateStaticParams()`. Many of those are the reason to pick Next.js in the first place.
+
+## Content, translations and page transitions
+
+A portfolio is mostly writing: case studies, a blog, a CV. Astro's content collections load Markdown and MDX from folders, validate frontmatter with a Zod schema and generate TypeScript types from that schema. This post is an MDX file in such a collection; its title, description and list of sources are validated before the page is built.
+
+The site runs in three locales with Lingui. The library choice behind that is in [Lingui vs i18next](/en/blog/lingui-vs-i18next/).
+
+For page transitions, Astro supports the browser's native cross-document view transitions through CSS `@view-transition`. When you want more control, its `<ClientRouter />` component turns navigation into SPA-style transitions, with a configurable fallback for browsers without support. You can add motion between pages without turning the site into a single-page app.
+
+## What public data says
+
+The HTTP Archive Tech Report takes real-user Core Web Vitals from the Chrome UX Report at the origin level, and detects technologies on each site's home page and one inner page. Here are Astro and Next.js in the August 2026 dataset, mobile, all origins:
+
+| Mobile, August 2026 | Astro | Next.js |
+| --- | --- | --- |
+| Origins assessed | 43,850 | 374,612 |
+| Good Core Web Vitals (LCP, INP, CLS) | 71.0% | 35.1% |
+| Good LCP | 80.6% | 53.1% |
+| Good INP | 85.7% | 59.8% |
+| Good CLS | 93.5% | 72.4% |
+| Median JavaScript per page | 405 KB | 853 KB |
+| Median Lighthouse performance | 70 | 52 |
+
+Read it as a picture of two populations, not a verdict on two frameworks. By their own docs, Next.js targets applications and Astro targets content sites, so part of the gap is what people build with each. The report cannot separate the framework from the site built on it. What it does show: a typical Astro site ships less than half the JavaScript of a typical Next.js site, and passes Core Web Vitals about twice as often.
+
+## What this site measured
+
+This site is Astro 7 with React components written in TSX and rendered on the server, Tailwind 4 and one variable font, deployed as static files on Vercel. I still write React; it just renders to HTML at build time. The home page on mobile Lighthouse, median of 3 runs: 100 for performance, accessibility, best practices and SEO, LCP about 1.65 s, CLS 0, and about 3 KB of page JavaScript, gzipped.
+
+Two honest notes. First, I did not build the same site in Next.js, so I cannot tell you what it would have scored; that is why the comparison above uses public data. Second, the framework did not earn those numbers alone. The H1 is the LCP element by design, there is one font file, and every visual effect loads after the text. Astro made that easy because it starts from zero JavaScript instead of asking me to remove it. The full build story is in [how this site was built](/en/blog/how-this-site-was-built/).
+
+## When Next.js is the right call
+
+Pick Next.js when most screens depend on who is looking at them. Clockful, the role-based time tracker from my internship at Neoteric, is that kind of project: logins, roles, per-user data, and Postgres row-level security on all 5 tables. The Next.js docs cover that ground in one guide: authentication, session management with cookies, authorization in a data access layer, optimistic checks in Proxy, and Server Actions for mutations. Astro can render on demand too, but its own docs point to other frameworks for logged-in dashboards.
+
+Next.js is also the sensible pick when the landing page belongs to an existing Next.js product. One codebase, one deploy and one set of components beat two stacks for a single marketing page.
+
+## When Astro is the right call
+
+Pick Astro when the site is content first: a portfolio, a landing page, docs, a blog, a small business site. You still write React, Preact, Svelte, Vue or SolidJS where you need interactivity, and only those islands ship code. Static output means hosting is a CDN plus a build, with a server function added only where you need one, like a contact form.
+
+## Decision table
+
+| Your site | Pick | Why |
+| --- | --- | --- |
+| Portfolio, CV, blog | Astro | Static HTML, zero JS by default, content collections |
+| Marketing landing page | Astro | Same, plus an island for the one interactive widget |
+| Landing page inside a Next.js product | Next.js | One codebase, one deploy |
+| Dashboard with logins and roles | Next.js | Server Components, auth guide, Server Actions |
+| App with per-user data on every screen | Next.js | Built for on-demand rendering |
+| Content site with one or two dynamic routes | Astro | Static by default, `prerender = false` per route |
+
+## How to decide for your project
+
+Write down what the site must do in its first year. If the list says "log in", "dashboard" or "per-user data", start with Next.js. If it says "pages, posts, a contact form", start with Astro, then measure: Lighthouse on mobile, the JavaScript you ship, LCP on a mid-range phone. Both kinds of project, the static site and the role-based app, are on my [work page](/en/work/).

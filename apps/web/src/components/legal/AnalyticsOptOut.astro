@@ -1,0 +1,79 @@
+---
+/**
+ * The statistics opt-out the privacy policy promises (§ 7, analytics.md, compliance-and-data.md § Cookies): a switch
+ * that stores `umami.disabled` in this browser (Umami honours it; the loader skips the script). It also reports
+ * when Do Not Track or Global Privacy Control already keeps statistics off. Needs JS; without it the text explains.
+ */
+import { t } from "lingui-for-astro/macro";
+---
+
+<aside class="optout" aria-labelledby="optout-t">
+  <p class="kick" id="optout-t">{t`Visit statistics in this browser`}</p>
+  <p data-optout-status>{t`Turning statistics off needs JavaScript. You can also block the Umami script or turn on Do Not Track.`}</p>
+  <button
+    class="btn btn-line"
+    type="button"
+    hidden
+    data-optout
+    aria-pressed="false"
+    data-on={t`Statistics are on. Turn them off`}
+    data-off={t`Statistics are off. Turn them on`}
+    data-signal={t`Your browser sends Do Not Track or Global Privacy Control, so statistics are already off.`}
+    data-idle={t`Statistics help me see which pages people read. No cookies, no profile of you.`}></button>
+</aside>
+
+<style>
+  .optout {
+    display: grid;
+    gap: 0.625rem;
+    margin: 0 0 2.5rem;
+    padding: 1.125rem 1.25rem 1.25rem;
+    box-shadow: inset 0 0 0 3px currentColor;
+  }
+  .optout p {
+    margin: 0;
+  }
+  .optout .btn {
+    justify-self: start;
+    white-space: normal;
+    text-align: left;
+    min-height: 2.75rem;
+    padding-block: 0.5rem;
+  }
+</style>
+
+<script>
+  const button = document.querySelector<HTMLButtonElement>("[data-optout]");
+  const status = document.querySelector<HTMLElement>("[data-optout-status]");
+  if (button && status) {
+    const nav = navigator as Navigator & { globalPrivacyControl?: boolean };
+    const signal = nav.globalPrivacyControl === true || nav.doNotTrack === "1";
+    const read = () => {
+      try {
+        return !!localStorage.getItem("umami.disabled");
+      } catch {
+        return false;
+      }
+    };
+    const sync = () => {
+      const off = read();
+      button.setAttribute("aria-pressed", String(off));
+      button.textContent = (off ? button.dataset.off : button.dataset.on) ?? "";
+    };
+    if (signal) status.textContent = button.dataset.signal ?? "";
+    else {
+      status.textContent = button.dataset.idle ?? "";
+      button.hidden = false;
+      button.addEventListener("click", () => {
+        try {
+          if (read()) localStorage.removeItem("umami.disabled");
+          else localStorage.setItem("umami.disabled", "1");
+        } catch {
+          /* storage blocked: nothing to remember, and the loader can't read it either */
+        }
+        sync();
+      });
+      sync();
+    }
+  }
+</script>

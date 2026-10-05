@@ -44,11 +44,21 @@
 - A visible label must start the control's accessible name (WCAG 2.5.3): use visually hidden text after the visible text
   ("PL Polski"), not an `aria-label` that replaces it; Lighthouse a11y flags the mismatch - 2026-10-05.
 
+- Before running a production build after adding copy, run `bun run i18n:extract`: a message missing from the catalog
+  renders as its id in a production build, and code that splits a string (fitted titles `a|b`) crashes - 2026-10-05.
+- `.still` pauses every animation; an entrance with a delay and `both` fill then freezes on its hidden first frame.
+  Mark entrances `.rise`/`.enter` (shown final when paused) and test a reload with a stored pause - 2026-10-05.
+
 ### Privacy of inputs
 - `context/` is private and gitignored (the pstryk code, klepacz.pdf). Copy patterns, not files; never quote the memo verbatim or name its author in committed files - 2026-10-05.
 - Research screenshots of third-party sites stay local (`research/inspirations/img/` is gitignored); the repo may go public - 2026-10-05.
 
 ### Tools and environment
+- Astro 7 renders Markdown with Sätteri: `markdown.remarkPlugins`/`rehypePlugins` need `@astrojs/markdown-remark`;
+  write Sätteri mdast/hast plugins (`satteri({ mdastPlugins, hastPlugins })`, visitor objects, `ctx.replaceNode`) instead
+  - 2026-10-05.
+- Splicing a config with a Python slice (start comment → `export default`) dropped the constants in between; replace
+  named blocks, then `node --check` / build at once - 2026-10-05.
 - Run prettier from the repo root (`bunx prettier --write <paths>`): run from `apps/web` it ignored the root config
   (130 cols) and re-wrapped untouched files at 80 - 2026-10-05.
 - fontkit can't instance a variable WOFF2 (`getVariation` throws in cmap); measure from the TTF source and ship the

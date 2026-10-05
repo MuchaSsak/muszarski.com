@@ -1,0 +1,157 @@
+---
+title: "Ruch, który szanuje ludzi: prefers-reduced-motion i przycisk pauzy"
+seoTitle: "prefers-reduced-motion i przycisk pauzy"
+description: "Jak ta strona obchodzi się z ruchem: pauza zgodna z WCAG 2.2.2, prefers-reduced-motion, pętle zatrzymane poza ekranem i animacje, które nie ukrywają treści."
+translationKey: "reduced-motion"
+published: 2026-10-05
+tags: [accessibility, design]
+cover: motion
+related: [fitted-type, this-site]
+sources:
+  - title: "Understanding SC 2.2.2: Pause, Stop, Hide (W3C WAI, WCAG 2.2)"
+    url: "https://www.w3.org/WAI/WCAG22/Understanding/pause-stop-hide"
+    accessed: 2026-10-05
+  - title: "Understanding SC 2.3.3: Animation from Interactions (W3C WAI, WCAG 2.2)"
+    url: "https://www.w3.org/WAI/WCAG22/Understanding/animation-from-interactions"
+    accessed: 2026-10-05
+  - title: "prefers-reduced-motion (MDN)"
+    url: "https://developer.mozilla.org/en-US/docs/Web/CSS/@media/prefers-reduced-motion"
+    accessed: 2026-10-05
+  - title: "Intersection Observer API (MDN)"
+    url: "https://developer.mozilla.org/en-US/docs/Web/API/Intersection_Observer_API"
+    accessed: 2026-10-05
+  - title: "animation-play-state (MDN)"
+    url: "https://developer.mozilla.org/en-US/docs/Web/CSS/animation-play-state"
+    accessed: 2026-10-05
+  - title: "animation-fill-mode (MDN)"
+    url: "https://developer.mozilla.org/en-US/docs/Web/CSS/animation-fill-mode"
+    accessed: 2026-10-05
+  - title: "Largest Contentful Paint (LCP), web.dev"
+    url: "https://web.dev/articles/lcp"
+    accessed: 2026-10-05
+---
+
+Ruch, który szanuje ludzi, wymaga czterech rzeczy: respektowania `prefers-reduced-motion` przez pokazanie stanu końcowego, jednego przycisku pauzy, który zatrzymuje każdą pętlę i jest zapamiętywany, zatrzymywania pętli, których nikt nie widzi, i animacji, które nie ukrywają treści, gdy skrypt zawiedzie. Ta strona spełnia wszystkie cztery warunki za pomocą jednego małego wspólnego modułu i jednego przycisku. Niżej pokazuję, jak to działa, razem z kryteriami WCAG stojącymi za każdą częścią i listą kontrolną na końcu.
+
+## Dwa kryteria, dwie różne potrzeby
+
+**Kryterium sukcesu 2.2.2 z WCAG 2.2 (Pause, Stop, Hide)** ma poziom A, czyli podstawowy. W wolnym tłumaczeniu: jeśli ruchoma, migająca albo przewijana treść (1) startuje sama, (2) trwa dłużej niż pięć sekund i (3) jest pokazana obok innej treści, użytkownik musi mieć sposób, żeby ją wstrzymać, zatrzymać albo ukryć, chyba że ruch jest niezbędny. Dokument „Understanding” tłumaczy tę liczbę: pięć sekund to dość, żeby przyciągnąć uwagę, ale nie tak długo, żeby nie dało się przeczekać rozproszenia. Jako dobrą praktykę zaleca też jeden mechanizm, który działa na wszystkie ruchome elementy naraz.
+
+**Kryterium sukcesu 2.3.3 (Animation from Interactions)** ma poziom AAA. Wymaga, żeby animację ruchu wywołaną interakcją dało się wyłączyć, chyba że jest niezbędna dla działania albo przekazywanej informacji. Dokument wprost wskazuje, kogo chroni: osoby z zaburzeniami przedsionkowymi (ucha wewnętrznego), u których zbędny ruch może wywołać rozproszenie, zawroty i bóle głowy oraz nudności. Jedną z technik wystarczających (C39) jest zapytanie medialne `prefers-reduced-motion`.
+
+To nie jest ten sam przełącznik. 2.2.2 dotyczy uwagi, i to u każdego: pasek przewijający się kątem oka, kiedy próbujesz czytać. 2.3.3 dotyczy ciała. Ustawienie w systemie pomaga tym, którzy wiedzą, że istnieje. Widoczny przycisk pomaga całej reszcie, także komuś na pożyczonym laptopie. Dlatego robię jedno i drugie.
+
+## Co się rusza na tej stronie
+
+| Ruch | Reduced motion | Przycisk pauzy | Poza ekranem |
+| --- | --- | --- | --- |
+| Pasek z narzędziami (pętla 50 s) | nie startuje; lista układa się w wiersze | wstrzymany | wstrzymany |
+| Obracająca się naklejka (pętla 22 s) | kończy się od razu | wstrzymana | wstrzymana |
+| Akordeon liter w moim imieniu i nazwisku | nie startuje | zatrzymany | zatrzymany |
+| Pojawianie się sekcji przy przewijaniu | treść po prostu jest | treść po prostu jest | nie dotyczy |
+
+Wszystko to dekoracja. Nic na stronie nie potrzebuje ruchu, żeby mieć sens, i właśnie dlatego „zatrzymaj wszystko” jest bezpiecznym wyborem.
+
+## Reduced motion: stan końcowy, a nie brak stanu
+
+MDN opisuje `prefers-reduced-motion: reduce` jako sygnał, że użytkownik woli interfejs, który usuwa, ogranicza albo zastępuje animacje oparte na ruchu. Gdzie się to ustawia, według MDN: Windows 11 w Ustawieniach, Ułatwienia dostępu, Efekty wizualne, Efekty animacji; macOS do wersji 15 w Ułatwieniach dostępu, Monitor, Ogranicz ruch; iOS w Dostępności, Ruch; Android 9 i nowszy w Ułatwieniach dostępu, Usuń animacje. Nazwy menu podaję w swoim tłumaczeniu, w systemie mogą brzmieć trochę inaczej.
+
+Część CSS to jeden blok:
+
+```css
+@media (prefers-reduced-motion: reduce) {
+  *, ::before, ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+```
+
+Animacje nadal się wykonują, przez setną część milisekundy, więc każdy element ląduje w stanie końcowym, zamiast utknąć na początku albo zostać pominiętym. Przejścia między stronami (view transitions) są zadeklarowane tylko w `@media (prefers-reduced-motion: no-preference)`.
+
+Część JavaScript sprawdza to samo zapytanie, zanim cokolwiek uruchomi: akordeon liter nie startuje, a pasek nie powiela listy, więc narzędzia stoją w zwykłych wierszach. Przycisk pauzy też znika. Skoro nic się nie rusza, przycisk pauzy byłby tylko szumem.
+
+## Jedna pauza dla wszystkiego, zapamiętana
+
+Stan pauzy to jedna klasa na `<html>`. CSS ją czyta, a pętle w JavaScripcie pytają wspólną funkcję.
+
+```ts
+export const motionStill = () => reduce.matches || root.classList.contains("still");
+
+export function setPaused(paused: boolean) {
+  root.classList.toggle("still", paused);
+  try {
+    if (paused) localStorage.setItem("motion", "still");
+    else localStorage.removeItem("motion");
+  } catch {
+    // storage zablokowany: wybór działa tylko na tej stronie
+  }
+  notify(); // pętle zapisane przez onMotion() reagują od razu
+}
+```
+
+```css
+.still *, .still *::before, .still *::after {
+  animation-play-state: paused !important;
+}
+```
+
+Szczegóły, które mają znaczenie:
+
+- **Jedna reguła obejmuje każdą animację CSS,** także te dodane później. Pętle w JavaScripcie sprawdzają `motionStill()` w każdej klatce i subskrybują zmiany, więc akordeon płynnie wraca do kształtu spoczynkowego i staje.
+- **To prawdziwy przycisk** z `aria-pressed`, w menu i w stopce. Wszystkie kopie są zsynchronizowane.
+- **Jest zapamiętany.** Wybór trafia do `localStorage`, a malutki skrypt inline w `<head>` stosuje go przed pierwszym malowaniem, więc kolejna strona nie zaczyna się ruszać tylko po to, żeby za chwilę stanąć. Dostęp do storage potrafi rzucić błąd w oknie prywatnym albo przy zablokowanych danych witryny, więc każde odwołanie siedzi w `try`.
+- **Ruch wraca tam, gdzie stanął.** MDN: wznowiona animacja rusza od miejsca, w którym ją wstrzymano. Dokument do 2.2.2 dopuszcza dokładnie to. Akordeon wraca łagodnie przez 1,6 s, zamiast skoczyć.
+
+Test w Playwright klika przycisk w stopce, sprawdza `aria-pressed` i to, że `animation-play-state` paska ma wartość `paused`, otwiera polską stronę główną i sprawdza, czy pauza nadal działa, a potem ją wyłącza i sprawdza, czy zapisany klucz zniknął.
+
+## Zatrzymaj to, czego nikt nie widzi
+
+MDN wymienia ten przypadek użycia Intersection Observer API wprost: decydowanie, czy wykonywać zadania albo animacje, w zależności od tego, czy użytkownik zobaczy wynik. Każda sekcja dostaje klasę `off`, gdy jest poza widokiem, i działa na nią ta sama reguła CSS co przycisk pauzy.
+
+```ts
+const sections = new IntersectionObserver(
+  (entries) => entries.forEach((e) => e.target.classList.toggle("off", !e.isIntersecting)),
+  { rootMargin: "80px 0px" },
+);
+document.querySelectorAll(".sec").forEach((section) => sections.observe(section));
+```
+
+Margines 80 px wznawia pętlę tuż przed wjazdem sekcji na ekran, więc gdy ją widzisz, już się rusza. Akordeon śledzi widoczność każdego bloku, a jego pętla klatek przestaje się planować, gdy nic się nie rusza. Oszczędności procesora ani baterii nie mierzyłem. Ten argument nie potrzebuje liczby: ruch, którego nikt nie widzi, nie ma powodu działać.
+
+## Animacje wejścia, które w razie awarii nic nie ukrywają
+
+Typowy wzorzec „pokaż przy przewijaniu” ukrywa elementy w CSS, a skrypt odsłania je, gdy wjeżdżają na ekran. Jeśli skrypt zostanie zablokowany, rzuci błąd albo dotrze późno, treść zostaje niewidoczna. Tutaj stan ukryty istnieje dopiero wtedy, gdy skrypt sam zgłosi, że działa:
+
+```css
+.rv-ready:not(.still) .rv:not(.in) {
+  opacity: 0;
+  transform: translateY(1.5rem);
+}
+```
+
+Klasę `rv-ready` na `<html>` dodaje sam skrypt, kiedy już zaczął obserwować. Nie ma skryptu, nie ma ukrytej treści. Pauza też wyłącza stan ukryty, więc wszystko po prostu jest.
+
+## Nagłówek nigdy nie animuje się przy ładowaniu
+
+H1 na stronie głównej to moje imię i nazwisko, a zarazem element Largest Contentful Paint. web.dev wyklucza z LCP elementy z przezroczystością 0, więc wejście z `opacity: 0` na tym nagłówku każe LCP czekać na koniec animacji. To też pierwsza rzecz, którą ktokolwiek czyta. Dlatego imię i nazwisko są gotowe przy pierwszym malowaniu (są [dopasowane do kontenera w czasie builda](/pl/blog/dopasowanie-tekstu-do-szerokosci/)), tekst pod nimi wchodzi krótką animacją CSS bez JavaScriptu, a wzorzec „pokaż przy przewijaniu” zaczyna się dopiero poniżej pierwszego ekranu. Strona główna ma LCP około 1,65 s i CLS 0 (mobilny Lighthouse, mediana z 3 pomiarów).
+
+## Pułapka: wstrzymana animacja wejścia może zamarznąć na pierwszej klatce
+
+MDN opisuje `animation-fill-mode: backwards` (i `both`) jako stosowanie pierwszej klatki kluczowej w czasie opóźnienia animacji. `animation-play-state: paused` trzyma animację tam, gdzie jest. Połącz jedno z drugim, dodaj pauzę zastosowaną przed pierwszym malowaniem, a animacja wejścia, która startuje od `opacity: 0`, może na `opacity: 0` zostać. Pauza powinna przeskakiwać animacje wejścia do stanu końcowego, a nie zamrażać je na starcie. Warto mieć na to jeden test: pauza zapisana, strona przeładowana.
+
+## Lista kontrolna
+
+- Każdą pętlę, która startuje sama i trwa dłużej niż 5 s, da się wstrzymać (2.2.2, poziom A).
+- Jeden przycisk wstrzymuje wszystkie: prawdziwy `<button>` z `aria-pressed`, łatwy do znalezienia.
+- Wybór przetrwa nawigację i przeładowanie, działa przed pierwszym malowaniem, a błędy storage go nie psują.
+- `prefers-reduced-motion: reduce` daje stany końcowe: animacje CSS kończą się od razu, pętle w JavaScripcie nie startują, a przycisk pauzy nie pojawia się, gdy nie ma czego wstrzymać.
+- Pętle stają poza ekranem (IntersectionObserver), a pętle klatek przestają się planować, gdy nic się nie dzieje.
+- Animacje „przy przewijaniu” ukrywają treść dopiero wtedy, gdy ich skrypt już działa.
+- Element LCP nigdy nie pojawia się z animacją ani nie przesuwa się przy ładowaniu.
+- Wstrzymane animacje wejścia pokazują stan końcowy, a nie pierwszą klatkę.
+- Testy emulują reduced motion (w Playwright: `page.emulateMedia({ reducedMotion: "reduce" })`) i sprawdzają to, co widzi czytelnik.
+
+Resztę budowy, od wiki projektu po bramki Lighthouse, opisałem w [studium przypadku tej strony](/pl/blog/jak-powstala-ta-strona/). Przycisk pauzy znajdziesz w stopce każdej podstrony, także na [stronach z moimi projektami](/pl/work/).

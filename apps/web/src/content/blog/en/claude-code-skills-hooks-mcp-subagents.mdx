@@ -1,0 +1,167 @@
+---
+title: "Claude Code skills, hooks, MCP servers and subagents: which one when"
+seoTitle: "Claude Code skills vs hooks vs MCP vs subagents"
+description: "A decision guide to Claude Code's building blocks, based on the official docs, with the real hooks, skills and MCP servers behind this site."
+translationKey: "claude-code-building-blocks"
+published: 2026-10-05
+tags: [ai, claude-code]
+cover: pipeline
+related: [llm-wiki, this-site]
+sources:
+  - title: "Extend Claude Code (Claude Code docs)"
+    url: "https://code.claude.com/docs/en/features-overview"
+    accessed: 2026-10-05
+  - title: "Extend Claude with skills (Claude Code docs)"
+    url: "https://code.claude.com/docs/en/skills"
+    accessed: 2026-10-05
+  - title: "Hooks reference (Claude Code docs)"
+    url: "https://code.claude.com/docs/en/hooks"
+    accessed: 2026-10-05
+  - title: "Automate actions with hooks (Claude Code docs)"
+    url: "https://code.claude.com/docs/en/hooks-guide"
+    accessed: 2026-10-05
+  - title: "Connect Claude Code to tools via MCP (Claude Code docs)"
+    url: "https://code.claude.com/docs/en/mcp"
+    accessed: 2026-10-05
+  - title: "Create custom subagents (Claude Code docs)"
+    url: "https://code.claude.com/docs/en/sub-agents"
+    accessed: 2026-10-05
+  - title: "How Claude remembers your project (Claude Code docs)"
+    url: "https://code.claude.com/docs/en/memory"
+    accessed: 2026-10-05
+  - title: "Use Claude Code with Chrome (Claude Code docs)"
+    url: "https://code.claude.com/docs/en/chrome"
+    accessed: 2026-10-05
+  - title: "Playwright MCP (GitHub, Microsoft)"
+    url: "https://github.com/microsoft/playwright-mcp"
+    accessed: 2026-10-05
+  - title: "Shoogle: search shadcn/ui blocks across registries (GitHub)"
+    url: "https://github.com/alibey-10/shoogle"
+    accessed: 2026-10-05
+  - title: "Mobbin"
+    url: "https://mobbin.com/"
+    accessed: 2026-10-05
+---
+
+Use CLAUDE.md for what Claude must know in every session, a skill for a procedure or reference it needs only sometimes, and a hook for anything that must happen every time. Reach for an MCP server when the data or the action lives outside your repo, and a subagent when side work would flood your main context. The rest of this post explains each piece from the official Claude Code docs and shows how I combined them to build this site.
+
+## Five pieces, one paragraph each
+
+The docs page "Extend Claude Code" describes the extension layer. In short:
+
+- **CLAUDE.md** is a markdown file loaded at the start of every session: build commands, conventions, "always do X" rules. The memory docs suggest keeping each file under 200 lines.
+- **Skills** are `SKILL.md` files in `.claude/skills/<name>/` holding instructions, reference material or a workflow. You run one with `/name`, or Claude loads it when its description matches the task. Custom slash commands have been merged into skills.
+- **Hooks** are handlers Claude Code runs at lifecycle events (session start, prompt submit, before a tool call, stop and many more). A handler can be a shell command, an HTTP request, an MCP tool call, a prompt or a subagent.
+- **MCP servers** connect Claude Code to external tools and data through the Model Context Protocol, an open-source standard.
+- **Subagents** are workers with their own context window, system prompt and tool access. They do the work and return only a summary.
+
+Plugins bundle all of these into one installable unit for reuse across repositories. I don't use one here, so I'll leave them out.
+
+## Two questions sort almost every case
+
+**Who decides that it runs?** The docs put it bluntly: a hook "always fires on its event; the trigger is guaranteed", while a skill is instructions Claude interprets, so the "outcome can vary". CLAUDE.md is in the second group too: the memory docs say Claude treats it "as context, not enforced configuration". That leads to the most useful rule on the page: "never edit `.env`" in CLAUDE.md is a request, and a `PreToolUse` hook that blocks the edit is enforcement.
+
+**What does it cost in context?** From the docs' context cost table:
+
+| Piece | When it loads | Context cost |
+| --- | --- | --- |
+| CLAUDE.md | session start, full content | every request |
+| Skill | descriptions at start, body when used | low until used |
+| MCP server | tool names at start, schemas on demand | low until a tool is used |
+| Subagent | when spawned, in its own window | isolated from the main session |
+| Hook | on its event, runs outside the model | zero, unless it returns context |
+
+This is why a long CLAUDE.md is a bad home for reference material: you pay for it on every request, needed or not. A skill's body costs almost nothing until it's used.
+
+## Need → building block
+
+| You need | Reach for | Why |
+| --- | --- | --- |
+| Claude to know your commands and conventions every time | CLAUDE.md | always loaded |
+| A procedure with side effects that you start yourself | skill with `disable-model-invocation: true` | only you trigger it, and its description stays out of context |
+| Background knowledge Claude applies when relevant | skill, `user-invocable: false` if it isn't a command | loads on demand |
+| Something on every edit, prompt or stop, no exceptions | hook | deterministic |
+| To block a dangerous action | `PreToolUse` hook or permission rules | enforcement, not a request |
+| Data from a system Claude can't see | MCP server | the server handles the connection and auth |
+| Research that reads many files, or parallel work | subagent | only the summary comes back |
+| Frequent back-and-forth on one problem | the main conversation | the docs recommend it over subagents here |
+
+The docs also suggest adding pieces when their trigger appears, not up front. A convention Claude gets wrong twice goes into CLAUDE.md. A playbook pasted for the third time becomes a skill. Data you keep copying from a browser tab becomes an MCP server. A side task that floods the conversation goes to a subagent. Anything you want every time without asking becomes a hook.
+
+## My setup, piece by piece
+
+This site was built with Claude Code driven by a project wiki in `.claude/project-info/`. Here is what each building block does in that repo.
+
+### CLAUDE.md: a router, not an encyclopedia
+
+My CLAUDE.md is 76 lines. Most of it is a routing table: 31 rows that map the words I type ("locales, translation, hreflang") to wiki pages, plus ten invariants such as performance budgets, licences and "no invented facts". The paths are plain text on purpose. An `@import` would load every page into every session, and the docs confirm imports "don't reduce its context cost". The wiki has its own post: [An LLM wiki: project memory for Claude Code](/en/blog/llm-wiki-project-memory-for-claude-code/).
+
+### Three hooks
+
+```json
+{
+  "hooks": {
+    "SessionStart": [{ "hooks": [{ "type": "command",
+      "command": "node .claude/hooks/session-start.mjs", "timeout": 10 }] }],
+    "UserPromptSubmit": [{ "hooks": [{ "type": "command",
+      "command": "node .claude/hooks/wiki-context.mjs", "timeout": 10 }] }],
+    "Stop": [{ "hooks": [{ "type": "command",
+      "command": "node .claude/hooks/wiki-check.mjs --stop-hook", "timeout": 30 }] }]
+  }
+}
+```
+
+This is trimmed: the real `.claude/settings.json` prefixes each path with `${CLAUDE_PROJECT_DIR:-.}` and runs the commands through bash.
+
+- **SessionStart** prints a "session card": a pointer to the working agreement, the git state as counts only, and the rules from `lessons.md`. The event fires on startup, on resume, after `/clear` and after compaction, and Claude Code adds the hook's output to the context. So after every compaction the rules come back word for word, whatever the summary dropped.
+- **UserPromptSubmit** scores each prompt against the routing table and injects up to five pages to read. Prompts under 25 characters get nothing.
+- **Stop** checks whether code changed this session without a wiki change. If it did, the hook returns `decision: "block"` with a reason, once per state, so Claude updates the page that describes the change before it finishes. It exits early when `stop_hook_active` is true, the field the docs provide so a Stop hook doesn't block forever.
+
+All three are plain Node scripts that exit cleanly on their own errors. A guard that breaks the session is worse than no guard.
+
+### Seven skills
+
+| Skill | Invoked by | What it does |
+| --- | --- | --- |
+| `code` | me or Claude | the coding loop: read the routed pages, match the codebase, verify before calling it done |
+| `commit` | me or Claude | one Conventional Commit, pinned to a small Haiku model so it stays fast |
+| `lighthouse-qa` | me or Claude | runs Lighthouse on the built site and fixes issues in a loop until each page is within budget |
+| `wiki-lint` | me or Claude | runs the mechanical wiki lint, then reads the pages for contradictions |
+| `awwwards` | Claude only | studies award-level sites in a real browser to lift one flat section |
+| `search-registry-items` | Claude only | finds a UI component in public shadcn registries through an MCP server, then installs it |
+| `start-project-info` | me only | sets up the wiki, routing table, lessons and hooks in a new project |
+
+"Claude only" is `user-invocable: false`: background knowledge that isn't a sensible command. "Me only" is `disable-model-invocation: true`: that skill writes many files, so I want to be the one who starts it, and its description costs no context until I do. The home page currently measures 100 in all four mobile Lighthouse categories (median of 3 runs), and `lighthouse-qa` is the loop that keeps checking it.
+
+### Three MCP servers
+
+- **Mobbin**, a library of UI and UX references for mobile and web. Its MCP server lets an agent search the library in natural language and get screen images back. I used it to research sections before designing them.
+- **Shoogle**, a search over shadcn/ui blocks across registries. The `search-registry-items` skill tells Claude when to call it.
+- **A real browser.** Playwright MCP drives a browser through accessibility snapshots; Claude in Chrome connects Claude Code to Chrome itself and shares its login state.
+
+The MCP docs carry a warning worth repeating: verify you trust each server, because servers that fetch external content can expose you to prompt injection.
+
+### Subagents
+
+I have no custom subagent files; the built-in ones were enough. I used them for research while planning: the wiki's log records one batch of 8 research agents and one of 3, each on its own topic, writing raw notes that I then condensed into the routed pages. One lesson came out of it: parallel agents share one web search budget and can run it dry, so prefer fetching URLs you already know.
+
+## How they combine
+
+The pieces get useful when they cover each other's weak spots.
+
+- **Skill + MCP.** The server gives Claude a tool. The skill says when it's worth calling and what to do with the result. The docs describe this exact pattern.
+- **CLAUDE.md + hook.** The routing table is plain markdown that I read and edit. The prompt hook parses that same table, so adding a row is all it takes to route a new page.
+- **Hook + skill.** `wiki-check.mjs` is the mechanical half: paths exist, every page is listed, log entries have the right shape. The `wiki-lint` skill is the judgement half: do two pages contradict each other? A script can't judge, and a model can't be trusted to run every time.
+- **Skill + subagent.** A skill can run in a forked subagent context (`context: fork`), and a subagent can preload skills. I haven't needed either yet.
+
+## Mistakes and limits
+
+- **Hooks run with your full user permissions.** The hooks reference says so directly. Read any hook before you add it, especially one copied from another repo.
+- **Skill descriptions are not free.** Every skill Claude can invoke has its description in context, and the listing has a budget. When it overflows, Claude Code drops descriptions of the skills you use least. Vague or overlapping descriptions also make Claude pick the wrong skill.
+- **Keyword routing misses.** My prompt hook scores words, not meaning. Early on, a generic phrase in one row outscored a project name in another and cut the page that mattered. The fix was boring: put shared task words in every row they apply to, then re-run the hook's `--test` mode.
+- **Subagents start blank.** A subagent doesn't see your conversation, only the delegation message, so a vague brief gets a vague summary back. Its requests also count toward the same usage limits as the main session.
+- **I haven't measured the savings.** I can't give you a token or time figure for these hooks. What I can say: after a compaction, the next turn starts with the rules instead of with me repeating them.
+
+## Where to start
+
+Write a short CLAUDE.md first. Add the next piece only when its trigger shows up: a repeated correction, a pasted playbook, a copied browser tab, a flooded context, a rule that must hold every time. How these pieces built this site, end to end, is in the [case study](/en/blog/how-this-site-was-built/). The projects themselves are on the [work page](/en/work/).

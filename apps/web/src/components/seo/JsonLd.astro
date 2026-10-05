@@ -1,0 +1,12 @@
+---
+/**
+ * One JSON-LD block (seo.md § Entity strategy). A data block, never executed; `<` is escaped so text can't close the
+ * script element. The markup must match the visible text of the page.
+ */
+interface Props {
+  data: unknown;
+}
+const json = JSON.stringify(Astro.props.data).replace(/</g, "\u003c");
+---
+
+<script is:inline type="application/ld+json" set:html={json} />

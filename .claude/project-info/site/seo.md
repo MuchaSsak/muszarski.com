@@ -89,6 +89,19 @@ Success signal: Google autocomplete starts completing "mateusz muszarski" to "�
 - **Launch gate** (port from pstryk): the build fails on a missing title/description/OG, a wrong host in canonical/sitemap,
   a preview noindex in production, or invalid JSON-LD.
 
+## Built (2026-10-05)
+
+- JSON-LD: `src/lib/schema.ts` (WebSite + ProfilePage + Person on home, ProfilePage on /cv/, CollectionPage on /work/ and
+  /blog/, AboutPage on /my-life/, BlogPosting + BreadcrumbList on posts; legal pages none). No photo or credentials in
+  the Person until they are real (P15, P11).
+- Share images: `bun run og` renders one 1200×630 Poster card per page × locale from the built pages; the launch gate
+  fails on a missing one. Favicons: SVG + 48 px PNG + apple-touch 180 + manifest 192/512.
+- `/llms.txt` from the CV + projects + posts; RSS per blog locale; the sitemap leaves out legal, CV print and contact
+  result pages.
+- Blog: 11 posts at launch (Q20): case study #0, Claude Code building blocks, LLM wiki, Claude Code po polsku (pl only),
+  Lingui vs i18next, Astro vs Next.js, translating Lingui catalogs with an LLM, fitted type, reduced motion, cookieless
+  analytics. Every external fact has a dated source in the frontmatter; `content.test.ts` checks links and PstrykWeb.
+
 ## Spanish
 
 - **Policy:** Google accepts machine translation "as long as there's a human involved in the review process";

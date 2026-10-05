@@ -50,6 +50,19 @@
 | Umami Software | processor | **pick the EU data region** at account creation | automatic on use | **not DPF** → SCCs |
 | Mailbox provider | processor | Unknown | Unknown | Unknown (owner) |
 
+## Drafts published in the site (2026-10-05)
+
+- `src/content/legal/{pl,en,es}/{privacy,terms}.md`: privacy policy (17 sections) and regulamin (14 §), Polish prevails,
+  drafted from this page and the legal research by an agent and not lawyer-reviewed (Q15, P13). Gaps (postal address,
+  mailbox provider and location) render as marked tokens (P22).
+- Facts corrected while drafting [web, 2026-10-05]: UODO moved to ul. Stanisława Moniuszki 1A, 00-014 Warszawa (July
+  2025; the research's Stawki 2 is outdated); Resend is operated by Plus Five Five, Inc.; the EU ODR platform closed on
+  20 July 2025 (Regulation (EU) 2024/3228).
+- Analytics position (b) is implemented [assumption, Q34]: no banner, disclosure, opt-out switch on the privacy page,
+  DNT/GPC honoured (the script isn't loaded).
+- For counsel (from the drafter): art. 399 without consent for statistics; whether he is a "usługodawca" at all; the
+  IP retention window for rate limiting; Vercel CDN log retention; DPF re-certification status of Resend and Cloudflare.
+
 ## Required legal pages
 
 | Page | Needed? | Basis | Status |

@@ -1,0 +1,455 @@
+---
+/**
+ * How I work (structure.md § Home 3, requirements.md F06): the product loop. Seven stops on a ring, code is one of
+ * them; each stop has one line and a receipt from a real project that links to its chapter. Every stop's text is in
+ * the HTML (crawlable, readable without JS); the script shows one at a time, moves the dot along the ring and
+ * advances while the section is visible (pauses on tap, the pause button and reduced motion).
+ * A receipt whose project is hidden by the rights gate falls back to another true one.
+ */
+import { t } from "lingui-for-astro/macro";
+
+import Fit from "~/components/ui/Fit.astro";
+import Icon from "~/components/ui/Icon.astro";
+import { visibleFlagships } from "~/data/projects";
+import { type IconName } from "~/lib/icons.gen";
+import { thisSitePath } from "~/lib/blog-paths";
+
+const locale = Astro.locals.locale;
+const visible = new Set(visibleFlagships().map((project) => project.slug));
+const caseStudy = thisSitePath(locale);
+
+interface Receipt {
+  project: string;
+  text: string;
+  href: string;
+  color: string;
+}
+interface Stop {
+  icon: IconName;
+  name: string;
+  line: string;
+  receipt: Receipt;
+  fallback?: Receipt;
+  code?: boolean;
+}
+
+const STOPS: Stop[] = [
+  {
+    icon: "tb:briefcase",
+    name: t`Client`,
+    line: t`I start with the person paying for it, and what they need to earn.`,
+    receipt: { project: "pstrykweb", text: t`PstrykWeb: built for Cetuspro and the businesses it serves.`, href: "#pstrykweb", color: "var(--yellow)" },
+    fallback: { project: "linkoglot", text: t`Linkoglot: built for learners who pay for a plan.`, href: "#linkoglot", color: "var(--orange)" },
+  },
+  {
+    icon: "tb:users",
+    name: t`Users`,
+    line: t`Who uses it, what they want done, and where they give up.`,
+    receipt: { project: "linkoglot", text: t`Linkoglot: snap a photo, get flashcards and quizzes.`, href: "#linkoglot", color: "var(--orange)" },
+  },
+  {
+    icon: "tb:target",
+    name: t`Conversion`,
+    line: t`Fewer steps between interest and a paid order.`,
+    receipt: { project: "pstrykweb", text: t`PstrykWeb: a website, ordered through one online form.`, href: "#pstrykweb", color: "var(--yellow)" },
+    fallback: { project: "linkoglot", text: t`Linkoglot: a free trial that leads into a plan.`, href: "#linkoglot", color: "var(--orange)" },
+  },
+  {
+    icon: "tb:coins",
+    name: t`Revenue`,
+    line: t`How it earns is designed in from day one.`,
+    receipt: {
+      project: "linkoglot",
+      text: t`Linkoglot: free trial, then monthly or yearly plans through RevenueCat.`,
+      href: "#linkoglot",
+      color: "var(--orange)",
+    },
+  },
+  {
+    icon: "tb:code",
+    name: t`Code`,
+    line: t`Then the code: web, mobile and backend, end to end, tested.`,
+    receipt: {
+      project: "neoteric-clockful",
+      text: t`Clockful: 118 automated tests, row-level security on every table.`,
+      href: "#clockful",
+      color: "var(--lime)",
+    },
+    fallback: { project: "site", text: t`This site: checked on every change, 100 on mobile Lighthouse.`, href: caseStudy, color: "var(--cobalt)" },
+    code: true,
+  },
+  {
+    icon: "tb:rocket",
+    name: t`Ship`,
+    line: t`Shipping is part of the job: stores, reviews, releases.`,
+    receipt: { project: "linkoglot", text: t`Linkoglot: through App Store and Google Play review, solo.`, href: "#linkoglot", color: "var(--orange)" },
+  },
+  {
+    icon: "tb:chart-line",
+    name: t`Measure`,
+    line: t`Measure, then decide what changes next.`,
+    receipt: { project: "space-portfolio", text: t`My old site scored 34 on mobile. So I rebuilt it.`, href: "#space", color: "var(--pink)" },
+  },
+];
+
+const stops = STOPS.map((stop) => ({
+  ...stop,
+  receipt: visible.has(stop.receipt.project) || !stop.fallback ? stop.receipt : stop.fallback,
+}));
+const pad = (n: number) => String(n).padStart(2, "0");
+const stopLabel = t({ message: "Stop", context: "a stop on the product loop, as in a bus stop" });
+const [line1, line2] = t`Product|engineer`.split("|") as [string, string];
+---
+
+<section class="sec field-alt how" id="how-i-work" aria-labelledby="t-how">
+  <div class="sbar draw">
+    <p>{t`How I work`}</p>
+    <p>{t`Code is one stop of seven`}</p>
+    <p>{t`Each with a receipt`}</p>
+  </div>
+  <Fit as="h2" id="t-how" lines={[line1, line2]} motion="calm" />
+  <div class="loop" data-loop>
+    <div class="ring" aria-hidden="true">
+      <svg viewBox="0 0 500 500">
+        <circle class="track" cx="250" cy="250" r="200"></circle>
+        <circle class="trail" cx="250" cy="250" r="200" pathLength="700" transform="rotate(-90 250 250)"></circle>
+        <g class="dot-arm"><circle class="dot" r="11" cx="250" cy="50"></circle></g>
+      </svg>
+      <div class="core">
+        <span class="n tabular" data-core-n>01 / {pad(stops.length)}</span>
+        {stops.map((stop, i) => <Icon name={stop.icon} data-core-icon={i} hidden={i > 0} />)}
+        <span class="nm" data-core-nm>{stops[0]!.name}</span>
+      </div>
+    </div>
+    <ol class="stops" aria-label={t`The loop`}>
+      {
+        stops.map((stop, i) => (
+          <li class:list={["stop", { code: stop.code }]} style={`--i:${i}`}>
+            <button class="stn" type="button" aria-pressed={i === 0 ? "true" : "false"} aria-controls={`stop-${i}`} data-stop={i}>
+              <Icon name={stop.icon} />
+              <span class="lbl">{stop.name}</span>
+            </button>
+          </li>
+        ))
+      }
+    </ol>
+    <div class="panel">
+      {
+        stops.map((stop, i) => (
+          <div class="pd enter" id={`stop-${i}`} data-pd={i}>
+            <p class="kick k">
+              {stopLabel} {pad(i + 1)} · {stop.name}
+            </p>
+            <p class="s">{stop.line}</p>
+            <a class="receipt-row" href={stop.receipt.href} style={`--c:${stop.receipt.color}`}>
+              <i aria-hidden="true" />
+              <span>{stop.receipt.text}</span>
+              <Icon name="tb:arrow-right" />
+            </a>
+          </div>
+        ))
+      }
+      <p class="after">
+        <Icon name="tb:refresh" />
+        {t`Then back to the client, with numbers.`}
+      </p>
+    </div>
+  </div>
+</section>
+
+<style>
+  .loop {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    grid-template-areas: "ring panel";
+    gap: clamp(1.75rem, 4vw, 5rem);
+    align-items: center;
+    margin-top: clamp(1.75rem, 3vw, 3rem);
+  }
+  .ring,
+  .stops {
+    grid-area: ring;
+    position: relative;
+    width: min(100%, 35rem);
+    aspect-ratio: 1;
+    justify-self: center;
+  }
+  .ring svg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+  }
+  .track {
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 3;
+    stroke-dasharray: 2 11;
+    stroke-linecap: round;
+    opacity: 0.55;
+    animation: dash 30s linear infinite;
+  }
+  @keyframes dash {
+    to {
+      stroke-dashoffset: -260;
+    }
+  }
+  .trail {
+    fill: none;
+    stroke: var(--loop-c);
+    stroke-width: 9;
+    stroke-linecap: round;
+    stroke-dasharray: var(--frac, 0) 700;
+    transition: stroke-dasharray 0.8s var(--ease-out);
+  }
+  .dot-arm {
+    transform-origin: 250px 250px;
+    transform: rotate(var(--ang, 0deg));
+    transition: transform 0.8s var(--ease-out);
+  }
+  .dot {
+    fill: var(--loop-c);
+    stroke: currentColor;
+    stroke-width: 3;
+  }
+  .how {
+    --loop-c: var(--accent);
+  }
+  :global(:root:not([data-theme])) .how {
+    --loop-c: var(--cobalt);
+  }
+  .core {
+    position: absolute;
+    inset: 24%;
+    display: grid;
+    place-content: center;
+    justify-items: center;
+    gap: 0.375rem;
+    text-align: center;
+  }
+  .core .n {
+    font-weight: 800;
+    font-size: 0.8125rem;
+    letter-spacing: 0.08em;
+    font-stretch: 125%;
+  }
+  .core :global(.ico) {
+    width: clamp(2.125rem, 3.4vw, 3.25rem);
+    height: clamp(2.125rem, 3.4vw, 3.25rem);
+  }
+  .core .nm {
+    font-weight: 900;
+    font-size: clamp(1.875rem, 3.6vw, 3.625rem);
+    line-height: 0.85;
+    font-stretch: 58%;
+    text-transform: uppercase;
+  }
+  .stops {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .stop {
+    --a: calc(-90deg + var(--i) * 360deg / 7);
+    position: absolute;
+    left: calc(50% + 40% * cos(var(--a)));
+    top: calc(50% + 40% * sin(var(--a)));
+    transform: translate(-50%, -50%);
+  }
+  .stn {
+    position: relative;
+    display: grid;
+    place-items: center;
+    width: clamp(3.25rem, 5.4vw, 4.875rem);
+    aspect-ratio: 1;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: var(--sbg);
+    color: var(--sfg);
+    box-shadow: inset 0 0 0 3px currentColor;
+    cursor: pointer;
+    transition:
+      transform 0.45s var(--ease-pop),
+      background-color var(--dur-base),
+      color var(--dur-base);
+  }
+  .stn :global(.ico) {
+    width: 46%;
+    height: 46%;
+  }
+  .lbl {
+    position: absolute;
+    left: 50%;
+    top: calc(100% + 0.375rem);
+    padding: 0.125rem 0.375rem;
+    background: var(--sbg);
+    color: var(--sfg);
+    font-weight: 800;
+    font-size: 0.75rem;
+    letter-spacing: 0.04em;
+    white-space: nowrap;
+    text-transform: uppercase;
+    font-stretch: 110%;
+    transform: translateX(-50%);
+  }
+  .stn[aria-pressed="true"] {
+    background: var(--sfg);
+    color: var(--sbg);
+    transform: scale(1.14);
+  }
+  .stn[aria-pressed="true"] :global(.ico) {
+    animation: bob 1.6s ease-in-out infinite;
+  }
+  @keyframes bob {
+    50% {
+      transform: translateY(-3px) rotate(-6deg);
+    }
+  }
+  @media (hover: hover) {
+    .stn:hover {
+      transform: scale(1.08);
+    }
+  }
+  .stop.code .stn {
+    box-shadow:
+      inset 0 0 0 3px currentColor,
+      0 0 0 6px var(--sbg),
+      0 0 0 8px currentColor;
+  }
+
+  .panel {
+    grid-area: panel;
+    display: grid;
+    gap: 1.125rem;
+    min-width: 0;
+  }
+  .pd {
+    display: grid;
+    gap: 1.125rem;
+  }
+  /* With the script, one stop at a time; without it, all seven read as a list. */
+  :global(.js) .pd:not(.on) {
+    display: none;
+  }
+  :global(.js) .pd.on {
+    animation: swap 0.5s var(--ease-out);
+  }
+  @keyframes swap {
+    from {
+      opacity: 0;
+      transform: translateY(0.75rem);
+    }
+  }
+  .k {
+    margin: 0;
+  }
+  .s {
+    margin: 0;
+    font-weight: 800;
+    font-size: clamp(1.75rem, 3vw, 3.125rem);
+    line-height: 1;
+    letter-spacing: -0.01em;
+    font-stretch: 80%;
+    text-wrap: balance;
+  }
+  .receipt-row {
+    display: flex;
+    align-items: center;
+    gap: 0.875rem;
+    padding: 0.875rem 1rem;
+    background: var(--sfg);
+    color: var(--sbg);
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 1.0625rem;
+    line-height: 1.3;
+    transition: transform var(--dur-base) var(--ease-out);
+  }
+  .receipt-row i {
+    flex: none;
+    width: 1.125rem;
+    height: 1.125rem;
+    background: var(--c);
+    box-shadow: 0 0 0 2px var(--sbg);
+  }
+  .receipt-row :global(.ico) {
+    width: 1.375rem;
+    height: 1.375rem;
+    margin-left: auto;
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .receipt-row:hover {
+      transform: translate(-3px, -3px);
+      box-shadow: 3px 3px 0 var(--accent);
+    }
+  }
+  .after {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+    margin: 0;
+    font-weight: 700;
+    font-size: 0.9375rem;
+  }
+  .after :global(.ico) {
+    width: 1.25rem;
+    height: 1.25rem;
+    animation: spin 6s linear infinite;
+  }
+
+  @media (max-width: 56.25rem) {
+    .loop {
+      grid-template-columns: minmax(0, 1fr);
+      grid-template-areas: "ring" "panel";
+    }
+  }
+  @media (max-width: 40rem) {
+    .lbl {
+      font-size: 0.625rem;
+      padding: 0.0625rem 0.25rem;
+    }
+    .core {
+      inset: 26%;
+    }
+  }
+</style>
+
+<script>
+  import { motionStill } from "~/scripts/motion";
+
+  for (const loop of document.querySelectorAll<HTMLElement>("[data-loop]")) {
+    const buttons = [...loop.querySelectorAll<HTMLButtonElement>("[data-stop]")];
+    const details = [...loop.querySelectorAll<HTMLElement>("[data-pd]")];
+    const icons = [...loop.querySelectorAll<SVGElement>("[data-core-icon]")];
+    const coreN = loop.querySelector<HTMLElement>("[data-core-n]")!;
+    const coreNm = loop.querySelector<HTMLElement>("[data-core-nm]")!;
+    const n = buttons.length;
+    const pad = (v: number) => String(v).padStart(2, "0");
+    let current = 0;
+    let turns = 0;
+    let visible = false;
+    let holdUntil = 0;
+
+    const show = (i: number, byUser: boolean) => {
+      if (i < current) turns += 1;
+      current = i;
+      buttons.forEach((b, j) => b.setAttribute("aria-pressed", String(j === i)));
+      details.forEach((d, j) => d.classList.toggle("on", j === i));
+      icons.forEach((icon, j) => icon.toggleAttribute("hidden", j !== i));
+      coreN.textContent = `${pad(i + 1)} / ${pad(n)}`;
+      coreNm.textContent = buttons[i]!.querySelector(".lbl")!.textContent;
+      loop.style.setProperty("--ang", `${(turns * n + i) * (360 / n)}deg`);
+      loop.style.setProperty("--frac", String((i / n) * 700 + 0.001));
+      if (byUser) holdUntil = performance.now() + 9000;
+    };
+    buttons.forEach((b, i) => b.addEventListener("click", () => show(i, true)));
+    show(0, false);
+
+    new IntersectionObserver(([entry]) => (visible = !!entry?.isIntersecting), { threshold: 0.4 }).observe(loop);
+    setInterval(() => {
+      if (visible && !motionStill() && !document.hidden && performance.now() > holdUntil) show((current + 1) % n, false);
+    }, 3200);
+  }
+</script>

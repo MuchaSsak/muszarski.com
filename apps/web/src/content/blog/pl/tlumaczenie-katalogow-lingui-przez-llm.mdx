@@ -1,0 +1,165 @@
+---
+title: "Tłumaczenie katalogów Lingui przez LLM"
+description: "Jak tłumaczyć katalogi .po z Lingui modelem językowym, co się psuje (zmienne, liczba mnoga, ton) i jakie testy puścić, zanim katalog trafi na produkcję."
+translationKey: "lingui-translate-ai"
+published: 2026-10-05
+tags: [i18n, ai]
+cover: globe
+related: [lingui-vs-i18next]
+sources:
+  - title: "lingui-translate-ai on npm"
+    url: "https://www.npmjs.com/package/lingui-translate-ai"
+    accessed: 2026-10-05
+  - title: "lingui-translate-ai README (GitHub)"
+    url: "https://github.com/MuchaSsak/lingui-translate-ai"
+    accessed: 2026-10-05
+  - title: "Unicode CLDR: Language Plural Rules"
+    url: "https://www.unicode.org/cldr/charts/latest/supplemental/language_plural_rules.html"
+    accessed: 2026-10-05
+  - title: "MDN: Intl.PluralRules.prototype.resolvedOptions()"
+    url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/PluralRules/resolvedOptions"
+    accessed: 2026-10-05
+  - title: "Lingui: Pluralization"
+    url: "https://lingui.dev/guides/plurals"
+    accessed: 2026-10-05
+  - title: "Lingui: Macros reference"
+    url: "https://lingui.dev/ref/macro"
+    accessed: 2026-10-05
+  - title: "Lingui: ICU MessageFormat"
+    url: "https://lingui.dev/guides/message-format"
+    accessed: 2026-10-05
+  - title: "Lingui: Vite plugin"
+    url: "https://lingui.dev/ref/vite-plugin"
+    accessed: 2026-10-05
+  - title: "ICU User Guide: Formatting Messages"
+    url: "https://unicode-org.github.io/icu/userguide/format_parse/messages/"
+    accessed: 2026-10-05
+---
+
+Model językowy naszkicuje Ci każdy brakujący tekst w katalogu `.po` z Lingui, ale wynik to wciąż szkic. Zanim trafi na produkcję, puść testy mechaniczne (każdy komunikat wypełniony, zmienne i tagi bez zmian, wszystkie formy liczby mnogiej, których wymaga język), a potem daj go do przeczytania komuś, kto zna ten język. Do szkicowania napisałem małe narzędzie CLI, lingui-translate-ai; ten tekst opisuje całą pętlę.
+
+## Po co w ogóle tłumaczyć katalogi maszynowo
+
+Linkoglot, moja własna aplikacja do nauki języków, działa w 30 językach. Każdy nowy ekran to nowe teksty w 30 katalogach. Linkoglot dostał do tego skrypt tłumaczący przez LLM, a ten skrypt urósł do [lingui-translate-ai](https://www.npmjs.com/package/lingui-translate-ai), narzędzia CLI na licencji MIT, opublikowanego w npm (w chwili pisania wersja 1.1.0).
+
+Szkicowanie jest łatwe. Trudne jest wiedzieć, które szkice są zepsute.
+
+## Jak katalog wygląda z perspektywy modelu
+
+Katalog Lingui to plik PO z gettext. Każdy wpis ma tekst źródłowy w `msgid`, tłumaczenie w `msgstr` i odnośnik do miejsca w kodzie. Ten wpis pochodzi z polskiego katalogu tej strony:
+
+```po
+#: src/components/layout/SiteHeader.astro:44
+msgid "{name}, home"
+msgstr "{name}, strona główna"
+```
+
+Model widzi krótkie teksty, zwykle bez kontekstu, pełne tokenów, których nie wolno mu ruszać. I właśnie tam zaczynają się problemy.
+
+## Co się psuje
+
+### Zmienne i tagi
+
+`{name}` musi wrócić dokładnie jako `{name}`: nieprzetłumaczone, nieusunięte, bez zmiany pisowni. To samo dotyczy numerowanych tagów, które Lingui generuje dla formatowania w `Trans`, takich jak `<0>` i `</0>`. Zepsuta zmienna niczego nie wywraca. W @lingui/core 6.9.0 polski tekst z `{imie}` zamiast `{name}` wyrenderuje się jako „, strona główna”, a usunięta zmienna po prostu zgubi wartość. Użytkownik zobaczy dziurę, build nie zobaczy nic.
+
+### Liczba mnoga
+
+Angielski ma w regułach Unicode CLDR dwie kategorie: one i other. Polski ma cztery: one (1), few (2-4, 22-24), many (0, 5-19, 100) i other (ułamki, na przykład 1,5). Model, który kopiuje strukturę angielskiego komunikatu, zwróci dwie gałęzie:
+
+```po
+msgid "{count, plural, one {# file} other {# files}}"
+msgstr "{count, plural, one {# plik} other {# plików}}"
+```
+
+Tu też nic się nie wywróci. Brakujące kategorie spadają do `other`, więc w @lingui/core 6.9.0 ten komunikat wyświetli „2 plików” i „1,5 plików”, a po polsku powinno być „2 pliki” i „1,5 pliku”. Przewodnik Lingui po liczbie mnogiej mówi jasno: programista zna tylko formy języka źródłowego, a formy języka docelowego to zadanie tłumacza. Gdy tłumaczem jest model, to zadanie trzeba sprawdzić.
+
+### Ton i kontekst
+
+Teksty w interfejsie są krótkie i wieloznaczne. Angielskie „Open” to czasownik albo przymiotnik, „Save” to przycisk albo rabat. Makra Lingui przyjmują pola `comment` i `context`, a oba trafiają do katalogu. Przekaż je modelowi, bo często to jedyny kontekst, jaki dostaje. Przydaje się też rada z dokumentacji ICU: w gałęziach plural i select pisz pełne zdania zamiast sklejać fragmenty, bo szyk i odmiana różnią się między językami.
+
+### Skopiowany angielski i rozjeżdżające się terminy
+
+Modele czasem zwracają angielski tekst bez zmian albo tłumaczą jeden termin z produktu na trzy różne sposoby w jednym katalogu. W długim diffie łatwo to przeoczyć.
+
+## Jak lingui-translate-ai obsługuje szkic
+
+Wszystko w tej sekcji pochodzi z README paczki. Narzędzie uruchamiasz w katalogu głównym projektu z Lingui. Szuka `package.json`, zależności od Lingui albo pliku `lingui.config.*` oraz folderów językowych z plikami PO, a jeśli folder nie wygląda na projekt Lingui, kończy działanie.
+
+```sh
+npx lingui-translate-ai init       # tworzy lingui-translate-ai.json
+npx lingui-translate-ai translate --only-empty --dry-run
+npx lingui-translate-ai translate --only-empty
+```
+
+- Domyślnie czyta klucz OpenRouter ze zmiennej `OPENROUTER_API_KEY`, z powłoki albo z pliku `.env`.
+- Przed pierwszym zapytaniem wypisuje podgląd (model, dostawca, język źródłowy, pliki językowe, liczba tekstów do wysłania, szacowana liczba zapytań, limity, tryb dry run i kopie zapasowe) i prosi o potwierdzenie, chyba że podasz `--yes`.
+- Z `onlyEmptyTranslations: true` wysyła tylko puste `msgstr`. Z `false` wysyła też istniejące tłumaczenia, więc model może poprawić skopiowany angielski, niespójne terminy, błędy w zmiennych i zbyt dosłowne teksty interfejsu.
+- Trzy limity ograniczają wielkość przebiegu: `maxTranslationsPerRequest`, `maxRequestsPerRun` i `maxTranslationsPerRun`.
+- Przed zmianą pliku zapisuje kopię `.bak` i obsługuje dry run. W domyślnym `rawPatchMode` podmienia tylko zmienione bloki `msgstr`, więc diff zostaje czytelny.
+- Sprawdza, czy zmienne i tagi ze źródła przetrwały. Jeśli model którąś zgubi, próbuje ją naprawić; poprawkę, której nie da się bezpiecznie naprawić, pomija i zapisuje w logu.
+- Wbudowany prompt systemowy możesz podmienić w konfiguracji, o ile wynik zostaje JSON-em zagnieżdżonym według języka.
+
+Zalecany w README przepływ kończy się trzema najważniejszymi krokami: przejrzyj zmienione pliki PO, uruchom zwykłą kompilację Lingui, build i testy, a dopiero potem commituj. README nie opisuje osobnej obsługi kategorii liczby mnogiej w ICU, więc liczba mnoga zostaje po Twojej stronie. O tym jest następna sekcja.
+
+## Testy przed wypuszczeniem katalogu
+
+Na tej stronie mały plik Vitest czyta każdy plik `.po` i kończy się błędem, gdy:
+
+1. w polskim albo hiszpańskim katalogu brakuje komunikatu z angielskiego źródła;
+2. któryś `msgstr` jest pusty;
+3. `{zmienne}` albo numerowane tagi różnią się od źródła;
+4. tłumaczenie zawiera surową twardą spację albo myślnik (półpauzę lub pauzę), co wynika z zasad stylu tej strony.
+
+Test zmiennych to jedno wyrażenie regularne:
+
+```ts
+const tokens = (text: string) =>
+  [...text.matchAll(/\{\w+\}|<\/?\d+>/g)].map((m) => m[0]).sort();
+
+for (const entry of list) expect(tokens(entry.str)).toEqual(tokens(entry.id));
+```
+
+Do tego build produkcyjny wywraca się, gdy polskiemu albo hiszpańskiemu katalogowi brakuje komunikatu (`failOnMissing: "catalog"` we wtyczce Vite od Lingui), więc nieprzetłumaczony tekst nie trafi na produkcję. Więcej o tej konfiguracji piszę w porównaniu [Lingui czy i18next](/pl/blog/lingui-czy-i18next/).
+
+Ta strona nie ma jeszcze komunikatów z liczbą mnogą, więc jej test nie sprawdza form. Jeśli Twoje katalogi je mają, dodaj taki test. `Intl.PluralRules` wie, jakich kategorii potrzebuje każdy język:
+
+```ts
+const CATEGORY = /\b(zero|one|two|few|many|other)\s*\{/g;
+
+export function missingPlurals(locale: string, msgstr: string) {
+  if (!/,\s*plural\s*,/.test(msgstr)) return [];
+  const needed = new Intl.PluralRules(locale).resolvedOptions().pluralCategories;
+  const found = new Set([...msgstr.matchAll(CATEGORY)].map((m) => m[1]));
+  return needed.filter((category) => !found.has(category));
+}
+
+missingPlurals("pl", "{count, plural, one {# plik} other {# plików}}");
+// ["few", "many"]
+```
+
+Celowo jest naiwny: czyta płaskie komunikaty, a nie liczbę mnogą zagnieżdżoną w `select`. Zgłosi też hiszpański, dla którego CLDR definiuje kategorię `many` dla liczb takich jak 1 000 000. Zdecyduj dla każdego języka, czy spadek do `other` jest tam do przyjęcia.
+
+## Cała pętla w jednym pull requeście
+
+Po złożeniu wszystkiego w całość jedna runda tłumaczeń wygląda tak:
+
+1. Po zmianach w kodzie uruchom `lingui extract`, żeby nowe komunikaty pojawiły się w katalogach jako puste wpisy.
+2. Uruchom `lingui-translate-ai translate --only-empty --dry-run` i przeczytaj podgląd: języki, liczbę tekstów, liczbę zapytań.
+3. Puść przebieg naprawdę. Pliki `.bak` to Twój przycisk „cofnij”.
+4. Uruchom testy katalogów i build produkcyjny. Brakujące komunikaty, zmienione zmienne i (z testem opisanym wyżej) niepełna liczba mnoga zatrzymują się tutaj.
+5. Przeczytaj diff dla każdego języka, który znasz. Pozostałe oznacz jako nieprzejrzane, w nagłówku katalogu i wszędzie tam, gdzie użytkownik wybiera język.
+6. Zacommituj katalogi i usuń pliki `.bak`.
+
+Kroki 4 i 5 sprawiają, że wynikowi można ufać. Kto je pomija, ten wcześniej czy później pokaże użytkownikom zepsute `{name}`.
+
+## Człowiek i tak musi to przeczytać
+
+Testy mechaniczne łapią zepsute tokeny i brakujące formy. Nie złapią złego rejestru, zdania poprawnego, ale dziwnego, ani słowa, którego żaden native speaker by nie użył. Na tej stronie tylko hiszpański katalog jest oznaczony jako nieprzejrzany: jego nagłówek mówi `X-Review-Status: unreviewed (AI translation)`, a test wywraca się, gdy ten nagłówek zniknie. Trzydziestu języków jedna osoba nie przeczyta. To prawdziwa granica tego podejścia i powód, żeby otwarcie mówić, które języki przeczytał człowiek.
+
+## Ograniczenia
+
+- Wynik nie jest deterministyczny. Dwa przebiegi mogą się różnić, więc dry run, pliki `.bak` i przejrzany diff przed commitem to Twoje zabezpieczenia.
+- Koszt zależy od modelu i wielkości katalogu. Zanim puścisz pełny przebieg, sprawdź jeden język z `--max-requests 1`.
+- Kontekstu z natury jest mało. Komentarze i konteksty w makrach dają modelowi, a także recenzentowi, więcej materiału.
+
+Cała konfiguracja i18n tej strony, razem z testami katalogów, jest częścią tekstu [jak powstała ta strona](/pl/blog/jak-powstala-ta-strona/). Jeśli chcesz poznać resztę mojego doświadczenia, znajdziesz ją w [CV](/pl/cv/).

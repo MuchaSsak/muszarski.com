@@ -1,12 +1,5 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
-  <style>
-    rect { fill: #f2efe6; stroke: #1e2226; }
-    path { stroke: #1e2226; }
-    @media (prefers-color-scheme: dark) {
-      rect { fill: #0c2240; stroke: #eef4fb; }
-      path { stroke: #eef4fb; }
-    }
-  </style>
-  <rect x="1.5" y="1.5" width="29" height="29" rx="1" stroke-width="3"/>
-  <path d="M6 23V9l4.5 8L15 9v14M17 23V9l4.5 8L26 9v14" fill="none" stroke-width="2.6" stroke-linejoin="miter"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <rect width="64" height="64" fill="#2433ff"/>
+  <path fill="#eef0ff" d="M6 44V16h6l6 13 6-13h6v28h-6V28l-6 12-6-12v16zM34 44V16h6l6 13 6-13h6v28h-6V28l-6 12-6-12v16z"/>
+  <rect x="6" y="50" width="52" height="5" fill="#ff4fb8"/>
 </svg>

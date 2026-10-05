@@ -1,0 +1,149 @@
+---
+title: "Jak powstała ta strona: najpierw wiki, potem odrzucony projekt i Lighthouse 100 na telefonie"
+seoTitle: "Jak zbudowałem to portfolio (case study)"
+description: "Case study: portfolio 3D z wynikiem 34 na telefonie zastąpione stroną w Astro z wynikiem 100, zaplanowaną w wiki projektu i zbudowaną z Claude Code."
+translationKey: this-site
+published: 2026-10-05
+tags: [case-study, ai, astro, performance]
+cover: blueprint
+featured: true
+related: [llm-wiki, fitted-type, reduced-motion]
+sources:
+  - title: "Lighthouse performance scoring (Chrome for Developers)"
+    url: "https://developer.chrome.com/docs/lighthouse/performance/performance-scoring"
+    accessed: 2026-10-05
+  - title: "Largest Contentful Paint (web.dev)"
+    url: "https://web.dev/articles/lcp"
+    accessed: 2026-10-05
+  - title: "Understanding Success Criterion 2.2.2: Pause, Stop, Hide (W3C)"
+    url: "https://www.w3.org/WAI/WCAG22/Understanding/pause-stop-hide.html"
+    accessed: 2026-10-05
+  - title: "Anybody, a variable font (Google Fonts)"
+    url: "https://fonts.google.com/specimen/Anybody"
+    accessed: 2026-10-05
+---
+
+Moje stare portfolio było lotem WebGL od Ziemi do Neptuna. Na moim komputerze wyglądało świetnie, a w mobilnym Lighthouse dostawało 34 punkty. Ta strona je zastępuje: Astro, trzy języki, jeden zmienny font, około 3 KB JavaScriptu na stronie głównej i 100 punktów w mobilnym Lighthouse. Zanim powstał pierwszy komponent, zaplanowałem ją w wiki projektu. Pierwszy projekt graficzny wyrzuciłem, a całość zbudowałem z Claude Code pod kontrolą testów, których nie da się pominąć.
+
+> **W skrócie**
+>
+> - **Przed:** 13,8 MB pobrane, zanim pojawił się przycisk „start”, wydajność na telefonie 34, brak obsługi dotyku i klawiatury, brak tekstu do zaindeksowania.
+> - **Po (strona główna, telefon, mediana z 3 pomiarów):** Lighthouse 100 / 100 / 100 / 100, LCP około 1,65 s, CLS 0, 3,0 KB JavaScriptu po kompresji.
+> - **Jak:** wiki czytane w każdej sesji, jeden kierunek graficzny wybrany z czterech działających propozycji, tekst dopasowany do szerokości już przy budowaniu, animacje, które same się zatrzymują, oraz zrzuty ekranu, testy dostępności i Lighthouse po każdym kawałku pracy.
+
+## Po co przebudowywać stronę, która się podobała?
+
+Kosmiczne portfolio najbardziej lubiłem pokazywać i najmniej nadawało się do wysłania rekruterowi. Zmierzyłem je 5 października 2026:
+
+| Pomiar | Stara strona |
+| --- | --- |
+| Pobrane przed przyciskiem „start” | 13,8 MB (z czego 7,6 MB to font z emoji) |
+| Wydajność w Lighthouse, telefon | 34 (LCP 46,9 s) |
+| Wydajność w Lighthouse, komputer | 60 (całkowity czas blokowania 1240 ms) |
+| Nawigacja | tylko kółko myszy: bez gestów, bez klawiatury |
+| Na telefonie | ekran „Oops!” |
+| Tekst w surowym HTML | żaden, który wyszukiwarka mogłaby zaindeksować |
+
+Ktoś, kto otwiera portfolio z wiadomości na LinkedInie, na telefonie, daje mu może dziesięć sekund. Moja strona wydawała je na pasek ładowania. Podróż w 3D pokazywała, że umiem pisać shadery. Pokazywała też, że nie pomyślałem o osobie po drugiej stronie. Nowa strona miała to naprawić i nie zrobić się przy tym nudna.
+
+## Co nowa strona miała robić?
+
+Wymagania spisałem przed wyborem frameworka, a główna zasada mieści się w jednym zdaniu: **robić wrażenie w 3 sekundy i działać jednym dotknięciem na telefonie.** Bez ekranu ładowania, bez bramki na wejściu, bez przejmowania przewijania, z tą samą treścią na telefonie co na komputerze.
+
+Z tej zasady wyszły budżety:
+
+- Lighthouse na telefonie co najmniej 90 na każdej podstronie; LCP poniżej 2,5 s (cel 2,0), CLS poniżej 0,05, czas blokowania poniżej 200 ms
+- poniżej 150 KB JavaScriptu (po kompresji) przy pierwszym wejściu, poniżej 100 KB fontów
+- główny nagłówek jest największym elementem treści (LCP), więc musi przyjść z serwera w ostatecznej formie, bez czekania na JavaScript
+- WCAG 2.2 AA w każdym motywie kolorystycznym i przycisk pauzy dla wszystkiego, co rusza się dłużej niż pięć sekund
+- angielski, polski i hiszpański, a strona CV i plik PDF generowane z jednego pliku danych
+
+## Jak wyglądało planowanie?
+
+Zanim powstał jakikolwiek komponent, w jednej sesji zbudowałem wiki projektu w `.claude/project-info/`: około trzydziestu stron, z których każda odpowiada za jeden rodzaj faktów. Brief, odbiorcy, styl komunikacji, wymagania, struktura strony, SEO, kwestie prawne, system projektowy, stack, otwarte pytania, dziennik zmian i lista lekcji. Każdy nieoczywisty fakt ma źródło: `[user]`, gdy to moja decyzja, `[research]`, gdy znalazł to agent, `[assumption]`, gdy jeszcze nikt nie wie.
+
+Przy życiu trzymają je trzy hooki. Pierwszy ładuje zasady pracy i lekcje na starcie sesji i po kompresji kontekstu. Drugi czyta każde polecenie i dołącza do niego właściwe strony wiki. Trzeci blokuje zakończenie tury, jeśli zmienił się kod, a wiki nie. Opisałem tę metodę w tekście [LLM wiki: pamięć projektu dla Claude Code](/pl/blog/llm-wiki-pamiec-projektu-dla-claude-code/).
+
+Research robili równolegle subagenci: rekrutacja z punktu widzenia software house'u, wzorce portfolio, wydajność i dostępność, SEO dla imienia i nazwiska, polskie i unijne prawo dla formularza kontaktowego i analityki, wybór stacku. Wnioski trafiły do stron wiki, surowe notatki zostały w osobnym folderze.
+
+Opłaciło się później. Kiedy zmieniałem zdanie, była jedna strona do poprawienia. Kiedy sesja traciła pamięć przy kompresji, następna czytała te same strony i pracowała dalej.
+
+## Dlaczego Astro, a nie Next.js?
+
+Aplikacje buduję w Next.js, w tym projekt ze stażu, który pokazuję na tej stronie. Portfolio to jednak strona z treścią: kilka podstron, głównie statycznych, gdzie każdy kilobajt JavaScriptu jest kosztem dla osoby na wolnym telefonie. Astro renderuje komponenty Reacta do HTML-a i nie wysyła JavaScriptu, dopóki komponent sam go nie potrzebuje. Lingui działa w Astro dzięki `lingui-for-astro`, a brak tłumaczenia na polski albo hiszpański wywraca build.
+
+Kilka interaktywnych elementów (animacja liter, filmy, formularz kontaktowy) to małe moduły w czystym TypeScripcie. Na stronie głównej razem ważą około 3 KB po kompresji. Dłuższe porównanie jest w tekście [Astro czy Next.js na portfolio](/pl/blog/astro-czy-nextjs-na-portfolio/).
+
+## Co się stało z pierwszym projektem?
+
+Pierwszą wersję zbudowałem porządnie: tokeny, dwa kroje pisma, nagłówek narysowany jak tabelka rysunku technicznego, stopka jak jego tabela zmian. Przechodziła wszystkie testy: 51 testów end-to-end, axe w trybie jasnym i ciemnym, Lighthouse 100 we wszystkich czterech kategoriach.
+
+Potem spojrzałem na nią na ekranie i uznałem, że jest brzydka. Była schludna, bezpieczna i łatwa do zapomnienia, a wybrałem ją, zanim zobaczyłem jakąkolwiek alternatywę. Czysty system to jeszcze nie dobry system.
+
+Zmieniłem więc proces. Zanim powstał kolejny kawałek kodu:
+
+1. Research nastawiony na ambicję, a nie bezpieczeństwo: nagradzane portfolia, strony produktów, inspiracje ruchu, z pomiarem tego, jak szybko odwiedzający może z nich realnie skorzystać.
+2. Cztery naprawdę różne kierunki, zbudowane jako działające strony z prawdziwą typografią, kolorem i ruchem, sfotografowane w szerokości telefonu i komputera. Nazywały się Orbit, Poster, Toybox i Exhibit.
+3. Wybieram, a dopiero potem powstaje nowy system projektowy.
+
+Wybrałem Poster: każda sekcja to płaskie pole koloru jak drukowany plakat, tekst jest dopasowany od krawędzi do krawędzi, głębię daje twardy przesunięty cień, a nad wszystkim leży delikatne ziarno druku. Potem przyszły jeszcze dwie rundy uwag. Najwięcej zmieniły te: mniej tekstu, więcej do oglądania, logotypy narzędzi zawsze razem z nazwami, prawdziwe nagrania produktów zamiast zrzutów ekranu i dla każdego efektu po najechaniu odpowiednik na ekranach dotykowych, bo telefony nie mają kursora.
+
+Każda wersja zostaje, łącznie z odrzuconą: otagowana w gicie i opisana w repozytorium.
+
+## Jak imię wypełnia ekran bez JavaScriptu?
+
+Imię i nazwisko w nagłówku biegną od krawędzi do krawędzi przy każdej szerokości i są największym elementem treści, więc nie mogą czekać, aż skrypt je zmierzy.
+
+Font to Anybody, zmienny font z osią szerokości od 50 do 150. Przy budowaniu skrypt mierzy szerokość każdego znaku i kerning przy szerokości 50 i przy 150. Pomiędzy nimi szerokość linii zmienia się liniowo, więc dla każdej linii mogę policzyć dokładną wartość osi, przy której linia wypełnia swoje pole, oraz rozmiar fontu jako ułamek kontenera. Strona dostaje to jako CSS: `font-size` w jednostkach kontenera i `font-stretch` dla każdej linii. Zero pomiarów w przeglądarce, zero przesunięć układu.
+
+Kiedy strona się załaduje, a przeglądarka ma wolną chwilę, mały skrypt dzieli linie na litery i zamienia je w akordeon: litery przy kursorze się rozszerzają, reszta zwęża, a linia nadal równo wypełnia szerokość. Na telefonie litery powoli falują same. Całą technikę opisałem w tekście [Dopasowanie tekstu do szerokości przy budowaniu](/pl/blog/dopasowanie-tekstu-do-szerokosci/).
+
+## Jak animacje są tanie i bezpieczne?
+
+Na tej stronie dużo się rusza: obracająca się naklejka, pasek z narzędziami, pętle z projektami, pierścień, który przechodzi przez to, jak pracuję. Każdy element trzyma się tych samych zasad:
+
+- zatrzymuje się, gdy jego sekcja jest poza ekranem
+- jeden przycisk „Zatrzymaj animacje” w menu i w stopce zatrzymuje wszystko, a wybór jest zapamiętany (WCAG 2.2.2)
+- przy włączonym ograniczeniu ruchu wszystko od razu pokazuje stan końcowy
+- nic nie rusza się na ścieżce krytycznej: wejścia na pierwszym ekranie to sam CSS, a nagłówek nigdy się nie pojawia z animacją
+
+Jeden błąd w tym systemie znalazł agent, który wcale nie szukał błędów. Subagent piszący [tekst o reduced motion](/pl/blog/reduced-motion-i-przycisk-pauzy/) przeczytał kod, żeby go opisać, i zauważył, że zapamiętana pauza zamrażała animacje wejścia na ich pierwszej, niewidocznej klatce. Po odświeżeniu tekst w nagłówku nigdy by się nie pojawił. Poprawka to reguła, która przy zatrzymanych animacjach pokazuje wejścia w stanie końcowym, i test, który tego pilnuje.
+
+## Jak na co dzień wygląda praca z AI?
+
+Prowadzę Claude Code jak mały zespół z wymagającym liderem. Polecenie przychodzi zwykłymi słowami. Hooki dołączają do niego właściwe strony wiki. Research i szkice trafiają równolegle do subagentów, a ja dostaję wnioski ze źródłami, nie całe transkrypty. Serwery MCP dają agentowi ręce: prawdziwe ekrany aplikacji jako wzorce, rejestr komponentów i prawdziwą przeglądarkę. Skille zawierają gotowe procedury: kontrolę zrzutów ekranu w szerokościach 390, 1024 i 1920 pikseli, pomiary Lighthouse, research projektowy, commity.
+
+Testy to podłoga, a nie argument sprzedażowy: sprawdzanie typów, lint, testy jednostkowe, testy end-to-end w Playwright z axe we wszystkich trzech motywach, sprawdzenie układu od 320 do 2560 pikseli i Lighthouse. Zmiana nie jest gotowa, dopóki to nie przechodzi i dopóki sam nie obejrzę zrzutów.
+
+Gdy coś pójdzie nie tak, staje się jednozdaniową regułą w pliku lekcji, a następna sesja ładuje ją na starcie. Kilka prawdziwych: uruchamiaj formatter z katalogu głównego repozytorium (z folderu aplikacji ignorował wspólną konfigurację i przeformatował nieruszane pliki), mierz zmienny font z pliku TTF (biblioteka nie odczytuje wariantów ze skompresowanego pliku), nigdy nie wpisuj tekstu widocznej etykiety wyłącznie do `aria-label`.
+
+AI pisze dużo kodu. Decyzje, przegląd i wszystko, co wychodzi pod moim nazwiskiem, należą do mnie, i dlatego [klocki, z których składa się Claude Code](/pl/blog/claude-code-skille-hooki-mcp-subagenty/), są dla mnie ważniejsze niż sam model.
+
+## Ile to kosztowało?
+
+Każdy etap zapisuje, ile wydał z budżetów. Poniżej strona główna na koniec etapu z nagłówkiem, mobilny Lighthouse z symulowanym dławieniem łącza, mediana z trzech pomiarów.
+
+| Etap | HTML (po kompresji) | JavaScript | Fonty | LCP | CLS |
+| --- | --- | --- | --- | --- | --- |
+| Pierwszy projekt, fundamenty | 7,7 KB | około 1 KB | 47,2 KB w 4 plikach | 1,05 s | 0 |
+| Pierwszy projekt, nagłówek i stopka | 10,7 KB | 0,8 KB | 47,2 KB | 1,21 s | 0,011 |
+| Poster: nagłówek, hero, pasek narzędzi, stopka | 22,9 KB | 3,0 KB | 49,5 KB w 1 pliku | 1,65 s | 0 |
+
+Największy element treści pojawia się później od wejścia Postera: nagłówek czeka teraz na jeden zmienny font o wadze 49,5 KB zamiast statycznego kroju o wadze 11,8 KB. Wciąż mieści się w celu 2 sekund, a jeden plik zastąpił cztery.
+
+## Co zrobiłbym inaczej?
+
+- **Pokazałbym kierunki przed budowaniem.** Zamroziłem pierwszy system projektowy, zanim zobaczyłem alternatywę, i zapłaciłem za dwa etapy pracy w wyglądzie, który potem wyrzuciłem. Teraz najpierw powstają makiety.
+- **Wpisałbym budżet do pierwszego commita.** Budżety były w wiki od pierwszego dnia, ale sprawdzanie ich po każdym etapie zaczęło się później. Pomiar od pierwszego etapu zamienia każdą późniejszą decyzję w liczbę zamiast opinii.
+- **Wcześniej nagrałbym filmy z produktów.** Dwa z czterech rozdziałów z projektami wciąż mają rysowane zastępstwa, dopóki nie powstaną nagrania, a rysunek wyjaśnia mniej niż dziesięć sekund prawdziwego produktu.
+
+## Wyniki i jak je zmierzyłem
+
+- Lighthouse, telefon, symulowane dławienie łącza, mediana z trzech pomiarów na lokalnym buildzie produkcyjnym: 100 za wydajność, dostępność, dobre praktyki i SEO, po angielsku, polsku i hiszpańsku.
+- LCP około 1,65 s, CLS 0, całkowity czas blokowania 0-2 ms na stronie głównej.
+- Około 3 KB JavaScriptu po kompresji i 49,5 KB fontu.
+- Testy end-to-end z axe we wszystkich trzech motywach; brak przewijania w poziomie od 320 do 2560 pikseli.
+
+Dane od prawdziwych użytkowników pojawią się po starcie strony. Do tego czasu to liczby z laboratorium i tak je traktuję.
+
+Jeśli chcesz porozmawiać o podobnym projekcie albo o pracy, [mój formularz kontaktowy to jedna wiadomość](/pl/#contact).

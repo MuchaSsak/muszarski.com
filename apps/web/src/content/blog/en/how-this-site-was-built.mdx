@@ -1,0 +1,149 @@
+---
+title: "How I built this site: a wiki first, a rejected design, and Lighthouse 100 on mobile"
+seoTitle: "How I built this portfolio (case study)"
+description: "Case study: replacing a 3D portfolio that scored 34 on mobile with an Astro site that scores 100, planned in a project wiki and built with Claude Code."
+translationKey: this-site
+published: 2026-10-05
+tags: [case-study, ai, astro, performance]
+cover: blueprint
+featured: true
+related: [llm-wiki, fitted-type, reduced-motion]
+sources:
+  - title: "Lighthouse performance scoring (Chrome for Developers)"
+    url: "https://developer.chrome.com/docs/lighthouse/performance/performance-scoring"
+    accessed: 2026-10-05
+  - title: "Largest Contentful Paint (web.dev)"
+    url: "https://web.dev/articles/lcp"
+    accessed: 2026-10-05
+  - title: "Understanding Success Criterion 2.2.2: Pause, Stop, Hide (W3C)"
+    url: "https://www.w3.org/WAI/WCAG22/Understanding/pause-stop-hide.html"
+    accessed: 2026-10-05
+  - title: "Anybody, a variable font (Google Fonts)"
+    url: "https://fonts.google.com/specimen/Anybody"
+    accessed: 2026-10-05
+---
+
+My old portfolio was a WebGL flight from Earth to Neptune. It looked good on my desktop and scored 34 on mobile Lighthouse. This site replaces it: Astro, three languages, one variable font, about 3 KB of JavaScript on the home page, and 100 on mobile Lighthouse. It was planned in a project wiki before any product code, its first design was thrown away, and it was built with Claude Code under checks I can't skip.
+
+> **TL;DR**
+>
+> - **Before:** 13.8 MB downloaded before the start button, mobile performance 34, no touch or keyboard navigation, no indexable text.
+> - **After (home page, mobile, median of 3 runs):** Lighthouse 100 / 100 / 100 / 100, LCP about 1.65 s, CLS 0, page JavaScript 3.0 KB gzip.
+> - **How:** a wiki that every session reads, one design direction picked from four live options, type fitted at build time, motion that pauses itself, and screenshots, accessibility checks and Lighthouse on every slice.
+
+## Why rebuild a site that people liked?
+
+The space portfolio was my favourite thing to show and the worst thing to send to a recruiter. I measured it on 5 October 2026:
+
+| Measure | Old site |
+| --- | --- |
+| Downloaded before the "start" button | 13.8 MB (7.6 MB of it an emoji font) |
+| Lighthouse performance, mobile | 34 (LCP 46.9 s) |
+| Lighthouse performance, desktop | 60 (total blocking time 1,240 ms) |
+| Navigation | mouse wheel only: no touch swipe, no keyboard |
+| On a phone | an "Oops!" screen |
+| Text in the raw HTML | none a search engine could index |
+
+A person who opens a portfolio from a LinkedIn message on a phone gets maybe ten seconds. My site spent them on a loading bar. The 3D journey proved I can write shaders; it also proved I hadn't thought about the person on the other side. The new site had to fix that without becoming boring.
+
+## What did the new site have to do?
+
+I wrote the requirements down before choosing a framework, and the main rule fits on one line: **impressive within 3 seconds, and usable in one tap on a phone.** No preloader, no gate, no scroll-jacking, the same content on mobile as on desktop.
+
+The budgets came from that rule:
+
+- Lighthouse mobile at least 90 on every page; LCP under 2.5 s (target 2.0), CLS under 0.05, total blocking time under 200 ms
+- under 150 KB of JavaScript (gzip) on first load, under 100 KB of fonts
+- the main heading is the largest contentful paint, so it must render final from the server, with no JavaScript in the way
+- WCAG 2.2 AA in every colour theme, a pause button for anything that moves longer than five seconds
+- English, Polish and Spanish, with the CV page and the PDF generated from one data file
+
+## How did the planning work?
+
+Before a single component existed, I spent a session building a wiki for the project in `.claude/project-info/`: about thirty pages, each owning one kind of fact. The brief, the audience, the brand voice, requirements, the site structure, SEO, legal facts, the design system, the tech stack, open questions, a log and a list of lessons. Every non-obvious fact carries its source: `[user]` when I decided it, `[research]` when an agent found it, `[assumption]` when nobody knows yet.
+
+Three hooks keep it alive. One loads the working rules and the lessons when a session starts or after its context is compacted. One reads each prompt and routes the right wiki pages into it. One blocks the end of a turn when code changed but the wiki didn't. I wrote about the method in [An LLM wiki: project memory for Claude Code](/en/blog/llm-wiki-project-memory-for-claude-code/).
+
+The research ran as parallel subagents: hiring from a software house's point of view, portfolio patterns, performance and accessibility, SEO for a personal name, Polish and EU law for a contact form and analytics, and the stack. Their conclusions went into the routed pages; the raw notes stayed in a research folder.
+
+The payoff showed up later. When I changed my mind about something, there was one place to change it. When a session lost its memory to compaction, the next one read the same pages and carried on.
+
+## Why Astro and not Next.js?
+
+I build apps in Next.js, and the internship project on this site is one. A portfolio is a content site: a few pages, mostly static, where every kilobyte of JavaScript is a cost for the person on a slow phone. Astro renders React components to HTML and ships no JavaScript unless a component asks for it. Lingui works in Astro through `lingui-for-astro`, and a missing Polish or Spanish string fails the build.
+
+The few interactive parts (the letter animation, the reels, the contact form) are small vanilla TypeScript modules. On the home page they add up to about 3 KB gzip. There is a longer comparison in [Astro vs Next.js for a portfolio](/en/blog/astro-vs-nextjs-for-a-portfolio/).
+
+## What happened to the first design?
+
+I built the first look properly: tokens, two typefaces, a header drawn like the title block of an engineering drawing, a footer like its revision block. It passed every check: 51 end-to-end tests, axe in light and dark mode, Lighthouse 100 on all four scores.
+
+Then I looked at it on the screen and called it ugly. It was tidy, safe and forgettable, and it had been chosen before I had seen any alternative. A clean system is not the same as a good one.
+
+So the process changed. Before any more product code:
+
+1. Research for ambition, not safety: award-winning portfolios, product sites, motion references, measured for how quickly a visitor can actually use them.
+2. Four genuinely different directions, built as live pages with real type, colour and motion, and screenshotted at phone and desktop widths. They were called Orbit, Poster, Toybox and Exhibit.
+3. I pick, then the design system gets rewritten.
+
+I picked Poster: every section is a flat colour field like a printed poster, the type is fitted edge to edge, depth is a hard offset shadow, and a fine print grain sits over everything. Two more rounds of notes followed. The ones that changed the most: less text and more to look at, tool logos always shown with their names, real video of the products instead of screenshots, and every hover effect with a twin for touch screens, because phones don't have a cursor.
+
+Every version is kept, the rejected one included, tagged in git and indexed in the repo.
+
+## How does the name fill the screen with no JavaScript?
+
+The hero name runs edge to edge at every width, and it is the largest contentful paint, so it can't wait for a script to measure it.
+
+The font is Anybody, a variable font with a width axis from 50 to 150. At build time a script measures every glyph's advance and the kerning at width 50 and at width 150. Between the two, the width of a line changes linearly, so for each line I can solve for the exact width setting that makes it fill its box, and for the font size as a fraction of the container. The page ships that as CSS: `font-size` in container query units and `font-stretch` per line. No measurement in the browser, no layout shift.
+
+After the page loads and the browser is idle, a small script splits the lines into letters and turns them into an accordion: letters near the pointer widen, the rest narrow, and the line stays flush. On a phone it idles as a slow wave. The full technique is in [Fit text to its container at build time](/en/blog/fit-text-to-width-at-build-time/).
+
+## How is the motion kept cheap and safe?
+
+The site moves a lot: a spinning sticker, a marquee of tools, product loops, a ring that walks through how I work. Each piece follows the same rules:
+
+- it pauses when its section is off screen
+- one "Pause motion" button in the menu and the footer stops everything, and the choice is remembered (WCAG 2.2.2)
+- with reduced motion requested, everything shows its final state
+- nothing moves on the critical path: entrances on the first screen are CSS, and the heading never fades in
+
+One bug in that system was found by an agent that wasn't looking for bugs. A subagent drafting the [reduced-motion post](/en/blog/reduced-motion-and-a-pause-button/) read the code to describe it and noticed that a stored pause would freeze the entrance animations on their first, invisible frame, so the hero text would never appear after a reload. The fix was a rule that shows entrances in their final state when motion is paused, and a test for it.
+
+## What does the AI workflow look like day to day?
+
+I run Claude Code like a small team with a strict lead. A request comes in as plain words. The hooks route the relevant wiki pages into it. Research and drafts fan out to subagents in parallel, and I get their conclusions with sources, not their transcripts. MCP servers give the agent hands: real app screens for patterns, a component registry, and a real browser. Skills hold the playbooks: screenshot QA at 390, 1024 and 1920 pixels, Lighthouse runs, design research, commits.
+
+The checks are the floor, not the pitch: type checking, lint, unit tests, Playwright end-to-end tests with axe in all three colour themes, a layout sweep from 320 to 2560 pixels, and Lighthouse. A change isn't done until they pass and I've looked at the screenshots myself.
+
+When something goes wrong, it becomes a one-line rule in the lessons file, and the next session loads it at start. A few real ones: run the formatter from the repo root (from the app folder it ignored the shared config and reformatted untouched files), measure the variable font from its TTF source (the library can't read the compressed file's variations), and never put a visible label's text only in `aria-label`.
+
+The AI does a lot of the typing. I own the decisions, the review and anything that ships under my name, which is why the [building blocks](/en/blog/claude-code-skills-hooks-mcp-subagents/) matter more to me than the model.
+
+## What did it cost?
+
+Each slice records what it spent of the budgets. The numbers below are the home page at the end of the hero slice, mobile Lighthouse with simulated throttling, median of three runs.
+
+| Slice | HTML (gzip) | Page JavaScript | Fonts | LCP | CLS |
+| --- | --- | --- | --- | --- | --- |
+| First design, foundation | 7.7 KB | about 1 KB | 47.2 KB in 4 files | 1.05 s | 0 |
+| First design, header and footer | 10.7 KB | 0.8 KB | 47.2 KB | 1.21 s | 0.011 |
+| Poster: header, hero, tool band, footer | 22.9 KB | 3.0 KB | 49.5 KB in 1 file | 1.65 s | 0 |
+
+The largest contentful paint went up when Poster arrived: the heading now waits for one 49.5 KB variable font instead of an 11.8 KB static cut. It is still under the 2-second target, and one file replaced four.
+
+## What would I do differently?
+
+- **Show directions before building.** I froze the first design system before seeing an alternative and paid for two slices of work in a look I then threw away. Now comps come first.
+- **Write the budget into the first commit.** The budgets existed from day one in the wiki, but checking them per slice only started later. Measuring from the first slice made every later trade-off a number instead of an opinion.
+- **Record the product videos earlier.** Two of the four project chapters still use drawn stand-ins until the recordings exist, and a drawing explains less than ten seconds of the real thing.
+
+## Results, and how they were measured
+
+- Lighthouse, mobile, simulated throttling, median of three runs on a local production build: 100 for performance, accessibility, best practices and SEO, in English, Polish and Spanish.
+- LCP about 1.65 s, CLS 0, total blocking time 0-2 ms on the home page.
+- About 3 KB gzip of page JavaScript, 49.5 KB of font.
+- End-to-end tests with axe in all three colour themes; no horizontal scrolling from 320 to 2560 pixels.
+
+Real-user data will come after launch. Until then these are lab numbers, and I treat them that way.
+
+If you'd like to talk about building something like this, or about a role, [my contact form is one message long](/en/#contact).

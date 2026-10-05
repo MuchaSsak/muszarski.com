@@ -1,0 +1,141 @@
+---
+/**
+ * A post's cover, drawn in code (content-model.md § Blog post: "cover: code-drawn or real"): one poster motif per
+ * topic on a project colour, no images to fetch. Decorative: the title next to it carries the meaning.
+ */
+import type { BlogCover } from "~/lib/blog";
+
+interface Props {
+  cover: BlogCover;
+  /** A stable index to vary the colour between neighbours. */
+  tone?: number;
+  class?: string | undefined;
+}
+
+const { cover, tone = 0, class: className } = Astro.props;
+const TONES = [
+  ["#ffd23f", "#0a0d33", "#2433ff"],
+  ["#ff5b1f", "#0a0d33", "#ff4fb8"],
+  ["#c9f24a", "#0a0d33", "#2433ff"],
+  ["#2433ff", "#eef0ff", "#ff4fb8"],
+  ["#ff4fb8", "#0a0d33", "#eef0ff"],
+  ["#07081c", "#eef0ff", "#ffd23f"],
+] as const;
+const [bg, fg, pop] = TONES[tone % TONES.length]!;
+---
+
+<svg class:list={["cover", className]} viewBox="0 0 400 250" aria-hidden="true" focusable="false" style={`--bg:${bg};--fg:${fg};--pop:${pop}`}>
+  <rect width="400" height="250" fill="var(--bg)"></rect>
+  {
+    cover === "blueprint" && (
+      <g fill="none" stroke="var(--fg)" stroke-width="2">
+        <path d="M0 50H400M0 100H400M0 150H400M0 200H400M50 0V250M100 0V250M150 0V250M200 0V250M250 0V250M300 0V250M350 0V250" opacity=".18" />
+        <rect x="90" y="60" width="220" height="130" stroke-width="5" />
+        <path d="M90 215H310M90 207v16M310 207v16M335 60V190M327 60h16M327 190h16" stroke-width="3" />
+        <circle cx="200" cy="125" r="34" fill="var(--pop)" stroke-width="5" />
+        <path d="M120 85h60M120 100h40" stroke-width="5" />
+      </g>
+    )
+  }
+  {
+    cover === "pipeline" && (
+      <g stroke="var(--fg)" stroke-width="5">
+        <path d="M40 125H360" stroke-dasharray="14 10" />
+        <rect x="30" y="100" width="50" height="50" fill="var(--bg)" />
+        <rect x="125" y="100" width="50" height="50" fill="var(--fg)" />
+        <rect x="220" y="100" width="50" height="50" fill="var(--bg)" />
+        <rect x="315" y="100" width="50" height="50" fill="var(--bg)" />
+        <path d="M150 50h90l14 14v26h-104z" fill="var(--pop)" />
+        <path d="M195 90l-12 12" />
+      </g>
+    )
+  }
+  {
+    cover === "wiki" && (
+      <g stroke="var(--fg)" stroke-width="5">
+        <rect x="150" y="40" width="150" height="180" fill="var(--pop)" transform="rotate(8 225 130)" />
+        <rect x="120" y="35" width="150" height="180" fill="var(--bg)" transform="rotate(-4 195 125)" />
+        <rect x="100" y="30" width="150" height="180" fill="var(--bg)" />
+        <path d="M125 70h100M125 95h80M125 120h100M125 145h60M125 170h90" />
+      </g>
+    )
+  }
+  {
+    cover === "translate" && (
+      <g stroke="var(--fg)" stroke-width="5">
+        <path d="M60 50h150v90h-90l-30 30v-30H60z" fill="var(--bg)" />
+        <path d="M190 100h150v90h-30v30l-30-30h-90z" fill="var(--pop)" />
+        <text x="135" y="112" font-size="54" font-weight="900" text-anchor="middle" fill="var(--fg)" stroke="none">
+          EN
+        </text>
+        <text x="265" y="162" font-size="54" font-weight="900" text-anchor="middle" fill="var(--fg)" stroke="none">
+          PL
+        </text>
+      </g>
+    )
+  }
+  {
+    cover === "compare" && (
+      <g stroke="var(--fg)" stroke-width="5">
+        <path d="M200 30V220" stroke-dasharray="10 10" />
+        <rect x="70" y="150" width="40" height="70" fill="var(--fg)" />
+        <rect x="120" y="90" width="40" height="130" fill="var(--pop)" />
+        <rect x="240" y="60" width="40" height="160" fill="var(--pop)" />
+        <rect x="290" y="120" width="40" height="100" fill="var(--fg)" />
+        <path d="M40 220h320" />
+      </g>
+    )
+  }
+  {
+    cover === "type" && (
+      <g fill="var(--fg)">
+        <text x="200" y="168" font-size="170" font-weight="900" text-anchor="middle" style="font-stretch:150%">
+          A
+        </text>
+        <text x="105" y="168" font-size="170" font-weight="900" text-anchor="middle" style="font-stretch:50%">
+          A
+        </text>
+        <text x="300" y="168" font-size="170" font-weight="900" text-anchor="middle" style="font-stretch:50%" fill="var(--pop)">
+          a
+        </text>
+        <rect x="40" y="190" width="320" height="6" />
+      </g>
+    )
+  }
+  {
+    cover === "motion" && (
+      <g fill="none" stroke="var(--fg)" stroke-width="5">
+        <circle cx="200" cy="125" r="90" stroke-dasharray="6 12" />
+        <circle cx="200" cy="125" r="60" />
+        <circle cx="290" cy="125" r="14" fill="var(--pop)" />
+        <path d="M185 100v50M215 100v50" stroke-width="12" />
+      </g>
+    )
+  }
+  {
+    cover === "shield" && (
+      <g stroke="var(--fg)" stroke-width="6">
+        <path d="M200 30l90 30v60c0 55-38 90-90 105-52-15-90-50-90-105V60z" fill="var(--pop)" />
+        <path d="M160 125l28 28 52-56" fill="none" />
+      </g>
+    )
+  }
+  {
+    cover === "globe" && (
+      <g fill="none" stroke="var(--fg)" stroke-width="5">
+        <circle cx="200" cy="125" r="90" fill="var(--pop)" />
+        <ellipse cx="200" cy="125" rx="40" ry="90" />
+        <path d="M110 125h180M125 80h150M125 170h150" />
+      </g>
+    )
+  }
+</svg>
+
+<style>
+  .cover {
+    display: block;
+    width: 100%;
+    height: auto;
+    font-family: var(--font-sans);
+  }
+</style>

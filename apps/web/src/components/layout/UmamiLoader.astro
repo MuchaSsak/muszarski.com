@@ -1,0 +1,36 @@
+---
+/**
+ * Cookieless statistics (site/analytics.md, the privacy policy): Umami loads after the page, and never when the
+ * browser sends Do Not Track or Global Privacy Control, or after the visitor's opt-out on the privacy page (the
+ * `umami.disabled` key, which Umami itself also honours). The script reads its settings from its own data attributes,
+ * so its text (and its CSP hash) never changes.
+ */
+interface Props {
+  src: string;
+  id: string;
+  domains: string;
+}
+const { src, id, domains } = Astro.props;
+---
+
+<script is:inline data-umami-loader data-src={src} data-id={id} data-domains={domains}>
+  (() => {
+    const me = document.currentScript;
+    const nav = navigator;
+    if (nav.globalPrivacyControl || nav.doNotTrack === "1" || window.doNotTrack === "1") return;
+    try {
+      if (localStorage.getItem("umami.disabled")) return;
+    } catch {
+      /* storage blocked: count the visit */
+    }
+    addEventListener("load", () => {
+      const s = document.createElement("script");
+      s.defer = true;
+      s.src = me.dataset.src;
+      s.dataset.websiteId = me.dataset.id;
+      s.dataset.domains = me.dataset.domains;
+      s.dataset.doNotTrack = "true";
+      document.head.append(s);
+    });
+  })();
+</script>

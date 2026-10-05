@@ -22,9 +22,10 @@ import { typo } from "~/lib/typography";
 interface Props {
   path: LocalizedPath;
   locales?: readonly Locale[] | undefined;
+  fallback?: LocalizedPath | undefined;
 }
 
-const { path, locales } = Astro.props;
+const { path, locales, fallback = "" } = Astro.props;
 const locale = Astro.locals.locale;
 const links = chromeLinks(locale);
 const english = links.blogLocale === locale ? "" : " (EN)";
@@ -37,7 +38,7 @@ const columns = [
     id: "work",
     title: t`Work`,
     items: [
-      ...visibleFlagships().map((project) => ({ label: project.name, href: links.project(project.slug) })),
+      ...visibleFlagships().map((project) => ({ label: project.name, href: links.project(project.anchor ?? project.slug) })),
       { label: t`All projects`, href: links.workIndex },
     ],
   },
@@ -110,13 +111,14 @@ const columns = [
   </div>
 
   <div class="row">
-    <LocaleCodes path={path} locales={locales} class="f-loc" />
+    <LocaleCodes path={path} locales={locales} fallback={fallback} class="f-loc" />
     <MotionToggle />
     <p class="meta">
       <span>
         © {year} {SITE.name}
       </span>
       <span>{t`Marks: Simple Icons (CC0). Icons: Tabler (MIT). Font: Anybody (SIL OFL).`}</span>
+      {locale === "es" && <span>{t`This Spanish version was translated with AI and has not been reviewed by a native speaker yet.`}</span>}
       <span>
         {t`Built with`}{" "}
         <a href="https://astro.build/" data-umami-event="outbound" data-umami-event-target="astro">

@@ -28,9 +28,11 @@ interface Props {
   current?: "work" | "blog" | undefined;
   /** The home page: the header starts transparent on the hero field. */
   home?: boolean | undefined;
+  /** Where the language switch goes when this page has no version in a locale. */
+  fallback?: LocalizedPath | undefined;
 }
 
-const { path, locales, current, home = false } = Astro.props;
+const { path, locales, current, home = false, fallback = "" } = Astro.props;
 const locale = Astro.locals.locale;
 const links = chromeLinks(locale);
 const blogSuffix = links.blogLocale === locale ? "" : " (EN)";
@@ -79,7 +81,7 @@ const homeLabel = t`${name}, home`;
     </ul>
   </nav>
 
-  <LocaleCodes path={path} locales={locales} class="h-loc" />
+  <LocaleCodes path={path} locales={locales} fallback={fallback} class="h-loc" />
   <ThemeCycle class="h-theme" />
 
   <div class="actions">
@@ -143,7 +145,7 @@ const homeLabel = t`${name}, home`;
     <ThemeCycle />
     <MotionToggle />
   </div>
-  <LocaleCodes path={path} locales={locales} class="sm-loc" />
+  <LocaleCodes path={path} locales={locales} fallback={fallback} class="sm-loc" />
 </div>
 
 <style>

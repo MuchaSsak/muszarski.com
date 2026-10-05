@@ -1,0 +1,44 @@
+---
+/**
+ * The result page of a contact form sent without JavaScript (api/contact.ts answers 303 here). noindex; never in the
+ * sitemap. With JavaScript the form shows the same message in place.
+ */
+import { t } from "lingui-for-astro/macro";
+
+import BaseLayout from "~/components/layout/BaseLayout.astro";
+import Fit from "~/components/ui/Fit.astro";
+import Icon from "~/components/ui/Icon.astro";
+import { chromeLinks } from "~/lib/nav";
+import { localeStaticPaths } from "~/lib/routes";
+
+export const getStaticPaths = localeStaticPaths;
+
+const links = chromeLinks(Astro.locals.locale);
+---
+
+<BaseLayout title={t`Message sent`} description={t`Your message reached Mateusz Muszarski. He replies to the address you gave.`} path="contact/sent" noindex>
+  <section class="sec field-accent result">
+    <Fit as="h1" lines={[t`Sent`]} motion="calm" />
+    <p class="lede">{t`Thank you. I'll reply to the address you gave me.`}</p>
+    <div class="ctas">
+      <a class="btn btn-inv" href={links.home}>{t`Back to the home page`}<Icon name="tb:arrow-right" class="nudge" /></a>
+      <a class="btn btn-line" href={links.workIndex}>{t`All projects`}</a>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .result {
+    min-height: 70svh;
+  }
+  .lede {
+    max-width: 40ch;
+    margin: 1.5rem 0;
+    font-size: clamp(1.1875rem, 1.6vw, 1.5rem);
+  }
+  .ctas {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+</style>

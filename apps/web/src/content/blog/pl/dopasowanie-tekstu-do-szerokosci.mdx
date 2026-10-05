@@ -1,0 +1,153 @@
+---
+title: "Tekst dopasowany do szerokości kontenera w czasie builda, dzięki fontowi zmiennemu"
+seoTitle: "Tekst dopasowany do szerokości w czasie builda"
+description: "Jak moje imię i nazwisko wypełniają szerokość strony bez JavaScriptu: metryki fontu liczone w buildzie, oś wdth, jednostki cqi i font-stretch."
+translationKey: "fitted-type"
+published: 2026-10-05
+tags: [typography, performance, design]
+cover: type
+related: [this-site, reduced-motion]
+sources:
+  - title: "CSS container queries (MDN)"
+    url: "https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_containment/Container_queries"
+    accessed: 2026-10-05
+  - title: "font-stretch (MDN)"
+    url: "https://developer.mozilla.org/en-US/docs/Web/CSS/font-stretch"
+    accessed: 2026-10-05
+  - title: "font-variation-settings (MDN)"
+    url: "https://developer.mozilla.org/en-US/docs/Web/CSS/font-variation-settings"
+    accessed: 2026-10-05
+  - title: "Anybody, Etcetera Type Co. (GitHub)"
+    url: "https://github.com/Etcetera-Type-Co/Anybody"
+    accessed: 2026-10-05
+  - title: "Anybody METADATA.pb, osie i licencja (google/fonts)"
+    url: "https://raw.githubusercontent.com/google/fonts/main/ofl/anybody/METADATA.pb"
+    accessed: 2026-10-05
+  - title: "fontkit (GitHub)"
+    url: "https://github.com/foliojs/fontkit"
+    accessed: 2026-10-05
+  - title: "Largest Contentful Paint (LCP), web.dev"
+    url: "https://web.dev/articles/lcp"
+    accessed: 2026-10-05
+  - title: "Cumulative Layout Shift (CLS), web.dev"
+    url: "https://web.dev/articles/cls"
+    accessed: 2026-10-05
+  - title: "Intersection Observer API (MDN)"
+    url: "https://developer.mozilla.org/en-US/docs/Web/API/Intersection_Observer_API"
+    accessed: 2026-10-05
+---
+
+Moje imię i nazwisko na stronie głównej wypełniają szerokość od krawędzi do krawędzi i żaden skrypt ich nie skaluje. W czasie builda mierzę font zmienny Anybody na obu końcach osi szerokości, wyliczam rozmiar i szerokość każdej linii tak, żeby wypełniała kontener, i zapisuję wynik w stronie jako jednostki `cqi` oraz wartości `font-stretch`. Przeglądarka rysuje nagłówek od razu w docelowym rozmiarze, z samego HTML i CSS.
+
+## Dlaczego nie dopasować tekstu JavaScriptem po załadowaniu?
+
+Typowe podejście to skrypt: wyrenderuj tekst, zmierz go, zwiększaj rozmiar fontu, aż wypełni pudełko, powtarzaj przy każdej zmianie rozmiaru okna. Tutaj nagłówkiem jest moje imię i nazwisko w hero. To największy element pierwszego ekranu, więc to on jest elementem Largest Contentful Paint (LCP). Dopasowanie skryptem zostawia dwie złe opcje.
+
+- **Najpierw pokaż, potem dopasuj.** Tekst pojawia się w zgadniętym rozmiarze, a potem skacze, razem ze wszystkim, co jest pod nim. To przesunięcie układu: web.dev definiuje je jako zmianę pozycji widocznego elementu między kolejnymi klatkami.
+- **Ukryj, dopóki nie pasuje.** web.dev wyklucza z LCP elementy z `opacity: 0`, więc LCP czeka wtedy na skrypt, font i pomiar.
+
+Nie chciałem żadnej z nich. Strona główna wysyła około 3 KB JavaScriptu (gzip) i nic z tego nie jest potrzebne do narysowania nagłówka. W mobilnym Lighthouse (mediana z 3 pomiarów) ma 100 we wszystkich czterech kategoriach, LCP około 1,65 s i CLS 0.
+
+## Obserwacja, która to umożliwia
+
+Anybody to font zmienny na licencji OFL z osią szerokości (`wdth`) od 50 do 150 i osią grubości od 100 do 900. W CSS osią `wdth` steruje właściwość `font-stretch`: MDN podaje ją jako zarejestrowaną oś stojącą za tą właściwością i zaleca właściwości wysokiego poziomu zamiast `font-variation-settings` wszędzie tam, gdzie istnieją.
+
+Kluczowy fakt: przy stałej grubości szerokość każdego znaku i każda para kerningowa zmieniają się liniowo względem `wdth`. Jeśli znam szerokość linii przy 50 i przy 150, znam ją dla każdej wartości pomiędzy, z jednej interpolacji.
+
+„Liniowo” wymaga przypisu. Sprawdziłem to fontkitem na pliku źródłowym fontu, w dziewięciu punktach od 50 do 150. Ściśle biorąc, font ma master przy 100 (wartość domyślną), więc wykres to dwa proste odcinki, które się tam spotykają. Załamanie jest małe: dla linii, które testowałem (MATEUSZ, MUSZARSKI i kilka par z mocnym kerningiem, jak AV i TO), rzeczywista szerokość w tych dziewięciu punktach odbiega od prostej najwyżej o 0,06%. Dopasowanie celuje w 99,5% kontenera, więc to się mieści.
+
+## Pomiar w czasie builda
+
+Skrypt Node (`scripts/fonts.mjs`) uruchamiam wtedy, gdy zmienia się krój, a nie przy każdym deployu. Robi subset fontu, generuje reguły `@font-face` i plik z metrykami każdego znaku, który może trafić do dopasowanej linii: wielkich liter łacińskich, polskich i hiszpańskich, cyfr i kilku znaków interpunkcyjnych. Obecny plik ma 72 znaki i 406 par kerningowych.
+
+```js
+// uproszczone z scripts/fonts.mjs
+const at = [50, 150].map((wdth) => font.getVariation({ wght: 900, wdth }));
+const em = (units) => units / font.unitsPerEm;
+
+for (const c of DISPLAY) adv[c] = at.map((f) => em(f.layout(c).advanceWidth));
+
+for (const a of DISPLAY)
+  for (const b of DISPLAY) {
+    // kerning = szerokość pary minus oba znaki osobno
+    const k = at.map((f) => f.layout(a + b).advanceWidth - f.layout(a).advanceWidth - f.layout(b).advanceWidth);
+    if (k.some((v) => Math.abs(v) > 0.5)) kern[a + b] = k.map(em);
+  }
+```
+
+Wynik to zwykły obiekt: dwie liczby w em, przy 50 i przy 150, dla każdego znaku i każdej pary z kerningiem. Wygenerowany plik jest w repozytorium, więc build strony w ogóle nie dotyka narzędzi do fontów.
+
+## Rozwiązanie dla każdej linii
+
+Z metrykami w ręku szerokość linii w em przy dowolnym `wdth` to suma interpolacji. Samo dopasowanie ma dwa kroki.
+
+1. Weź najszerszą linię przy wybranej szerokości bazowej. Jej szerokość w em wyznacza rozmiar fontu: linia o szerokości 4,30 em wypełnia kontener przy rozmiarze 100 / 4,30, czyli około 23,2 `cqi`.
+2. Dla każdej pozostałej linii wylicz `wdth`, przy którym będzie dokładnie tak szeroka jak najszersza. Szerokość jest liniowa względem `wdth`, więc to jedno dzielenie, a nie szukanie.
+
+```ts
+// uproszczone z src/lib/fit.ts; linie przychodzą już wielkimi literami wg języka strony
+function fitLines(lines: string[], base: number, fill = 0.995) {
+  const target = Math.max(...lines.map((line) => lineEm(line, base)));
+  const wdth = lines.map((line) => {
+    const lo = lineEm(line, 50);
+    const hi = lineEm(line, 150);
+    return clamp(50 + ((target - lo) / (hi - lo)) * 100, 50, 150);
+  });
+  return { size: (100 * fill) / target, wdth }; // rozmiar w cqi
+}
+```
+
+`fill` równe 0,995 zostawia zapas na zaokrąglenia między buildem a przeglądarką.
+
+## Wynik w CSS: cqi i font-stretch
+
+Rozmiar jest w `cqi`. MDN definiuje 1 `cqi` jako 1% szerokości (rozmiaru w osi inline) kontenera zapytań. Opakowanie każdego dopasowanego bloku ma `container-type: inline-size`, więc tekst skaluje się z własnym pudełkiem, a nie z oknem przeglądarki. Ten sam komponent dopasowuje imię i nazwisko w hero oraz samo nazwisko w stopce.
+
+Szerokości trafiają do HTML jako procenty `font-stretch`, po jednej na linię, w zmiennych CSS. Na telefonie szerokie ustawienie daje niski, cienko wyglądający tekst, a zwężone dodaje mu wysokości. Dlatego każdy blok liczę dwa razy: z bazowym `wdth` 66 dla kontenerów węższych niż 700 px i z 96 dla szerszych. Który wariant obowiązuje, decyduje container query.
+
+```css
+.fit-host { container-type: inline-size; }
+.fit { font-size: calc(var(--fs-n) * 1cqi); line-height: 0.8; }
+.line { display: block; width: max-content; white-space: nowrap; font-stretch: var(--w-n); }
+
+@container (min-width: 700px) {
+  .fit { font-size: calc(var(--fs-w) * 1cqi); }
+  .line { font-stretch: var(--w-w); }
+}
+```
+
+Dla mojego imienia i nazwiska build zapisuje w wąskim wariancie rozmiar 23,118 `cqi`, MATEUSZ przy 84,97% i MUSZARSKI przy 66%. W szerokim to 16,115 `cqi`, ze 121,33% i 96%. W przeglądarce nic nie jest mierzone.
+
+## Co się psuje i w jaki sposób
+
+- **Nieznany znak wywraca build.** Jeśli dopasowana linia zawiera znak, którego nie ma w pliku metryk, funkcja licząca szerokość rzuca błąd i strona się nie wygeneruje. Wolę to niż linię, która po cichu jest o kilka procent za krótka. Naprawa: dopisać znak i uruchomić skrypt fontów ponownie.
+- **Bardzo nierówne linie nie mogą obie trzymać krawędzi.** Oś daje zakres mniej więcej 3 do 1 (MATEUSZ ma 2,51 em przy 50 i 7,65 em przy 150). Linia z dwiema literami obok linii z piętnastoma dojdzie do limitu 150 i zostanie krótsza.
+- **Font zastępczy nie ma osi szerokości.** Zanim dotrze Anybody, przeglądarka pokazuje lokalny krój dopasowany metrykami (Arial Bold albo podobny systemowy). MDN zaznacza, że `font-stretch` nic nie robi, gdy font nie ma krojów zwężonych ani rozszerzonych, więc przez tę chwilę linie są nierówne. Rozmiar się zgadza, bo wynika z `cqi`, a nie z fontu, a Anybody to jeden plik 49,5 KB ładowany z preloadem. Ile ta chwila trwa na wolnym łączu, nie mierzyłem.
+- **Metryki należą do jednego pliku fontu.** Wystarczy zmienić krój, grubość albo subset, a liczby przestają się zgadzać. Skrypt je odtwarza, ale nic nie sprawdza, czy ktoś go uruchomił.
+
+Test w Playwright otwiera stronę główną przy 1440 px i sprawdza, czy każda linia wypełnia ponad 97% kontenera, przed startem opisanego niżej ulepszenia i po nim. Tolerancja jest celowo luźna: ma złapać zepsute dopasowanie, a nie zaokrąglenia.
+
+## Po załadowaniu: akordeon liter
+
+Gdy strona się załaduje, a przeglądarka ma wolną chwilę, małe ulepszenie (1,7 KB po gzip) wprawia imię i nazwisko w ruch. Litery przy kursorze się rozszerzają, pozostałe zwężają, a linia nadal trzyma krawędzie. Bez kursora przez tekst przechodzi powolna fala. To ta sama liniowa zależność, tylko na poziomie pojedynczych liter.
+
+- Każda linia jest dzielona na osobne elementy dla liter. Dochodzi wizualnie ukryta kopia tekstu, a litery są ukryte przed technologiami asystującymi, więc czytnik ekranu przeczyta imię i nazwisko raz, a nie litera po literze. Ten sam test sprawdza, czy dostępna nazwa nagłówka to nadal pełne imię i nazwisko.
+- Każdą literę mierzę raz przy `wdth` 50 i raz przy 150. To daje dwie liczby: szerokość przy 50 i to, ile pikseli litera zyskuje na jednostkę `wdth`.
+- W każdej klatce liczona jest krzywa dzwonowa wokół punktu skupienia (kursora albo fali). Gdyby każda litera rozszerzyła się zgodnie z krzywą, linia by urosła. Dlatego najpierw odejmuję średnią krzywej ważoną nachyleniem każdej litery. Ważone zmiany sumują się wtedy do zera i linia zachowuje szerokość. Gdy litera dojdzie do 50 albo 150, równowaga trochę się psuje, a powolna korekta ściąga linię z powrotem do krawędzi.
+
+Klatki nigdy nie mierzą liter. Jedyny odczyt układu to jeden prostokąt na widoczny blok, żeby wiedzieć, gdzie jest kursor względem niego, i dzieje się przed jakimkolwiek zapisem stylu w tej klatce. Litery, których `wdth` zmienił się o mniej niż 0,02 od ostatniego zapisu, nie są ruszane.
+
+Ulepszenie wie też, kiedy przestać. Nie startuje przy `prefers-reduced-motion: reduce`. Zatrzymuje się, gdy blok jest poza ekranem (IntersectionObserver), gdy wciśniesz przycisk pauzy na stronie i gdy nic się już nie rusza. Te zasady opisałem w tekście o [ruchu, który szanuje ludzi](/pl/blog/reduced-motion-i-przycisk-pauzy/).
+
+## Co zrobiłbym inaczej
+
+- **Lista znaków wyliczana z treści.** Brakujący znak głośno wywraca build i to działa, ale lista wyliczana z każdego dopasowanego tekstu w każdym języku usunęłaby ten krok.
+- **Sprawdzanie krawędzi przy większej liczbie szerokości.** Test układu sprawdza już brak poziomego przewijania przy 8 szerokościach od 320 do 2560 px, ale test „wypełnia linię” działa tylko przy 1440. Wąski wariant, z bazowym `wdth` 66, zasługuje na to samo.
+
+## Wnioski
+
+- Jeśli Twój tekst wystawowy jest elementem LCP, ustal jego rozmiar, zanim zobaczy go przeglądarka. Font zmienny zamienia to w obliczenie zamiast pomiaru.
+- Sprawdź liniowość dla swojego fontu, zamiast ją zakładać. Dwa pomiary wystarczą tylko wtedy, gdy wykres jest prawie prosty; mój odchyla się najwyżej o 0,06%.
+- Używaj `cqi` zamiast `vw`, żeby dopasowany blok pasował do własnego pudełka, gdziekolwiek stoi.
+
+Jak powstała reszta tej strony, od wiki projektu po bramki Lighthouse, opisałem w [studium przypadku](/pl/blog/jak-powstala-ta-strona/). Jeśli szukasz kogoś do frontendu, w którym takie detale mają znaczenie, [tu znajdziesz kontakt](/pl/#contact).

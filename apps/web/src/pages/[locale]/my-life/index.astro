@@ -1,0 +1,234 @@
+---
+/**
+ * My life (structure.md § /my-life/, requirements.md F13): the person behind the work. Photo (the owner's own,
+ * placeholders.md P15), a short intro, the interests he named [user 2026-10-05], ways to hang out (Discord,
+ * Messenger: P5), back to work and contact. AboutPage JSON-LD → the Person. Faith is his own decision to publish
+ * (compliance-and-data.md: GDPR art. 9(2)(e)); no third persons on this page.
+ * PLACEHOLDER: the intro and the one-line blurbs are drafts for the owner to rewrite in his voice (P6).
+ */
+import { t } from "lingui-for-astro/macro";
+
+import BaseLayout from "~/components/layout/BaseLayout.astro";
+import JsonLd from "~/components/seo/JsonLd.astro";
+import Fit from "~/components/ui/Fit.astro";
+import Icon from "~/components/ui/Icon.astro";
+import { SITE, SOCIAL } from "~/data/site";
+import { type IconName } from "~/lib/icons.gen";
+import { chromeLinks } from "~/lib/nav";
+import { localeStaticPaths, pathTo } from "~/lib/routes";
+import { pageGraph } from "~/lib/schema";
+
+export const getStaticPaths = localeStaticPaths;
+
+const locale = Astro.locals.locale;
+const links = chromeLinks(locale);
+const site = Astro.site ?? new URL("http://localhost:4321");
+const url = new URL(pathTo(locale, "my-life"), site).href;
+const title = t`My life`;
+const description = t`Mateusz Muszarski outside of work: calisthenics, faith, travel, motorcycles, films, music, games with friends. And where to find him.`;
+const [line1, line2] = t`My|life`.split("|") as [string, string];
+
+const INTERESTS: { icon: IconName; title: string; blurb: string; tone: string }[] = [
+  { icon: "tb:barbell", title: t`Calisthenics`, blurb: t`Bodyweight training. Slow progress you can see.`, tone: "var(--yellow)" },
+  { icon: "tb:cross", title: t`Faith`, blurb: t`I'm a Christian. It shapes how I treat people and work.`, tone: "var(--ice)" },
+  { icon: "tb:plane", title: t`Travel`, blurb: t`New places, new languages, other ways of living.`, tone: "var(--orange)" },
+  { icon: "tb:motorbike", title: t`Motorcycles`, blurb: t`Two wheels and an open road.`, tone: "var(--lime)" },
+  { icon: "tb:movie", title: t`Films`, blurb: t`Good stories, well told.`, tone: "var(--pink)" },
+  { icon: "tb:headphones", title: t`Music`, blurb: t`Eclectic: whatever fits the moment.`, tone: "var(--cobalt)" },
+  { icon: "tb:device-gamepad-2", title: t`Games with friends`, blurb: t`Better together, on one couch or one voice channel.`, tone: "var(--yellow)" },
+  { icon: "tb:users-group", title: t`Parties`, blurb: t`Good people, long evenings.`, tone: "var(--orange)" },
+  { icon: "tb:trending-up", title: t`Self-improvement`, blurb: t`A bit better than yesterday, in code and outside it.`, tone: "var(--lime)" },
+  { icon: "tb:code", title: t`Web development`, blurb: t`Yes, also for fun: three.js scenes and side projects.`, tone: "var(--pink)" },
+];
+const SOCIAL_ICONS: Record<string, IconName> = { discord: "si:discord", messenger: "si:messenger" };
+---
+
+<BaseLayout title={title} description={description} path="my-life" og="my-life">
+  <JsonLd
+    slot="head"
+    data={pageGraph(site, url, "AboutPage", `${title} – ${SITE.name}`, description, locale, [
+      { name: SITE.name, url: new URL(links.home, site).href },
+      { name: title, url },
+    ])}
+  />
+  <section class="sec field-accent top" aria-labelledby="t-life">
+    <div class="sbar draw">
+      <p>{t`My life`}</p>
+      <p>{t`Outside of work`}</p>
+      <p>{t`Poland`}</p>
+    </div>
+    <div class="head">
+      <Fit as="h1" id="t-life" lines={[line1, line2]} />
+      <figure class="photo rise" style="--d:1">
+        <div class="ph" aria-hidden="true">
+          <Icon name="tb:camera" />
+          <span>{t`Photo soon`}</span>
+        </div>
+        <figcaption class="sr-only">{t`A photo of Mateusz will be here.`}</figcaption>
+      </figure>
+    </div>
+    <p class="lede rise" style="--d:2">
+      {t`I'm Mateusz. I write code for a living and for fun, but most of what keeps me going happens away from the screen. Here is a bit of that.`}
+    </p>
+  </section>
+
+  <section class="sec field-alt grid-sec" aria-labelledby="t-interests">
+    <h2 class="kick" id="t-interests">{t`What I'm into`}</h2>
+    <ul class="interests" role="list">
+      {
+        INTERESTS.map((interest, i) => (
+          <li class="tile rv" style={`--tone:${interest.tone};--d:${i % 4}`}>
+            <span class="ib">
+              <Icon name={interest.icon} />
+            </span>
+            <h3>{interest.title}</h3>
+            <p>{interest.blurb}</p>
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+
+  <section class="sec field-bar hang" aria-labelledby="t-hang">
+    <div class="hang-grid">
+      <div>
+        <h2 class="hang-t" id="t-hang">{t`Hang out`}</h2>
+        <p>{t`For games, talks and everything that isn't a job offer.`}</p>
+      </div>
+      <div class="hang-links">
+        {
+          SOCIAL.map((social) => (
+            <a class="btn btn-acc" href={social.href} rel="me noopener" data-umami-event="outbound" data-umami-event-target={social.id}>
+              <Icon name={SOCIAL_ICONS[social.id] ?? "tb:message-circle"} />
+              {social.label}
+            </a>
+          ))
+        }
+        <a class="btn btn-line" href={links.home}>
+          {t`Back to the work`}
+          <Icon name="tb:arrow-right" class="nudge" />
+        </a>
+        <a class="btn btn-line" href={links.contact}>
+          {t`Contact`}
+        </a>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .head {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: clamp(1rem, 3vw, 3rem);
+    align-items: end;
+  }
+  .photo {
+    width: clamp(8rem, 18vw, 16rem);
+    margin: 0;
+    transform: rotate(3deg);
+  }
+  .ph {
+    display: grid;
+    place-content: center;
+    justify-items: center;
+    gap: 0.5rem;
+    aspect-ratio: 4 / 5;
+    background: repeating-linear-gradient(-45deg, rgb(0 0 0 / 0.12) 0 14px, transparent 14px 28px), var(--ice);
+    color: var(--navy);
+    box-shadow: 10px 10px 0 0 var(--navy);
+    font-weight: 800;
+    font-size: 0.8125rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+  .ph :global(.ico) {
+    width: 2.5rem;
+    height: 2.5rem;
+  }
+  .lede {
+    max-width: 46ch;
+    margin: clamp(1.5rem, 3vw, 2.5rem) 0 0;
+    font-size: clamp(1.25rem, 1.8vw, 1.75rem);
+    line-height: 1.35;
+    font-weight: 600;
+  }
+  .grid-sec .kick {
+    margin: 0 0 1.25rem;
+  }
+  .interests {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 15rem), 1fr));
+    gap: 0.75rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .tile {
+    display: grid;
+    align-content: start;
+    gap: 0.625rem;
+    padding: 1.125rem;
+    box-shadow: inset 0 0 0 3px currentColor;
+    transition: transform var(--dur-base) var(--ease-out);
+  }
+  .ib {
+    display: grid;
+    place-items: center;
+    width: 3.25rem;
+    height: 3.25rem;
+    background: var(--tone);
+    color: var(--navy);
+    box-shadow: 0 0 0 2px currentColor;
+    transition: transform 0.45s var(--ease-pop);
+  }
+  .ib :global(.ico) {
+    width: 1.75rem;
+    height: 1.75rem;
+  }
+  .tile h3 {
+    margin: 0.25rem 0 0;
+    font-weight: 900;
+    font-size: 1.5rem;
+    line-height: 1;
+    text-transform: uppercase;
+    font-stretch: 72%;
+  }
+  .tile p {
+    margin: 0;
+    line-height: 1.45;
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .tile:hover .ib {
+      transform: rotate(-8deg) scale(1.08);
+    }
+  }
+  .hang-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 1.5rem 3rem;
+    align-items: center;
+  }
+  .hang-t {
+    margin: 0 0 0.5rem;
+    font-weight: 900;
+    font-size: clamp(2.5rem, 5vw, 4.5rem);
+    line-height: 0.9;
+    text-transform: uppercase;
+    font-stretch: 62%;
+  }
+  .hang p {
+    margin: 0;
+  }
+  .hang-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.625rem;
+  }
+  @media (max-width: 48rem) {
+    .head,
+    .hang-grid {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+</style>

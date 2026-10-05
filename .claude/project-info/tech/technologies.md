@@ -13,14 +13,15 @@
 | Components | React TSX via `@astrojs/react` (server-rendered; hydrate only islands) | 7.0.0 + react 19.3.0 | all sections are TSX (a React signal in the repo) | [research] |
 | Language | TypeScript strict (+ `@astrojs/check`) | **~6.0.3** (+ 0.9.10) | `@astrojs/check` does not accept TS 7 | [research] |
 | i18n | Lingui: core/react/cli/vite-plugin (`macroTransform: true`), format-po; `lingui-for-astro` for macros in `.astro` files | 6.9.0; 0.7.1 | owner requirement; S0 passed on the real scaffold 2026-10-05; `.po` compiled on import (no committed compiled catalog); details `site/i18n.md`, `usage/lingui.md` | [user], [research: spike] |
-| Content | `@astrojs/mdx` per-locale collections; `@astrojs/sitemap`; `@astrojs/rss` | 8.0.2; 3.7.4; 4.0.19 | case studies, posts, legal per locale | [research] |
+| Content | `@astrojs/mdx` per-locale collections (`src/content.config.ts`); `@astrojs/sitemap`; RSS written by hand (`[locale]/rss.xml.ts`) | 8.0.2; 3.7.4 | posts (incl. case study #0) and legal per locale | [research] |
+| Markdown | **Sätteri** (`@astrojs/markdown-satteri`, Astro 7's default processor): plugins are Sätteri mdast/hast plugins, not remark/rehype; Shiki with the `css-variables` theme | 0.4.2 | `legalTokens` (legal placeholders) + `tableScroll` (focusable wide tables) in `astro.config.mjs` | [measured 2026-10-05] |
 | Styling | Tailwind CSS + `@tailwindcss/vite` | 4.3.3 | same as the pstrykweb.pl landing | [research] |
 | Signature 3D | **vanilla three** (default) or **OGL** in an Astro `<script>` island, behind a custom `client:after-load` directive (load + idle + capability probe) | three 0.186.1 / ogl 1.0.11 | measured gz: R3F + React 302 KB (the whole budget) vs three 126 KB vs OGL 14 KB. R3F only if the moment grows into several scenes | [research: § 3.1] |
 | Motion | CSS first; GSAP lazily after LCP if needed; `motion` vanilla only if needed | gsap 3.15.0; motion 13.5.x (14.0 too fresh) | | [research] |
 | Page transitions | native cross-document View Transitions (`@view-transition`, `view-transition-name` for card → case) | 0 KB | Chrome 126+, Safari 18.2+; Firefox navigates without animation | [research: § 3.3] |
 | Smooth scroll | none (no Lenis) | — | native scroll; Lenis breaks anchors | [research] |
-| CV PDF | Playwright `page.pdf()` from `/<locale>/cv/print/` on `astro:build:done` (+ `@sparticuz/chromium` on Vercel) | playwright 1.63.0 | tagged PDF, 67 KB, the same components and data as `/cv/`; build output, never committed; a pdfjs content test fails the build when the PDF text ≠ the CV data; plan B Typst | [research: § 4] |
-| Contact | `src/pages/api/contact.ts` → `/api/contact/` (trailing slash, `i18n.md`; `prerender = false`) + Turnstile `siteverify` + Resend; honeypot + min fill time; one host rate-limit rule | resend 6.32.0 | works without JS (POST → 303); no DB | [research: § 5] |
+| CV PDF | `bun run cv:pdf`: Playwright `page.pdf()` (tagged, outline) from `/<locale>/cv/print/` of a running preview | playwright 1.63.0 | **committed** to `public/files/` (the Vercel build has no browser); the print route exposes a digest of the CV data, the script records it, `src/data/cv.test.ts` fails when the data changed after the PDFs were made [decided 2026-10-05, replaces the build-time + pdfjs plan] | [measured] |
+| Contact | **`apps/web/api/contact.ts`, a plain Vercel Function** next to the static site (no Astro adapter, so `astro preview` keeps working) → `/api/contact/`; Turnstile `siteverify` + Resend REST via `fetch` (no SDK); honeypot + min fill time + a per-instance limit; the real limit is one Vercel WAF rule; region fra1 (`vercel.json`) | — | works without JS (POST → 303 to `/contact/sent/` or `/contact/error/`); no DB; validation shared with the page (`src/lib/contact.ts`) | [decided 2026-10-05] |
 | Analytics | Umami Cloud Hobby (EU), script 2.3 KB gz, `data-domains` = prod host | — | cookieless; reads one localStorage opt-out key | [research: § 6] |
 | Media | `astro:assets` AVIF/WebP; loops AV1 (CRF 44–48) + optional HEVC + **H.264 fallback**; ffmpeg 8.1 | — | AV1 55–64% smaller; iPhone AV1 only on A17 Pro+ | [research: § 7] |
 | Testing | vitest; Playwright e2e + axe; Lighthouse script; pdfjs-dist PDF content test | — | gates in `working-agreement.md` § 2 | [research] |
@@ -56,7 +57,9 @@ Turborepo (`usage/turborepo.md`): `apps/web/` (the site; folders in `conventions
 | Lighthouse | `bun run lhci` (`scripts/lighthouse.mjs`, median of 3, budgets) |
 | fonts | `bun run fonts` (Anybody subset + metric fallbacks + `fit-metrics.gen.ts`; outputs committed) |
 | icons | `bun run icons` (the listed Simple Icons / Tabler icons → `src/lib/icons.gen.ts`; committed) |
-| media (later) | `video` · `og` |
+| CV PDFs | `bun run cv:pdf` (needs `bun run preview`; writes `public/files/*.pdf` + `cv-digest.json`; committed) |
+| share images + icons | `bun run og` (after a build; writes `public/og/<locale>/*.png`, `public/icons/*`, `manifest.webmanifest`; committed) |
+| video | ffmpeg by hand for now: AV1 (libsvtav1) + H.264, posters as WebP (`public/media/`) |
 | wiki | `node .claude/hooks/wiki-check.mjs` |
 
 Package manager: **bun 1.3.14** (decided at scaffold 2026-10-05 with the owner's Turborepo choice). Timings: `memory/run-notes.md`.
@@ -67,7 +70,7 @@ Package manager: **bun 1.3.14** (decided at scaffold 2026-10-05 with the owner's
 | --- | --- | --- | --- |
 | `PUBLIC_SITE_URL` | canonical origin; default `https://matmuszarski.space` (`seo.md` § Domain); review deploys use their own `VERCEL_URL` | host env | no |
 | `PUBLIC_TURNSTILE_SITE_KEY` / `TURNSTILE_SECRET_KEY` | contact bot check | host env | yes |
-| `RESEND_API_KEY` / `CONTACT_TO_EMAIL` | contact delivery | host env | yes |
+| `RESEND_API_KEY` / `CONTACT_TO_EMAIL` / `CONTACT_FROM_EMAIL` | contact delivery (`CONTACT_FROM_EMAIL` on a domain verified in Resend); unset = the form answers "can't send right now, copy my email" | host env | yes |
 | `PUBLIC_UMAMI_WEBSITE_ID` | analytics; unset = no script | host env | no |
 | `PUBLIC_GOOGLE_SITE_VERIFICATION` | only if not verified by DNS | host env | no |
 | `INDEXNOW_KEY` | IndexNow pings after deploy | host env | no |

@@ -32,6 +32,11 @@ Wired so far (no-ops until `PUBLIC_UMAMI_WEBSITE_ID` is set):
 - slice 0: `locale_switch` (Umami data attributes on the locale links, 0 JS), `theme_toggle` (`umami.track` in the toggle script)
 - slice 1: `cta` id=contact / id=cv (header, footer), `cv_download` (header, menu, footer), `outbound` (GitHub, LinkedIn,
   npm, astro) - all data attributes
+- overnight build 2026-10-05: `cta` (see-work, all-projects, walkthrough, this-site, open-to-projects, blog), `outbound`
+  (every chapter and /work/ link with `project`), `cv_download` (hero, contact, cv-page, blog), `copy_email` (contact),
+  `contact_submit` (topic) / `contact_error` (kind), `case_open` (/work/ → case study), `motion_toggle`
+- The script loads after `load`, never with DNT/GPC or the `umami.disabled` opt-out (`layout/UmamiLoader.astro`); the
+  privacy page has the opt-out switch (`legal/AnalyticsOptOut.astro`)
 
 ## Funnels and KPIs
 

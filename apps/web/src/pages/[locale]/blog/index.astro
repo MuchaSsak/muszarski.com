@@ -1,0 +1,158 @@
+---
+/**
+ * Blog index (structure.md § Blog, requirements.md F12): en + pl only (i18n.md § Locale coverage). The featured post
+ * (the case study) leads, then every post newest first with a tag filter (buttons; without JS every post shows).
+ */
+import type { Locale } from "@package/shared/locales";
+import { t } from "lingui-for-astro/macro";
+
+import PostCard from "~/components/blog/PostCard.astro";
+import TagLabel from "~/components/blog/TagLabel.astro";
+import BaseLayout from "~/components/layout/BaseLayout.astro";
+import JsonLd from "~/components/seo/JsonLd.astro";
+import Fit from "~/components/ui/Fit.astro";
+import Icon from "~/components/ui/Icon.astro";
+import { SITE } from "~/data/site";
+import { BLOG_TAGS } from "~/lib/blog";
+import { BLOG_LOCALES, chromeLinks } from "~/lib/nav";
+import { postsIn } from "~/lib/posts";
+import { pathTo } from "~/lib/routes";
+import { pageGraph } from "~/lib/schema";
+
+export const getStaticPaths = () => BLOG_LOCALES.map((locale) => ({ params: { locale } }));
+
+const locale = Astro.locals.locale as "en" | "pl";
+const links = chromeLinks(locale);
+const posts = await postsIn(locale);
+const featured = posts.find((post) => post.data.featured) ?? posts[0];
+const rest = posts.filter((post) => post !== featured);
+const tags = BLOG_TAGS.filter((tag) => posts.some((post) => post.data.tags.includes(tag)));
+const site = Astro.site ?? new URL("http://localhost:4321");
+const title = t`Blog`;
+const description = t`Notes from building web and mobile products: AI-assisted development with Claude Code, i18n with Lingui, performance and accessibility. With sources.`;
+const url = new URL(pathTo(locale, "blog"), site).href;
+---
+
+<BaseLayout title={title} description={description} path="blog" locales={BLOG_LOCALES as Locale[]} current="blog" og="blog">
+  <JsonLd
+    slot="head"
+    data={pageGraph(site, url, "CollectionPage", `${title} – ${SITE.name}`, description, locale, [
+      { name: SITE.name, url: new URL(links.home, site).href },
+      { name: title, url },
+    ])}
+  />
+  <section class="sec field-hero top" aria-labelledby="t-blog">
+    <div class="sbar draw">
+      <p>{t`Blog`}</p>
+      <p>{t`Notes from the work`}</p>
+      <p><a href={links.rss}><Icon name="tb:rss" /> RSS</a></p>
+    </div>
+    <Fit as="h1" id="t-blog" lines={[title]} />
+    <p class="lede rise">{description}</p>
+  </section>
+
+  <section class="sec field-alt list" aria-label={t`Posts`}>
+    {featured && <PostCard post={featured} wide headingLevel="h2" tone={3} />}
+    {
+      tags.length > 1 && (
+        <div class="filters" role="group" aria-label={t`Show posts about`} data-filters hidden>
+          <button class="fchip" type="button" aria-pressed="true" data-tag="">
+            {t`All`}
+          </button>
+          {tags.map((tag) => (
+            <button class="fchip" type="button" aria-pressed="false" data-tag={tag}>
+              <TagLabel tag={tag} />
+            </button>
+          ))}
+        </div>
+      )
+    }
+    <div class="grid" data-posts>
+      {rest.map((post, i) => <PostCard post={post} tone={i} headingLevel="h2" />)}
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .top {
+    padding-bottom: clamp(2.5rem, 5vw, 4.5rem);
+  }
+  .sbar a {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    text-decoration: none;
+  }
+  .sbar :global(.ico) {
+    width: 1.125rem;
+    height: 1.125rem;
+  }
+  .lede {
+    max-width: 52ch;
+    margin: clamp(1.25rem, 2.4vw, 2rem) 0 0;
+    font-size: clamp(1.1875rem, 1.6vw, 1.5rem);
+    line-height: 1.4;
+  }
+  .list {
+    display: grid;
+    gap: clamp(1.25rem, 2.6vw, 2.25rem);
+  }
+  .filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  .fchip {
+    min-height: 2.75rem;
+    padding: 0 0.875rem;
+    border: 0;
+    background: none;
+    color: inherit;
+    box-shadow: inset 0 0 0 2px currentColor;
+    font: inherit;
+    font-weight: 800;
+    font-size: 0.8125rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    font-stretch: 115%;
+    cursor: pointer;
+    transition:
+      background-color var(--dur-base),
+      color var(--dur-base);
+  }
+  .fchip[aria-pressed="true"] {
+    background: var(--sfg);
+    color: var(--sbg);
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: clamp(0.75rem, 1.6vw, 1.5rem);
+  }
+  @media (max-width: 64rem) {
+    .grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+  @media (max-width: 40rem) {
+    .grid {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+</style>
+
+<script>
+  for (const filters of document.querySelectorAll<HTMLElement>("[data-filters]")) {
+    const grid = document.querySelector<HTMLElement>("[data-posts]")!;
+    const cards = [...grid.querySelectorAll<HTMLElement>("[data-tags]")];
+    const buttons = [...filters.querySelectorAll<HTMLButtonElement>("[data-tag]")];
+    filters.hidden = false;
+    for (const button of buttons) {
+      button.addEventListener("click", () => {
+        const tag = button.dataset.tag ?? "";
+        buttons.forEach((b) => b.setAttribute("aria-pressed", String(b === button)));
+        for (const card of cards) card.hidden = !!tag && !(card.dataset.tags ?? "").split(" ").includes(tag);
+      });
+    }
+  }
+</script>

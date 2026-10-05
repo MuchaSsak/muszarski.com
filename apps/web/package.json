@@ -18,9 +18,12 @@
     "lhci": "node ./scripts/lighthouse.mjs",
     "shots": "node ./scripts/shots.mjs",
     "fonts": "node ./scripts/fonts.mjs",
-    "icons": "node ./scripts/icons.mjs"
+    "icons": "node ./scripts/icons.mjs",
+    "cv:pdf": "node ./scripts/cv-pdf.mjs",
+    "og": "node ./scripts/og.mjs"
   },
   "dependencies": {
+    "@astrojs/markdown-satteri": "0.4.2",
     "@astrojs/mdx": "8.0.2",
     "@astrojs/react": "7.0.0",
     "@astrojs/sitemap": "3.7.4",

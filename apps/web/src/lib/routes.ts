@@ -56,7 +56,8 @@ export function alternates(site: string | URL, path: LocalizedPath, available: r
  */
 export function switchPath(path: LocalizedPath, to: Locale, fallback: LocalizedPath = "", available: readonly Locale[] = LOCALES): string {
   if (localesOf(path, available).includes(to)) return pathTo(to, path);
-  return pathTo(to, fallback);
+  // The fallback section may not exist in `to` either (no Spanish blog): then that locale's home.
+  return localesOf(fallback).includes(to) ? pathTo(to, fallback) : pathTo(to);
 }
 
 /** The locale of a URL path's first segment, or the default. */

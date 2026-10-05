@@ -1,0 +1,609 @@
+---
+/**
+ * Contact (structure.md § Home 7, requirements.md F09): message first. One text box; once something is written, a
+ * "Where do I reply?" field appears and fills itself when the message holds an email, phone or LinkedIn link. Topic
+ * chips are optional; "Start with a project" preselects one. Works without JS (a plain POST to /api/contact/, then a
+ * result page); with JS it sends in place and keeps the text on every error, with copy-email as the way out.
+ * Turnstile loads only once the visitor starts typing, and only when its site key is set.
+ */
+import { PUBLIC_TURNSTILE_SITE_KEY } from "astro:env/client";
+import { t } from "lingui-for-astro/macro";
+
+import Fit from "~/components/ui/Fit.astro";
+import Icon from "~/components/ui/Icon.astro";
+import { cvPdfHref, PROFILES, SITE } from "~/data/site";
+import { LIMITS } from "~/lib/contact";
+import { chromeLinks } from "~/lib/nav";
+
+const locale = Astro.locals.locale;
+const links = chromeLinks(locale);
+const linkedin = PROFILES.find((profile) => profile.id === "linkedin")!;
+const github = PROFILES.find((profile) => profile.id === "github")!;
+const [line1, line2] = t`Let's|talk`.split("|") as [string, string];
+const errors = {
+  "message-empty": t`Write a message first. One line is enough.`,
+  "message-long": t`That's a long one. Please keep it under 4,000 characters.`,
+  "reply-missing": t`Where should I reply? Add an email, a phone number or your LinkedIn.`,
+  "reply-invalid": t`I can't reply to that. Use an email, a phone number or a LinkedIn profile link.`,
+  spam: t`That looked automated. Please try again in a moment.`,
+  turnstile: t`The spam check didn't pass. Please try again.`,
+  rate: t`Too many messages from here. Please wait a few minutes, or copy my email.`,
+  unavailable: t`The form can't send right now. Copy my email instead; your text is still here.`,
+  network: t`No connection. Your text is still here; try again, or copy my email.`,
+};
+const found = { email: t`Found an email in your message`, phone: t`Found a phone number in your message`, linkedin: t`Found your LinkedIn in your message` };
+---
+
+<section class="sec field-accent contact" id="contact" aria-labelledby="t-ct">
+  <div class="sbar draw">
+    <p>{t`Contact`}</p>
+    <p>{t`One message is enough`}</p>
+    <p>{t`Poland · CET`}</p>
+  </div>
+  <div class="contact-grid">
+    <div class="intro">
+      <Fit as="h2" id="t-ct" lines={[line1, line2]} />
+      <p class="lede rv">{t`A role, a project or a question. One line is fine.`}</p>
+      <!-- PLACEHOLDER: availability facts wait for the owner (placeholders.md P4, Q3). -->
+      <ul class="ifacts rv" style="--d:1" role="list">
+        <li><Icon name="tb:briefcase" />{t`Full-time or contract`}</li>
+        <li><Icon name="tb:map-pin" />{t`Remote · Poland, CET`}</li>
+        <li><Icon name="tb:language" />{t`English · Polish`}</li>
+      </ul>
+      <p class="open rv" style="--d:2">
+        <span>{t`Open to selected freelance projects.`}</span>
+        <button class="btn btn-inv" type="button" data-start-project data-umami-event="cta" data-umami-event-id="open-to-projects" data-umami-event-source="contact">
+          {t`Start with a project`}
+          <Icon name="tb:arrow-right" class="nudge" />
+        </button>
+      </p>
+    </div>
+
+    <div class="form-col">
+      <form
+        class="msg"
+        action="/api/contact/"
+        method="post"
+        data-contact
+        data-errors={JSON.stringify(errors)}
+        data-found={JSON.stringify(found)}
+        data-sending={t`Sending…`}
+        data-sitekey={PUBLIC_TURNSTILE_SITE_KEY}
+      >
+        <input type="hidden" name="locale" value={locale} />
+        <input type="hidden" name="topic" value="" data-topic-input />
+        <input type="hidden" name="started" value="" data-started />
+        <div class="hp" aria-hidden="true">
+          <label>Website <input type="text" name="website" tabindex="-1" autocomplete="off" /></label>
+        </div>
+        <div class="topics" role="group" aria-labelledby="ct-about">
+          <span class="kick" id="ct-about">{t`About`} <span class="sr-only">{t`(optional)`}</span></span>
+          <button class="topic" type="button" aria-pressed="false" data-topic="job"><Icon name="tb:briefcase" />{t`A job`}</button>
+          <button class="topic" type="button" aria-pressed="false" data-topic="project"><Icon name="tb:rocket" />{t`A project`}</button>
+          <button class="topic" type="button" aria-pressed="false" data-topic="question"><Icon name="tb:message-circle" />{t`A question`}</button>
+        </div>
+        <label class="field">
+          <span class="sr-only">{t`Your message`}</span>
+          <textarea
+            name="message"
+            required
+            minlength={LIMITS.messageMin}
+            maxlength={LIMITS.messageMax}
+            rows="5"
+            placeholder={t`Hi Mateusz, we're hiring for…`}
+            aria-describedby="ct-note"
+            data-message></textarea>
+        </label>
+        <div class="send-row">
+          <label class="reply">
+            <span class="kick">{t`Where do I reply?`}</span>
+            <input
+              name="reply"
+              type="text"
+              required
+              maxlength={LIMITS.replyMax}
+              autocomplete="email"
+              inputmode="email"
+              spellcheck="false"
+              placeholder={t`Email, phone or LinkedIn`}
+              aria-describedby="ct-found"
+              data-reply
+            />
+            <span class="found" id="ct-found" aria-live="polite" data-found-note></span>
+          </label>
+          <button class="btn btn-inv send" type="submit" data-send>
+            <span data-send-label>{t`Send`}</span>
+            <Icon name="tb:send" />
+          </button>
+        </div>
+        <div class="ts" data-turnstile></div>
+        <p class="note" id="ct-note" aria-live="polite" data-note>
+          <span data-note-text>{t`Used only to reply.`}</span>
+          <a href={links.privacy}>{t`Privacy policy`}</a>
+        </p>
+      </form>
+
+      <div class="done" data-done hidden tabindex="-1">
+        <Icon name="tb:circle-check" />
+        <p class="done-t">{t`Sent. Thank you.`}</p>
+        <p>{t`I'll reply to the address you gave me.`}</p>
+        <button class="btn btn-line" type="button" data-again>{t`Write another message`}</button>
+      </div>
+
+      <div class="direct">
+        <button
+          class="dlink"
+          type="button"
+          data-copy={SITE.email}
+          data-copied={t`Email copied`}
+          data-copy-failed={SITE.email}
+          data-copy-event="copy_email"
+          data-copy-source="contact"
+        >
+          <Icon name="tb:copy" />
+          <span>{t`Copy email`}<small>{SITE.email}</small></span>
+        </button>
+        <a class="dlink" href={linkedin.href} rel="me noopener" data-umami-event="outbound" data-umami-event-target="linkedin">
+          <Icon name="tb:brand-linkedin" />
+          <span>LinkedIn<small>/in/{linkedin.handle}</small></span>
+        </a>
+        <a class="dlink" href={github.href} rel="me noopener" data-umami-event="outbound" data-umami-event-target="github">
+          <Icon name="si:github" />
+          <span>GitHub<small>{github.handle}</small></span>
+        </a>
+        <div class="dlink cv">
+          <Icon name="tb:file-cv" />
+          <span>
+            <a href={links.cv} data-umami-event="cta" data-umami-event-id="cv" data-umami-event-source="contact">CV</a>
+            <small
+              ><a href={links.cv} tabindex="-1" aria-hidden="true">{t`Page`}</a> · <a
+                href={cvPdfHref(locale)}
+                download
+                data-umami-event="cv_download"
+                data-umami-event-source="contact"
+                data-umami-event-locale={locale}>PDF</a
+              ></small
+            >
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .contact-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: clamp(2rem, 5vw, 6rem);
+    margin-top: clamp(1.25rem, 2.4vw, 2.25rem);
+    align-items: start;
+  }
+  .lede {
+    max-width: 34ch;
+    margin: 1.5rem 0 0;
+    font-size: clamp(1.1875rem, 1.5vw, 1.4375rem);
+    line-height: 1.4;
+  }
+  .ifacts {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1.25rem;
+    margin: 1.375rem 0 0;
+    padding: 0;
+    list-style: none;
+    font-weight: 800;
+    font-size: 0.875rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    font-stretch: 115%;
+  }
+  .ifacts li {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .ifacts :global(.ico) {
+    width: 1.375rem;
+    height: 1.375rem;
+  }
+  .open {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem 1rem;
+    margin: 1.75rem 0 0;
+    padding-top: 1.25rem;
+    border-top: 3px solid currentColor;
+    font-weight: 700;
+  }
+
+  form.msg {
+    display: grid;
+    gap: 0.875rem;
+  }
+  .hp {
+    position: absolute;
+    left: -9999px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+  }
+  .topics {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .topics .kick {
+    margin-right: 0.25rem;
+  }
+  .topic {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    min-height: 2.75rem;
+    padding: 0 0.75rem;
+    border: 0;
+    background: none;
+    color: inherit;
+    box-shadow: inset 0 0 0 2px currentColor;
+    font: inherit;
+    font-weight: 800;
+    font-size: 0.8125rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    font-stretch: 115%;
+    cursor: pointer;
+    transition:
+      background-color var(--dur-base),
+      color var(--dur-base);
+  }
+  .topic :global(.ico) {
+    width: 1.125rem;
+    height: 1.125rem;
+  }
+  .topic[aria-pressed="true"] {
+    background: var(--sfg);
+    color: var(--sbg);
+  }
+  textarea,
+  input:not([type="hidden"]) {
+    width: 100%;
+    padding: 1rem 1.125rem;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    font-weight: 500;
+    font-size: 1.3125rem;
+    line-height: 1.35;
+    box-shadow: inset 0 0 0 3px currentColor;
+    transition: box-shadow var(--dur-fast);
+  }
+  textarea {
+    min-height: 10.5rem;
+    max-height: 26rem;
+    resize: vertical;
+    field-sizing: content;
+  }
+  ::placeholder {
+    color: currentColor;
+    opacity: 0.62;
+  }
+  textarea:focus-visible,
+  input:focus-visible {
+    outline: none;
+    box-shadow: inset 0 0 0 6px currentColor;
+  }
+  [aria-invalid="true"] {
+    box-shadow:
+      inset 0 0 0 3px currentColor,
+      6px 6px 0 0 var(--navy);
+  }
+  .send-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 0.625rem;
+    align-items: end;
+  }
+  .reply {
+    display: grid;
+    gap: 0.375rem;
+    transition:
+      opacity 0.4s var(--ease-out),
+      transform 0.5s var(--ease-out);
+  }
+  .reply input {
+    padding: 0.75rem 0.875rem;
+    font-size: 1.125rem;
+  }
+  :global(.js) form.msg:not(.ask) .reply {
+    opacity: 0;
+    transform: translateY(0.5rem);
+    visibility: hidden;
+  }
+  .found {
+    min-height: 1.2em;
+    font-weight: 700;
+    font-size: 0.8125rem;
+  }
+  .send {
+    min-height: 3.25rem;
+  }
+  .send[disabled] {
+    opacity: 0.7;
+    cursor: progress;
+  }
+  .note {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem 0.5rem;
+    margin: 0;
+    font-size: 0.875rem;
+  }
+  .note.err {
+    padding: 0.75rem 0.875rem;
+    background: var(--navy);
+    color: var(--ice);
+    font-weight: 700;
+  }
+  .ts:empty {
+    display: none;
+  }
+  .done {
+    display: grid;
+    justify-items: start;
+    gap: 0.75rem;
+    padding: 1.5rem;
+    box-shadow: inset 0 0 0 3px currentColor;
+  }
+  .done[hidden] {
+    display: none;
+  }
+  .done :global(.ico) {
+    width: 2.75rem;
+    height: 2.75rem;
+  }
+  .done p {
+    margin: 0;
+  }
+  .done-t {
+    font-weight: 900;
+    font-size: clamp(2rem, 3vw, 3rem);
+    line-height: 0.95;
+    font-stretch: 70%;
+    text-transform: uppercase;
+  }
+  .direct {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 0.5rem;
+    margin-top: 1.75rem;
+    padding-top: 1.375rem;
+    border-top: 3px solid currentColor;
+  }
+  .dlink {
+    display: grid;
+    justify-items: start;
+    align-content: start;
+    gap: 0.625rem;
+    min-width: 0;
+    padding: 0.875rem;
+    border: 0;
+    background: none;
+    color: inherit;
+    box-shadow: inset 0 0 0 2px currentColor;
+    font: inherit;
+    font-weight: 800;
+    font-size: 0.8125rem;
+    line-height: 1.2;
+    letter-spacing: 0.04em;
+    text-align: left;
+    text-decoration: none;
+    text-transform: uppercase;
+    font-stretch: 110%;
+    cursor: pointer;
+    transition:
+      background-color var(--dur-base),
+      color var(--dur-base);
+  }
+  .dlink :global(.ico) {
+    width: 1.875rem;
+    height: 1.875rem;
+    transition: transform 0.45s var(--ease-pop);
+  }
+  .dlink > span {
+    display: block;
+    width: 100%;
+    min-width: 0;
+  }
+  .dlink small {
+    display: block;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-weight: 600;
+    font-size: 0.75rem;
+    letter-spacing: 0;
+    text-transform: none;
+  }
+  .dlink.cv {
+    cursor: default;
+  }
+  .dlink.cv a {
+    text-underline-offset: 3px;
+  }
+  @media (hover: hover) {
+    .dlink:not(.cv):hover {
+      background: var(--sfg);
+      color: var(--sbg);
+    }
+    .dlink:hover :global(.ico) {
+      transform: rotate(-10deg) scale(1.12);
+    }
+  }
+
+  @media (max-width: 64rem) {
+    .direct {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+  @media (max-width: 56.25rem) {
+    .contact-grid {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+  @media (max-width: 40rem) {
+    .send-row {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    :global(.js) form.msg:not(.ask) .reply {
+      display: none;
+    }
+    textarea {
+      font-size: 1.125rem;
+    }
+  }
+</style>
+
+<script>
+  import { findReply, isTopic, LIMITS, replyKind, validateContact, type ContactError } from "~/lib/contact";
+  import { toast } from "~/scripts/motion";
+
+  type Umami = { track: (event: string, data?: Record<string, string>) => void };
+  const track = (event: string, data?: Record<string, string>) => (window as unknown as { umami?: Umami }).umami?.track(event, data);
+
+  for (const form of document.querySelectorAll<HTMLFormElement>("[data-contact]")) {
+    const section = form.closest("section")!;
+    const errors = JSON.parse(form.dataset.errors ?? "{}") as Record<ContactError, string>;
+    const foundText = JSON.parse(form.dataset.found ?? "{}") as Record<string, string>;
+    const message = form.querySelector<HTMLTextAreaElement>("[data-message]")!;
+    const reply = form.querySelector<HTMLInputElement>("[data-reply]")!;
+    const foundNote = form.querySelector<HTMLElement>("[data-found-note]")!;
+    const topicInput = form.querySelector<HTMLInputElement>("[data-topic-input]")!;
+    const started = form.querySelector<HTMLInputElement>("[data-started]")!;
+    const note = form.querySelector<HTMLElement>("[data-note]")!;
+    const noteText = form.querySelector<HTMLElement>("[data-note-text]")!;
+    const defaultNote = noteText.textContent ?? "";
+    const send = form.querySelector<HTMLButtonElement>("[data-send]")!;
+    const sendLabel = form.querySelector<HTMLElement>("[data-send-label]")!;
+    const sendText = sendLabel.textContent ?? "";
+    const done = section.querySelector<HTMLElement>("[data-done]")!;
+    const topics = [...form.querySelectorAll<HTMLButtonElement>("[data-topic]")];
+    const sitekey = form.dataset.sitekey;
+    let autoFilled = false;
+    let turnstileId: string | undefined;
+
+    const setTopic = (value: string) => {
+      topicInput.value = isTopic(value) ? value : "";
+      topics.forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.topic === topicInput.value)));
+    };
+    topics.forEach((b) => b.addEventListener("click", () => setTopic(topicInput.value === b.dataset.topic ? "" : b.dataset.topic!)));
+
+    const showError = (kind: ContactError | null) => {
+      note.classList.toggle("err", !!kind);
+      noteText.textContent = kind ? errors[kind] : defaultNote;
+      message.setAttribute("aria-invalid", String(kind === "message-empty" || kind === "message-long"));
+      reply.setAttribute("aria-invalid", String(kind === "reply-missing" || kind === "reply-invalid"));
+    };
+
+    const loadTurnstile = () => {
+      if (!sitekey || document.querySelector("script[data-turnstile-script]")) return;
+      const script = document.createElement("script");
+      script.src = "https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit";
+      script.async = true;
+      script.dataset.turnstileScript = "";
+      script.onload = () => {
+        const api = (window as unknown as { turnstile?: { render: (el: Element, opts: object) => string } }).turnstile;
+        turnstileId = api?.render(form.querySelector("[data-turnstile]")!, { sitekey, appearance: "interaction-only", size: "flexible" });
+      };
+      document.head.append(script);
+    };
+
+    message.addEventListener("input", () => {
+      if (!started.value) {
+        started.value = String(Date.now());
+        loadTurnstile();
+      }
+      form.classList.toggle("ask", message.value.trim().length > 0);
+      const hit = findReply(message.value);
+      if (hit && (!reply.value || autoFilled)) {
+        reply.value = hit.value;
+        autoFilled = true;
+        foundNote.textContent = foundText[hit.kind] ?? "";
+      } else if (!hit && autoFilled) {
+        reply.value = "";
+        autoFilled = false;
+        foundNote.textContent = "";
+      }
+      if (note.classList.contains("err")) showError(null);
+    });
+    reply.addEventListener("input", () => {
+      autoFilled = false;
+      foundNote.textContent = "";
+      const kind = replyKind(reply.value);
+      reply.inputMode = kind === "phone" ? "tel" : "email";
+    });
+
+    section.querySelector("[data-start-project]")?.addEventListener("click", () => {
+      setTopic("project");
+      message.focus();
+    });
+
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      const problem = validateContact({ message: message.value, reply: reply.value, topic: topicInput.value });
+      if (problem) {
+        form.classList.add("ask");
+        showError(problem);
+        (problem.startsWith("message") ? message : reply).focus();
+        track("contact_error", { kind: "validation" });
+        return;
+      }
+      if (message.value.length > LIMITS.messageMax) return;
+      send.disabled = true;
+      sendLabel.textContent = form.dataset.sending ?? sendText;
+      try {
+        const response = await fetch(form.action, {
+          method: "POST",
+          body: new URLSearchParams(new FormData(form) as unknown as Record<string, string>),
+          headers: { Accept: "application/json" },
+        });
+        const result = (await response.json().catch(() => ({ ok: false, error: response.status === 429 ? "rate" : "unavailable" }))) as {
+          ok: boolean;
+          error?: ContactError;
+        };
+        if (!result.ok) throw Object.assign(new Error("send"), { kind: result.error ?? "unavailable" });
+        track("contact_submit", { topic: topicInput.value || "none" });
+        form.hidden = true;
+        done.hidden = false;
+        done.focus();
+      } catch (error) {
+        const kind = ((error as { kind?: ContactError }).kind ?? "network") as ContactError;
+        showError(kind);
+        toast(errors[kind]);
+        track("contact_error", { kind: kind === "rate" ? "429" : kind === "unavailable" ? "5xx" : kind });
+        const api = (window as unknown as { turnstile?: { reset: (id?: string) => void } }).turnstile;
+        if (turnstileId) api?.reset(turnstileId);
+      } finally {
+        send.disabled = false;
+        sendLabel.textContent = sendText;
+      }
+    });
+
+    section.querySelector("[data-again]")?.addEventListener("click", () => {
+      form.reset();
+      setTopic("");
+      autoFilled = false;
+      foundNote.textContent = "";
+      form.classList.remove("ask");
+      showError(null);
+      done.hidden = true;
+      form.hidden = false;
+      message.focus();
+    });
+  }
+</script>

@@ -1,0 +1,62 @@
+---
+/**
+ * The error page of a contact form sent without JavaScript (api/contact.ts answers 303 here with `?e=<kind>`). The
+ * reason is read by a tiny script; without it the page shows the general message. Copy email is the way out.
+ * noindex; never in the sitemap.
+ */
+import { t } from "lingui-for-astro/macro";
+
+import BaseLayout from "~/components/layout/BaseLayout.astro";
+import Fit from "~/components/ui/Fit.astro";
+import Icon from "~/components/ui/Icon.astro";
+import { SITE } from "~/data/site";
+import { chromeLinks } from "~/lib/nav";
+import { localeStaticPaths } from "~/lib/routes";
+
+export const getStaticPaths = localeStaticPaths;
+
+const links = chromeLinks(Astro.locals.locale);
+const reasons = {
+  "message-empty": t`The message was empty.`,
+  "message-long": t`The message was longer than 4,000 characters.`,
+  "reply-missing": t`There was no address to reply to.`,
+  "reply-invalid": t`The reply address wasn't an email, a phone number or a LinkedIn link.`,
+  rate: t`Too many messages were sent from your connection. Please wait a few minutes.`,
+};
+---
+
+<BaseLayout title={t`Message not sent`} description={t`The contact form could not send your message. Write directly to Mateusz Muszarski instead.`} path="contact/error" noindex>
+  <section class="sec field-bar result">
+    <Fit as="h1" lines={[t`Not sent`]} motion="calm" />
+    <p class="lede" data-reason data-reasons={JSON.stringify(reasons)}>{t`The form couldn't send your message.`}</p>
+    <p>{t`Go back and try again, or write to me directly:`} <strong>{SITE.email}</strong></p>
+    <div class="ctas">
+      <a class="btn btn-acc" href={links.contact}>{t`Back to the form`}<Icon name="tb:arrow-right" class="nudge" /></a>
+      <a class="btn btn-line" href={`mailto:${SITE.email}`}><Icon name="tb:mail" />{t`Email me`}</a>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .result {
+    min-height: 70svh;
+  }
+  .lede {
+    max-width: 44ch;
+    margin: 1.5rem 0 0.75rem;
+    font-size: clamp(1.1875rem, 1.6vw, 1.5rem);
+  }
+  .ctas {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: 1.5rem;
+  }
+</style>
+
+<script>
+  const el = document.querySelector<HTMLElement>("[data-reason]");
+  const kind = new URLSearchParams(location.search).get("e");
+  const reasons = JSON.parse(el?.dataset.reasons ?? "{}") as Record<string, string>;
+  if (el && kind && reasons[kind]) el.textContent = reasons[kind];
+</script>

@@ -4,15 +4,19 @@
  * `si:*` tool marks (Simple Icons, CC0; one colour, unaltered, nominative use) and `tb:*` UI icons (Tabler, MIT).
  * Decorative by default; pass `label` when the icon is the only content of a control.
  */
+import type { HTMLAttributes } from "astro/types";
+
 import { type IconName, ICONS } from "~/lib/icons.gen";
 
-interface Props {
+interface Props extends Omit<HTMLAttributes<"svg">, "name" | "class"> {
   name: IconName;
   class?: string | undefined;
   label?: string | undefined;
+  hidden?: boolean | undefined;
+  [key: `data-${string}`]: unknown;
 }
 
-const { name, class: className, label } = Astro.props;
+const { name, class: className, label, ...rest } = Astro.props;
 const icon = ICONS[name];
 const paint = icon.stroke
   ? ({
@@ -33,5 +37,6 @@ const paint = icon.stroke
   role={label ? "img" : undefined}
   aria-label={label}
   {...paint}
+  {...rest}
   set:html={icon.body}
 />

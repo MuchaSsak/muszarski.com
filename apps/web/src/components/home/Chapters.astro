@@ -1,0 +1,76 @@
+---
+/**
+ * Selected work (structure.md § Home 2, requirements.md F03): the flagship chapters as a stack of posters, then the
+ * "All projects" strip. The rights gate (CLAUDE.md invariants) drops client/internship chapters whose rights are not
+ * `ok` from the launch build; review builds show all four (placeholders.md P10).
+ */
+import "~/styles/chapters.css";
+
+import { t } from "lingui-for-astro/macro";
+
+import ChapterClockful from "~/components/home/chapters/ChapterClockful.astro";
+import ChapterLinkoglot from "~/components/home/chapters/ChapterLinkoglot.astro";
+import ChapterPstrykWeb from "~/components/home/chapters/ChapterPstrykWeb.astro";
+import ChapterSpace from "~/components/home/chapters/ChapterSpace.astro";
+import Icon from "~/components/ui/Icon.astro";
+import { visibleFlagships } from "~/data/projects";
+import { WORK_LINKS } from "~/data/site";
+import { chromeLinks } from "~/lib/nav";
+
+const links = chromeLinks(Astro.locals.locale);
+const CHAPTERS = {
+  pstrykweb: ChapterPstrykWeb,
+  linkoglot: ChapterLinkoglot,
+  "neoteric-clockful": ChapterClockful,
+  "space-portfolio": ChapterSpace,
+} as const;
+const shown = visibleFlagships().filter((project) => project.slug in CHAPTERS);
+const pad = (n: number) => String(n).padStart(2, "0");
+---
+
+<div class="chapters" id="work" aria-label={t`Selected work`} role="region">
+  {
+    shown.map((project, i) => {
+      const Chapter = CHAPTERS[project.slug as keyof typeof CHAPTERS];
+      return <Chapter counter={`${pad(i + 1)} / ${pad(shown.length)}`} />;
+    })
+  }
+</div>
+
+<div class="sec field-bar more">
+  <p>
+    <Icon name="si:npm" />
+    <span>
+      <b>{t`Also shipped:`}</b>
+      <a href={WORK_LINKS.linguiTranslateAi} rel="noopener" data-umami-event="outbound" data-umami-event-target="npm-lingui-translate-ai"
+        >lingui-translate-ai</a
+      >, {t`my npm CLI that translates Lingui catalogs with an LLM.`}
+    </span>
+  </p>
+  <a class="btn btn-acc" href={links.workIndex} data-umami-event="cta" data-umami-event-id="all-projects" data-umami-event-source="chapters">
+    {t`All projects`}
+    <Icon name="tb:arrow-right" class="nudge" />
+  </a>
+</div>
+
+<dialog class="lb" data-lightbox aria-label={t`Video`}>
+  <div class="lb-in">
+    <video controls muted loop playsinline></video>
+    <button class="r-btn" type="button" data-close aria-label={t`Close video`}><Icon name="tb:x" /></button>
+  </div>
+</dialog>
+
+<script>
+  import "~/scripts/reel";
+
+  // Each chapter sticks when its bottom meets the viewport (never under the header), so the next poster slides over
+  // the whole previous one. Re-measured on resize; no per-scroll work.
+  const chapters = [...document.querySelectorAll<HTMLElement>(".chapter")];
+  const header = document.querySelector<HTMLElement>(".site-header");
+  const stick = () => {
+    const top = header?.offsetHeight ?? 0;
+    for (const chapter of chapters) chapter.style.setProperty("--stick", `${Math.min(top, innerHeight - chapter.offsetHeight)}px`);
+  };
+  stick();
+  new ResizeObserver(stick).observe(document.documentElement);
+</script>

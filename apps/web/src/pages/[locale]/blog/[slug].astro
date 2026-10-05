@@ -1,0 +1,409 @@
+---
+/**
+ * A blog post (structure.md § Blog, requirements.md F12): header on the hero field (tags, title, description, dates,
+ * reading time, author, cover), then the prose on the alt field with a table of contents (sticky on wide screens),
+ * sources, the author box and related posts. BlogPosting + BreadcrumbList JSON-LD; hreflang only between real
+ * translations (`translationKey`); the language switch falls back to the other blog's index.
+ */
+import "~/styles/prose.css";
+
+import type { Locale } from "@package/shared/locales";
+import { render } from "astro:content";
+import { t } from "lingui-for-astro/macro";
+
+import PostCard from "~/components/blog/PostCard.astro";
+import PostCover from "~/components/blog/PostCover.astro";
+import TagLabel from "~/components/blog/TagLabel.astro";
+import BaseLayout from "~/components/layout/BaseLayout.astro";
+import JsonLd from "~/components/seo/JsonLd.astro";
+import Icon from "~/components/ui/Icon.astro";
+import { cvPdfHref, SITE } from "~/data/site";
+import { proseWords, tocOf } from "~/lib/blog";
+import { chromeLinks } from "~/lib/nav";
+import { allPosts, type Post, postLocale, postMinutes, postPath, postSlug, relatedTo, translationsOf } from "~/lib/posts";
+import { pathTo } from "~/lib/routes";
+import { postGraph } from "~/lib/schema";
+
+export async function getStaticPaths() {
+  return (await allPosts()).map((post) => ({ params: { locale: postLocale(post), slug: postSlug(post) }, props: { post } }));
+}
+
+interface Props {
+  post: Post;
+}
+
+const { post } = Astro.props;
+const locale = postLocale(post);
+const links = chromeLinks(locale);
+const { Content, headings } = await render(post);
+const toc = tocOf(headings);
+const translations = await translationsOf(post);
+const otherLocale = locale === "en" ? "pl" : "en";
+const otherPath = translations[otherLocale];
+const related = await relatedTo(post);
+const minutes = postMinutes(post);
+const site = Astro.site ?? new URL("http://localhost:4321");
+const url = new URL(postPath(post), site).href;
+const fmt = (date: Date) => new Intl.DateTimeFormat(locale, { day: "numeric", month: "long", year: "numeric", timeZone: "Europe/Warsaw" }).format(date);
+const ogKey = `blog-${postSlug(post)}`;
+const isCaseStudy = post.data.tags.includes("case-study");
+const blogTitle = t`Blog`;
+const tocLabel = t`On this page`;
+---
+
+<BaseLayout
+  title={post.data.seoTitle ?? post.data.title}
+  description={post.data.description}
+  path={translations}
+  locales={Object.keys(translations) as Locale[]}
+  current="blog"
+  og={ogKey}
+  fallback={{ en: "blog", pl: "blog" }}
+  article={{ published: post.data.published, updated: post.data.updated, tags: post.data.tags }}
+>
+  <JsonLd
+    slot="head"
+    data={postGraph(
+      site,
+      {
+        url,
+        title: post.data.title,
+        description: post.data.description,
+        locale,
+        published: post.data.published,
+        updated: post.data.updated,
+        image: new URL(`/og/${locale}/${ogKey}.png`, site).href,
+        tags: post.data.tags,
+        words: proseWords(post.body ?? ""),
+        aboutUrl: new URL(links.myLife, site).href,
+      },
+      [
+        { name: SITE.name, url: new URL(links.home, site).href },
+        { name: blogTitle, url: new URL(links.blog, site).href },
+        { name: post.data.title, url },
+      ],
+    )}
+  />
+
+  <article class="post" lang={locale}>
+    <header class="sec field-hero head">
+      <nav class="crumbs" aria-label={t`Breadcrumb`}>
+        <a href={links.blog}>{blogTitle}</a>
+        <span aria-hidden="true">/</span>
+        <span>{isCaseStudy ? t`Case study` : <TagLabel tag={post.data.tags[0]!} />}</span>
+      </nav>
+      <div class="head-grid">
+        <div>
+          <p class="tags rise">
+            {
+              post.data.tags.map((tag) => (
+                <span>
+                  <TagLabel tag={tag} />
+                </span>
+              ))
+            }
+          </p>
+          <h1 class="title">{post.data.title}</h1>
+          <p class="desc rise" style="--d:1">{post.data.description}</p>
+          <p class="meta rise" style="--d:2">
+            <span>
+              {t`By`} <a href={links.myLife}>{SITE.name}</a>
+            </span>
+            <time datetime={post.data.published.toISOString()}>{fmt(post.data.published)}</time>
+            {
+              post.data.updated && (
+                <span>
+                  {t`Updated`} <time datetime={post.data.updated.toISOString()}>{fmt(post.data.updated)}</time>
+                </span>
+              )
+            }
+            <span>{t`${minutes} min read`}</span>
+            {
+              otherPath && (
+                <a href={pathTo(otherLocale, otherPath)} hreflang={otherLocale} lang={otherLocale}>
+                  {locale === "en" ? "Po polsku" : "In English"}
+                </a>
+              )
+            }
+          </p>
+        </div>
+        <div class="cover-wrap rise" style="--d:1"><PostCover cover={post.data.cover} tone={3} /></div>
+      </div>
+    </header>
+
+    <div class="sec field-alt body">
+      <aside class="toc" aria-label={tocLabel}>
+        {
+          toc.length > 2 && (
+            <details open class="toc-box">
+              <summary class="kick">{tocLabel}</summary>
+              <ol>
+                {toc.map((heading) => (
+                  <li class:list={{ sub: heading.depth === 3 }}>
+                    <a href={`#${heading.slug}`}>{heading.text}</a>
+                  </li>
+                ))}
+              </ol>
+            </details>
+          )
+        }
+      </aside>
+      <div class="prose">
+        <Content />
+
+        {
+          post.data.sources.length > 0 && (
+            <section class="sources" aria-labelledby="sources">
+              <h2 id="sources">{t`Sources`}</h2>
+              <ol>
+                {post.data.sources.map((source) => (
+                  <li>
+                    <a href={source.url} rel="noopener">
+                      {source.title}
+                    </a>
+                    <span class="acc">
+                      {" "}
+                      ({t`accessed`} <time datetime={source.accessed.toISOString().slice(0, 10)}>{fmt(source.accessed)}</time>)
+                    </span>
+                  </li>
+                ))}
+              </ol>
+            </section>
+          )
+        }
+
+        <aside class="author" aria-label={t`About the author`}>
+          <div class="avatar" aria-hidden="true">MM</div>
+          <div>
+            <p class="a-name">{SITE.name}</p>
+            <p>
+              {t`Full-stack developer from Poland. I build web and mobile products end to end, and I write down what I learn while doing it.`}
+            </p>
+            <p class="a-links">
+              <a href={links.myLife}>{t`More about me`}</a>
+              <a href={links.cv}>CV</a>
+              <a href={cvPdfHref(locale)} download data-umami-event="cv_download" data-umami-event-source="blog" data-umami-event-locale={locale}>PDF</a>
+              <a href={links.contact} data-umami-event="cta" data-umami-event-id="contact" data-umami-event-source="blog">{t`Contact`}</a>
+            </p>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </article>
+
+  {
+    related.length > 0 && (
+      <section class="sec field-hero more" aria-labelledby="related">
+        <div class="sbar draw">
+          <p id="related">{t`Read next`}</p>
+          <p />
+          <p>
+            <a href={links.blog}>
+              {t`All posts`} <Icon name="tb:arrow-right" />
+            </a>
+          </p>
+        </div>
+        <div class="grid">
+          {related.map((other, i) => (
+            <PostCard post={other} tone={i + 1} />
+          ))}
+        </div>
+      </section>
+    )
+  }
+</BaseLayout>
+
+<style>
+  .head {
+    padding-bottom: clamp(2.5rem, 5vw, 4.5rem);
+  }
+  .crumbs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: clamp(1.25rem, 3vw, 2.5rem);
+    font-weight: 800;
+    font-size: 0.8125rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    font-stretch: 120%;
+  }
+  .head-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 8fr) minmax(0, 4fr);
+    gap: clamp(1.5rem, 4vw, 4rem);
+    align-items: end;
+  }
+  .tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.375rem;
+    margin: 0 0 1rem;
+  }
+  .tags span {
+    padding: 0.25rem 0.5rem;
+    background: var(--sfg);
+    color: var(--sbg);
+    font-weight: 800;
+    font-size: 0.75rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    font-stretch: 115%;
+  }
+  .title {
+    max-width: 24ch;
+    margin: 0;
+    font-weight: 900;
+    font-size: clamp(2.25rem, 1.4rem + 3.6vw, 5.25rem);
+    line-height: 0.96;
+    letter-spacing: -0.01em;
+    font-stretch: 72%;
+  }
+  .desc {
+    max-width: 56ch;
+    margin: 1.25rem 0 0;
+    font-size: clamp(1.125rem, 1.4vw, 1.375rem);
+    line-height: 1.45;
+  }
+  .meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.375rem 1.125rem;
+    margin: 1.5rem 0 0;
+    padding-top: 0.875rem;
+    border-top: 3px solid currentColor;
+    font-weight: 700;
+    font-size: 0.875rem;
+  }
+  .cover-wrap {
+    box-shadow: 10px 10px 0 0 var(--accent);
+  }
+  .body {
+    display: grid;
+    grid-template-columns: minmax(13rem, 3fr) minmax(0, 9fr);
+    gap: clamp(1.5rem, 4vw, 4.5rem);
+    align-items: start;
+    padding-top: clamp(2.5rem, 5vw, 4.5rem);
+  }
+  .toc {
+    position: sticky;
+    top: calc(var(--header-h) + 1.25rem);
+    max-height: calc(100svh - var(--header-h) - 2.5rem);
+    overflow-y: auto;
+  }
+  .toc-box summary {
+    padding-bottom: 0.625rem;
+    border-bottom: 3px solid currentColor;
+    cursor: pointer;
+  }
+  .toc ol {
+    margin: 0.75rem 0 0;
+    padding: 0;
+    list-style: none;
+    font-size: 0.9375rem;
+    line-height: 1.35;
+  }
+  .toc li {
+    margin: 0.5rem 0;
+  }
+  .toc li.sub {
+    padding-left: 0.875rem;
+    font-size: 0.875rem;
+  }
+  .toc a {
+    text-decoration: none;
+  }
+  .toc a:hover {
+    text-decoration: underline;
+  }
+  .sources {
+    margin-top: 3rem;
+    padding-top: 0.5rem;
+    border-top: 3px solid currentColor;
+    font-size: 0.9375rem;
+  }
+  .sources h2 {
+    margin-top: 0.75em;
+  }
+  .acc {
+    opacity: 0.85;
+  }
+  .author {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: 1.25rem;
+    margin-top: 3rem;
+    padding: 1.25rem;
+    box-shadow: inset 0 0 0 3px currentColor;
+  }
+  .author p {
+    margin: 0 0 0.5rem;
+  }
+  .avatar {
+    display: grid;
+    place-items: center;
+    width: 4.5rem;
+    height: 4.5rem;
+    background: var(--accent);
+    color: var(--on-accent);
+    font-weight: 900;
+    font-size: 1.5rem;
+    font-stretch: 70%;
+  }
+  .a-name {
+    font-weight: 900;
+    font-size: 1.25rem;
+    text-transform: uppercase;
+    font-stretch: 80%;
+  }
+  .a-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1.25rem;
+    font-weight: 800;
+  }
+  .more .sbar a {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    text-decoration: none;
+  }
+  .more .sbar :global(.ico) {
+    width: 1.125rem;
+    height: 1.125rem;
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: clamp(0.75rem, 1.6vw, 1.5rem);
+    margin-top: 1.5rem;
+  }
+  @media (max-width: 64rem) {
+    .body {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .toc {
+      position: static;
+      max-height: none;
+    }
+    .toc-box:not([open]) summary {
+      border-bottom-width: 2px;
+    }
+    .grid {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+  @media (max-width: 48rem) {
+    .head-grid {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .cover-wrap {
+      max-width: 26rem;
+    }
+  }
+</style>
+
+<script>
+  // On narrow screens the table of contents starts closed (it would push the text down a full screen).
+  if (matchMedia("(max-width: 64rem)").matches) document.querySelector<HTMLDetailsElement>(".toc-box")?.removeAttribute("open");
+</script>

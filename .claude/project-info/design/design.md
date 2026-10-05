@@ -72,10 +72,25 @@ checks AA for every field in every theme.
 | Theme switch | `layout/ThemeCycle.astro` | shows the current theme's name; cross-fade View Transition |
 | Pause motion | `layout/MotionToggle.astro` + `scripts/motion.ts` | every copy in sync; stored; hidden under reduced motion |
 
-**To build (later slices):** chapter stack with a reel per project (platform frame, seek chips, play/pause, expand),
-PstrykWeb #1 badge + order loop, the 7-stop product loop, the AI pipeline, expanding credential cards, message-first
-contact, toast. Patterns: `comps/poster-r3.html`. The Stack section is cut [user 2026-10-05: recruiters don't need a
-whole section for it]; tools show in the band and in each chapter.
+**Built 2026-10-05 (overnight build [user: "build everything ... in one go"]):**
+
+| Component | File | Notes |
+| --- | --- | --- |
+| Chapters | `home/Chapters.astro`, `home/chapters/*.astro`, `styles/chapters.css` | 4 skins (yellow, orange, lime, space); sticky stack (JS sets `--stick` so each poster sticks when its bottom meets the viewport); rights gate drops client/internship chapters at launch; "All projects" strip + npm line |
+| Reel | `ui/ReelControls.astro`, `scripts/reel.ts` | sources attach after the first interaction AND near view; plays at 50% visible; chips seek + fill; expand → `<dialog>`; drawn stand-ins use the same row, inert (`live={false}`) |
+| PstrykWeb stage | chapter 01 | #1 burst (ring text fitted at build), drawn order loop (CSS, 10 s), "Video soon" (P18); public info only |
+| Linkoglot stage | chapter 02 | phone breaks into the title (overlap computed from the build-time fit), flash card flip, the owner's store preview as interim loop (AV1 + H.264, 0.5 MB, P8) |
+| Clockful stage | chapter 03 | drawn dashboard; a real demo timer in CSS only (`@property` integer + counters), Start/Stop |
+| Space stage | chapter 04 | monitor + loop cut to Mars and Jupiter (planet textures CC BY 4.0, credited; the stops with third-party logos and the uncredited lens-dirt texture are left out); CSS orrery (offset-path ellipses); Lighthouse receipt → case study |
+| How I work | `home/HowIWork.astro` | 7-stop ring (CSS trig), every stop's text in the HTML, auto-advance while visible, tap holds 9 s; receipts fall back when a project is hidden by the rights gate |
+| AI workflow | `home/AiWorkflow.astro`, `lib/repo-stats.ts` | 7 steps, packet on desktop, vertical run on phones; hooks/wiki/skills/lessons counted from the repo at build; MCP servers named |
+| Credentials | `home/Credentials.astro` | expanding cards from `data/cv.ts`; media loads on open; vertical accordion < 900 px; all open without JS |
+| Latest writing | `home/LatestWriting.astro`, `blog/PostCard.astro`, `blog/PostCover.astro` | 3 newest posts; covers are code-drawn SVG motifs |
+| Contact | `home/Contact.astro`, `lib/contact.ts`, `api/contact.ts` | message first; reply field appears after typing and fills itself from the message; topic chips; Turnstile on first keystroke; works without JS (303 to `/contact/sent/` or `/contact/error/`) |
+| Pages | `pages/[locale]/{work,cv,cv/print,my-life,privacy,terms,blog,blog/[slug]}` | Poster headers (fitted titles), prose on the alt field (`styles/prose.css`), sticky TOC on wide screens |
+
+The Stack section is cut [user 2026-10-05: recruiters don't need a whole section for it]; tools show in the band and in each
+chapter. Patterns came from `comps/poster-r3.html`.
 
 ## Motion
 
@@ -85,7 +100,10 @@ whole section for it]; tools show in the band and in each chapter.
 - **Rules:** the H1 never fades or moves on load; first-screen entrances are CSS; `.rv` reveals below the fold only
   hide once the script runs (`html.rv-ready`), so a failed script hides nothing. Sections get `.off` offscreen (CSS
   loops pause); `html.still` pauses everything (WCAG 2.2.2); reduced motion shows the final state.
-- **Cost:** page JS 3.0 KB gz (fit 1.7, motion 0.5, pause 0.4, band 0.3); no per-frame layout reads.
+- **Cost:** page JS 3.0 KB gz at the hero slice (fit 1.7, motion 0.5, pause 0.4, band 0.3). The accordion reads one
+  bounding box per visible block per frame (before any write), never per letter.
+- **Entrances under a stored pause:** `.still *` pauses every animation, which would freeze an entrance on its hidden first
+  frame; entrances carry `.rise` / `.enter` and show their final state when paused (`global.css`, `e2e/pages.spec.ts`).
 
 ## Imagery
 
@@ -111,5 +129,5 @@ whole section for it]; tools show in the band and in each chapter.
 | Marks with names, in context | A wall of coloured logos without names |
 | Many small loops, all pausable and offscreen-aware | Loops that run unseen or ignore the pause button |
 | Same content on phones, tap twins for every hover | Hover-only reveals, cursor effects, scroll-jacking |
-| Native cursor always; a contextual label next to it over media is the open idea (owner asked about a custom cursor 2026-10-05) | Replacing or hiding the cursor, a follower blob |
+| Native cursor always [user 2026-10-05: "we not building custom cursor"] | Replacing or hiding the cursor, a follower blob, cursor labels |
 | Avoid: custom cursor, magnetic everything, "Hello" preloader, text scramble, typewriter hero, skill bars, floating 3D laptop, purple AI gradients | — |

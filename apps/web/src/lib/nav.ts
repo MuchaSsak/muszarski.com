@@ -25,9 +25,10 @@ export function chromeLinks(locale: Locale) {
     rss: `/${blogLocale}/rss.xml`,
     cv: pathTo(locale, "cv"),
     myLife: pathTo(locale, "my-life"),
-    thisSite: pathTo(locale, "work/how-this-site-was-built"),
+    thisSite: pathTo(blogLocale, `blog/${blogLocale === "pl" ? "jak-powstala-ta-strona" : "how-this-site-was-built"}`),
     privacy: pathTo(locale, "privacy"),
     terms: pathTo(locale, "terms"),
-    project: (slug: string) => pathTo(locale, `work/${slug}`),
+    /** A flagship's chapter on the home page (case studies live in the blog: open-questions Q43). */
+    project: (anchor: string) => `${pathTo(locale)}#${anchor}`,
   };
 }

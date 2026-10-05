@@ -11,13 +11,16 @@
 /                                → 308 /en/                      (vercel.json; i18n.md)
 /<locale>/                       home                            locale ∈ en (default) · pl · es
 /<locale>/work/                  ALL projects index, filterable (F04) [user] 2026-10-05
-/<locale>/work/<slug>/           case study per flagship (F05); **owner 2026-10-05: case studies live in the blog** (Q43)
+/<locale>/work/<slug>/           not built: **case studies live in the blog** [user 2026-10-05] (Q43); `/work/` links a
+                                 flagship's home chapter (`/<locale>/#<anchor>`) and case study #0 (`/blog/how-this-site-was-built/`)
 /<locale>/blog/                  blog index (F12); en + pl only (i18n.md § Locale coverage)
 /<locale>/blog/<slug>/           post (slug per locale)
 /<locale>/cv/                    web CV, same data as the PDF (F11)
 /<locale>/my-life/               personal page (F13)
 /<locale>/privacy/               privacy policy, noindex,follow (F14)
-/<locale>/terms/                 only if required (compliance-and-data.md)
+/<locale>/terms/                 regulamin, conservative draft (compliance-and-data.md; Q16)
+/<locale>/contact/sent|error/     results of a no-JS form post (noindex)
+/<locale>/cv/print/              the PDF's source (noindex)
 /404                             per-locale copy (F21)
 /files/mateusz-muszarski-cv-<locale>.pdf
 /en/rss.xml · /pl/rss.xml · /sitemap.xml (index) · /robots.txt · /llms.txt
@@ -104,11 +107,11 @@ Messenger) · back to work / contact. Secondary nav item; not in the hero path.
   - < 480 px: the CV control is a single "CV" button (the PDF lives in the menu); button type condenses (`wdth` 82, 72 under
     360 px); the stuck full name stacks in two lines
   - `e2e/chrome.spec.ts` checks every header control for spill and overlap at 8 widths x 3 locales
-- **Contact panel:** the same content as the home contact section; opens from any page; Esc closes;
-  focus is trapped and returned.
+- **Contact panel:** not built [assumption 2026-10-05]: every Contact link goes to the home section `#contact` (one form,
+  one place to maintain). Revisit if analytics show people dropping on the jump.
 - **Footer columns** (this list owns the footer links; ~15 links):
-  - Work (the 4 flagships + All projects)
-  - Site (Blog, CV, My life, How this site was built → `/work/how-this-site-was-built/` [assumption 2026-10-05], RSS)
+  - Work (the 4 flagships → their home chapters, + All projects)
+  - Site (Blog, CV, My life, How this site was built → the blog case study, RSS)
   - Elsewhere (GitHub, LinkedIn, npm…; `rel="me"`)
   - Legal (Privacy, Terms)
   - plus the locale switch and the build-time revision row (`design-references.md` § Per home section, Footer row)

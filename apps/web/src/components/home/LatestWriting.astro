@@ -1,0 +1,58 @@
+---
+/**
+ * Latest writing (structure.md § Home 6): three newest posts for internal links, in the page's blog locale (Spanish
+ * pages show the English posts, marked as English). Hidden when there are no posts.
+ */
+import { t } from "lingui-for-astro/macro";
+
+import PostCard from "~/components/blog/PostCard.astro";
+import Fit from "~/components/ui/Fit.astro";
+import Icon from "~/components/ui/Icon.astro";
+import { chromeLinks } from "~/lib/nav";
+import { postsIn } from "~/lib/posts";
+
+const locale = Astro.locals.locale;
+const links = chromeLinks(locale);
+const posts = (await postsIn(links.blogLocale === "pl" ? "pl" : "en")).slice(0, 3);
+const english = links.blogLocale !== locale;
+---
+
+{
+  posts.length > 0 && (
+    <section class="sec field-hero writing" id="writing" aria-labelledby="t-wr">
+      <div class="sbar draw">
+        <p>{t`Writing`}</p>
+        <p>{t`Notes from the work`}</p>
+        <p>{english ? t`In English` : t`Newest first`}</p>
+      </div>
+      <Fit as="h2" id="t-wr" lines={[t`Writing`]} motion="calm" />
+      <div class="grid">
+        {posts.map((post, i) => (
+          <PostCard post={post} tone={i * 2} />
+        ))}
+      </div>
+      <a class="btn btn-acc all" href={links.blog} data-umami-event="cta" data-umami-event-id="blog" data-umami-event-source="home">
+        {t`All posts`}
+        {english && " (EN)"}
+        <Icon name="tb:arrow-right" class="nudge" />
+      </a>
+    </section>
+  )
+}
+
+<style>
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: clamp(0.75rem, 1.6vw, 1.5rem);
+    margin-top: clamp(1.5rem, 3vw, 2.5rem);
+  }
+  .all {
+    margin-top: clamp(1.5rem, 3vw, 2.5rem);
+  }
+  @media (max-width: 64rem) {
+    .grid {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+</style>

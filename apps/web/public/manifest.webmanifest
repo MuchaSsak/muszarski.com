@@ -1,0 +1,20 @@
+{
+  "name": "Mateusz Muszarski",
+  "short_name": "M—M",
+  "start_url": "/en/",
+  "display": "browser",
+  "background_color": "#2433ff",
+  "theme_color": "#2433ff",
+  "icons": [
+    {
+      "src": "/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

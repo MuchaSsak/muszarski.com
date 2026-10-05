@@ -1,0 +1,153 @@
+---
+title: "Fit text to its container at build time with a variable font"
+seoTitle: "Fit text to its container at build time"
+description: "How my name runs edge to edge on this site with no JavaScript: font metrics measured at build time, the wdth axis, cqi units and font-stretch."
+translationKey: "fitted-type"
+published: 2026-10-05
+tags: [typography, performance, design]
+cover: type
+related: [this-site, reduced-motion]
+sources:
+  - title: "CSS container queries (MDN)"
+    url: "https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_containment/Container_queries"
+    accessed: 2026-10-05
+  - title: "font-stretch (MDN)"
+    url: "https://developer.mozilla.org/en-US/docs/Web/CSS/font-stretch"
+    accessed: 2026-10-05
+  - title: "font-variation-settings (MDN)"
+    url: "https://developer.mozilla.org/en-US/docs/Web/CSS/font-variation-settings"
+    accessed: 2026-10-05
+  - title: "Anybody, Etcetera Type Co. (GitHub)"
+    url: "https://github.com/Etcetera-Type-Co/Anybody"
+    accessed: 2026-10-05
+  - title: "Anybody METADATA.pb, axes and licence (google/fonts)"
+    url: "https://raw.githubusercontent.com/google/fonts/main/ofl/anybody/METADATA.pb"
+    accessed: 2026-10-05
+  - title: "fontkit (GitHub)"
+    url: "https://github.com/foliojs/fontkit"
+    accessed: 2026-10-05
+  - title: "Largest Contentful Paint (LCP), web.dev"
+    url: "https://web.dev/articles/lcp"
+    accessed: 2026-10-05
+  - title: "Cumulative Layout Shift (CLS), web.dev"
+    url: "https://web.dev/articles/cls"
+    accessed: 2026-10-05
+  - title: "Intersection Observer API (MDN)"
+    url: "https://developer.mozilla.org/en-US/docs/Web/API/Intersection_Observer_API"
+    accessed: 2026-10-05
+---
+
+The name at the top of this site's home page runs edge to edge, and no script sizes it. At build time I measure the variable font Anybody at both ends of its width axis, solve for the font size and the per-line width that make each line fill its container, and write them into the page as `cqi` units and `font-stretch` values. The browser renders the heading at its final size from HTML and CSS alone.
+
+## Why not fit the text with JavaScript on load?
+
+The usual way to fit a headline is a script: render the text, measure it, scale the font size until it fills the box, repeat on resize. On this site the heading is my name, the largest thing on the first screen, so it is the Largest Contentful Paint (LCP) element. A script fit leaves two bad options.
+
+- **Render first, fit later.** The text appears at a guessed size and then jumps, and everything under it moves too. That is a layout shift: web.dev defines one as a visible element changing its position from one rendered frame to the next.
+- **Hide it until it fits.** web.dev excludes elements with an opacity of 0 from LCP, so the LCP now waits for the script, the font and the measurement.
+
+I wanted neither. The home page ships about 3 KB of page JavaScript (gzip), and none of it is needed to draw the heading. On mobile Lighthouse (median of 3 runs) it scores 100 in all four categories, with an LCP of about 1.65 s and a CLS of 0.
+
+## The observation that makes it possible
+
+Anybody is a variable font with a width axis (`wdth`) from 50 to 150 and a weight axis from 100 to 900, under the OFL. In CSS, `font-stretch` drives the `wdth` axis: MDN lists it as the registered axis behind that property, and recommends the high-level property over `font-variation-settings` whenever one exists.
+
+The key fact: at a fixed weight, the advance width of every glyph, and every kerning pair, changes linearly with `wdth`. If I know a line's width at 50 and at 150, I know it at every width in between, with one interpolation.
+
+"Linearly" deserves a footnote. I checked it with fontkit on the source font file at nine points from 50 to 150. Strictly, the font has a master at 100 (its default), so the curve is two straight pieces that meet there. The bend is small: for the lines I tested (MATEUSZ, MUSZARSKI and a few kerning-heavy pairs such as AV and TO), the real width at those nine points is at most 0.06% away from the straight line. The fit aims at 99.5% of the container, which absorbs that.
+
+## Measuring at build time
+
+A Node script (`scripts/fonts.mjs`) runs when the type changes, not on every deploy. It subsets the font, writes the `@font-face` rules, and writes a metrics file for every character a fitted line may use: Latin capitals, Polish and Spanish capitals, digits and some punctuation. The current file holds 72 characters and 406 kerning pairs.
+
+```js
+// simplified from scripts/fonts.mjs
+const at = [50, 150].map((wdth) => font.getVariation({ wght: 900, wdth }));
+const em = (units) => units / font.unitsPerEm;
+
+for (const c of DISPLAY) adv[c] = at.map((f) => em(f.layout(c).advanceWidth));
+
+for (const a of DISPLAY)
+  for (const b of DISPLAY) {
+    // kerning = the pair's width minus both glyphs on their own
+    const k = at.map((f) => f.layout(a + b).advanceWidth - f.layout(a).advanceWidth - f.layout(b).advanceWidth);
+    if (k.some((v) => Math.abs(v) > 0.5)) kern[a + b] = k.map(em);
+  }
+```
+
+The output is a plain object: two numbers per character and per kerning pair, in em, at 50 and at 150. The generated file is committed, so the site build never touches the font tools.
+
+## Solving each line
+
+With the metrics, a line's width in em at any `wdth` is a sum of interpolations. The fit has two steps.
+
+1. Take the widest line at a chosen base width. Its width in em sets the font size: a line 4.30 em wide fills its container at a font size of 100 / 4.30, about 23.2 `cqi`.
+2. For every other line, solve for the `wdth` that makes it exactly as wide as the widest one. Width is linear in `wdth`, so this is one division, not a search.
+
+```ts
+// simplified from src/lib/fit.ts; lines arrive uppercased with the page's locale
+function fitLines(lines: string[], base: number, fill = 0.995) {
+  const target = Math.max(...lines.map((line) => lineEm(line, base)));
+  const wdth = lines.map((line) => {
+    const lo = lineEm(line, 50);
+    const hi = lineEm(line, 150);
+    return clamp(50 + ((target - lo) / (hi - lo)) * 100, 50, 150);
+  });
+  return { size: (100 * fill) / target, wdth }; // size in cqi
+}
+```
+
+The `fill` of 0.995 leaves room for rounding between the build and the browser.
+
+## Writing the CSS: cqi and font-stretch
+
+The size is in `cqi`. MDN defines 1 `cqi` as 1% of a query container's inline size. The wrapper around each fitted block has `container-type: inline-size`, so the type scales with its own box, not with the viewport. The same component fits my name across the hero and my surname in the footer.
+
+The widths become `font-stretch` percentages, one per line, as custom properties in the HTML. On a phone, a wide setting gives short, thin-looking type, while a condensed one gives it height. So every block is solved twice: with a base `wdth` of 66 for containers under 700 px, and with 96 above. A container query picks one.
+
+```css
+.fit-host { container-type: inline-size; }
+.fit { font-size: calc(var(--fs-n) * 1cqi); line-height: 0.8; }
+.line { display: block; width: max-content; white-space: nowrap; font-stretch: var(--w-n); }
+
+@container (min-width: 700px) {
+  .fit { font-size: calc(var(--fs-w) * 1cqi); }
+  .line { font-stretch: var(--w-w); }
+}
+```
+
+For my name the build writes, in the narrow case, a size of 23.118 `cqi` with MATEUSZ at 84.97% and MUSZARSKI at 66%. In the wide case it is 16.115 `cqi`, with 121.33% and 96%. Nothing is measured in the browser.
+
+## What fails, and how
+
+- **An unknown character fails the build.** If a fitted line contains a character the metrics file doesn't hold, the width function throws and the page can't be generated. I prefer that to a line that is silently a few percent off. The fix: add the character and rerun the font script.
+- **Very uneven lines can't both be flush.** The axis gives a range of about 3 to 1 (MATEUSZ is 2.51 em wide at 50 and 7.65 em at 150). A two-letter line next to a fifteen-letter line hits the limit at 150 and stays short.
+- **The fallback font has no width axis.** Until Anybody arrives, the browser shows a metric-matched local face (Arial Bold or a close system equivalent). MDN notes that `font-stretch` has no effect when a font offers no condensed or expanded faces, so for that moment the lines are uneven. The size is right, because it comes from `cqi` and not from the font, and Anybody is one preloaded 49.5 KB file. How long the uneven moment lasts on a slow network, I have not measured.
+- **The metrics belong to one font file.** Change the font, the weight or the subset and the numbers are stale. The script regenerates them, but nothing checks that someone ran it.
+
+A Playwright test loads the home page at 1440 px and checks that each line of the name fills more than 97% of its container, before and after the enhancement below starts. The tolerance is loose on purpose: it catches a broken fit, not rounding.
+
+## After load: the letter accordion
+
+Once the page has loaded and the browser is idle, a small enhancement (1.7 KB gzipped) makes the name move. Letters near the pointer widen, the others narrow, and the line stays flush. Without a pointer, a slow wave runs through it. It applies the same linear idea to single letters.
+
+- Each line is split into one span per letter. A visually hidden copy of the text is added and the letters are hidden from assistive technology, so screen readers read the name once, not letter by letter. The same test checks that the heading's accessible name is still my full name.
+- Each letter is measured once at `wdth` 50 and once at 150. That gives two numbers per letter: its width at 50, and how many pixels it gains per unit of `wdth`.
+- Each frame computes a bell curve around the focus point (the pointer, or the wave). If every letter widened along the curve, the line would grow. So the curve's average, weighted by each letter's slope, is subtracted first. The weighted changes then add up to zero and the line keeps its width. When a letter hits 50 or 150 the balance breaks a little, and a slow correction pulls the line back.
+
+Frames never measure letters. The only layout read is one bounding box per visible block, to know where the pointer is relative to it, and it happens before any style is written in that frame. Letters whose `wdth` moved by less than 0.02 since their last write are left alone.
+
+It also knows when to stop. It doesn't start under `prefers-reduced-motion: reduce`. It stops while the block is offscreen (an IntersectionObserver), when the reader presses the site's pause button, and when nothing is moving. I wrote up those rules in [motion that respects people](/en/blog/reduced-motion-and-a-pause-button/).
+
+## What I would do differently
+
+- **Derive the character list from the copy.** A missing character fails the build loudly, which works, but deriving the list from every fitted string in every locale would remove the step.
+- **Check flushness at more widths.** A layout test already checks for horizontal overflow at 8 widths from 320 to 2560 px, but the "fills its line" check runs only at 1440. The narrow case, where the base `wdth` is 66, deserves the same check.
+
+## Takeaways
+
+- If your display type is the LCP element, size it before the browser sees it. A variable font turns that into a calculation instead of a measurement.
+- Check linearity for your font instead of assuming it. Two measurements are only enough if the curve is close to straight; mine bends by at most 0.06%.
+- Use `cqi` rather than `vw`, so a fitted block fits its own box wherever it sits.
+
+The rest of the build, from the project wiki to the Lighthouse gates, is in [the case study](/en/blog/how-this-site-was-built/). If you are hiring for front-end work where details like this matter, [my contact details are here](/en/#contact).

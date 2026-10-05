@@ -1,0 +1,173 @@
+---
+title: "Claude Code po polsku: jak zacząć i pracować z nim na co dzień"
+seoTitle: "Claude Code po polsku: instalacja i codzienna praca"
+description: "Przewodnik dla polskich programistów: instalacja Claude Code, pierwsza sesja, CLAUDE.md, plan, uprawnienia, weryfikacja oraz uczciwie o kosztach i limitach."
+translationKey: "claude-code-po-polsku"
+published: 2026-10-05
+tags: [ai, claude-code]
+cover: blueprint
+related: [claude-code-building-blocks, llm-wiki, this-site]
+sources:
+  - title: "Overview (dokumentacja Claude Code)"
+    url: "https://code.claude.com/docs/en/overview"
+    accessed: 2026-10-05
+  - title: "Quickstart (dokumentacja Claude Code)"
+    url: "https://code.claude.com/docs/en/quickstart"
+    accessed: 2026-10-05
+  - title: "How Claude remembers your project (dokumentacja Claude Code)"
+    url: "https://code.claude.com/docs/en/memory"
+    accessed: 2026-10-05
+  - title: "Best practices for Claude Code (dokumentacja Claude Code)"
+    url: "https://code.claude.com/docs/en/best-practices"
+    accessed: 2026-10-05
+  - title: "Choose a permission mode (dokumentacja Claude Code)"
+    url: "https://code.claude.com/docs/en/permission-modes"
+    accessed: 2026-10-05
+  - title: "Configure permissions (dokumentacja Claude Code)"
+    url: "https://code.claude.com/docs/en/permissions"
+    accessed: 2026-10-05
+  - title: "All settings: language (dokumentacja Claude Code)"
+    url: "https://code.claude.com/docs/en/settings-reference"
+    accessed: 2026-10-05
+  - title: "Manage costs effectively (dokumentacja Claude Code)"
+    url: "https://code.claude.com/docs/en/costs"
+    accessed: 2026-10-05
+  - title: "Multilingual support (dokumentacja Claude Platform)"
+    url: "https://platform.claude.com/docs/en/build-with-claude/multilingual-support"
+    accessed: 2026-10-05
+  - title: "Plans & Pricing (Claude)"
+    url: "https://claude.com/pricing"
+    accessed: 2026-10-05
+---
+
+Claude Code to narzędzie Anthropic do programowania z agentem: czyta Twój kod, edytuje pliki i uruchamia komendy, w terminalu, w IDE, w aplikacji desktopowej albo w przeglądarce. Na start wystarczy płatny plan Claude albo konto w Claude Console, jedna komenda instalacyjna i projekt, na którym możesz spokojnie poćwiczyć. Na co dzień liczą się trzy nawyki: krótki CLAUDE.md, plan przed kodem i sprawdzanie każdej zmiany czymś, co odpowiada „przeszło” albo „nie przeszło”.
+
+## Czego potrzebujesz
+
+- **Konto.** Quickstart wymienia plany Pro, Max, Team i Enterprise, konto w Claude Console (API z przedpłaconymi kredytami) albo dostawcę chmurowego. Darmowego planu na tej liście nie ma. 5 października 2026 roku cennik podawał: Pro za 20 USD miesięcznie albo 17 USD miesięcznie przy płatności rocznej (200 USD z góry), Max od 100 USD miesięcznie. Ceny się zmieniają, więc sprawdź je przed zakupem.
+- **Terminal i projekt.** Na Windowsie dokumentacja zaleca Git for Windows, żeby Claude Code mógł korzystać z Basha. Bez niego używa PowerShella.
+
+## Instalacja
+
+```bash
+# macOS, Linux, WSL
+curl -fsSL https://claude.ai/install.sh | bash
+```
+
+```powershell
+# Windows PowerShell
+irm https://claude.ai/install.ps1 | iex
+```
+
+Potem otwórz nowe okno terminala i wpisz `claude --version`. Jeśli powłoka nie zna komendy `claude`, katalog instalacji nie trafił jeszcze do PATH, a dokumentacja ma na to osobną stronę z poprawkami. Instalacja natywna aktualizuje się sama w tle. Wersje z Homebrew i WinGet trzeba aktualizować ręcznie.
+
+## Pierwsza sesja
+
+```bash
+cd ~/projekty/moj-projekt
+claude
+```
+
+Przy pierwszym uruchomieniu zalogujesz się w przeglądarce. Potem zacznij od pytań, a nie od zmian: „co robi ten projekt?”, „gdzie jest punkt wejścia?”, „wyjaśnij strukturę folderów”. Claude sam czyta pliki, których potrzebuje, więc nie musisz niczego wklejać.
+
+Kilka komend na start: `/help` pokazuje dostępne komendy, `claude -c` wraca do ostatniej rozmowy w tym katalogu, `claude -r` pozwala wybrać starszą, a `/clear` czyści kontekst między niezwiązanymi zadaniami.
+
+## Po polsku, czyli język rozmowy
+
+Możesz pisać po polsku od pierwszego promptu. Jeśli chcesz, żeby Claude Code zawsze odpowiadał po polsku, ustaw to w pliku ustawień, na przykład w `~/.claude/settings.json`, który działa we wszystkich Twoich projektach:
+
+```json
+{
+  "language": "polish"
+}
+```
+
+Dokumentacja ustawień wyjaśnia, że Claude Code przekazuje tę wartość dosłownie jako polecenie, by zawsze odpowiadać w danym języku, i niczego nie sprawdza: literówka trafi do modelu tak, jak ją wpiszesz.
+
+Uczciwie: polskiego nie ma w tabeli wyników wielojęzycznych, którą publikuje Anthropic. Dokumentacja mówi, że Claude radzi sobie w wielu językach spoza tabeli, i zaleca przetestować te, na których Ci zależy. Radzi też pisać w natywnym zapisie, czyli z polskimi znakami, a nie „bez ogonków”.
+
+U mnie kod, commity i dokumentacja projektu są po angielsku. To osobna decyzja niż język rozmowy i warto ją zapisać w CLAUDE.md, żeby nie wracała przy każdej sesji.
+
+## CLAUDE.md, czyli pamięć projektu
+
+Każda sesja zaczyna się od pustego kontekstu. CLAUDE.md to plik, który Claude czyta na starcie każdej sesji. `/init` wygeneruje pierwszą wersję na podstawie kodu, a Ty ją potem przycinasz.
+
+Co tam wpisać według dokumentacji: komendy, których Claude nie zgadnie, reguły stylu inne niż domyślne, sposób uruchamiania testów, zwyczaje w repozytorium (nazwy gałęzi, pull requesty), decyzje architektoniczne, dziwactwa środowiska, nieoczywiste pułapki. Czego nie wpisywać: tego, co Claude wyczyta z kodu, długich tutoriali, opisów plik po pliku. Celuj poniżej 200 linii i przy każdej linii zadaj pytanie z dokumentacji: czy bez niej Claude popełniłby błąd? Jeśli nie, wytnij ją.
+
+Dwie rzeczy, które łatwo przeoczyć:
+
+- `CLAUDE.local.md` w katalogu projektu to Twoje prywatne zasady. Dodaj go do `.gitignore`.
+- `/context` pokazuje, czy plik faktycznie się wczytał.
+
+Mój CLAUDE.md w repozytorium tej strony ma 76 linii, bo resztę wiedzy trzymam w osobnym wiki, opisanym we wpisie [LLM wiki: pamięć projektu dla Claude Code](/pl/blog/llm-wiki-pamiec-projektu-dla-claude-code/).
+
+## Najpierw plan, potem kod
+
+Kuszące jest napisać „zrób mi X” w pierwszym zdaniu. Dokumentacja proponuje cztery kroki: zbadaj, zaplanuj, zaimplementuj, zacommituj. Do pierwszych dwóch służy tryb planu: wciskaj `Shift+Tab`, aż na pasku stanu pojawi się `⏸ plan mode on`, albo uruchom `claude --permission-mode plan`. W tym trybie Claude czyta pliki i odpowiada na pytania, ale nie edytuje źródeł. `Ctrl+G` otwiera plan w edytorze, więc możesz go poprawić, zanim Claude ruszy.
+
+Przy większych funkcjach dokumentacja radzi poprosić Claude'a o wywiad z Tobą i spisanie specyfikacji, a implementację zacząć w nowej sesji z czystym kontekstem. Przy drobiazgach plan to zbędny narzut: jeśli diff da się opisać jednym zdaniem, pomiń planowanie.
+
+Przy tej stronie cała faza zero była samym planowaniem, czyli researchem i pisaniem wiki. Kod produktu zaczął powstawać dopiero potem.
+
+## Uprawnienia
+
+Claude Code pyta albo nie pyta o zgodę w zależności od trybu. Przełączasz je klawiszem `Shift+Tab`, a aktualny tryb widać na pasku stanu.
+
+| Tryb | Co robi |
+| --- | --- |
+| `default` (Manual) | pyta przy pierwszym użyciu każdego narzędzia |
+| `acceptEdits` | sam akceptuje edycje plików i proste komendy plikowe w katalogu roboczym |
+| `plan` | czyta i planuje, nie edytuje źródeł |
+| `auto` | bez rutynowych pytań, akcje sprawdza w tle osobny klasyfikator |
+| `dontAsk` | odrzuca wszystko, co wymagałoby pytania, poza wcześniej dozwolonym |
+| `bypassPermissions` | pomija pytania, tylko w odizolowanym kontenerze albo maszynie wirtualnej |
+
+Tryb, w którym startuje sesja, zależy od wersji, planu i ustawień, więc po prostu spójrz na pasek stanu. Komenda `/permissions` pokazuje reguły allow, ask i deny, sprawdzane w kolejności deny, ask, allow. Najważniejsze zdanie z tej części dokumentacji: reguły uprawnień egzekwuje Claude Code, a nie model. Zakaz wpisany do CLAUDE.md wpływa na to, co Claude próbuje zrobić, ale niczego nie blokuje.
+
+## Jak dawać kontekst
+
+- **Konkretnie.** Który plik, jaki scenariusz, co znaczy „naprawione”. Zamiast „napraw logowanie” napisz: logowanie pada po wygaśnięciu sesji, sprawdź odświeżanie tokenu w `src/auth/`, najpierw napisz test, który odtwarza błąd, potem go napraw.
+- **Z odnośnikami.** Wskazuj pliki przez `@`, wklejaj zrzuty ekranu, podawaj adresy dokumentacji.
+- **Na wzorcu.** Pokaż istniejący fragment kodu, na którym Claude ma się wzorować.
+- **Dosłownie.** Komunikaty błędów wklejaj w całości i proś o przyczynę, a nie o wyciszenie błędu.
+- **Z terminala.** Logi przekażesz bez kopiowania: `cat error.log | claude -p "wyjaśnij ten błąd"`.
+
+## Jak sprawdzać jego pracę
+
+Dokumentacja ujmuje to krótko: Claude kończy, kiedy praca wygląda na skończoną. Bez sprawdzenia, które da się uruchomić, jedynym sygnałem jest „wygląda dobrze”, a pętlą weryfikacji stajesz się Ty. Daj mu coś, co zwraca wynik: testy, kod wyjścia builda, linter, zrzut ekranu do porównania z projektem. Proś o dowody, a nie zapewnienia: wynik testów, uruchomioną komendę, zrzut.
+
+Na tej stronie „gotowe” znaczy: typecheck, lint, testy jednostkowe i e2e, zrzuty z Playwrighta w szerokościach 390, 1024 i 1920 pikseli faktycznie obejrzane, axe na kontrast AA, motyw jasny i ciemny, ograniczony ruch i mobilny Lighthouse co najmniej 90 na każdej stronie. Strona główna ma dziś 100/100/100/100 (mediana z 3 pomiarów), LCP około 1,65 s i CLS 0.
+
+Inny przykład z mojej pracy: na stażu w Neoteric, polskim software housie, zbudowałem samymi agentami AI aplikację Clockful do śledzenia czasu pracy z rolami użytkowników. Powstała ze specyfikacji 15 wymagań w około 9 dni (to szacunek z dat w repozytorium) i ma 118 testów automatycznych: 49 w Vitest i 69 w Playwright, a row-level security w Postgresie obejmuje 5 z 5 tabel.
+
+## Najczęstsze błędy
+
+Dokumentacja wymienia pięć typowych wzorców porażki:
+
+- **Sesja „wszystko w jednym”.** Jedno zadanie, potem coś obok, potem powrót. Rozwiązanie: `/clear` między niezwiązanymi zadaniami.
+- **Poprawianie w kółko.** Po dwóch nieudanych poprawkach zrób `/clear` i napisz lepszy pierwszy prompt z tym, czego się nauczyłeś.
+- **Przeładowany CLAUDE.md.** Ważne zasady giną w szumie. Przycinaj bez litości.
+- **Zaufanie bez sprawdzenia.** Kod wygląda wiarygodnie, ale nie obsługuje przypadków brzegowych. Jeśli nie da się tego zweryfikować, nie wdrażaj.
+- **Niekończące się badanie.** „Zbadaj X” bez zakresu kończy się setkami przeczytanych plików. Zawęź pytanie albo oddaj je subagentowi.
+
+Do tego dwa narzędzia ratunkowe. `Esc` zatrzymuje Claude'a w trakcie, a podwójne `Esc` albo `/rewind` cofa rozmowę, kod albo jedno i drugie do punktu kontrolnego. Uwaga: punkty kontrolne śledzą tylko zmiany zrobione narzędziami edycji Claude'a, a nie komendami w Bashu, więc nie zastępują gita.
+
+Jeszcze jeden błąd, przez który napisałem sobie osobny hook: ustalenia podane tylko w czacie znikają po kompaktowaniu. Dokumentacja pamięci mówi to wprost. Co ma przetrwać, zapisuj w CLAUDE.md albo w pliku, który hook wczytuje po każdym kompaktowaniu.
+
+## Koszty i limity, bez upiększania
+
+- **Kontekst to główny zasób.** Dokumentacja pisze wprost, że jakość pracy modelu spada, gdy okno kontekstu się zapełnia. Stąd `/clear`, subagenty do researchu i krótki CLAUDE.md.
+- **Limity.** Claude Code rozlicza zużycie w tokenach API. W planach subskrypcyjnych użycie jest wliczone w plan z limitami, a `/usage` pokazuje, ile już zużyłeś. Subagenty liczą się do tych samych limitów co główna rozmowa.
+- **Punkt odniesienia.** Według dokumentacji we wdrożeniach firmowych średni koszt to około 13 USD na programistę na aktywny dzień i 150-250 USD miesięcznie, a u 90% użytkowników poniżej 30 USD dziennie. To dane z rozliczeń API w firmach, a nie cena Twojego planu.
+- **Jak płacić mniej.** Czyść kontekst między zadaniami, prostsze zadania dawaj tańszemu modelowi (`/model`), wyłącz nieużywane serwery MCP.
+- **Czego tu nie ma.** Nie podaję własnych rachunków. Zależą od planu, modelu i stylu pracy, więc niewiele powiedziałyby o Twoich.
+
+## Od czego zacząć jutro
+
+1. Zainstaluj, zaloguj się, otwórz mały projekt.
+2. Zadaj trzy pytania o kod, zanim cokolwiek zmienisz.
+3. Uruchom `/init` i przytnij wynik do tego, czego Claude nie wyczyta z kodu.
+4. Pierwszą zmianę zrób w trybie planu, z testem, który Claude ma uruchomić.
+5. Każdą poprawkę, którą powtarzasz drugi raz, wpisz do CLAUDE.md.
+
+Gdy to wejdzie w nawyk, przyjdzie pora na skille, hooki i serwery MCP. Kiedy który, opisuję we wpisie [Skille, hooki, serwery MCP i subagenty w Claude Code](/pl/blog/claude-code-skille-hooki-mcp-subagenty/). Jak cały ten proces wyglądał przy budowie tej strony, pokazuje [studium przypadku](/pl/blog/jak-powstala-ta-strona/). A jeśli szukasz kogoś, kto tak pracuje, zajrzyj do mojego [CV](/pl/cv/).

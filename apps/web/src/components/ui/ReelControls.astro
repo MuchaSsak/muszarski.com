@@ -1,0 +1,69 @@
+---
+/**
+ * The control row under a reel (design.md § Components: reel): play/pause, chapter chips that seek and fill, expand.
+ * `live={false}` renders the same row for a drawn stand-in: inert, hidden from assistive tech, chips fill with the
+ * CSS loop (classes `chap-loop k1..k3`).
+ */
+import { t } from "lingui-for-astro/macro";
+
+import Icon from "~/components/ui/Icon.astro";
+
+interface Props {
+  chips: { label: string; at?: number; time?: string }[];
+  live?: boolean;
+}
+
+const { chips, live = true } = Astro.props;
+const labelPause = t`Pause video`;
+const labelPlay = t`Play video`;
+const labelExpand = t`Expand video`;
+const labelChapters = t`Jump to`;
+---
+
+{
+  live ? (
+    <div class="reel-ui">
+      <button class="r-btn" type="button" data-toggle aria-pressed="true" aria-label={labelPlay} data-label-pause={labelPause} data-label-play={labelPlay}>
+        <Icon name="tbf:player-pause" data-icon-pause hidden />
+        <Icon name="tbf:player-play" data-icon-play />
+      </button>
+      <ol class="chaps" aria-label={labelChapters}>
+        {chips.map((chip) => (
+          <li>
+            <button class="chap" type="button" data-seek={chip.at ?? 0}>
+              <span>{chip.label}</span>
+              {chip.time && <small class="tabular">{chip.time}</small>}
+            </button>
+          </li>
+        ))}
+      </ol>
+      <button class="r-btn" type="button" data-expand aria-label={labelExpand}>
+        <Icon name="tb:arrows-maximize" />
+      </button>
+    </div>
+  ) : (
+    <div class="reel-ui" aria-hidden="true">
+      <span class="r-btn" data-disabled>
+        <Icon name="tbf:player-pause" />
+      </span>
+      <ol class="chaps">
+        {chips.map((chip, i) => (
+          <li>
+            <span class:list={["chap", "chap-loop", `k${i + 1}`]} aria-disabled="true">
+              <span>{chip.label}</span>
+            </span>
+          </li>
+        ))}
+      </ol>
+      <span class="r-btn" data-disabled>
+        <Icon name="tb:arrows-maximize" />
+      </span>
+    </div>
+  )
+}
+
+<style>
+  [data-disabled] {
+    opacity: 0.35;
+  }
+</style>

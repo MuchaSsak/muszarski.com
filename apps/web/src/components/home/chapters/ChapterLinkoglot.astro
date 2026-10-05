@@ -1,0 +1,282 @@
+---
+/**
+ * Chapter 02, Linkoglot (content/projects/linkoglot.md): his own app, so its store preview is fine as interim media
+ * (placeholders.md P8; the owner records finals). The phone breaks into the fitted title; a flash card flips between
+ * a snapped word and its meaning. Never quote downloads or ratings (pre-traction).
+ */
+import { t } from "lingui-for-astro/macro";
+
+import Fit from "~/components/ui/Fit.astro";
+import Icon from "~/components/ui/Icon.astro";
+import ReelControls from "~/components/ui/ReelControls.astro";
+import { WORK_LINKS } from "~/data/site";
+import { fitLines } from "~/lib/fit";
+
+// The phone overlaps the title by ~58% of its height; the title's height is known from the build-time fit.
+const fit = fitLines(["Linkoglot"], 96);
+const fitHeight = `calc(0.8 * ${fit.size} * (min(100vw, 120rem) - 2 * var(--gutter)) / 100)`;
+
+interface Props {
+  /** "01 / 04": this chapter's place among the visible ones. */
+  counter: string;
+}
+const { counter } = Astro.props;
+---
+
+<section class="sec chapter c-lk" id="linkoglot" aria-labelledby="t-lk" style={`--fit-h:${fitHeight}`}>
+  <div class="sbar draw">
+    <p>{counter} · {t`Selected work`}</p>
+    <p>{t`Own product`}</p>
+    <p>2026</p>
+  </div>
+  <Fit as="h2" id="t-lk" lines={["Linkoglot"]} />
+  <div class="board">
+    <div class="side ch-info">
+      <p class="tag-chip">
+        <img src="/media/linkoglot/icon.webp" alt="" width="30" height="30" loading="lazy" decoding="async" />
+        {t`Own product · solo · 2026`}
+      </p>
+      <p class="outcome rv">{t`Snap a photo, get flashcards. A subscription language app, shipped solo to both stores.`}</p>
+      <ul class="cfacts rv" style="--d:1">
+        <li><span class="ib"><Icon name="si:apple" /></span>App Store</li>
+        <li><span class="ib"><Icon name="si:googleplay" /></span>Google Play</li>
+        <li>
+          <span class="ib"><Icon name="tb:language" /></span><span><b data-count="30">30</b>{t`languages`}</span>
+        </li>
+        <li><span class="ib"><Icon name="tb:receipt-2" /></span>{t`Free trial, then a plan`}</li>
+      </ul>
+    </div>
+
+    <div class="stage">
+      <figure class="reel" data-reel>
+        <div class="frame">
+          <div class="phone enter">
+            <video
+              muted
+              loop
+              playsinline
+              preload="none"
+              poster="/media/linkoglot/camera-poster.webp"
+              width="320"
+              height="694"
+              aria-label={t`Linkoglot camera mode: point the phone at a street, a room, breakfast, a book and a park to learn the words`}
+            >
+              <source data-src="/media/linkoglot/camera.av1.mp4" type='video/mp4; codecs="av01.0.05M.08"' />
+              <source data-src="/media/linkoglot/camera.mp4" type="video/mp4" />
+            </video>
+          </div>
+          <div class="flash" aria-hidden="true">
+            <div class="card">
+              <div class="face"><span>{t`Snapped → card`}</span><b>{t`la maceta`}</b></div>
+              <div class="face back"><span>{t`Spanish → English`}</span><b>{t`the flowerpot`}</b></div>
+            </div>
+          </div>
+          <button class="r-btn bigplay" type="button" data-play aria-label={t`Play video`}>
+            <Icon name="tbf:player-play" />
+          </button>
+        </div>
+        <ReelControls
+          chips={[
+            { label: t`City`, at: 0 },
+            { label: t`Home`, at: 3 },
+            { label: t`Food`, at: 6 },
+            { label: t`Book`, at: 10.5 },
+            { label: t`Park`, at: 13.5 },
+          ]}
+        />
+      </figure>
+    </div>
+
+    <div class="side ch-info">
+      <ul class="stackrow rv" aria-label={t`Stack`}>
+        <li><Icon name="si:expo" />Expo</li>
+        <li><Icon name="si:react" />React Native</li>
+        <li><Icon name="si:supabase" />Supabase</li>
+        <li><Icon name="si:revenuecat" />RevenueCat</li>
+        <li><span class="mono" aria-hidden="true">Li</span>Lingui</li>
+      </ul>
+      <div class="links rv" style="--d:1">
+        <a
+          class="btn btn-inv"
+          href={WORK_LINKS.linkoglotAppStore}
+          rel="noopener"
+          target="_blank"
+          data-umami-event="outbound"
+          data-umami-event-target="app-store"
+          data-umami-event-project="linkoglot"
+        >
+          <Icon name="si:apple" />App Store<span class="sr-only">{t`(opens in a new tab)`}</span>
+        </a>
+        <a
+          class="btn btn-line"
+          href={WORK_LINKS.linkoglotPlay}
+          rel="noopener"
+          target="_blank"
+          data-umami-event="outbound"
+          data-umami-event-target="google-play"
+          data-umami-event-project="linkoglot"
+        >
+          <Icon name="si:googleplay" />Google Play<span class="sr-only">{t`(opens in a new tab)`}</span>
+        </a>
+      </div>
+      <p class="status live">{t`Live · pre-traction`}</p>
+    </div>
+  </div>
+</section>
+
+<style>
+  .board {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+    gap: clamp(1.5rem, 3vw, 3.5rem);
+    margin-top: calc(var(--fit-h) * -0.58);
+  }
+  .board .side {
+    padding-top: calc(var(--fit-h) * 0.58 + clamp(1.25rem, 2.4vw, 2.5rem));
+  }
+  .stage {
+    position: relative;
+    display: grid;
+    justify-items: center;
+  }
+  .stage .reel {
+    width: min(100%, 26.25rem);
+  }
+  .stage .frame {
+    width: max-content;
+    margin-inline: auto;
+    padding: 0.75rem 0 1.5rem;
+  }
+  .phone {
+    position: relative;
+    z-index: 1;
+    width: clamp(13.75rem, 21vw, 18.75rem);
+    aspect-ratio: 320 / 694;
+    border-radius: 2.125rem;
+    overflow: hidden;
+    background: #000;
+    box-shadow:
+      0 0 0 9px var(--navy),
+      18px 22px 0 9px rgb(10 13 51 / 0.9);
+    transform: rotate(-5deg);
+  }
+  .phone video {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  @supports (animation-timeline: view()) {
+    @media (prefers-reduced-motion: no-preference) {
+      .phone {
+        animation: tilt linear both;
+        animation-timeline: view();
+        animation-range: entry 10% cover 50%;
+      }
+    }
+    @keyframes tilt {
+      from {
+        transform: rotate(-14deg) translateY(5rem);
+      }
+      to {
+        transform: rotate(-5deg);
+      }
+    }
+  }
+  .stage :global(.chap) {
+    padding: 0 0.375rem;
+  }
+  .flash {
+    position: absolute;
+    z-index: 3;
+    right: -24%;
+    top: 55%;
+    width: clamp(10.5rem, 15vw, 13.75rem);
+    aspect-ratio: 1.45;
+    perspective: 800px;
+  }
+  .flash .card {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    transform-style: preserve-3d;
+    transform: rotate(7deg);
+    animation: flip 7s var(--ease-out) infinite;
+  }
+  .flash .face {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    align-content: center;
+    gap: 0.25rem;
+    padding: 0.875rem 1rem;
+    background: var(--pink);
+    color: var(--navy);
+    box-shadow: 8px 8px 0 var(--navy);
+    backface-visibility: hidden;
+  }
+  .flash .back {
+    background: var(--ice);
+    transform: rotateY(180deg);
+  }
+  .flash span {
+    display: block;
+    font-size: 0.6875rem;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    font-stretch: 125%;
+  }
+  .flash b {
+    display: block;
+    font-size: clamp(1.625rem, 2.5vw, 2.25rem);
+    line-height: 0.95;
+    font-weight: 900;
+    font-stretch: 80%;
+  }
+  @keyframes flip {
+    0%,
+    40% {
+      transform: rotate(7deg) rotateY(0);
+    }
+    50%,
+    90% {
+      transform: rotate(7deg) rotateY(180deg);
+    }
+    100% {
+      transform: rotate(7deg) rotateY(360deg);
+    }
+  }
+  .tag-chip img {
+    border-radius: 0.5rem;
+  }
+
+  @media (max-width: 56.25rem) {
+    .board {
+      grid-template-columns: minmax(0, 1fr);
+      margin-top: calc(var(--fit-h) * -0.3);
+    }
+    .board .side {
+      padding-top: 0;
+    }
+    .stage {
+      order: -1;
+    }
+  }
+  @media (max-width: 40rem) {
+    .phone {
+      width: 13.125rem;
+      box-shadow:
+        0 0 0 7px var(--navy),
+        12px 14px 0 7px rgb(10 13 51 / 0.9);
+    }
+    .flash {
+      right: -18%;
+      top: 56%;
+      width: 8.25rem;
+    }
+    .flash b {
+      font-size: 1.5rem;
+    }
+  }
+</style>

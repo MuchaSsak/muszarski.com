@@ -1,0 +1,352 @@
+---
+/**
+ * All projects (structure.md § All projects, requirements.md F04): every project the build may show, flagships first,
+ * then the archive. Filters by type and by tool, with counts (buttons; without JS everything shows). A row: year,
+ * name, one line, type, tools, links. Case studies live in the blog (open-questions Q43): only "this site" has one.
+ */
+import { plural, t } from "lingui-for-astro/macro";
+
+import BaseLayout from "~/components/layout/BaseLayout.astro";
+import JsonLd from "~/components/seo/JsonLd.astro";
+import Fit from "~/components/ui/Fit.astro";
+import Icon from "~/components/ui/Icon.astro";
+import { type Context, visibleProjects } from "~/data/projects";
+import { SITE } from "~/data/site";
+import { thisSitePath } from "~/lib/blog-paths";
+import { chromeLinks } from "~/lib/nav";
+import { localeStaticPaths, pathTo } from "~/lib/routes";
+import { pageGraph } from "~/lib/schema";
+
+export const getStaticPaths = localeStaticPaths;
+
+const locale = Astro.locals.locale;
+const links = chromeLinks(locale);
+const projects = visibleProjects();
+const CONTEXT: Record<Context, string> = {
+  client: t`Client work`,
+  internship: t`Internship`,
+  product: t`Own product`,
+  oss: t`Open source`,
+  side: t`Personal`,
+  course: t`Course`,
+};
+const SKIN: Record<string, string> = { pstrykweb: "var(--yellow)", linkoglot: "var(--orange)", "neoteric-clockful": "var(--lime)", "space-portfolio": "var(--pink)" };
+const contexts = (Object.keys(CONTEXT) as Context[])
+  .map((context) => ({ context, count: projects.filter((project) => project.context === context).length }))
+  .filter((entry) => entry.count > 0);
+const tools = [...new Set(projects.flatMap((project) => project.stack))]
+  .map((tool) => ({ tool, count: projects.filter((project) => project.stack.includes(tool)).length }))
+  .filter((entry) => entry.count > 1)
+  .sort((a, b) => b.count - a.count || a.tool.localeCompare(b.tool));
+const slugify = (value: string) => value.toLowerCase().replace(/[^a-z0-9]+/g, "-");
+const site = Astro.site ?? new URL("http://localhost:4321");
+const title = t`All projects`;
+const description = t`Every project by Mateusz Muszarski: client work, his own products, open source and experiments, with the tools, the year and the links.`;
+const url = new URL(pathTo(locale, "work"), site).href;
+const [line1, line2] = t`All|projects`.split("|") as [string, string];
+const count = projects.length;
+---
+
+<BaseLayout title={title} description={description} path="work" current="work" og="work">
+  <JsonLd
+    slot="head"
+    data={pageGraph(site, url, "CollectionPage", `${title} – ${SITE.name}`, description, locale, [
+      { name: SITE.name, url: new URL(links.home, site).href },
+      { name: title, url },
+    ])}
+  />
+  <section class="sec field-hero top" aria-labelledby="t-work">
+    <div class="sbar draw">
+      <p>{t`Work`}</p>
+      <p>{plural(count, { one: "# project", other: "# projects" })}</p>
+      <p>{t`Flagships first`}</p>
+    </div>
+    <Fit as="h1" id="t-work" lines={[line1, line2]} />
+    <p class="lede rise">{t`Client work, my own products, open source and experiments. The four flagships have their own chapter on the home page.`}</p>
+  </section>
+
+  <section class="sec field-alt list" aria-label={t`Projects`}>
+    <div class="filters" data-filters hidden>
+      <div class="frow" role="group" aria-label={t`Type`}>
+        <span class="kick">{t`Type`}</span>
+        <button class="fchip" type="button" aria-pressed="true" data-kind="context" data-value="">{t`All`} <b>{count}</b></button>
+        {
+          contexts.map((entry) => (
+            <button class="fchip" type="button" aria-pressed="false" data-kind="context" data-value={entry.context}>
+              {CONTEXT[entry.context]} <b>{entry.count}</b>
+            </button>
+          ))
+        }
+      </div>
+      <div class="frow" role="group" aria-label={t`Tool`}>
+        <span class="kick">{t`Tool`}</span>
+        <button class="fchip" type="button" aria-pressed="true" data-kind="tool" data-value="">{t`Any`}</button>
+        {
+          tools.map((entry) => (
+            <button class="fchip" type="button" aria-pressed="false" data-kind="tool" data-value={slugify(entry.tool)}>
+              {entry.tool} <b>{entry.count}</b>
+            </button>
+          ))
+        }
+      </div>
+    </div>
+
+    <ol class="rows" data-rows>
+      {
+        projects.map((project) => (
+          <li class="row" data-context={project.context} data-tools={project.stack.map(slugify).join(" ")} style={SKIN[project.slug] ? `--skin:${SKIN[project.slug]}` : undefined}>
+            <span class="year tabular">{project.year}</span>
+            <div class="main">
+              <h2 class="name">
+                {project.flagship && <i class="sq" aria-hidden="true" />}
+                {project.name}
+              </h2>
+              <p class="line">{project.line[locale]}</p>
+              <ul class="tools" aria-label={t`Tools`}>
+                {project.stack.map((tool) => (
+                  <li>{tool}</li>
+                ))}
+              </ul>
+            </div>
+            <span class="ctx">{CONTEXT[project.context]}</span>
+            <div class="go">
+              {project.anchor && (
+                <a class="btn btn-inv" href={links.project(project.anchor)}>
+                  {t`Chapter`}
+                  <Icon name="tb:arrow-right" class="nudge" />
+                </a>
+              )}
+              {project.links.caseStudy && (
+                <a class="btn btn-inv" href={thisSitePath(locale)} data-umami-event="case_open" data-umami-event-project={project.slug}>
+                  {t`Case study`}
+                  <Icon name="tb:arrow-right" class="nudge" />
+                </a>
+              )}
+              {project.links.live && (
+                <a class="btn btn-line" href={project.links.live} rel="noopener" data-umami-event="outbound" data-umami-event-target="live" data-umami-event-project={project.slug}>
+                  {t`Live`}
+                  <Icon name="tb:arrow-up-right" />
+                </a>
+              )}
+              {project.links.appStore && (
+                <a class="btn btn-line" href={project.links.appStore} rel="noopener" data-umami-event="outbound" data-umami-event-target="app-store" data-umami-event-project={project.slug}>
+                  <Icon name="si:apple" />
+                  App Store
+                </a>
+              )}
+              {project.links.googlePlay && (
+                <a class="btn btn-line" href={project.links.googlePlay} rel="noopener" data-umami-event="outbound" data-umami-event-target="google-play" data-umami-event-project={project.slug}>
+                  <Icon name="si:googleplay" />
+                  Google Play
+                </a>
+              )}
+              {project.links.npm && (
+                <a class="btn btn-line" href={project.links.npm} rel="noopener" data-umami-event="outbound" data-umami-event-target="npm" data-umami-event-project={project.slug}>
+                  <Icon name="si:npm" />
+                  npm
+                </a>
+              )}
+              {project.links.code && (
+                <a class="btn btn-line" href={project.links.code} rel="noopener" data-umami-event="outbound" data-umami-event-target="code" data-umami-event-project={project.slug}>
+                  <Icon name="si:github" />
+                  {t`Code`}
+                </a>
+              )}
+              {project.slug === "neoteric-clockful" && <span class="private">{t`Code private · walkthrough on request`}</span>}
+            </div>
+          </li>
+        ))
+      }
+    </ol>
+    <p class="empty" data-empty hidden>{t`No project matches both filters.`}</p>
+  </section>
+</BaseLayout>
+
+<style>
+  .top {
+    padding-bottom: clamp(2.5rem, 5vw, 4.5rem);
+  }
+  .lede {
+    max-width: 52ch;
+    margin: clamp(1.25rem, 2.4vw, 2rem) 0 0;
+    font-size: clamp(1.1875rem, 1.6vw, 1.5rem);
+    line-height: 1.4;
+  }
+  .filters {
+    display: grid;
+    gap: 0.75rem;
+    margin-bottom: clamp(1.5rem, 3vw, 2.5rem);
+  }
+  .frow {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .frow .kick {
+    min-width: 4.5rem;
+  }
+  .fchip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    min-height: 2.75rem;
+    padding: 0 0.75rem;
+    border: 0;
+    background: none;
+    color: inherit;
+    box-shadow: inset 0 0 0 2px currentColor;
+    font: inherit;
+    font-weight: 800;
+    font-size: 0.8125rem;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    font-stretch: 110%;
+    cursor: pointer;
+    transition:
+      background-color var(--dur-base),
+      color var(--dur-base);
+  }
+  .fchip b {
+    font-variant-numeric: tabular-nums;
+    opacity: 0.8;
+  }
+  .fchip[aria-pressed="true"] {
+    background: var(--sfg);
+    color: var(--sbg);
+  }
+  .rows {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    border-top: 3px solid currentColor;
+  }
+  .row {
+    display: grid;
+    grid-template-columns: 4.5rem minmax(0, 1fr) 9rem minmax(0, auto);
+    gap: 0.75rem 1.5rem;
+    align-items: start;
+    padding: 1.25rem 0;
+    border-bottom: 2px solid color-mix(in srgb, currentColor 25%, transparent);
+  }
+  .year {
+    font-weight: 900;
+    font-size: 1.5rem;
+    line-height: 1;
+    font-stretch: 70%;
+  }
+  .name {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+    margin: 0;
+    font-weight: 900;
+    font-size: clamp(1.5rem, 2.4vw, 2.25rem);
+    line-height: 1;
+    text-transform: uppercase;
+    font-stretch: 72%;
+  }
+  .sq {
+    flex: none;
+    width: 0.875rem;
+    height: 0.875rem;
+    background: var(--skin, var(--accent));
+    box-shadow: 0 0 0 2px currentColor;
+  }
+  .line {
+    max-width: 62ch;
+    margin: 0.5rem 0 0.75rem;
+    line-height: 1.45;
+  }
+  .tools {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.375rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .tools li {
+    padding: 0.1875rem 0.5rem;
+    box-shadow: inset 0 0 0 2px color-mix(in srgb, currentColor 45%, transparent);
+    font-weight: 700;
+    font-size: 0.75rem;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+  }
+  .ctx {
+    padding-top: 0.375rem;
+    font-weight: 800;
+    font-size: 0.8125rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    font-stretch: 115%;
+  }
+  .go {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 0.5rem;
+  }
+  .go .btn {
+    min-height: 2.75rem;
+    padding: 0 0.875rem;
+    font-size: 0.8125rem;
+  }
+  .private {
+    align-self: center;
+    font-weight: 700;
+    font-size: 0.8125rem;
+  }
+  .empty {
+    margin: 2rem 0 0;
+    font-weight: 700;
+  }
+  @media (max-width: 64rem) {
+    .row {
+      grid-template-columns: 3.5rem minmax(0, 1fr);
+    }
+    .ctx {
+      grid-column: 2;
+      padding-top: 0;
+    }
+    .go {
+      grid-column: 2;
+      justify-content: flex-start;
+    }
+  }
+  @media (max-width: 30rem) {
+    .row {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .ctx,
+    .go {
+      grid-column: 1;
+    }
+  }
+</style>
+
+<script>
+  const filters = document.querySelector<HTMLElement>("[data-filters]");
+  if (filters) {
+    const rows = [...document.querySelectorAll<HTMLElement>("[data-rows] > .row")];
+    const empty = document.querySelector<HTMLElement>("[data-empty]")!;
+    const state = { context: "", tool: "" };
+    filters.hidden = false;
+    for (const button of filters.querySelectorAll<HTMLButtonElement>("[data-kind]")) {
+      button.addEventListener("click", () => {
+        const kind = button.dataset.kind as "context" | "tool";
+        state[kind] = button.dataset.value ?? "";
+        filters.querySelectorAll(`[data-kind="${kind}"]`).forEach((b) => b.setAttribute("aria-pressed", String(b === button)));
+        let shown = 0;
+        for (const row of rows) {
+          const on =
+            (!state.context || row.dataset.context === state.context) && (!state.tool || (row.dataset.tools ?? "").split(" ").includes(state.tool));
+          row.hidden = !on;
+          if (on) shown += 1;
+        }
+        empty.hidden = shown > 0;
+      });
+    }
+  }
+</script>

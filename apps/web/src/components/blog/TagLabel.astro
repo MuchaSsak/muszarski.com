@@ -1,0 +1,29 @@
+---
+/**
+ * Tag names per locale. A component (not a .ts map) so the labels go through the `.astro` Lingui macro; it renders
+ * one label. Used by cards, the index filter and posts.
+ */
+import { t } from "lingui-for-astro/macro";
+
+import type { BlogTag } from "~/lib/blog";
+
+interface Props {
+  tag: BlogTag;
+}
+
+const LABELS: Record<BlogTag, string> = {
+  "case-study": t`Case study`,
+  ai: t`AI`,
+  "claude-code": "Claude Code",
+  i18n: "i18n",
+  astro: "Astro",
+  react: "React",
+  performance: t`Performance`,
+  accessibility: t`Accessibility`,
+  design: t`Design`,
+  privacy: t`Privacy`,
+  typography: t`Typography`,
+};
+---
+
+{LABELS[Astro.props.tag]}

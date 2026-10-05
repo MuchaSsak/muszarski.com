@@ -44,15 +44,82 @@ const sections = new IntersectionObserver(
 );
 for (const section of document.querySelectorAll(".sec")) sections.observe(section);
 
-// Reveal on first view.
+// Reveal on first view: `.rv` fades up, `.draw` draws its rule, `[data-count]` inside counts up once.
+function countUp(el: HTMLElement) {
+  const end = Number(el.dataset.count);
+  if (!Number.isFinite(end) || motionStill()) return;
+  const start = performance.now();
+  const duration = 1100;
+  const tick = (now: number) => {
+    const k = Math.min(1, (now - start) / duration);
+    el.textContent = String(Math.round(end * (1 - Math.pow(1 - k, 3))));
+    if (k < 1) requestAnimationFrame(tick);
+  };
+  requestAnimationFrame(tick);
+}
+
 const reveals = new IntersectionObserver(
   (entries, observer) =>
     entries.forEach((e) => {
       if (!e.isIntersecting) return;
       e.target.classList.add("in");
       observer.unobserve(e.target);
+      for (const el of e.target.querySelectorAll<HTMLElement>("[data-count]")) countUp(el);
     }),
   { rootMargin: "0px 0px -8% 0px" },
 );
-for (const el of document.querySelectorAll(".rv")) reveals.observe(el);
+for (const el of document.querySelectorAll(".rv, .draw")) reveals.observe(el);
 root.classList.add("rv-ready");
+
+/**
+ * Heavy media (loops) waits for the reader's first interaction as well as for visibility: a loop that starts during
+ * page load costs main-thread time on phones (lessons.md). Resolves at once if the page was already used.
+ */
+let interacted = false;
+const interactionWaiters: (() => void)[] = [];
+const INTERACTIONS = ["pointerdown", "keydown", "wheel", "touchstart", "scroll"] as const;
+function markInteracted() {
+  if (interacted) return;
+  interacted = true;
+  for (const type of INTERACTIONS) removeEventListener(type, markInteracted, true);
+  interactionWaiters.splice(0).forEach((fn) => fn());
+}
+for (const type of INTERACTIONS) addEventListener(type, markInteracted, { capture: true, passive: true });
+if (scrollY > 0) markInteracted();
+
+export const afterInteraction = (fn: () => void) => (interacted ? fn() : interactionWaiters.push(fn));
+
+/** A short status line at the bottom of the screen (copy email, form states). */
+export function toast(message: string) {
+  let el = document.querySelector<HTMLElement>(".toast");
+  if (!el) {
+    el = document.createElement("div");
+    el.className = "toast";
+    el.setAttribute("role", "status");
+    document.body.append(el);
+  }
+  el.textContent = message;
+  el.classList.add("on");
+  clearTimeout(Number(el.dataset.timer));
+  el.dataset.timer = String(setTimeout(() => el.classList.remove("on"), 2600));
+}
+
+/** Copy text; falls back to selecting nothing and returning false when the clipboard is refused. */
+export async function copyText(text: string): Promise<boolean> {
+  try {
+    await navigator.clipboard.writeText(text);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+// Copy buttons anywhere: `data-copy` holds the text, `data-copied` the confirmation.
+document.addEventListener("click", async (event) => {
+  const button = (event.target as Element | null)?.closest<HTMLElement>("[data-copy]");
+  if (!button) return;
+  const ok = await copyText(button.dataset.copy ?? "");
+  toast(ok ? (button.dataset.copied ?? "Copied") : (button.dataset.copyFailed ?? button.dataset.copy ?? ""));
+  const umami = (window as unknown as { umami?: { track: (e: string, d?: object) => void } }).umami;
+  if (ok && button.dataset.copyEvent) umami?.track(button.dataset.copyEvent, { source: button.dataset.copySource ?? "page" });
+});

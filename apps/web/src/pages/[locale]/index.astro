@@ -1,24 +1,40 @@
 ---
 /**
- * Home (structure.md § Home). Built one slice at a time (working-agreement.md § 9): header + hero + tool band now;
- * the chapters (#work), How I work, AI, credentials and contact follow.
+ * Home (structure.md § Home): hero + tool band, the project chapters (#work), how I work, the AI workflow,
+ * credentials, latest writing, contact. The JSON-LD graph (WebSite + ProfilePage + Person) is the entity home
+ * (seo.md § Entity strategy).
  */
 import { t } from "lingui-for-astro/macro";
 
+import AiWorkflow from "~/components/home/AiWorkflow.astro";
+import Chapters from "~/components/home/Chapters.astro";
+import Contact from "~/components/home/Contact.astro";
+import Credentials from "~/components/home/Credentials.astro";
 import Hero from "~/components/home/Hero.astro";
+import HowIWork from "~/components/home/HowIWork.astro";
+import LatestWriting from "~/components/home/LatestWriting.astro";
 import ToolBand from "~/components/home/ToolBand.astro";
 import BaseLayout from "~/components/layout/BaseLayout.astro";
+import JsonLd from "~/components/seo/JsonLd.astro";
+import { homeGraph } from "~/lib/schema";
 import { localeStaticPaths } from "~/lib/routes";
 
 export const getStaticPaths = localeStaticPaths;
 
+const locale = Astro.locals.locale;
 const title = t`Full-stack Developer · TypeScript, React, three.js`;
 const description = t`Mateusz Muszarski, a full-stack product engineer from Poland. Web and mobile products in TypeScript, React and Node.js, from the business problem to the shipped app.`;
+const site = Astro.site ?? new URL("http://localhost:4321");
 ---
 
-<BaseLayout title={title} description={description} home>
+<BaseLayout title={title} description={description} home og="home">
+  <JsonLd slot="head" data={homeGraph(site, locale, description)} />
   <Hero />
   <ToolBand />
-  <!-- PLACEHOLDER: the chapters land here next (#work); "See the work" points at this anchor (placeholders.md P17). -->
-  <div id="work"></div>
+  <Chapters />
+  <HowIWork />
+  <AiWorkflow />
+  <Credentials />
+  <LatestWriting />
+  <Contact />
 </BaseLayout>

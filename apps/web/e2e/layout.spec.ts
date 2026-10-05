@@ -1,13 +1,14 @@
 import { expect, test } from "@playwright/test";
 
-import { ROUTES, WIDTHS } from "./routes";
+import { INNER_WIDTHS, LOCALIZED, ROUTES, WIDTHS } from "./routes";
 
 /**
  * The layout sweep (working-agreement.md § 2): no horizontal overflow from 320 to 2560, and the
  * content stays inside the 1920 poster cap so nothing smears across an ultrawide screen.
  */
-for (const width of WIDTHS) {
-  for (const route of ROUTES) {
+for (const route of ROUTES) {
+  const widths: readonly number[] = (LOCALIZED as readonly string[]).includes(route) ? WIDTHS : INNER_WIDTHS;
+  for (const width of widths) {
     test(`layout ${width} ${route}`, async ({ page }) => {
       await page.setViewportSize({ width, height: width < 700 ? 844 : 1000 });
       await page.goto(route);

@@ -124,7 +124,10 @@ landing (study it first: `context/pstryk-turborepo/apps/pstrykweb.pl`, patterns 
    Round 3 (2026-10-05): owner's notes applied in `comps/poster-r3.html`; 4 answers pending (Q43-Q46).
    **Gate closed 2026-10-05** [user: "lets finally start coding", the comps are a mock-up to improve on]: Poster is built
    into the app slice by slice. Done: slice 0 visual layer (tokens, Anybody, themes, motion), slice 1 (header + footer),
-   slice 2 (hero + tool band). Next: the flagship chapters. The Stack slice is cut (tools live in the band and chapters).
+   slice 2 (hero + tool band). The Stack slice is cut (tools live in the band and chapters).
+   **Overnight build 2026-10-05** [user: "build everything about this project ... in one go", no questions, placeholders
+   where facts are missing]: all remaining home sections and pages built at once, then looped together (shots, axe,
+   Lighthouse); the owner polishes from the morning. Content agents drafted the posts and the legal texts in parallel.
    Status 2026-10-05: steps 1-2 done (`research/2026-10-05-rebrand-ambition.md`, `comps/`). Step 3: the owner picked Poster; round 2
    (`comps/poster-full.html`, the whole home page) waits for his answers on theme, font and cuts before `design.md` is rewritten.
    The engineering foundation stays: Turborepo, Astro, Lingui, routes, gates, tests, launch gate.
