@@ -40,6 +40,14 @@
   the real axes, so its screenshots look broken. A limitation of that port, not the site; real Safari (CoreText) still
   needs a look on a Mac or iPhone.
 
+## Third parties under the CSP (2026-10-06, local build)
+
+- Turnstile with Cloudflare's public test key `1x00000000000000000000AA`: the widget renders on first input, a dummy
+  token arrives, no CSP violation. The first load can take > 6 s on a cold connection.
+- Umami Cloud script with a dummy id: loads (200), `window.umami` exists, no CSP violation, nothing sent on localhost
+  (`data-domains`).
+- Lighthouse desktop: `/en/` and the case study 100 × 4, LCP 0.46 s / 0.40 s.
+
 ## Gotchas already paid for
 
 - One `astro preview` per project (Astro 7): a second one exits with "Another astro preview server is already running".

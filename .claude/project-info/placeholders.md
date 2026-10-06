@@ -43,3 +43,19 @@
 | P22 | Legal tokens rendered as marked gaps: postal address, mailbox provider and its location (`[[POSTAL_ADDRESS]]`, `[[MAILBOX_PROVIDER]]`, `[[MAILBOX_LOCATION]]`) | `src/content/legal/*/*.md` | owner | fill the values in `astro.config.mjs` `legalTokens` known map | 36 |
 | P23 | CV entries with unconfirmed dates (PstrykWeb year, "since 2022" freelance, credentials dates, verify URLs on `.example`) | `src/data/cv.ts` | owner | confirm, then `bun run cv:pdf` | 10, 25 |
 | P16 | Project facts not yet supplied (years, metrics, decisions, "what I'd do differently") | dossiers, case studies | owner | replace or drop the claim | 1 |
+
+## Launch runbook (in order; owner steps marked **owner**)
+
+1. **owner** Replace or accept every row above; `LAUNCH_BUILD=true bun run build` (apps/web) lists what still blocks.
+2. **owner** Lawyer review of `/privacy/` + `/terms/` (P13); the gap values go in `astro.config.mjs` `legalTokens` (P22).
+3. **owner** Services: Resend (verify the sending domain's DNS, SPF + DKIM), Turnstile widget for the domain, Umami Cloud
+   website. Names of the values: `apps/web/.env.example`.
+4. **owner** Vercel (Pro): Root Directory `apps/web`; env vars in Production (+ Preview without `LAUNCH_BUILD`);
+   `LAUNCH_BUILD=true` in Production only; WAF rate-limit rule on `/api/contact/` (e.g. 5 per 10 min per IP, the
+   function's own limit).
+5. Preview deploy (no domain): send a real message through the form, check the mail arrives with the reply address;
+   Lighthouse mobile against the preview URL (`--base`); compare the LCP with `memory/run-notes.md`.
+6. **owner** Attach `matmuszarski.space` (+ `www`, redirected by `vercel.json`); the production build must pass the gate.
+7. **owner** Search Console: Domain property (DNS TXT), submit `/sitemap-index.xml`, URL Inspection on home, the case
+   study, one post and `/en/cv/`; Bing Webmaster: import from GSC.
+8. **owner** Same day: the site URL on LinkedIn, GitHub and the CV sources (`sameAs` must match).

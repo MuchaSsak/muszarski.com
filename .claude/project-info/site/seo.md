@@ -86,8 +86,10 @@ Success signal: Google autocomplete starts completing "mateusz muszarski" to "â€
   post and `/cv/`.
 - **Bing Webmaster:** import from GSC + **IndexNow** ping (key file in `public/`) after every deploy.
 - **`/llms.txt`:** P2, generated from the CV data; Google doesn't use it. Zero expectation, zero cost.
-- **Launch gate** (port from pstryk): the build fails on a missing title/description/OG, a wrong host in canonical/sitemap,
-  a preview noindex in production, or invalid JSON-LD.
+- **Launch gate** (`apps/web/scripts/launch-gate.mjs`, after every build): fails on a missing title, description or
+  canonical, more than one origin across canonicals / hreflang / og:url / sitemap, JSON-LD that does not parse, a
+  broken internal link or #anchor, a missing share image or PDF; in a launch build also on placeholder markers and on
+  wrong robots (legal, print and contact-result pages noindex, everything else indexable).
 
 ## Built (2026-10-05)
 

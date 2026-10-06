@@ -88,8 +88,45 @@ if (existsSync(dist)) {
   }
 }
 
-if (broken.length) {
-  console.error(`launch-gate: ${broken.length} broken internal link(s):\n  ${broken.slice(0, 30).join("\n  ")}`);
+// SEO basics on every page (seo.md § Crawl and indexing setup): a title and a description, a canonical (not the
+// print route or the root redirect), every canonical, og:url, hreflang and sitemap URL on one origin, and JSON-LD
+// that parses. Like broken links, these fail every build.
+const seo = [];
+const robotsOf = new Map();
+if (existsSync(dist)) {
+  const origins = new Set();
+  for (const page of pages(dist)) {
+    const html = readFileSync(page, "utf8");
+    const name = relative(dist, page).replace(/\\/g, "/");
+    const stub = name === "index.html";
+    const print = /cv\/print\//.test(name);
+    robotsOf.set(name, /<meta name="robots" content="([^"]+)"/.exec(html)?.[1] ?? "");
+    if (!/<title>[^<]+<\/title>/.test(html)) seo.push(`${name}: no <title>`);
+    if (!stub && !/<meta name="description" content="[^"]{20,}"/.test(html)) seo.push(`${name}: no description`);
+    if (!stub && !print && !/<link rel="canonical" href="https?:\/\//.test(html)) seo.push(`${name}: no canonical`);
+    for (const [, url] of html.matchAll(
+      /<(?:link rel="(?:canonical|alternate)"[^>]*?|meta property="og:url"[^>]*?) (?:href|content)="(https?:\/\/[^"]+)"/g,
+    ))
+      origins.add(new URL(url).origin);
+    for (const [, json] of html.matchAll(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/g)) {
+      try {
+        if (!JSON.parse(json)["@context"]) seo.push(`${name}: JSON-LD without @context`);
+      } catch {
+        seo.push(`${name}: JSON-LD does not parse`);
+      }
+    }
+  }
+  for (const map of readdirSync(dist).filter((file) => /^sitemap.*\.xml$/.test(file)))
+    for (const [, url] of readFileSync(join(dist, map), "utf8").matchAll(/<loc>([^<]+)<\/loc>/g))
+      origins.add(new URL(url).origin);
+  if (origins.size > 1)
+    seo.push(`more than one origin in canonicals, hreflang, og:url and the sitemap: ${[...origins].join(", ")}`);
+}
+
+if (broken.length || seo.length) {
+  if (broken.length)
+    console.error(`launch-gate: ${broken.length} broken internal link(s):\n  ${broken.slice(0, 30).join("\n  ")}`);
+  if (seo.length) console.error(`launch-gate: ${seo.length} SEO problem(s):\n  ${seo.slice(0, 30).join("\n  ")}`);
   process.exit(1);
 }
 
@@ -100,6 +137,12 @@ const noindex = existsSync(home) && /<meta name="robots" content="noindex/.test(
 if (launch) {
   const problems = [...hits, ...missing];
   if (noindex) problems.push("dist/en/index.html is noindex in a launch build");
+  // Legal pages, the print route and the contact results stay out of the index; everything else is indexable.
+  for (const [name, robots] of robotsOf) {
+    const hidden = /(privacy|terms|cv\/print|contact\/(sent|error))\//.test(name) || name === "index.html";
+    if (!hidden && !robots.startsWith("index")) problems.push(`${name}: robots "${robots}" in a launch build`);
+    if (hidden && name !== "index.html" && !robots.startsWith("noindex")) problems.push(`${name}: should be noindex`);
+  }
   if (problems.length) {
     console.error(`launch-gate: ${problems.length} problem(s) block the launch:\n  ${problems.join("\n  ")}`);
     process.exit(1);
