@@ -148,3 +148,4 @@ Messenger) · back to work / contact. Secondary nav item; not in the hero path.
 | How this site was built | AI section, footer | the case-study post |
 | All posts | latest writing | blog index |
 | Copy email | contact section | clipboard + toast |
+| Send fails | contact form | its own navy error box (`role=alert`) under Send; the note "Used only to reply. Privacy policy" never changes, link underlined [user 2026-10-06]; unknown answers read as "can't send right now" |

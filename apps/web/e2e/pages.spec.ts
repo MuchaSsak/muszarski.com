@@ -21,9 +21,17 @@ test("a post links its translation (hreflang) and the language switch keeps it",
   await page.goto("/en/blog/how-this-site-was-built/");
   const hreflangs = await page
     .locator('link[rel="alternate"][hreflang]')
-    .evaluateAll((links) => links.map((link) => `${link.getAttribute("hreflang")} ${new URL(link.getAttribute("href")!).pathname}`));
-  expect(hreflangs).toEqual(["en /en/blog/how-this-site-was-built/", "pl /pl/blog/jak-powstala-ta-strona/", "x-default /en/blog/how-this-site-was-built/"]);
-  const jsonLd = await page.locator('script[type="application/ld+json"]').evaluateAll((scripts) => scripts.map((s) => s.textContent).join(""));
+    .evaluateAll((links) =>
+      links.map((link) => `${link.getAttribute("hreflang")} ${new URL(link.getAttribute("href")!).pathname}`),
+    );
+  expect(hreflangs).toEqual([
+    "en /en/blog/how-this-site-was-built/",
+    "pl /pl/blog/jak-powstala-ta-strona/",
+    "x-default /en/blog/how-this-site-was-built/",
+  ]);
+  const jsonLd = await page
+    .locator('script[type="application/ld+json"]')
+    .evaluateAll((scripts) => scripts.map((s) => s.textContent).join(""));
   expect(jsonLd).toContain('"BlogPosting"');
   await expect(page.locator(".site-header .h-loc a[hreflang=pl]")).toHaveAttribute("href", "/pl/blog/jak-powstala-ta-strona/");
   // No Spanish blog: the switch goes to the Spanish home.
@@ -51,7 +59,9 @@ test("contact: the reply address fills itself from the message, and a sent messa
   });
   await page.goto("/en/#contact");
   await page.getByRole("button", { name: "A job" }).click();
-  await page.getByRole("textbox", { name: "Your message" }).fill("Hi, we are hiring a full-stack developer. Write to jobs@studio.dev");
+  await page
+    .getByRole("textbox", { name: "Your message" })
+    .fill("Hi, we are hiring a full-stack developer. Write to jobs@studio.dev");
   await expect(page.getByRole("textbox", { name: "Where do I reply?" })).toHaveValue("jobs@studio.dev");
   await page.getByRole("button", { name: "Send" }).click();
   await expect(page.locator("[data-done]")).toBeVisible();
@@ -68,12 +78,30 @@ test("contact: an error keeps the text and points to the email", async ({ page }
   await message.fill("A question about Linkoglot");
   await page.getByRole("textbox", { name: "Where do I reply?" }).fill("+48 600 700 800");
   await page.getByRole("button", { name: "Send" }).click();
-  await expect(page.locator("[data-note]")).toContainText("Copy my email");
+  await expect(page.getByRole("alert")).toContainText("Copy my email");
+  // The privacy note stays as it is.
+  await expect(page.locator("#ct-note")).toHaveText(/Used only to reply\.\s*Privacy policy/);
   await expect(message).toHaveValue("A question about Linkoglot");
   // Nothing written: the form says so before sending anything.
   await message.fill("");
   await page.getByRole("button", { name: "Send" }).click();
-  await expect(page.locator("[data-note]")).toContainText("Write a message first");
+  await expect(page.getByRole("alert")).toContainText("Write a message first");
+});
+
+test("contact: a platform error page still reads as a sentence", async ({ page }) => {
+  // What Vercel answers when the function itself crashes (the live empty toast on 2026-10-06).
+  await page.route("**/api/contact/", (route) =>
+    route.fulfill({
+      status: 500,
+      contentType: "application/json",
+      body: JSON.stringify({ error: { code: "500", message: "A server error has occurred" } }),
+    }),
+  );
+  await page.goto("/en/#contact");
+  await page.getByRole("textbox", { name: "Your message" }).fill("A question about Linkoglot");
+  await page.getByRole("textbox", { name: "Where do I reply?" }).fill("+48 600 700 800");
+  await page.getByRole("button", { name: "Send" }).click();
+  await expect(page.getByRole("alert")).toContainText("The form can't send right now");
 });
 
 test("how I work: a stop shows its line and its practices", async ({ page }) => {

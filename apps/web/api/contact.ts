@@ -7,7 +7,7 @@
  * a plain form post without JavaScript. Secrets come from the host env (names only: technologies.md § Environment).
  * Region: fra1 (vercel.json). No database: nothing is stored here.
  */
-import { findReply, isTopic, LIMITS, replyKind, validateContact, type ContactError } from "../src/lib/contact";
+import { findReply, isTopic, LIMITS, replyKind, validateContact, type ContactError } from "../src/lib/contact.js";
 
 const LOCALES = ["en", "pl", "es"] as const;
 type Locale = (typeof LOCALES)[number];
@@ -24,12 +24,23 @@ function limited(ip: string): boolean {
   return recent.length > MAX_PER_WINDOW;
 }
 
-function answer(request: Request, locale: Locale, result: { ok: true } | { ok: false; error: ContactError }, status: number): Response {
+function answer(
+  request: Request,
+  locale: Locale,
+  result: { ok: true } | { ok: false; error: ContactError },
+  status: number,
+): Response {
   if (request.headers.get("accept")?.includes("application/json")) {
-    return new Response(JSON.stringify(result), { status, headers: { "Content-Type": "application/json", "Cache-Control": "no-store" } });
+    return new Response(JSON.stringify(result), {
+      status,
+      headers: { "Content-Type": "application/json", "Cache-Control": "no-store" },
+    });
   }
   const target = result.ok ? `/${locale}/contact/sent/` : `/${locale}/contact/error/?e=${result.error}`;
-  return new Response(null, { status: 303, headers: { Location: new URL(target, request.url).href, "Cache-Control": "no-store" } });
+  return new Response(null, {
+    status: 303,
+    headers: { Location: new URL(target, request.url).href, "Cache-Control": "no-store" },
+  });
 }
 
 async function turnstileOk(token: string, ip: string, secret: string): Promise<boolean> {
@@ -53,7 +64,8 @@ export async function POST(request: Request): Promise<Response> {
 
   // Bots: a filled honeypot or a form sent faster than a person types.
   const started = Number(field("started"));
-  if (field("website") || (started && Date.now() - started < LIMITS.minFillMs)) return answer(request, locale, { ok: false, error: "spam" }, 400);
+  if (field("website") || (started && Date.now() - started < LIMITS.minFillMs))
+    return answer(request, locale, { ok: false, error: "spam" }, 400);
   if (limited(ip)) return answer(request, locale, { ok: false, error: "rate" }, 429);
 
   const message = field("message").trim();
@@ -91,7 +103,15 @@ export async function POST(request: Request): Promise<Response> {
   return answer(request, locale, { ok: true }, 200);
 }
 
-type Mail = { subject: string; text: string; message: string; reply: string; kind: ReturnType<typeof replyKind>; topic: string; locale: Locale };
+type Mail = {
+  subject: string;
+  text: string;
+  message: string;
+  reply: string;
+  kind: ReturnType<typeof replyKind>;
+  topic: string;
+  locale: Locale;
+};
 
 /**
  * EmailJS (tech/technologies.md § Contact): the template (dashboard) holds the recipient and the layout; it gets

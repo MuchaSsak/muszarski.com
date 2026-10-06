@@ -2,6 +2,7 @@
  * The contact function end to end, with the network mocked: bot checks, validation, Turnstile, EmailJS, both answer
  * shapes (JSON for the page script, 303 for a plain form post). Env names only (technologies.md § Environment).
  */
+import { readFileSync } from "node:fs";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 let ipCounter = 0;
@@ -22,6 +23,17 @@ const valid = () => ({
   locale: "pl",
   topic: "job",
   started: String(Date.now() - 10_000),
+});
+
+describe("api/contact.ts on Vercel", () => {
+  // Vercel runs the function as native ESM: an extensionless relative import compiles fine and then crashes every
+  // request with ERR_MODULE_NOT_FOUND (live 500s on 2026-10-06).
+  it("imports relative files with their .js extension", () => {
+    const source = readFileSync(new URL("./contact.ts", import.meta.url), "utf8");
+    const relative = [...source.matchAll(/from "(\.{1,2}\/[^"]+)"/g)].map((m) => m[1]);
+    expect(relative.length).toBeGreaterThan(0);
+    for (const path of relative) expect(path).toMatch(/\.js$/);
+  });
 });
 
 async function load() {
@@ -56,7 +68,12 @@ describe("POST /api/contact/", () => {
     const [url, init] = fetchMock.mock.calls[0]!;
     expect(url).toBe("https://api.emailjs.com/api/v1.0/email/send");
     const payload = JSON.parse(String(init?.body));
-    expect(payload).toMatchObject({ service_id: "service_test", template_id: "template_test", user_id: "public-test", accessToken: "private-test" });
+    expect(payload).toMatchObject({
+      service_id: "service_test",
+      template_id: "template_test",
+      user_id: "public-test",
+      accessToken: "private-test",
+    });
     expect(payload.template_params).toMatchObject({ reply_to: "recruiter@example.com", reply_kind: "email", locale: "pl" });
     expect(payload.template_params.subject).toContain("(job)");
     expect(payload.template_params.text).toContain("Page language: pl");

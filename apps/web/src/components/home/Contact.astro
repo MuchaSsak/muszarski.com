@@ -33,7 +33,11 @@ const errors = {
   unavailable: t`The form can't send right now. Copy my email instead; your text is still here.`,
   network: t`No connection. Your text is still here; try again, or copy my email.`,
 };
-const found = { email: t`Found an email in your message`, phone: t`Found a phone number in your message`, linkedin: t`Found your LinkedIn in your message` };
+const found = {
+  email: t`Found an email in your message`,
+  phone: t`Found a phone number in your message`,
+  linkedin: t`Found your LinkedIn in your message`,
+};
 ---
 
 <section class="sec field-accent contact" id="contact" aria-labelledby="t-ct">
@@ -48,9 +52,18 @@ const found = { email: t`Found an email in your message`, phone: t`Found a phone
       <p class="lede rv">{typo(locale, t`A role, a project or a question. One line is fine.`)}</p>
       <!-- PLACEHOLDER: availability facts wait for the owner (placeholders.md P4, Q3). -->
       <ul class="ifacts rv" style="--d:1" role="list">
-        <li><Icon name="tb:briefcase" />{t`Full-time or contract`}</li>
-        <li><Icon name="tb:map-pin" />{t`Remote · Poland, CET`}</li>
-        <li><Icon name="tb:language" />{t`English · Polish`}</li>
+        <li>
+          <Icon name="tb:briefcase" />
+          {t`Full-time or contract`}
+        </li>
+        <li>
+          <Icon name="tb:map-pin" />
+          {t`Remote · Poland, CET`}
+        </li>
+        <li>
+          <Icon name="tb:language" />
+          {t`English · Polish`}
+        </li>
       </ul>
     </div>
 
@@ -69,13 +82,26 @@ const found = { email: t`Found an email in your message`, phone: t`Found a phone
         <input type="hidden" name="topic" value="" data-topic-input />
         <input type="hidden" name="started" value="" data-started />
         <div class="hp" aria-hidden="true">
-          <label>Website <input type="text" name="website" tabindex="-1" autocomplete="off" /></label>
+          <label>
+            Website <input type="text" name="website" tabindex="-1" autocomplete="off" />
+          </label>
         </div>
         <div class="topics" role="group" aria-labelledby="ct-about">
-          <span class="kick" id="ct-about">{t`About`} <span class="sr-only">{t`(optional)`}</span></span>
-          <button class="topic" type="button" aria-pressed="false" data-topic="job"><Icon name="tb:briefcase" />{t`A job`}</button>
-          <button class="topic" type="button" aria-pressed="false" data-topic="project"><Icon name="tb:rocket" />{t`A project`}</button>
-          <button class="topic" type="button" aria-pressed="false" data-topic="question"><Icon name="tb:message-circle" />{t`A question`}</button>
+          <span class="kick" id="ct-about">
+            {t`About`} <span class="sr-only">{t`(optional)`}</span>
+          </span>
+          <button class="topic" type="button" aria-pressed="false" data-topic="job">
+            <Icon name="tb:briefcase" />
+            {t`A job`}
+          </button>
+          <button class="topic" type="button" aria-pressed="false" data-topic="project">
+            <Icon name="tb:rocket" />
+            {t`A project`}
+          </button>
+          <button class="topic" type="button" aria-pressed="false" data-topic="question">
+            <Icon name="tb:message-circle" />
+            {t`A question`}
+          </button>
         </div>
         <label class="field">
           <span class="sr-only">{t`Your message`}</span>
@@ -86,8 +112,9 @@ const found = { email: t`Found an email in your message`, phone: t`Found a phone
             maxlength={LIMITS.messageMax}
             rows="5"
             placeholder={t`Hi Mateusz, we're hiring for…`}
-            aria-describedby="ct-note"
-            data-message></textarea>
+            aria-describedby="ct-err ct-note"
+            data-message
+          ></textarea>
         </label>
         <div class="send-row">
           <label class="reply">
@@ -101,7 +128,7 @@ const found = { email: t`Found an email in your message`, phone: t`Found a phone
               inputmode="email"
               spellcheck="false"
               placeholder={t`Email, phone or LinkedIn`}
-              aria-describedby="ct-found"
+              aria-describedby="ct-err ct-found"
               data-reply
             />
             <span class="found" id="ct-found" aria-live="polite" data-found-note></span>
@@ -111,9 +138,10 @@ const found = { email: t`Found an email in your message`, phone: t`Found a phone
             <Icon name="tb:send" />
           </button>
         </div>
+        <p class="fail" id="ct-err" role="alert" data-error hidden></p>
         <div class="ts" data-turnstile></div>
-        <p class="note" id="ct-note" aria-live="polite" data-note>
-          <span data-note-text>{t`Used only to reply.`}</span>
+        <p class="note" id="ct-note">
+          <span>{t`Used only to reply.`}</span>
           <a href={links.privacy}>{t`Privacy policy`}</a>
         </p>
       </form>
@@ -136,16 +164,40 @@ const found = { email: t`Found an email in your message`, phone: t`Found a phone
           data-copy-source="contact"
         >
           <Icon name="tb:copy" />
-          <span>{t`Copy email`}<small>{emailUser}@<wbr />{emailDomain}</small></span>
+          <span>
+            {t`Copy email`}
+            <small>
+              {emailUser}@<wbr />
+              {emailDomain}
+            </small>
+          </span>
         </button>
-        <a class="dlink" href={linkedin.href} rel="me noopener" target="_blank" data-umami-event="outbound" data-umami-event-target="linkedin">
+        <a
+          class="dlink"
+          href={linkedin.href}
+          rel="me noopener"
+          target="_blank"
+          data-umami-event="outbound"
+          data-umami-event-target="linkedin"
+        >
           <Icon name="tb:brand-linkedin" />
-          <span>LinkedIn<small>/in/{linkedin.handle}</small></span>
+          <span>
+            LinkedIn<small>/in/{linkedin.handle}</small>
+          </span>
           <span class="sr-only">{t`(opens in a new tab)`}</span>
         </a>
-        <a class="dlink" href={github.href} rel="me noopener" target="_blank" data-umami-event="outbound" data-umami-event-target="github">
+        <a
+          class="dlink"
+          href={github.href}
+          rel="me noopener"
+          target="_blank"
+          data-umami-event="outbound"
+          data-umami-event-target="github"
+        >
           <Icon name="si:github" />
-          <span>GitHub<small>{github.handle}</small></span>
+          <span>
+            GitHub<small>{github.handle}</small>
+          </span>
           <span class="sr-only">{t`(opens in a new tab)`}</span>
         </a>
       </div>
@@ -326,11 +378,22 @@ const found = { email: t`Found an email in your message`, phone: t`Found a phone
     margin: 0;
     font-size: 0.875rem;
   }
-  .note.err {
+  .note a {
+    text-decoration: underline;
+    text-decoration-thickness: 2px;
+    text-underline-offset: 0.2em;
+  }
+  /* Errors get their own box; the privacy note stays as it is [user 2026-10-06]. */
+  .fail {
+    margin: 0;
     padding: 0.75rem 0.875rem;
     background: var(--navy);
     color: var(--ice);
     font-weight: 700;
+    font-size: 0.875rem;
+  }
+  .fail[hidden] {
+    display: none;
   }
   .ts:empty {
     display: none;
@@ -444,10 +507,10 @@ const found = { email: t`Found an email in your message`, phone: t`Found a phone
 
 <script>
   import { findReply, isTopic, LIMITS, replyKind, validateContact, type ContactError } from "~/lib/contact";
-  import { toast } from "~/scripts/motion";
 
   type Umami = { track: (event: string, data?: Record<string, string>) => void };
-  const track = (event: string, data?: Record<string, string>) => (window as unknown as { umami?: Umami }).umami?.track(event, data);
+  const track = (event: string, data?: Record<string, string>) =>
+    (window as unknown as { umami?: Umami }).umami?.track(event, data);
 
   for (const form of document.querySelectorAll<HTMLFormElement>("[data-contact]")) {
     const section = form.closest("section")!;
@@ -458,9 +521,7 @@ const found = { email: t`Found an email in your message`, phone: t`Found a phone
     const foundNote = form.querySelector<HTMLElement>("[data-found-note]")!;
     const topicInput = form.querySelector<HTMLInputElement>("[data-topic-input]")!;
     const started = form.querySelector<HTMLInputElement>("[data-started]")!;
-    const note = form.querySelector<HTMLElement>("[data-note]")!;
-    const noteText = form.querySelector<HTMLElement>("[data-note-text]")!;
-    const defaultNote = noteText.textContent ?? "";
+    const fail = form.querySelector<HTMLElement>("[data-error]")!;
     const send = form.querySelector<HTMLButtonElement>("[data-send]")!;
     const sendLabel = form.querySelector<HTMLElement>("[data-send-label]")!;
     const sendText = sendLabel.textContent ?? "";
@@ -477,11 +538,13 @@ const found = { email: t`Found an email in your message`, phone: t`Found a phone
       topicInput.value = isTopic(value) ? value : "";
       topics.forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.topic === topicInput.value)));
     };
-    topics.forEach((b) => b.addEventListener("click", () => setTopic(topicInput.value === b.dataset.topic ? "" : b.dataset.topic!)));
+    topics.forEach((b) =>
+      b.addEventListener("click", () => setTopic(topicInput.value === b.dataset.topic ? "" : b.dataset.topic!)),
+    );
 
     const showError = (kind: ContactError | null) => {
-      note.classList.toggle("err", !!kind);
-      noteText.textContent = kind ? errors[kind] : defaultNote;
+      fail.hidden = !kind;
+      fail.textContent = kind ? errors[kind] : "";
       message.setAttribute("aria-invalid", String(kind === "message-empty" || kind === "message-long"));
       reply.setAttribute("aria-invalid", String(kind === "reply-missing" || kind === "reply-invalid"));
     };
@@ -494,7 +557,11 @@ const found = { email: t`Found an email in your message`, phone: t`Found a phone
       script.dataset.turnstileScript = "";
       script.onload = () => {
         const api = (window as unknown as { turnstile?: { render: (el: Element, opts: object) => string } }).turnstile;
-        turnstileId = api?.render(form.querySelector("[data-turnstile]")!, { sitekey, appearance: "interaction-only", size: "flexible" });
+        turnstileId = api?.render(form.querySelector("[data-turnstile]")!, {
+          sitekey,
+          appearance: "interaction-only",
+          size: "flexible",
+        });
       };
       document.head.append(script);
     };
@@ -515,7 +582,7 @@ const found = { email: t`Found an email in your message`, phone: t`Found a phone
         autoFilled = false;
         foundNote.textContent = "";
       }
-      if (note.classList.contains("err")) showError(null);
+      if (!fail.hidden) showError(null);
     });
     reply.addEventListener("input", () => {
       autoFilled = false;
@@ -543,11 +610,17 @@ const found = { email: t`Found an email in your message`, phone: t`Found a phone
           body: new URLSearchParams(new FormData(form) as unknown as Record<string, string>),
           headers: { Accept: "application/json" },
         });
-        const result = (await response.json().catch(() => ({ ok: false, error: response.status === 429 ? "rate" : "unavailable" }))) as {
+        const result = (await response
+          .json()
+          .catch(() => ({ ok: false, error: response.status === 429 ? "rate" : "unavailable" }))) as {
           ok: boolean;
           error?: ContactError;
         };
-        if (!result.ok) throw Object.assign(new Error("send"), { kind: result.error ?? "unavailable" });
+        // Anything but our own answer (a platform error page, an unknown kind) reads as "can't send right now".
+        if (!result.ok)
+          throw Object.assign(new Error("send"), {
+            kind: typeof result.error === "string" && result.error in errors ? result.error : "unavailable",
+          });
         track("contact_submit", { topic: topicInput.value || "none" });
         form.hidden = true;
         done.hidden = false;
@@ -555,7 +628,7 @@ const found = { email: t`Found an email in your message`, phone: t`Found a phone
       } catch (error) {
         const kind = ((error as { kind?: ContactError }).kind ?? "network") as ContactError;
         showError(kind);
-        toast(errors[kind]);
+        fail.scrollIntoView({ block: "nearest" });
         track("contact_error", { kind: kind === "rate" ? "429" : kind === "unavailable" ? "5xx" : kind });
         const api = (window as unknown as { turnstile?: { reset: (id?: string) => void } }).turnstile;
         if (turnstileId) api?.reset(turnstileId);
