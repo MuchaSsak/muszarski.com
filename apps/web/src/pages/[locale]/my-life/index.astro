@@ -6,7 +6,7 @@
  * - the head (`LifeHero`): the title over a goo shader that follows the pointer
  * - the playground: one toy per interest he named [user 2026-10-05], each something to do, not to watch: pull-ups to
  *   count, light to move (faith), a departures board, an engine to rev, a beat to make, a film to roll, Pong to play,
- *   a party to start, a slider for the 1 % idea. Sound is synthesised and only plays after a press; one switch mutes it.
+ *   a party to start, a camera to focus and shoot [user 2026-10-06], a slider for the 1 % idea. Sound is synthesised and only plays after a press; one switch mutes it.
  * - hang out: a yellow band, so it stands apart from the footer; his chats (Discord, Messenger, Telegram) arrive as
  *   messages, Discord with the username to add.
  * Every toy works by keyboard and says what it is in text; paused or reduced motion keeps them usable and still.
@@ -24,6 +24,7 @@ import ToyCard from "~/components/life/ToyCard.astro";
 import ToyFilm from "~/components/life/ToyFilm.astro";
 import ToyLight from "~/components/life/ToyLight.astro";
 import ToyParty from "~/components/life/ToyParty.astro";
+import ToyPhoto from "~/components/life/ToyPhoto.astro";
 import ToyPong from "~/components/life/ToyPong.astro";
 import ToyReps from "~/components/life/ToyReps.astro";
 import ToyRev from "~/components/life/ToyRev.astro";
@@ -98,6 +99,9 @@ const SOCIAL_ICONS: Record<string, IconName> = { discord: "si:discord", messenge
       </ToyCard>
       <ToyCard area="party" title={t`Parties`} line={L(t`I like a good party.`)} tone="var(--space)" ink="var(--ice)" hint={tap}>
         <ToyParty />
+      </ToyCard>
+      <ToyCard area="photo" title={t`Photography`} line={L(t`I take photos. Strictly amateur, strictly for fun.`)} tone="var(--pink)" hint={slide}>
+        <ToyPhoto />
       </ToyCard>
       <ToyCard area="better" title={t`Self-improvement`} line={L(t`Trying to be a bit better than yesterday.`)} tone="var(--lime)" hint={slide}>
         <ToyBetter />
@@ -227,7 +231,8 @@ const SOCIAL_ICONS: Record<string, IconName> = { discord: "si:discord", messenge
       "reps beats beats light"
       "board board rev light"
       "pong pong film party"
-      "pong pong better better";
+      "pong pong photo photo"
+      "better better better better";
     gap: clamp(1.25rem, 2.2vw, 2rem);
     margin: 0;
     padding: 0;
@@ -242,6 +247,7 @@ const SOCIAL_ICONS: Record<string, IconName> = { discord: "si:discord", messenge
         "board board"
         "light film"
         "pong pong"
+        "photo photo"
         "better better"
         "party party";
     }
@@ -249,7 +255,7 @@ const SOCIAL_ICONS: Record<string, IconName> = { discord: "si:discord", messenge
   @media (max-width: 40rem) {
     .toys {
       grid-template-columns: minmax(0, 1fr);
-      grid-template-areas: "reps" "beats" "light" "board" "rev" "pong" "film" "party" "better";
+      grid-template-areas: "reps" "beats" "light" "board" "rev" "pong" "film" "party" "photo" "better";
     }
   }
 

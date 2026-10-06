@@ -520,7 +520,7 @@ const FILMS = [
   type Film = { id: string; genre: string; line: string };
   let scenes: Promise<Record<string, () => string>> | undefined;
   /** The drawings load when a roll is near (a hover, a focus, a press), never with the page. */
-  const loadScenes = () => (scenes ??= import("~/scripts/life-films").then((m) => m.SCENES).catch(() => ({})));
+  const loadScenes = () => (scenes ??= import("~/scripts/life-films").then((m) => m.SCENES).catch((): Record<string, () => string> => ({})));
 
   for (const root of document.querySelectorAll<HTMLElement>("[data-film]")) {
     const num = root.querySelector<HTMLElement>("[data-num]")!;

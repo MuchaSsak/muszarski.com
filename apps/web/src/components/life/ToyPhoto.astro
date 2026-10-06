@@ -13,6 +13,7 @@ import Icon from "~/components/ui/Icon.astro";
 const SAYS = { sharp: t`Sharp!`, soft: t`A bit soft.`, blurry: t`Blurry. Art, though.` };
 ---
 
+<div class="ph-wrap">
 <div class="photo" data-photo data-says={JSON.stringify(SAYS)} data-print-label={t`Photo`}>
   <div class="ph-view" aria-hidden="true">
     <div class="ph-scene" data-scene>
@@ -59,11 +60,38 @@ const SAYS = { sharp: t`Sharp!`, soft: t`A bit soft.`, blurry: t`Blurry. Art, th
   </div>
   <p class="ph-say" role="status" data-said></p>
 </div>
+</div>
 
 <style>
+  /* Stacked in a narrow card; in a wide one the viewfinder sits left of the controls. */
+  .ph-wrap {
+    container-type: inline-size;
+  }
   .photo {
     display: grid;
     gap: 0.75rem;
+  }
+  @container (min-width: 30rem) {
+    .photo {
+      grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
+      grid-template-areas: "view ring" "view row" "view say";
+      align-content: center;
+      gap: 0.75rem 1.25rem;
+    }
+    .ph-view {
+      grid-area: view;
+      align-self: center;
+    }
+    .ph-ring {
+      grid-area: ring;
+      align-self: end;
+    }
+    .ph-row {
+      grid-area: row;
+    }
+    .ph-say {
+      grid-area: say;
+    }
   }
   .ph-view {
     position: relative;
@@ -181,25 +209,30 @@ const SAYS = { sharp: t`Sharp!`, soft: t`A bit soft.`, blurry: t`Blurry. Art, th
     padding: 0;
     list-style: none;
   }
-  /* A print: white border, thicker at the bottom; it develops from blank to the picture. */
-  .ph-print {
+  /* A print (made by the script, so its rules are global): white border, thicker at the bottom; it develops from blank
+     to the picture, framed as it was shot. */
+  .ph-prints :global(.ph-print) {
     width: 3.5rem;
     padding: 0.1875rem 0.1875rem 0.625rem;
     background: #fbfaf5;
     box-shadow: 2px 2px 0 rgb(10 13 51 / 0.35);
     rotate: var(--r, 0deg);
   }
-  .ph-print > :global(.ph-svg) {
-    width: 100%;
-    height: auto;
+  .ph-prints :global(.ph-pic) {
+    display: block;
     aspect-ratio: 4 / 3;
+    overflow: hidden;
+  }
+  .ph-prints :global(.ph-pic > svg) {
+    width: 100%;
+    height: 100%;
     transition: none;
   }
-  .ph-print.dev > :global(.ph-svg) {
-    animation: pt-dev 1.6s ease-out both;
-  }
-  .ph-print.dev {
+  .ph-prints :global(.ph-print.dev) {
     animation: pt-out 0.45s var(--ease-pop) both;
+  }
+  .ph-prints :global(.ph-print.dev .ph-pic > svg) {
+    animation: pt-dev 1.6s ease-out both;
   }
   @keyframes pt-dev {
     from {
@@ -220,8 +253,9 @@ const SAYS = { sharp: t`Sharp!`, soft: t`A bit soft.`, blurry: t`Blurry. Art, th
     text-transform: uppercase;
     letter-spacing: 0.04em;
   }
-  :global(.still) :is(.ph-shut.snap, .ph-print.dev, .ph-print.dev > :global(.ph-svg)) {
-    animation: none;
+  :global(.still) .ph-shut.snap,
+  :global(.still) .ph-prints :global(:is(.ph-print, .ph-print svg)) {
+    animation: none !important;
   }
 </style>
 
@@ -280,7 +314,12 @@ const SAYS = { sharp: t`Sharp!`, soft: t`A bit soft.`, blurry: t`Blurry. Art, th
       copy.setAttribute("aria-label", root.dataset.printLabel ?? "");
       copy.style.setProperty("--f", `blur(${(Math.min(blur, 6) / 4).toFixed(2)}px)`);
       copy.style.filter = "var(--f)";
-      print.append(copy);
+      // The gradients stay in the viewfinder's copy: one set of ids on the page.
+      copy.querySelector("defs")?.remove();
+      const pic = document.createElement("span");
+      pic.className = "ph-pic";
+      pic.append(copy);
+      print.append(pic);
       prints.prepend(print);
       while (prints.children.length > PRINTS) prints.lastElementChild!.remove();
       said.textContent = blur <= LOCK / SOFTNESS ? says.sharp : blur < 3 ? says.soft : says.blurry;
