@@ -142,6 +142,7 @@ const UI = [
   "route",
   "rss",
   "school",
+  "search",
   "send",
   "shield-lock",
   "sparkles",

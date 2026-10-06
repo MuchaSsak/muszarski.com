@@ -21,12 +21,15 @@ export interface CvEntry {
   when: Text;
   bullets: Text[];
   links?: { label: string; href: string }[];
+  /** A one-line version for the home "Experience" card: the place and what it was. */
+  short?: { name: string; note: Text };
   placeholder?: boolean;
 }
 
 export interface Credential {
   id: string;
-  kind: "qualification" | "course" | "volunteering" | "hackathon";
+  /** `experience` is the home card that sums up `education` + `experience`; the CV shows those sections instead. */
+  kind: "experience" | "qualification" | "course" | "volunteering" | "hackathon";
   icon: IconName;
   title: Text;
   issuer: Text;
@@ -61,12 +64,24 @@ export const CV = {
   experience: [
     {
       id: "pstrykweb",
-      title: { en: "Developer, PstrykWeb", pl: "Programista, PstrykWeb", es: "Desarrollador, PstrykWeb" },
-      org: same("Cetuspro"),
-      // PLACEHOLDER (P16): dates from the repo history, owner confirms.
-      when: { en: "2026", pl: "2026", es: "2026" },
-      placeholder: true,
+      title: { en: "Intern, Cetuspro", pl: "Praktykant, Cetuspro", es: "Becario, Cetuspro" },
+      org: { en: "Software house, remote", pl: "Software house, zdalnie", es: "Software house, en remoto" },
+      // [user 2026-10-06] "june to currently".
+      when: { en: "June 2026 – now", pl: "czerwiec 2026 – obecnie", es: "junio de 2026 – actualidad" },
+      short: {
+        name: "Cetuspro",
+        note: {
+          en: "remote, real commercial projects",
+          pl: "zdalnie, prawdziwe projekty komercyjne",
+          es: "en remoto, proyectos comerciales reales",
+        },
+      },
       bullets: [
+        {
+          en: "Real commercial projects for a software house, worked on remotely.",
+          pl: "Prawdziwe projekty komercyjne dla software house'u, w pracy zdalnej.",
+          es: "Proyectos comerciales reales para una software house, en remoto.",
+        },
         {
           en: "Built PstrykWeb for the software house Cetuspro: bespoke websites for local businesses, ordered through one online form.",
           pl: "Zbudowałem PstrykWeb dla software house'u Cetuspro: strony na zamówienie dla lokalnych firm, zamawiane przez jeden formularz online.",
@@ -83,7 +98,16 @@ export const CV = {
       id: "neoteric",
       title: { en: "Intern, Neoteric", pl: "Stażysta, Neoteric", es: "Becario, Neoteric" },
       org: { en: "Software house, Poland", pl: "Software house, Polska", es: "Software house, Polonia" },
-      when: { en: "August 2026", pl: "sierpień 2026", es: "agosto de 2026" },
+      // [user 2026-10-06] six weeks, working with AI.
+      when: { en: "2026 · 6 weeks", pl: "2026 · 6 tygodni", es: "2026 · 6 semanas" },
+      short: {
+        name: "Neoteric",
+        note: {
+          en: "6 weeks, building with AI agents",
+          pl: "6 tygodni, budowanie z agentami AI",
+          es: "6 semanas, construir con agentes de IA",
+        },
+      },
       bullets: [
         {
           en: "Built Clockful, a role-based time tracker, with AI agents only, from a 15-requirement spec in about 9 days (an estimate from the repo dates).",
@@ -99,7 +123,11 @@ export const CV = {
     },
     {
       id: "linkoglot",
-      title: { en: "Founder and developer, Linkoglot", pl: "Twórca i programista, Linkoglot", es: "Fundador y desarrollador, Linkoglot" },
+      title: {
+        en: "Founder and developer, Linkoglot",
+        pl: "Twórca i programista, Linkoglot",
+        es: "Fundador y desarrollador, Linkoglot",
+      },
       org: { en: "Own product", pl: "Własny produkt", es: "Producto propio" },
       when: same("2026"),
       links: [
@@ -116,6 +144,29 @@ export const CV = {
           en: "Free trial, then monthly or yearly plans through RevenueCat; 30 languages with Lingui (Expo, React Native, Supabase).",
           pl: "Darmowy okres próbny, potem plan miesięczny lub roczny przez RevenueCat; 30 języków z Lingui (Expo, React Native, Supabase).",
           es: "Prueba gratuita y después planes mensuales o anuales con RevenueCat; 30 idiomas con Lingui (Expo, React Native, Supabase).",
+        },
+      ],
+    },
+    {
+      id: "beniaminek",
+      title: { en: "Programming intern", pl: "Praktykant, programista", es: "Becario de programación" },
+      org: same("KS Beniaminek 03"),
+      // PLACEHOLDER (P16): the month and year, owner confirms [user 2026-10-06: one month].
+      when: { en: "1 month", pl: "1 miesiąc", es: "1 mes" },
+      placeholder: true,
+      short: {
+        name: "KS Beniaminek 03",
+        note: {
+          en: "a month as a programmer, people skills",
+          pl: "miesiąc jako programista, umiejętności miękkie",
+          es: "un mes como programador, habilidades sociales",
+        },
+      },
+      bullets: [
+        {
+          en: "A one-month internship as a programmer that grew my soft and social skills.",
+          pl: "Miesięczny staż jako programista, na którym rozwinąłem umiejętności miękkie i społeczne.",
+          es: "Unas prácticas de un mes como programador que hicieron crecer mis habilidades sociales.",
         },
       ],
     },
@@ -137,6 +188,29 @@ export const CV = {
           es: "lingui-translate-ai: una CLI en npm que traduce catálogos de Lingui con un LLM, nacida de Linkoglot.",
         },
       ],
+    },
+  ] satisfies CvEntry[],
+
+  education: [
+    {
+      id: "zse",
+      title: {
+        en: "Programming technician (technik programista)",
+        pl: "Technik programista",
+        es: "Técnico programador (technik programista)",
+      },
+      org: same("ZSE Starogard Gdański"),
+      // [user 2026-10-06] in progress; the years wait for the full resume.
+      when: { en: "In progress", pl: "W trakcie", es: "En curso" },
+      short: {
+        name: "ZSE Starogard Gdański",
+        note: {
+          en: "technical school, technik programista",
+          pl: "technikum, technik programista",
+          es: "escuela técnica, técnico programador",
+        },
+      },
+      bullets: [],
     },
   ] satisfies CvEntry[],
 
@@ -169,13 +243,19 @@ export const CV = {
   ] satisfies CvEntry[],
 
   skills: [
-    { group: { en: "Frontend", pl: "Frontend", es: "Frontend" }, items: ["TypeScript", "React", "Next.js", "Astro", "Tailwind CSS"] },
+    {
+      group: { en: "Frontend", pl: "Frontend", es: "Frontend" },
+      items: ["TypeScript", "React", "Next.js", "Astro", "Tailwind CSS"],
+    },
     { group: { en: "Mobile", pl: "Mobile", es: "Móvil" }, items: ["React Native", "Expo", "RevenueCat"] },
     {
       group: { en: "Backend and data", pl: "Backend i dane", es: "Backend y datos" },
       items: ["Node.js", "Supabase", "PostgreSQL (RLS)", "TanStack Query"],
     },
-    { group: { en: "3D and motion", pl: "3D i animacja", es: "3D y animación" }, items: ["three.js", "React Three Fiber", "GLSL", "GSAP"] },
+    {
+      group: { en: "3D and motion", pl: "3D i animacja", es: "3D y animación" },
+      items: ["three.js", "React Three Fiber", "GLSL", "GSAP"],
+    },
     {
       group: { en: "AI and quality", pl: "AI i jakość", es: "IA y calidad" },
       items: ["Claude Code", "MCP", "Playwright", "Vitest", "Lighthouse"],
@@ -184,6 +264,23 @@ export const CV = {
   ],
 
   credentials: [
+    {
+      id: "experience",
+      kind: "experience",
+      icon: "tb:briefcase",
+      title: { en: "Experience", pl: "Doświadczenie", es: "Experiencia" },
+      issuer: {
+        en: "About 4 years of building projects",
+        pl: "Około 4 lat budowania projektów",
+        es: "Unos 4 años construyendo proyectos",
+      },
+      summary: {
+        en: "Studying to be a programming technician, building since 2022, with three internships: AI agents, commercial projects and a lot of work with people.",
+        pl: "Uczę się na technika programistę, buduję od 2022 roku i mam za sobą trzy praktyki: agenci AI, projekty komercyjne i dużo pracy z ludźmi.",
+        es: "Estudio para técnico programador, construyo desde 2022 y llevo tres prácticas: agentes de IA, proyectos comerciales y mucho trabajo con personas.",
+      },
+      when: { en: "Since 2022", pl: "Od 2022", es: "Desde 2022" },
+    },
     {
       id: "inf",
       kind: "qualification",
@@ -223,8 +320,16 @@ export const CV = {
       id: "jonas",
       kind: "course",
       icon: "si:udemy",
-      title: { en: "Full-stack development courses", pl: "Kursy programowania full-stack", es: "Cursos de desarrollo full-stack" },
-      issuer: { en: "Courses by Jonas Schmedtmann, Udemy", pl: "Kursy Jonasa Schmedtmanna, Udemy", es: "Cursos de Jonas Schmedtmann, Udemy" },
+      title: {
+        en: "Full-stack development courses",
+        pl: "Kursy programowania full-stack",
+        es: "Cursos de desarrollo full-stack",
+      },
+      issuer: {
+        en: "Courses by Jonas Schmedtmann, Udemy",
+        pl: "Kursy Jonasa Schmedtmanna, Udemy",
+        es: "Cursos de Jonas Schmedtmann, Udemy",
+      },
       summary: {
         en: "JavaScript and React from the fundamentals up. Course certificates, not an accredited qualification.",
         pl: "JavaScript i React od podstaw. Certyfikaty ukończenia kursu, nie akredytowana kwalifikacja.",
@@ -244,7 +349,11 @@ export const CV = {
         pl: "Erasmus+ i Europejski Korpus Solidarności",
         es: "Erasmus+ y Cuerpo Europeo de Solidaridad",
       },
-      issuer: { en: "Youth exchanges and volunteering", pl: "Wymiany młodzieżowe i wolontariat", es: "Intercambios juveniles y voluntariado" },
+      issuer: {
+        en: "Youth exchanges and volunteering",
+        pl: "Wymiany młodzieżowe i wolontariat",
+        es: "Intercambios juveniles y voluntariado",
+      },
       summary: {
         en: "Youth exchanges and volunteering with people from other countries, in English.",
         pl: "Wymiany młodzieżowe i wolontariat z ludźmi z innych krajów, po angielsku.",

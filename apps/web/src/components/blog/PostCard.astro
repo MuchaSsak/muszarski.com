@@ -4,11 +4,14 @@
  * title as the link, the description. The whole card is clickable through the title link's stretched hit area.
  * The compact card (the home teaser) is a paper note taped to the section: paper fill, a strip of tape, a tilt that
  * straightens on hover or focus [user 2026-10-06: the outlined cards were too flat].
+ * Two kinds, told apart at a glance [user 2026-10-06: fewer badges, case studies vs articles]: a case study (the
+ * `case-study` tag) is a navy poster with a "Case study" stamp; an article is the outlined card with a small "Article"
+ * label. Topic tags stay off the cards (the blog index filters by them). The data attributes feed the index's search,
+ * filters and sort.
  */
 import { t } from "lingui-for-astro/macro";
 
 import PostCover from "~/components/blog/PostCover.astro";
-import TagLabel from "~/components/blog/TagLabel.astro";
 import { type Post, postLocale, postMinutes, postPath } from "~/lib/posts";
 import { typo } from "~/lib/typography";
 
@@ -24,25 +27,38 @@ interface Props {
 
 const { post, tone = 0, wide = false, compact = false, headingLevel: H = "h3" } = Astro.props;
 const locale = postLocale(post);
-const date = new Intl.DateTimeFormat(locale, { day: "numeric", month: "short", year: "numeric", timeZone: "Europe/Warsaw" }).format(post.data.published);
+const date = new Intl.DateTimeFormat(locale, {
+  day: "numeric",
+  month: "short",
+  year: "numeric",
+  timeZone: "Europe/Warsaw",
+}).format(post.data.published);
 const minutes = postMinutes(post);
+const caseStudy = post.data.tags.includes("case-study");
+const search = [post.data.title, post.data.description, ...post.data.tags].join(" ").toLowerCase();
 ---
 
-<article class:list={["card", { wide, compact }]} data-tags={post.data.tags.join(" ")} lang={locale}>
-  <div class="art"><PostCover cover={post.data.cover} tone={tone} /></div>
+<article
+  class:list={["card", { wide, compact, cs: caseStudy }]}
+  data-tags={post.data.tags.join(" ")}
+  data-kind={caseStudy ? "case-study" : "article"}
+  data-minutes={minutes}
+  data-search={search}
+  lang={locale}
+>
+  {caseStudy && !compact && <span class="cs-stamp" aria-hidden="true">{t`Case study`}</span>}
+  <div class="art">
+    <PostCover cover={post.data.cover} tone={tone} />
+  </div>
   <div class="txt">
     <p class="meta">
-      {
-        post.data.tags.slice(0, compact ? 0 : 2).map((tag) => (
-          <span class="tag">
-            <TagLabel tag={tag} />
-          </span>
-        ))
-      }
+      {!(caseStudy && !compact) && <span class="kind">{caseStudy ? t`Case study` : t`Article`}</span>}
       <time datetime={post.data.published.toISOString()}>{date}</time>
       <span>{t`${minutes} min read`}</span>
     </p>
-    <H class="title"><a href={postPath(post)}>{post.data.title}</a></H>
+    <H class="title">
+      <a href={postPath(post)}>{post.data.title}</a>
+    </H>
     {!compact && <p class="desc">{typo(locale, post.data.description)}</p>}
   </div>
 </article>
@@ -89,10 +105,36 @@ const minutes = postMinutes(post);
     text-transform: uppercase;
     font-stretch: 115%;
   }
-  .tag {
+  .kind {
     padding: 0.1875rem 0.4375rem;
-    background: var(--sfg);
-    color: var(--sbg);
+    box-shadow: inset 0 0 0 2px currentColor;
+  }
+  .cs .kind {
+    background: var(--yellow);
+    color: var(--navy);
+    box-shadow: none;
+  }
+  /* A case study: a navy poster with a pink shadow and a stamp over its corner. */
+  .card.cs:not(.compact) {
+    background: var(--navy);
+    color: var(--ice);
+    box-shadow: 10px 10px 0 var(--pink);
+  }
+  .cs-stamp {
+    position: absolute;
+    z-index: 2;
+    left: -0.75rem;
+    top: -1rem;
+    padding: 0.375rem 0.75rem;
+    background: var(--yellow);
+    color: var(--navy);
+    box-shadow: 4px 4px 0 var(--navy);
+    font-weight: 900;
+    font-size: 0.8125rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    font-stretch: 120%;
+    transform: rotate(-5deg);
   }
   .title {
     margin: 0;
@@ -134,6 +176,9 @@ const minutes = postMinutes(post);
       box-shadow:
         inset 0 0 0 3px currentColor,
         6px 6px 0 0 var(--accent);
+    }
+    .card.cs:not(.compact):hover {
+      box-shadow: 14px 14px 0 var(--pink);
     }
     .card:hover .art :global(.cover) {
       transform: scale(1.04);
