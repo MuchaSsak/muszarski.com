@@ -48,6 +48,7 @@ They are not the same switch. 2.2.2 is about attention, for everyone: a marquee 
 | Tool marquee (a 50 s loop) | never starts; the list wraps into rows | paused | paused |
 | Spinning sticker (a 22 s loop) | finishes at once | paused | paused |
 | Letter accordion on my name | never starts | stops | stops |
+| Small CSS loops in the project, process and credentials sections | finish at once | paused | paused |
 | Reveals as sections scroll in | content is simply there | content is simply there | not applicable |
 
 All of it is decoration. Nothing on the page needs motion to make sense, which is what makes "pause everything" a safe default.
@@ -136,7 +137,7 @@ The script adds `rv-ready` to `<html>` itself, after it starts observing. No scr
 
 ## The heading never animates on load
 
-The H1 on the home page is my name, and it is the Largest Contentful Paint element. web.dev excludes elements with an opacity of 0 from LCP, so a fade-in on that heading makes the LCP wait for the fade. It is also the first thing anyone reads. So the name is final in the first paint (it is [fitted to its container at build time](/en/blog/fit-text-to-width-at-build-time/)), the lines under it enter with a short CSS animation and no JavaScript, and the reveal pattern only starts below the first screen. The home page measures an LCP of about 1.65 s and a CLS of 0 (mobile Lighthouse, median of 3 runs).
+The H1 on the home page is my name, and it is the Largest Contentful Paint element. web.dev excludes elements with an opacity of 0 from LCP, so a fade-in on that heading makes the LCP wait for the fade. It is also the first thing anyone reads. So the name is final in the first paint (it is [fitted to its container at build time](/en/blog/fit-text-to-width-at-build-time/)), the lines under it enter with a short CSS animation and no JavaScript, and the reveal pattern only starts below the first screen. The home page measures an LCP of about 1.95 s and a CLS of 0 (mobile Lighthouse, median of 3 runs).
 
 ## One trap: a paused entrance can freeze on its first frame
 

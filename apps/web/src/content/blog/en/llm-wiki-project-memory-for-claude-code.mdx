@@ -120,7 +120,7 @@ If I had to drop everything else, I'd keep `lessons.md`. When I correct Claude, 
   commands with `MSYS_NO_PATHCONV=1` - 2026-10-05.
 ```
 
-The session card injects that section, so every new session and every compaction starts with all the rules. There are 39 now, about 7,200 characters, under a cap of 60. A rule that keeps coming back gets promoted into a check (a test, a lint rule, a hook), because enforced beats remembered.
+The session card injects that section, so every new session and every compaction starts with all the rules. There are more than 40 now, under caps of 60 rules and 8,000 characters. A rule that keeps coming back gets promoted into a check (a test, a lint rule, a hook), because enforced beats remembered.
 
 Claude Code also has built-in auto memory: notes Claude writes for itself, indexed in a `MEMORY.md` whose first 200 lines or 25 KB load at every session start. The docs describe it as machine-local. The lessons file lives in git instead, so I review its changes in diffs like code.
 
@@ -140,7 +140,7 @@ I packaged steps 2-6 as a skill, so a new project starts with the same machinery
 
 - **Drift is real.** The wiki is only as true as its last update. One read-through as a stranger, when the wiki had 26 pages, found about 40 contradictions between pages. The Stop hook proves that something in the wiki changed, not that it's right.
 - **Routing misses.** It is keyword scoring, not meaning. A generic phrase in one row once outscored a project name in another and cut the page that mattered. The fix: put shared task words in every row they apply to, then re-run the test.
-- **It costs tokens and time.** The session card puts about 7,200 characters of rules into every session, and every task ends with documentation work. I haven't measured the net saving. What I can say is that I stopped repeating myself after compactions.
+- **It costs tokens and time.** The session card puts up to 8,000 characters of rules into every session, and every task ends with documentation work. I haven't measured the net saving. What I can say is that I stopped repeating myself after compactions.
 - **It's advice, not enforcement.** The docs are clear that CLAUDE.md is context, not configuration, and the wiki is the same. Anything that must hold every time belongs in a hook or a test.
 - **It can leak.** A wiki in git is a wiki someone might read. Name environment variables, never their values. My lint scans the wiki for key-shaped strings.
 

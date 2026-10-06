@@ -29,8 +29,8 @@ const play = t`Play motion`;
   aria-label={variant === "icon" ? pause : undefined}
   title={variant === "icon" ? pause : undefined}
 >
-  <Icon name="tbf:player-pause" class="mt-pause" />
-  <Icon name="tbf:player-play" class="mt-play" />
+  <Icon inline name="tbf:player-pause" class="mt-pause" />
+  <Icon inline name="tbf:player-play" class="mt-play" />
   {variant === "text" && <span data-motion-label>{pause}</span>}
 </button>
 

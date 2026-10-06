@@ -46,7 +46,7 @@ Typowe podejście to skrypt: wyrenderuj tekst, zmierz go, zwiększaj rozmiar fon
 - **Najpierw pokaż, potem dopasuj.** Tekst pojawia się w zgadniętym rozmiarze, a potem skacze, razem ze wszystkim, co jest pod nim. To przesunięcie układu: web.dev definiuje je jako zmianę pozycji widocznego elementu między kolejnymi klatkami.
 - **Ukryj, dopóki nie pasuje.** web.dev wyklucza z LCP elementy z `opacity: 0`, więc LCP czeka wtedy na skrypt, font i pomiar.
 
-Nie chciałem żadnej z nich. Strona główna wysyła około 3 KB JavaScriptu (gzip) i nic z tego nie jest potrzebne do narysowania nagłówka. W mobilnym Lighthouse (mediana z 3 pomiarów) ma 100 we wszystkich czterech kategoriach, LCP około 1,65 s i CLS 0.
+Nie chciałem żadnej z nich. Strona główna wysyła około 9 KB JavaScriptu (gzip) i nic z tego nie jest potrzebne do narysowania nagłówka. W mobilnym Lighthouse (mediana z 3 pomiarów) ma 99 za wydajność i 100 w pozostałych kategoriach, LCP około 1,95 s i CLS 0.
 
 ## Obserwacja, która to umożliwia
 
@@ -146,7 +146,7 @@ Ulepszenie wie też, kiedy przestać. Nie startuje przy `prefers-reduced-motion:
 
 ## Wnioski
 
-- Jeśli Twój tekst wystawowy jest elementem LCP, ustal jego rozmiar, zanim zobaczy go przeglądarka. Font zmienny zamienia to w obliczenie zamiast pomiaru.
+- Jeśli Twój duży nagłówek jest elementem LCP, ustal jego rozmiar, zanim zobaczy go przeglądarka. Font zmienny zamienia to w obliczenie zamiast pomiaru.
 - Sprawdź liniowość dla swojego fontu, zamiast ją zakładać. Dwa pomiary wystarczą tylko wtedy, gdy wykres jest prawie prosty; mój odchyla się najwyżej o 0,06%.
 - Używaj `cqi` zamiast `vw`, żeby dopasowany blok pasował do własnego pudełka, gdziekolwiek stoi.
 

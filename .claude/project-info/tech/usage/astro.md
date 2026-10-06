@@ -31,7 +31,12 @@
   btn-icon`), `.kick`, `.ico`, `.draw-line`, `.rise` (first-screen CSS entrance), `.rv` (reveal below the fold).
 - Type: one face (`font-sans` = Anybody). Hierarchy through `font-stretch` (the `wdth` axis) and weight, never another family.
   Fitted lines: `<Fit lines={[...]} as="h2" base={[66, 96]} />`; add any new character to `DISPLAY` in `scripts/fonts.mjs`.
-- Icons: `<Icon name="si:react" />` / `tb:*` / `tbf:*`; add a name to `scripts/icons.mjs`, run `bun run icons`.
+- Icons: `<Icon name="si:react" />` / `tb:*` / `tbf:*`; add a name to `scripts/icons.mjs`, run `bun run icons`. Icons
+  reference the cached sprite; pass `inline` only for icons on the first screen (header, hero).
+- JS-only controls (filters): class `js-only`, never the `hidden` attribute + reveal in a script (the late reveal
+  shifted `/work/` by CLS 0.23). The head script sets `.js` before the first paint.
+- The font subset must cover every character in the copy: `src/lib/font-coverage.test.ts` fails otherwise; add the
+  character to `PUNCT` in `scripts/fonts.mjs` (or use one the font has), then `bun run fonts`.
 - Breakpoints: `sm` 480 · `md` 768 · `lg` 1024 · `xl` 1440 · `2xl` 1920; the header collapses below 1180 (73.75rem).
 - Motion: `--ease-out`, `--ease-pop`, `--dur-fast/base/slow` (200/350/800 ms). JS loops import `~/scripts/motion`
   (`motionStill`, `onMotion`); CSS loops pause through `.off` / `.still`. The reduced-motion rule shortens every transition

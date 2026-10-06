@@ -67,7 +67,7 @@ const count = projects.length;
   </section>
 
   <section class="sec field-alt list" aria-label={t`Projects`}>
-    <div class="filters" data-filters hidden>
+    <div class="filters js-only" data-filters>
       <div class="frow" role="group" aria-label={t`Type`}>
         <span class="kick">{t`Type`}</span>
         <button class="fchip" type="button" aria-pressed="true" data-kind="context" data-value="">{t`All`} <b>{count}</b></button>
@@ -333,7 +333,6 @@ const count = projects.length;
     const rows = [...document.querySelectorAll<HTMLElement>("[data-rows] > .row")];
     const empty = document.querySelector<HTMLElement>("[data-empty]")!;
     const state = { context: "", tool: "" };
-    filters.hidden = false;
     for (const button of filters.querySelectorAll<HTMLButtonElement>("[data-kind]")) {
       button.addEventListener("click", () => {
         const kind = button.dataset.kind as "context" | "tool";

@@ -55,7 +55,7 @@ const url = new URL(pathTo(locale, "blog"), site).href;
     {featured && <PostCard post={featured} wide headingLevel="h2" tone={3} />}
     {
       tags.length > 1 && (
-        <div class="filters" role="group" aria-label={t`Show posts about`} data-filters hidden>
+        <div class="filters js-only" role="group" aria-label={t`Show posts about`} data-filters>
           <button class="fchip" type="button" aria-pressed="true" data-tag="">
             {t`All`}
           </button>
@@ -146,7 +146,6 @@ const url = new URL(pathTo(locale, "blog"), site).href;
     const grid = document.querySelector<HTMLElement>("[data-posts]")!;
     const cards = [...grid.querySelectorAll<HTMLElement>("[data-tags]")];
     const buttons = [...filters.querySelectorAll<HTMLButtonElement>("[data-tag]")];
-    filters.hidden = false;
     for (const button of buttons) {
       button.addEventListener("click", () => {
         const tag = button.dataset.tag ?? "";

@@ -42,7 +42,7 @@ sources:
     accessed: 2026-10-05
 ---
 
-Na portfolio albo landing page lepszym punktem wyjścia jest Astro: renderuje każdą stronę do HTML z wyprzedzeniem i nie wysyła JavaScriptu, dopóki komponent sam o to nie poprosi. Next.js wygrywa wtedy, gdy strona jest w praktyce aplikacją, z logowaniem, danymi per użytkownik i zapisem po stronie serwera. Ta strona stoi na Astro i ma 100 w mobilnym Lighthouse przy około 3 KB JavaScriptu, a Clockful, tracker czasu pracy zbudowany przeze mnie na stażu w Neoteric, powstał w Next.js.
+Na portfolio albo landing page lepszym punktem wyjścia jest Astro: renderuje każdą stronę do HTML z wyprzedzeniem i nie wysyła JavaScriptu, dopóki komponent sam o to nie poprosi. Next.js wygrywa wtedy, gdy strona jest w praktyce aplikacją, z logowaniem, danymi per użytkownik i zapisem po stronie serwera. Ta strona stoi na Astro i ma 99-100 w mobilnym Lighthouse przy około 9 KB JavaScriptu na stronie głównej, a Clockful, tracker czasu pracy zbudowany przeze mnie na stażu w Neoteric, powstał w Next.js.
 
 ## Do czego służy każdy z frameworków
 
@@ -90,7 +90,7 @@ Traktuj to jako obraz dwóch populacji, a nie wyrok na dwa frameworki. Według i
 
 ## Co zmierzyłem na tej stronie
 
-Ta strona to Astro 7 z komponentami Reacta pisanymi w TSX i renderowanymi na serwerze, Tailwind 4 i jeden font zmienny, wdrożona jako statyczne pliki na Vercelu. Dalej piszę w React, tylko że wynik to HTML wygenerowany przy buildzie. Strona główna w mobilnym Lighthouse, mediana z 3 pomiarów: 100 w performance, accessibility, best practices i SEO, LCP około 1,65 s, CLS 0 i około 3 KB JavaScriptu strony po gzipie.
+Ta strona to Astro 7 z komponentami Reacta pisanymi w TSX i renderowanymi na serwerze, Tailwind 4 i jeden font zmienny, wdrożona jako statyczne pliki na Vercelu. Dalej piszę w React, tylko że wynik to HTML wygenerowany przy buildzie. Strona główna w mobilnym Lighthouse, mediana z 3 pomiarów: 99 w performance i 100 w accessibility, best practices i SEO, LCP około 1,95 s, CLS 0 i około 9 KB JavaScriptu strony po gzipie. Pozostałe podstrony mają 100 we wszystkich czterech.
 
 Dwie uczciwe uwagi. Po pierwsze, nie zbudowałem tej samej strony w Next.js, więc nie powiem Ci, ile by dostała; dlatego porównanie wyżej opiera się na publicznych danych. Po drugie, sam framework tych wyników nie wypracował. H1 jest elementem LCP z założenia, jest jeden plik fontu, a każdy efekt wizualny ładuje się po tekście. Astro to ułatwiło, bo zaczyna od zera JavaScriptu, zamiast kazać mi go wycinać. Całą historię budowy opisuję w tekście [jak powstała ta strona](/pl/blog/jak-powstala-ta-strona/).
 

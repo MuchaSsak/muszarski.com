@@ -50,11 +50,11 @@ Turborepo (`usage/turborepo.md`): `apps/web/` (the site; folders in `conventions
 | dev | `bun run dev` (astro dev, 4321) |
 | typecheck / lint / unit | `bun run check` (astro check + eslint + vitest, via turbo) |
 | i18n | `bun run i18n:extract` (then fill pl/es; the build compiles `.po` and fails on a missing message) |
-| build | `bun run build` (astro build → launch gate; later: CV PDFs, SEO/link gates) |
+| build | `bun run build` (astro build → launch gate: placeholder markers, share images + PDFs present, every internal link / asset / #anchor resolves, incl. sprite symbols) |
 | preview | `bun run preview` (4322; one per project, shared by e2e/shots/Lighthouse) |
 | e2e + a11y | `bun run e2e` |
 | screenshots | `MSYS_NO_PATHCONV=1 node scripts/shots.mjs --paths /en/ --widths 390,1024,1920,2560 --themes cobalt,paper,ink` (apps/web) |
-| Lighthouse | `bun run lhci` (`scripts/lighthouse.mjs`, median of 3, budgets) |
+| Lighthouse | `MSYS_NO_PATHCONV=1 bun run lhci -- --runs 3 /en/ /en/work/` (`scripts/lighthouse.mjs`, median of 3, budgets; exits 1 on a miss) |
 | fonts | `bun run fonts` (Anybody subset + metric fallbacks + `fit-metrics.gen.ts`; outputs committed) |
 | icons | `bun run icons` (the listed Simple Icons / Tabler icons → `src/lib/icons.gen.ts`; committed) |
 | CV PDFs | `bun run cv:pdf` (needs `bun run preview`; writes `public/files/*.pdf` + `cv-digest.json`; committed) |
@@ -66,14 +66,17 @@ Package manager: **bun 1.3.14** (decided at scaffold 2026-10-05 with the owner's
 
 ## Environment variables (names only)
 
+Template with every name: `apps/web/.env.example`. Values live in the Vercel project settings only.
+
 | Name | Purpose | Where | Required |
 | --- | --- | --- | --- |
 | `PUBLIC_SITE_URL` | canonical origin; default `https://matmuszarski.space` (`seo.md` § Domain); review deploys use their own `VERCEL_URL` | host env | no |
 | `PUBLIC_TURNSTILE_SITE_KEY` / `TURNSTILE_SECRET_KEY` | contact bot check | host env | yes |
 | `RESEND_API_KEY` / `CONTACT_TO_EMAIL` / `CONTACT_FROM_EMAIL` | contact delivery (`CONTACT_FROM_EMAIL` on a domain verified in Resend); unset = the form answers "can't send right now, copy my email" | host env | yes |
 | `PUBLIC_UMAMI_WEBSITE_ID` | analytics; unset = no script | host env | no |
+| `PUBLIC_UMAMI_SCRIPT_URL` / `PUBLIC_UMAMI_COLLECT_ORIGIN` | overrides for the Umami script and collector (defaults: Umami Cloud); the CSP follows them | host env | no |
 | `PUBLIC_GOOGLE_SITE_VERIFICATION` | only if not verified by DNS | host env | no |
-| `INDEXNOW_KEY` | IndexNow pings after deploy | host env | no |
+| `INDEXNOW_KEY` | IndexNow pings after deploy (not wired yet: post-launch, `seo.md`) | host env | no |
 | `LAUNCH_BUILD` | true only for the production launch build; other builds are noindex | host env | yes |
 
 ## External services and limits

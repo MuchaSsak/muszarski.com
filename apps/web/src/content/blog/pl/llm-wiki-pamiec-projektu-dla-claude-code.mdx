@@ -120,7 +120,7 @@ Gdybym miał wyrzucić wszystko poza jednym plikiem, zostawiłbym `lessons.md`. 
   commands with `MSYS_NO_PATHCONV=1` - 2026-10-05.
 ```
 
-Karta sesji wstrzykuje tę sekcję, więc każda nowa sesja i każde kompaktowanie zaczyna się od kompletu reguł. Teraz jest ich 39, około 7200 znaków, przy limicie 60. Reguła, która ciągle wraca, awansuje do automatycznej kontroli (test, reguła lintera, hook), bo to, co wymuszone, działa pewniej niż to, co zapamiętane.
+Karta sesji wstrzykuje tę sekcję, więc każda nowa sesja i każde kompaktowanie zaczyna się od kompletu reguł. Teraz jest ich ponad 40, przy limitach 60 reguł i 8000 znaków. Reguła, która ciągle wraca, awansuje do automatycznej kontroli (test, reguła lintera, hook), bo to, co wymuszone, działa pewniej niż to, co zapamiętane.
 
 Claude Code ma też wbudowane auto memory: notatki, które Claude pisze sam dla siebie, ze spisem w `MEMORY.md`, którego pierwsze 200 linii albo 25 KB wczytuje się na starcie każdej sesji. Dokumentacja opisuje je jako lokalne dla danego komputera. Plik lekcji leży w gicie, więc jego zmiany przeglądam w diffach jak kod.
 
@@ -140,7 +140,7 @@ Kroki 2-6 spakowałem w skill, więc nowy projekt startuje z tą samą mechanik�
 
 - **Wiki się rozjeżdża.** Jest prawdziwe tylko na tyle, na ile świeża jest ostatnia aktualizacja. Jedno czytanie całości oczami kogoś z zewnątrz, kiedy wiki miało 26 stron, wyłapało około 40 sprzeczności między stronami. Hook Stop dowodzi, że w wiki coś się zmieniło, a nie że to coś jest prawdą.
 - **Routing się myli.** To liczenie słów kluczowych, nie rozumienie. Raz ogólna fraza w jednym wierszu przebiła nazwę projektu w innym i wycięła potrzebną stronę. Poprawka: wspólne słowa zadań wpisać do każdego wiersza, którego dotyczą, i powtórzyć test.
-- **Kosztuje tokeny i czas.** Karta sesji wnosi do każdej sesji około 7200 znaków reguł, a każde zadanie kończy się pracą nad dokumentacją. Nie zmierzyłem, ile to netto oszczędza. Mogę powiedzieć tyle, że po kompaktowaniu przestałem się powtarzać.
+- **Kosztuje tokeny i czas.** Karta sesji wnosi do każdej sesji do 8000 znaków reguł, a każde zadanie kończy się pracą nad dokumentacją. Nie zmierzyłem, ile to netto oszczędza. Mogę powiedzieć tyle, że po kompaktowaniu przestałem się powtarzać.
 - **To rada, nie przymus.** Dokumentacja jasno mówi, że CLAUDE.md to kontekst, a nie konfiguracja, i z wiki jest tak samo. Wszystko, co musi działać zawsze, należy do hooka albo testu.
 - **Może wyciec.** Wiki w gicie to wiki, które ktoś może przeczytać. Podawaj nazwy zmiennych środowiskowych, nigdy wartości. Mój lint szuka w wiki ciągów wyglądających jak klucze.
 

@@ -1,7 +1,7 @@
 ---
-title: "How I built this site: a wiki first, a rejected design, and Lighthouse 100 on mobile"
+title: "How I built this site: a wiki first, a rejected design, and Lighthouse 99+ on mobile"
 seoTitle: "How I built this portfolio (case study)"
-description: "Case study: replacing a 3D portfolio that scored 34 on mobile with an Astro site that scores 100, planned in a project wiki and built with Claude Code."
+description: "Case study: replacing a 3D portfolio that scored 34 on mobile with an Astro site that scores 99 to 100, planned in a project wiki and built with Claude Code."
 translationKey: this-site
 published: 2026-10-05
 tags: [case-study, ai, astro, performance]
@@ -23,12 +23,12 @@ sources:
     accessed: 2026-10-05
 ---
 
-My old portfolio was a WebGL flight from Earth to Neptune. It looked good on my desktop and scored 34 on mobile Lighthouse. This site replaces it: Astro, three languages, one variable font, about 3 KB of JavaScript on the home page, and 100 on mobile Lighthouse. It was planned in a project wiki before any product code, its first design was thrown away, and it was built with Claude Code under checks I can't skip.
+My old portfolio was a WebGL flight from Earth to Neptune. It looked good on my desktop and scored 34 on mobile Lighthouse. This site replaces it: Astro, three languages, one variable font, about 9 KB of JavaScript on the home page, and 99 to 100 on mobile Lighthouse. It was planned in a project wiki before any product code, its first design was thrown away, and it was built with Claude Code under checks I can't skip.
 
 > **TL;DR**
 >
 > - **Before:** 13.8 MB downloaded before the start button, mobile performance 34, no touch or keyboard navigation, no indexable text.
-> - **After (home page, mobile, median of 3 runs):** Lighthouse 100 / 100 / 100 / 100, LCP about 1.65 s, CLS 0, page JavaScript 3.0 KB gzip.
+> - **After (mobile, median of 3 runs):** home page Lighthouse 99 / 100 / 100 / 100, LCP about 1.95 s, CLS 0, page JavaScript about 9 KB gzip; every other page 100 on all four scores.
 > - **How:** a wiki that every session reads, one design direction picked from four live options, type fitted at build time, motion that pauses itself, and screenshots, accessibility checks and Lighthouse on every slice.
 
 ## Why rebuild a site that people liked?
@@ -72,7 +72,7 @@ The payoff showed up later. When I changed my mind about something, there was on
 
 I build apps in Next.js, and the internship project on this site is one. A portfolio is a content site: a few pages, mostly static, where every kilobyte of JavaScript is a cost for the person on a slow phone. Astro renders React components to HTML and ships no JavaScript unless a component asks for it. Lingui works in Astro through `lingui-for-astro`, and a missing Polish or Spanish string fails the build.
 
-The few interactive parts (the letter animation, the reels, the contact form) are small vanilla TypeScript modules. On the home page they add up to about 3 KB gzip. There is a longer comparison in [Astro vs Next.js for a portfolio](/en/blog/astro-vs-nextjs-for-a-portfolio/).
+The few interactive parts (the letter animation, the reels, the contact form) are small vanilla TypeScript modules. With every section built, the home page ships about 9 KB of them, gzipped. There is a longer comparison in [Astro vs Next.js for a portfolio](/en/blog/astro-vs-nextjs-for-a-portfolio/).
 
 ## What happened to the first design?
 
@@ -121,15 +121,18 @@ The AI does a lot of the typing. I own the decisions, the review and anything th
 
 ## What did it cost?
 
-Each slice records what it spent of the budgets. The numbers below are the home page at the end of the hero slice, mobile Lighthouse with simulated throttling, median of three runs.
+Each slice records what it spent of the budgets. The numbers below are the home page after each step, mobile Lighthouse with simulated throttling, median of three runs.
 
 | Slice | HTML (gzip) | Page JavaScript | Fonts | LCP | CLS |
 | --- | --- | --- | --- | --- | --- |
 | First design, foundation | 7.7 KB | about 1 KB | 47.2 KB in 4 files | 1.05 s | 0 |
 | First design, header and footer | 10.7 KB | 0.8 KB | 47.2 KB | 1.21 s | 0.011 |
 | Poster: header, hero, tool band, footer | 22.9 KB | 3.0 KB | 49.5 KB in 1 file | 1.65 s | 0 |
+| Poster: every section | 38.1 KB | about 9 KB | 49.9 KB in 1 file | 1.95 s | 0 |
 
 The largest contentful paint went up when Poster arrived: the heading now waits for one 49.5 KB variable font instead of an 11.8 KB static cut. It is still under the 2-second target, and one file replaced four.
+
+With every section built, the home page first measured 2.03 s. A trace showed why: the browser holds the first paint until the preloaded font arrives, and the font shares the connection with the HTML. Every byte of HTML before that paint costs time. The icons were the easiest bytes to move: their paths went into one cached sprite file instead of every page, the HTML dropped from 54.5 to 38.1 KB gzip, and the LCP went to 1.95 s. The same trace found that the font subset was missing the en and em dash, so those fell back to Arial. A test now fails when the copy uses a character the font file doesn't have.
 
 ## What would I do differently?
 
@@ -139,9 +142,9 @@ The largest contentful paint went up when Poster arrived: the heading now waits 
 
 ## Results, and how they were measured
 
-- Lighthouse, mobile, simulated throttling, median of three runs on a local production build: 100 for performance, accessibility, best practices and SEO, in English, Polish and Spanish.
-- LCP about 1.65 s, CLS 0, total blocking time 0-2 ms on the home page.
-- About 3 KB gzip of page JavaScript, 49.5 KB of font.
+- Lighthouse, mobile, simulated throttling, median of three runs on a local production build: the home page scores 99 for performance and 100 for accessibility, best practices and SEO, in English, Polish and Spanish; the work, blog, CV, my life and legal pages score 100 on all four.
+- On the home page: LCP about 1.95 s, CLS 0, total blocking time 0-15 ms.
+- About 9 KB gzip of page JavaScript on the home page, 49.9 KB of font.
 - End-to-end tests with axe in all three colour themes; no horizontal scrolling from 320 to 2560 pixels.
 
 Real-user data will come after launch. Until then these are lab numbers, and I treat them that way.

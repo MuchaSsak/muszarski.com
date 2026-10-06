@@ -503,6 +503,11 @@
     display: none !important;
   }
 }
+/* Controls that only work with JavaScript (filters): present from the first paint when the head script has set
+   `.js`, so revealing them later never shifts the page (CLS). */
+html:not(.js) .js-only {
+  display: none !important;
+}
 
 @layer utilities {
   .tabular {

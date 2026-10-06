@@ -49,12 +49,48 @@ const dist = join(ROOT, "dist");
 if (existsSync(dist)) {
   for (const page of pages(dist)) {
     const image = /<meta property="og:image" content="([^"]+)"/.exec(readFileSync(page, "utf8"))?.[1];
-    if (image && !existsSync(join(ROOT, "public", new URL(image).pathname))) missing.push(`${relative(ROOT, page)}: no ${new URL(image).pathname}`);
+    if (image && !existsSync(join(ROOT, "public", new URL(image).pathname)))
+      missing.push(`${relative(ROOT, page)}: no ${new URL(image).pathname}`);
   }
 }
 for (const locale of ["en", "pl", "es"]) {
   const pdf = join(ROOT, "public", "files", `mateusz-muszarski-cv-${locale}.pdf`);
   if (!existsSync(pdf)) missing.push(`no ${relative(ROOT, pdf)}`);
+}
+
+// Every internal link, asset and #anchor in the built HTML resolves (a file in dist/, and the id on that page or in
+// that SVG). Broken links fail every build, review or launch. /api/ is a function, not a file.
+const broken = [];
+if (existsSync(dist)) {
+  const ids = new Map();
+  const idsOf = (file) => {
+    if (!ids.has(file))
+      ids.set(file, new Set([...readFileSync(file, "utf8").matchAll(/\sid="([^"]+)"/g)].map((match) => match[1])));
+    return ids.get(file);
+  };
+  const target = (path) => {
+    const file = join(dist, decodeURIComponent(path));
+    if (path.endsWith("/")) return existsSync(join(file, "index.html")) ? join(file, "index.html") : null;
+    return existsSync(file) && statSync(file).isFile() ? file : null;
+  };
+  for (const page of pages(dist)) {
+    const html = readFileSync(page, "utf8").replace(/<script[\s\S]*?<\/script>/g, "");
+    const pagePath = `/${relative(dist, dirname(page)).replace(/\\/g, "/")}/`.replace(/^\/\.?\/$/, "/").replace(/^\/\//, "/");
+    for (const [, url] of html.matchAll(/\s(?:href|src)="([^"]+)"/g)) {
+      if (!/^[/#]/.test(url) || url.startsWith("//") || url.startsWith("/api/")) continue;
+      const [rest, hash = ""] = url.split("#");
+      const path = (rest ?? "").split("?")[0] || pagePath;
+      const file = target(path);
+      if (!file) broken.push(`${relative(ROOT, page)}: ${url} (no file)`);
+      else if (hash && /\.(html|svg)$/.test(file) && !idsOf(file).has(decodeURIComponent(hash)))
+        broken.push(`${relative(ROOT, page)}: ${url} (no #${hash})`);
+    }
+  }
+}
+
+if (broken.length) {
+  console.error(`launch-gate: ${broken.length} broken internal link(s):\n  ${broken.slice(0, 30).join("\n  ")}`);
+  process.exit(1);
 }
 
 const launch = isLaunchBuild();

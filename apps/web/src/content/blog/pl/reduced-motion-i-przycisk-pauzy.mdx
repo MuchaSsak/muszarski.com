@@ -48,6 +48,7 @@ To nie jest ten sam przełącznik. 2.2.2 dotyczy uwagi, i to u każdego: pasek p
 | Pasek z narzędziami (pętla 50 s) | nie startuje; lista układa się w wiersze | wstrzymany | wstrzymany |
 | Obracająca się naklejka (pętla 22 s) | kończy się od razu | wstrzymana | wstrzymana |
 | Akordeon liter w moim imieniu i nazwisku | nie startuje | zatrzymany | zatrzymany |
+| Małe pętle CSS w sekcjach projektów, procesu pracy i kwalifikacji | kończą się od razu | wstrzymane | wstrzymane |
 | Pojawianie się sekcji przy przewijaniu | treść po prostu jest | treść po prostu jest | nie dotyczy |
 
 Wszystko to dekoracja. Nic na stronie nie potrzebuje ruchu, żeby mieć sens, i właśnie dlatego „zatrzymaj wszystko” jest bezpiecznym wyborem.
@@ -136,7 +137,7 @@ Klasę `rv-ready` na `<html>` dodaje sam skrypt, kiedy już zaczął obserwować
 
 ## Nagłówek nigdy nie animuje się przy ładowaniu
 
-H1 na stronie głównej to moje imię i nazwisko, a zarazem element Largest Contentful Paint. web.dev wyklucza z LCP elementy z przezroczystością 0, więc wejście z `opacity: 0` na tym nagłówku każe LCP czekać na koniec animacji. To też pierwsza rzecz, którą ktokolwiek czyta. Dlatego imię i nazwisko są gotowe przy pierwszym malowaniu (są [dopasowane do kontenera w czasie builda](/pl/blog/dopasowanie-tekstu-do-szerokosci/)), tekst pod nimi wchodzi krótką animacją CSS bez JavaScriptu, a wzorzec „pokaż przy przewijaniu” zaczyna się dopiero poniżej pierwszego ekranu. Strona główna ma LCP około 1,65 s i CLS 0 (mobilny Lighthouse, mediana z 3 pomiarów).
+H1 na stronie głównej to moje imię i nazwisko, a zarazem element Largest Contentful Paint. web.dev wyklucza z LCP elementy z przezroczystością 0, więc wejście z `opacity: 0` na tym nagłówku każe LCP czekać na koniec animacji. To też pierwsza rzecz, którą ktokolwiek czyta. Dlatego imię i nazwisko są gotowe przy pierwszym malowaniu (są [dopasowane do kontenera w czasie builda](/pl/blog/dopasowanie-tekstu-do-szerokosci/)), tekst pod nimi wchodzi krótką animacją CSS bez JavaScriptu, a wzorzec „pokaż przy przewijaniu” zaczyna się dopiero poniżej pierwszego ekranu. Strona główna ma LCP około 1,95 s i CLS 0 (mobilny Lighthouse, mediana z 3 pomiarów).
 
 ## Pułapka: wstrzymana animacja wejścia może zamarznąć na pierwszej klatce
 

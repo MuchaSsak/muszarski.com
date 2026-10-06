@@ -1,7 +1,7 @@
 ---
-title: "Jak powstała ta strona: najpierw wiki, potem odrzucony projekt i Lighthouse 100 na telefonie"
+title: "Jak powstała ta strona: najpierw wiki, potem odrzucony projekt i Lighthouse 99+ na telefonie"
 seoTitle: "Jak zbudowałem to portfolio (case study)"
-description: "Case study: portfolio 3D z wynikiem 34 na telefonie zastąpione stroną w Astro z wynikiem 100, zaplanowaną w wiki projektu i zbudowaną z Claude Code."
+description: "Case study: portfolio 3D z wynikiem 34 na telefonie zastąpione stroną w Astro z wynikiem 99-100, zaplanowaną w wiki projektu i zbudowaną z Claude Code."
 translationKey: this-site
 published: 2026-10-05
 tags: [case-study, ai, astro, performance]
@@ -23,12 +23,12 @@ sources:
     accessed: 2026-10-05
 ---
 
-Moje stare portfolio było lotem WebGL od Ziemi do Neptuna. Na moim komputerze wyglądało świetnie, a w mobilnym Lighthouse dostawało 34 punkty. Ta strona je zastępuje: Astro, trzy języki, jeden zmienny font, około 3 KB JavaScriptu na stronie głównej i 100 punktów w mobilnym Lighthouse. Zanim powstał pierwszy komponent, zaplanowałem ją w wiki projektu. Pierwszy projekt graficzny wyrzuciłem, a całość zbudowałem z Claude Code pod kontrolą testów, których nie da się pominąć.
+Moje stare portfolio było lotem WebGL od Ziemi do Neptuna. Na moim komputerze wyglądało świetnie, a w mobilnym Lighthouse dostawało 34 punkty. Ta strona je zastępuje: Astro, trzy języki, jeden zmienny font, około 9 KB JavaScriptu na stronie głównej i 99-100 punktów w mobilnym Lighthouse. Zanim powstał pierwszy komponent, zaplanowałem ją w wiki projektu. Pierwszy projekt graficzny wyrzuciłem, a całość zbudowałem z Claude Code pod kontrolą testów, których nie da się pominąć.
 
 > **W skrócie**
 >
 > - **Przed:** 13,8 MB pobrane, zanim pojawił się przycisk „start”, wydajność na telefonie 34, brak obsługi dotyku i klawiatury, brak tekstu do zaindeksowania.
-> - **Po (strona główna, telefon, mediana z 3 pomiarów):** Lighthouse 100 / 100 / 100 / 100, LCP około 1,65 s, CLS 0, 3,0 KB JavaScriptu po kompresji.
+> - **Po (telefon, mediana z 3 pomiarów):** strona główna Lighthouse 99 / 100 / 100 / 100, LCP około 1,95 s, CLS 0, około 9 KB JavaScriptu po kompresji; każda inna podstrona 100 we wszystkich czterech kategoriach.
 > - **Jak:** wiki czytane w każdej sesji, jeden kierunek graficzny wybrany z czterech działających propozycji, tekst dopasowany do szerokości już przy budowaniu, animacje, które same się zatrzymują, oraz zrzuty ekranu, testy dostępności i Lighthouse po każdym kawałku pracy.
 
 ## Po co przebudowywać stronę, która się podobała?
@@ -72,7 +72,7 @@ Opłaciło się później. Kiedy zmieniałem zdanie, była jedna strona do popra
 
 Aplikacje buduję w Next.js, w tym projekt ze stażu, który pokazuję na tej stronie. Portfolio to jednak strona z treścią: kilka podstron, głównie statycznych, gdzie każdy kilobajt JavaScriptu jest kosztem dla osoby na wolnym telefonie. Astro renderuje komponenty Reacta do HTML-a i nie wysyła JavaScriptu, dopóki komponent sam go nie potrzebuje. Lingui działa w Astro dzięki `lingui-for-astro`, a brak tłumaczenia na polski albo hiszpański wywraca build.
 
-Kilka interaktywnych elementów (animacja liter, filmy, formularz kontaktowy) to małe moduły w czystym TypeScripcie. Na stronie głównej razem ważą około 3 KB po kompresji. Dłuższe porównanie jest w tekście [Astro czy Next.js na portfolio](/pl/blog/astro-czy-nextjs-na-portfolio/).
+Kilka interaktywnych elementów (animacja liter, filmy, formularz kontaktowy) to małe moduły w czystym TypeScripcie. Gdy zbudowane są już wszystkie sekcje, strona główna wysyła ich około 9 KB po kompresji. Dłuższe porównanie jest w tekście [Astro czy Next.js na portfolio](/pl/blog/astro-czy-nextjs-na-portfolio/).
 
 ## Co się stało z pierwszym projektem?
 
@@ -121,15 +121,18 @@ AI pisze dużo kodu. Decyzje, przegląd i wszystko, co wychodzi pod moim nazwisk
 
 ## Ile to kosztowało?
 
-Każdy etap zapisuje, ile wydał z budżetów. Poniżej strona główna na koniec etapu z nagłówkiem, mobilny Lighthouse z symulowanym dławieniem łącza, mediana z trzech pomiarów.
+Każdy etap zapisuje, ile wydał z budżetów. Poniżej strona główna po każdym etapie, mobilny Lighthouse z symulowanym dławieniem łącza, mediana z trzech pomiarów.
 
 | Etap | HTML (po kompresji) | JavaScript | Fonty | LCP | CLS |
 | --- | --- | --- | --- | --- | --- |
 | Pierwszy projekt, fundamenty | 7,7 KB | około 1 KB | 47,2 KB w 4 plikach | 1,05 s | 0 |
 | Pierwszy projekt, nagłówek i stopka | 10,7 KB | 0,8 KB | 47,2 KB | 1,21 s | 0,011 |
 | Poster: nagłówek, hero, pasek narzędzi, stopka | 22,9 KB | 3,0 KB | 49,5 KB w 1 pliku | 1,65 s | 0 |
+| Poster: wszystkie sekcje | 38,1 KB | około 9 KB | 49,9 KB w 1 pliku | 1,95 s | 0 |
 
 Największy element treści pojawia się później od wejścia Postera: nagłówek czeka teraz na jeden zmienny font o wadze 49,5 KB zamiast statycznego kroju o wadze 11,8 KB. Wciąż mieści się w celu 2 sekund, a jeden plik zastąpił cztery.
+
+Po zbudowaniu wszystkich sekcji pierwszy pomiar strony głównej dał 2,03 s. Ślad wydajności pokazał przyczynę: przeglądarka wstrzymuje pierwsze malowanie, dopóki nie dotrze wczytywany z wyprzedzeniem font, a font dzieli łącze z HTML-em. Każdy bajt HTML-a przed tym malowaniem kosztuje czas. Najłatwiej było przenieść ikony: ich ścieżki trafiły do jednego pliku sprite w pamięci podręcznej zamiast do każdej strony, HTML spadł z 54,5 do 38,1 KB po kompresji, a LCP do 1,95 s. Ten sam ślad pokazał, że w podzbiorze fontu brakowało półpauzy i pauzy, więc te znaki rysował Arial. Teraz test nie przechodzi, gdy tekst używa znaku, którego nie ma w pliku fontu.
 
 ## Co zrobiłbym inaczej?
 
@@ -139,9 +142,9 @@ Największy element treści pojawia się później od wejścia Postera: nagłów
 
 ## Wyniki i jak je zmierzyłem
 
-- Lighthouse, telefon, symulowane dławienie łącza, mediana z trzech pomiarów na lokalnym buildzie produkcyjnym: 100 za wydajność, dostępność, dobre praktyki i SEO, po angielsku, polsku i hiszpańsku.
-- LCP około 1,65 s, CLS 0, całkowity czas blokowania 0-2 ms na stronie głównej.
-- Około 3 KB JavaScriptu po kompresji i 49,5 KB fontu.
+- Lighthouse, telefon, symulowane dławienie łącza, mediana z trzech pomiarów na lokalnym buildzie produkcyjnym: strona główna 99 za wydajność i 100 za dostępność, dobre praktyki i SEO, po angielsku, polsku i hiszpańsku; podstrony z projektami, blogiem, CV, „Moje życie” i dokumentami prawnymi mają 100 we wszystkich czterech.
+- Na stronie głównej: LCP około 1,95 s, CLS 0, całkowity czas blokowania 0-15 ms.
+- Około 9 KB JavaScriptu po kompresji na stronie głównej i 49,9 KB fontu.
 - Testy end-to-end z axe we wszystkich trzech motywach; brak przewijania w poziomie od 320 do 2560 pikseli.
 
 Dane od prawdziwych użytkowników pojawią się po starcie strony. Do tego czasu to liczby z laboratorium i tak je traktuję.

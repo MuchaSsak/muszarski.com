@@ -68,7 +68,7 @@ checks AA for every field in every theme.
 | Tool band | `home/ToolBand.astro` | bar-field marquee of one-colour marks + names, edge to edge; one row from first paint (no shift), copy appended by JS; never stops on hover and has no button of its own [user 2026-10-05]: the site-wide Pause motion (menu, footer) covers WCAG 2.2.2; wraps without JS or under reduced motion |
 | Footer | `layout/SiteFooter.astro` | say-line + Contact, 4 link columns, codes, pause, credits (marks, icons, font), build revision, the surname fitted in accent |
 | Buttons | `global.css` `.btn` | square, uppercase, wide; `btn-line` / `btn-acc` / `btn-inv`; 3 px offset shadow on hover (fine pointers), press on tap |
-| Icons | `ui/Icon.astro`, `bun run icons` | inline SVG from a generated list: Simple Icons marks (`si:`), Tabler outline (`tb:`) and filled (`tbf:`) |
+| Icons | `ui/Icon.astro`, `bun run icons` | Simple Icons marks (`si:`), Tabler outline (`tb:`) and filled (`tbf:`) from a generated list; `<use>` into one cached, content-hashed sprite (`/icons/sprite-<hash>.svg`, `~/lib/sprite.ts`); header and hero icons are `inline` so the first screen never waits for it |
 | Theme switch | `layout/ThemeCycle.astro` | shows the current theme's name; cross-fade View Transition |
 | Pause motion | `layout/MotionToggle.astro` + `scripts/motion.ts` | every copy in sync; stored; hidden under reduced motion |
 
