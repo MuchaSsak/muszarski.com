@@ -8,12 +8,17 @@
  */
 import { t } from "lingui-for-astro/macro";
 
+import { Image } from "astro:assets";
+
 import Fit from "~/components/ui/Fit.astro";
 import Icon from "~/components/ui/Icon.astro";
+import { photo } from "~/lib/photos";
 import { typo } from "~/lib/typography";
 
 const locale = Astro.locals.locale;
 const [line1, line2] = t`My|life`.split("|") as [string, string];
+// The owner's photo when `src/assets/photos/life.*` exists [user 2026-10-06: "for my life, here is the pic you can use"].
+const life = photo("life");
 ---
 
 <section class="hero" aria-labelledby="t-life" data-goo-host>
@@ -27,19 +32,35 @@ const [line1, line2] = t`My|life`.split("|") as [string, string];
     <div class="h-grid">
       <div class="h-txt">
         <Fit as="h1" id="t-life" lines={[line1, line2]} base={[100, 140]} class="h-title" />
-        <p class="lede rise" style="--d:2">{typo(locale, t`I'm Mateusz. Code is the job. This page is the rest.`)}</p>
+        <p class="lede rise" style="--d:2">
+          {typo(locale, t`I'm Mateusz. Code is the job. This page is the rest.`)}
+        </p>
         <p class="poke rise" style="--d:3" aria-hidden="true">
           <Icon name="tb:hand-click" />
           {t`Poke the goo.`}
         </p>
       </div>
-      <figure class="photo enter" aria-hidden="true">
-        <div class="ph">
-          <Icon name="tb:camera" />
-          <span>{t`Photo soon`}</span>
-        </div>
-        <figcaption>{t`me, probably smiling`}</figcaption>
-      </figure>
+      {life ? (
+        <figure class="photo enter">
+          <Image
+            class="pic"
+            src={life}
+            alt={t`Me in a straw hat and sunglasses, the sea and a rocky coast behind me`}
+            widths={[320, 640]}
+            sizes="(min-width: 48rem) 18rem, 60vw"
+            loading="eager"
+          />
+          <figcaption>{t`me, probably smiling`}</figcaption>
+        </figure>
+      ) : (
+        <figure class="photo enter" aria-hidden="true">
+          <div class="ph">
+            <Icon name="tb:camera" />
+            <span>{t`Photo soon`}</span>
+          </div>
+          <figcaption>{t`me, probably smiling`}</figcaption>
+        </figure>
+      )}
     </div>
   </div>
 </section>
@@ -53,8 +74,7 @@ const [line1, line2] = t`My|life`.split("|") as [string, string];
       radial-gradient(circle at 18% 30%, var(--pink) 0 9rem, transparent 9.1rem),
       radial-gradient(circle at 78% 62%, var(--cobalt) 0 11rem, transparent 11.1rem),
       radial-gradient(circle at 56% 18%, var(--yellow) 0 6rem, transparent 6.1rem),
-      radial-gradient(circle at 34% 84%, var(--lime) 0 7rem, transparent 7.1rem),
-      var(--navy);
+      radial-gradient(circle at 34% 84%, var(--lime) 0 7rem, transparent 7.1rem), var(--navy);
     color: var(--ice);
     cursor: crosshair;
   }
@@ -160,6 +180,13 @@ const [line1, line2] = t`My|life`.split("|") as [string, string];
     font-size: 0.8125rem;
     letter-spacing: 0.05em;
     text-transform: uppercase;
+  }
+  .pic {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 4 / 5;
+    object-fit: cover;
   }
   .ph :global(.ico) {
     width: 2.5rem;

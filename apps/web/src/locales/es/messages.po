@@ -22,8 +22,8 @@ msgstr ""
 #: src/components/home/Credentials.astro:136
 #: src/components/home/Credentials.astro:163
 #: src/components/layout/SiteFooter.astro:37
-#: src/pages/[locale]/blog/[slug].astro:163
-#: src/pages/[locale]/my-life/index.astro:152
+#: src/pages/[locale]/blog/[slug].astro:164
+#: src/pages/[locale]/my-life/index.astro:186
 #: src/pages/[locale]/work/index.astro:129
 #: src/pages/[locale]/work/index.astro:135
 #: src/pages/[locale]/work/index.astro:141
@@ -45,7 +45,7 @@ msgid "{count, plural, one {# project} other {# projects}}"
 msgstr "{count, plural, one {# proyecto} other {# proyectos}}"
 
 #: src/components/blog/PostCard.astro:56
-#: src/pages/[locale]/blog/[slug].astro:121
+#: src/pages/[locale]/blog/[slug].astro:124
 msgid "{minutes} min read"
 msgstr "{minutes} min de lectura"
 
@@ -69,11 +69,11 @@ msgstr "1 semana"
 msgid "1 year"
 msgstr "1 año"
 
-#: src/components/life/ToyBetter.astro:38
+#: src/components/life/ToyBetter.astro:43
 msgid "1% better every day"
 msgstr "1% mejor cada día"
 
-#: src/components/life/ToyBetter.astro:42
+#: src/components/life/ToyBetter.astro:49
 msgid "1% worse every day"
 msgstr "1% peor cada día"
 
@@ -105,7 +105,7 @@ msgstr "Un cronómetro de demostración que avanza."
 msgid "A dream inside a dream inside a dream."
 msgstr "Un sueño dentro de un sueño dentro de un sueño."
 
-#: src/pages/[locale]/my-life/index.astro:97
+#: src/pages/[locale]/my-life/index.astro:116
 msgid "A good film night is hard to beat."
 msgstr "Una buena noche de peli es difícil de superar."
 
@@ -161,7 +161,7 @@ msgstr "Tema"
 msgid "About the author"
 msgstr "Sobre el autor"
 
-#: src/pages/[locale]/blog/[slug].astro:167
+#: src/pages/[locale]/blog/[slug].astro:168
 msgid "accessed"
 msgstr "consultado"
 
@@ -208,7 +208,7 @@ msgid "All"
 msgstr "Todos"
 
 #: src/components/home/LatestWriting.astro:57
-#: src/pages/[locale]/blog/[slug].astro:202
+#: src/pages/[locale]/blog/[slug].astro:214
 msgid "All posts"
 msgstr "Todos los artículos"
 
@@ -287,7 +287,7 @@ msgstr "Volver al formulario"
 msgid "Back to the home page"
 msgstr "Volver al inicio"
 
-#: src/pages/[locale]/my-life/index.astro:119
+#: src/pages/[locale]/my-life/index.astro:150
 msgid "Back to the work"
 msgstr "Volver a los proyectos"
 
@@ -317,7 +317,7 @@ msgstr "bloqueado"
 
 #: src/components/layout/SiteFooter.astro:52
 #: src/components/layout/SiteHeader.astro:46
-#: src/pages/[locale]/blog/[slug].astro:51
+#: src/pages/[locale]/blog/[slug].astro:56
 #: src/pages/[locale]/blog/index.astro:36
 #: src/pages/[locale]/blog/index.astro:52
 msgid "Blog"
@@ -335,7 +335,7 @@ msgstr "Audaz"
 msgid "Both app stores"
 msgstr "Ambas tiendas de apps"
 
-#: src/pages/[locale]/blog/[slug].astro:91
+#: src/pages/[locale]/blog/[slug].astro:96
 msgid "Breadcrumb"
 msgstr "Ruta de navegación"
 
@@ -381,11 +381,11 @@ msgstr "Hecho con este curso: mi portfolio espacial"
 msgid "Business name"
 msgstr "Nombre del negocio"
 
-#: src/pages/[locale]/blog/[slug].astro:111
+#: src/pages/[locale]/blog/[slug].astro:116
 msgid "By"
 msgstr "Por"
 
-#: src/pages/[locale]/my-life/index.astro:79
+#: src/pages/[locale]/my-life/index.astro:81
 msgid "Calisthenics"
 msgstr "Calistenia"
 
@@ -408,7 +408,7 @@ msgstr "Casos de estudio"
 #: src/components/blog/PostCard.astro:48
 #: src/components/blog/PostCard.astro:54
 #: src/components/blog/TagLabel.astro:15
-#: src/pages/[locale]/blog/[slug].astro:94
+#: src/pages/[locale]/blog/[slug].astro:99
 #: src/pages/[locale]/work/index.astro:122
 msgid "Case study"
 msgstr "Caso de estudio"
@@ -506,9 +506,9 @@ msgstr "confirmar email"
 #: src/components/home/Contact.astro:45
 #: src/components/layout/SiteFooter.astro:87
 #: src/components/layout/SiteHeader.astro:120
-#: src/pages/[locale]/blog/[slug].astro:186
+#: src/pages/[locale]/blog/[slug].astro:199
 #: src/pages/[locale]/cv/index.astro:87
-#: src/pages/[locale]/my-life/index.astro:123
+#: src/pages/[locale]/my-life/index.astro:154
 msgid "Contact"
 msgstr "Contacto"
 
@@ -550,7 +550,7 @@ msgstr "Currículum vítae"
 msgid "CV"
 msgstr "CV"
 
-#: src/components/life/ToyBetter.astro:35
+#: src/components/life/ToyBetter.astro:36
 msgid "Day"
 msgstr "Día"
 
@@ -675,7 +675,7 @@ msgstr "Experiencia"
 msgid "Experience · qualifications · training · teams"
 msgstr "Experiencia · cualificaciones · formación · equipos"
 
-#: src/pages/[locale]/my-life/index.astro:85
+#: src/pages/[locale]/my-life/index.astro:91
 msgid "Faith"
 msgstr "Fe"
 
@@ -695,7 +695,7 @@ msgstr "Destacado"
 msgid "Fewer steps between interest and action."
 msgstr "Menos pasos entre el interés y la acción."
 
-#: src/pages/[locale]/my-life/index.astro:97
+#: src/pages/[locale]/my-life/index.astro:116
 msgid "Films"
 msgstr "Cine"
 
@@ -723,11 +723,11 @@ msgstr "Encontré un correo en tu mensaje"
 msgid "Found your LinkedIn in your message"
 msgstr "Encontré tu LinkedIn en tu mensaje"
 
-#: src/pages/[locale]/index.astro:25
+#: src/pages/[locale]/index.astro:27
 msgid "Full-stack Developer · TypeScript, React, three.js"
 msgstr "Desarrollador full stack · TypeScript, React, three.js"
 
-#: src/pages/[locale]/blog/[slug].astro:181
+#: src/pages/[locale]/blog/[slug].astro:189
 msgid "Full-stack developer from Poland. I build web and mobile products end to end, and I write down what I learn while doing it."
 msgstr "Desarrollador full stack de Polonia. Creo productos web y móviles de principio a fin, y escribo lo que aprendo por el camino."
 
@@ -739,11 +739,11 @@ msgstr "Ingeniero de producto full stack"
 msgid "Full-time or contract"
 msgstr "Tiempo completo o por contrato"
 
-#: src/pages/[locale]/my-life/index.astro:94
+#: src/pages/[locale]/my-life/index.astro:108
 msgid "Games with friends"
 msgstr "Juegos con amigos"
 
-#: src/pages/[locale]/my-life/index.astro:94
+#: src/pages/[locale]/my-life/index.astro:109
 msgid "Gaming, but best with friends."
 msgstr "Videojuegos, pero mejor con amigos."
 
@@ -776,7 +776,7 @@ msgstr "objetivos en cifras"
 msgid "guard"
 msgstr "vigilan"
 
-#: src/pages/[locale]/my-life/index.astro:115
+#: src/pages/[locale]/my-life/index.astro:146
 msgid "Hang out"
 msgstr "Pasar el rato"
 
@@ -792,7 +792,7 @@ msgstr "Hola, Mateusz, estamos contratando para…"
 msgid "hi-hat"
 msgstr "charles"
 
-#: src/pages/[locale]/my-life/index.astro:134
+#: src/pages/[locale]/my-life/index.astro:169
 msgid "Hi!"
 msgstr "¡Hola!"
 
@@ -842,15 +842,15 @@ msgstr "No puedo responder ahí. Usa un correo, un teléfono o el enlace a un pe
 msgid "I lead. Claude Code agents do the work, each with its own job, and nothing ships before I review it."
 msgstr "Yo dirijo. Los agentes de Claude Code hacen el trabajo, cada uno con su tarea, y nada sale sin que yo lo revise."
 
-#: src/pages/[locale]/my-life/index.astro:100
+#: src/pages/[locale]/my-life/index.astro:119
 msgid "I like a good party."
 msgstr "Me gusta una buena fiesta."
 
-#: src/pages/[locale]/my-life/index.astro:91
+#: src/pages/[locale]/my-life/index.astro:103
 msgid "I like bikes. Simple as that."
 msgstr "Me gustan las motos. Así de simple."
 
-#: src/pages/[locale]/my-life/index.astro:88
+#: src/pages/[locale]/my-life/index.astro:97
 msgid "I like going somewhere I haven't been yet."
 msgstr "Me gusta ir a sitios donde todavía no he estado."
 
@@ -866,7 +866,7 @@ msgstr "Dirijo la IA como un equipo."
 msgid "I start with the person paying for it, and what they need to earn."
 msgstr "Empiezo por quien lo paga y por lo que necesita ganar."
 
-#: src/pages/[locale]/my-life/index.astro:103
+#: src/pages/[locale]/my-life/index.astro:125
 msgid "I take photos. Strictly amateur, strictly for fun."
 msgstr "Hago fotos. Totalmente amateur, totalmente por diversión."
 
@@ -874,11 +874,11 @@ msgstr "Hago fotos. Totalmente amateur, totalmente por diversión."
 msgid "I'll reply to the address you gave me."
 msgstr "Te responderé a la dirección que me diste."
 
-#: src/pages/[locale]/my-life/index.astro:85
+#: src/pages/[locale]/my-life/index.astro:91
 msgid "I'm a Christian."
 msgstr "Soy cristiano."
 
-#: src/components/life/LifeHero.astro:30
+#: src/components/life/LifeHero.astro:35
 msgid "I'm Mateusz. Code is the job. This page is the rest."
 msgstr "Soy Mateusz. El código es el trabajo. Esta página es todo lo demás."
 
@@ -927,7 +927,7 @@ msgstr "Construye dentro de las reglas. Los hooks frenan los movimientos arriesg
 msgid "It reads the project wiki first, so no session starts from zero."
 msgstr "Primero lee la wiki del proyecto, así ninguna sesión empieza de cero."
 
-#: src/components/life/ToyBetter.astro:72
+#: src/components/life/ToyBetter.astro:79
 msgid "Jump to"
 msgstr "Saltar a"
 
@@ -1052,7 +1052,7 @@ msgstr "Marcas: Simple Icons (CC0), Playwright (Apache 2.0). Iconos: Tabler (MIT
 msgid "Mateusz Muszarski off the clock: calisthenics, faith, travel, photography, motorcycles, films, music, games with friends and parties. And where to find him."
 msgstr "Mateusz Muszarski fuera del trabajo: calistenia, fe, viajes, fotografía, motos, películas, música, juegos con amigos y fiestas. Y dónde encontrarlo."
 
-#: src/pages/[locale]/index.astro:26
+#: src/pages/[locale]/index.astro:28
 msgid "Mateusz Muszarski, a full-stack product engineer from Poland. Web and mobile products in TypeScript, React and Node.js, from the business problem to the shipped app."
 msgstr "Mateusz Muszarski, ingeniero de producto full stack de Polonia. Productos web y móviles con TypeScript, React y Node.js, del problema de negocio a la app publicada."
 
@@ -1068,7 +1068,12 @@ msgstr "Los servidores MCP traen datos reales: pantallas de apps reales, compone
 msgid "Me"
 msgstr "Yo"
 
-#: src/components/life/LifeHero.astro:41
+#: src/components/life/LifeHero.astro:47
+msgid "Me in a straw hat and sunglasses, the sea and a rocky coast behind me"
+msgstr "Yo con sombrero de paja y gafas de sol, detrás el mar y una costa rocosa"
+
+#: src/components/life/LifeHero.astro:52
+#: src/components/life/LifeHero.astro:60
 msgid "me, probably smiling"
 msgstr "yo, seguramente sonriendo"
 
@@ -1097,11 +1102,11 @@ msgstr "Mensaje no enviado"
 msgid "Message sent"
 msgstr "Mensaje enviado"
 
-#: src/pages/[locale]/blog/[slug].astro:184
+#: src/pages/[locale]/blog/[slug].astro:192
 msgid "More about me"
 msgstr "Más sobre mí"
 
-#: src/pages/[locale]/my-life/index.astro:91
+#: src/pages/[locale]/my-life/index.astro:103
 msgid "Motorcycles"
 msgstr "Motos"
 
@@ -1113,7 +1118,7 @@ msgstr "Muévete sobre la pista o usa las flechas. Gana quien llegue a 5."
 msgid "Movie night."
 msgstr "Noche de peli."
 
-#: src/pages/[locale]/my-life/index.astro:82
+#: src/pages/[locale]/my-life/index.astro:88
 msgid "Music"
 msgstr "Música"
 
@@ -1123,7 +1128,7 @@ msgstr "Mi favorito"
 
 #: src/components/layout/SiteFooter.astro:54
 #: src/components/layout/SiteHeader.astro:119
-#: src/components/life/LifeHero.astro:23
+#: src/components/life/LifeHero.astro:28
 #: src/pages/[locale]/my-life/index.astro:47
 msgid "My life"
 msgstr "Mi vida"
@@ -1132,7 +1137,7 @@ msgstr "Mi vida"
 msgid "My npm CLI that translates Lingui catalogs with an LLM."
 msgstr "Mi CLI de npm que traduce catálogos de Lingui con un LLM."
 
-#: src/pages/[locale]/my-life/index.astro:82
+#: src/pages/[locale]/my-life/index.astro:88
 msgid "My playlist is all over the place."
 msgstr "Mi playlist es de todo un poco."
 
@@ -1144,7 +1149,7 @@ msgstr "Mi portfolio anterior: un vuelo por el sistema solar guiado por el scrol
 msgid "My space portfolio, built with what the course taught"
 msgstr "Mi portfolio espacial, hecho con lo que enseñó el curso"
 
-#: src/components/life/LifeHero.astro:16
+#: src/components/life/LifeHero.astro:19
 msgid "My|life"
 msgstr "Mi|vida"
 
@@ -1164,7 +1169,7 @@ msgstr "Siguientes artículos"
 msgid "Next stop"
 msgstr "Próxima parada"
 
-#: src/components/blog/case/Versions.astro:70
+#: src/components/blog/case/Versions.astro:73
 msgid "Next version"
 msgstr "Siguiente versión"
 
@@ -1197,7 +1202,7 @@ msgstr "No hay resultados. Prueba con menos palabras u otro tema."
 msgid "off"
 msgstr "no"
 
-#: src/components/life/LifeHero.astro:24
+#: src/components/life/LifeHero.astro:29
 msgid "Off the clock"
 msgstr "Fuera del trabajo"
 
@@ -1205,7 +1210,7 @@ msgstr "Fuera del trabajo"
 msgid "on"
 msgstr "sí"
 
-#: src/pages/[locale]/blog/[slug].astro:52
+#: src/pages/[locale]/blog/[slug].astro:57
 msgid "On this page"
 msgstr "En esta página"
 
@@ -1262,7 +1267,7 @@ msgstr "Página no encontrada"
 msgid "paid"
 msgstr "pagado"
 
-#: src/pages/[locale]/my-life/index.astro:100
+#: src/pages/[locale]/my-life/index.astro:119
 msgid "Parties"
 msgstr "Fiestas"
 
@@ -1307,11 +1312,11 @@ msgstr "Personal · en solitario · 2025"
 msgid "Photo"
 msgstr "Foto"
 
-#: src/components/life/LifeHero.astro:39
+#: src/components/life/LifeHero.astro:58
 msgid "Photo soon"
 msgstr "Foto próximamente"
 
-#: src/pages/[locale]/my-life/index.astro:103
+#: src/pages/[locale]/my-life/index.astro:124
 msgid "Photography"
 msgstr "Fotografía"
 
@@ -1343,11 +1348,11 @@ msgstr "Reproducir vídeo"
 msgid "Point the camera at a street, a room or your breakfast, and Linkoglot turns what it sees into flashcards and quizzes. Free to try, then a monthly or yearly plan; the app comes in 30 languages. I built and published it alone."
 msgstr "Apunta la cámara a una calle, una habitación o tu desayuno, y Linkoglot convierte lo que ve en tarjetas y cuestionarios. Gratis para probar, luego un plan mensual o anual; la app está en 30 idiomas. La construí y la publiqué yo solo."
 
-#: src/components/life/LifeHero.astro:33
+#: src/components/life/LifeHero.astro:38
 msgid "Poke the goo."
 msgstr "Toca la masa."
 
-#: src/components/life/LifeHero.astro:25
+#: src/components/life/LifeHero.astro:30
 msgid "Poland"
 msgstr "Polonia"
 
@@ -1433,7 +1438,7 @@ msgstr "Cualificación"
 msgid "Qualifications and training"
 msgstr "Cualificaciones y formación"
 
-#: src/pages/[locale]/blog/[slug].astro:198
+#: src/pages/[locale]/blog/[slug].astro:210
 msgid "Read next"
 msgstr "Sigue leyendo"
 
@@ -1543,7 +1548,7 @@ msgstr "Proyectos seleccionados"
 msgid "Selected work"
 msgstr "Proyectos seleccionados"
 
-#: src/pages/[locale]/my-life/index.astro:106
+#: src/pages/[locale]/my-life/index.astro:133
 msgid "Self-improvement"
 msgstr "Superación personal"
 
@@ -1904,15 +1909,15 @@ msgstr "Herramientas con las que trabajo"
 msgid "Topic"
 msgstr "Tema"
 
-#: src/pages/[locale]/my-life/index.astro:79
+#: src/pages/[locale]/my-life/index.astro:82
 msgid "Training with just my bodyweight. Bar, floor, repeat."
 msgstr "Entreno solo con mi peso corporal. Barra, suelo, repetir."
 
-#: src/pages/[locale]/my-life/index.astro:88
+#: src/pages/[locale]/my-life/index.astro:96
 msgid "Travel"
 msgstr "Viajes"
 
-#: src/pages/[locale]/my-life/index.astro:106
+#: src/pages/[locale]/my-life/index.astro:134
 msgid "Trying to be a bit better than yesterday."
 msgstr "Intento ser un poco mejor que ayer."
 
@@ -1929,11 +1934,11 @@ msgstr "Tipo"
 msgid "Typography"
 msgstr "Tipografía"
 
-#: src/pages/[locale]/my-life/index.astro:116
+#: src/pages/[locale]/my-life/index.astro:147
 msgid "Up for a game or a chat? Find me here."
 msgstr "¿Te apetece jugar o charlar? Encuéntrame aquí."
 
-#: src/pages/[locale]/blog/[slug].astro:117
+#: src/pages/[locale]/blog/[slug].astro:121
 msgid "Updated"
 msgstr "Actualizado"
 
@@ -1982,7 +1987,7 @@ msgstr "visitas"
 msgid "Web + mobile"
 msgstr "Web + móvil"
 
-#: src/components/blog/case/Versions.astro:64
+#: src/components/blog/case/Versions.astro:67
 msgid "What I said"
 msgstr "Lo que dije"
 

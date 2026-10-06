@@ -34,7 +34,7 @@
 | P12 | Spanish (es) copy: AI-translated, unreviewed | catalogs + es content files | a fluent reviewer | review, or keep the visible "Translated with AI" line by explicit owner choice | 19 |
 | P13 | Legal pages: drafts, not lawyer-reviewed; postal address; mailbox provider; Umami plan confirmation (Q17) | `/privacy/`, `/terms/` | owner + lawyer | review; fill Unknowns | 15, 16, 17, 36 |
 | P14 | ~~Drafting Table visual layer~~ **resolved 2026-10-05:** replaced by Poster (tokens, Anybody, header, hero, footer); the old look is archived (`comps/HISTORY.md`) | — | — | — | — |
-| P15 | Owner photo (Person image, my-life) | schema, `/my-life/` | owner | replace | 7 |
+| P15 | Owner photo (Person image, my-life): slots ready, waiting for the files `src/assets/photos/me.*` and `life.*` (sent in chat 2026-10-06, not on disk) | schema, `/my-life/`, blog author box | owner | replace | 7 |
 | P17 | ~~Chrome links to routes that later slices build~~ **resolved 2026-10-05:** every route exists (work, blog, posts, cv + PDFs, my-life, privacy, terms, RSS, anchors) | — | — | a link checker before launch stays a good idea | — |
 | P18 | Drawn stand-ins marked "Video soon" in the PstrykWeb and Clockful chapters (the credential "image soon" slots became certificate tickets 2026-10-06) | `home/chapters/ChapterPstrykWeb.astro`, `ChapterClockful.astro` | owner recordings (Q46) | replace | 46 |
 | P19 | ~~AI section counts typed by hand~~ **resolved 2026-10-05:** counted from the repo at build (`src/lib/repo-stats.ts`); MCP servers are named (user-level config). **2026-10-06:** no counts at all now [user: "dont give precise numbers"]; examples instead, `repo-stats.ts` deleted | — | — | — | — |

@@ -52,7 +52,7 @@
 ## Missing / needed (→ `open-questions.md`, `placeholders.md`)
 
 - **Owner recordings per flagship:** shot lists in the research files (PstrykWeb, Linkoglot 11 shots, space, Clockful).
-- **Owner photo:** square ≥ 800 px, same as the GitHub/LinkedIn avatars (Q7).
+- **Owner photo:** square ≥ 800 px, same as the GitHub/LinkedIn avatars (Q7). **Slots ready 2026-10-06** [owner sent two photos in chat: a pier selfie for the avatar, a straw-hat seaside selfie for My life; chat images don't reach the disk]: drop `me.*` and `life.*` into `apps/web/src/assets/photos/` (`lib/photos.ts`); the author box, the home Person JSON-LD `image` and the My life hero switch on by themselves. Own photos = owner's rights. Astro re-encodes them and strips EXIF/GPS (verified with a GPS-tagged test JPEG).
 - **Fonts (Poster, 2026-10-05):** `apps/web/public/fonts/` holds one subset variable woff2 (Anybody, 49.5 KB) +
   `LICENSE-Anybody.txt` (SIL OFL 1.1, from github.com/google/fonts). The Drafting Table faces (Archivo, Plex Mono) are gone
   from the site; their history is in git (`history/drafting-table`).

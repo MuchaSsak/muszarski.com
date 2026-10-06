@@ -4,6 +4,7 @@
  * credentials, latest writing, contact. The JSON-LD graph (WebSite + ProfilePage + Person) is the entity home
  * (seo.md § Entity strategy).
  */
+import { getImage } from "astro:assets";
 import { t } from "lingui-for-astro/macro";
 
 import AiWorkflow from "~/components/home/AiWorkflow.astro";
@@ -16,6 +17,7 @@ import LatestWriting from "~/components/home/LatestWriting.astro";
 import ToolBand from "~/components/home/ToolBand.astro";
 import BaseLayout from "~/components/layout/BaseLayout.astro";
 import JsonLd from "~/components/seo/JsonLd.astro";
+import { photo } from "~/lib/photos";
 import { homeGraph } from "~/lib/schema";
 import { localeStaticPaths } from "~/lib/routes";
 
@@ -25,10 +27,13 @@ const locale = Astro.locals.locale;
 const title = t`Full-stack Developer · TypeScript, React, three.js`;
 const description = t`Mateusz Muszarski, a full-stack product engineer from Poland. Web and mobile products in TypeScript, React and Node.js, from the business problem to the shipped app.`;
 const site = Astro.site ?? new URL("http://localhost:4321");
+// The Person image in JSON-LD, once the owner's portrait is in src/assets/photos/ (lib/photos.ts).
+const me = photo("me");
+const meUrl = me ? new URL((await getImage({ src: me, width: 640, format: "jpeg" })).src, site).href : undefined;
 ---
 
 <BaseLayout title={title} description={description} home og="home">
-  <JsonLd slot="head" data={homeGraph(site, locale, description)} />
+  <JsonLd slot="head" data={homeGraph(site, locale, description, meUrl)} />
   <Hero />
   <ToolBand />
   <Chapters />

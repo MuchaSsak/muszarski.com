@@ -28,7 +28,8 @@ const KNOWS_ABOUT: { name: string; wikidata?: string }[] = [
   { name: "Claude Code" },
 ];
 
-export function personNode(site: URL, locale: Locale): Node {
+/** `image`: the absolute URL of the owner's photo, when there is one (lib/photos.ts). */
+export function personNode(site: URL, locale: Locale, image?: string): Node {
   return {
     "@type": "Person",
     "@id": personId(site),
@@ -39,10 +40,13 @@ export function personNode(site: URL, locale: Locale): Node {
     description: CV.summary[locale],
     address: { "@type": "PostalAddress", addressRegion: SITE.region, addressCountry: SITE.countryCode },
     knowsAbout: KNOWS_ABOUT.map((thing) =>
-      thing.wikidata ? { "@type": "Thing", name: thing.name, sameAs: `https://www.wikidata.org/wiki/${thing.wikidata}` } : thing.name,
+      thing.wikidata
+        ? { "@type": "Thing", name: thing.name, sameAs: `https://www.wikidata.org/wiki/${thing.wikidata}` }
+        : thing.name,
     ),
     knowsLanguage: ["pl", "en"],
     sameAs: PROFILES.map((profile) => profile.href),
+    ...(image ? { image } : {}),
   };
 }
 
@@ -58,7 +62,7 @@ export function websiteNode(site: URL): Node {
   };
 }
 
-export function homeGraph(site: URL, locale: Locale, description: string): Node {
+export function homeGraph(site: URL, locale: Locale, description: string, image?: string): Node {
   const url = `${origin(site)}${pathTo(locale)}`;
   return {
     "@context": "https://schema.org",
@@ -74,12 +78,20 @@ export function homeGraph(site: URL, locale: Locale, description: string): Node 
         isPartOf: { "@id": websiteId(site) },
         mainEntity: { "@id": personId(site) },
       },
-      personNode(site, locale),
+      personNode(site, locale, image),
     ],
   };
 }
 
-export function pageGraph(site: URL, url: string, type: "WebPage" | "AboutPage" | "CollectionPage" | "ProfilePage", name: string, description: string, locale: string, crumbs: { name: string; url: string }[]): Node {
+export function pageGraph(
+  site: URL,
+  url: string,
+  type: "WebPage" | "AboutPage" | "CollectionPage" | "ProfilePage",
+  name: string,
+  description: string,
+  locale: string,
+  crumbs: { name: string; url: string }[],
+): Node {
   return {
     "@context": "https://schema.org",
     "@graph": [
@@ -91,7 +103,9 @@ export function pageGraph(site: URL, url: string, type: "WebPage" | "AboutPage" 
         description,
         inLanguage: locale,
         isPartOf: { "@id": websiteId(site) },
-        ...(type === "AboutPage" || type === "ProfilePage" ? { mainEntity: { "@id": personId(site) } } : { author: { "@id": personId(site) } }),
+        ...(type === "AboutPage" || type === "ProfilePage"
+          ? { mainEntity: { "@id": personId(site) } }
+          : { author: { "@id": personId(site) } }),
       },
       breadcrumbs(crumbs),
     ],
