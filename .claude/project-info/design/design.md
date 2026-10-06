@@ -105,10 +105,11 @@ button, flags, single theme, chapters, AI, credentials, writing, contact, footer
 
 ## Motion
 
-- **Vocabulary:** rise (fade + 20 px up), draw (scaleX rules), pop (sticker), spin, marquee, letter accordion, hard
+- **Vocabulary:** rise (10 px settle, never hidden), draw (scaleX rules), pop (sticker), spin, marquee, letter accordion, hard
   shadow on hover, stagger in the menu. Ease-out `cubic-bezier(.2,.75,.1,1)`, pop `cubic-bezier(.3,1.6,.5,1)`;
   200-900 ms.
-- **Rules:** the H1 never fades or moves on load; first-screen entrances are CSS; `.rv` reveals below the fold only
+- **Rules:** the H1 never fades or moves on load; first-screen entrances are CSS and never hide content (no opacity 0,
+  no delay over ~150 ms: a first visit showed only the name for up to 1 s [user 2026-10-06]); `.rv` reveals below the fold only
   hide once the script runs (`html.rv-ready`), so a failed script hides nothing. Sections get `.off` offscreen (CSS
   loops pause); `html.still` pauses everything (WCAG 2.2.2); reduced motion shows the final state.
 - **Cost:** page JS 3.0 KB gz at the hero slice (fit 1.7, motion 0.5, pause 0.4, band 0.3). The accordion reads one

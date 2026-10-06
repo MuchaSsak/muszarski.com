@@ -42,6 +42,9 @@ Wired so far (no-ops until `PUBLIC_UMAMI_WEBSITE_ID` is set):
   landing now), `malatro-live`, `yws-live` and `npm-lingui-translate-ai` (the "Also shipped" tickets, with `project`)
 - The script loads after `load`, never with DNT/GPC or the `umami.disabled` opt-out (`layout/UmamiLoader.astro`); the
   privacy page has the opt-out switch (`legal/AnalyticsOptOut.astro`)
+- The tracker counts the production domain only (`data-domains`: apex + www from `SITE_HOSTS` in `scripts/launch.mjs`),
+  never a preview or localhost. A new domain → add it there. 2026-10-06: the first deploy baked its preview host in
+  and Umami dropped every real visit (0 visitors).
 
 ## Funnels and KPIs
 

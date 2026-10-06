@@ -5,7 +5,7 @@
  * deploy on the domain) is noindex; the launch gate refuses to ship a launch while placeholders are left.
  */
 
-/** The production domain, "for now" (owner 2026-10-05; site/seo.md § Domain). */
+/** The production domain, "for now" (owner 2026-10-05; site/seo.md § Domain). Umami counts visits here only (apex + www). */
 export const SITE_HOSTS = ["matmuszarski.space"];
 export const FALLBACK_SITE_URL = "https://matmuszarski.space";
 

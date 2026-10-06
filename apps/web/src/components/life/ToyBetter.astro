@@ -1,60 +1,133 @@
 ---
 /**
- * Self-improvement: the 1 % idea, as a slider. Pick a number of days and see what a little better (1.01ⁿ) and a
- * little worse (0.99ⁿ) every day add up to. Plain arithmetic, nothing claimed. The chart draws both curves; a marker
- * follows the slider.
+ * Self-improvement: the 1 % idea as a race [user 2026-10-06: "more interactive", "more fun"; no figures, nothing
+ * specific to relate to]. Two orbs start as one. Press +1 day (hold to fast-forward): the 1 % better one climbs its
+ * curve (1.01ⁿ) and grows, the 1 % worse one sinks (0.99ⁿ) and shrinks. The view zooms out as the gap grows; flags
+ * mark a week, a month, 100 days and a year, and the chips jump there. Plain arithmetic, nothing claimed. Keyboard:
+ * the button repeats while Enter is held.
  */
 import { t } from "lingui-for-astro/macro";
 
+import Icon from "~/components/ui/Icon.astro";
+
 const locale = Astro.locals.locale;
-const DAYS = 365;
 const fmt = (v: number) => new Intl.NumberFormat(locale, { maximumFractionDigits: 2, minimumFractionDigits: 2 }).format(v);
-const W = 300;
-const H = 120;
-const MAX = 40;
-const curve = (base: number) =>
-  Array.from({ length: 74 }, (_, k) => {
-    const d = Math.min(DAYS, k * 5);
-    return `${((d / DAYS) * W).toFixed(1)},${(H - (Math.min(MAX, base ** d) / MAX) * H).toFixed(1)}`;
-  }).join(" ");
+const DAYS = 365;
+const MARKS = [
+  { day: 7, label: t`1 week`, cheer: t`One week in!` },
+  { day: 30, label: t`1 month`, cheer: t`A month. Feeling it.` },
+  { day: 100, label: t`100 days`, cheer: t`100 days!` },
+  { day: DAYS, label: t`1 year`, cheer: t`A whole year!` },
+];
+const STRINGS = { next: t`+1 day`, again: t`Again`, start: t`Same you. For now.` };
 ---
 
-<div class="better" data-better data-locale={locale}>
-  <div class="b-out">
-    <p class="b-up">
-      <span class="big tabular" data-up>×{fmt(1.01 ** DAYS)}</span>
-      <small>{t`1% better every day`}</small>
-    </p>
-    <p class="b-down">
-      <span class="big tabular" data-down>×{fmt(0.99 ** DAYS)}</span>
-      <small>{t`1% worse every day`}</small>
-    </p>
+<div class="bt-wrap">
+  <div
+    class="better"
+    data-better
+    data-locale={locale}
+    data-days={DAYS}
+    data-marks={JSON.stringify(MARKS)}
+    data-strings={JSON.stringify(STRINGS)}
+  >
+    <div class="b-out">
+      <p class="b-day tabular"><small>{t`Day`}</small> <b data-day>0</b><small>/ {DAYS}</small></p>
+      <p class="b-up">
+        <span class="big tabular" data-up>×{fmt(1)}</span>
+        <small>{t`1% better every day`}</small>
+      </p>
+      <p class="b-down">
+        <span class="big tabular" data-down>×{fmt(1)}</span>
+        <small>{t`1% worse every day`}</small>
+      </p>
+    </div>
+
+    <div class="b-stage" aria-hidden="true">
+      <div class="b-plot" data-plot>
+        <span class="b-one" data-one><i>×1</i></span>
+        <svg class="b-chart" viewBox="0 0 300 120" preserveAspectRatio="none">
+          <polyline class="c-down" data-line-down points="0,60"></polyline>
+          <polyline class="c-up" data-line-up points="0,60"></polyline>
+        </svg>
+        {
+          MARKS.map((mark) => (
+            <span class="b-flag" data-flag={mark.day}>
+              <b class="tabular">{mark.day}</b>
+            </span>
+          ))
+        }
+        <span class="b-orb b-orb-down" data-down-orb></span>
+        <span class="b-orb b-orb-up" data-up-orb>
+          <span class="b-say" data-say></span>
+        </span>
+      </div>
+    </div>
+
+    <div class="b-ctl">
+      <button class="toy-btn b-next" type="button" data-next>
+        <Icon name="tb:trending-up" />
+        <span data-next-label>{STRINGS.next}</span>
+      </button>
+      <div class="b-marks" role="group" aria-label={t`Jump to`}>
+        {
+          MARKS.map((mark) => (
+            <button class="b-chip" type="button" data-jump={mark.day}>
+              {mark.label}
+              <small class="tabular">×{fmt(1.01 ** mark.day)}</small>
+            </button>
+          ))
+        }
+      </div>
+    </div>
+    <p class="sr-only" role="status" data-said></p>
   </div>
-  <svg class="chart" viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="none" aria-hidden="true">
-    <polyline class="c-up" points={curve(1.01)}></polyline>
-    <polyline class="c-down" points={curve(0.99)}></polyline>
-    <line class="mark" x1={W} x2={W} y1="0" y2={H} data-mark></line>
-  </svg>
-  <label class="b-l">
-    <span>{t`Days`}</span>
-    <output class="tabular" data-days>{DAYS}</output>
-    <input type="range" min="0" max={DAYS} value={DAYS} step="1" data-range />
-  </label>
 </div>
 
 <style>
+  /* Stacked in a narrow card; in a wide one the race runs left of the numbers and the controls. */
+  .bt-wrap {
+    container-type: inline-size;
+  }
   .better {
     display: grid;
-    gap: 0.75rem;
+    grid-template-areas: "out" "stage" "ctl";
+    gap: 1rem;
+  }
+  @container (min-width: 44rem) {
+    .better {
+      grid-template-columns: minmax(0, 1.7fr) minmax(0, 1fr);
+      grid-template-areas: "stage out" "stage ctl";
+      align-items: center;
+      gap: 1.25rem 2rem;
+    }
+    .b-stage {
+      height: 100%;
+      min-height: 16rem;
+    }
   }
   .b-out {
+    grid-area: out;
     display: flex;
     flex-wrap: wrap;
-    gap: 0.5rem 2rem;
+    align-items: flex-end;
+    gap: 0.5rem 1.75rem;
   }
   .b-out p {
     display: grid;
     margin: 0;
+  }
+  .b-out .b-day {
+    display: flex;
+    flex-basis: 100%;
+    align-items: baseline;
+    gap: 0.375rem;
+  }
+  .b-day b {
+    font-weight: 900;
+    font-size: 1.75rem;
+    line-height: 1;
+    font-stretch: 70%;
   }
   .big {
     font-weight: 900;
@@ -63,7 +136,7 @@ const curve = (base: number) =>
     font-stretch: 70%;
   }
   .b-down .big {
-    opacity: 0.55;
+    color: #b0127a;
   }
   .b-out small {
     font-weight: 800;
@@ -71,19 +144,33 @@ const curve = (base: number) =>
     letter-spacing: 0.06em;
     text-transform: uppercase;
   }
-  .chart {
-    display: block;
-    width: 100%;
-    height: 7.5rem;
-    overflow: visible;
+
+  /* ---- The race. The plot is inset so the two of you never leave the card at either end. */
+  .b-stage {
+    grid-area: stage;
+    position: relative;
+    height: 13rem;
     background:
-      linear-gradient(rgb(10 13 51 / 0.12) 1px, transparent 1px) 0 0 / 100% 25%,
-      transparent;
+      linear-gradient(rgb(10 13 51 / 0.1) 1px, transparent 1px) 0 0 / 100% 25%,
+      rgb(255 255 255 / 0.28);
+    box-shadow: inset 0 0 0 2px var(--navy);
   }
-  .chart polyline {
+  .b-plot {
+    position: absolute;
+    inset: 3.75rem 2.25rem 1.25rem 2.5rem;
+  }
+  .b-chart {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+  }
+  .b-chart polyline {
     fill: none;
-    stroke-width: 4;
+    stroke-width: 5;
     stroke-linejoin: round;
+    stroke-linecap: round;
     vector-effect: non-scaling-stroke;
   }
   .c-up {
@@ -92,52 +179,371 @@ const curve = (base: number) =>
   .c-down {
     stroke: var(--pink);
   }
-  .mark {
-    stroke: var(--navy);
-    stroke-width: 2;
-    stroke-dasharray: 4 4;
-    vector-effect: non-scaling-stroke;
+  /* ×1: where both of you started. */
+  .b-one {
+    position: absolute;
+    right: -1.75rem;
+    left: -2rem;
+    bottom: var(--one, 50%);
+    border-top: 2px dashed rgb(10 13 51 / 0.35);
   }
-  .b-l {
-    display: grid;
-    grid-template-columns: auto auto 1fr;
-    align-items: center;
-    gap: 0.75rem;
+  .b-one i {
+    position: absolute;
+    left: 0.25rem;
+    bottom: 0.125rem;
+    font-style: normal;
+    font-weight: 900;
+    font-size: 0.75rem;
+    opacity: 0.6;
+  }
+  .b-flag {
+    position: absolute;
+    left: var(--x);
+    bottom: var(--y);
+    width: 2px;
+    height: 1.75rem;
+    background: var(--navy);
+    transform-origin: 50% 100%;
+    scale: 0;
+    transition: scale 0.3s var(--ease-pop);
+  }
+  .b-flag.got {
+    scale: 1;
+  }
+  .b-flag b {
+    position: absolute;
+    top: 0;
+    left: 2px;
+    padding: 0.0625rem 0.3125rem 0.0625rem 0.25rem;
+    background: var(--yellow);
+    color: var(--navy);
+    font-weight: 900;
+    font-size: 0.6875rem;
+    line-height: 1.2;
+    clip-path: polygon(0 0, 100% 0, 85% 50%, 100% 100%, 0 100%);
+    padding-right: 0.5rem;
+  }
+  /* The orbs: centred on their curve's tip, sized by their value (--s). */
+  .b-orb {
+    position: absolute;
+    left: var(--x, 0%);
+    bottom: var(--y, 50%);
+    width: min(var(--s, 1.25rem), 12cqi);
+    aspect-ratio: 1;
+    border-radius: 50%;
+    translate: -50% 50%;
+  }
+  .b-orb-up {
+    z-index: 2;
+    background: radial-gradient(circle at 34% 30%, #4a57ff 0 18%, var(--navy) 60%);
+    box-shadow:
+      0 0 0 0.1875rem var(--lime),
+      0 0 0 0.375rem var(--navy);
+  }
+  .b-orb-down {
+    background: radial-gradient(circle at 34% 30%, #ffc2e6 0 15%, var(--pink) 60%);
+    box-shadow: 0 0 0 2px var(--navy);
+  }
+  /* Each day sends a ring out of the climbing orb; a milestone pops it. */
+  .b-orb-up::after {
+    content: "";
+    position: absolute;
+    inset: -0.375rem;
+    border-radius: 50%;
+    border: 2px solid var(--navy);
+    opacity: 0;
+  }
+  .go .b-orb-up::after {
+    animation: bt-ring 0.45s var(--ease-out) infinite;
+  }
+  .b-orb-up.yay {
+    animation: bt-yay 0.5s var(--ease-pop);
+  }
+  @keyframes bt-ring {
+    from {
+      opacity: 0.6;
+      scale: 1;
+    }
+    to {
+      opacity: 0;
+      scale: 1.6;
+    }
+  }
+  @keyframes bt-yay {
+    40% {
+      scale: 1.35;
+    }
+  }
+  /* A speech bubble over the climbing orb: the start line, then the milestones. */
+  .b-say {
+    position: absolute;
+    bottom: calc(100% + 0.375rem);
+    left: 50%;
+    width: max-content;
+    max-width: 11rem;
+    padding: 0.25rem 0.5rem;
+    background: var(--ice);
+    color: var(--navy);
     font-weight: 800;
-    font-size: 0.875rem;
+    font-size: 0.75rem;
+    line-height: 1.2;
+    box-shadow:
+      0 0 0 2px var(--navy),
+      3px 3px 0 2px var(--navy);
+    translate: -50% 0;
+    scale: 0;
+    transform-origin: 50% 100%;
+    transition: scale 0.25s var(--ease-pop);
+  }
+  .b-say.on {
+    scale: 1;
+  }
+  /* Near the right edge the bubbles grow leftwards, so they stay in the card. */
+  .far .b-say {
+    left: auto;
+    right: -0.5rem;
+    translate: 0 0;
+    transform-origin: 100% 100%;
+  }
+
+  /* ---- The controls. */
+  .b-ctl {
+    grid-area: ctl;
+    display: grid;
+    gap: 0.75rem;
+    justify-items: start;
+  }
+  .b-next {
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-touch-callout: none;
+  }
+  .b-marks {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.5rem;
+    width: min(100%, 24rem);
+  }
+  .b-chip {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.375rem;
+    min-height: 2.75rem;
+    padding: 0.375rem 0.75rem;
+    border: 0;
+    background: var(--ice);
+    color: var(--navy);
+    font: inherit;
+    font-weight: 800;
+    font-size: 0.8125rem;
     letter-spacing: 0.04em;
     text-transform: uppercase;
-  }
-  .b-l output {
-    min-width: 3ch;
-    font-size: 1.25rem;
-  }
-  input[type="range"] {
-    width: 100%;
-    accent-color: var(--navy);
-    height: 2rem;
+    box-shadow: 0 0 0 2px var(--navy);
     cursor: pointer;
+    transition:
+      background-color 0.2s,
+      translate 0.2s var(--ease-pop);
+  }
+  .b-chip small {
+    font-weight: 900;
+    font-size: 0.75rem;
+    opacity: 0.7;
+  }
+  .b-chip.got {
+    background: var(--navy);
+    color: var(--lime);
+  }
+  .b-chip:hover {
+    translate: 0 -2px;
+  }
+  .b-chip:focus-visible {
+    outline: 3px solid var(--navy);
+    outline-offset: 3px;
+  }
+  :global(.still) .better :global(*),
+  :global(.still) .better {
+    animation: none !important;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .better :global(*) {
+      animation: none !important;
+    }
   }
 </style>
 
 <script>
+  import { audio, blip } from "~/scripts/life-audio";
+  import { confetti } from "~/scripts/life-confetti";
+  import { motionStill } from "~/scripts/motion";
+
+  type Mark = { day: number; label: string; cheer: string };
+  /** The view's width never goes under this many days, so the first steps aren't a full-width leap. */
+  const MIN_SPAN = 20;
+  const W = 300;
+  const H = 120;
   for (const root of document.querySelectorAll<HTMLElement>("[data-better]")) {
-    const range = root.querySelector<HTMLInputElement>("[data-range]")!;
-    const up = root.querySelector<HTMLElement>("[data-up]")!;
-    const down = root.querySelector<HTMLElement>("[data-down]")!;
-    const days = root.querySelector<HTMLElement>("[data-days]")!;
-    const mark = root.querySelector<SVGLineElement>("[data-mark]")!;
+    const max = Number(root.dataset.days);
+    const marks: Mark[] = JSON.parse(root.dataset.marks ?? "[]");
+    const strings: Record<"next" | "again" | "start", string> = JSON.parse(root.dataset.strings ?? "{}");
+    const $ = <T extends Element>(sel: string) => root.querySelector<T>(sel)!;
+    const stage = $<HTMLElement>(".b-stage");
+    const plot = $<HTMLElement>("[data-plot]");
+    const lineUp = $<SVGPolylineElement>("[data-line-up]");
+    const lineDown = $<SVGPolylineElement>("[data-line-down]");
+    const orbUp = $<HTMLElement>("[data-up-orb]");
+    const orbDown = $<HTMLElement>("[data-down-orb]");
+    const bubble = $<HTMLElement>("[data-say]");
+    const one = $<HTMLElement>("[data-one]");
+    const next = $<HTMLButtonElement>("[data-next]");
+    const nextLabel = $<HTMLElement>("[data-next-label]");
+    const said = $<HTMLElement>("[data-said]");
+    const flags = [...root.querySelectorAll<HTMLElement>("[data-flag]")];
+    const chips = [...root.querySelectorAll<HTMLButtonElement>("[data-jump]")];
+    const out = { day: $<HTMLElement>("[data-day]"), up: $<HTMLElement>("[data-up]"), down: $<HTMLElement>("[data-down]") };
     const fmt = new Intl.NumberFormat(root.dataset.locale, { maximumFractionDigits: 2, minimumFractionDigits: 2 });
-    const max = Number(range.max);
-    const update = () => {
-      const d = Number(range.value);
-      up.textContent = `×${fmt.format(1.01 ** d)}`;
-      down.textContent = `×${fmt.format(0.99 ** d)}`;
-      days.textContent = String(d);
-      const x = String((d / max) * 300);
-      mark.setAttribute("x1", x);
-      mark.setAttribute("x2", x);
+    let day = 0;
+    let lastSound = 0;
+    let idle = 0;
+    let hush = 0;
+
+    /** A bubble for `ms`; 0 keeps it until the next one (the start line stays until the first step). */
+    const say = (text: string, ms = 1800) => {
+      bubble.textContent = text;
+      bubble.classList.add("on");
+      window.clearTimeout(hush);
+      if (ms) hush = window.setTimeout(() => bubble.classList.remove("on"), ms);
     };
-    range.addEventListener("input", update);
+
+    /** Draws day `d`: both curves up to it, in a view that zooms out as they part. */
+    const draw = (d: number) => {
+      const span = Math.max(MIN_SPAN, d);
+      const top = Math.max(1.6, 1.01 ** d * 1.12);
+      const x = (k: number) => (k / span) * W;
+      const y = (v: number) => H - (v / top) * H;
+      const every = Math.max(1, Math.ceil(d / 120));
+      const up: string[] = [];
+      const down: string[] = [];
+      for (let k = 0; k <= d; k += every) {
+        up.push(`${x(k).toFixed(1)},${y(1.01 ** k).toFixed(1)}`);
+        down.push(`${x(k).toFixed(1)},${y(0.99 ** k).toFixed(1)}`);
+      }
+      if (d % every) {
+        up.push(`${x(d).toFixed(1)},${y(1.01 ** d).toFixed(1)}`);
+        down.push(`${x(d).toFixed(1)},${y(0.99 ** d).toFixed(1)}`);
+      }
+      lineUp.setAttribute("points", up.join(" "));
+      lineDown.setAttribute("points", down.join(" "));
+      const px = `${((d / span) * 100).toFixed(2)}%`;
+      // Grows with the better value (×37.78 → 3 rem), shrinks with the worse one (×0.03 → a speck).
+      orbUp.style.setProperty("--x", px);
+      orbUp.style.setProperty("--y", `${((1.01 ** d / top) * 100).toFixed(2)}%`);
+      orbUp.style.setProperty("--s", `${(1.25 * (1 + Math.log(1.01 ** d) * 0.38)).toFixed(3)}rem`);
+      orbDown.style.setProperty("--x", px);
+      orbDown.style.setProperty("--y", `${((0.99 ** d / top) * 100).toFixed(2)}%`);
+      orbDown.style.setProperty("--s", `${(1.25 * Math.max(0.3, 1 + Math.log(0.99 ** d) * 0.19)).toFixed(3)}rem`);
+      one.style.setProperty("--one", `${((1 / top) * 100).toFixed(2)}%`);
+      plot.classList.toggle("far", d / span > 0.6);
+      for (const flag of flags) {
+        const at = Number(flag.dataset.flag);
+        flag.classList.toggle("got", d >= at);
+        flag.style.setProperty("--x", `${((at / span) * 100).toFixed(2)}%`);
+        flag.style.setProperty("--y", `${((1.01 ** at / top) * 100).toFixed(2)}%`);
+      }
+      for (const chip of chips) chip.classList.toggle("got", d >= Number(chip.dataset.jump));
+      out.day.textContent = String(d);
+      out.up.textContent = `×${fmt.format(1.01 ** d)}`;
+      out.down.textContent = `×${fmt.format(0.99 ** d)}`;
+      nextLabel.textContent = d >= max ? strings.again : strings.next;
+    };
+
+    /** Moves to day `d`. The milestone reached last cheers (with a sound); a year throws confetti. */
+    const go = (d: number, from = day) => {
+      day = Math.max(0, Math.min(max, d));
+      draw(day);
+      stage.classList.add("go");
+      window.clearTimeout(idle);
+      idle = window.setTimeout(() => stage.classList.remove("go"), 260);
+      if (bubble.textContent === strings.start) bubble.classList.remove("on");
+      const passed = marks.filter((mark) => from < mark.day && day >= mark.day).pop();
+      const ac = audio();
+      if (passed) {
+        orbUp.classList.remove("yay");
+        void orbUp.offsetWidth;
+        orbUp.classList.add("yay");
+        say(passed.cheer);
+        said.textContent = `${passed.cheer} ×${fmt.format(1.01 ** passed.day)} / ×${fmt.format(0.99 ** passed.day)}`;
+        if (ac) [660, 880, 1320].forEach((f, i) => window.setTimeout(() => blip(ac, f), i * 90));
+        if (passed.day === max) {
+          const box = next.getBoundingClientRect();
+          confetti(160, { x: box.left + box.width / 2, y: box.top });
+        }
+        return;
+      }
+      // A rising tick per day, at most ~12 a second while fast-forwarding.
+      const now = performance.now();
+      if (ac && day > from && now - lastSound > 80) {
+        lastSound = now;
+        blip(ac, Math.min(1500, 300 * 1.01 ** (day * 0.45)));
+      }
+    };
+
+    const step = () => {
+      if (day >= max) {
+        day = 0;
+        draw(0);
+        say(strings.start, 0);
+        said.textContent = strings.start;
+        return false;
+      }
+      go(day + 1);
+      return day < max;
+    };
+
+    // Hold to fast-forward: a step at once, then faster and faster until the year is out or the press ends.
+    let holding = 0;
+    const release = () => {
+      window.clearTimeout(holding);
+      holding = 0;
+    };
+    next.addEventListener("pointerdown", (event) => {
+      if (event.button !== 0) return;
+      next.setPointerCapture(event.pointerId);
+      let wait = 320;
+      const tick = () => {
+        if (!step()) return release();
+        wait = Math.max(12, wait * 0.8);
+        holding = window.setTimeout(tick, wait);
+      };
+      if (step()) holding = window.setTimeout(tick, wait);
+    });
+    for (const type of ["pointerup", "pointercancel", "lostpointercapture"]) next.addEventListener(type, release);
+    next.addEventListener("contextmenu", (event) => event.preventDefault());
+    // Keyboard (and assistive tech) clicks have no pointer: one step each; a held Enter repeats.
+    next.addEventListener("click", (event) => {
+      if (event.detail === 0) step();
+    });
+
+    // The chips run there: a quick count up (or down), or a jump with paused motion.
+    let run = 0;
+    for (const chip of chips) {
+      chip.addEventListener("click", () => {
+        cancelAnimationFrame(run);
+        const target = Number(chip.dataset.jump);
+        if (motionStill()) return go(target);
+        const start = day;
+        const frame = () => {
+          const left = target - day;
+          if (!left) return;
+          const move = Math.sign(left) * Math.max(1, Math.ceil(Math.abs(left) / 10));
+          go(day + move, start > target ? day + move : day);
+          run = requestAnimationFrame(frame);
+        };
+        frame();
+      });
+    }
+
+    draw(0);
+    say(strings.start, 0);
   }
 </script>

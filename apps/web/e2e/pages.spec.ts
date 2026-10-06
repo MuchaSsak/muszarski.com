@@ -96,10 +96,10 @@ test("AI story: the chip pauses it, and a step plays from that step", async ({ p
   await expect(page.locator("#beat-4")).toBeVisible();
 });
 
-test("my life: the toys answer (a rep, the 1% slider, the sound switch, a game of Pong)", async ({ page }) => {
+test("my life: the toys answer (a rep, the 1% race, the sound switch, a game of Pong)", async ({ page }) => {
   await page.goto("/en/my-life/");
   const reps = page.locator("[data-reps]");
-  const rep = reps.getByRole("button", { name: "Pull-up" });
+  const rep = reps.getByRole("button", { name: "Pull-up", exact: true });
   await rep.click();
   await expect(reps.locator("[data-n]")).toHaveText("1");
   // A full set (8 pull-ups) cheers, and the next press starts the next set at once: no rest lock.
@@ -107,9 +107,13 @@ test("my life: the toys answer (a rep, the 1% slider, the sound switch, a game o
   await expect(reps.locator("[data-done]")).toContainText("Set done!");
   await rep.click();
   await expect(reps.locator("[data-n]")).toHaveText("1");
-  const range = page.locator("[data-better] input[type=range]");
-  await range.fill("100");
-  await expect(page.locator("[data-better] [data-up]")).toHaveText("×2.70");
+  // The 1% race: a press is a day; a chip runs to its milestone.
+  const better = page.locator("[data-better]");
+  await better.getByRole("button", { name: "+1 day" }).press("Enter");
+  await expect(better.locator("[data-day]")).toHaveText("1");
+  await better.getByRole("button", { name: /100 days/ }).click();
+  await expect(better.locator("[data-up]")).toHaveText("×2.70");
+  await expect(better.locator("[data-day]")).toHaveText("100");
   const sound = page.getByRole("button", { name: /Sound/ });
   await sound.click();
   await expect(sound).toHaveAttribute("aria-pressed", "false");

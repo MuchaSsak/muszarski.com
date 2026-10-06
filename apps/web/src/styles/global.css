@@ -497,14 +497,15 @@ html:not(.js) .js-only {
   transform: scaleX(0);
 }
 
+/* Entrances never hide content [user 2026-10-06: on a first visit the hero showed only the name for up to a second]:
+   the text is there at first paint and only settles a few pixels into place. */
 .rise {
-  animation: rise 0.9s var(--ease-out) both;
-  animation-delay: calc(120ms + var(--d, 0) * 90ms);
+  animation: rise 0.5s var(--ease-out) both;
+  animation-delay: calc(var(--d, 0) * 40ms);
 }
 @keyframes rise {
   from {
-    opacity: 0;
-    transform: translateY(1.25rem);
+    transform: translateY(0.625rem);
   }
 }
 

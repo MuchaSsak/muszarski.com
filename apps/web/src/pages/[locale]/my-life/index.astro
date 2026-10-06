@@ -6,7 +6,7 @@
  * - the head (`LifeHero`): the title over a goo shader that follows the pointer
  * - the playground: one toy per interest he named [user 2026-10-05], each something to do, not to watch: pull-ups to
  *   count, light to move (faith), a departures board, an engine to rev, a beat to make, a film to roll, Pong to play,
- *   a party to start, a camera to focus and shoot [user 2026-10-06], a slider for the 1 % idea. Sound is synthesised and only plays after a press; one switch mutes it.
+ *   a party to start, a camera to focus and shoot [user 2026-10-06], a race between a better and a worse you (1 %). Sound is synthesised and only plays after a press; one switch mutes it.
  * - hang out: a yellow band, so it stands apart from the footer; his chats (Discord, Messenger, Telegram) arrive as
  *   messages, Discord with the username to add.
  * Every toy works by keyboard and says what it is in text; paused or reduced motion keeps them usable and still.
@@ -103,7 +103,7 @@ const SOCIAL_ICONS: Record<string, IconName> = { discord: "si:discord", messenge
       <ToyCard area="photo" title={t`Photography`} line={L(t`I take photos. Strictly amateur, strictly for fun.`)} tone="var(--pink)" hint={slide}>
         <ToyPhoto />
       </ToyCard>
-      <ToyCard area="better" title={t`Self-improvement`} line={L(t`Trying to be a bit better than yesterday.`)} tone="var(--lime)" hint={slide}>
+      <ToyCard area="better" title={t`Self-improvement`} line={L(t`Trying to be a bit better than yesterday.`)} tone="var(--lime)" hint={hold}>
         <ToyBetter />
       </ToyCard>
     </ul>

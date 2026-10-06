@@ -51,13 +51,37 @@ msgstr "{minutes} min czytania"
 msgid "{name}, home"
 msgstr "{name}, strona główna"
 
-#: src/components/life/ToyBetter.astro:26
+#: src/components/life/ToyBetter.astro:22
+msgid "+1 day"
+msgstr "+1 dzień"
+
+#: src/components/life/ToyBetter.astro:18
+msgid "1 month"
+msgstr "1 miesiąc"
+
+#: src/components/life/ToyBetter.astro:17
+msgid "1 week"
+msgstr "1 tydzień"
+
+#: src/components/life/ToyBetter.astro:20
+msgid "1 year"
+msgstr "1 rok"
+
+#: src/components/life/ToyBetter.astro:38
 msgid "1% better every day"
 msgstr "1% lepiej każdego dnia"
 
-#: src/components/life/ToyBetter.astro:30
+#: src/components/life/ToyBetter.astro:42
 msgid "1% worse every day"
 msgstr "1% gorzej każdego dnia"
+
+#: src/components/life/ToyBetter.astro:19
+msgid "100 days"
+msgstr "100 dni"
+
+#: src/components/life/ToyBetter.astro:19
+msgid "100 days!"
+msgstr "100 dni!"
 
 #: src/components/home/Chapters.astro:42
 msgid "A 3D site for a Luxembourg non-profit that houses young people."
@@ -91,6 +115,10 @@ msgstr "Praca"
 msgid "A local business owner answers a few questions in one online form and orders a website made for their business. I built PstrykWeb for Cetuspro, a Polish software house."
 msgstr "Właściciel lokalnej firmy odpowiada na kilka pytań w jednym formularzu online i zamawia stronę zrobioną dla swojej firmy. Zbudowałem PstrykWeb dla Cetuspro, polskiego software house'u."
 
+#: src/components/life/ToyBetter.astro:18
+msgid "A month. Feeling it."
+msgstr "Miesiąc. Już czuć."
+
 #: src/components/home/chapters/ChapterSpace.astro:90
 msgid "A portfolio you fly through: Earth to Neptune in 12 camera stops."
 msgstr "Portfolio, przez które przelatujesz: od Ziemi do Neptuna w 12 przystankach kamery."
@@ -118,6 +146,10 @@ msgstr "Rekin, plaża i za mała łódź."
 #: src/pages/[locale]/blog/index.astro:104
 msgid "A to Z"
 msgstr "Od A do Z"
+
+#: src/components/life/ToyBetter.astro:20
+msgid "A whole year!"
+msgstr "Cały rok!"
 
 #: src/components/home/Contact.astro:75
 msgid "About"
@@ -154,6 +186,10 @@ msgstr "Akcja"
 #: src/components/life/ToyFilm.astro:18
 msgid "Adventure"
 msgstr "Przygodowy"
+
+#: src/components/life/ToyBetter.astro:22
+msgid "Again"
+msgstr "Jeszcze raz"
 
 #: src/components/blog/TagLabel.astro:16
 #: src/components/layout/SiteHeader.astro:42
@@ -519,9 +555,9 @@ msgstr "Curriculum vitae"
 msgid "CV"
 msgstr "CV"
 
-#: src/components/life/ToyBetter.astro:39
-msgid "Days"
-msgstr "Dni"
+#: src/components/life/ToyBetter.astro:35
+msgid "Day"
+msgstr "Dzień"
 
 #: src/components/home/chapters/ChapterClockful.astro:111
 msgid "days from spec to hand-in (an estimate)"
@@ -896,6 +932,10 @@ msgstr "Buduje w ramach zasad. Hooki zatrzymują ryzykowne ruchy."
 msgid "It reads the project wiki first, so no session starts from zero."
 msgstr "Najpierw czyta wiki projektu, więc żadna sesja nie zaczyna od zera."
 
+#: src/components/life/ToyBetter.astro:72
+msgid "Jump to"
+msgstr "Skocz do"
+
 #: src/components/home/AiWorkflow.astro:60
 msgid "Karpathy-style LLM wiki"
 msgstr "LLM wiki w stylu Karpathy'ego"
@@ -1185,6 +1225,10 @@ msgstr "Wystarczy jedna wiadomość"
 #: src/components/life/ToyFilm.astro:17
 msgid "One ring. One volcano. A very long walk."
 msgstr "Jeden pierścień. Jeden wulkan. Bardzo długi spacer."
+
+#: src/components/life/ToyBetter.astro:17
+msgid "One week in!"
+msgstr "Pierwszy tydzień!"
 
 #: src/pages/[locale]/work/index.astro:30
 msgid "Open source"
@@ -1478,6 +1522,10 @@ msgstr "hooki bezpieczeństwa"
 msgid "Sales are dropping."
 msgstr "Sprzedaż spada."
 
+#: src/components/life/ToyBetter.astro:22
+msgid "Same you. For now."
+msgstr "Ten sam ty. Na razie."
+
 #: src/components/life/ToyFilm.astro:16
 #: src/components/life/ToyFilm.astro:20
 #: src/components/life/ToyFilm.astro:22
@@ -1596,7 +1644,7 @@ msgstr "Skille + bramki"
 msgid "Skills and gates check every change: types, tests, accessibility, speed."
 msgstr "Skille i bramki sprawdzają każdą zmianę: typy, testy, dostępność, szybkość."
 
-#: src/components/layout/BaseLayout.astro:119
+#: src/components/layout/BaseLayout.astro:124
 msgid "Skip to content"
 msgstr "Przejdź do treści"
 

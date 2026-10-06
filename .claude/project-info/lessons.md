@@ -66,6 +66,7 @@
 - The owner works on two PCs: `git pull` first; on a merge take one side's `.po`, re-add the other side's changed msgids, `bun run i18n:extract`; regenerate PDFs, never merge them - 2026-10-06.
 - WebSearch has a budget shared by parallel agents; prefer WebFetch of known URLs, then Playwright - 2026-10-05.
 - Host redirects live in ONE place (Vercel → Domains): a www → apex rule in `vercel.json` against the dashboard's apex → www looped every font and script while the cached HTML still loaded (Arial titles overflowed) - 2026-10-06.
+- Never derive analytics domains from the build origin (a preview host got baked in, Umami dropped every real visit): list the production hosts explicitly - 2026-10-06.
 - `.gitignore` must not ignore `*.txt` (it hid `robots.txt` and `llms.txt`) - 2026-10-05.
 - Routing: a generic phrase in one row outscores a project name; put shared task words in every row they apply to and re-run `wiki-context.mjs --test` - 2026-10-05.
 - The wiki is foldered; the hooks need README, log, lessons and working-agreement at the root; keep basenames unique - 2026-10-05.

@@ -52,13 +52,37 @@ msgstr "{minutes} min de lectura"
 msgid "{name}, home"
 msgstr "{name}, inicio"
 
-#: src/components/life/ToyBetter.astro:26
+#: src/components/life/ToyBetter.astro:22
+msgid "+1 day"
+msgstr "+1 día"
+
+#: src/components/life/ToyBetter.astro:18
+msgid "1 month"
+msgstr "1 mes"
+
+#: src/components/life/ToyBetter.astro:17
+msgid "1 week"
+msgstr "1 semana"
+
+#: src/components/life/ToyBetter.astro:20
+msgid "1 year"
+msgstr "1 año"
+
+#: src/components/life/ToyBetter.astro:38
 msgid "1% better every day"
 msgstr "1% mejor cada día"
 
-#: src/components/life/ToyBetter.astro:30
+#: src/components/life/ToyBetter.astro:42
 msgid "1% worse every day"
 msgstr "1% peor cada día"
+
+#: src/components/life/ToyBetter.astro:19
+msgid "100 days"
+msgstr "100 días"
+
+#: src/components/life/ToyBetter.astro:19
+msgid "100 days!"
+msgstr "¡100 días!"
 
 #: src/components/home/Chapters.astro:42
 msgid "A 3D site for a Luxembourg non-profit that houses young people."
@@ -92,6 +116,10 @@ msgstr "Un empleo"
 msgid "A local business owner answers a few questions in one online form and orders a website made for their business. I built PstrykWeb for Cetuspro, a Polish software house."
 msgstr "El dueño de un negocio local responde unas preguntas en un único formulario online y encarga una web hecha para su negocio. Construí PstrykWeb para Cetuspro, una software house polaca."
 
+#: src/components/life/ToyBetter.astro:18
+msgid "A month. Feeling it."
+msgstr "Un mes. Ya se nota."
+
 #: src/components/home/chapters/ChapterSpace.astro:90
 msgid "A portfolio you fly through: Earth to Neptune in 12 camera stops."
 msgstr "Un portfolio que recorres volando: de la Tierra a Neptuno en 12 paradas de cámara."
@@ -119,6 +147,10 @@ msgstr "Un tiburón, una playa y un barco demasiado pequeño."
 #: src/pages/[locale]/blog/index.astro:104
 msgid "A to Z"
 msgstr "De la A a la Z"
+
+#: src/components/life/ToyBetter.astro:20
+msgid "A whole year!"
+msgstr "¡Un año entero!"
 
 #: src/components/home/Contact.astro:75
 msgid "About"
@@ -155,6 +187,10 @@ msgstr "Acción"
 #: src/components/life/ToyFilm.astro:18
 msgid "Adventure"
 msgstr "Aventura"
+
+#: src/components/life/ToyBetter.astro:22
+msgid "Again"
+msgstr "Otra vez"
 
 #: src/components/blog/TagLabel.astro:16
 #: src/components/layout/SiteHeader.astro:42
@@ -520,9 +556,9 @@ msgstr "Currículum vítae"
 msgid "CV"
 msgstr "CV"
 
-#: src/components/life/ToyBetter.astro:39
-msgid "Days"
-msgstr "Días"
+#: src/components/life/ToyBetter.astro:35
+msgid "Day"
+msgstr "Día"
 
 #: src/components/home/chapters/ChapterClockful.astro:111
 msgid "days from spec to hand-in (an estimate)"
@@ -897,6 +933,10 @@ msgstr "Construye dentro de las reglas. Los hooks frenan los movimientos arriesg
 msgid "It reads the project wiki first, so no session starts from zero."
 msgstr "Primero lee la wiki del proyecto, así ninguna sesión empieza de cero."
 
+#: src/components/life/ToyBetter.astro:72
+msgid "Jump to"
+msgstr "Saltar a"
+
 #: src/components/home/AiWorkflow.astro:60
 msgid "Karpathy-style LLM wiki"
 msgstr "wiki LLM al estilo de Karpathy"
@@ -1186,6 +1226,10 @@ msgstr "Basta con un mensaje"
 #: src/components/life/ToyFilm.astro:17
 msgid "One ring. One volcano. A very long walk."
 msgstr "Un anillo. Un volcán. Un paseo muy largo."
+
+#: src/components/life/ToyBetter.astro:17
+msgid "One week in!"
+msgstr "¡Primera semana!"
 
 #: src/pages/[locale]/work/index.astro:30
 msgid "Open source"
@@ -1479,6 +1523,10 @@ msgstr "hooks de seguridad"
 msgid "Sales are dropping."
 msgstr "Las ventas están bajando."
 
+#: src/components/life/ToyBetter.astro:22
+msgid "Same you. For now."
+msgstr "El mismo tú. Por ahora."
+
 #: src/components/life/ToyFilm.astro:16
 #: src/components/life/ToyFilm.astro:20
 #: src/components/life/ToyFilm.astro:22
@@ -1597,7 +1645,7 @@ msgstr "Skills + puertas"
 msgid "Skills and gates check every change: types, tests, accessibility, speed."
 msgstr "Skills y puertas revisan cada cambio: tipos, tests, accesibilidad, velocidad."
 
-#: src/components/layout/BaseLayout.astro:119
+#: src/components/layout/BaseLayout.astro:124
 msgid "Skip to content"
 msgstr "Saltar al contenido"
 

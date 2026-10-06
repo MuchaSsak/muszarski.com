@@ -3,9 +3,10 @@
  * Films: roll the film [user 2026-10-06: "actual films rolled ... parodies/indications so that everybody knows what
  * it's about"; then "detailed illustrations ... instead of boring text ... of course everything performant still"].
  * The old countdown leader plays (a sweep around the circle, 3, 2, 1) under grain and flicker, then tonight's film:
- * a drawn parody still (scripts/life-films.ts, own work: no titles, posters, characters or likenesses) with its genre
- * on a chip and its one-line parody as the subtitle. The drawings load on the first roll; at rest, and with paused
- * motion, the title card sits there and a roll shows the still at once.
+ * a drawn parody still (scripts/life-films.ts, own work: no titles, posters, characters or likenesses), picture only
+ * [user 2026-10-06: "shouldnt include all that text when rolled"]; its genre and one-line parody go to screen readers.
+ * The drawings load on the first roll; at rest, and with paused motion, the title card sits there and a roll shows the
+ * still at once.
  */
 import { t } from "lingui-for-astro/macro";
 
@@ -34,8 +35,7 @@ const FILMS = [
     <b class="num" data-num>3</b>
     <span class="end" data-end>
       <span class="e-scene" data-scene></span>
-      <span class="e-top" data-top>{t`Movie night.`}</span>
-      <span class="e-line" data-line></span>
+      <span class="e-top">{t`Movie night.`}</span>
     </span>
     <span class="grain"></span>
   </div>
@@ -115,12 +115,11 @@ const FILMS = [
     font-style: italic;
     font-stretch: 70%;
   }
-  .e-line:empty,
-  .e-scene:empty {
+  .e-scene:empty,
+  .picked .e-top {
     display: none;
   }
-  /* Once a film has rolled: the still fills the screen inside its frame, the genre is a chip in the corner and the
-     parody runs as the subtitle. */
+  /* Once a film has rolled: the still fills the screen inside its frame, nothing written over it. */
   .picked .end {
     position: absolute;
     inset: 0.5rem;
@@ -135,35 +134,6 @@ const FILMS = [
     display: block;
     width: 100%;
     height: 100%;
-  }
-  .picked .e-top {
-    position: absolute;
-    top: 0.5rem;
-    left: 0.5rem;
-    padding: 0.125rem 0.5rem;
-    background: var(--yellow);
-    color: var(--navy);
-    font-size: 0.6875rem;
-    font-style: normal;
-    letter-spacing: 0.1em;
-    font-stretch: 100%;
-    line-height: 1.4;
-  }
-  .e-line {
-    position: absolute;
-    right: 0.5rem;
-    bottom: 0.5rem;
-    left: 0.5rem;
-    width: fit-content;
-    max-width: calc(100% - 1rem);
-    margin-inline: auto;
-    padding: 0.25rem 0.5rem;
-    background: rgb(7 8 28 / 0.82);
-    color: #fff6c4;
-    font-weight: 800;
-    font-size: clamp(0.875rem, 1.3vw, 1.0625rem);
-    line-height: 1.2;
-    text-wrap: balance;
   }
   .grain {
     position: absolute;
@@ -526,8 +496,6 @@ const FILMS = [
     const num = root.querySelector<HTMLElement>("[data-num]")!;
     const sweep = root.querySelector<HTMLElement>(".sweep")!;
     const scene = root.querySelector<HTMLElement>("[data-scene]")!;
-    const top = root.querySelector<HTMLElement>("[data-top]")!;
-    const line = root.querySelector<HTMLElement>("[data-line]")!;
     const said = root.querySelector<HTMLElement>("[data-said]")!;
     const button = root.querySelector<HTMLButtonElement>("[data-roll]")!;
     const films: Film[] = JSON.parse(root.dataset.films ?? "[]");
@@ -542,9 +510,7 @@ const FILMS = [
       // Static markup from our own module, never from input.
       scene.innerHTML = draw ? draw() : "";
       root.classList.add("picked");
-      top.textContent = `${root.dataset.tonight ?? ""} · ${film.genre}`;
-      line.textContent = film.line;
-      said.textContent = `${top.textContent}: ${film.line}`;
+      said.textContent = `${root.dataset.tonight ?? ""} · ${film.genre}: ${film.line}`;
     };
     for (const type of ["pointerenter", "focus"]) button.addEventListener(type, () => void loadScenes(), { once: true });
     button.addEventListener("click", () => {
