@@ -25,10 +25,23 @@ export function setMuted(value: boolean) {
 }
 export const onMute = (fn: (muted: boolean) => void) => listeners.add(fn);
 
-/** The shared context, or null when muted. Call only from a reader's gesture (or after one). */
+/**
+ * The shared context, or null when muted or when the browser has no Web Audio (older Safari names it
+ * `webkitAudioContext`; some builds have neither, and a throw here used to stop the toys mid-press). Call only from a
+ * reader's gesture (or after one).
+ */
 export function audio() {
   if (muted) return null;
-  ctx ??= new AudioContext();
+  if (!ctx) {
+    const w = window as unknown as { AudioContext?: typeof AudioContext; webkitAudioContext?: typeof AudioContext };
+    const Ctor = w.AudioContext ?? w.webkitAudioContext;
+    if (!Ctor) return null;
+    try {
+      ctx = new Ctor();
+    } catch {
+      return null;
+    }
+  }
   if (ctx.state === "suspended") void ctx.resume();
   return ctx;
 }
