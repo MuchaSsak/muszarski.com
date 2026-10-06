@@ -2,11 +2,15 @@
 /**
  * Latest writing (structure.md § Home 6): every post of the page's blog locale on one rail of small cards (Spanish pages
  * show the English posts, marked as English), with "All posts" beside the heading. Hidden when there are no posts.
- * [user 2026-10-06: "animated drawing them", a pointer that drags them like a marquee]: a card sketches itself in (a
- * pencil outline, then the paper, the tape and the content) when it scrolls into view; while the rail sits in view
- * untouched, a drawn cursor grabs it and drags it one card on, and back to the start at the end. Visitors drag it
- * with the mouse, swipe it, use the arrows or tab through the links. Without JS, paused or reduced motion: every card
- * is simply there and nothing moves on its own.
+ * [user 2026-10-06: "a pointer/pencil that actually draws/writes cards one by one, and then the pointer grabs the
+ * whole container and scrolls horizontally ... in some loop"; no outline, no marks: "gradually uncover the whole card
+ * ... removing its mask by scribbling from left top corner to bottom right corner"]: a drawn pencil uncovers each card
+ * in view in turn, scribbling diagonally from the top left corner to the bottom right, the card showing exactly where
+ * it has scribbled; when all in view are drawn and the reader is idle, it turns into a pointer, grabs the rail and drags it
+ * one card on, and the pencil draws the new card. At the end it drags back to the start and the cards that left the
+ * view are rubbed out, so the next lap draws them again. Visitors drag it with the mouse, swipe it, use the arrows or
+ * tab through the links (while they do, cards ink in without the pencil). Without JS, paused or reduced motion: every
+ * card is simply there and nothing moves on its own.
  */
 import { t } from "lingui-for-astro/macro";
 
@@ -19,9 +23,6 @@ const locale = Astro.locals.locale;
 const links = chromeLinks(locale);
 const posts = await postsIn(links.blogLocale === "pl" ? "pl" : "en");
 const english = links.blogLocale !== locale;
-/** A hand-drawn rectangle: corners a little off, so the outline reads as pencil. */
-const SKETCH =
-  "M1.2 2.4 C 30 0.8, 70 1.6, 98.6 1 C 99.4 30, 98.6 70, 99 98.2 C 70 99.4, 30 98.6, 1.6 99 C 0.6 70, 1.4 30, 1.2 2.4";
 ---
 
 {posts.length > 0 && (
@@ -63,16 +64,25 @@ const SKETCH =
       <ul class="strip" role="list" data-strip>
         {posts.map((post, i) => (
           <li class="wc drawn" style={`--i:${i % 3}`}>
-            <svg class="sketch" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
-              <path d={SKETCH} pathLength="100" />
-            </svg>
             <PostCard post={post} tone={i * 2} compact />
           </li>
         ))}
       </ul>
       <span class="ghost" data-ghost hidden aria-hidden="true">
-        <svg viewBox="0 0 24 24">
+        <svg class="g-hand" viewBox="0 0 24 24">
           <path d="M4 2.5 20 11l-7 1.6-3.4 6.4z" />
+        </svg>
+        <svg class="g-pen" viewBox="-4 -38 42 42">
+          <g transform="rotate(-45)">
+            <path class="pen-wood" d="M0 0 10 -4.6 10 4.6z" />
+            <path class="pen-lead" d="M0 0 3.6 -1.65 3.6 1.65z" />
+            <rect class="pen-body" x="10" y="-4.6" width="26" height="9.2" />
+            <rect class="pen-shade" x="10" y="1.4" width="26" height="3.2" />
+            <rect class="pen-shine" x="10" y="-3.4" width="26" height="1.4" />
+            <rect class="pen-band" x="36" y="-4.6" width="4.4" height="9.2" />
+            <path class="pen-ridge" d="M37.5 -4.6v9.2M39 -4.6v9.2" />
+            <rect class="pen-rub" x="40.4" y="-4.6" width="6" height="9.2" rx="2" />
+          </g>
         </svg>
       </span>
     </div>
@@ -177,43 +187,28 @@ const SKETCH =
     --tilt: -0.75deg;
   }
 
-  /* The pencil outline under the note, a little looser than the paper. */
-  .sketch {
-    position: absolute;
-    inset: -0.5rem -0.375rem;
-    width: calc(100% + 0.75rem);
-    height: calc(100% + 1rem);
-    overflow: visible;
-    pointer-events: none;
-  }
-  .sketch path {
-    fill: none;
-    stroke: currentColor;
-    stroke-width: 2;
-    stroke-linecap: round;
-    stroke-dasharray: 100;
-    vector-effect: non-scaling-stroke;
-    opacity: 0.55;
-    transition: stroke-dashoffset 0.75s var(--ease-out);
-  }
-  /* Drawing in: outline → paper → tape → content. The scripted state only: without it every card is drawn. The staged
-     delays live on `.inking` (the moment of drawing), so hover never waits for them. */
+  /* Drawing in. The scripted state only: without it every card is there. With the pencil, the card sits under an
+     invisible mask that the pencil scribbles away (a clip-path the script grows), so nothing transitions; without
+     it (the reader is moving) the paper, tape and words ink in quickly. The staged delays live on `.inking` (the
+     moment of drawing), so hover never waits for them. */
   .wc.inking > :global(.card.compact) {
     transition:
       transform var(--dur-base) var(--ease-out),
-      box-shadow 0.3s var(--ease-out) 0.55s,
-      background-color 0.3s var(--ease-out) 0.5s;
+      box-shadow 0.3s var(--ease-out) 0.1s,
+      background-color 0.3s var(--ease-out);
   }
   .wc.inking > :global(.card.compact)::before {
-    transition: transform 0.4s var(--ease-pop) 0.85s;
+    transition: transform 0.4s var(--ease-pop) 0.35s;
   }
   .wc.inking > :global(.card) > :global(*) {
     transition:
-      opacity 0.35s var(--ease-out) 0.7s,
-      translate 0.45s var(--ease-out) 0.7s;
+      opacity 0.35s var(--ease-out) 0.2s,
+      translate 0.45s var(--ease-out) 0.2s;
   }
-  .wc:not(.drawn) .sketch path {
-    stroke-dashoffset: 100;
+  .wc.scribbling > :global(.card),
+  .wc.scribbling > :global(.card)::before,
+  .wc.scribbling > :global(.card) > :global(*) {
+    transition: none !important;
   }
   .wc:not(.drawn) > :global(.card.compact) {
     background-color: transparent;
@@ -227,28 +222,96 @@ const SKETCH =
     translate: 0 0.5rem;
   }
 
-  /* The drawn cursor that drags the rail. */
+  /* The ghost: a pencil that draws the cards, and the pointer that drags the rail. The script moves it (transform)
+     and switches the two (.pen); it fades in and out with .on. */
   .ghost {
     position: absolute;
     left: 0;
     top: 0;
     z-index: 6;
-    width: 2.75rem;
-    height: 2.75rem;
+    width: 0;
+    height: 0;
+    opacity: 0;
     pointer-events: none;
+    transition: opacity 0.25s var(--ease-out);
+  }
+  .ghost.on {
+    opacity: 1;
   }
   .ghost svg {
-    width: 100%;
-    height: 100%;
+    position: absolute;
     overflow: visible;
+    transition:
+      opacity 0.2s var(--ease-out),
+      scale 0.25s var(--ease-pop);
   }
-  .ghost path {
+  .g-hand {
+    left: -0.2rem;
+    top: -0.15rem;
+    width: 2.75rem;
+    height: 2.75rem;
+  }
+  .g-hand path {
     fill: var(--ice);
     stroke: var(--navy);
     stroke-width: 1.8;
     stroke-linejoin: round;
     filter: drop-shadow(2px 2px 0 var(--navy));
   }
+  /* The pencil's tip sits on the ghost's origin (the viewBox puts 0,0 at 4/42 across, 38/42 down). It leans with
+     the stroke it is drawing (--lean, set by the script). */
+  .g-pen {
+    left: calc(-4 / 42 * 4.5rem);
+    top: calc(-38 / 42 * 4.5rem);
+    width: 4.5rem;
+    height: 4.5rem;
+    transform-origin: calc(4 / 42 * 100%) calc(38 / 42 * 100%);
+    rotate: var(--lean, 0deg);
+    filter: drop-shadow(3px 3px 0 rgb(10 13 51 / 0.45));
+    transition:
+      opacity 0.2s var(--ease-out),
+      scale 0.25s var(--ease-pop),
+      rotate 0.18s var(--ease-out);
+  }
+  .g-pen :is(path, rect) {
+    stroke: var(--navy);
+    stroke-width: 1;
+    stroke-linejoin: round;
+  }
+  .g-pen :is(.pen-shade, .pen-shine) {
+    stroke: none;
+  }
+  .pen-wood {
+    fill: #f4d6a8;
+  }
+  .pen-lead {
+    fill: var(--navy);
+  }
+  .pen-body {
+    fill: var(--yellow);
+  }
+  .pen-shade {
+    fill: rgb(10 13 51 / 0.16);
+  }
+  .pen-shine {
+    fill: rgb(255 255 255 / 0.55);
+  }
+  .pen-band {
+    fill: var(--ice);
+  }
+  .g-pen .pen-ridge {
+    fill: none;
+    stroke-width: 0.7;
+  }
+  .pen-rub {
+    fill: var(--pink);
+  }
+  .ghost:not(.pen) .g-pen,
+  .ghost.pen .g-hand {
+    opacity: 0;
+    scale: 0.6;
+  }
+  /* Holding: a ring stays under the tip while it drags. */
   .ghost::before {
     content: "";
     position: absolute;
@@ -263,7 +326,6 @@ const SKETCH =
       opacity var(--dur-fast),
       transform var(--dur-fast);
   }
-  /* Holding: a ring stays under the tip while it drags. */
   .ghost.grab::before {
     opacity: 1;
     transform: scale(0.8);
@@ -271,15 +333,16 @@ const SKETCH =
 </style>
 
 <script>
-  import { motionStill } from "~/scripts/motion";
+  import { motionStill, onMotion } from "~/scripts/motion";
 
   const ease = (x: number) => (x < 0.5 ? 4 * x * x * x : 1 - (-2 * x + 2) ** 3 / 2);
-  const frames = (ms: number, step: (p: number) => void) =>
+  /** Runs `step` every frame for `ms` with an eased 0..1; `stop` (checked each frame) jumps to the end. */
+  const frames = (ms: number, step: (p: number) => void, stop = motionStill, curve = ease) =>
     new Promise<void>((done) => {
       const start = performance.now();
       const tick = (now: number) => {
-        const p = Math.min(1, (now - start) / ms);
-        step(ease(p));
+        const p = stop() ? 1 : Math.min(1, (now - start) / ms);
+        step(curve(p));
         if (p < 1) requestAnimationFrame(tick);
         else done();
       };
@@ -291,35 +354,271 @@ const SKETCH =
     const strip = rail.querySelector<HTMLElement>("[data-strip]")!;
     const ghost = rail.querySelector<HTMLElement>("[data-ghost]")!;
     const cards = [...strip.querySelectorAll<HTMLElement>(".wc")];
+    const paperOf = (card: HTMLElement) => card.querySelector<HTMLElement>(":scope > .card")!;
     const stepSize = () => cards[0]!.offsetWidth + parseFloat(getComputedStyle(strip).columnGap || "0");
     const atEnd = () => strip.scrollLeft + strip.clientWidth >= strip.scrollWidth - 4;
+    const drawn = (card: HTMLElement) => card.classList.contains("drawn");
+    ghost.hidden = false;
 
-    // Sketch in: with motion, each card draws itself the first time most of it is in view.
+    // ---- Timing: the reader's own moves hold the tour; the pencil keeps drawing, faster, while they move.
+    let visible = false;
+    let inside = false;
+    let down = false;
+    let lastInput = -1e9;
+    let idleSince = performance.now();
+    let idleFor = 2500;
+    /** Hold the tour for at least `ms` from now (never shortens a longer hold). */
+    function hold(ms = 8000) {
+      const now = performance.now();
+      if (now + ms > idleSince + idleFor) {
+        idleSince = now;
+        idleFor = ms;
+      }
+    }
+    const touched = (ms = 8000) => {
+      lastInput = performance.now();
+      hold(ms);
+    };
+    const reading = () => performance.now() - lastInput < 1800;
+    const idle = () =>
+      visible && !inside && !down && !motionStill() && !document.hidden && !rail.contains(document.activeElement);
+
+    // ---- The ghost: one element, a pencil (.pen) or the pointer; it glides from wherever it is.
+    let gx = 0;
+    let gy = 0;
+    let fade = 0;
+    const place = (x: number, y: number) => {
+      gx = x;
+      gy = y;
+      ghost.style.transform = `translate(${x}px, ${y}px)`;
+    };
+    const appear = (x: number, y: number) => {
+      clearTimeout(fade);
+      if (!ghost.classList.contains("on")) place(x, y);
+      ghost.classList.add("on");
+    };
+    const glide = (x: number, y: number, ms: number) => {
+      const fx = gx;
+      const fy = gy;
+      return frames(ms, (p) => place(fx + (x - fx) * p, fy + (y - fy) * p));
+    };
+    const vanishSoon = (ms = 1400) => {
+      clearTimeout(fade);
+      fade = window.setTimeout(() => {
+        if (!tracing && !busy) ghost.classList.remove("on", "grab");
+      }, ms);
+    };
+
+    // ---- Drawing a card: the card sits under an invisible mask and the pencil scribbles it away, stroke by stroke,
+    // diagonally from the top left corner to the bottom right; the card shows exactly where it has been (trace).
+    // Without the pencil (the reader is moving, or motion is still) a short CSS inking plays, or the card is simply
+    // there (ink).
+    const ink = (card: HTMLElement) => {
+      paperOf(card).style.clipPath = "";
+      card.classList.remove("scribbling");
+      card.classList.add("drawn", "inking");
+      setTimeout(() => card.classList.remove("inking"), 1400);
+    };
+    type Pt = readonly [number, number];
+    const rnd = (a: number) => (Math.random() * 2 - 1) * a;
+    /** Signed area: tells which way a polygon winds. */
+    const area = (pts: readonly Pt[]) =>
+      pts.reduce((sum, p, k) => {
+        const q = pts[(k + 1) % pts.length]!;
+        return sum + p[0] * q[1] - q[0] * p[1];
+      }, 0);
+    /** A thick pencil stroke along `line` as a closed outline (wound one way, so the nonzero rule joins them all). */
+    const outline = (line: readonly Pt[], widths: readonly number[]) => {
+      if (line.length < 2) return "";
+      const left: Pt[] = [];
+      const right: Pt[] = [];
+      line.forEach((p, j) => {
+        const a = line[Math.max(0, j - 1)]!;
+        const b = line[Math.min(line.length - 1, j + 1)]!;
+        const len = Math.hypot(b[0] - a[0], b[1] - a[1]) || 1;
+        const nx = -(b[1] - a[1]) / len;
+        const ny = (b[0] - a[0]) / len;
+        const r = widths[j] ?? widths[widths.length - 1]!;
+        left.push([p[0] + nx * r, p[1] + ny * r]);
+        right.push([p[0] - nx * r, p[1] - ny * r]);
+      });
+      let ring = [...left, ...right.reverse()];
+      if (area(ring) < 0) ring = ring.reverse();
+      return `M${ring.map(([x, y]) => `${x.toFixed(1)} ${y.toFixed(1)}`).join("L")}Z`;
+    };
+    /** The scribble over a card of w × h px: loose, slightly curved strokes back and forth across the diagonal, from
+     * the top left corner to the bottom right, each a little different (spacing, overshoot, bend, width). The area
+     * takes in the tape above the card and the shadow under it. */
+    const scribble = (w: number, h: number) => {
+      const L = -18;
+      const T = -36;
+      const R = w + 20;
+      const B = h + 20;
+      const span = R + B - L - T;
+      const n = Math.max(6, Math.round(span / 46));
+      const gap = span / n;
+      const strokes = Array.from({ length: n }, (_, i) => {
+        const c = L + T + (i + 0.5) * gap + rnd(gap * 0.14);
+        // The line x + y = c across the area, run a little past the edges.
+        const lowX = Math.max(L, c - B);
+        const highX = Math.min(R, c - T);
+        const o1 = 6 + Math.random() * 16;
+        const o2 = 6 + Math.random() * 16;
+        const low: Pt = [lowX - o1 * 0.7, c - lowX + o1 * 0.7];
+        const high: Pt = [highX + o2 * 0.7, c - highX - o2 * 0.7];
+        const [a, b] = i % 2 ? [high, low] : [low, high];
+        // A slight bend, as a hand makes it.
+        const bend = rnd(gap * 0.45);
+        const mid: Pt = [(a[0] + b[0]) / 2 + bend * 0.7, (a[1] + b[1]) / 2 + bend * 0.7];
+        const line: Pt[] = [];
+        const widths: number[] = [];
+        const m = 12;
+        for (let k = 0; k <= m; k++) {
+          const t = k / m;
+          const u = 1 - t;
+          line.push([
+            u * u * a[0] + 2 * u * t * mid[0] + t * t * b[0] + rnd(1.2),
+            u * u * a[1] + 2 * u * t * mid[1] + t * t * b[1] + rnd(1.2),
+          ]);
+          widths.push(gap * (0.62 + 0.12 * Math.sin(t * 6 + i)) + rnd(1.5));
+        }
+        const cum = [0];
+        for (let k = 1; k < line.length; k++) {
+          cum.push(cum[k - 1]! + Math.hypot(line[k]![0] - line[k - 1]![0], line[k]![1] - line[k - 1]![1]));
+        }
+        return { line, widths, cum, length: cum[cum.length - 1]! };
+      });
+      // The pencil's whole run: each stroke, and the short hop to the next one.
+      let total = 0;
+      const starts = strokes.map((stroke, i) => {
+        if (i) {
+          const prev = strokes[i - 1]!.line;
+          const end = prev[prev.length - 1]!;
+          total += Math.hypot(stroke.line[0]![0] - end[0], stroke.line[0]![1] - end[1]);
+        }
+        const start = total;
+        total += stroke.length;
+        return start;
+      });
+      const done = strokes.map((stroke) => outline(stroke.line, stroke.widths));
+      /** At distance d along the run: the pencil's point and the clip that shows what it has uncovered. */
+      const at = (d: number) => {
+        const dist = Math.max(0, Math.min(total, d));
+        let i = 0;
+        while (i < n - 1 && dist >= starts[i + 1]!) i += 1;
+        const stroke = strokes[i]!;
+        const before = done.slice(0, i).join("");
+        const into = dist - starts[i]!;
+        if (into < 0) {
+          // Hopping to this stroke.
+          const prev = strokes[i - 1]!.line;
+          const from = prev[prev.length - 1]!;
+          const hop = starts[i]! - (starts[i - 1]! + strokes[i - 1]!.length);
+          const f = hop ? 1 + into / hop : 1;
+          const x = from[0] + (stroke.line[0]![0] - from[0]) * f;
+          const y = from[1] + (stroke.line[0]![1] - from[1]) * f;
+          return { x, y, clip: `path("${before || "M0 0Z"}")` };
+        }
+        let k = 1;
+        while (k < stroke.cum.length - 1 && stroke.cum[k]! < into) k += 1;
+        const seg = stroke.cum[k]! - stroke.cum[k - 1]!;
+        const f = seg ? Math.min(1, (into - stroke.cum[k - 1]!) / seg) : 1;
+        const p = stroke.line[k - 1]!;
+        const q = stroke.line[k]!;
+        const tip: Pt = [p[0] + (q[0] - p[0]) * f, p[1] + (q[1] - p[1]) * f];
+        const partial = outline([...stroke.line.slice(0, k), tip], stroke.widths);
+        return { x: tip[0], y: tip[1], clip: `path("${before}${partial || "M0 0Z"}")` };
+      };
+      return { at, total };
+    };
+    const smooth = (x: number) => -(Math.cos(Math.PI * x) - 1) / 2;
+    let tracing = false;
+    const trace = async (card: HTMLElement) => {
+      tracing = true;
+      const paper = paperOf(card);
+      const { at, total } = scribble(paper.offsetWidth, paper.offsetHeight);
+      // The pencil's spot on the rail for a point on the card.
+      const onRail = (x: number, y: number) => {
+        const box = paper.getBoundingClientRect();
+        const home = rail.getBoundingClientRect();
+        return [box.left - home.left + x, box.top - home.top + y] as const;
+      };
+      const first = at(0);
+      const [sx, sy] = onRail(first.x, first.y);
+      ghost.classList.add("pen");
+      appear(sx + 90, sy + 90);
+      paper.style.clipPath = `path("M0 0Z")`;
+      card.classList.add("drawn", "scribbling");
+      await glide(sx, sy, 220);
+      // The pencil leans with its motion, eased so it sways instead of flipping.
+      let lean = 0;
+      let lastX = sx;
+      await frames(
+        1150,
+        (p) => {
+          const now = at(total * p);
+          const [x, y] = onRail(now.x, now.y);
+          lean += (Math.max(-9, Math.min(9, (lastX - x) * 0.5)) - lean) * 0.25;
+          lastX = x;
+          ghost.style.setProperty("--lean", `${lean.toFixed(1)}deg`);
+          place(x, y);
+          paper.style.clipPath = p < 1 ? now.clip : "";
+        },
+        motionStill,
+        smooth,
+      );
+      ghost.style.removeProperty("--lean");
+      paper.style.clipPath = "";
+      card.classList.remove("scribbling");
+      tracing = false;
+    };
+
+    // Cards wait, undrawn, until most of one is in view; then they are drawn one after another, left to right.
+    const queue = new Set<HTMLElement>();
+    let working = false;
+    const work = async () => {
+      if (working) return;
+      working = true;
+      for (let card = cards.find((c) => queue.has(c)); card; card = cards.find((c) => queue.has(c))) {
+        queue.delete(card);
+        if (drawn(card)) continue;
+        if (motionStill() || document.hidden) ink(card);
+        else if (reading()) {
+          ink(card);
+          await new Promise((r) => setTimeout(r, 120));
+        } else await trace(card);
+      }
+      working = false;
+      hold(2600);
+      vanishSoon();
+    };
     if (!motionStill()) {
       for (const card of cards) card.classList.remove("drawn");
       const seen = new IntersectionObserver(
         (entries) => {
-          let delay = 0;
           for (const entry of entries) {
-            if (!entry.isIntersecting) continue;
             const card = entry.target as HTMLElement;
-            seen.unobserve(card);
-            setTimeout(() => {
-              card.classList.add("drawn", "inking");
-              setTimeout(() => card.classList.remove("inking"), 1600);
-            }, delay);
-            delay += 180;
+            if (entry.isIntersecting && entry.intersectionRatio >= 0.8 && !drawn(card)) queue.add(card);
+            else queue.delete(card);
           }
+          if (queue.size) void work();
         },
-        { threshold: 0.55 },
+        { threshold: [0, 0.8] },
       );
       for (const card of cards) seen.observe(card);
     }
+    // Paused mid-way: everything is drawn at once and the ghost leaves.
+    onMotion((still) => {
+      if (!still) return;
+      for (const card of cards) if (!drawn(card)) ink(card);
+      queue.clear();
+      ghost.classList.remove("on", "grab");
+    });
 
-    // The arrows: one card per press.
+    // ---- The arrows: one card per press.
     for (const button of section.querySelectorAll<HTMLButtonElement>("[data-step]")) {
       button.addEventListener("click", () => {
-        hold();
+        touched();
         const dir = Number(button.dataset.step);
         const to =
           dir > 0 && atEnd() ? 0 : dir < 0 && strip.scrollLeft <= 4 ? strip.scrollWidth : strip.scrollLeft + dir * stepSize();
@@ -327,13 +626,12 @@ const SKETCH =
       });
     }
 
-    // Mouse drag (touch scrolls natively). A drag never counts as a click on the card under it.
-    let down = false;
+    // ---- Mouse drag (touch scrolls natively). A drag never counts as a click on the card under it.
     let moved = false;
     let startX = 0;
     let startLeft = 0;
     strip.addEventListener("pointerdown", (event) => {
-      hold();
+      touched();
       if (event.pointerType !== "mouse" || event.button !== 0) return;
       down = true;
       moved = false;
@@ -345,6 +643,7 @@ const SKETCH =
       const dx = event.clientX - startX;
       if (!moved && Math.abs(dx) < 6) return;
       moved = true;
+      lastInput = performance.now();
       strip.classList.add("dragging");
       strip.scrollLeft = startLeft - dx;
     });
@@ -367,76 +666,82 @@ const SKETCH =
       true,
     );
     strip.addEventListener("dragstart", (event) => event.preventDefault());
+    rail.addEventListener("pointerenter", (event) => {
+      if (event.pointerType !== "mouse") return;
+      inside = true;
+      hold(2500);
+    });
+    rail.addEventListener("pointerleave", () => {
+      inside = false;
+      hold(2000);
+    });
+    strip.addEventListener("focusin", () => touched());
+    strip.addEventListener("wheel", () => touched(), { passive: true });
+    strip.addEventListener("touchstart", () => touched(), { passive: true });
+    new IntersectionObserver(
+      ([entry]) => {
+        visible = !!entry?.isIntersecting;
+        hold(2500);
+      },
+      { threshold: 0.6 },
+    ).observe(rail);
 
-    // The tour: in view and untouched for a moment, the drawn cursor drags the rail one card on (back at the end).
-    let visible = false;
-    let inside = false;
+    // ---- The tour: everything in view drawn and the reader idle, the pencil turns into the pointer, grabs the rail
+    // and drags it one card on; the new card gets drawn. At the end it drags back to the start, and the cards that went
+    // out of view are rubbed out, so the next lap draws them again.
     let busy = false;
-    let idleSince = performance.now();
-    let idleFor = 2500;
-    function hold(ms = 8000) {
-      idleSince = performance.now();
-      idleFor = ms;
-    }
-    rail.addEventListener("pointerenter", () => ((inside = true), hold(2500)));
-    rail.addEventListener("pointerleave", () => ((inside = false), hold(2000)));
-    strip.addEventListener("focusin", () => hold());
-    strip.addEventListener("wheel", () => hold(), { passive: true });
-    strip.addEventListener("touchstart", () => hold(), { passive: true });
-    new IntersectionObserver(([entry]) => ((visible = !!entry?.isIntersecting), hold(2500)), { threshold: 0.6 }).observe(rail);
-
-    const idle = () =>
-      visible && !inside && !down && !motionStill() && !document.hidden && !rail.contains(document.activeElement);
     const drag = async () => {
       const box = rail.getBoundingClientRect();
       const x = box.width * (innerWidth < 640 ? 0.62 : 0.7);
       const y = box.height * 0.5;
       const from = strip.scrollLeft;
-      const to = atEnd() ? 0 : Math.min(from + stepSize(), strip.scrollWidth - strip.clientWidth);
+      const rewind = atEnd();
+      const to = rewind ? 0 : Math.min(from + stepSize(), strip.scrollWidth - strip.clientWidth);
       // The hand moves with the paper, capped so a rewind stays on screen.
       const reach = Math.max(-box.width * 0.4, Math.min(box.width * 0.25, from - to));
-      const at = (dx: number, dy: number, s = 1) => `translate(${x + dx}px, ${y + dy}px) scale(${s})`;
-      ghost.hidden = false;
-      await ghost.animate(
-        [
-          { transform: at(160, 150), opacity: 0 },
-          { opacity: 1, offset: 0.4 },
-          { transform: at(0, 0), opacity: 1 },
-        ],
-        {
-          duration: 850,
-          easing: "cubic-bezier(0.2, 0.75, 0.1, 1)",
-          fill: "forwards",
-        },
-      ).finished;
-      if (!idle()) return void (ghost.hidden = true);
+      ghost.classList.remove("pen");
+      if (ghost.classList.contains("on")) await glide(x, y, 520);
+      else {
+        appear(x + 140, y + 140);
+        await glide(x, y, 700);
+      }
+      if (!idle()) return;
       ghost.classList.add("grab");
       strip.classList.add("dragging");
-      await frames(Math.abs(to - from) > stepSize() * 1.5 ? 1300 : 900, (p) => {
-        strip.scrollLeft = from + (to - from) * p;
-        ghost.getAnimations().forEach((a) => a.cancel());
-        ghost.style.transform = at(reach * p, 0);
-      });
+      await frames(
+        rewind ? 1300 : 900,
+        (p) => {
+          strip.scrollLeft = from + (to - from) * p;
+          place(x + reach * p, y);
+        },
+        () => motionStill() || !idle(),
+      );
       strip.classList.remove("dragging");
       ghost.classList.remove("grab");
-      await ghost.animate(
-        [
-          { transform: at(reach, 0), opacity: 1 },
-          { transform: at(reach + 120, 170), opacity: 0 },
-        ],
-        {
-          duration: 650,
-          easing: "cubic-bezier(0.2, 0.75, 0.1, 1)",
-          fill: "forwards",
-        },
-      ).finished;
-      ghost.style.transform = "";
-      ghost.hidden = true;
+      if (rewind) {
+        const view = strip.getBoundingClientRect();
+        for (const card of cards) {
+          const r = card.getBoundingClientRect();
+          if (r.left >= view.right - 8 || r.right <= view.left + 8 || (r.right > view.right + 8 && r.left < view.right)) {
+            card.classList.remove("drawn", "inking");
+            paperOf(card).style.clipPath = "";
+          }
+        }
+      }
+      await glide(gx + 40, gy + 30, 360);
     };
     setInterval(() => {
-      if (busy || !idle() || performance.now() - idleSince < idleFor) return;
+      if (busy || working || queue.size || !idle() || performance.now() - idleSince < idleFor) return;
       busy = true;
-      drag().finally(() => ((busy = false), hold(3200)));
+      drag().finally(() => {
+        busy = false;
+        hold(1200);
+        vanishSoon(900);
+      });
     }, 250);
+    // Paused tour: the ghost never lingers.
+    rail.addEventListener("pointerdown", () => {
+      if (!tracing) ghost.classList.remove("on", "grab");
+    });
   }
 </script>

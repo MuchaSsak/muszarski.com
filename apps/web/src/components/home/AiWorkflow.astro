@@ -6,8 +6,9 @@
  * the agents, each with its job); each beat lights up who works, plays a drawn scene and says one line, with the real
  * tools as marks. Never counts [user 2026-10-06]. PstrykWeb is not evidence here (public info only).
  * Every beat's text is in the HTML (crawlable, readable without JS, then all seven read as a list); the script shows
- * one beat at a time and advances while the section is visible, like a story (pauses on tap, the pause button and
- * reduced motion). One CTA: the "how this site was built" post.
+ * one beat at a time and advances while the section is visible, like a story [user 2026-10-06: "click on any step and
+ * go to it, and also pause upon clicking on the illustration"]: a step plays from its start; the drawing or the corner
+ * chip pauses and plays; the site's pause button and reduced motion stop it. One CTA: the "how this site was built" post.
  */
 import { t } from "lingui-for-astro/macro";
 
@@ -168,6 +169,12 @@ const approved = t`approved`;
     </ol>
 
     <div class="shows">
+      <button class="ai-pp js-only" type="button" aria-pressed="false" data-pp>
+        <Icon name="tbf:player-pause" class="pp-pause" />
+        <Icon name="tbf:player-play" class="pp-play" />
+        <span class="pp-pause">{t`Pause`}</span>
+        <span class="pp-play">{t`Play`}</span>
+      </button>
       {BEATS.map((beat, i) => (
         <div class="bt" id={`beat-${i}`} data-bt={i} data-actors={beat.actors.join(" ")}>
           <div class={`sc sc-${beat.scene}`} style={`--c:${beat.color}`} aria-hidden="true">
@@ -521,16 +528,25 @@ const approved = t`approved`;
     transform-origin: 0 50%;
   }
   .beat.done .prog i,
-  .story.held .beat[aria-pressed="true"] .prog i,
   :global(.still) .beat[aria-pressed="true"] .prog i {
     transform: none;
   }
   .beat[aria-pressed="true"] .prog i {
     animation: ai-fill var(--beat) linear both;
   }
-  .story.held .beat[aria-pressed="true"] .prog i,
   :global(.still) .beat .prog i {
     animation: none;
+  }
+  .story.paused .beat[aria-pressed="true"] .prog i {
+    animation-play-state: paused;
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .beat:hover :is(.bn, .bl) {
+      color: var(--yellow);
+    }
+    .beat:hover .prog {
+      background: color-mix(in srgb, currentColor 50%, transparent);
+    }
   }
   @keyframes ai-fill {
     to {
@@ -650,6 +666,76 @@ const approved = t`approved`;
   :global(.still) .sc *::before,
   :global(.still) .sc *::after {
     animation: none !important;
+  }
+  /* Pause / play the story: the chip in the stage's corner, or a click on the drawing itself. Paused, the scene
+     freezes where it is and the bar stops filling; a click on a step always plays from that step. */
+  .shows {
+    position: relative;
+  }
+  :global(.js) .sc {
+    cursor: pointer;
+  }
+  .ai-pp {
+    position: absolute;
+    top: 0.75rem;
+    right: 0.75rem;
+    z-index: 3;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    min-height: 2.25rem;
+    padding: 0.25rem 0.875rem 0.25rem 0.625rem;
+    border: 0;
+    border-radius: 999px;
+    background: var(--navy);
+    color: var(--ice);
+    font-weight: 900;
+    font-size: 0.8125rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition:
+      scale 0.3s var(--ease-pop),
+      background-color 0.2s var(--ease-out);
+  }
+  .ai-pp :global(.ico) {
+    width: 1.125rem;
+    height: 1.125rem;
+  }
+  .ai-pp:focus-visible {
+    outline: 3px solid var(--yellow);
+    outline-offset: 3px;
+  }
+  .ai-pp :global(.pp-play),
+  .story.paused .ai-pp :global(.pp-pause) {
+    display: none;
+  }
+  .story.paused .ai-pp :global(.pp-play) {
+    display: block;
+  }
+  .story.paused .ai-pp {
+    background: var(--yellow);
+    color: var(--navy);
+    scale: 1.08;
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .ai-pp:hover {
+      scale: 1.06;
+    }
+  }
+  .story.paused .sc *,
+  .story.paused .sc *::before,
+  .story.paused .sc *::after {
+    animation-play-state: paused !important;
+  }
+  /* Nothing to pause when motion is already still. */
+  :global(.still) .ai-pp {
+    display: none;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .ai-pp {
+      display: none;
+    }
   }
   @media (prefers-reduced-motion: reduce) {
     .sc *,
@@ -1209,13 +1295,24 @@ const approved = t`approved`;
   for (const story of document.querySelectorAll<HTMLElement>("[data-story]")) {
     const buttons = [...story.querySelectorAll<HTMLButtonElement>("[data-beat]")];
     const beats = [...story.querySelectorAll<HTMLElement>("[data-bt]")];
+    const pp = story.querySelector<HTMLButtonElement>("[data-pp]");
     const step = parseFloat(getComputedStyle(story).getPropertyValue("--beat")) * 1000 || 4600;
     let current = 0;
     let visible = false;
-    let holdUntil = 0;
+    let paused = false;
+    let pausedAt = 0;
     let shownAt = performance.now();
 
-    const show = (i: number, byUser: boolean) => {
+    // Paused: the scene freezes and the bar stops; playing again carries on from the same moment.
+    const setPaused = (on: boolean) => {
+      if (on === paused) return;
+      paused = on;
+      const now = performance.now();
+      if (on) pausedAt = now;
+      else shownAt += now - pausedAt;
+      story.classList.toggle("paused", on);
+    };
+    const show = (i: number) => {
       current = i;
       // Re-showing the same beat restarts its scene and its bar.
       buttons.forEach((b) => b.setAttribute("aria-pressed", "false"));
@@ -1227,26 +1324,37 @@ const approved = t`approved`;
       });
       beats[i]!.classList.add("on");
       story.dataset.on = beats[i]!.dataset.actors;
-      story.classList.toggle("held", byUser);
       shownAt = performance.now();
-      if (byUser) holdUntil = shownAt + 12000;
     };
-    buttons.forEach((b, i) => b.addEventListener("click", () => show(i, true)));
-    show(0, false);
+    // A step: go there and play it from the start.
+    buttons.forEach((b, i) =>
+      b.addEventListener("click", () => {
+        setPaused(false);
+        show(i);
+      }),
+    );
+    // The chip, or a click anywhere on the drawing, pauses and plays.
+    pp?.addEventListener("click", () => setPaused(!paused));
+    for (const scene of story.querySelectorAll<HTMLElement>(".sc")) {
+      scene.addEventListener("click", () => {
+        if (!motionStill()) setPaused(!paused);
+      });
+    }
+    show(0);
 
     new IntersectionObserver(
       ([entry]) => {
         const was = visible;
         visible = !!entry?.isIntersecting;
         // Coming into view restarts the current beat, so its scene plays where it can be seen.
-        if (visible && !was && performance.now() > holdUntil) show(current, false);
+        if (visible && !was && !paused) show(current);
       },
       { threshold: 0.35 },
     ).observe(story);
     setInterval(() => {
       const now = performance.now();
-      if (!visible || motionStill() || document.hidden || now < holdUntil || now - shownAt < step) return;
-      show((current + 1) % buttons.length, false);
+      if (!visible || paused || motionStill() || document.hidden || now - shownAt < step) return;
+      show((current + 1) % buttons.length);
     }, 250);
   }
 </script>

@@ -105,14 +105,34 @@ const STOPS: Stop[] = [
 const pad = (n: number) => String(n).padStart(2, "0");
 const stopLabel = t({ message: "Stop", context: "a stop on the product loop, as in a bus stop" });
 const [line1, line2] = t`Product|engineer`.split("|") as [string, string];
+/** Client: what I write down while they talk. */
+const BRIEF: { icon: IconName; label: string }[] = [
+  { icon: "tb:target", label: t`goal` },
+  { icon: "tb:coins", label: t`budget` },
+  { icon: "tb:calendar", label: t`deadline` },
+];
+/** Users: the flow one person walks through, on one phone. */
+const FLOW: { icon: IconName; label: string }[] = [
+  { icon: "tb:browser", label: t`landing` },
+  { icon: "tb:forms", label: t`sign-up` },
+  { icon: "tb:circle-check", label: t`done` },
+];
+/** Conversion: the steps that stood between interest and action, and get cut. */
+const DETOURS: { icon: IconName; label: string }[] = [
+  { icon: "tb:user", label: t`account` },
+  { icon: "tb:forms", label: t`long form` },
+  { icon: "tb:mail", label: t`confirm email` },
+  { icon: "tb:shield-lock", label: t`password` },
+];
 /** The ship scene's pipeline. */
 const pipeline: { icon: IconName; label: string }[] = [
   { icon: "tb:hammer", label: t`build` },
   { icon: "tb:test-pipe", label: t`test` },
   { icon: "tb:rocket", label: t`deploy` },
 ];
-/** Where a release lands: the web, both stores, Google. */
-const DESTS: IconName[] = ["tb:world", "si:apple", "si:googleplay", "si:google"];
+/** Measure: what gets measured. A funnel (bar widths are a drawing, not data), page quality, what people say. */
+const FUNNEL = [t`visits`, t`sign-ups`, t`purchases`];
+const VITALS = [t`speed`, t`accessibility`, "SEO"];
 ---
 
 <section class="sec field-alt how" id="how-i-work" aria-labelledby="t-how">
@@ -156,60 +176,192 @@ const DESTS: IconName[] = ["tb:world", "si:apple", "si:googleplay", "si:google"]
     <div class="panel">
       {STOPS.map((stop, i) => (
         <div class="pd enter" id={`stop-${i}`} data-pd={i}>
-          <p class="kick k">
-            {stopLabel} {pad(i + 1)} · {stop.name}
-          </p>
+          <div class="k-row">
+            <p class="kick k">
+              {stopLabel} {pad(i + 1)} · {stop.name}
+            </p>
+            <span class="k-bar js-only" aria-hidden="true">
+              <i />
+            </span>
+          </div>
           <div class={`scene sc-${stop.scene}`} style={`--c:${stop.color}`} aria-hidden="true">
             {stop.scene === "client" && (
-              <div class="row">
-                <span class="tile enter">
-                  <Icon name="tb:building-store" />
+              <div class="call">
+                <span class="c-prob">
+                  <span class="c-av">
+                    <Icon name="tb:building-store" />
+                  </span>
+                  <span class="c-chart">
+                    <svg class="c-svg" viewBox="0 0 100 60">
+                      <path class="c-grid" d="M0 15H100M0 30H100M0 45H100" />
+                      <polyline class="c-down" points="5,10 24,16 40,13 58,30 76,36 94,52" pathLength="100" />
+                    </svg>
+                    <i class="c-alarm">
+                      <Icon name="tb:trending-down" />
+                    </i>
+                  </span>
+                  <span class="c-ring">
+                    <Icon name="tb:phone-call" />
+                  </span>
                 </span>
-                <span class="bubble enter">
-                  <Icon name="tb:coins" class="coin" />
-                  <Icon name="tb:trending-up" />
+                <span class="c-half c-them">
+                  <span class="c-who">
+                    <span class="c-av">
+                      <Icon name="tb:building-store" />
+                    </span>
+                    <i class="c-tel">
+                      <Icon name="tb:phone-call" />
+                    </i>
+                  </span>
+                  <span class="c-say" style="--k:0">
+                    {t`Sales are dropping.`}
+                  </span>
+                  <span class="c-say" style="--k:1">
+                    {t`Can you help?`}
+                  </span>
+                </span>
+                <span class="c-half c-me">
+                  <span class="c-who">
+                    <span class="c-av c-av-me">
+                      <Icon name="tb:user" />
+                    </span>
+                    <i class="c-tel">
+                      <Icon name="tb:headphones" />
+                    </i>
+                  </span>
+                  <span class="c-note">
+                    {BRIEF.map((item, k) => (
+                      <span class="c-row" style={`--k:${k}`}>
+                        <Icon name={item.icon} />
+                        {item.label}
+                        <b>
+                          <Icon name="tb:check" />
+                        </b>
+                      </span>
+                    ))}
+                  </span>
                 </span>
               </div>
             )}
             {stop.scene === "users" && (
-              <div class="journey">
-                {[0, 1, 2].map((k) => (
-                  <span class="scr enter" style={`--k:${k};--ok:${[0.6, 2.05, 3.45][k]}s`}>
-                    {k === 1 && <Icon name="tb:alert-triangle" class="warn" />}
-                    <Icon name="tb:check" class="ok" />
+              <div class="row u-row">
+                <span class="phone enter">
+                  <span class="scrn s-a">
+                    <i class="s-hero" />
+                    <i class="s-bar" />
+                    <i class="s-bar s-short" />
+                    <i class="s-btn" />
                   </span>
-                ))}
-                <span class="walker">
-                  <Icon name="tb:user" />
+                  <span class="scrn s-b">
+                    <i class="s-bar s-title" />
+                    {[0, 1, 2, 3, 4].map(() => (
+                      <i class="s-field" />
+                    ))}
+                    <i class="s-btn" />
+                  </span>
+                  <span class="scrn s-c">
+                    <i class="s-bar s-title" />
+                    <i class="s-field" />
+                    <i class="s-btn" />
+                  </span>
+                  <span class="scrn s-d">
+                    <span class="s-done">
+                      <Icon name="tb:check" />
+                    </span>
+                    <i class="s-bar" />
+                  </span>
+                  <i class="notch" />
+                  <span class="finger">
+                    <Icon name="tb:hand-click" />
+                  </span>
+                </span>
+                <span class="flow">
+                  {FLOW.map((step, k) => (
+                    <span class={`f-step f-${k}`}>
+                      <i class="f-ico">
+                        <Icon name={step.icon} />
+                      </i>
+                      <span class="f-l">{step.label}</span>
+                      {k === 1 && <em class="f-tag">{t`drop-off`}</em>}
+                      <b class="f-ok">
+                        <Icon name="tb:check" />
+                      </b>
+                      {k === 1 && (
+                        <b class="f-x">
+                          <Icon name="tb:x" />
+                        </b>
+                      )}
+                    </span>
+                  ))}
                 </span>
               </div>
             )}
             {stop.scene === "conversion" && (
-              <div class="row">
-                <span class="form enter">
-                  {[0, 1, 2].map((k) => (
-                    <i style={`--k:${k}`} />
-                  ))}
-                  <b>
-                    <Icon name="tb:hand-click" />
-                  </b>
+              <div class="path">
+                <span class="p-node p-end">
+                  <span class="p-ico">
+                    <Icon name="tb:eye" />
+                  </span>
+                  <small>{t`interest`}</small>
                 </span>
-                <span class="done enter">
-                  <Icon name="tb:check" />
+                {DETOURS.map((step, k) => (
+                  <span class="p-mid" style={`--k:${k}`}>
+                    <span class="p-node">
+                      <span class="p-ico">
+                        <Icon name={step.icon} />
+                        <b class="p-x">
+                          <Icon name="tb:x" />
+                        </b>
+                      </span>
+                      <small>{step.label}</small>
+                    </span>
+                  </span>
+                ))}
+                <span class="p-cta">
+                  <b>{t`Get started`}</b>
+                  <Icon name="tb:hand-click" class="p-tap" />
+                </span>
+                <span class="p-node p-end p-act">
+                  <span class="p-ico">
+                    <Icon name="tb:check" />
+                  </span>
+                  <small>{t`action`}</small>
                 </span>
               </div>
             )}
             {stop.scene === "revenue" && (
               <div class="row">
-                <span class="ccard enter">
-                  <i />
+                <span class="plan enter">
+                  <b class="plan-t">
+                    {t`Pro`}
+                    <Icon name="tbf:star" />
+                  </b>
+                  <i class="plan-p" />
+                  <i class="plan-f" />
+                  <i class="plan-f" />
+                  <span class="ccard">
+                    <i />
+                  </span>
+                  <em class="plan-paid">{t`paid`}</em>
                 </span>
-                <Icon name="tb:arrow-right" class="arw" />
-                <span class="bars">
-                  {[0, 1, 2, 3].map((k) => (
-                    <i style={`--k:${k}`} />
+                <span class="money">
+                  {[0, 1, 2].map((k) => (
+                    <span class="fly" style={`--k:${k}`}>
+                      <Icon name="tb:coins" />
+                    </span>
                   ))}
-                  <Icon name="tb:coins" class="coin" />
+                </span>
+                <span class="biz">
+                  <span class="c-av">
+                    <Icon name="tb:building-store" />
+                  </span>
+                  <span class="bars">
+                    {[0, 1, 2, 3].map((k) => (
+                      <i style={`--k:${k}`} />
+                    ))}
+                    <Icon name="tb:trending-up" class="up" />
+                  </span>
+                  <small class="biz-l">{stop.name}</small>
                 </span>
               </div>
             )}
@@ -263,30 +415,85 @@ const DESTS: IconName[] = ["tb:world", "si:apple", "si:googleplay", "si:google"]
                     </span>
                   ))}
                 </span>
-                <span class="dests">
-                  {DESTS.map((icon, k) => (
-                    <span class="dest" style={`--k:${k}`}>
-                      <Icon name={icon} />
+                <span class="ship-live">
+                  <span class="serp">
+                    <span class="q">
+                      <Icon name="si:google" class="q-g" />
+                      <span class="q-t">{t`your product`}</span>
+                      <Icon name="tb:search" class="q-s" />
                     </span>
-                  ))}
+                    <span class="hit">
+                      <span class="hit-url">
+                        <i class="fav">
+                          <Icon name="tb:world" />
+                        </i>
+                        <i class="bar-g" />
+                        <em class="on-air">{t`Live`}</em>
+                      </span>
+                      <i class="hit-t" />
+                      <i class="bar-g" />
+                      <i class="bar-g bar-s" />
+                    </span>
+                  </span>
+                  <span class="store">
+                    <span class="st-marks">
+                      <Icon name="si:apple" />
+                      <Icon name="si:googleplay" />
+                    </span>
+                    <span class="app">
+                      <i class="app-ico">
+                        <Icon name="tb:sparkles" />
+                      </i>
+                      <span class="app-n">
+                        <i class="bar-g" />
+                        <span class="st-stars">
+                          {[0, 1, 2, 3, 4].map(() => (
+                            <Icon name="tbf:star" />
+                          ))}
+                        </span>
+                      </span>
+                    </span>
+                    <b class="get">
+                      <span>{t`Install`}</span>
+                    </b>
+                  </span>
                 </span>
               </div>
             )}
             {stop.scene === "measure" && (
-              <div class="row">
-                <span class="chart enter">
-                  <svg class="c-svg" viewBox="0 0 100 60">
-                    <path class="c-grid" d="M0 15H100M0 30H100M0 45H100" />
-                    <polyline class="c-line" points="5,52 22,43 38,46 55,30 72,25 93,9" pathLength="100" />
-                    <circle class="c-dot" cx="93" cy="9" r="3.4" />
-                  </svg>
+              <div class="dash">
+                <span class="d-card d-fun">
+                  {FUNNEL.map((label, k) => (
+                    <span class="fun" style={`--k:${k};--w:${[100, 58, 30][k]}%`}>
+                      <small>{label}</small>
+                      <i />
+                    </span>
+                  ))}
                 </span>
-                <span class="gauge enter" style="--v:96">
-                  <svg class="g-ring" viewBox="0 0 40 40">
-                    <circle class="g-bg" cx="20" cy="20" r="16" />
-                    <circle class="g-fg" cx="20" cy="20" r="16" pathLength="100" transform="rotate(-90 20 20)" />
-                  </svg>
-                  <Icon name="tb:check" class="g-ok" />
+                <span class="d-card d-vit">
+                  {VITALS.map((label, k) => (
+                    <span class="vit" style={`--k:${k}`}>
+                      <svg class="g-ring" viewBox="0 0 40 40">
+                        <circle class="g-bg" cx="20" cy="20" r="15" />
+                        <circle class="g-fg" cx="20" cy="20" r="15" pathLength="100" transform="rotate(-90 20 20)" />
+                      </svg>
+                      <small>{label}</small>
+                    </span>
+                  ))}
+                </span>
+                <span class="d-card d-say">
+                  <span class="d-av">
+                    <Icon name="tb:user" />
+                  </span>
+                  <span class="d-q">
+                    <Icon name="tb:quote" />
+                    {t`Can't find the price.`}
+                  </span>
+                </span>
+                <span class="d-next">
+                  <Icon name="tb:bulb" />
+                  {t`next change`}
+                  <Icon name="tb:arrow-right" />
                 </span>
               </div>
             )}
@@ -302,10 +509,6 @@ const DESTS: IconName[] = ["tb:world", "si:apple", "si:googleplay", "si:google"]
           </ul>
         </div>
       ))}
-      <p class="after">
-        <Icon name="tb:refresh" />
-        {t`Then back to the client, with numbers.`}
-      </p>
     </div>
   </div>
 </section>
@@ -492,14 +695,53 @@ const DESTS: IconName[] = ["tb:world", "si:apple", "si:googleplay", "si:google"]
       transform: translateY(0.75rem);
     }
   }
+  .k-row {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
   .k {
+    flex: none;
     margin: 0;
   }
+  /* Time to the next stop: fills while the stop plays (--dwell, set by the script); full when a click holds it,
+     hidden when motion is paused. */
+  .k-bar {
+    flex: 1;
+    max-width: 12rem;
+    height: 0.3125rem;
+    margin-left: auto;
+    background: color-mix(in srgb, currentColor 18%, transparent);
+    overflow: hidden;
+  }
+  .k-bar i {
+    display: block;
+    height: 100%;
+    background: currentColor;
+    transform-origin: 0 50%;
+    transform: scaleX(0);
+  }
+  .pd.on.timing .k-bar i {
+    animation: hw-dwell var(--dwell, 6.4s) linear both;
+  }
+  @keyframes hw-dwell {
+    to {
+      transform: none;
+    }
+  }
+  :global(.still) .k-bar {
+    visibility: hidden;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .k-bar {
+      visibility: hidden;
+    }
+  }
   .s {
-    margin: 0;
+    margin: clamp(0.5rem, 1vw, 0.875rem) 0 0;
     font-weight: 800;
-    font-size: clamp(1.25rem, 1.7vw, 1.75rem);
-    line-height: 1.1;
+    font-size: clamp(1.375rem, 2vw, 2.125rem);
+    line-height: 1.08;
     font-stretch: 85%;
     text-wrap: balance;
   }
@@ -550,271 +792,913 @@ const DESTS: IconName[] = ["tb:world", "si:apple", "si:googleplay", "si:google"]
     width: 6cqw !important;
     height: 6cqw !important;
   }
-  .tile,
-  .bubble,
-  .scr,
-  .form,
-  .ccard,
+  /* Paper pieces: ice with the navy outline and a hard shadow. */
+  .c-av,
+  .c-chart,
+  .c-say,
+  .c-note,
+  .flow,
+  .p-ico,
+  .plan,
+  .serp,
+  .store,
   .pr,
-  .dest,
-  .chart,
-  .gauge {
+  .d-card {
     background: var(--ice);
     box-shadow:
       0 0 0 0.5cqw var(--navy),
-      1.4cqw 1.4cqw 0 0.5cqw var(--navy);
-  }
-
-  /* Client: the business, and what it needs to earn. */
-  .tile {
-    display: grid;
-    place-items: center;
-    width: 20cqw;
-    aspect-ratio: 1;
-    padding: 4cqw;
-    animation: hw-pop 0.6s var(--ease-pop) both;
-  }
-  .bubble {
-    position: relative;
-    display: flex;
-    gap: 2cqw;
-    padding: 2.6cqw 3.4cqw;
-    border-radius: 3cqw;
-    transform-origin: 0 100%;
-    animation: hw-pop 0.6s var(--ease-pop) 0.35s both;
-  }
-  .bubble :global(.ico) {
-    width: 9cqw;
-    height: 9cqw;
-  }
-  .bubble :global(.coin) {
-    animation: hw-hop 1.4s ease-in-out 1s infinite;
-  }
-  .bubble::after {
-    content: "";
-    position: absolute;
-    left: -2.6cqw;
-    bottom: 1.8cqw;
-    border: 1.6cqw solid transparent;
-    border-right: 2.4cqw solid var(--navy);
-    border-left: 0;
+      1.2cqw 1.2cqw 0 0.5cqw var(--navy);
   }
   /* Navy pieces cast a see-through shadow (a navy one would read as a second box). */
   .term,
-  .walker,
-  .stage {
-    box-shadow: 1.4cqw 1.4cqw 0 rgb(10 13 51 / 0.35);
+  .stage,
+  .c-ring,
+  .p-cta,
+  .d-next {
+    box-shadow: 1.2cqw 1.2cqw 0 rgb(10 13 51 / 0.35);
+  }
+  /* Small labels: what each piece of a scene is [user 2026-10-06: icons alone are not always recognised]. */
+  .scene small,
+  .f-l {
+    font-weight: 800;
+    font-size: 2.3cqw;
+    line-height: 1.1;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
   }
   @keyframes hw-pop {
     from {
       transform: scale(0);
     }
   }
-  @keyframes hw-hop {
-    0%,
-    60%,
-    100% {
-      transform: none;
-    }
-    30% {
-      transform: translateY(-1.2cqw) rotate(-10deg);
-    }
-  }
-
-  /* Users: someone walks through three screens; the middle one stops them, then it is fixed. */
-  .journey {
-    position: relative;
-    display: flex;
-    gap: 7cqw;
-    padding-top: 10cqw;
-  }
-  .journey::before {
-    content: "";
-    position: absolute;
-    left: 7.5cqw;
-    right: 7.5cqw;
-    top: calc(10cqw + 11cqw);
-    height: 0.6cqw;
-    background: repeating-linear-gradient(90deg, var(--navy) 0 1.6cqw, transparent 1.6cqw 3cqw);
-  }
-  .scr {
-    position: relative;
-    width: 15cqw;
-    height: 22cqw;
-    border-radius: 1.4cqw;
-    background:
-      linear-gradient(var(--navy), var(--navy)) 0 0 / 100% 3.2cqw no-repeat,
-      linear-gradient(rgb(10 13 51 / 0.3), rgb(10 13 51 / 0.3)) 2cqw 6.2cqw / 9cqw 1cqw no-repeat,
-      linear-gradient(rgb(10 13 51 / 0.3), rgb(10 13 51 / 0.3)) 2cqw 9cqw / 6.5cqw 1cqw no-repeat,
-      linear-gradient(var(--c), var(--c)) 2cqw 15cqw / 11cqw 3.6cqw no-repeat,
-      var(--ice);
-    animation: hw-pop 0.45s var(--ease-pop) both;
-    animation-delay: calc(var(--k) * 0.14s);
-  }
-  .scr :global(.ico) {
-    position: absolute;
-    right: -2.4cqw;
-    top: -2.4cqw;
-    width: 6.4cqw;
-    height: 6.4cqw;
-    padding: 1.1cqw;
-    border-radius: 50%;
-    color: var(--navy);
-    box-shadow: 0 0 0 0.5cqw var(--navy);
-  }
-  .scr :global(.ok) {
-    background: var(--lime);
-    animation: hw-pop 0.45s var(--ease-pop) var(--ok) both;
-  }
-  .scr :global(.warn) {
-    z-index: 1;
-    background: var(--pink);
-    transform: scale(0);
-    animation: hw-warn 0.95s ease-in-out 1.15s both;
-  }
-  @keyframes hw-warn {
-    0% {
-      transform: scale(0);
-    }
-    18%,
-    78% {
-      transform: scale(1) rotate(-8deg);
-    }
-    100% {
-      transform: scale(0);
-    }
-  }
-  .walker {
-    position: absolute;
-    left: 3cqw;
-    top: 0;
-    display: grid;
-    place-items: center;
-    width: 9cqw;
-    height: 9cqw;
-    padding: 2cqw;
-    border-radius: 50%;
-    background: var(--navy);
-    color: var(--ice);
-    transform: translateX(44cqw);
-    animation: hw-walk 3s ease-in-out 0.45s both;
-  }
-  @keyframes hw-walk {
-    0% {
-      transform: translateX(0);
-    }
-    25%,
-    58% {
-      transform: translateX(22cqw);
-    }
-    100% {
-      transform: translateX(44cqw);
-    }
-  }
-
-  /* Conversion: one short form, one tap, done. */
-  .form {
-    display: grid;
-    gap: 2.2cqw;
-    width: 34cqw;
-    padding: 3.4cqw;
-    animation: hw-pop 0.5s var(--ease-pop) both;
-  }
-  .form i {
-    height: 3.4cqw;
-    box-shadow: inset 0 0 0 0.45cqw var(--navy);
-    background: linear-gradient(rgb(10 13 51 / 0.35), rgb(10 13 51 / 0.35)) 1.4cqw 50% / 60% 1cqw no-repeat;
-    animation: hw-type 0.5s ease-out both;
-    animation-delay: calc(0.35s + var(--k) * 0.35s);
-  }
-  @keyframes hw-type {
-    from {
-      background-size: 0 1cqw;
-    }
-  }
-  .form b {
-    display: grid;
-    place-items: center;
-    height: 6cqw;
-    background: var(--navy);
-    color: var(--c);
-    animation: hw-press 0.4s ease-in-out 1.5s both;
-  }
-  .form b :global(.ico) {
-    width: 4cqw;
-    height: 4cqw;
-  }
   @keyframes hw-press {
     50% {
       transform: scale(0.9);
     }
   }
-  .done {
-    display: grid;
-    place-items: center;
-    width: 16cqw;
-    aspect-ratio: 1;
-    padding: 3.5cqw;
-    border-radius: 50%;
-    background: var(--navy);
-    color: var(--ice);
-    animation: hw-pop 0.6s var(--ease-pop) 1.85s both;
+  @keyframes hw-buzz {
+    0%,
+    100% {
+      rotate: 0deg;
+    }
+    20% {
+      rotate: -14deg;
+    }
+    40% {
+      rotate: 12deg;
+    }
+    60% {
+      rotate: -10deg;
+    }
+    80% {
+      rotate: 8deg;
+    }
   }
 
-  /* Revenue: a card pays, the bars grow, a coin hops. */
-  .ccard {
+  /* Client: a business has a problem and calls; the screen splits: they explain, I listen and write the brief. */
+  .call {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+  /* The split, drawn top to bottom as the call starts. */
+  .call::after {
+    content: "";
+    position: absolute;
+    left: calc(50% - 0.3cqw);
+    top: 5cqw;
+    bottom: 5cqw;
+    width: 0.6cqw;
+    background: var(--navy);
+    transform-origin: 50% 0;
+    animation: hw-grow-y 0.35s ease-out 1.9s both;
+  }
+  @keyframes hw-grow-y {
+    from {
+      transform: scaleY(0);
+    }
+  }
+  .c-av {
+    display: grid;
+    place-items: center;
+    width: 15cqw;
+    aspect-ratio: 1;
+    padding: 3cqw;
+  }
+  .c-av-me {
+    border-radius: 50%;
+    background: var(--pink);
+  }
+  /* The problem, alone on stage until the call: gone in the finished picture. */
+  .c-prob {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5cqw;
+    visibility: hidden;
+    animation: hw-prob 2.1s var(--ease-out) both;
+  }
+  @keyframes hw-prob {
+    0% {
+      visibility: visible;
+      opacity: 0;
+      transform: scale(0.7);
+    }
+    12%,
+    84% {
+      visibility: visible;
+      opacity: 1;
+      transform: none;
+    }
+    100% {
+      visibility: hidden;
+      opacity: 0;
+      transform: scale(0.9);
+    }
+  }
+  .c-chart {
     position: relative;
-    width: 26cqw;
-    aspect-ratio: 1.6;
-    border-radius: 1.8cqw;
+    width: 30cqw;
+    padding: 2cqw;
+  }
+  .c-svg {
+    display: block;
+    width: 100%;
+    overflow: visible;
+  }
+  .c-grid {
+    fill: none;
+    stroke: rgb(10 13 51 / 0.14);
+    stroke-width: 1;
+  }
+  .c-down {
+    fill: none;
+    stroke: var(--pink);
+    stroke-width: 3.6;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-dasharray: 100;
+    animation: hw-draw 0.9s var(--ease-out) 0.3s both;
+  }
+  @keyframes hw-draw {
+    from {
+      stroke-dashoffset: 100;
+    }
+  }
+  .c-alarm {
+    position: absolute;
+    right: -2.6cqw;
+    top: -2.6cqw;
+    display: grid;
+    width: 7cqw;
+    height: 7cqw;
+    padding: 1.3cqw;
+    border-radius: 50%;
+    background: var(--pink);
+    box-shadow: 0 0 0 0.5cqw var(--navy);
+    animation: hw-pop 0.4s var(--ease-pop) 1s both;
+  }
+  .c-ring {
+    display: grid;
+    place-items: center;
+    width: 11cqw;
+    aspect-ratio: 1;
+    padding: 2.4cqw;
+    border-radius: 50%;
+    background: var(--navy);
+    color: var(--lime);
+    animation:
+      hw-pop 0.4s var(--ease-pop) 1.15s both,
+      hw-buzz 0.5s linear 1.4s 2;
+  }
+  .c-half {
+    position: relative;
+    display: grid;
+    align-content: center;
+    justify-items: start;
+    gap: 2.2cqw;
+    padding: 0 3cqw 0 6.5cqw;
+    animation: hw-in-l 0.5s var(--ease-pop) 1.9s both;
+  }
+  .c-me {
+    animation-name: hw-in-r;
+  }
+  @keyframes hw-in-l {
+    from {
+      transform: translateX(-60cqw);
+    }
+  }
+  @keyframes hw-in-r {
+    from {
+      transform: translateX(60cqw);
+    }
+  }
+  .c-who {
+    position: relative;
+    margin-bottom: 0.6cqw;
+  }
+  .c-half .c-av {
+    width: 11cqw;
+    padding: 2.2cqw;
+  }
+  .c-tel {
+    position: absolute;
+    right: -2.6cqw;
+    bottom: -2cqw;
+    display: grid;
+    width: 6cqw;
+    height: 6cqw;
+    padding: 1.2cqw;
+    border-radius: 50%;
+    background: var(--lime);
+    box-shadow: 0 0 0 0.5cqw var(--navy);
+    animation: hw-buzz 0.6s linear 2.4s 3;
+  }
+  .c-say {
+    max-width: 38cqw;
+    padding: 1.3cqw 2.2cqw;
+    border-radius: 2.4cqw 2.4cqw 2.4cqw 0.4cqw;
+    font-weight: 800;
+    font-size: 2.9cqw;
+    line-height: 1.15;
+    font-stretch: 85%;
+    transform-origin: 0 100%;
+    animation: hw-pop 0.4s var(--ease-pop) both;
+    animation-delay: calc(2.4s + var(--k) * 0.75s);
+  }
+  .c-note {
+    display: grid;
+    gap: 1.3cqw;
+    min-width: 30cqw;
+    padding: 3cqw 2.4cqw 2.2cqw;
     background:
-      linear-gradient(var(--navy), var(--navy)) 0 3cqw / 100% 3.4cqw no-repeat,
-      linear-gradient(rgb(10 13 51 / 0.3), rgb(10 13 51 / 0.3)) 2.4cqw 12cqw / 12cqw 1cqw no-repeat,
+      linear-gradient(var(--navy), var(--navy)) 0 0 / 100% 1.2cqw no-repeat,
       var(--ice);
-    animation: hw-slide-in 0.6s var(--ease-pop) both;
+    transform-origin: 0 0;
+    animation: hw-pop 0.4s var(--ease-pop) 2.9s both;
+  }
+  .c-row {
+    display: flex;
+    align-items: center;
+    gap: 1.4cqw;
+    font-weight: 800;
+    font-size: 2.6cqw;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    clip-path: inset(0);
+    animation: hw-line 0.45s steps(10, end) both;
+    animation-delay: calc(3.3s + var(--k) * 0.5s);
+  }
+  .c-row :global(.ico) {
+    flex: none;
+    width: 3.6cqw;
+    height: 3.6cqw;
+  }
+  .c-row b {
+    display: grid;
+    margin-left: auto;
+    width: 3.8cqw;
+    height: 3.8cqw;
+    padding: 0.6cqw;
+    border-radius: 50%;
+    background: var(--lime);
+    box-shadow: 0 0 0 0.4cqw var(--navy);
+  }
+  .c-row b :global(.ico) {
+    width: 100%;
+    height: 100%;
+  }
+
+  /* Users: one person, one phone. The landing, then a long sign-up form where they give up; the form is cut down
+     and they get through. The flow beside it ticks each screen off. */
+  .u-row {
+    gap: 7cqw;
+  }
+  .phone {
+    position: relative;
+    width: 20cqw;
+    height: 40cqw;
+    overflow: hidden;
+    border-radius: 3cqw;
+    background: var(--ice);
+    box-shadow:
+      0 0 0 0.9cqw var(--navy),
+      1.6cqw 1.6cqw 0 0.9cqw var(--navy);
+  }
+  .notch {
+    position: absolute;
+    left: 50%;
+    top: 0;
+    z-index: 2;
+    width: 7cqw;
+    height: 1.8cqw;
+    border-radius: 0 0 1.2cqw 1.2cqw;
+    background: var(--navy);
+    translate: -50% 0;
+  }
+  .scrn {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1.6cqw;
+    padding: 4cqw 2cqw 2.4cqw;
+    background: var(--ice);
+    translate: 105% 0;
+    animation: 4.4s var(--ease-out) both;
+  }
+  .scrn i {
+    display: block;
+    flex: none;
+  }
+  .s-a {
+    animation-name: hw-sa;
+  }
+  .s-b {
+    gap: 1.2cqw;
+    animation-name: hw-sb;
+  }
+  .s-c {
+    animation-name: hw-sc;
+  }
+  .s-d {
+    align-items: center;
+    justify-content: center;
+    translate: 0 0;
+    animation-name: hw-sd;
+  }
+  @keyframes hw-sa {
+    0%,
+    22% {
+      translate: 0 0;
+    }
+    28%,
+    100% {
+      translate: -105% 0;
+    }
+  }
+  @keyframes hw-sb {
+    0%,
+    22% {
+      translate: 105% 0;
+    }
+    28%,
+    58% {
+      translate: 0 0;
+    }
+    64%,
+    100% {
+      translate: -105% 0;
+    }
+  }
+  @keyframes hw-sc {
+    0%,
+    58% {
+      translate: 105% 0;
+    }
+    64%,
+    77% {
+      translate: 0 0;
+    }
+    83%,
+    100% {
+      translate: -105% 0;
+    }
+  }
+  @keyframes hw-sd {
+    0%,
+    77% {
+      translate: 105% 0;
+    }
+    83%,
+    100% {
+      translate: 0 0;
+    }
+  }
+  .s-hero {
+    height: 12cqw;
+    background: var(--c);
+    box-shadow: inset 0 0 0 0.4cqw var(--navy);
+  }
+  .s-bar {
+    width: 80%;
+    height: 1.3cqw;
+    background: rgb(10 13 51 / 0.3);
+  }
+  .s-short {
+    width: 55%;
+  }
+  .s-title {
+    width: 60%;
+    height: 1.8cqw;
+    background: var(--navy);
+  }
+  .s-field {
+    height: 3cqw;
+    box-shadow: inset 0 0 0 0.4cqw var(--navy);
+  }
+  .s-b .s-field {
+    height: 2.6cqw;
+  }
+  .s-btn {
+    height: 3.8cqw;
+    margin-top: auto;
+    background: var(--navy);
+  }
+  .s-done {
+    display: grid;
+    width: 11cqw;
+    aspect-ratio: 1;
+    padding: 2.4cqw;
+    border-radius: 50%;
+    background: var(--lime);
+    box-shadow: 0 0 0 0.5cqw var(--navy);
+  }
+  .s-d .s-bar {
+    width: 60%;
+  }
+  /* The person's finger: taps "next", hovers over the long form, gives up; comes back and gets through. */
+  .finger {
+    position: absolute;
+    left: 0;
+    top: 0;
+    z-index: 3;
+    width: 7cqw;
+    height: 7cqw;
+    color: var(--navy);
+    filter: drop-shadow(0.4cqw 0.4cqw 0 var(--ice));
+    opacity: 0;
+    animation: hw-finger 4.4s ease-in-out both;
+  }
+  @keyframes hw-finger {
+    0% {
+      opacity: 0;
+      translate: 14cqw 44cqw;
+    }
+    10% {
+      opacity: 1;
+      translate: 7cqw 32cqw;
+      scale: 1;
+    }
+    15% {
+      scale: 0.8;
+    }
+    19% {
+      scale: 1;
+      translate: 7cqw 32cqw;
+    }
+    30% {
+      opacity: 1;
+      translate: 9cqw 18cqw;
+    }
+    38% {
+      translate: 6cqw 22cqw;
+    }
+    44% {
+      opacity: 0;
+      translate: 24cqw 26cqw;
+    }
+    60% {
+      opacity: 0;
+      translate: 14cqw 44cqw;
+    }
+    68% {
+      opacity: 1;
+      translate: 7cqw 32cqw;
+      scale: 1;
+    }
+    73% {
+      scale: 0.8;
+    }
+    77% {
+      opacity: 1;
+      scale: 1;
+      translate: 7cqw 32cqw;
+    }
+    84%,
+    100% {
+      opacity: 0;
+      translate: 7cqw 32cqw;
+    }
+  }
+  .flow {
+    display: grid;
+    gap: 2.6cqw;
+    min-width: 44cqw;
+    padding: 3cqw 3.4cqw;
+  }
+  .f-step {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 1.6cqw;
+  }
+  .f-ico {
+    display: grid;
+    flex: none;
+    width: 5.4cqw;
+    height: 5.4cqw;
+    padding: 1.1cqw;
+    background: var(--navy);
+    color: var(--ice);
+  }
+  .f-l {
+    font-size: 2.6cqw;
+  }
+  .f-ok,
+  .f-x {
+    display: grid;
+    width: 4.6cqw;
+    height: 4.6cqw;
+    padding: 0.8cqw;
+    border-radius: 50%;
+    box-shadow: 0 0 0 0.45cqw var(--navy);
+  }
+  .f-ok {
+    margin-left: auto;
+    background: var(--lime);
+    animation: hw-pop 0.4s var(--ease-pop) both;
+  }
+  .f-0 .f-ok {
+    animation-delay: 1s;
+  }
+  .f-1 .f-ok {
+    animation-delay: 2.8s;
+  }
+  .f-2 .f-ok {
+    animation-delay: 3.6s;
+  }
+  .f-x {
+    position: absolute;
+    right: 0;
+    background: var(--pink);
+    transform: scale(0);
+    animation: hw-x 4.4s both;
+  }
+  @keyframes hw-x {
+    0%,
+    42% {
+      transform: scale(0);
+    }
+    46%,
+    58% {
+      transform: scale(1) rotate(-8deg);
+    }
+    62%,
+    100% {
+      transform: scale(0);
+    }
+  }
+  /* Where they gave up: tagged, then struck through once fixed. */
+  .f-tag {
+    position: relative;
+    margin-left: 1cqw;
+    padding: 0.2cqw 1cqw;
+    background: var(--pink);
+    font-style: normal;
+    font-weight: 800;
+    font-size: 2cqw;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    transform-origin: 0 50%;
+    animation: hw-pop 0.35s var(--ease-pop) 1.9s both;
+  }
+  .f-tag::after {
+    content: "";
+    position: absolute;
+    left: -0.4cqw;
+    right: -0.4cqw;
+    top: calc(50% - 0.2cqw);
+    height: 0.45cqw;
+    background: var(--navy);
+    transform-origin: 0 50%;
+    animation: hw-fill-x 0.3s ease-out 2.7s both;
+  }
+
+  /* Conversion: the steps between interest and action are struck out and fold away; one clear button is left. */
+  .path {
+    position: relative;
+    display: flex;
+    align-items: flex-start;
+  }
+  .path::before {
+    content: "";
+    position: absolute;
+    left: 7cqw;
+    right: 7cqw;
+    top: 5.2cqw;
+    height: 0.6cqw;
+    background: repeating-linear-gradient(90deg, var(--navy) 0 1.6cqw, transparent 1.6cqw 3cqw);
+  }
+  .p-node {
+    position: relative;
+    display: grid;
+    justify-items: center;
+    gap: 1.6cqw;
+    width: 14cqw;
+  }
+  .p-ico {
+    position: relative;
+    display: grid;
+    width: 11cqw;
+    aspect-ratio: 1;
+    padding: 2.6cqw;
+  }
+  .p-node small {
+    max-width: 13cqw;
+    text-align: center;
+  }
+  .p-x {
+    position: absolute;
+    right: -2cqw;
+    top: -2cqw;
+    display: grid;
+    width: 5.4cqw;
+    height: 5.4cqw;
+    padding: 1cqw;
+    border-radius: 50%;
+    background: var(--navy);
+    color: var(--c);
+    animation: hw-pop 0.35s var(--ease-pop) both;
+    animation-delay: calc(0.7s + var(--k) * 0.16s);
+  }
+  .p-mid {
+    display: flex;
+    justify-content: center;
+    width: 0;
+    opacity: 0;
+    animation: hw-fold 3.4s var(--ease-out) both;
+  }
+  @keyframes hw-fold {
+    0%,
+    50% {
+      width: 14cqw;
+      opacity: 1;
+      transform: none;
+    }
+    68%,
+    100% {
+      width: 0;
+      opacity: 0;
+      transform: scale(0.4);
+    }
+  }
+  .p-cta {
+    position: relative;
+    display: flex;
+    align-items: center;
+    margin: 2cqw 1.5cqw 0;
+    padding: 1.4cqw 2.6cqw;
+    background: var(--navy);
+    color: var(--ice);
+    font-weight: 900;
+    font-size: 2.8cqw;
+    font-stretch: 80%;
+    letter-spacing: 0.03em;
+    white-space: nowrap;
+    text-transform: uppercase;
+    animation: hw-cta 3.4s var(--ease-pop) both;
+  }
+  @keyframes hw-cta {
+    0%,
+    68% {
+      max-width: 0;
+      opacity: 0;
+      transform: scale(0.5);
+    }
+    78%,
+    100% {
+      max-width: 40cqw;
+      opacity: 1;
+      transform: none;
+    }
+  }
+  .p-cta :global(.p-tap) {
+    position: absolute;
+    right: -2.6cqw;
+    bottom: -4cqw;
+    width: 6cqw;
+    height: 6cqw;
+    color: var(--ice);
+    filter: drop-shadow(0.35cqw 0.35cqw 0 var(--navy));
+    animation:
+      hw-pop 0.3s var(--ease-pop) 2.8s both,
+      hw-press 0.3s ease-in-out 3.1s both;
+  }
+  .p-act .p-ico {
+    background: var(--lime);
+    animation: hw-lit 0.01s steps(1) 3.3s both;
+  }
+  .p-act .p-ico :global(.ico) {
+    animation: hw-pop 0.4s var(--ease-pop) 3.3s both;
+  }
+
+  /* Revenue: a customer picks the paid plan and pays; the money lands with the business and its revenue grows. */
+  .plan {
+    position: relative;
+    display: grid;
+    gap: 1.6cqw;
+    width: 22cqw;
+    padding: 2.4cqw 2.4cqw 7cqw;
+  }
+  .plan-t {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-weight: 900;
+    font-size: 3.4cqw;
+    line-height: 1;
+    font-stretch: 80%;
+    text-transform: uppercase;
+  }
+  .plan-t :global(.ico) {
+    width: 3.6cqw;
+    height: 3.6cqw;
+    color: var(--orange);
+  }
+  .plan i {
+    display: block;
+  }
+  .plan-p {
+    width: 55%;
+    height: 3cqw;
+    background: var(--navy);
+  }
+  .plan-f {
+    height: 1.2cqw;
+    background: rgb(10 13 51 / 0.3);
+  }
+  .plan-f + .plan-f {
+    width: 70%;
+  }
+  .ccard {
+    position: absolute;
+    left: 30%;
+    bottom: -4cqw;
+    width: 17cqw;
+    aspect-ratio: 1.6;
+    border-radius: 1.4cqw;
+    background:
+      linear-gradient(var(--navy), var(--navy)) 0 2.2cqw / 100% 2.4cqw no-repeat,
+      var(--yellow);
+    box-shadow: 0 0 0 0.45cqw var(--navy);
+    rotate: -8deg;
+    animation: hw-pay 1.1s var(--ease-pop) 0.4s both;
   }
   .ccard i {
     position: absolute;
-    left: 2.4cqw;
-    top: 7.2cqw;
-    width: 4.6cqw;
-    height: 3.4cqw;
-    border-radius: 0.6cqw;
-    background: var(--yellow);
-    box-shadow: inset 0 0 0 0.4cqw var(--navy);
+    left: 1.6cqw;
+    top: 5.8cqw;
+    width: 3.4cqw;
+    height: 2.6cqw;
+    border-radius: 0.5cqw;
+    background: var(--ice);
+    box-shadow: inset 0 0 0 0.35cqw var(--navy);
   }
-  @keyframes hw-slide-in {
-    from {
-      transform: translateX(-50cqw) rotate(-12deg);
+  @keyframes hw-pay {
+    0% {
+      transform: translate(-40cqw, 12cqw) rotate(-20deg);
     }
+    60% {
+      transform: translate(0, -2cqw);
+    }
+    75% {
+      transform: translate(0, 1cqw);
+    }
+    100% {
+      transform: none;
+    }
+  }
+  .plan-paid {
+    position: absolute;
+    right: -3.4cqw;
+    top: -3cqw;
+    padding: 0.6cqw 1.6cqw;
+    background: var(--pink);
+    box-shadow: 0 0 0 0.45cqw var(--navy);
+    font-style: normal;
+    font-weight: 900;
+    font-size: 3cqw;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    rotate: 10deg;
+    animation: hw-stamp 0.4s var(--ease-pop) 1.4s both;
+  }
+  @keyframes hw-stamp {
+    from {
+      opacity: 0;
+      transform: scale(2.4);
+    }
+  }
+  /* The money travels from the plan to the business, along a dashed line. */
+  .money {
+    position: relative;
+    width: 15cqw;
+    height: 8cqw;
+  }
+  .money::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 1.4cqw;
+    top: calc(50% - 0.3cqw);
+    height: 0.6cqw;
+    background: repeating-linear-gradient(90deg, var(--navy) 0 1.6cqw, transparent 1.6cqw 3cqw);
+  }
+  .money::after {
+    content: "";
+    position: absolute;
+    right: 0;
+    top: calc(50% - 1.6cqw);
+    border: 1.6cqw solid transparent;
+    border-left: 2.2cqw solid var(--navy);
+    border-right: 0;
+  }
+  .fly {
+    position: absolute;
+    left: 0;
+    top: calc(50% - 3cqw);
+    width: 6cqw;
+    height: 6cqw;
+    padding: 0.6cqw;
+    border-radius: 50%;
+    background: var(--yellow);
+    box-shadow: 0 0 0 0.45cqw var(--navy);
+    opacity: 0;
+    animation: hw-fly 1.5s ease-in-out infinite backwards;
+    animation-delay: calc(1.6s + var(--k) * 0.5s);
+  }
+  /* Paused, one coin sits halfway. */
+  .fly:first-child {
+    opacity: 1;
+    transform: translateX(4.5cqw);
+  }
+  @keyframes hw-fly {
+    0% {
+      opacity: 0;
+      transform: translateX(0) scale(0.5);
+    }
+    15% {
+      opacity: 1;
+      transform: translate(1.5cqw, -1.5cqw) scale(1);
+    }
+    85% {
+      opacity: 1;
+      transform: translate(8cqw, -1cqw);
+    }
+    100% {
+      opacity: 0;
+      transform: translateX(10cqw) scale(0.5);
+    }
+  }
+  .biz {
+    position: relative;
+    display: flex;
+    align-items: flex-end;
+    gap: 3cqw;
+  }
+  .biz .c-av {
+    width: 13cqw;
+    padding: 2.8cqw;
   }
   .bars {
     position: relative;
     display: flex;
     align-items: flex-end;
-    gap: 2cqw;
-    height: 26cqw;
+    gap: 1.6cqw;
+    height: 20cqw;
   }
   .bars i {
-    width: 5.5cqw;
+    width: 4cqw;
     height: calc(30% + var(--k) * 22%);
     background: var(--navy);
     transform-origin: 50% 100%;
     animation: hw-grow 0.5s var(--ease-pop) both;
-    animation-delay: calc(0.65s + var(--k) * 0.14s);
+    animation-delay: calc(1.9s + var(--k) * 0.18s);
   }
   @keyframes hw-grow {
     from {
       transform: scaleY(0);
     }
   }
-  .bars :global(.coin) {
+  .bars :global(.up) {
     position: absolute;
-    right: -1cqw;
-    top: -9cqw;
-    width: 8cqw;
-    height: 8cqw;
-    animation: hw-hop 1.4s ease-in-out 1.4s infinite;
+    right: -2cqw;
+    top: -8cqw;
+    width: 7cqw;
+    height: 7cqw;
+    animation: hw-pop 0.4s var(--ease-pop) 2.7s both;
+  }
+  .biz-l {
+    position: absolute;
+    right: 0;
+    bottom: -4.2cqw;
+    width: 22.4cqw;
+    text-align: center;
   }
 
   /* Code: the checks that run on every change, then an approved review. */
@@ -902,12 +1786,12 @@ const DESTS: IconName[] = ["tb:world", "si:apple", "si:googleplay", "si:google"]
     }
   }
 
-  /* Ship: build, test, deploy light up in turn; then the release lands on the web, both stores and Google. */
+  /* Ship: build, test and deploy light up in turn; then it is live: found on Google, installed from the stores. */
   .launch {
     position: relative;
     display: grid;
     justify-items: center;
-    gap: 5cqw;
+    gap: 4cqw;
   }
   .pipe {
     display: flex;
@@ -917,18 +1801,14 @@ const DESTS: IconName[] = ["tb:world", "si:apple", "si:googleplay", "si:google"]
     position: relative;
     display: grid;
     justify-items: center;
-    gap: 1.4cqw;
-    font-weight: 800;
-    font-size: 2.8cqw;
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
+    gap: 1.2cqw;
   }
   /* The link to the next stage fills in as the work moves on. */
   .step + .step::before {
     content: "";
     position: absolute;
     right: calc(100% + 0.8cqw);
-    top: 5.4cqw;
+    top: 3.9cqw;
     width: 5.4cqw;
     height: 0.8cqw;
     background: var(--navy);
@@ -944,9 +1824,9 @@ const DESTS: IconName[] = ["tb:world", "si:apple", "si:googleplay", "si:google"]
   .stage {
     display: grid;
     place-items: center;
-    width: 11cqw;
-    height: 11cqw;
-    padding: 2.6cqw;
+    width: 8.5cqw;
+    height: 8.5cqw;
+    padding: 2cqw;
     background: var(--navy);
     color: var(--lime);
     animation:
@@ -960,99 +1840,318 @@ const DESTS: IconName[] = ["tb:world", "si:apple", "si:googleplay", "si:google"]
       color: var(--navy);
     }
   }
-  .dests {
+  .ship-live {
     display: flex;
-    gap: 3cqw;
-    padding-top: 3cqw;
-    border-top: 0.6cqw dashed var(--navy);
+    align-items: flex-start;
+    gap: 5cqw;
   }
-  .dest {
+  /* A search for the product finds it, live. */
+  .serp {
     display: grid;
-    place-items: center;
-    width: 8.5cqw;
-    height: 8.5cqw;
-    padding: 2cqw;
-    border-radius: 50%;
-    animation: hw-pop 0.45s var(--ease-pop) both;
-    animation-delay: calc(1.55s + var(--k) * 0.12s);
+    gap: 2cqw;
+    width: 46cqw;
+    padding: 2.2cqw;
+    transform-origin: 50% 0;
+    animation: hw-pop 0.45s var(--ease-pop) 1.6s both;
   }
-
-  /* Measure: the numbers draw in, the score fills, then the next decision. */
-  .chart {
-    width: 40cqw;
-    padding: 2cqw;
+  .q {
+    display: flex;
+    align-items: center;
+    gap: 1.4cqw;
+    height: 5.6cqw;
+    padding: 0 1.8cqw;
+    border-radius: 3cqw;
+    box-shadow: inset 0 0 0 0.45cqw var(--navy);
   }
-  .c-svg {
-    display: block;
-    width: 100%;
-    overflow: visible;
+  .q :global(.q-g) {
+    flex: none;
+    width: 3.4cqw;
+    height: 3.4cqw;
   }
-  .c-grid {
-    fill: none;
-    stroke: rgb(10 13 51 / 0.14);
-    stroke-width: 1;
+  .q :global(.q-s) {
+    flex: none;
+    width: 3cqw;
+    height: 3cqw;
+    margin-left: auto;
   }
-  .c-line {
-    fill: none;
-    stroke: var(--navy);
-    stroke-width: 3.4;
-    stroke-linecap: round;
-    stroke-linejoin: round;
-    stroke-dasharray: 100;
-    animation: hw-draw 1.2s var(--ease-out) 0.4s both;
+  .q-t {
+    font-weight: 700;
+    font-size: 2.6cqw;
+    white-space: nowrap;
+    clip-path: inset(0);
+    animation: hw-line 0.7s steps(12, end) 1.9s both;
   }
-  @keyframes hw-draw {
+  .hit {
+    display: grid;
+    gap: 1.1cqw;
+    animation: hw-hit 0.45s var(--ease-out) 2.7s both;
+  }
+  @keyframes hw-hit {
     from {
-      stroke-dashoffset: 100;
+      opacity: 0;
+      transform: translateY(2cqw);
     }
   }
-  .c-dot {
-    fill: var(--c);
-    stroke: var(--navy);
-    stroke-width: 2;
-    transform-box: fill-box;
-    transform-origin: center;
-    animation: hw-pop 0.4s var(--ease-pop) 1.5s both;
+  .hit-url {
+    display: flex;
+    align-items: center;
+    gap: 1.2cqw;
   }
-  .gauge {
+  .fav {
+    display: grid;
+    width: 3.6cqw;
+    height: 3.6cqw;
+    padding: 0.6cqw;
+    border-radius: 50%;
+    background: var(--navy);
+    color: var(--ice);
+  }
+  .bar-g {
+    display: block;
+    width: 14cqw;
+    height: 1.2cqw;
+    background: rgb(10 13 51 / 0.3);
+  }
+  .hit > .bar-g {
+    width: 90%;
+  }
+  .hit > .bar-s {
+    width: 60%;
+  }
+  .hit-t {
+    display: block;
+    width: 75%;
+    height: 2.2cqw;
+    background: var(--cobalt);
+  }
+  .on-air {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.8cqw;
+    margin-left: auto;
+    padding: 0.3cqw 1.2cqw;
+    background: var(--lime);
+    box-shadow: 0 0 0 0.4cqw var(--navy);
+    font-style: normal;
+    font-weight: 900;
+    font-size: 2.1cqw;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    animation: hw-pop 0.35s var(--ease-pop) 3s both;
+  }
+  .on-air::before {
+    content: "";
+    width: 1.3cqw;
+    height: 1.3cqw;
+    border-radius: 50%;
+    background: var(--pink);
+    animation: hw-blink 1s steps(2) infinite;
+  }
+  @keyframes hw-blink {
+    50% {
+      opacity: 0.2;
+    }
+  }
+  :global(.still) .on-air::before {
+    animation: none;
+  }
+  /* The app in the stores, installed. */
+  .store {
+    display: grid;
+    gap: 1.8cqw;
+    width: 26cqw;
+    padding: 2.2cqw;
+    transform-origin: 50% 0;
+    animation: hw-pop 0.45s var(--ease-pop) 3.2s both;
+  }
+  .st-marks {
+    display: flex;
+    gap: 1.4cqw;
+  }
+  .st-marks :global(.ico) {
+    width: 3.2cqw;
+    height: 3.2cqw;
+  }
+  .app {
+    display: flex;
+    align-items: center;
+    gap: 1.6cqw;
+  }
+  .app-ico {
+    display: grid;
+    flex: none;
+    width: 8cqw;
+    height: 8cqw;
+    padding: 1.8cqw;
+    border-radius: 2cqw;
+    background: var(--pink);
+    box-shadow: 0 0 0 0.45cqw var(--navy);
+  }
+  .app-n {
+    display: grid;
+    gap: 1.2cqw;
+  }
+  .app-n .bar-g {
+    width: 11cqw;
+  }
+  .st-stars {
+    display: flex;
+    gap: 0.3cqw;
+    color: var(--orange);
+  }
+  .st-stars :global(.ico) {
+    width: 2.2cqw;
+    height: 2.2cqw;
+  }
+  .get {
     position: relative;
     display: grid;
     place-items: center;
-    width: 22cqw;
-    aspect-ratio: 1;
-    border-radius: 50%;
-    animation: hw-pop 0.5s var(--ease-pop) 0.3s both;
+    height: 5cqw;
+    overflow: hidden;
+    background: var(--navy);
+    color: var(--lime);
+    font-weight: 900;
+    font-size: 2.6cqw;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    animation: hw-press 0.4s ease-in-out 3.9s both;
   }
-  .g-ring {
+  /* Installing: the button fills. */
+  .get::before {
+    content: "";
     position: absolute;
     inset: 0;
+    background: var(--cobalt);
+    transform-origin: 0 50%;
+    animation: hw-fill-x 0.9s ease-in-out 4.1s both;
+  }
+  .get span {
+    position: relative;
+  }
+
+  /* Measure: what gets measured. Where people drop out of the funnel, how fast and accessible the pages are, what
+     people say; then the next change. The bar widths are a drawing, not data. */
+  .dash {
+    display: grid;
+    grid-template-columns: auto auto;
+    gap: 3.6cqw 4cqw;
+    align-items: center;
+  }
+  .d-card {
+    animation: hw-pop 0.45s var(--ease-pop) both;
+  }
+  .d-fun {
+    display: grid;
+    gap: 1.4cqw;
+    padding: 2.2cqw 2.6cqw;
+  }
+  .fun {
+    display: grid;
+    grid-template-columns: 15cqw minmax(0, 1fr);
+    align-items: center;
+    gap: 1.4cqw;
+  }
+  .fun i {
+    display: block;
+    width: var(--w);
+    height: 2.6cqw;
+    background: var(--navy);
+    transform-origin: 0 50%;
+    animation: hw-fill-x 0.6s var(--ease-out) both;
+    animation-delay: calc(0.5s + var(--k) * 0.2s);
+  }
+  .d-vit {
+    display: grid;
+    gap: 1.1cqw;
+    padding: 2.2cqw 2.6cqw;
+    animation-delay: 0.2s;
+  }
+  .vit {
+    display: flex;
+    align-items: center;
+    gap: 1.4cqw;
+  }
+  .g-ring {
+    display: block;
+    flex: none;
+    width: 4.6cqw;
+    height: 4.6cqw;
   }
   .g-bg,
   .g-fg {
     fill: none;
-    stroke-width: 3.4;
+    stroke-width: 7;
   }
   .g-bg {
-    stroke: rgb(10 13 51 / 0.12);
+    stroke: rgb(10 13 51 / 0.14);
   }
   .g-fg {
-    stroke: #0a8a4a;
+    stroke: var(--cobalt);
     stroke-linecap: round;
-    stroke-dasharray: var(--v) 100;
-    animation: hw-fill-gauge 1.1s var(--ease-out) 0.7s both;
+    stroke-dasharray: 100;
+    stroke-dashoffset: 8;
+    animation: hw-ring 1s var(--ease-out) both;
+    animation-delay: calc(0.7s + var(--k) * 0.2s);
   }
-  @keyframes hw-fill-gauge {
+  @keyframes hw-ring {
     from {
-      stroke-dasharray: 0 100;
+      stroke-dashoffset: 100;
     }
   }
-  .gauge :global(.g-ok) {
-    width: 9cqw;
-    height: 9cqw;
-    color: #0a8a4a;
+  .d-say {
+    display: flex;
+    align-items: center;
+    gap: 1.6cqw;
+    padding: 2cqw 2.4cqw;
+    transform-origin: 0 100%;
+    animation-delay: 1.6s;
+  }
+  .d-av {
+    display: grid;
+    flex: none;
+    width: 6.4cqw;
+    height: 6.4cqw;
+    padding: 1.4cqw;
+    border-radius: 50%;
+    background: var(--navy);
+    color: var(--ice);
+  }
+  .d-q {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.8cqw;
+    font-weight: 800;
+    font-size: 2.7cqw;
+    line-height: 1.15;
+    font-stretch: 85%;
+  }
+  .d-q :global(.ico) {
+    flex: none;
+    width: 2.8cqw;
+    height: 2.8cqw;
+    color: var(--pink);
+  }
+  .d-next {
+    display: inline-flex;
+    align-items: center;
+    justify-self: start;
+    gap: 1.2cqw;
+    padding: 1.6cqw 2.4cqw;
+    background: var(--navy);
+    color: var(--yellow);
+    font-weight: 900;
+    font-size: 2.8cqw;
+    font-stretch: 80%;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    animation: hw-pop 0.45s var(--ease-pop) 2.3s both;
+  }
+  .d-next :global(.ico) {
+    width: 3.6cqw;
+    height: 3.6cqw;
   }
 
-  /* The practices behind the stop: small chips, a tool's mark where one does the job. */
   .does {
     display: flex;
     flex-wrap: wrap;
@@ -1078,19 +2177,6 @@ const DESTS: IconName[] = ["tb:world", "si:apple", "si:googleplay", "si:google"]
     width: 1rem;
     height: 1rem;
   }
-  .after {
-    display: flex;
-    align-items: center;
-    gap: 0.625rem;
-    margin: 0;
-    font-weight: 700;
-    font-size: 0.9375rem;
-  }
-  .after :global(.ico) {
-    width: 1.25rem;
-    height: 1.25rem;
-    animation: spin 6s linear infinite;
-  }
 
   @media (max-width: 56.25rem) {
     .loop {
@@ -1105,6 +2191,17 @@ const DESTS: IconName[] = ["tb:world", "si:apple", "si:googleplay", "si:google"]
     }
     .core {
       inset: 26%;
+    }
+    /* The scene's words stay readable on a phone-width stage. */
+    .scene small,
+    .f-l,
+    .c-row,
+    .q-t {
+      font-size: 2.9cqw;
+    }
+    .c-say,
+    .d-q {
+      font-size: 3.3cqw;
     }
   }
 </style>
@@ -1124,25 +2221,48 @@ const DESTS: IconName[] = ["tb:world", "si:apple", "si:googleplay", "si:google"]
     let turns = 0;
     let visible = false;
     let holdUntil = 0;
+    let shownAt = performance.now();
+    const DWELL = 6400;
 
     const show = (i: number, byUser: boolean) => {
       if (i < current) turns += 1;
       current = i;
       buttons.forEach((b, j) => b.setAttribute("aria-pressed", String(j === i)));
-      details.forEach((d, j) => d.classList.toggle("on", j === i));
+      // Re-showing a stop restarts its scene.
+      details.forEach((d) => d.classList.remove("on"));
+      void loop.offsetWidth;
+      details[i]!.classList.add("on");
       icons.forEach((icon, j) => icon.toggleAttribute("hidden", j !== i));
       coreN.textContent = `${pad(i + 1)} / ${pad(n)}`;
       coreNm.textContent = buttons[i]!.querySelector(".lbl")!.textContent;
       loop.style.setProperty("--ang", `${(turns * n + i) * (360 / n)}deg`);
       loop.style.setProperty("--frac", String((i / n) * 700 + 0.001));
-      if (byUser) holdUntil = performance.now() + 9000;
+      shownAt = performance.now();
+      if (byUser) holdUntil = shownAt + 9000;
+      // The bar under the kicker counts down to the next stop.
+      const pd = details[i]!;
+      pd.classList.remove("timing");
+      void pd.offsetWidth;
+      loop.style.setProperty("--dwell", `${byUser ? 9 : DWELL / 1000}s`);
+      pd.classList.add("timing");
     };
     buttons.forEach((b, i) => b.addEventListener("click", () => show(i, true)));
     show(0, false);
 
-    new IntersectionObserver(([entry]) => (visible = !!entry?.isIntersecting), { threshold: 0.4 }).observe(loop);
+    // Coming into view plays the current stop from its start, so its story and its bar are seen whole.
+    new IntersectionObserver(
+      ([entry]) => {
+        const was = visible;
+        visible = !!entry?.isIntersecting;
+        if (visible && !was && performance.now() > holdUntil) show(current, false);
+      },
+      { threshold: 0.4 },
+    ).observe(loop);
+    // Each stop's scene is a short story (up to ~5 s): it stays up a little longer than that.
     setInterval(() => {
-      if (visible && !motionStill() && !document.hidden && performance.now() > holdUntil) show((current + 1) % n, false);
-    }, 3200);
+      const now = performance.now();
+      if (!visible || motionStill() || document.hidden || now < holdUntil || now - shownAt < DWELL) return;
+      show((current + 1) % n, false);
+    }, 250);
   }
 </script>

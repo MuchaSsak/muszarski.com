@@ -1,17 +1,19 @@
 ---
 /**
- * My life (structure.md § /my-life/, requirements.md F13): the person behind the work, off the clock. A page to play
- * with [user 2026-10-06: "more chilled out", casual lines instead of selling hobbies, web development cut, "go kinda
- * nuts ... visually outstanding, tons of great animations"]:
- * - the head: the title, one casual line and a sticker board around the photo (the owner's own, placeholders.md P15);
- *   the stickers slap on and can be dragged around
- * - "Stuff I like": a bento of the interests he named [user 2026-10-05], each card with its own drawn, looping toy
- *   (pull-ups, rays, an orbiting plane, a wheelie, a film strip, a spinning record, a pixel invader, a disco ball,
- *   stairs); a tap or hover gives it a boost
- * - hang out: Discord and Messenger as chat bubbles (P5), back to work, contact.
- * Every toy is decorative (aria-hidden): the list of interests is plain headings and lines. Paused or reduced motion
- * shows the finished drawings, still. AboutPage JSON-LD → the Person. Faith is his own decision to publish
- * (compliance-and-data.md: GDPR art. 9(2)(e)); no third persons on this page.
+ * My life (structure.md § /my-life/, requirements.md F13): the person behind the work, off the clock. Casual lines,
+ * not a pitch [user 2026-10-06: "more chilled out", web development cut]. Kinetic type instead of drawings [user
+ * 2026-10-06: "dont want to overdo the illustrations ... way more creative and stunning"]:
+ * - the head: the fitted title, one line and the photo (the owner's own, placeholders.md P15)
+ * - "Stuff I like": one full-bleed band per interest he named [user 2026-10-05], its name set huge in the variable
+ *   font, and each word moves its own way while it is in view: reps (calisthenics), a passing light (faith), a
+ *   departures board (travel), speed (motorcycles), an equaliser (music), a letterbox (films), letters that hop in
+ *   two players' colours (games with friends), colours that change like party lights (parties), a staircase of
+ *   weights (self-improvement). A hover or a tap gives it a boost.
+ * - hang out: a yellow band, so it stands apart from the footer; the two chats arrive as messages (P5), back to the
+ *   work, contact.
+ * Every word is a real heading (the letters are a decorative copy). Paused or reduced motion: still posters. Party
+ * colours change at most twice a second (WCAG 2.3.1). AboutPage JSON-LD → the Person. Faith is his own decision to
+ * publish (compliance-and-data.md: GDPR art. 9(2)(e)); no third persons on this page.
  * PLACEHOLDER: the lines are drafts for the owner to rewrite in his voice (P6).
  */
 import { t } from "lingui-for-astro/macro";
@@ -20,7 +22,9 @@ import BaseLayout from "~/components/layout/BaseLayout.astro";
 import JsonLd from "~/components/seo/JsonLd.astro";
 import Fit from "~/components/ui/Fit.astro";
 import Icon from "~/components/ui/Icon.astro";
+import Logo from "~/components/ui/Logo.astro";
 import { SITE, SOCIAL } from "~/data/site";
+import { fitLines } from "~/lib/fit";
 import { type IconName } from "~/lib/icons.gen";
 import { chromeLinks } from "~/lib/nav";
 import { localeStaticPaths, pathTo } from "~/lib/routes";
@@ -37,29 +41,45 @@ const title = t`My life`;
 const description = t`Mateusz Muszarski off the clock: calisthenics, faith, travel, motorcycles, films, music, games with friends and parties. And where to find him.`;
 const [line1, line2] = t`My|life`.split("|") as [string, string];
 
-type Toy = "cal" | "faith" | "travel" | "moto" | "films" | "music" | "games" | "party" | "better";
-const LIKES: { toy: Toy; title: string; line: string; tone: string; ink?: string; wide?: boolean }[] = [
-  { toy: "cal", title: t`Calisthenics`, line: t`Training with just my bodyweight. Bar, floor, repeat.`, tone: "var(--yellow)", wide: true },
-  { toy: "faith", title: t`Faith`, line: t`I'm a Christian.`, tone: "var(--ice)" },
-  { toy: "travel", title: t`Travel`, line: t`I like going somewhere I haven't been yet.`, tone: "var(--lime)" },
-  { toy: "moto", title: t`Motorcycles`, line: t`I like bikes. Simple as that.`, tone: "var(--orange)", wide: true },
-  { toy: "music", title: t`Music`, line: t`My playlist is all over the place.`, tone: "var(--pink)" },
-  { toy: "films", title: t`Films`, line: t`A good film night is hard to beat.`, tone: "var(--cobalt)", ink: "var(--ice)" },
-  { toy: "games", title: t`Games with friends`, line: t`Gaming, but best with friends.`, tone: "var(--space)", ink: "var(--ice)" },
-  { toy: "party", title: t`Parties`, line: t`I like a good party.`, tone: "var(--yellow)" },
-  { toy: "better", title: t`Self-improvement`, line: t`Trying to be a bit better than yesterday.`, tone: "var(--lime)", wide: true },
+type Move = "reps" | "glow" | "board" | "speed" | "eq" | "film" | "hop" | "flash" | "climb";
+const LIKES: { move: Move; title: string; line: string; bg: string; fg: string }[] = [
+  { move: "reps", title: t`Calisthenics`, line: t`Training with just my bodyweight. Bar, floor, repeat.`, bg: "var(--yellow)", fg: "var(--navy)" },
+  { move: "glow", title: t`Faith`, line: t`I'm a Christian.`, bg: "var(--navy)", fg: "var(--ice)" },
+  { move: "board", title: t`Travel`, line: t`I like going somewhere I haven't been yet.`, bg: "var(--lime)", fg: "var(--navy)" },
+  { move: "speed", title: t`Motorcycles`, line: t`I like bikes. Simple as that.`, bg: "var(--orange)", fg: "var(--navy)" },
+  { move: "eq", title: t`Music`, line: t`My playlist is all over the place.`, bg: "var(--pink)", fg: "var(--navy)" },
+  { move: "film", title: t`Films`, line: t`A good film night is hard to beat.`, bg: "var(--ice)", fg: "var(--navy)" },
+  { move: "hop", title: t`Games with friends`, line: t`Gaming, but best with friends.`, bg: "var(--cobalt)", fg: "var(--ice)" },
+  { move: "flash", title: t`Parties`, line: t`I like a good party.`, bg: "var(--space)", fg: "var(--ice)" },
+  { move: "climb", title: t`Self-improvement`, line: t`Trying to be a bit better than yesterday.`, bg: "var(--lime)", fg: "var(--navy)" },
 ];
-/** The sticker board: icon stickers around the photo, placed in % of the board, each its own shape and tilt. */
-const STICKERS: { icon?: IconName; text?: string; x: number; y: number; r: number; bg: string; shape: string }[] = [
-  { icon: "tb:barbell", x: 6, y: 8, r: -12, bg: "var(--yellow)", shape: "circle" },
-  { icon: "tb:motorbike", x: 70, y: 4, r: 9, bg: "var(--lime)", shape: "tag" },
-  { icon: "tb:headphones", x: 78, y: 42, r: -7, bg: "var(--ice)", shape: "circle" },
-  { icon: "tb:plane", x: 2, y: 54, r: 8, bg: "var(--orange)", shape: "square" },
-  { icon: "tb:device-gamepad-2", x: 66, y: 76, r: 12, bg: "var(--cobalt)", shape: "square" },
-  { icon: "tb:movie", x: 14, y: 82, r: -5, bg: "var(--lime)", shape: "tag" },
-  { text: t`Hi!`, x: 40, y: 0, r: -9, bg: "var(--yellow)", shape: "burst" },
-  { icon: "tb:heart", x: 84, y: 18, r: 14, bg: "var(--pink)", shape: "circle" },
-];
+/** A long name goes on two lines (at the space or hyphen nearest the middle), so it stays big on a phone. */
+const split = (text: string) => {
+  if (text.length <= 11) return [text];
+  const cuts = [...text.matchAll(/[ -]/g)].map((m) => m.index);
+  if (!cuts.length) return [text];
+  const mid = text.length / 2;
+  const at = cuts.reduce((a, b) => (Math.abs(b - mid) < Math.abs(a - mid) ? b : a));
+  const cut = text[at] === "-" ? at + 1 : at;
+  return [text.slice(0, cut).trim(), text.slice(cut).trim()];
+};
+const NBSP = String.fromCharCode(160);
+const words = LIKES.map((like) => {
+  const lines = split(like.title).map((line) => line.toLocaleUpperCase(locale));
+  const narrow = fitLines(lines, 70, locale, 0.97);
+  const wide = fitLines(lines, 92, locale, 0.97);
+  let k = 0;
+  return {
+    narrow,
+    wide,
+    lines: lines.map((line, li) => ({
+      wn: narrow.wdth[li],
+      ww: wide.wdth[li],
+      chars: [...line].map((ch) => ({ ch: ch === " " ? NBSP : ch, k: k++ })),
+    })),
+  };
+});
+const pad = (n: number) => String(n).padStart(2, "0");
 const SOCIAL_ICONS: Record<string, IconName> = { discord: "si:discord", messenger: "si:messenger" };
 ---
 
@@ -81,176 +101,61 @@ const SOCIAL_ICONS: Record<string, IconName> = { discord: "si:discord", messenge
       <div class="h-txt">
         <Fit as="h1" id="t-life" lines={[line1, line2]} base={[100, 140]} />
         <p class="lede rise" style="--d:2">{typo(locale, t`I'm Mateusz. Code is the job. This page is the rest.`)}</p>
-        <p class="hint rise" style="--d:3" aria-hidden="true">
-          <Icon name="tb:hand-click" />
-          {t`The stickers move. Go on.`}
-        </p>
       </div>
-      <div class="board" data-board aria-hidden="true">
-        <figure class="polaroid enter">
-          <div class="ph">
-            <Icon name="tb:camera" />
-            <span>{t`Photo soon`}</span>
-          </div>
-          <figcaption>{t`me, probably smiling`}</figcaption>
-        </figure>
-        {
-          STICKERS.map((sticker, i) => (
-            <span class={`stk enter s-${sticker.shape}`} style={`--x:${sticker.x}%;--y:${sticker.y}%;--r:${sticker.r}deg;--bg:${sticker.bg};--i:${i}`}>
-              {sticker.icon ? <Icon name={sticker.icon} /> : <b>{sticker.text}</b>}
-            </span>
-          ))
-        }
-      </div>
+      <figure class="photo enter" aria-hidden="true">
+        <div class="ph">
+          <Icon name="tb:camera" />
+          <span>{t`Photo soon`}</span>
+        </div>
+        <figcaption>{t`me, probably smiling`}</figcaption>
+      </figure>
     </div>
   </section>
 
-  <section class="sec field-alt likes" aria-labelledby="t-likes">
-    <h2 class="likes-t" id="t-likes">{t`Stuff I like`}</h2>
-    <ul class="bento" role="list" data-likes>
+  <section class="likes" aria-labelledby="t-likes">
+    <h2 class="likes-t" id="t-likes">
+      {t`Stuff I like`}
+      <Icon name="tb:arrow-down" />
+    </h2>
+    <ol class="rows" role="list" data-rows>
       {
-        LIKES.map((like, i) => (
-          <li class:list={["lk", `lk-${like.toy}`, { wide: like.wide }]} style={`--tone:${like.tone};--ink:${like.ink ?? "var(--navy)"};--t:${i % 2 ? 1.2 : -1}deg`}>
-            <div class="toy" aria-hidden="true">
-              {like.toy === "cal" && (
-                <div class="t-cal">
-                  <i class="pole l" />
-                  <i class="pole r" />
-                  <i class="bar-x" />
-                  <span class="guy">
-                    <i class="arm l" />
-                    <i class="arm r" />
-                    <i class="head" />
-                    <i class="body" />
-                    <i class="leg l" />
-                    <i class="leg r" />
-                  </span>
-                  <i class="floor" />
-                </div>
-              )}
-              {like.toy === "faith" && (
-                <div class="t-faith">
-                  <i class="rays" />
-                  <span class="cross">
-                    <i />
-                    <i />
-                  </span>
-                </div>
-              )}
-              {like.toy === "travel" && (
-                <div class="t-travel">
-                  <span class="globe">
-                    <Icon name="tb:world" />
-                  </span>
-                  <span class="orbit">
-                    <span class="jet">
-                      <Icon name="tb:plane" />
-                    </span>
-                  </span>
-                  <i class="trail" />
-                </div>
-              )}
-              {like.toy === "moto" && (
-                <div class="t-moto">
-                  <span class="sun" />
-                  <span class="hills" />
-                  <span class="bike">
-                    <Icon name="tb:motorbike" />
-                    <i class="speed" />
-                  </span>
-                  <i class="road" />
-                </div>
-              )}
-              {like.toy === "music" && (
-                <div class="t-music">
-                  <span class="vinyl">
-                    <i />
-                  </span>
-                  <span class="eq">
-                    {[0, 1, 2, 3, 4].map((k) => (
-                      <i style={`--k:${k}`} />
-                    ))}
-                  </span>
-                </div>
-              )}
-              {like.toy === "films" && (
-                <div class="t-films">
-                  <span class="strip">
-                    <span class="frames">
-                      {[0, 1, 2, 3, 4, 5, 6, 7].map((k) => (
-                        <i style={`--k:${k}`} />
+        LIKES.map((like, i) => {
+          const word = words[i]!;
+          return (
+            <li
+              class={`row m-${like.move}`}
+              style={`--bg:${like.bg};--fg:${like.fg};--fs-n:${word.narrow.size};--fs-w:${word.wide.size};--n:${Math.max(...word.lines.map((line) => line.chars.length))}`}
+            >
+              <h3 class="word">
+                <span class="sr-only">{like.title}</span>
+                <span class="w-art" aria-hidden="true">
+                  {word.lines.map((line) => (
+                    <span class="w-line" style={`--wn:${line.wn}%;--ww:${line.ww}%`}>
+                      {line.chars.map((c) => (
+                        <span class="ch" style={`--k:${c.k}`} data-ch={c.ch}>
+                          {c.ch}
+                        </span>
                       ))}
                     </span>
-                  </span>
-                  <span class="clap">
-                    <i class="top" />
-                    <i class="base" />
-                  </span>
-                </div>
-              )}
-              {like.toy === "games" && (
-                <div class="t-games">
-                  <span class="invader" />
-                  <span class="ship" />
-                  <i class="shot" />
-                  <span class="score tabular">GG</span>
-                </div>
-              )}
-              {like.toy === "party" && (
-                <div class="t-party">
-                  <i class="cord" />
-                  <span class="disco" />
-                  {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map((k) => (
-                    <i class="bit" style={`--k:${k}`} />
                   ))}
-                </div>
-              )}
-              {like.toy === "better" && (
-                <div class="t-better">
-                  {[0, 1, 2, 3, 4].map((k) => (
-                    <i class="stair" style={`--k:${k}`} />
-                  ))}
-                  <span class="climber" />
-                  <b class="plus">+1%</b>
-                </div>
-              )}
-            </div>
-            <h3>{like.title}</h3>
-            <p>{typo(locale, like.line)}</p>
-          </li>
-        ))
+                </span>
+              </h3>
+              <p class="meta">
+                <span class="n tabular">{pad(i + 1)}</span>
+                <span>{typo(locale, like.line)}</span>
+              </p>
+            </li>
+          );
+        })
       }
-    </ul>
+    </ol>
   </section>
 
-  <section class="sec field-bar hang" aria-labelledby="t-hang">
+  <section class="sec hang" aria-labelledby="t-hang">
     <div class="hang-grid">
       <div>
         <h2 class="hang-t" id="t-hang">{t`Hang out`}</h2>
         <p>{t`Up for a game or a chat? Find me here.`}</p>
-      </div>
-      <div class="chat">
-        {
-          SOCIAL.map((social, i) => (
-            <a
-              class={`bubble b-${i}`}
-              href={social.href}
-              rel="me noopener"
-              target="_blank"
-              data-umami-event="outbound"
-              data-umami-event-target={social.id}
-            >
-              <Icon name={SOCIAL_ICONS[social.id] ?? "tb:message-circle"} />
-              <span>{social.label}</span>
-              <i class="typing" aria-hidden="true">
-                <b />
-                <b />
-                <b />
-              </i>
-              <span class="sr-only"> {t`(opens in a new tab)`}</span>
-            </a>
-          ))
-        }
         <div class="more-links">
           <a class="btn btn-line" href={links.home}>
             {t`Back to the work`}
@@ -261,17 +166,50 @@ const SOCIAL_ICONS: Record<string, IconName> = { discord: "si:discord", messenge
           </a>
         </div>
       </div>
+      <div class="win" data-chat>
+        <div class="win-bar" aria-hidden="true">
+          <Logo class="win-av" />
+          <b>{SITE.name}</b>
+          <i class="win-dots"><b /><b /><b /></i>
+        </div>
+        <div class="win-body">
+          <p class="m m-hi" style="--m:0" aria-hidden="true">{t`Hi!`}</p>
+          {
+            SOCIAL.map((social, i) => (
+              <a
+                class={`m bubble b-${i}`}
+                style={`--m:${i + 1}`}
+                href={social.href}
+                rel="me noopener"
+                target="_blank"
+                data-umami-event="outbound"
+                data-umami-event-target={social.id}
+              >
+                <Icon name={SOCIAL_ICONS[social.id] ?? "tb:message-circle"} />
+                <span>{social.label}</span>
+                <Icon name="tb:arrow-up-right" class="b-go" />
+                <span class="sr-only"> {t`(opens in a new tab)`}</span>
+              </a>
+            ))
+          }
+          <i class="m typing" style={`--m:${SOCIAL.length + 1}`} aria-hidden="true">
+            <b />
+            <b />
+            <b />
+          </i>
+        </div>
+      </div>
     </div>
   </section>
 </BaseLayout>
 
 <style>
-  /* ---- Head: the title and line on the left, the sticker board on the right. */
+  /* ---- Head: the title and the line on the left, the photo on the right. */
   .head {
     display: grid;
-    grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+    grid-template-columns: minmax(0, 1.25fr) minmax(0, 0.75fr);
     gap: clamp(1.5rem, 4vw, 4rem);
-    align-items: center;
+    align-items: end;
   }
   .lede {
     max-width: 30ch;
@@ -281,891 +219,438 @@ const SOCIAL_ICONS: Record<string, IconName> = { discord: "si:discord", messenge
     line-height: 1.2;
     text-wrap: balance;
   }
-  .hint {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    margin: 1.25rem 0 0;
-    padding: 0.375rem 0.75rem;
-    background: var(--navy);
-    color: var(--ice);
-    font-weight: 800;
-    font-size: 0.8125rem;
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
-    transform: rotate(-2deg);
-  }
-  .hint :global(.ico) {
-    width: 1.125rem;
-    height: 1.125rem;
-  }
-
-  .board {
+  .photo {
     position: relative;
-    aspect-ratio: 1;
-    width: min(100%, 34rem);
     justify-self: center;
-    container-type: inline-size;
-  }
-  .polaroid {
-    position: absolute;
-    left: 24%;
-    top: 16%;
-    width: 52%;
+    width: min(100%, 22rem);
     margin: 0;
-    padding: 3cqw 3cqw 0;
+    padding: 0.875rem 0.875rem 0;
     background: #fff;
     color: var(--navy);
-    box-shadow: 2.4cqw 2.4cqw 0 var(--navy);
-    transform: rotate(-4deg);
-    animation: ml-drop 0.7s var(--ease-pop) both;
+    box-shadow: 10px 10px 0 var(--navy);
+    rotate: 3deg;
   }
   /* Tape on the top edge. */
-  .polaroid::before {
+  .photo::before {
     content: "";
     position: absolute;
     left: 50%;
-    top: -2.6cqw;
-    width: 20cqw;
-    height: 5.4cqw;
+    top: -0.75rem;
+    width: 6rem;
+    height: 1.5rem;
     background: color-mix(in srgb, var(--yellow) 80%, transparent);
-    transform: translateX(-50%) rotate(3deg);
+    transform: translateX(-50%) rotate(-3deg);
   }
   .ph {
     display: grid;
     place-content: center;
     justify-items: center;
-    gap: 1.6cqw;
-    aspect-ratio: 1;
-    background: repeating-linear-gradient(-45deg, rgb(10 13 51 / 0.1) 0 2.4cqw, transparent 2.4cqw 4.8cqw), var(--ice);
+    gap: 0.5rem;
+    aspect-ratio: 4 / 5;
+    background: repeating-linear-gradient(-45deg, rgb(10 13 51 / 0.1) 0 0.75rem, transparent 0.75rem 1.5rem), var(--ice);
     font-weight: 800;
-    font-size: 2.6cqw;
+    font-size: 0.8125rem;
     letter-spacing: 0.05em;
     text-transform: uppercase;
   }
   .ph :global(.ico) {
-    width: 9cqw;
-    height: 9cqw;
+    width: 2.5rem;
+    height: 2.5rem;
   }
-  .polaroid figcaption {
-    padding: 2.4cqw 0 3.4cqw;
+  .photo figcaption {
+    padding: 0.75rem 0 1rem;
     text-align: center;
     font-weight: 700;
-    font-size: 3.4cqw;
+    font-size: 1.0625rem;
     font-style: italic;
     font-stretch: 85%;
   }
-  @keyframes ml-drop {
-    from {
-      transform: translateY(-12cqw) rotate(-16deg) scale(1.15);
-    }
-  }
 
-  /* A sticker: slaps on in turn, then can be dragged (the script moves --dx/--dy). */
-  .stk {
-    position: absolute;
-    left: var(--x);
-    top: var(--y);
-    z-index: 2;
-    display: grid;
-    place-items: center;
-    width: 17cqw;
-    aspect-ratio: 1;
-    padding: 3.6cqw;
-    background: var(--bg);
-    color: var(--navy);
-    box-shadow:
-      0 0 0 0.7cqw var(--navy),
-      1.4cqw 1.4cqw 0 0.7cqw var(--navy);
-    transform: translate(var(--dx, 0px), var(--dy, 0px)) rotate(var(--r));
-    cursor: grab;
-    touch-action: none;
-    user-select: none;
-    transition:
-      transform 0.25s var(--ease-pop),
-      box-shadow 0.25s var(--ease-out);
-    animation: ml-slap 0.5s var(--ease-pop) both;
-    animation-delay: calc(0.35s + var(--i) * 0.09s);
+  /* ---- Stuff I like: a stack of full-bleed bands, one per interest, each with its name set huge. */
+  /* Bands: the colour runs full width (a clipped shadow), the type stops at the poster cap like every section. */
+  .likes {
+    overflow-x: clip;
   }
-  .stk :global(.ico) {
-    width: 100%;
-    height: 100%;
-  }
-  .stk b {
-    font-weight: 900;
-    font-size: 6cqw;
-    font-stretch: 70%;
-    text-transform: uppercase;
-  }
-  .s-circle {
-    border-radius: 50%;
-  }
-  .s-tag {
-    width: 21cqw;
-    aspect-ratio: 1.35;
-    border-radius: 1.6cqw;
-  }
-  .s-burst {
-    width: 19cqw;
-    clip-path: polygon(50% 0, 61% 18%, 82% 10%, 80% 32%, 100% 40%, 84% 56%, 96% 76%, 74% 78%, 68% 100%, 50% 86%, 32% 100%, 26% 78%, 4% 76%, 16% 56%, 0 40%, 20% 32%, 18% 10%, 39% 18%);
-    box-shadow: none;
-  }
-  .s-cobalt,
-  .stk[style*="--cobalt"] {
-    color: var(--ice);
-  }
-  .stk.held {
-    z-index: 5;
-    cursor: grabbing;
-    transition: box-shadow 0.25s var(--ease-out);
-    transform: translate(var(--dx, 0px), var(--dy, 0px)) rotate(calc(var(--r) * -0.4)) scale(1.12);
-    box-shadow:
-      0 0 0 0.7cqw var(--navy),
-      2.6cqw 2.6cqw 0 0.7cqw var(--navy);
-  }
-  .s-burst.held {
-    box-shadow: none;
-  }
-  @keyframes ml-slap {
-    from {
-      transform: translate(var(--dx, 0px), var(--dy, 0px)) rotate(calc(var(--r) * 3)) scale(0);
-    }
-    70% {
-      transform: translate(var(--dx, 0px), var(--dy, 0px)) rotate(var(--r)) scale(1.18);
-    }
-  }
-  @media (hover: hover) and (pointer: fine) {
-    .stk:not(.held):hover {
-      transform: translate(var(--dx, 0px), var(--dy, 0px)) rotate(calc(var(--r) * -1)) scale(1.06);
-    }
-  }
-
-  /* ---- Stuff I like: a bento of cards, each with its toy on top. */
   .likes-t {
-    margin: 0 0 clamp(1.25rem, 2.4vw, 2rem);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    width: min(100%, var(--container-poster));
+    margin: 0 auto;
+    padding: clamp(1.25rem, 2.4vw, 2rem) var(--gutter);
+    background: var(--navy);
+    box-shadow: 0 0 0 100vmax var(--navy);
+    clip-path: inset(0 -100vmax);
+    color: var(--ice);
     font-weight: 900;
-    font-size: clamp(2.5rem, 6vw, 5.5rem);
-    line-height: 0.9;
+    font-size: clamp(1.5rem, 3vw, 2.5rem);
+    line-height: 1;
     text-transform: uppercase;
-    font-stretch: 62%;
+    font-stretch: 70%;
   }
-  .bento {
+  .likes-t :global(.ico) {
+    width: 1.5em;
+    height: 1.5em;
+    animation: ml-nod 1.6s ease-in-out infinite;
+  }
+  @keyframes ml-nod {
+    50% {
+      translate: 0 0.2em;
+    }
+  }
+  /* The navy between the bands is the list's own background, showing through the gaps. */
+  .rows {
     display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: clamp(1rem, 2vw, 1.75rem);
+    gap: 3px;
     margin: 0;
-    padding: 0;
+    padding: 3px 0 0;
+    background: var(--navy);
     list-style: none;
   }
-  .lk {
-    display: grid;
-    grid-template-rows: auto auto 1fr;
-    gap: 0.375rem;
-    padding: 0.75rem 0.75rem 1.125rem;
-    background: var(--tone);
-    color: var(--ink);
-    box-shadow:
-      0 0 0 3px var(--navy),
-      8px 8px 0 3px var(--navy);
-    rotate: var(--t);
-    transition:
-      rotate 0.4s var(--ease-pop),
-      translate 0.4s var(--ease-pop);
-    cursor: pointer;
-  }
-  .lk.wide {
-    grid-column: span 2;
-  }
-  .lk h3 {
-    margin: 0.5rem 0.25rem 0;
-    font-weight: 900;
-    font-size: clamp(1.5rem, 2.2vw, 2rem);
-    line-height: 0.95;
-    text-transform: uppercase;
-    font-stretch: 68%;
-  }
-  .lk p {
-    margin: 0 0.25rem;
-    font-size: 1rem;
-    line-height: 1.4;
-  }
-  @media (hover: hover) and (pointer: fine) {
-    .lk:hover {
-      rotate: 0deg;
-      translate: 0 -4px;
-    }
-  }
-
-  /* The toy: a little stage in container units, so each drawing scales with its card. A boost (hover, or a tap
-     that sets .boost) speeds it up. */
-  .toy {
-    position: relative;
-    aspect-ratio: 16 / 10;
-    overflow: hidden;
-    container-type: inline-size;
-    background: rgb(255 255 255 / 0.28);
-    box-shadow: inset 0 0 0 3px var(--navy);
+  .row {
     --spd: 1;
+    position: relative;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 0.75rem 2rem;
+    width: min(100%, var(--container-poster));
+    margin: 0 auto;
+    padding: clamp(1.25rem, 3vw, 2.75rem) var(--gutter) clamp(1.5rem, 3vw, 2.5rem);
+    container-type: inline-size;
+    background: var(--bg);
+    color: var(--fg);
+    box-shadow: 0 0 0 100vmax var(--bg);
+    clip-path: inset(0 -100vmax);
+    cursor: default;
   }
-  .wide .toy {
-    aspect-ratio: 16 / 7;
-  }
-  .lk.boost .toy {
-    --spd: 2.6;
+  .row.boost {
+    --spd: 2.2;
   }
   @media (hover: hover) and (pointer: fine) {
-    .lk:hover .toy {
-      --spd: 2.6;
+    .row:hover {
+      --spd: 2.2;
     }
   }
-  .toy > div {
-    position: absolute;
-    inset: 0;
+  /* The word: fitted to the band's width from the font's metrics (like Fit), capped so short names stay a size a
+     band can hold. */
+  .word {
+    position: relative;
+    z-index: 1;
+    margin: 0;
+    font-weight: 900;
+    line-height: 0.8;
+    text-transform: uppercase;
+    font-size: min(calc(var(--fs-n) * 1cqi), 30cqi, 15rem);
   }
-  .toy :global(.ico) {
-    width: 100%;
-    height: 100%;
+  .w-art {
+    display: block;
   }
-  /* Paused or reduced motion: every toy stands still, finished. */
-  :global(.still) .toy *,
-  :global(.still) .toy *::before,
-  :global(.still) .toy *::after {
+  .w-line {
+    display: block;
+    width: max-content;
+    white-space: nowrap;
+    font-stretch: var(--wn);
+  }
+  @container (min-width: 700px) {
+    .word {
+      font-size: min(calc(var(--fs-w) * 1cqi), 17cqi, 15rem);
+    }
+    .w-line {
+      font-stretch: var(--ww);
+    }
+  }
+  .ch {
+    display: inline-block;
+  }
+  .meta {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: baseline;
+    gap: 0.75rem;
+    max-width: 26rem;
+    margin: 0;
+    font-weight: 700;
+    font-size: clamp(1.0625rem, 1.4vw, 1.25rem);
+    line-height: 1.3;
+  }
+  .meta .n {
+    flex: none;
+    padding: 0.125rem 0.4375rem;
+    background: var(--fg);
+    color: var(--bg);
+    font-weight: 800;
+    font-size: 0.8125rem;
+    letter-spacing: 0.06em;
+  }
+  /* The moves run only while a band is in view (.live), and never when paused or under reduced motion. */
+  :global(.still) .row *,
+  :global(.still) .row::before,
+  :global(.still) .row::after {
     animation: none !important;
   }
   @media (prefers-reduced-motion: reduce) {
-    .toy *,
-    .toy *::before,
-    .toy *::after {
+    .row *,
+    .row::before,
+    .row::after {
       animation: none !important;
     }
   }
+  .row:not(.live) *,
+  .row:not(.live)::before,
+  .row:not(.live)::after {
+    animation-play-state: paused !important;
+  }
 
-  /* Calisthenics: a stick figure doing pull-ups between two poles. */
-  .t-cal .pole {
-    position: absolute;
-    top: 18%;
-    bottom: 12%;
-    width: 1.4cqw;
-    background: var(--navy);
+  /* Calisthenics: the word does reps. */
+  .m-reps .w-art {
+    transform-origin: 50% 100%;
+    animation: ml-reps calc(1.8s / var(--spd)) ease-in-out infinite;
   }
-  .t-cal .pole.l {
-    left: 30%;
-  }
-  .t-cal .pole.r {
-    right: 30%;
-  }
-  .t-cal .bar-x {
-    position: absolute;
-    left: 28%;
-    right: 28%;
-    top: 18%;
-    height: 1.4cqw;
-    background: var(--navy);
-  }
-  .t-cal .floor {
-    position: absolute;
-    left: 0;
-    right: 0;
-    bottom: 12%;
-    height: 0.8cqw;
-    background: var(--navy);
-  }
-  .guy {
-    position: absolute;
-    left: 50%;
-    top: 19%;
-    width: 8cqw;
-    margin-left: -4cqw;
-    height: 30cqw;
-    transform-origin: 50% 0;
-    animation: ml-pull calc(1.8s / var(--spd)) ease-in-out infinite;
-  }
-  .guy i {
-    position: absolute;
-    background: var(--navy);
-    border-radius: 1cqw;
-  }
-  .guy .arm {
-    top: 0;
-    width: 1cqw;
-    height: 8cqw;
-    transform-origin: 50% 0;
-  }
-  .guy .arm.l {
-    left: 0.6cqw;
-    rotate: -12deg;
-  }
-  .guy .arm.r {
-    right: 0.6cqw;
-    rotate: 12deg;
-  }
-  .guy .head {
-    left: 50%;
-    top: 6.5cqw;
-    width: 5cqw;
-    height: 5cqw;
-    margin-left: -2.5cqw;
-    border-radius: 50%;
-    background: var(--pink);
-    box-shadow: 0 0 0 0.6cqw var(--navy);
-  }
-  .guy .body {
-    left: 50%;
-    top: 11cqw;
-    width: 1.2cqw;
-    height: 10cqw;
-    margin-left: -0.6cqw;
-  }
-  .guy .leg {
-    top: 20.5cqw;
-    left: 50%;
-    width: 1.1cqw;
-    height: 8cqw;
-    transform-origin: 50% 0;
-  }
-  .guy .leg.l {
-    rotate: 14deg;
-  }
-  .guy .leg.r {
-    rotate: -14deg;
-  }
-  /* Down: arms long, body low. Up: chin over the bar. */
-  @keyframes ml-pull {
+  @keyframes ml-reps {
     0%,
     100% {
-      transform: translateY(6cqw) scaleY(1);
+      transform: none;
     }
-    50% {
-      transform: translateY(-4.5cqw);
+    35% {
+      transform: translateY(4%) scale(1.03, 0.84);
     }
-  }
-
-  /* Faith: a cross with slow rays behind it. */
-  .t-faith .rays {
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    width: 140cqw;
-    aspect-ratio: 1;
-    margin: -70cqw 0 0 -70cqw;
-    background: repeating-conic-gradient(rgb(255 210 63 / 0.85) 0 7deg, transparent 7deg 18deg);
-    animation: ml-spin calc(40s / var(--spd)) linear infinite;
-  }
-  .cross {
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    width: 22cqw;
-    height: 34cqw;
-    margin: -17cqw 0 0 -11cqw;
-  }
-  .cross i {
-    position: absolute;
-    background: var(--navy);
-    box-shadow: 1.6cqw 1.6cqw 0 rgb(10 13 51 / 0.3);
-  }
-  .cross i:first-child {
-    left: 50%;
-    top: 0;
-    bottom: 0;
-    width: 6cqw;
-    margin-left: -3cqw;
-  }
-  .cross i:last-child {
-    left: 0;
-    right: 0;
-    top: 26%;
-    height: 6cqw;
-  }
-  @keyframes ml-spin {
-    to {
-      rotate: 360deg;
+    60% {
+      transform: translateY(-6%) scale(0.98, 1.05);
     }
   }
 
-  /* Travel: a plane circles the globe. */
-  .t-travel .globe {
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    width: 30cqw;
-    height: 30cqw;
-    margin: -15cqw 0 0 -15cqw;
-    color: var(--navy);
+  /* Faith: a warm light passes through the letters. */
+  .m-glow .ch {
+    animation: ml-glow calc(3.6s / var(--spd)) ease-in-out infinite;
+    animation-delay: calc(var(--k) * 0.16s);
   }
-  .t-travel .trail {
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    width: 50cqw;
-    height: 50cqw;
-    margin: -25cqw 0 0 -25cqw;
-    border: 0.7cqw dashed rgb(10 13 51 / 0.45);
-    border-radius: 50%;
+  @keyframes ml-glow {
+    0%,
+    34%,
+    100% {
+      color: var(--fg);
+      text-shadow: none;
+    }
+    14% {
+      color: var(--yellow);
+      text-shadow: 0 0 0.18em color-mix(in srgb, var(--yellow) 55%, transparent);
+    }
   }
-  .orbit {
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    width: 0;
-    height: 0;
-    animation: ml-spin calc(6s / var(--spd)) linear infinite;
+
+  /* Travel: a departures board. Each letter sits on its own flap; now and then they spin (the script) and land. */
+  /* The board is sized by its flaps (0.92em each), not by the letters' own widths. */
+  .m-board .word {
+    font-size: min(calc(96cqi / (var(--n) * 0.92)), 22cqi, 11rem);
   }
-  .jet {
-    position: absolute;
-    left: 25cqw;
-    top: 0;
-    width: 11cqw;
-    height: 11cqw;
-    margin: -5.5cqw 0 0 -5.5cqw;
-    padding: 1.8cqw;
-    border-radius: 50%;
+  @container (min-width: 700px) {
+    .m-board .word {
+      font-size: min(calc(96cqi / (var(--n) * 0.92)), 13cqi, 11rem);
+    }
+  }
+  /* Fixed flaps, so a spinning letter never changes the board's width. */
+  .m-board .ch {
+    position: relative;
+    width: 0.86em;
+    overflow: hidden;
+    margin-right: 0.06em;
+    padding: 0.08em 0.06em 0.02em;
     background: var(--navy);
     color: var(--yellow);
-    rotate: 135deg;
+    text-align: center;
+    border-radius: 0.06em;
   }
-
-  /* Motorcycles: a bike on a moving road under the sun; boosted, it pulls a wheelie. */
-  .t-moto .sun {
-    position: absolute;
-    right: 12%;
-    top: 12%;
-    width: 14cqw;
-    aspect-ratio: 1;
-    border-radius: 50%;
-    background: var(--yellow);
-    box-shadow: 0 0 0 0.6cqw var(--navy);
-  }
-  .t-moto .hills {
-    position: absolute;
-    left: -5%;
-    right: -5%;
-    bottom: 22%;
-    height: 22cqw;
-    background: radial-gradient(60% 100% at 25% 100%, rgb(10 13 51 / 0.28) 98%, transparent) 0 0 / 50% 100% repeat-x;
-    animation: ml-pan calc(9s / var(--spd)) linear infinite;
-  }
-  .t-moto .road {
+  .m-board .ch::after {
+    content: "";
     position: absolute;
     left: 0;
     right: 0;
-    bottom: 0;
-    height: 22%;
-    background:
-      linear-gradient(90deg, var(--ice) 0 50%, transparent 0) 0 50% / 9cqw 1cqw repeat-x,
-      var(--navy);
-    animation: ml-road calc(0.6s / var(--spd)) linear infinite;
+    top: 50%;
+    height: 0.025em;
+    background: var(--lime);
+    opacity: 0.5;
   }
-  .bike {
-    position: absolute;
-    left: 30%;
-    bottom: 19%;
-    width: 22cqw;
-    height: 22cqw;
-    color: var(--navy);
-    transform-origin: 80% 85%;
-    animation: ml-bump calc(0.5s / var(--spd)) ease-in-out infinite alternate;
+  .m-board .ch.flip {
+    animation: ml-flap 0.09s linear;
   }
-  .lk.boost .bike,
-  .lk-moto:hover .bike {
-    rotate: -14deg;
-  }
-  .bike .speed {
-    position: absolute;
-    right: 100%;
-    top: 35%;
-    width: 12cqw;
-    height: 6cqw;
-    background:
-      linear-gradient(var(--navy), var(--navy)) 0 0 / 100% 0.7cqw no-repeat,
-      linear-gradient(var(--navy), var(--navy)) 30% 50% / 70% 0.7cqw no-repeat,
-      linear-gradient(var(--navy), var(--navy)) 60% 100% / 40% 0.7cqw no-repeat;
-    animation: ml-dash calc(0.4s / var(--spd)) linear infinite;
-  }
-  @keyframes ml-road {
-    to {
-      background-position:
-        -9cqw 50%,
-        0 0;
-    }
-  }
-  @keyframes ml-pan {
-    to {
-      transform: translateX(-25%);
-    }
-  }
-  @keyframes ml-bump {
-    to {
-      translate: 0 -0.8cqw;
-    }
-  }
-  @keyframes ml-dash {
+  @keyframes ml-flap {
     50% {
-      opacity: 0.4;
-      translate: -1.5cqw 0;
+      transform: scaleY(0.1);
     }
   }
 
-  /* Music: a record spins, the bars bounce. */
-  .vinyl {
-    position: absolute;
-    left: 10%;
-    top: 50%;
-    width: 46cqw;
-    aspect-ratio: 1;
-    margin-top: -23cqw;
-    border-radius: 50%;
-    background: repeating-radial-gradient(circle, #14183f 0 0.9cqw, var(--navy) 0.9cqw 1.8cqw);
-    box-shadow: 1.4cqw 1.4cqw 0 rgb(10 13 51 / 0.35);
-    animation: ml-spin calc(3s / var(--spd)) linear infinite;
+  /* Motorcycles: leaning into speed, streaks rushing past. */
+  .m-speed .w-art {
+    transform: skewX(-12deg);
+    animation: ml-rev calc(2.2s / var(--spd)) ease-in-out infinite;
   }
-  .vinyl i {
-    position: absolute;
-    inset: 33%;
-    border-radius: 50%;
-    background:
-      radial-gradient(circle, var(--navy) 0 12%, transparent 13%),
-      conic-gradient(var(--yellow) 0 25%, var(--ice) 0 50%, var(--yellow) 0 75%, var(--ice) 0);
+  @keyframes ml-rev {
+    0%,
+    100% {
+      transform: skewX(-12deg) translateX(0);
+    }
+    50% {
+      transform: skewX(-16deg) translateX(1.5%);
+    }
   }
-  .eq {
+  .m-speed::before {
+    content: "";
     position: absolute;
-    right: 9%;
-    bottom: 16%;
-    display: flex;
-    align-items: flex-end;
-    gap: 1.6cqw;
-    height: 40cqw;
+    inset: 0 -100vmax;
+    background: repeating-linear-gradient(
+      180deg,
+      transparent 0 1.5rem,
+      color-mix(in srgb, var(--navy) 24%, transparent) 1.5rem 1.7rem,
+      transparent 1.7rem 3.1rem
+    );
+    -webkit-mask: repeating-linear-gradient(90deg, #000 0 5rem, transparent 5rem 9rem);
+    mask: repeating-linear-gradient(90deg, #000 0 5rem, transparent 5rem 9rem);
+    animation: ml-streak calc(0.6s / var(--spd)) linear infinite;
   }
-  .eq i {
-    width: 4.6cqw;
-    height: 100%;
-    background: var(--navy);
+  @keyframes ml-streak {
+    to {
+      -webkit-mask-position: -9rem 0;
+      mask-position: -9rem 0;
+    }
+  }
+
+  /* Music: the letters are an equaliser. */
+  .m-eq .ch {
     transform-origin: 50% 100%;
-    animation: ml-eq calc(0.9s / var(--spd)) ease-in-out infinite alternate;
-    animation-delay: calc(var(--k) * -0.27s);
+    animation: ml-eq calc(0.8s / var(--spd)) ease-in-out infinite alternate;
+    animation-delay: calc(var(--k) * -0.23s);
   }
   @keyframes ml-eq {
     from {
-      transform: scaleY(0.2);
+      transform: scaleY(0.62);
+    }
+    to {
+      transform: scaleY(1.06);
     }
   }
 
-  /* Films: a film strip runs past a clapperboard that snaps. */
-  .strip {
+  /* Films: a letterbox closes in and opens; the picture flickers a little. */
+  .m-film::before,
+  .m-film::after {
+    content: "";
     position: absolute;
-    left: 0;
-    right: 0;
-    top: 20%;
-    height: 40%;
-    overflow: hidden;
-    background:
-      radial-gradient(circle, var(--cobalt) 0 32%, transparent 34%) 0 0.4cqw / 5cqw 4cqw repeat-x,
-      radial-gradient(circle, var(--cobalt) 0 32%, transparent 34%) 0 calc(100% - 0.4cqw) / 5cqw 4cqw repeat-x,
-      var(--navy);
-  }
-  .frames {
-    position: absolute;
-    left: 0;
-    top: 22%;
-    bottom: 22%;
-    display: flex;
-    gap: 3cqw;
-    padding-left: 3cqw;
-    animation: ml-reel calc(5s / var(--spd)) linear infinite;
-  }
-  .frames i {
-    flex: none;
-    width: 22cqw;
-    background: hsl(calc(var(--k) * 47) 90% 66%);
-  }
-  @keyframes ml-reel {
-    to {
-      transform: translateX(-50%);
-    }
-  }
-  .clap {
-    position: absolute;
-    right: 8%;
-    bottom: 8%;
-    width: 26cqw;
-    height: 22cqw;
-  }
-  .clap .base {
-    position: absolute;
-    inset: 30% 0 0;
-    background: var(--ice);
-    box-shadow: 0 0 0 0.7cqw var(--navy);
-  }
-  .clap .top {
-    position: absolute;
-    left: 0;
-    right: 0;
-    top: 6%;
+    left: -100vmax;
+    right: -100vmax;
+    z-index: 2;
     height: 22%;
-    background: repeating-linear-gradient(-45deg, var(--navy) 0 3cqw, var(--ice) 3cqw 6cqw);
-    box-shadow: 0 0 0 0.7cqw var(--navy);
-    transform-origin: 0 100%;
-    animation: ml-clap calc(2.4s / var(--spd)) ease-in infinite;
+    background: #000;
+    transform: scaleY(0);
+    animation: ml-box calc(5s / var(--spd)) ease-in-out infinite;
   }
-  @keyframes ml-clap {
-    0%,
-    60%,
-    100% {
-      rotate: -24deg;
-    }
-    70% {
-      rotate: 0deg;
-    }
-  }
-
-  /* Games: a pixel invader drifts, the ship below fires. */
-  .invader {
-    position: absolute;
-    left: 50%;
-    top: 22%;
-    width: 2.6cqw;
-    height: 2.6cqw;
-    margin-left: -14cqw;
-    color: var(--lime);
-    background: transparent;
-    /* An 11 × 8 sprite, one shadow per pixel. */
-    box-shadow:
-      5.2cqw 0,
-      20.8cqw 0,
-      7.8cqw 2.6cqw,
-      18.2cqw 2.6cqw,
-      5.2cqw 5.2cqw,
-      7.8cqw 5.2cqw,
-      10.4cqw 5.2cqw,
-      13cqw 5.2cqw,
-      15.6cqw 5.2cqw,
-      18.2cqw 5.2cqw,
-      20.8cqw 5.2cqw,
-      2.6cqw 7.8cqw,
-      5.2cqw 7.8cqw,
-      10.4cqw 7.8cqw,
-      13cqw 7.8cqw,
-      15.6cqw 7.8cqw,
-      20.8cqw 7.8cqw,
-      23.4cqw 7.8cqw,
-      0 10.4cqw,
-      2.6cqw 10.4cqw,
-      5.2cqw 10.4cqw,
-      7.8cqw 10.4cqw,
-      10.4cqw 10.4cqw,
-      13cqw 10.4cqw,
-      15.6cqw 10.4cqw,
-      18.2cqw 10.4cqw,
-      20.8cqw 10.4cqw,
-      23.4cqw 10.4cqw,
-      26cqw 10.4cqw,
-      0 13cqw,
-      5.2cqw 13cqw,
-      7.8cqw 13cqw,
-      10.4cqw 13cqw,
-      13cqw 13cqw,
-      15.6cqw 13cqw,
-      18.2cqw 13cqw,
-      20.8cqw 13cqw,
-      26cqw 13cqw,
-      0 15.6cqw,
-      5.2cqw 15.6cqw,
-      20.8cqw 15.6cqw,
-      26cqw 15.6cqw,
-      7.8cqw 18.2cqw,
-      10.4cqw 18.2cqw,
-      15.6cqw 18.2cqw,
-      18.2cqw 18.2cqw;
-    animation: ml-march calc(2.4s / var(--spd)) steps(6) infinite alternate;
-  }
-  @keyframes ml-march {
-    to {
-      translate: 12cqw 0;
-    }
-  }
-  .ship {
-    position: absolute;
-    left: 50%;
-    bottom: 10%;
-    width: 12cqw;
-    height: 5cqw;
-    margin-left: -6cqw;
-    background: var(--pink);
-    clip-path: polygon(0 100%, 0 55%, 40% 55%, 40% 20%, 60% 20%, 60% 55%, 100% 55%, 100% 100%);
-  }
-  .shot {
-    position: absolute;
-    left: 50%;
-    bottom: 16%;
-    width: 1cqw;
-    height: 4cqw;
-    margin-left: -0.5cqw;
-    background: var(--yellow);
-    animation: ml-shot calc(1.2s / var(--spd)) linear infinite;
-  }
-  @keyframes ml-shot {
-    from {
-      translate: 0 0;
-      opacity: 1;
-    }
-    to {
-      translate: 0 -40cqw;
-      opacity: 0;
-    }
-  }
-  .score {
-    position: absolute;
-    right: 4%;
-    top: 6%;
-    color: var(--yellow);
-    font-family: ui-monospace, "Cascadia Mono", Consolas, monospace;
-    font-weight: 700;
-    font-size: 5cqw;
-    animation: ml-blink 1s steps(1) infinite;
-  }
-  @keyframes ml-blink {
-    50% {
-      opacity: 0;
-    }
-  }
-
-  /* Parties: a disco ball swings, confetti falls. */
-  .t-party .cord {
-    position: absolute;
-    left: 50%;
+  .m-film::before {
     top: 0;
-    width: 0.6cqw;
-    height: 14%;
-    background: var(--navy);
+    transform-origin: 50% 0;
   }
-  .disco {
-    position: absolute;
-    left: 50%;
-    top: 13%;
-    width: 24cqw;
-    aspect-ratio: 1;
-    margin-left: -12cqw;
-    border-radius: 50%;
-    background:
-      linear-gradient(90deg, transparent 0 46%, rgb(10 13 51 / 0.3) 0 54%, transparent 0) 0 0 / 4cqw 4cqw,
-      linear-gradient(transparent 0 46%, rgb(10 13 51 / 0.3) 0 54%, transparent 0) 0 0 / 4cqw 4cqw,
-      radial-gradient(circle at 35% 30%, #fff 0 12%, #c8ccff 13% 45%, #7c84d8 75%);
-    box-shadow: 0 0 0 0.7cqw var(--navy);
-    transform-origin: 50% -20cqw;
-    animation: ml-swing calc(2.2s / var(--spd)) ease-in-out infinite alternate;
+  .m-film::after {
+    bottom: 0;
+    transform-origin: 50% 100%;
   }
-  @keyframes ml-swing {
-    from {
-      rotate: -8deg;
+  @keyframes ml-box {
+    0%,
+    20%,
+    100% {
+      transform: scaleY(0);
     }
-    to {
-      rotate: 8deg;
+    35%,
+    80% {
+      transform: scaleY(1);
     }
   }
-  .bit {
-    position: absolute;
-    left: calc(6% + var(--k) * 9.4%);
-    top: -8%;
-    width: 2.6cqw;
-    height: 4cqw;
-    background: hsl(calc(var(--k) * 71) 95% 58%);
-    box-shadow: 0 0 0 0.3cqw var(--navy);
-    animation: ml-fall calc((2.6s + var(--k) * 0.17s) / var(--spd)) linear infinite;
-    animation-delay: calc(var(--k) * -0.43s);
+  .m-film .w-art {
+    animation: ml-flicker calc(0.5s / var(--spd)) steps(2) infinite;
   }
-  @keyframes ml-fall {
-    to {
-      transform: translateY(70cqw) rotate(540deg);
+  @keyframes ml-flicker {
+    50% {
+      opacity: 0.88;
     }
   }
 
-  /* Self-improvement: a little climber hops up the steps, "+1%" each time. */
-  .t-better .stair {
-    position: absolute;
-    left: calc(14% + var(--k) * 14%);
-    bottom: 0;
-    width: 14%;
-    height: calc(14% + var(--k) * 15%);
-    background: var(--navy);
-    box-shadow: inset 0 0.8cqw 0 rgb(255 255 255 / 0.25);
+  /* Games with friends: two players' colours; the letters hop one after another. */
+  .m-hop .ch:nth-child(even) {
+    color: var(--yellow);
   }
-  .climber {
-    position: absolute;
-    left: 14%;
-    bottom: 14%;
-    width: 5cqw;
-    height: 5cqw;
-    margin-left: 4.5cqw;
-    border-radius: 50%;
-    background: var(--pink);
-    box-shadow: 0 0 0 0.6cqw var(--navy);
-    animation: ml-climb calc(4s / var(--spd)) ease-in-out infinite;
+  .m-hop .ch {
+    animation: ml-hop calc(2.4s / var(--spd)) ease-in-out infinite;
+    animation-delay: calc(var(--k) * 0.08s);
   }
-  @keyframes ml-climb {
+  @keyframes ml-hop {
+    0%,
+    18%,
+    100% {
+      transform: none;
+    }
+    7% {
+      transform: translateY(-16%) rotate(-4deg);
+    }
+  }
+
+  /* Parties: a dark room; the letters dance and take the lights' colours (each changes at most twice a second). */
+  .m-flash .ch {
+    animation:
+      ml-lights calc(2s / var(--spd)) steps(1) infinite,
+      ml-dance calc(1s / var(--spd)) ease-in-out infinite alternate;
+    animation-delay: calc(var(--k) * -0.5s), calc(var(--k) * -0.25s);
+  }
+  @keyframes ml-lights {
     0% {
-      translate: 0 0;
+      color: var(--pink);
     }
-    15% {
-      translate: 7cqw -9cqw;
+    25% {
+      color: var(--lime);
     }
-    20% {
-      translate: 14cqw -6.5cqw;
-    }
-    35% {
-      translate: 21cqw -15cqw;
-    }
-    40% {
-      translate: 28cqw -13cqw;
-    }
-    55% {
-      translate: 35cqw -21.5cqw;
-    }
-    60% {
-      translate: 42cqw -19.5cqw;
+    50% {
+      color: var(--yellow);
     }
     75% {
-      translate: 49cqw -28cqw;
-    }
-    80%,
-    96% {
-      translate: 56cqw -26cqw;
-    }
-    100% {
-      translate: 0 0;
+      color: var(--ice);
     }
   }
-  .plus {
-    position: absolute;
-    right: 6%;
-    top: 8%;
-    padding: 0.6cqw 1.6cqw;
-    background: var(--pink);
-    color: var(--navy);
-    box-shadow: 0 0 0 0.5cqw var(--navy);
-    font-weight: 900;
-    font-size: 4.4cqw;
-    rotate: 6deg;
-    animation: ml-plus calc(4s / var(--spd)) ease-in-out infinite;
-  }
-  @keyframes ml-plus {
-    0%,
-    70% {
-      scale: 0.9;
+  @keyframes ml-dance {
+    from {
+      transform: rotate(-5deg) translateY(2%);
     }
-    80% {
-      scale: 1.25;
-    }
-    90%,
-    100% {
-      scale: 1;
+    to {
+      transform: rotate(5deg) translateY(-3%);
     }
   }
 
-  /* ---- Hang out: the two chats as speech bubbles that are typing. */
+  /* Self-improvement: each letter a step heavier and higher than the one before; a step-up runs along them. */
+  .m-climb .ch {
+    font-weight: calc(400 + var(--k) * 32);
+    translate: 0 calc(var(--k) * -1.2%);
+    animation: ml-step calc(3s / var(--spd)) ease-in-out infinite;
+    animation-delay: calc(var(--k) * 0.12s);
+  }
+  @keyframes ml-step {
+    0%,
+    16%,
+    100% {
+      transform: none;
+    }
+    8% {
+      transform: translateY(-12%);
+    }
+  }
+
+  /* ---- Hang out: a yellow band, so it stands apart from the footer. The title, the line and the links on the
+     left; a chat window on the right where the two chats arrive as messages (.dealing/.in), then he keeps typing. */
+  .hang {
+    background: var(--yellow);
+    color: var(--navy);
+    border-top: 3px solid var(--navy);
+  }
   .hang-grid {
     display: grid;
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-    gap: 1.5rem 3rem;
+    gap: 2rem 3rem;
     align-items: center;
   }
   .hang-t {
@@ -1180,58 +665,135 @@ const SOCIAL_ICONS: Record<string, IconName> = { discord: "si:discord", messenge
     margin: 0;
     font-size: 1.125rem;
   }
-  .chat {
+  .more-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.625rem;
+    margin-top: 1.5rem;
+  }
+  .more-links .btn {
+    max-width: 100%;
+    white-space: normal;
+  }
+  .win {
+    justify-self: center;
+    width: min(100%, 27rem);
+    background: var(--ice);
+    color: var(--navy);
+    box-shadow:
+      0 0 0 3px var(--navy),
+      10px 10px 0 3px var(--navy);
+    rotate: 1.5deg;
+  }
+  .win-bar {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+    padding: 0.625rem 0.875rem;
+    background: var(--navy);
+    color: var(--ice);
+    font-weight: 900;
+    font-size: 1rem;
+    font-stretch: 80%;
+    text-transform: uppercase;
+  }
+  .win-bar :global(.win-av) {
+    flex: none;
+    width: 1.75rem;
+    height: 1.75rem;
+  }
+  .win-dots {
+    display: flex;
+    gap: 0.3125rem;
+    margin-left: auto;
+  }
+  .win-dots b {
+    width: 0.625rem;
+    height: 0.625rem;
+    border-radius: 50%;
+    background: var(--yellow);
+  }
+  .win-dots b:nth-child(2) {
+    background: var(--lime);
+  }
+  .win-dots b:nth-child(3) {
+    background: var(--pink);
+  }
+  .win-body {
     display: grid;
-    gap: 1rem;
+    justify-items: start;
+    gap: 0.75rem;
+    padding: 1.25rem 1.125rem 1.375rem;
+    background: radial-gradient(circle at 1px 1px, rgb(10 13 51 / 0.12) 1px, transparent 1.5px) 0 0 / 14px 14px;
+  }
+  /* A message: a bubble from him, tail bottom left. */
+  .m {
+    border-radius: 1.25rem 1.25rem 1.25rem 0.25rem;
+  }
+  .m-hi {
+    margin: 0;
+    padding: 0.5rem 1rem;
+    background: var(--navy);
+    color: var(--ice);
+    font-weight: 900;
+    font-size: 1.25rem;
+    font-stretch: 80%;
+    text-transform: uppercase;
   }
   .bubble {
-    position: relative;
     display: flex;
     align-items: center;
     gap: 0.75rem;
-    justify-self: start;
     min-height: 3.5rem;
-    padding: 0.75rem 1.25rem;
-    border-radius: 1.5rem 1.5rem 1.5rem 0.25rem;
-    background: var(--ice);
+    padding: 0.75rem 1rem 0.75rem 1.125rem;
+    background: var(--yellow);
     color: var(--navy);
     text-decoration: none;
     font-weight: 900;
     font-size: 1.375rem;
     font-stretch: 80%;
     text-transform: uppercase;
-    box-shadow: 6px 6px 0 var(--pink);
+    box-shadow:
+      0 0 0 3px var(--navy),
+      5px 5px 0 3px var(--navy);
     transition:
-      transform 0.35s var(--ease-pop),
-      box-shadow 0.35s var(--ease-pop);
+      translate 0.35s var(--ease-pop),
+      rotate 0.35s var(--ease-pop);
   }
   .bubble.b-1 {
-    justify-self: end;
-    border-radius: 1.5rem 1.5rem 0.25rem 1.5rem;
-    background: var(--yellow);
-    box-shadow: 6px 6px 0 var(--cobalt);
+    background: var(--lime);
   }
   .bubble :global(.ico) {
     width: 1.75rem;
     height: 1.75rem;
   }
+  .bubble :global(.b-go) {
+    width: 1.25rem;
+    height: 1.25rem;
+    transition: translate 0.35s var(--ease-pop);
+  }
   .bubble:is(:hover, :focus-visible) {
-    transform: translate(-3px, -3px) rotate(-2deg);
+    translate: -3px -3px;
+    rotate: -2deg;
+  }
+  .bubble:is(:hover, :focus-visible) :global(.b-go) {
+    translate: 3px -3px;
   }
   .bubble:focus-visible {
-    outline: 3px solid var(--ice);
-    outline-offset: 4px;
+    outline: 3px solid var(--cobalt);
+    outline-offset: 5px;
   }
   .typing {
     display: inline-flex;
-    gap: 0.25rem;
-    margin-left: 0.25rem;
+    gap: 0.3125rem;
+    padding: 0.75rem 1rem;
+    background: rgb(10 13 51 / 0.12);
   }
   .typing b {
-    width: 0.4375rem;
-    height: 0.4375rem;
+    width: 0.5rem;
+    height: 0.5rem;
     border-radius: 50%;
-    background: currentColor;
+    background: var(--navy);
     animation: ml-type 1.2s ease-in-out infinite;
   }
   .typing b:nth-child(2) {
@@ -1252,81 +814,101 @@ const SOCIAL_ICONS: Record<string, IconName> = { discord: "si:discord", messenge
       opacity: 1;
     }
   }
-  .more-links {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.625rem;
-    margin-top: 0.5rem;
+  .dealing .m {
+    animation: ml-msg 0.5s var(--ease-pop) both paused;
+    animation-delay: calc(0.2s + var(--m) * 0.75s);
   }
-
-  @media (max-width: 64rem) {
-    .bento {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
+  .dealing.in .m {
+    animation-play-state: running;
+  }
+  @keyframes ml-msg {
+    from {
+      opacity: 0;
+      transform: translateY(1rem) scale(0.6);
+      transform-origin: 0 100%;
     }
   }
+  :global(.still) .dealing .m {
+    animation: none !important;
+  }
+
   @media (max-width: 48rem) {
     .head,
     .hang-grid {
       grid-template-columns: minmax(0, 1fr);
     }
-    .board {
-      width: min(100%, 26rem);
-    }
-  }
-  @media (max-width: 34rem) {
-    .bento {
-      grid-template-columns: minmax(0, 1fr);
-    }
-    .lk.wide {
-      grid-column: auto;
-    }
-    .wide .toy {
-      aspect-ratio: 16 / 10;
+    .photo {
+      width: min(62%, 15rem);
     }
   }
 </style>
 
 <script>
-  // The sticker board: drag a sticker anywhere on the board; it remembers where it was left (this visit only).
-  for (const board of document.querySelectorAll<HTMLElement>("[data-board]")) {
-    let top = 10;
-    for (const sticker of board.querySelectorAll<HTMLElement>(".stk")) {
-      let startX = 0;
-      let startY = 0;
-      let baseX = 0;
-      let baseY = 0;
-      sticker.addEventListener("pointerdown", (event) => {
-        sticker.setPointerCapture(event.pointerId);
-        startX = event.clientX;
-        startY = event.clientY;
-        baseX = parseFloat(sticker.style.getPropertyValue("--dx")) || 0;
-        baseY = parseFloat(sticker.style.getPropertyValue("--dy")) || 0;
-        sticker.classList.add("held");
-        sticker.style.zIndex = String((top += 1));
-      });
-      sticker.addEventListener("pointermove", (event) => {
-        if (!sticker.classList.contains("held")) return;
-        // Keep the sticker on the board.
-        const box = board.getBoundingClientRect();
-        const own = sticker.offsetLeft;
-        const ownTop = sticker.offsetTop;
-        const dx = Math.max(-own, Math.min(box.width - own - sticker.offsetWidth, baseX + event.clientX - startX));
-        const dy = Math.max(-ownTop, Math.min(box.height - ownTop - sticker.offsetHeight, baseY + event.clientY - startY));
-        sticker.style.setProperty("--dx", `${dx}px`);
-        sticker.style.setProperty("--dy", `${dy}px`);
-      });
-      const drop = () => sticker.classList.remove("held");
-      sticker.addEventListener("pointerup", drop);
-      sticker.addEventListener("pointercancel", drop);
-    }
-  }
-  // A tap on a card boosts its toy for a moment (the hover twin for touch screens).
-  for (const card of document.querySelectorAll<HTMLElement>("[data-likes] .lk")) {
+  import { motionStill } from "~/scripts/motion";
+
+  // A band moves only while it is in view.
+  const rows = [...document.querySelectorAll<HTMLElement>("[data-rows] .row")];
+  const seen = new IntersectionObserver((entries) => {
+    for (const entry of entries) entry.target.classList.toggle("live", entry.isIntersecting);
+  });
+  for (const row of rows) {
+    seen.observe(row);
+    // A tap boosts the band for a moment (the hover twin for touch screens).
     let timer = 0;
-    card.addEventListener("click", () => {
-      card.classList.add("boost");
+    row.addEventListener("click", () => {
+      row.classList.add("boost");
       clearTimeout(timer);
-      timer = window.setTimeout(() => card.classList.remove("boost"), 2400);
+      timer = window.setTimeout(() => row.classList.remove("boost"), 2400);
     });
+  }
+
+  // The departures board: every few seconds, while in view, each flap spins through letters and lands on its own,
+  // left to right.
+  const ABC = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+  for (const board of document.querySelectorAll<HTMLElement>(".m-board")) {
+    const flaps = [...board.querySelectorAll<HTMLElement>(".ch")];
+    let busy = false;
+    const spin = () => {
+      if (busy || motionStill() || document.hidden || !board.classList.contains("live")) return;
+      busy = true;
+      let left = flaps.length;
+      flaps.forEach((flap, k) => {
+        const own = flap.dataset.ch ?? "";
+        if (own.trim() === "" || own === String.fromCharCode(160)) return void (left -= 1);
+        let turns = 5 + k * 2;
+        const tick = () => {
+          flap.classList.remove("flip");
+          void flap.offsetWidth;
+          flap.classList.add("flip");
+          if (turns-- > 0 && !motionStill()) {
+            flap.textContent = ABC[Math.floor(Math.random() * ABC.length)]!;
+            window.setTimeout(tick, 70);
+          } else {
+            flap.textContent = own;
+            if (--left <= 0) busy = false;
+          }
+        };
+        window.setTimeout(tick, k * 40);
+      });
+      if (left <= 0) busy = false;
+    };
+    window.setInterval(spin, 4800);
+    board.addEventListener("click", spin);
+  }
+
+  // The chat's messages arrive in turn as it scrolls into view. Without the script, or with motion paused, they are
+  // simply there.
+  if (!motionStill()) {
+    for (const chat of document.querySelectorAll<HTMLElement>("[data-chat]")) {
+      chat.classList.add("dealing");
+      new IntersectionObserver(
+        (entries, observer) => {
+          if (!entries.some((entry) => entry.isIntersecting)) return;
+          chat.classList.add("in");
+          observer.disconnect();
+        },
+        { rootMargin: "0px 0px -15% 0px" },
+      ).observe(chat);
+    }
   }
 </script>
