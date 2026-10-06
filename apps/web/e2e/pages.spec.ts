@@ -99,7 +99,13 @@ test("AI story: the chip pauses it, and a step plays from that step", async ({ p
 test("my life: the toys answer (a rep, the 1% slider, the sound switch, a game of Pong)", async ({ page }) => {
   await page.goto("/en/my-life/");
   const reps = page.locator("[data-reps]");
-  await reps.getByRole("button", { name: "Pull-up" }).click();
+  const rep = reps.getByRole("button", { name: "Pull-up" });
+  await rep.click();
+  await expect(reps.locator("[data-n]")).toHaveText("1");
+  // A full set (8 pull-ups) cheers, and the next press starts the next set at once: no rest lock.
+  for (let i = 1; i < 8; i++) await rep.click();
+  await expect(reps.locator("[data-done]")).toContainText("Set done!");
+  await rep.click();
   await expect(reps.locator("[data-n]")).toHaveText("1");
   const range = page.locator("[data-better] input[type=range]");
   await range.fill("100");

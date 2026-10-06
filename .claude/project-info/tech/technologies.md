@@ -71,14 +71,14 @@ Template with every name: `apps/web/.env.example`. Values live in the Vercel pro
 
 | Name | Purpose | Where | Required |
 | --- | --- | --- | --- |
-| `PUBLIC_SITE_URL` | canonical origin; default `https://matmuszarski.space` (`seo.md` § Domain); review deploys use their own `VERCEL_URL` | host env | no |
+| `PUBLIC_SITE_URL` | canonical origin; default `https://matmuszarski.space` (`seo.md` § Domain); a production deploy uses `VERCEL_PROJECT_PRODUCTION_URL`, review deploys their own `VERCEL_URL` | host env | no |
 | `PUBLIC_TURNSTILE_SITE_KEY` / `TURNSTILE_SECRET_KEY` | contact bot check | host env | yes |
 | `RESEND_API_KEY` / `CONTACT_TO_EMAIL` / `CONTACT_FROM_EMAIL` | contact delivery (`CONTACT_FROM_EMAIL` on a domain verified in Resend); unset = the form answers "can't send right now, copy my email" | host env | yes |
 | `PUBLIC_UMAMI_WEBSITE_ID` | analytics; unset = no script | host env | no |
 | `PUBLIC_UMAMI_SCRIPT_URL` / `PUBLIC_UMAMI_COLLECT_ORIGIN` | overrides for the Umami script and collector (defaults: Umami Cloud); the CSP follows them | host env | no |
 | `PUBLIC_GOOGLE_SITE_VERIFICATION` | only if not verified by DNS | host env | no |
 | `INDEXNOW_KEY` | IndexNow pings after deploy (not wired yet: post-launch, `seo.md`) | host env | no |
-| `LAUNCH_BUILD` | true only for the production launch build; other builds are noindex | host env | yes |
+| `LAUNCH_BUILD` | true only when the owner calls the launch [owner 2026-10-06: "full prod when i say it is, regardless of whether deployed to domain"]; every other build, a production deploy on the domain included, is noindex | host env | yes |
 
 ## External services and limits
 

@@ -89,6 +89,11 @@ export function snare(ac: AudioContext, t = ac.currentTime) {
 }
 
 export const hat = (ac: AudioContext, t = ac.currentTime) => hiss(ac, t, 7000, 0.22, 0.05);
+/** A camera shutter: two quick clicks, the curtains opening and closing. */
+export function click(ac: AudioContext, t = ac.currentTime) {
+  hiss(ac, t, 2600, 0.4, 0.025);
+  hiss(ac, t + 0.07, 3400, 0.3, 0.03);
+}
 
 export function bass(ac: AudioContext, t = ac.currentTime, freq = 55) {
   const osc = ac.createOscillator();

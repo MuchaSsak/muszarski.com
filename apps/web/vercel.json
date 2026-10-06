@@ -3,17 +3,6 @@
   "trailingSlash": true,
   "redirects": [
     {
-      "source": "/:path*",
-      "has": [
-        {
-          "type": "host",
-          "value": "www.matmuszarski.space"
-        }
-      ],
-      "destination": "https://matmuszarski.space/:path*",
-      "permanent": true
-    },
-    {
       "source": "/",
       "destination": "/en/",
       "permanent": true

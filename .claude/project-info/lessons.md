@@ -8,6 +8,7 @@
 ## Rules
 
 ### The user's way of working
+- Deploying to the domain is not the launch: launch mode (indexable, placeholder gate) only on the owner's word (`LAUNCH_BUILD`) - 2026-10-06.
 - Practicality ≥ wow: impressive within 3 s AND usable in 1 click on mobile; immersive layers are opt-in, never a gate - 2026-10-05.
 - Research before designing a section: Mobbin, Awwwards (skill), the component registry, Playwright shots, Lighthouse, web research - 2026-10-05.
 - Prove the "product engineer" profile with evidence; never put the negative ("task executor", "klepacz", "not just a coder") in copy - 2026-10-05.
@@ -64,6 +65,7 @@
 - WebKit scrolls focus to where a stuck sticky chapter is drawn (under the next poster): `Chapters.astro` re-scrolls to the flow position; test focus in Firefox + WebKit (`bun run e2e:xb`) - 2026-10-06.
 - The owner works on two PCs: `git pull` first; on a merge take one side's `.po`, re-add the other side's changed msgids, `bun run i18n:extract`; regenerate PDFs, never merge them - 2026-10-06.
 - WebSearch has a budget shared by parallel agents; prefer WebFetch of known URLs, then Playwright - 2026-10-05.
+- Host redirects live in ONE place (Vercel → Domains): a www → apex rule in `vercel.json` against the dashboard's apex → www looped every font and script while the cached HTML still loaded (Arial titles overflowed) - 2026-10-06.
 - `.gitignore` must not ignore `*.txt` (it hid `robots.txt` and `llms.txt`) - 2026-10-05.
 - Routing: a generic phrase in one row outscores a project name; put shared task words in every row they apply to and re-run `wiki-context.mjs --test` - 2026-10-05.
 - The wiki is foldered; the hooks need README, log, lessons and working-agreement at the root; keep basenames unique - 2026-10-05.

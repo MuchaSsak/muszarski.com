@@ -7,7 +7,8 @@
  * - the playground: one toy per interest he named [user 2026-10-05], each something to do, not to watch: pull-ups to
  *   count, light to move (faith), a departures board, an engine to rev, a beat to make, a film to roll, Pong to play,
  *   a party to start, a slider for the 1 % idea. Sound is synthesised and only plays after a press; one switch mutes it.
- * - hang out: a yellow band, so it stands apart from the footer; the two chats arrive as messages (P5).
+ * - hang out: a yellow band, so it stands apart from the footer; his chats (Discord, Messenger, Telegram) arrive as
+ *   messages, Discord with the username to add.
  * Every toy works by keyboard and says what it is in text; paused or reduced motion keeps them usable and still.
  * AboutPage JSON-LD → the Person. Faith is his own decision to publish (compliance-and-data.md: GDPR art. 9(2)(e)); no
  * third persons on this page. PLACEHOLDER: the lines are drafts for the owner to rewrite in his voice (P6).
@@ -43,13 +44,13 @@ const links = chromeLinks(locale);
 const site = Astro.site ?? new URL("http://localhost:4321");
 const url = new URL(pathTo(locale, "my-life"), site).href;
 const title = t`My life`;
-const description = t`Mateusz Muszarski off the clock: calisthenics, faith, travel, motorcycles, films, music, games with friends and parties. And where to find him.`;
+const description = t`Mateusz Muszarski off the clock: calisthenics, faith, travel, photography, motorcycles, films, music, games with friends and parties. And where to find him.`;
 const tap = { label: t`Tap`, icon: "tb:hand-click" as IconName };
 const hold = { label: t`Hold`, icon: "tb:hand-click" as IconName };
 const play = { label: t`Play`, icon: "tb:device-gamepad-2" as IconName };
 const slide = { label: t`Slide`, icon: "tb:arrows-maximize" as IconName };
 const L = (text: string) => typo(locale, text);
-const SOCIAL_ICONS: Record<string, IconName> = { discord: "si:discord", messenger: "si:messenger" };
+const SOCIAL_ICONS: Record<string, IconName> = { discord: "si:discord", messenger: "si:messenger", telegram: "si:telegram" };
 ---
 
 <BaseLayout title={title} description={description} path="my-life" og="my-life">
@@ -139,7 +140,10 @@ const SOCIAL_ICONS: Record<string, IconName> = { discord: "si:discord", messenge
                 data-umami-event-target={social.id}
               >
                 <Icon name={SOCIAL_ICONS[social.id] ?? "tb:message-circle"} />
-                <span>{social.label}</span>
+                <span class="b-txt">
+                  {social.label}
+                  {social.handle && <small>{social.handle}</small>}
+                </span>
                 <Icon name="tb:arrow-up-right" class="b-go" />
                 <span class="sr-only"> {t`(opens in a new tab)`}</span>
               </a>
@@ -371,6 +375,22 @@ const SOCIAL_ICONS: Record<string, IconName> = { discord: "si:discord", messenge
   }
   .bubble.b-1 {
     background: var(--lime);
+  }
+  .bubble.b-2 {
+    background: var(--pink);
+  }
+  /* The name, and under it the handle to add by hand (Discord adds by username). */
+  .b-txt {
+    display: grid;
+    min-width: 0;
+  }
+  .b-txt small {
+    font-weight: 700;
+    font-size: 0.875rem;
+    font-stretch: 100%;
+    letter-spacing: 0.02em;
+    text-transform: none;
+    overflow-wrap: anywhere;
   }
   .bubble :global(.ico) {
     width: 1.75rem;

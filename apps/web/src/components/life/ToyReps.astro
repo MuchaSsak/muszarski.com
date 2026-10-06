@@ -222,7 +222,7 @@ const first = MOVES[0]!;
     const chips = [...root.querySelectorAll<HTMLButtonElement>("[data-move]")];
     let move = 0;
     let reps = 0;
-    let resting = false;
+    let hush = 0;
     let xp = 0;
     try {
       xp = Number(localStorage.getItem("life-xp")) || 0;
@@ -260,8 +260,20 @@ const first = MOVES[0]!;
         showSet();
       }),
     );
+    /** The cheer stays a moment; then a finished set empties its ring. A press before that starts the next set anyway. */
+    const cheer = (text: string) => {
+      done.textContent = text;
+      window.clearTimeout(hush);
+      hush = window.setTimeout(() => {
+        done.textContent = "";
+        if (reps < moves[move]!.set) return;
+        reps = 0;
+        showSet();
+      }, 1800);
+    };
     button.addEventListener("click", () => {
-      if (resting) return;
+      // No rest between sets: a press after a full set is the first rep of the next one.
+      if (reps >= moves[move]!.set) reps = 0;
       const before = levelOf(xp);
       reps += 1;
       xp += moves[move]!.xp;
@@ -281,17 +293,9 @@ const first = MOVES[0]!;
       const up = levelOf(xp) > before;
       if (up) restart(badge, "pop");
       if (!set && !up) return;
-      done.textContent = [set ? root.dataset.doneLabel : "", up ? root.dataset.upLabel : ""].filter(Boolean).join(" ");
+      cheer([set ? root.dataset.doneLabel : "", up ? root.dataset.upLabel : ""].filter(Boolean).join(" "));
       const box = button.getBoundingClientRect();
       confetti(up ? 140 : 80, { x: box.left + box.width / 2, y: box.top });
-      if (!set) return void window.setTimeout(() => (done.textContent = ""), 1800);
-      resting = true;
-      window.setTimeout(() => {
-        reps = 0;
-        resting = false;
-        done.textContent = "";
-        showSet();
-      }, 2000);
     });
   }
 </script>

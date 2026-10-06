@@ -28,11 +28,15 @@ export const PROFILES = [
   { id: "npm", label: "npm", handle: "muchassakkk", href: "https://www.npmjs.com/~muchassakkk" },
 ] as const;
 
-/** "Hang out" links on /my-life/ (content-model.md § Site facts `social`). */
+/**
+ * "Hang out" links on /my-life/ (content-model.md § Site facts `social`) [owner, 2026-10-06]. Discord opens his profile
+ * (with "Add friend" once signed in) and shows the username to add by hand; m.me opens the Messenger app on phones
+ * (it redirects to messenger.com/t/<id>, his Facebook profile).
+ */
 export const SOCIAL = [
-  // PLACEHOLDER (P5): the owner sends his Discord and Messenger links (open-questions Q11).
-  { id: "discord", label: "Discord", href: "https://discord.example/mateusz-muszarski", placeholder: true },
-  { id: "messenger", label: "Messenger", href: "https://messenger.example/mateusz-muszarski", placeholder: true },
+  { id: "discord", label: "Discord", handle: "muchassak", href: "https://discord.com/users/440900720334602242" },
+  { id: "messenger", label: "Messenger", handle: undefined, href: "https://m.me/100072259775217" },
+  { id: "telegram", label: "Telegram", handle: "@MateuszMuszarski", href: "https://t.me/MateuszMuszarski" },
 ] as const;
 
 /** Public links of the work shown on the site (content/projects/*.md § Facts). */

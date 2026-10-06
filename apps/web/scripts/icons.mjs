@@ -48,6 +48,7 @@ const BRANDS = [
   "shadcnui",
   "supabase",
   "tailwindcss",
+  "telegram",
   "threedotjs",
   "turborepo",
   "typescript",

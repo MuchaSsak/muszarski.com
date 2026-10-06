@@ -1,0 +1,294 @@
+---
+/**
+ * Photography: take a picture [owner 2026-10-06: "one of my hobbies is amateur photography too"]. A viewfinder over a
+ * drawn golden-hour lake (own work), out of focus until the focus ring finds the sharp point; the brackets lock when it
+ * does. Shoot: the shutter snaps (a short curtain, at most ~2 a second, WCAG 2.3.1), and a print develops in the
+ * tray, sharp or as blurry as it was shot. Each shot reframes the view and moves the sharp point. With paused motion
+ * the print is simply there.
+ */
+import { t } from "lingui-for-astro/macro";
+
+import Icon from "~/components/ui/Icon.astro";
+
+const SAYS = { sharp: t`Sharp!`, soft: t`A bit soft.`, blurry: t`Blurry. Art, though.` };
+---
+
+<div class="photo" data-photo data-says={JSON.stringify(SAYS)} data-print-label={t`Photo`}>
+  <div class="ph-view" aria-hidden="true">
+    <div class="ph-scene" data-scene>
+      <svg class="ph-svg" viewBox="0 0 160 120" preserveAspectRatio="xMidYMid slice">
+        <defs>
+          <linearGradient id="ph-sky" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#2433ff"></stop>
+            <stop offset=".5" stop-color="#ff4fb8"></stop>
+            <stop offset="1" stop-color="#ffd23f"></stop>
+          </linearGradient>
+          <linearGradient id="ph-lake" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#ff8a5a"></stop>
+            <stop offset=".45" stop-color="#9a3f9a"></stop>
+            <stop offset="1" stop-color="#1a24b8"></stop>
+          </linearGradient>
+        </defs>
+        <rect width="160" height="76" fill="url(#ph-sky)"></rect>
+        <circle cx="108" cy="64" r="13" fill="#fff6c4"></circle>
+        <path d="M0 62L18 46L30 54L48 38L66 56L80 48L96 60L112 44L128 56L144 42L160 52V76H0Z" fill="#8a5cc2" opacity=".75"></path>
+        <path d="M0 70L22 56L40 66L58 52L78 68L100 58L120 70L140 60L160 68V76H0Z" fill="#3a2a7a"></path>
+        <rect y="75" width="160" height="45" fill="url(#ph-lake)"></rect>
+        <path d="M96 79h24M100 84h16M103 89h10M98 95h20M105 101h6" stroke="#fff6c4" stroke-width="1.6" stroke-linecap="round" opacity=".8"></path>
+        <path d="M0 75H160" stroke="#0a0d33" stroke-width="1.4"></path>
+        <path d="M0 120V70L6 58L12 70L16 52L22 70L26 60L31 76L38 74L46 80L58 84L70 92L64 120Z" fill="#0a0d33"></path>
+        <path d="M160 120V82L150 66L144 80L138 70L132 84L118 96L112 120Z" fill="#0a0d33"></path>
+        <path d="M44 26q2-2 4 0q2-2 4 0M58 20q1.5-1.5 3 0q1.5-1.5 3 0M36 32q1.5-1.5 3 0q1.5-1.5 3 0" fill="none" stroke="#0a0d33" stroke-width=".9" stroke-linecap="round"></path>
+      </svg>
+    </div>
+    <span class="ph-thirds"></span>
+    <span class="ph-mark" data-mark></span>
+    <span class="ph-info tabular">f/2.8 · 1/250 · ISO 100</span>
+    <span class="ph-shut" data-shut></span>
+  </div>
+  <label class="ph-ring">
+    <span>{t`Focus`}</span>
+    <input type="range" min="0" max="100" value="20" data-focus />
+  </label>
+  <div class="ph-row">
+    <button class="toy-btn ph-btn" type="button" data-shoot>
+      <Icon name="tb:camera" />
+      {t`Shoot`}
+    </button>
+    <ol class="ph-prints" role="list" data-prints></ol>
+  </div>
+  <p class="ph-say" role="status" data-said></p>
+</div>
+
+<style>
+  .photo {
+    display: grid;
+    gap: 0.75rem;
+  }
+  .ph-view {
+    position: relative;
+    aspect-ratio: 4 / 3;
+    overflow: hidden;
+    background: var(--navy);
+    box-shadow:
+      inset 0 0 0 0.5rem var(--navy),
+      5px 5px 0 rgb(10 13 51 / 0.35);
+  }
+  .ph-scene {
+    position: absolute;
+    inset: 0.5rem;
+    overflow: hidden;
+  }
+  /* Out of focus by the ring's distance from the sharp point (--blur); each shot reframes (--x, --z). */
+  .ph-svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+    filter: blur(var(--blur, 4px));
+    transform: translateX(var(--x, 0%)) scale(var(--z, 1.12));
+    transition:
+      filter 0.15s,
+      transform 0.6s var(--ease-out);
+  }
+  .ph-thirds {
+    position: absolute;
+    inset: 0.5rem;
+    background:
+      linear-gradient(rgb(238 240 255 / 0.35), rgb(238 240 255 / 0.35)) 33.333% 0 / 1px 100% no-repeat,
+      linear-gradient(rgb(238 240 255 / 0.35), rgb(238 240 255 / 0.35)) 66.666% 0 / 1px 100% no-repeat,
+      linear-gradient(rgb(238 240 255 / 0.35), rgb(238 240 255 / 0.35)) 0 33.333% / 100% 1px no-repeat,
+      linear-gradient(rgb(238 240 255 / 0.35), rgb(238 240 255 / 0.35)) 0 66.666% / 100% 1px no-repeat;
+  }
+  /* The focus brackets: white while hunting, lime once locked. */
+  .ph-mark {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 26%;
+    aspect-ratio: 4 / 3;
+    translate: -50% -50%;
+    --c: var(--ice);
+    background:
+      linear-gradient(var(--c), var(--c)) 0 0 / 22% 2px no-repeat,
+      linear-gradient(var(--c), var(--c)) 0 0 / 2px 30% no-repeat,
+      linear-gradient(var(--c), var(--c)) 100% 0 / 22% 2px no-repeat,
+      linear-gradient(var(--c), var(--c)) 100% 0 / 2px 30% no-repeat,
+      linear-gradient(var(--c), var(--c)) 0 100% / 22% 2px no-repeat,
+      linear-gradient(var(--c), var(--c)) 0 100% / 2px 30% no-repeat,
+      linear-gradient(var(--c), var(--c)) 100% 100% / 22% 2px no-repeat,
+      linear-gradient(var(--c), var(--c)) 100% 100% / 2px 30% no-repeat;
+    transition: scale 0.25s var(--ease-pop);
+  }
+  .ph-mark.lock {
+    --c: var(--lime);
+    scale: 0.88;
+  }
+  .ph-info {
+    position: absolute;
+    right: 0.5rem;
+    bottom: 0.5rem;
+    left: 0.5rem;
+    padding: 0.25rem 0.5rem;
+    background: rgb(10 13 51 / 0.6);
+    color: var(--ice);
+    font-weight: 800;
+    font-size: 0.6875rem;
+    letter-spacing: 0.08em;
+  }
+  /* The shutter: two navy curtains meet and part. */
+  .ph-shut {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background:
+      linear-gradient(var(--navy), var(--navy)) 0 0 / 100% 50% no-repeat,
+      linear-gradient(var(--navy), var(--navy)) 0 100% / 100% 50% no-repeat;
+    scale: 1 0;
+  }
+  .ph-shut.snap {
+    animation: pt-snap 0.22s ease-in-out;
+  }
+  @keyframes pt-snap {
+    50% {
+      scale: 1 1;
+    }
+  }
+  .ph-ring {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: center;
+    gap: 0.75rem;
+    font-weight: 800;
+    font-size: 0.75rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .ph-ring input {
+    width: 100%;
+    accent-color: var(--navy);
+  }
+  .ph-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem 1rem;
+  }
+  .ph-prints {
+    display: flex;
+    gap: 0.375rem;
+    min-height: 3.75rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  /* A print: white border, thicker at the bottom; it develops from blank to the picture. */
+  .ph-print {
+    width: 3.5rem;
+    padding: 0.1875rem 0.1875rem 0.625rem;
+    background: #fbfaf5;
+    box-shadow: 2px 2px 0 rgb(10 13 51 / 0.35);
+    rotate: var(--r, 0deg);
+  }
+  .ph-print > :global(.ph-svg) {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 4 / 3;
+    transition: none;
+  }
+  .ph-print.dev > :global(.ph-svg) {
+    animation: pt-dev 1.6s ease-out both;
+  }
+  .ph-print.dev {
+    animation: pt-out 0.45s var(--ease-pop) both;
+  }
+  @keyframes pt-dev {
+    from {
+      opacity: 0.08;
+      filter: var(--f) sepia(1) brightness(1.6);
+    }
+  }
+  @keyframes pt-out {
+    from {
+      translate: 0 -0.75rem;
+      opacity: 0;
+    }
+  }
+  .ph-say {
+    min-height: 1.25em;
+    margin: 0;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  :global(.still) :is(.ph-shut.snap, .ph-print.dev, .ph-print.dev > :global(.ph-svg)) {
+    animation: none;
+  }
+</style>
+
+<script>
+  import { audio, blip, click } from "~/scripts/life-audio";
+  import { motionStill } from "~/scripts/motion";
+
+  /** Blur (px) per point of focus-ring distance from the sharp point; in focus within LOCK points. */
+  const SOFTNESS = 6;
+  const LOCK = 4;
+  const PRINTS = 3;
+  for (const root of document.querySelectorAll<HTMLElement>("[data-photo]")) {
+    const svg = root.querySelector<SVGSVGElement>(".ph-svg")!;
+    const mark = root.querySelector<HTMLElement>("[data-mark]")!;
+    const shut = root.querySelector<HTMLElement>("[data-shut]")!;
+    const ring = root.querySelector<HTMLInputElement>("[data-focus]")!;
+    const prints = root.querySelector<HTMLElement>("[data-prints]")!;
+    const said = root.querySelector<HTMLElement>("[data-said]")!;
+    const says: Record<"sharp" | "soft" | "blurry", string> = JSON.parse(root.dataset.says ?? "{}");
+    let sharpAt = 62;
+    let locked = false;
+    let last = 0;
+    const blurOf = () => Math.abs(Number(ring.value) - sharpAt) / SOFTNESS;
+    const focus = () => {
+      const blur = blurOf();
+      svg.style.setProperty("--blur", `${Math.min(blur, 6).toFixed(2)}px`);
+      const now = blur <= LOCK / SOFTNESS;
+      mark.classList.toggle("lock", now);
+      if (now && !locked) {
+        const ac = audio();
+        if (ac) blip(ac, 1320);
+      }
+      locked = now;
+    };
+    focus();
+    ring.addEventListener("input", focus);
+    root.querySelector("[data-shoot]")!.addEventListener("click", () => {
+      // A shutter, not a strobe: at most one snap every 0.45 s.
+      const now = performance.now();
+      if (now - last < 450) return;
+      last = now;
+      const ac = audio();
+      if (ac) click(ac);
+      const still = motionStill();
+      if (!still) {
+        shut.classList.remove("snap");
+        void shut.offsetWidth;
+        shut.classList.add("snap");
+      }
+      const blur = blurOf();
+      const print = document.createElement("li");
+      print.className = still ? "ph-print" : "ph-print dev";
+      print.style.setProperty("--r", `${(Math.random() * 10 - 5).toFixed(1)}deg`);
+      const copy = svg.cloneNode(true) as SVGSVGElement;
+      copy.setAttribute("role", "img");
+      copy.setAttribute("aria-label", root.dataset.printLabel ?? "");
+      copy.style.setProperty("--f", `blur(${(Math.min(blur, 6) / 4).toFixed(2)}px)`);
+      copy.style.filter = "var(--f)";
+      print.append(copy);
+      prints.prepend(print);
+      while (prints.children.length > PRINTS) prints.lastElementChild!.remove();
+      said.textContent = blur <= LOCK / SOFTNESS ? says.sharp : blur < 3 ? says.soft : says.blurry;
+      // The next frame: a new view and a new sharp point to find.
+      sharpAt = 25 + Math.round(Math.random() * 60);
+      svg.style.setProperty("--x", `${(Math.random() * 16 - 8).toFixed(1)}%`);
+      svg.style.setProperty("--z", (1.08 + Math.random() * 0.22).toFixed(2));
+      focus();
+    });
+  }
+</script>

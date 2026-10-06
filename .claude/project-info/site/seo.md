@@ -140,6 +140,9 @@ Every post links one case study and one pillar.
 - **Decided for now [user] 2026-10-05:** the new site launches on **`matmuszarski.space`**. The old space site moved to
   `3d-space-folio.vercel.app`, so the domain's indexed content gets replaced, not redirected (the old site was one URL).
   Renew it before it expires (2027-03-17). A name domain stays an option; if it comes, the migration below applies.
+- **Deployed, not launched [owner] 2026-10-06:** the site runs on the domain as a noindex build until the owner calls the
+  launch (`LAUNCH_BUILD`). The www/apex redirect lives only in Vercel → Domains (the apex should be primary, www → apex);
+  `vercel.json` has no host redirect (one there plus the dashboard's apex → www looped every font and script).
 
 - **All candidates are unregistered (2026-10-05):** mateuszmuszarski .com/.pl/.dev/.me, muszarski .com/.pl/.dev,
   matmuszarski .com/.dev/.pl.
