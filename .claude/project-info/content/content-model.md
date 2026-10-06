@@ -63,6 +63,11 @@ verifyUrl?, skills[], summary, image? }`.
 - Data: `apps/web/src/data/cv.ts` `credentials`. The Jonas Schmedtmann (Udemy) entry is titled "Full-stack development
   courses" (pl "Kursy programowania full-stack", es "Cursos de desarrollo full-stack"), not "JavaScript and React
   courses" [user 2026-10-06]; the summary still names JavaScript and React. PDFs regenerated with the rename.
+- `items[]` on a credential = its certificates `{ title (as printed), when, href?, code? }` [owner's certificates
+  2026-10-06]. Home shows them as tickets with a "Verify" link (44 px) and the code; the CV page lists them with
+  links; the PDF prints one run-on line per card (title, date, code) and drops that card's summary to stay at two
+  pages. Udemy links use `udemy.com/certificate/<UC-id>/` (Udemy answers bots 403, so not fetch-checked); Youthpass
+  links go to the public check page plus the code. The Youthpass PDFs print personal data: never publish them.
 
 ## Skill
 

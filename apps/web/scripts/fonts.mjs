@@ -33,13 +33,15 @@ const GF = "https://raw.githubusercontent.com/google/fonts/main/ofl";
 
 const range = (from, to) => Array.from({ length: to - from + 1 }, (_, i) => String.fromCodePoint(from + i)).join("");
 const POLISH = "ĄąĆćĘęŁłŃńÓóŚśŹźŻż";
+// Latvian and Lithuanian place names on the credentials (Saraiķi, Daugirdiškės) [owner's certificates 2026-10-06].
+const BALTIC = "ĖėĶķŠš";
 // En and em dash, quotes („ ” ‘ ’), bullet, ellipsis, angle quotes, euro, arrows (← ↑ → ↓ ↗ ↘), minus, primes,
 // thin spaces, superscript five (Polish article numbers such as art. 385⁵).
 const PUNCT =
   "\u2013\u2014\u2018\u2019\u201A\u201C\u201D\u201E\u2022\u2026\u2039\u203A\u20AC\u2190\u2191\u2192\u2193\u2197\u2198\u2212\u2032\u2033\u2009\u202F\u2075";
-const TEXT = range(0x20, 0x7e) + range(0xa0, 0xff) + POLISH + PUNCT;
+const TEXT = range(0x20, 0x7e) + range(0xa0, 0xff) + POLISH + BALTIC + PUNCT;
 const UNICODE_RANGE =
-  "U+0020-007E, U+00A0-00FF, U+0104-0107, U+0118-0119, U+0141-0144, U+015A-015B, U+0179-017C, U+2009, U+2013-2014, U+2018-201E, U+2022, U+2026, U+2032-2033, U+2039-203A, U+202F, U+20AC, U+2190-2193, U+2197-2198, U+2212, U+2075";
+  "U+0020-007E, U+00A0-00FF, U+0104-0107, U+0116-0119, U+0136-0137, U+0141-0144, U+015A-015B, U+0160-0161, U+0179-017C, U+2009, U+2013-2014, U+2018-201E, U+2022, U+2026, U+2032-2033, U+2039-203A, U+202F, U+20AC, U+2190-2193, U+2197-2198, U+2212, U+2075";
 // Layout features the copy needs; tnum/lnum for dates and metrics, case for all-caps labels.
 const FEATURES = ["kern", "liga", "clig", "calt", "ccmp", "locl", "mark", "mkmk", "rlig", "tnum", "lnum", "case"];
 const SAMPLE = "Full-stack product engineer. Buduję produkty od pomysłu do wdrożenia. Ingeniero de producto 0123456789";

@@ -14,7 +14,7 @@
 | 7 | Photos of the owner (my-life, Person image, maybe hero) | F13, schema image, OG | owner | my-life + schema only; the hero uses a drawing | open |
 | 8 | Locale URL segments `/en/` or pstryk-style `/eng/`? | routing, hreflang | owner | `/en/` | answered 2026-10-05: `/en/` |
 | 9 | Instructor photos: ask Jonas Schmedtmann / Bruno Simon for written permission? | credentials band | owner | names + course titles + certificate links only | default per legal research: text credit + certificate links (no photos without written permission) |
-| 10 | Credentials data: INF.02/.03/.04 dates; course certificates + verify URLs; Erasmus+/ESC (programme, country, dates, role); hackathons (name, date, result, team); short courses | F08, CV | owner | placeholders | open |
+| 10 | Credentials data: **partly answered 2026-10-06** (9 certificates: Udemy x4, Three.js Journey, Youthpass x3, Product Challenge 2026, now in `cv.ts`). Still open: INF.02/.03/.04 dates and results; ESC volunteering details; two Udemy certificates print the holder as "MuchaSsak" (fine, or reissue?). Was: INF.02/.03/.04 dates; course certificates + verify URLs; Erasmus+/ESC (programme, country, dates, role); hackathons (name, date, result, team); short courses | F08, CV | owner | placeholders | open |
 | 11 | Contact facts: public email, LinkedIn, Discord, Messenger, npm/dev.to/X profiles | contact, footer, `sameAs` | owner | GitHub only until given | open |
 | 12 | Booking link (Cal.com) in contact? | F09 | owner | no (fewer third parties) | open |
 | 13 | Make the portfolio repo public (the wiki, skills and hooks become AI-workflow proof)? The scrub must remove PstrykWeb internals (dossier + research file) | F07, F23 | owner | public at launch after a scrub | open |

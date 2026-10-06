@@ -2,8 +2,8 @@
 export const FONT_FILES = [
   {
     "id": "anybody",
-    "href": "/fonts/anybody.53b16f9b.woff2",
-    "bytes": 51092,
+    "href": "/fonts/anybody.856d252e.woff2",
+    "bytes": 51564,
     "preload": true
   }
 ] as const;

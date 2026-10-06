@@ -36,8 +36,23 @@ export interface Credential {
   summary: Text;
   when: Text;
   verifyUrl?: string | undefined;
+  /** The certificates behind a card, each with its own proof: a verify link, a code to check, or both. */
+  items?: CertItem[] | undefined;
   placeholder?: boolean;
 }
+
+export interface CertItem {
+  /** The title as printed on the certificate (not translated). */
+  title: string;
+  /** Date and length, or date and place. */
+  when: Text;
+  href?: string | undefined;
+  /** A credential ID or verification code, as printed. */
+  code?: string | undefined;
+}
+
+const UDEMY = (id: string) => ({ href: `https://www.udemy.com/certificate/${id}/`, code: id });
+const YOUTHPASS = (code: string) => ({ href: "https://www.youthpass.eu/en/verify/", code: `Youthpass ${code}` });
 
 const same = (value: string): Text => ({ en: value, pl: value, es: value });
 
@@ -311,10 +326,9 @@ export const CV = {
         pl: "WebGL, shadery i 3D w przeglądarce. Na tym kursie zbudowałem swoje kosmiczne portfolio.",
         es: "WebGL, shaders y 3D en la web. Mi portfolio espacial está hecho con lo que enseña.",
       },
-      when: same("2025"),
-      // PLACEHOLDER (P11): the certificate URL.
-      verifyUrl: "https://threejs-journey.example/certificate",
-      placeholder: true,
+      // Certificate dated 30 Jan 2025 [owner's certificate, 2026-10-06].
+      when: { en: "January 2025", pl: "Styczeń 2025", es: "Enero 2025" },
+      verifyUrl: "https://threejs-journey.com/certificate/view/45175",
     },
     {
       id: "jonas",
@@ -331,14 +345,24 @@ export const CV = {
         es: "Cursos de Jonas Schmedtmann, Udemy",
       },
       summary: {
-        en: "JavaScript and React from the fundamentals up. Course certificates, not an accredited qualification.",
-        pl: "JavaScript i React od podstaw. Certyfikaty ukończenia kursu, nie akredytowana kwalifikacja.",
-        es: "JavaScript y React desde los fundamentos. Certificados de curso, no una titulación acreditada.",
+        en: "JavaScript and React from the fundamentals up, about 135 hours of video. Course certificates, not an accredited qualification.",
+        pl: "JavaScript i React od podstaw, około 135 godzin nagrań. Certyfikaty ukończenia kursu, nie akredytowana kwalifikacja.",
+        es: "JavaScript y React desde los fundamentos, unas 135 horas de vídeo. Certificados de curso, no una titulación acreditada.",
       },
-      // PLACEHOLDER (P11): course titles, dates and certificate links.
-      when: same("2022"),
-      verifyUrl: "https://udemy.example/certificates",
-      placeholder: true,
+      when: same("2023"),
+      // From the owner's certificates [2026-10-06]; titles as printed.
+      items: [
+        {
+          title: "The Complete JavaScript Course 2023: From Zero to Expert!",
+          when: { en: "Sep 2023 · 68.5 h", pl: "Wrz 2023 · 68,5 h", es: "Sep 2023 · 68,5 h" },
+          ...UDEMY("UC-8c6e4b4f-2f3f-4c3e-9773-8b2b2f9ee1a7"),
+        },
+        {
+          title: "The Ultimate React Course 2024: React, Redux & More",
+          when: { en: "Dec 2023 · 67 h", pl: "Gru 2023 · 67 h", es: "Dic 2023 · 67 h" },
+          ...UDEMY("UC-f3d532a0-be9d-43e9-b822-0f511752b87c"),
+        },
+      ],
     },
     {
       id: "erasmus",
@@ -355,13 +379,38 @@ export const CV = {
         es: "Intercambios juveniles y voluntariado",
       },
       summary: {
-        en: "Youth exchanges and volunteering with people from other countries, in English.",
-        pl: "Wymiany młodzieżowe i wolontariat z ludźmi z innych krajów, po angielsku.",
-        es: "Intercambios juveniles y voluntariado con gente de otros países, en inglés.",
+        en: "A training course, a study visit and a youth exchange in Latvia and Lithuania, with people from other countries, in English. Each one has a Youthpass.",
+        pl: "Szkolenie, wizyta studyjna i wymiana młodzieżowa na Łotwie i Litwie, z ludźmi z innych krajów, po angielsku. Każde ma Youthpass.",
+        es: "Un curso de formación, una visita de estudio y un intercambio juvenil en Letonia y Lituania, con gente de otros países, en inglés. Cada uno tiene su Youthpass.",
       },
-      // PLACEHOLDER (P11): programmes, countries, dates, Youthpass.
-      when: { en: "Dates to confirm", pl: "Daty do potwierdzenia", es: "Fechas por confirmar" },
-      placeholder: true,
+      when: same("2025"),
+      // From the owner's Youthpass certificates [2026-10-06]. The PDFs print personal data: never publish them, link
+      // the Youthpass check and the code instead.
+      items: [
+        {
+          title: "Digital Youth Work Methods",
+          when: {
+            en: "Apr-May 2025 · Saraiķi, Latvia",
+            pl: "Kwi-maj 2025 · Saraiķi, Łotwa",
+            es: "Abr-may 2025 · Saraiķi, Letonia",
+          },
+          ...YOUTHPASS("EKGX-9QF3-9D1R-NCVU"),
+        },
+        {
+          title: "Developing Infrastructure to Work with Youth",
+          when: {
+            en: "May 2025 · Daugirdiškės, Lithuania",
+            pl: "Maj 2025 · Daugirdiškės, Litwa",
+            es: "May 2025 · Daugirdiškės, Lituania",
+          },
+          ...YOUTHPASS("ZCY6-LYHV-Y2WF-U5VD"),
+        },
+        {
+          title: "Youth Entrepreneurship 2025",
+          when: { en: "Jun 2025 · Palanga, Lithuania", pl: "Cze 2025 · Palanga, Litwa", es: "Jun 2025 · Palanga, Lituania" },
+          ...YOUTHPASS("E5WH-X1BC-UXR9-YSXD"),
+        },
+      ],
     },
     {
       id: "hackathons",
@@ -374,9 +423,18 @@ export const CV = {
         pl: "Trudny problem, zespół i zegar.",
         es: "Un problema difícil, un equipo y un reloj.",
       },
-      // PLACEHOLDER (P11): names, dates, results, team size.
-      when: { en: "Dates to confirm", pl: "Daty do potwierdzenia", es: "Fechas por confirmar" },
-      placeholder: true,
+      when: same("2026"),
+      // From the owner's certificate of participation [2026-10-06].
+      items: [
+        {
+          title: "Product Challenge 2026: Vibe the Future",
+          when: {
+            en: "May 2026 · Rzeszów · Cetus Pro, LOTAMS, University of Rzeszów",
+            pl: "Maj 2026 · Rzeszów · Cetus Pro, LOTAMS, Uniwersytet Rzeszowski",
+            es: "May 2026 · Rzeszów · Cetus Pro, LOTAMS, Universidad de Rzeszów",
+          },
+        },
+      ],
     },
     {
       id: "short-courses",
@@ -387,15 +445,26 @@ export const CV = {
         pl: "Marketing, psychologia i UX",
         es: "Marketing, psicología y UX",
       },
-      issuer: { en: "Short courses", pl: "Krótkie kursy", es: "Cursos breves" },
+      issuer: { en: "Short courses, Udemy", pl: "Krótkie kursy, Udemy", es: "Cursos breves, Udemy" },
       summary: {
         en: "Short courses on how people decide, buy and use products.",
         pl: "Krótkie kursy o tym, jak ludzie decydują, kupują i korzystają z produktów.",
         es: "Cursos breves sobre cómo la gente decide, compra y usa productos.",
       },
-      // PLACEHOLDER (P11): course names and dates.
-      when: { en: "Dates to confirm", pl: "Daty do potwierdzenia", es: "Fechas por confirmar" },
-      placeholder: true,
+      when: same("2025"),
+      // From the owner's certificates [2026-10-06]; titles as printed.
+      items: [
+        {
+          title: "Marketing Psychology and Consumer Behavior",
+          when: { en: "Sep 2025 · 4 h", pl: "Wrz 2025 · 4 h", es: "Sep 2025 · 4 h" },
+          ...UDEMY("UC-69a3d782-44a9-4e70-8502-92f4f87d39de"),
+        },
+        {
+          title: "UX Writing: Microcopy, User Research, Accessibility & More",
+          when: { en: "Sep 2025 · 7.5 h", pl: "Wrz 2025 · 7,5 h", es: "Sep 2025 · 7,5 h" },
+          ...UDEMY("UC-ccd766df-76e3-4c9d-8339-c87eabe681de"),
+        },
+      ],
     },
   ] satisfies Credential[],
 

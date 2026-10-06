@@ -17,9 +17,10 @@ msgstr ""
 #: src/components/home/chapters/ChapterSpace.astro:83
 #: src/components/home/chapters/ChapterSpace.astro:109
 #: src/components/home/chapters/ChapterSpace.astro:131
-#: src/components/home/Contact.astro:144
-#: src/components/home/Contact.astro:149
-#: src/components/home/Credentials.astro:149
+#: src/components/home/Contact.astro:187
+#: src/components/home/Contact.astro:201
+#: src/components/home/Credentials.astro:136
+#: src/components/home/Credentials.astro:163
 #: src/components/layout/SiteFooter.astro:37
 #: src/pages/[locale]/blog/[slug].astro:163
 #: src/pages/[locale]/my-life/index.astro:152
@@ -31,7 +32,7 @@ msgstr ""
 msgid "(opens in a new tab)"
 msgstr "(se abre en una pestaña nueva)"
 
-#: src/components/home/Contact.astro:75
+#: src/components/home/Contact.astro:91
 msgid "(optional)"
 msgstr "(opcional)"
 
@@ -43,7 +44,7 @@ msgstr "(PDF y luego la página del CV)"
 msgid "{count, plural, one {# project} other {# projects}}"
 msgstr "{count, plural, one {# proyecto} other {# proyectos}}"
 
-#: src/components/blog/PostCard.astro:57
+#: src/components/blog/PostCard.astro:56
 #: src/pages/[locale]/blog/[slug].astro:121
 msgid "{minutes} min read"
 msgstr "{minutes} min de lectura"
@@ -92,7 +93,7 @@ msgstr "Una web 3D para una ONG de Luxemburgo que da vivienda a jóvenes."
 msgid "A bit soft."
 msgstr "Un poco desenfocada."
 
-#: src/components/life/ToyFilm.astro:24
+#: src/components/life/ToyFilm.astro:25
 msgid "A car, 88 miles per hour, and 1955."
 msgstr "Un coche, 88 millas por hora y 1955."
 
@@ -100,7 +101,7 @@ msgstr "Un coche, 88 millas por hora y 1955."
 msgid "A demo timer that counts up."
 msgstr "Un cronómetro de demostración que avanza."
 
-#: src/components/life/ToyFilm.astro:22
+#: src/components/life/ToyFilm.astro:23
 msgid "A dream inside a dream inside a dream."
 msgstr "Un sueño dentro de un sueño dentro de un sueño."
 
@@ -108,7 +109,7 @@ msgstr "Un sueño dentro de un sueño dentro de un sueño."
 msgid "A good film night is hard to beat."
 msgstr "Una buena noche de peli es difícil de superar."
 
-#: src/components/home/Contact.astro:76
+#: src/components/home/Contact.astro:95
 msgid "A job"
 msgstr "Un empleo"
 
@@ -124,11 +125,11 @@ msgstr "Un mes. Ya se nota."
 msgid "A portfolio you fly through: Earth to Neptune in 12 camera stops."
 msgstr "Un portfolio que recorres volando: de la Tierra a Neptuno en 12 paradas de cámara."
 
-#: src/components/home/Contact.astro:77
+#: src/components/home/Contact.astro:99
 msgid "A project"
 msgstr "Un proyecto"
 
-#: src/components/home/Contact.astro:78
+#: src/components/home/Contact.astro:103
 msgid "A question"
 msgstr "Una pregunta"
 
@@ -136,11 +137,11 @@ msgstr "Una pregunta"
 msgid "A role-based time tracker, built with AI agents under a deadline."
 msgstr "Una herramienta de control horario por roles, hecha con agentes de IA y con un plazo de entrega."
 
-#: src/components/home/Contact.astro:48
+#: src/components/home/Contact.astro:52
 msgid "A role, a project or a question. One line is fine."
 msgstr "Un puesto, un proyecto o una pregunta. Basta con una línea."
 
-#: src/components/life/ToyFilm.astro:21
+#: src/components/life/ToyFilm.astro:22
 msgid "A shark, a beach, and a boat that's too small."
 msgstr "Un tiburón, una playa y un barco demasiado pequeño."
 
@@ -152,7 +153,7 @@ msgstr "De la A a la Z"
 msgid "A whole year!"
 msgstr "¡Un año entero!"
 
-#: src/components/home/Contact.astro:75
+#: src/components/home/Contact.astro:91
 msgid "About"
 msgstr "Tema"
 
@@ -180,11 +181,11 @@ msgstr "cuenta"
 msgid "action"
 msgstr "acción"
 
-#: src/components/life/ToyFilm.astro:25
+#: src/components/life/ToyFilm.astro:26
 msgid "Action"
 msgstr "Acción"
 
-#: src/components/life/ToyFilm.astro:18
+#: src/components/life/ToyFilm.astro:19
 msgid "Adventure"
 msgstr "Aventura"
 
@@ -238,7 +239,7 @@ msgstr "Un encargo de prácticas de Neoteric, una software house polaca: un cont
 msgid "analytics"
 msgstr "analítica"
 
-#: src/components/life/ToyFilm.astro:23
+#: src/components/life/ToyFilm.astro:24
 msgid "Animation"
 msgstr "Animación"
 
@@ -254,7 +255,7 @@ msgstr "App Store y Google Play"
 msgid "approved"
 msgstr "aprobado"
 
-#: src/components/blog/PostCard.astro:55
+#: src/components/blog/PostCard.astro:54
 msgid "Article"
 msgstr "Artículo"
 
@@ -346,7 +347,7 @@ msgstr "Encargo"
 msgid "bring data"
 msgstr "traen datos"
 
-#: src/components/life/ToyFilm.astro:18
+#: src/components/life/ToyFilm.astro:19
 msgid "Bringing dinosaurs back was a bad idea."
 msgstr "Revivir dinosaurios fue mala idea."
 
@@ -372,7 +373,7 @@ msgstr "construye"
 msgid "Built with"
 msgstr "Hecho con"
 
-#: src/components/home/Credentials.astro:119
+#: src/components/home/Credentials.astro:113
 msgid "Built with it: my space portfolio"
 msgstr "Hecho con este curso: mi portfolio espacial"
 
@@ -404,25 +405,18 @@ msgstr "No encuentro el precio."
 msgid "Case studies"
 msgstr "Casos de estudio"
 
-#: src/components/blog/PostCard.astro:49
-#: src/components/blog/PostCard.astro:55
+#: src/components/blog/PostCard.astro:48
+#: src/components/blog/PostCard.astro:54
 #: src/components/blog/TagLabel.astro:15
 #: src/pages/[locale]/blog/[slug].astro:94
 #: src/pages/[locale]/work/index.astro:122
 msgid "Case study"
 msgstr "Caso de estudio"
 
-#: src/components/home/Credentials.astro:147
+#: src/components/cv/CvBody.astro:153
+#: src/components/home/Credentials.astro:161
 msgid "Certificate"
 msgstr "Certificado"
-
-#: src/components/home/Credentials.astro:49
-msgid "Certificate image soon"
-msgstr "Imagen del certificado próximamente"
-
-#: src/components/home/Credentials.astro:52
-msgid "Certificate images soon"
-msgstr "Imágenes de certificados próximamente"
 
 #: src/pages/[locale]/work/index.astro:116
 msgid "Chapter"
@@ -487,7 +481,7 @@ msgstr "Código privado · demo guiada a petición"
 msgid "code review"
 msgstr "revisión de código"
 
-#: src/components/life/ToyFilm.astro:24
+#: src/components/life/ToyFilm.astro:25
 msgid "Comedy"
 msgstr "Comedia"
 
@@ -499,8 +493,8 @@ msgstr "Comercial"
 msgid "Commercial · Cetuspro · 2026"
 msgstr "Comercial · Cetuspro · 2026"
 
-#: src/components/home/Credentials.astro:58
-#: src/components/home/Credentials.astro:62
+#: src/components/home/Credentials.astro:52
+#: src/components/home/Credentials.astro:56
 msgid "Competences"
 msgstr "Competencias"
 
@@ -509,7 +503,7 @@ msgid "confirm email"
 msgstr "confirmar email"
 
 #: src/components/cv/CvBody.astro:36
-#: src/components/home/Contact.astro:41
+#: src/components/home/Contact.astro:45
 #: src/components/layout/SiteFooter.astro:87
 #: src/components/layout/SiteHeader.astro:120
 #: src/pages/[locale]/blog/[slug].astro:186
@@ -526,7 +520,7 @@ msgstr "Contenido"
 msgid "Conversion"
 msgstr "Conversión"
 
-#: src/components/home/Contact.astro:139
+#: src/components/home/Contact.astro:168
 msgid "Copy email"
 msgstr "Copiar correo"
 
@@ -593,7 +587,7 @@ msgstr "Escritorio · WebGL2 · ~14 MB."
 msgid "Desktop only · copy link"
 msgstr "Solo escritorio · copiar enlace"
 
-#: src/components/home/Credentials.astro:153
+#: src/components/home/Credentials.astro:167
 msgid "Details on the CV"
 msgstr "Detalles en el CV"
 
@@ -645,7 +639,7 @@ msgstr "Formación"
 msgid "Elsewhere"
 msgstr "En la red"
 
-#: src/components/home/Contact.astro:133
+#: src/components/home/Contact.astro:161
 msgid "Email copied"
 msgstr "Correo copiado"
 
@@ -653,7 +647,7 @@ msgstr "Correo copiado"
 msgid "Email me"
 msgstr "Escríbeme por correo"
 
-#: src/components/home/Contact.astro:103
+#: src/components/home/Contact.astro:130
 msgid "Email, phone or LinkedIn"
 msgstr "Correo, teléfono o LinkedIn"
 
@@ -661,7 +655,7 @@ msgstr "Correo, teléfono o LinkedIn"
 msgid "Employee"
 msgstr "Empleado"
 
-#: src/components/home/Contact.astro:53
+#: src/components/home/Contact.astro:65
 msgid "English · Polish"
 msgstr "Inglés · polaco"
 
@@ -677,7 +671,7 @@ msgstr "Ejercicio"
 msgid "Experience"
 msgstr "Experiencia"
 
-#: src/components/home/Credentials.astro:59
+#: src/components/home/Credentials.astro:53
 msgid "Experience · qualifications · training · teams"
 msgstr "Experiencia · cualificaciones · formación · equipos"
 
@@ -685,7 +679,7 @@ msgstr "Experiencia · cualificaciones · formación · equipos"
 msgid "Faith"
 msgstr "Fe"
 
-#: src/components/life/ToyFilm.astro:17
+#: src/components/life/ToyFilm.astro:18
 msgid "Fantasy"
 msgstr "Fantasía"
 
@@ -717,15 +711,15 @@ msgstr "Enfoque"
 msgid "Footer"
 msgstr "Pie de página"
 
-#: src/components/home/Contact.astro:36
+#: src/components/home/Contact.astro:38
 msgid "Found a phone number in your message"
 msgstr "Encontré un teléfono en tu mensaje"
 
-#: src/components/home/Contact.astro:36
+#: src/components/home/Contact.astro:37
 msgid "Found an email in your message"
 msgstr "Encontré un correo en tu mensaje"
 
-#: src/components/home/Contact.astro:36
+#: src/components/home/Contact.astro:39
 msgid "Found your LinkedIn in your message"
 msgstr "Encontré tu LinkedIn en tu mensaje"
 
@@ -741,7 +735,7 @@ msgstr "Desarrollador full stack de Polonia. Creo productos web y móviles de pr
 msgid "Full-stack product engineer"
 msgstr "Ingeniero de producto full stack"
 
-#: src/components/home/Contact.astro:51
+#: src/components/home/Contact.astro:57
 msgid "Full-time or contract"
 msgstr "Tiempo completo o por contrato"
 
@@ -786,11 +780,11 @@ msgstr "vigilan"
 msgid "Hang out"
 msgstr "Pasar el rato"
 
-#: src/components/life/ToyFilm.astro:25
+#: src/components/life/ToyFilm.astro:26
 msgid "He said he'd be back. He was."
 msgstr "Dijo que volvería. Volvió."
 
-#: src/components/home/Contact.astro:88
+#: src/components/home/Contact.astro:114
 msgid "Hi Mateusz, we're hiring for…"
 msgstr "Hola, Mateusz, estamos contratando para…"
 
@@ -876,7 +870,7 @@ msgstr "Empiezo por quien lo paga y por lo que necesita ganar."
 msgid "I take photos. Strictly amateur, strictly for fun."
 msgstr "Hago fotos. Totalmente amateur, totalmente por diversión."
 
-#: src/components/home/Contact.astro:124
+#: src/components/home/Contact.astro:152
 msgid "I'll reply to the address you gave me."
 msgstr "Te responderé a la dirección que me diste."
 
@@ -1115,7 +1109,7 @@ msgstr "Motos"
 msgid "Move over the court, or use the arrow keys. First to 5."
 msgstr "Muévete sobre la pista o usa las flechas. Gana quien llegue a 5."
 
-#: src/components/life/ToyFilm.astro:37
+#: src/components/life/ToyFilm.astro:38
 msgid "Movie night."
 msgstr "Noche de peli."
 
@@ -1146,7 +1140,7 @@ msgstr "Mi playlist es de todo un poco."
 msgid "My previous portfolio: a scroll-driven flight through the solar system, where each planet holds one section. 13 shaders written by hand in GLSL. Best on a computer."
 msgstr "Mi portfolio anterior: un vuelo por el sistema solar guiado por el scroll, donde cada planeta guarda una sección. 13 shaders escritos a mano en GLSL. Mejor en un ordenador."
 
-#: src/components/home/Credentials.astro:114
+#: src/components/home/Credentials.astro:108
 msgid "My space portfolio, built with what the course taught"
 msgstr "Mi portfolio espacial, hecho con lo que enseñó el curso"
 
@@ -1219,11 +1213,11 @@ msgstr "Un cambio, paso a paso"
 msgid "one clear CTA"
 msgstr "un CTA claro"
 
-#: src/components/home/Contact.astro:42
+#: src/components/home/Contact.astro:46
 msgid "One message is enough"
 msgstr "Basta con un mensaje"
 
-#: src/components/life/ToyFilm.astro:17
+#: src/components/life/ToyFilm.astro:18
 msgid "One ring. One volcano. A very long walk."
 msgstr "Un anillo. Un volcán. Un paseo muy largo."
 
@@ -1309,14 +1303,6 @@ msgstr "Personal · en solitario · 2025"
 msgid "Photo"
 msgstr "Foto"
 
-#: src/components/home/Credentials.astro:51
-msgid "Photo from a hackathon soon"
-msgstr "Foto de un hackathon próximamente"
-
-#: src/components/home/Credentials.astro:50
-msgid "Photo from an exchange soon"
-msgstr "Foto de un intercambio próximamente"
-
 #: src/components/life/LifeHero.astro:39
 msgid "Photo soon"
 msgstr "Foto próximamente"
@@ -1325,7 +1311,7 @@ msgstr "Foto próximamente"
 msgid "Photography"
 msgstr "Fotografía"
 
-#: src/components/home/Credentials.astro:60
+#: src/components/home/Credentials.astro:54
 msgid "Pick one"
 msgstr "Elige uno"
 
@@ -1361,7 +1347,7 @@ msgstr "Toca la masa."
 msgid "Poland"
 msgstr "Polonia"
 
-#: src/components/home/Contact.astro:43
+#: src/components/home/Contact.astro:47
 msgid "Poland · CET"
 msgstr "Polonia · CET"
 
@@ -1393,7 +1379,7 @@ msgstr "Imprimir"
 msgid "Privacy"
 msgstr "Privacidad"
 
-#: src/components/home/Contact.astro:117
+#: src/components/home/Contact.astro:145
 #: src/components/layout/SiteFooter.astro:68
 msgid "Privacy policy"
 msgstr "Política de privacidad"
@@ -1451,7 +1437,7 @@ msgstr "Sigue leyendo"
 msgid "real app references"
 msgstr "apps reales como referencia"
 
-#: src/components/life/ToyFilm.astro:20
+#: src/components/life/ToyFilm.astro:21
 msgid "Red pill or blue pill?"
 msgstr "¿Pastilla roja o azul?"
 
@@ -1471,7 +1457,7 @@ msgstr "recuerda"
 msgid "Remote"
 msgstr "En remoto"
 
-#: src/components/home/Contact.astro:52
+#: src/components/home/Contact.astro:61
 msgid "Remote · Poland, CET"
 msgstr "En remoto · Polonia, CET"
 
@@ -1499,7 +1485,7 @@ msgstr "Revisión"
 msgid "Roll it"
 msgstr "Dale"
 
-#: src/components/life/ToyFilm.astro:19
+#: src/components/life/ToyFilm.astro:20
 msgid "Romance"
 msgstr "Romance"
 
@@ -1527,9 +1513,9 @@ msgstr "Las ventas están bajando."
 msgid "Same you. For now."
 msgstr "El mismo tú. Por ahora."
 
-#: src/components/life/ToyFilm.astro:16
-#: src/components/life/ToyFilm.astro:20
-#: src/components/life/ToyFilm.astro:22
+#: src/components/life/ToyFilm.astro:17
+#: src/components/life/ToyFilm.astro:21
+#: src/components/life/ToyFilm.astro:23
 msgid "Sci-fi"
 msgstr "Ciencia ficción"
 
@@ -1557,11 +1543,11 @@ msgstr "Proyectos seleccionados"
 msgid "Self-improvement"
 msgstr "Superación personal"
 
-#: src/components/home/Contact.astro:110
+#: src/components/home/Contact.astro:137
 msgid "Send"
 msgstr "Enviar"
 
-#: src/components/home/Contact.astro:65
+#: src/components/home/Contact.astro:78
 msgid "Sending…"
 msgstr "Enviando…"
 
@@ -1569,7 +1555,7 @@ msgstr "Enviando…"
 msgid "Sent"
 msgstr "Enviado"
 
-#: src/components/home/Contact.astro:123
+#: src/components/home/Contact.astro:151
 msgid "Sent. Thank you."
 msgstr "Enviado. Gracias."
 
@@ -1681,7 +1667,7 @@ msgstr "Sonido"
 msgid "Sources"
 msgstr "Fuentes"
 
-#: src/components/life/ToyFilm.astro:16
+#: src/components/life/ToyFilm.astro:17
 msgid "Space wizards with laser swords."
 msgstr "Magos espaciales con espadas láser."
 
@@ -1836,7 +1822,7 @@ msgstr "La dirección de respuesta no era un correo, un teléfono ni un enlace d
 msgid "The same loop on every project"
 msgstr "El mismo ciclo en cada proyecto"
 
-#: src/components/life/ToyFilm.astro:19
+#: src/components/life/ToyFilm.astro:20
 msgid "The ship sinks. There was room on that door."
 msgstr "El barco se hunde. En esa puerta había sitio."
 
@@ -1852,7 +1838,7 @@ msgstr "No se superó la comprobación antispam. Vuelve a intentarlo."
 msgid "The team"
 msgstr "El equipo"
 
-#: src/components/life/ToyFilm.astro:23
+#: src/components/life/ToyFilm.astro:24
 msgid "The toys come alive when you leave the room."
 msgstr "Los juguetes cobran vida cuando sales de la habitación."
 
@@ -1876,11 +1862,11 @@ msgstr "Este texto en español es una traducción asistida por máquina, pendien
 msgid "This Spanish version was translated with AI and has not been reviewed by a native speaker yet."
 msgstr "Esta versión en español se tradujo con IA y aún no la ha revisado un hablante nativo."
 
-#: src/components/life/ToyFilm.astro:21
+#: src/components/life/ToyFilm.astro:22
 msgid "Thriller"
 msgstr "Thriller"
 
-#: src/components/life/ToyFilm.astro:29
+#: src/components/life/ToyFilm.astro:30
 msgid "Tonight"
 msgstr "Esta noche"
 
@@ -1891,6 +1877,10 @@ msgstr "Demasiados mensajes desde aquí. Espera unos minutos o copia mi correo."
 #: src/pages/[locale]/contact/error/index.astro:24
 msgid "Too many messages were sent from your connection. Please wait a few minutes."
 msgstr "Se enviaron demasiados mensajes desde tu conexión. Espera unos minutos."
+
+#: src/components/home/Credentials.astro:140
+msgid "Took part"
+msgstr "Participación"
 
 #: src/pages/[locale]/work/index.astro:82
 #: src/pages/[locale]/work/index.astro:83
@@ -1943,7 +1933,7 @@ msgstr "¿Te apetece jugar o charlar? Encuéntrame aquí."
 msgid "Updated"
 msgstr "Actualizado"
 
-#: src/components/home/Contact.astro:116
+#: src/components/home/Contact.astro:144
 msgid "Used only to reply."
 msgstr "Solo se usa para responder."
 
@@ -1958,6 +1948,10 @@ msgstr "flujos de usuario"
 #: src/components/home/HowIWork.astro:45
 msgid "Users"
 msgstr "Usuarios"
+
+#: src/components/home/Credentials.astro:133
+msgid "Verify"
+msgstr "Verificar"
 
 #: src/components/legal/LegalPage.astro:36
 msgid "Version"
@@ -1988,7 +1982,7 @@ msgstr "Web + móvil"
 msgid "What you do"
 msgstr "A qué te dedicas"
 
-#: src/components/home/Contact.astro:94
+#: src/components/home/Contact.astro:121
 msgid "Where do I reply?"
 msgstr "¿Dónde te respondo?"
 
@@ -2014,7 +2008,7 @@ msgstr "Proyectos"
 msgid "Write a message first. One line is enough."
 msgstr "Escribe primero un mensaje. Basta con una línea."
 
-#: src/components/home/Contact.astro:125
+#: src/components/home/Contact.astro:153
 msgid "Write another message"
 msgstr "Escribir otro mensaje"
 
@@ -2034,7 +2028,7 @@ msgstr "¡Ganas!"
 msgid "Your browser sends Do Not Track or Global Privacy Control, so statistics are already off."
 msgstr "Tu navegador envía Do Not Track o Global Privacy Control, así que las estadísticas ya están desactivadas."
 
-#: src/components/home/Contact.astro:81
+#: src/components/home/Contact.astro:107
 msgid "Your message"
 msgstr "Tu mensaje"
 
