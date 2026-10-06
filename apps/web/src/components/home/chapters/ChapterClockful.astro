@@ -10,7 +10,9 @@ import Fit from "~/components/ui/Fit.astro";
 import Icon from "~/components/ui/Icon.astro";
 import ReelControls from "~/components/ui/ReelControls.astro";
 import { chromeLinks } from "~/lib/nav";
+import { typo } from "~/lib/typography";
 
+const locale = Astro.locals.locale;
 const links = chromeLinks(Astro.locals.locale);
 const running = t`Running`;
 const paused = t`Paused`;
@@ -63,7 +65,7 @@ const { counter } = Astro.props;
     </figure>
 
     <div class="ch-info">
-      <p class="outcome rv">{t`A role-based time tracker, built with AI agents under a deadline.`}</p>
+      <p class="outcome rv">{typo(locale, t`A role-based time tracker, built with AI agents under a deadline.`)}</p>
       <ul class="stats rv" style="--d:1">
         <li>
           <span class="top"><Icon name="tb:test-pipe" /><b data-count="118">118</b></span>
@@ -78,7 +80,7 @@ const { counter } = Astro.props;
           <span>{t`requirements in the spec`}</span>
         </li>
         <li>
-          <span class="top"><Icon name="tb:calendar" /><b>~9</b></span>
+          <span class="top"><Icon name="tb:calendar" /><b>9</b></span>
           <span>{t`days from spec to hand-in (an estimate)`}</span>
         </li>
       </ul>

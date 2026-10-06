@@ -12,9 +12,11 @@ import Icon from "~/components/ui/Icon.astro";
 import ReelControls from "~/components/ui/ReelControls.astro";
 import { WORK_LINKS } from "~/data/site";
 import { lineEm } from "~/lib/fit";
+import { typo } from "~/lib/typography";
 
 const locale = Astro.locals.locale;
 const ring = [t`Latest`, t`My favourite`, t`Commercial`].map((part) => part.toLocaleUpperCase(locale)).join(" • ") + " • ";
+const orderLabel = t`Order website`;
 const RADIUS = 62;
 const circumference = 2 * Math.PI * RADIUS;
 const fontSize = Math.min(14, circumference / (lineEm(ring, 120) + 0.16 * [...ring].length));
@@ -35,7 +37,7 @@ const { counter } = Astro.props;
   <Fit as="h2" id="t-pw" lines={["PstrykWeb"]} />
   <div class="pw-grid grid-2">
     <div class="ch-info">
-      <p class="outcome rv">{t`Bespoke websites for local businesses, ordered through one online form. Built solo for Cetuspro.`}</p>
+      <p class="outcome rv">{typo(locale, t`Bespoke websites for local businesses, ordered through one online form. Built solo for Cetuspro.`)}</p>
       <ol class="how rv" style="--d:1" aria-label={t`How it works`}>
         <li>
           <Icon name="tb:forms" />
@@ -106,16 +108,17 @@ const { counter } = Astro.props;
             <div class="w w-img" style="--i:2"></div>
             <div class="w-cards"><div class="w" style="--i:4"></div><div class="w" style="--i:5"></div><div class="w" style="--i:6"></div></div>
           </div>
-          <span class="live-stamp" aria-hidden="true">LIVE ✓</span>
+          <span class="live-stamp" aria-hidden="true" data-t="LIVE ✓"></span>
           <span class="soon">{t`Video soon`}</span>
         </div>
         <div class="order" aria-hidden="true">
-          <p class="o-k">{t`Order a website`}</p>
-          <span class="o-l">{t`Business name`}</span><span class="o-f" style="--fw:52%"></span>
-          <span class="o-l">{t`What you do`}</span><span class="o-f f2" style="--fw:74%"></span>
-          <span class="o-l">{t`Style`}</span>
-          <div class="o-chips"><span class="on">{t`Bold`}</span><span>{t`Calm`}</span><span>{t`Classic`}</span></div>
-          <span class="o-btn">{t`Order website`} →</span>
+          <!-- Drawn text: set as generated content, so a mid-fade frame isn't read as page text. -->
+          <p class="o-k" data-t={t`Order a website`}></p>
+          <span class="o-l" data-t={t`Business name`}></span><span class="o-f" style="--fw:52%"></span>
+          <span class="o-l" data-t={t`What you do`}></span><span class="o-f f2" style="--fw:74%"></span>
+          <span class="o-l" data-t={t`Style`}></span>
+          <div class="o-chips"><span class="on" data-t={t`Bold`}></span><span data-t={t`Calm`}></span><span data-t={t`Classic`}></span></div>
+          <span class="o-btn" data-t={`${orderLabel} →`}></span>
           <svg class="pointer" viewBox="0 0 24 24"><path d="M5 3l14 7-6 2-2 6z" fill="#fff" stroke="#0a0d33" stroke-width="1.6" stroke-linejoin="round"
             ></path></svg>
         </div>
@@ -393,6 +396,10 @@ const { counter } = Astro.props;
     text-transform: uppercase;
     font-stretch: 115%;
   }
+  .order [data-t]::before,
+  .live-stamp::before {
+    content: attr(data-t);
+  }
   .pointer {
     position: absolute;
     z-index: 4;
@@ -532,8 +539,8 @@ const { counter } = Astro.props;
   @keyframes o-build {
     0%,
     37% {
-      transform: scaleX(0);
-      opacity: 0;
+      transform: scaleX(0.4);
+      opacity: 0.12;
     }
     46%,
     93% {
@@ -541,8 +548,8 @@ const { counter } = Astro.props;
       opacity: 1;
     }
     100% {
-      transform: none;
-      opacity: 0;
+      transform: scaleX(0.4);
+      opacity: 0.12;
     }
   }
   @keyframes o-live {

@@ -117,6 +117,7 @@ const wide = fitLines(lines, base[1], locale);
     calm: boolean;
     lines: Line[];
     visible: boolean;
+    built: boolean;
     phase: number;
     start: number;
     width: number;
@@ -170,7 +171,7 @@ const wide = fitLines(lines, base[1], locale);
     const t = now / 1000;
     let busy = false;
     for (const block of blocks) {
-      if (!block.visible) continue;
+      if (!block.visible || !block.built) continue;
       const r = block.el.getBoundingClientRect();
       const near = !still && pointer.active && pointer.y > r.top - 140 && pointer.y < r.bottom + 140;
       const wave = !still && !block.calm;
@@ -201,7 +202,7 @@ const wide = fitLines(lines, base[1], locale);
       });
     }
     for (const block of blocks) {
-      if (!block.visible) continue;
+      if (!block.visible || !block.built) continue;
       for (const line of block.lines) {
         for (const c of line.chars) {
           if (Math.abs(c.cur - c.shown) < 0.02) continue;
@@ -231,46 +232,56 @@ const wide = fitLines(lines, base[1], locale);
         S: 1,
         delta: 0,
       }));
-      // Letters split into boxes read badly to some screen readers: one hidden copy of the text speaks instead.
-      if (el.getAttribute("aria-hidden") !== "true") {
-        const sr = document.createElement("span");
-        sr.className = "fit-sr";
-        sr.textContent = lines.map((line) => line.text).join(" ");
-        el.prepend(sr);
-        lines.forEach((line) => line.el.setAttribute("aria-hidden", "true"));
-      }
-      const block: Block = {
+      blocks.push({
         el,
         host: el.parentElement!,
         calm: el.dataset.fit === "calm",
         lines,
         visible: false,
+        built: false,
         phase: i * 1.37,
         start: performance.now(),
         width: 0,
-      };
-      build(block);
-      blocks.push(block);
+      });
     });
-
-    const io = new IntersectionObserver((entries) => {
-      for (const e of entries) {
-        const block = blocks.find((b) => b.el === e.target);
-        if (block) block.visible = e.isIntersecting;
-      }
-      schedule();
-    });
-    blocks.forEach((block) => io.observe(block.el));
 
     let resizeTimer = 0;
     const ro = new ResizeObserver(() => {
       clearTimeout(resizeTimer);
       resizeTimer = window.setTimeout(() => {
-        for (const block of blocks) if (block.host.clientWidth !== block.width) build(block);
+        for (const block of blocks) if (block.built && block.host.clientWidth !== block.width) build(block);
         schedule();
       }, 150);
     });
-    blocks.forEach((block) => ro.observe(block.host));
+
+    // A block is split and measured only when it first comes near the screen: a page with many fitted titles pays
+    // for the ones a reader actually sees, never all at once on load.
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (const e of entries) {
+          const block = blocks.find((b) => b.el === e.target);
+          if (!block) continue;
+          block.visible = e.isIntersecting;
+          if (block.visible && !block.built) {
+            // Letters split into boxes read badly to some screen readers: one hidden copy of the text speaks instead.
+            if (block.el.getAttribute("aria-hidden") !== "true") {
+              const sr = document.createElement("span");
+              sr.className = "fit-sr";
+              sr.textContent = block.lines.map((line) => line.text).join(" ");
+              block.el.prepend(sr);
+              block.lines.forEach((line) => line.el.setAttribute("aria-hidden", "true"));
+            }
+            build(block);
+            block.built = true;
+            block.start = performance.now();
+            ro.observe(block.host);
+          }
+        }
+        schedule();
+      },
+      { rootMargin: "100px 0px" },
+    );
+    blocks.forEach((block) => io.observe(block.el));
 
     addEventListener(
       "pointermove",

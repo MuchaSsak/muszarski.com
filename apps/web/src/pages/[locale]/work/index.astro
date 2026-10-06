@@ -16,6 +16,7 @@ import { thisSitePath } from "~/lib/blog-paths";
 import { chromeLinks } from "~/lib/nav";
 import { localeStaticPaths, pathTo } from "~/lib/routes";
 import { pageGraph } from "~/lib/schema";
+import { typo } from "~/lib/typography";
 
 export const getStaticPaths = localeStaticPaths;
 
@@ -61,8 +62,8 @@ const count = projects.length;
       <p>{plural(count, { one: "# project", other: "# projects" })}</p>
       <p>{t`Flagships first`}</p>
     </div>
-    <Fit as="h1" id="t-work" lines={[line1, line2]} />
-    <p class="lede rise">{t`Client work, my own products, open source and experiments. The four flagships have their own chapter on the home page.`}</p>
+    <Fit as="h1" id="t-work" lines={[line1, line2]} base={[100, 140]} />
+    <p class="lede rise">{typo(locale, t`Client work, my own products, open source and experiments. The four flagships have their own chapter on the home page.`)}</p>
   </section>
 
   <section class="sec field-alt list" aria-label={t`Projects`}>
@@ -101,7 +102,7 @@ const count = projects.length;
                 {project.flagship && <i class="sq" aria-hidden="true" />}
                 {project.name}
               </h2>
-              <p class="line">{project.line[locale]}</p>
+              <p class="line">{typo(locale, project.line[locale])}</p>
               <ul class="tools" aria-label={t`Tools`}>
                 {project.stack.map((tool) => (
                   <li>{tool}</li>

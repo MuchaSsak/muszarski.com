@@ -17,6 +17,7 @@ import { type IconName } from "~/lib/icons.gen";
 import { chromeLinks } from "~/lib/nav";
 import { localeStaticPaths, pathTo } from "~/lib/routes";
 import { pageGraph } from "~/lib/schema";
+import { typo } from "~/lib/typography";
 
 export const getStaticPaths = localeStaticPaths;
 
@@ -58,7 +59,7 @@ const SOCIAL_ICONS: Record<string, IconName> = { discord: "si:discord", messenge
       <p>{t`Poland`}</p>
     </div>
     <div class="head">
-      <Fit as="h1" id="t-life" lines={[line1, line2]} />
+      <Fit as="h1" id="t-life" lines={[line1, line2]} base={[100, 140]} />
       <figure class="photo rise" style="--d:1">
         <div class="ph" aria-hidden="true">
           <Icon name="tb:camera" />
@@ -68,7 +69,7 @@ const SOCIAL_ICONS: Record<string, IconName> = { discord: "si:discord", messenge
       </figure>
     </div>
     <p class="lede rise" style="--d:2">
-      {t`I'm Mateusz. I write code for a living and for fun, but most of what keeps me going happens away from the screen. Here is a bit of that.`}
+      {typo(locale, t`I'm Mateusz. I write code for a living and for fun, but most of what keeps me going happens away from the screen. Here is a bit of that.`)}
     </p>
   </section>
 

@@ -8,6 +8,7 @@ import { t } from "lingui-for-astro/macro";
 import PostCover from "~/components/blog/PostCover.astro";
 import TagLabel from "~/components/blog/TagLabel.astro";
 import { type Post, postLocale, postMinutes, postPath } from "~/lib/posts";
+import { typo } from "~/lib/typography";
 
 interface Props {
   post: Post;
@@ -38,7 +39,7 @@ const minutes = postMinutes(post);
       <span>{t`${minutes} min read`}</span>
     </p>
     <H class="title"><a href={postPath(post)}>{post.data.title}</a></H>
-    <p class="desc">{post.data.description}</p>
+    <p class="desc">{typo(locale, post.data.description)}</p>
   </div>
 </article>
 

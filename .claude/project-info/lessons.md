@@ -49,6 +49,13 @@
 - `.still` pauses every animation; an entrance with a delay and `both` fill then freezes on its hidden first frame.
   Mark entrances `.rise`/`.enter` (shown final when paused) and test a reload with a stored pause - 2026-10-05.
 
+- Never name a class after a Tailwind utility (`.ring` drew a 1px box-shadow ring around the product loop); prefix
+  section classes (`lp-ring`) - 2026-10-05.
+- `Icon.astro` forwards extra attributes, including Astro's scope attribute, so a scoped `svg` selector in a parent also hits
+  its icons (`.ring svg` blew the core icon up to 291 px); target drawn SVGs by class - 2026-10-05.
+- A component's inline `<script>` renders between sibling sections: count siblings with `:nth-of-type`, not `:nth-child`
+  (the 4th chapter lost its z-index and never showed) - 2026-10-05.
+
 ### Privacy of inputs
 - `context/` is private and gitignored (the pstryk code, klepacz.pdf). Copy patterns, not files; never quote the memo verbatim or name its author in committed files - 2026-10-05.
 - Research screenshots of third-party sites stay local (`research/inspirations/img/` is gitignored); the repo may go public - 2026-10-05.

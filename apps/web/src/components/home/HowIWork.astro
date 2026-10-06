@@ -13,6 +13,7 @@ import Icon from "~/components/ui/Icon.astro";
 import { visibleFlagships } from "~/data/projects";
 import { type IconName } from "~/lib/icons.gen";
 import { thisSitePath } from "~/lib/blog-paths";
+import { typo } from "~/lib/typography";
 
 const locale = Astro.locals.locale;
 const visible = new Set(visibleFlagships().map((project) => project.slug));
@@ -107,10 +108,10 @@ const [line1, line2] = t`Product|engineer`.split("|") as [string, string];
     <p>{t`Code is one stop of seven`}</p>
     <p>{t`Each with a receipt`}</p>
   </div>
-  <Fit as="h2" id="t-how" lines={[line1, line2]} motion="calm" />
+  <Fit as="h2" id="t-how" lines={[line1, line2]} motion="calm" base={[90, 130]} />
   <div class="loop" data-loop>
-    <div class="ring" aria-hidden="true">
-      <svg viewBox="0 0 500 500">
+    <div class="lp-ring" aria-hidden="true">
+      <svg class="lp-svg" viewBox="0 0 500 500">
         <circle class="track" cx="250" cy="250" r="200"></circle>
         <circle class="trail" cx="250" cy="250" r="200" pathLength="700" transform="rotate(-90 250 250)"></circle>
         <g class="dot-arm"><circle class="dot" r="11" cx="250" cy="50"></circle></g>
@@ -140,7 +141,7 @@ const [line1, line2] = t`Product|engineer`.split("|") as [string, string];
             <p class="kick k">
               {stopLabel} {pad(i + 1)} · {stop.name}
             </p>
-            <p class="s">{stop.line}</p>
+            <p class="s">{typo(locale, stop.line)}</p>
             <a class="receipt-row" href={stop.receipt.href} style={`--c:${stop.receipt.color}`}>
               <i aria-hidden="true" />
               <span>{stop.receipt.text}</span>
@@ -166,7 +167,7 @@ const [line1, line2] = t`Product|engineer`.split("|") as [string, string];
     align-items: center;
     margin-top: clamp(1.75rem, 3vw, 3rem);
   }
-  .ring,
+  .lp-ring,
   .stops {
     grid-area: ring;
     position: relative;
@@ -174,7 +175,7 @@ const [line1, line2] = t`Product|engineer`.split("|") as [string, string];
     aspect-ratio: 1;
     justify-self: center;
   }
-  .ring svg {
+  .lp-svg {
     position: absolute;
     inset: 0;
     width: 100%;

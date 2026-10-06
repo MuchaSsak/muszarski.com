@@ -23,7 +23,8 @@ test("a post links its translation (hreflang) and the language switch keeps it",
     .locator('link[rel="alternate"][hreflang]')
     .evaluateAll((links) => links.map((link) => `${link.getAttribute("hreflang")} ${new URL(link.getAttribute("href")!).pathname}`));
   expect(hreflangs).toEqual(["en /en/blog/how-this-site-was-built/", "pl /pl/blog/jak-powstala-ta-strona/", "x-default /en/blog/how-this-site-was-built/"]);
-  await expect(page.locator('script[type="application/ld+json"]')).toContainText('"BlogPosting"');
+  const jsonLd = await page.locator('script[type="application/ld+json"]').evaluateAll((scripts) => scripts.map((s) => s.textContent).join(""));
+  expect(jsonLd).toContain('"BlogPosting"');
   await expect(page.locator(".site-header .h-loc a[hreflang=pl]")).toHaveAttribute("href", "/pl/blog/jak-powstala-ta-strona/");
   // No Spanish blog: the switch goes to the Spanish home.
   await expect(page.locator(".site-header .h-loc a[hreflang=es]")).toHaveAttribute("href", "/es/");

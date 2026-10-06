@@ -12,6 +12,7 @@ import Icon from "~/components/ui/Icon.astro";
 import ReelControls from "~/components/ui/ReelControls.astro";
 import { WORK_LINKS } from "~/data/site";
 import { thisSitePath } from "~/lib/blog-paths";
+import { typo } from "~/lib/typography";
 
 const locale = Astro.locals.locale;
 const caseStudy = thisSitePath(locale);
@@ -29,7 +30,7 @@ const { counter } = Astro.props;
     <div class="stars s2"></div>
     <div class="orbits">
       <span class="sun"></span>
-      <span class="ring r1"></span><span class="ring r2"></span><span class="ring r3"></span><span class="ring r4"></span>
+      <span class="orbit r1"></span><span class="orbit r2"></span><span class="orbit r3"></span><span class="orbit r4"></span>
       <span class="planet p1"></span><span class="planet p2"></span><span class="planet p3"></span><span class="planet p4"></span>
     </div>
   </div>
@@ -80,7 +81,7 @@ const { counter } = Astro.props;
 
     <div class="ch-info">
       <p class="tag-chip">{t`Personal · creative · 2025`}</p>
-      <p class="outcome rv">{t`A portfolio you fly through: Earth to Neptune in 12 camera stops.`}</p>
+      <p class="outcome rv">{typo(locale, t`A portfolio you fly through: Earth to Neptune in 12 camera stops.`)}</p>
       <ul class="cfacts rv" style="--d:1">
         <li><span class="ib"><Icon name="si:webgl" /></span><span><b data-count="13">13</b>{t`GLSL shaders, by hand`}</span></li>
         <li><span class="ib"><Icon name="tb:planet" /></span><span><b data-count="12">12</b>{t`camera stops`}</span></li>
@@ -192,14 +193,14 @@ const { counter } = Astro.props;
     opacity: 0.6;
     transform: rotate(-12deg);
   }
-  .ring,
+  .orbit,
   .planet,
   .sun {
     position: absolute;
     left: 0;
     top: 0;
   }
-  .ring {
+  .orbit {
     width: var(--w);
     height: calc(var(--w) * 0.34);
     border: 1.5px dashed rgb(238 240 255 / 0.28);

@@ -47,7 +47,7 @@ const url = new URL(pathTo(locale, "blog"), site).href;
       <p>{t`Notes from the work`}</p>
       <p><a href={links.rss}><Icon name="tb:rss" /> RSS</a></p>
     </div>
-    <Fit as="h1" id="t-blog" lines={[title]} />
+    <Fit as="h1" id="t-blog" lines={[title]} base={[130, 150]} />
     <p class="lede rise">{description}</p>
   </section>
 

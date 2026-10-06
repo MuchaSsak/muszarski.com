@@ -14,6 +14,7 @@ import { WORK_LINKS } from "~/data/site";
 import { thisSitePath } from "~/lib/blog-paths";
 import { type IconName } from "~/lib/icons.gen";
 import { MCP_SERVERS, repoStats } from "~/lib/repo-stats";
+import { typo } from "~/lib/typography";
 
 const locale = Astro.locals.locale;
 const stats = repoStats();
@@ -95,7 +96,7 @@ const [line1, line2] = t`Delegate.|Automate.`.split("|") as [string, string];
   </div>
   <div class="ai-top">
     <Fit as="h2" id="t-ai" lines={[line1, line2]} />
-    <p class="lede rv">{t`I run Claude Code like a small team: a wiki it reads, tools it can use, checks it can't skip.`}</p>
+    <p class="lede rv">{typo(locale, t`I run Claude Code like a small team: a wiki it reads, tools it can use, checks it can't skip.`)}</p>
   </div>
   <ol class="pipe rv" data-pipe>
     {

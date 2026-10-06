@@ -1,0 +1,22 @@
+---
+/**
+ * The page's icon sprite (see Icon.astro): one `<symbol>` per icon used on the page, rendered at the end of the body
+ * after every icon has registered itself. Paint (fill / stroke) comes from each referencing `<svg>`.
+ */
+import { ICONS } from "~/lib/icons.gen";
+
+const used = [...(Astro.locals.icons ?? [])].sort();
+---
+
+<svg class="icon-sprite" aria-hidden="true" focusable="false">
+  {used.map((name) => <symbol id={`i-${name.replace(":", "-")}`} viewBox={ICONS[name].viewBox} set:html={ICONS[name].body} />)}
+</svg>
+
+<style>
+  .icon-sprite {
+    position: absolute;
+    width: 0;
+    height: 0;
+    overflow: hidden;
+  }
+</style>

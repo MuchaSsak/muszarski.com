@@ -14,6 +14,7 @@ import Icon from "~/components/ui/Icon.astro";
 import { cvPdfHref, PROFILES, SITE } from "~/data/site";
 import { LIMITS } from "~/lib/contact";
 import { chromeLinks } from "~/lib/nav";
+import { typo } from "~/lib/typography";
 
 const locale = Astro.locals.locale;
 const links = chromeLinks(locale);
@@ -42,8 +43,8 @@ const found = { email: t`Found an email in your message`, phone: t`Found a phone
   </div>
   <div class="contact-grid">
     <div class="intro">
-      <Fit as="h2" id="t-ct" lines={[line1, line2]} />
-      <p class="lede rv">{t`A role, a project or a question. One line is fine.`}</p>
+      <Fit as="h2" id="t-ct" lines={[line1, line2]} base={[100, 140]} />
+      <p class="lede rv">{typo(locale, t`A role, a project or a question. One line is fine.`)}</p>
       <!-- PLACEHOLDER: availability facts wait for the owner (placeholders.md P4, Q3). -->
       <ul class="ifacts rv" style="--d:1" role="list">
         <li><Icon name="tb:briefcase" />{t`Full-time or contract`}</li>
@@ -320,9 +321,20 @@ const found = { email: t`Found an email in your message`, phone: t`Found a phone
     font-size: 1.125rem;
   }
   :global(.js) form.msg:not(.ask) .reply {
-    opacity: 0;
-    transform: translateY(0.5rem);
-    visibility: hidden;
+    display: none;
+  }
+  :global(.js) form.msg.ask .reply {
+    animation: reply-in 0.45s var(--ease-out);
+  }
+  @keyframes reply-in {
+    from {
+      opacity: 0;
+      transform: translateY(0.5rem);
+    }
+  }
+  :global(.js) form.msg:not(.ask) .send-row {
+    display: flex;
+    justify-content: flex-end;
   }
   .found {
     min-height: 1.2em;
@@ -460,9 +472,6 @@ const found = { email: t`Found an email in your message`, phone: t`Found a phone
     .send-row {
       grid-template-columns: minmax(0, 1fr);
     }
-    :global(.js) form.msg:not(.ask) .reply {
-      display: none;
-    }
     textarea {
       font-size: 1.125rem;
     }
@@ -496,6 +505,9 @@ const found = { email: t`Found an email in your message`, phone: t`Found a phone
     const sitekey = form.dataset.sitekey;
     let autoFilled = false;
     let turnstileId: string | undefined;
+    // The script validates with the same rules as the server and explains in words; the browser's own bubbles stay
+    // for the no-JS form.
+    form.noValidate = true;
 
     const setTopic = (value: string) => {
       topicInput.value = isTopic(value) ? value : "";

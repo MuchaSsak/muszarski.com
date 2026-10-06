@@ -3,6 +3,9 @@
  * One icon, inlined (no sprite, no request). Names come from `bun run icons` (scripts/icons.mjs):
  * `si:*` tool marks (Simple Icons, CC0; one colour, unaltered, nominative use) and `tb:*` UI icons (Tabler, MIT).
  * Decorative by default; pass `label` when the icon is the only content of a control.
+ * Pages with a layout get a sprite: each used icon's path is written once at the end of the body (IconSprite.astro)
+ * and every use is a `<use>` reference, so a page with 150 icons doesn't repeat the same paths. Pages without the
+ * layout (`sprite={false}`) inline the path.
  */
 import type { HTMLAttributes } from "astro/types";
 
@@ -13,11 +16,15 @@ interface Props extends Omit<HTMLAttributes<"svg">, "name" | "class"> {
   class?: string | undefined;
   label?: string | undefined;
   hidden?: boolean | undefined;
+  /** Inline the path instead of referencing the page sprite (pages without BaseLayout). */
+  sprite?: boolean;
   [key: `data-${string}`]: unknown;
 }
 
-const { name, class: className, label, ...rest } = Astro.props;
+const { name, class: className, label, sprite = true, ...rest } = Astro.props;
 const icon = ICONS[name];
+const id = `i-${name.replace(":", "-")}`;
+if (sprite) (Astro.locals.icons ??= new Set()).add(name);
 const paint = icon.stroke
   ? ({
       fill: "none",
@@ -38,5 +45,5 @@ const paint = icon.stroke
   aria-label={label}
   {...paint}
   {...rest}
-  set:html={icon.body}
+  set:html={sprite ? `<use href="#${id}"></use>` : icon.body}
 />

@@ -75,6 +75,11 @@ async function audit(url, mode) {
     mode === "desktop" ? { ...desktopConfig, settings: { ...desktopConfig.settings, ...settings } } : { extends: "lighthouse:default", settings };
   const result = await lighthouse(url, { port: chrome.port, ...settings }, config);
   const { categories, audits, runtimeError } = result.lhr;
+  // --save keeps the full report (lighthouse/<page>-<mode>.json, gitignored) for digging into an audit.
+  if (flag("save")) {
+    mkdirSync(join(ROOT, "lighthouse"), { recursive: true });
+    writeFileSync(join(ROOT, "lighthouse", `${new URL(url).pathname.replace(/\//g, "_")}-${mode}.json`), JSON.stringify(result.lhr));
+  }
   if (runtimeError) throw new Error(`${url}: ${runtimeError.code} ${runtimeError.message}`);
   return {
     performance: Math.round(categories.performance.score * 100),

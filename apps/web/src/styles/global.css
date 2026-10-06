@@ -259,6 +259,15 @@
     width: 2.875rem;
     padding: 0;
   }
+  /* In content rows a long label (Polish, Spanish) wraps instead of pushing the page sideways; the header keeps
+     its one-line buttons. */
+  :is(.ai-links, .hang-links, .links, .ctas, .go, .open) > .btn {
+    max-width: 100%;
+    padding-block: 0.625rem;
+    line-height: 1.15;
+    text-align: left;
+    white-space: normal;
+  }
   @media (hover: hover) and (pointer: fine) {
     .btn:hover {
       transform: translate(-3px, -3px);
@@ -509,6 +518,13 @@
     clip-path: inset(50%);
     white-space: nowrap;
   }
+}
+
+/* Below-the-fold home sections skip rendering until they come near (the first paint only lays out the hero and the
+   chapters). Not the chapters: their sticky offsets are measured from real heights. */
+:is(#how-i-work, #ai, #credentials, #writing, #contact, .site-footer) {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 900px;
 }
 
 /* Reveal on first view. `html.rv-ready` is set by the motion script once its observer runs (it adds .in), so a

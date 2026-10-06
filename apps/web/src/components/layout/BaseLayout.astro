@@ -14,6 +14,7 @@ import SiteFooter from "~/components/layout/SiteFooter.astro";
 import SiteHeader from "~/components/layout/SiteHeader.astro";
 import ThemeScript from "~/components/layout/ThemeScript.astro";
 import UmamiLoader from "~/components/layout/UmamiLoader.astro";
+import IconSprite from "~/components/ui/IconSprite.astro";
 import { SITE } from "~/data/site";
 import { FONT_FILES } from "~/lib/fonts.gen";
 import { alternates, type LocalizedPath, localesOf, pathTo } from "~/lib/routes";
@@ -123,6 +124,7 @@ const umamiDomain = new URL(site).hostname;
       <slot />
     </main>
     <SiteFooter path={path ?? ""} locales={locales} fallback={fallback} />
+    <IconSprite />
     <script>
       import "~/scripts/motion";
     </script>

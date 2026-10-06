@@ -11,8 +11,10 @@ import Icon from "~/components/ui/Icon.astro";
 import ReelControls from "~/components/ui/ReelControls.astro";
 import { WORK_LINKS } from "~/data/site";
 import { fitLines } from "~/lib/fit";
+import { typo } from "~/lib/typography";
 
 // The phone overlaps the title by ~58% of its height; the title's height is known from the build-time fit.
+const locale = Astro.locals.locale;
 const fit = fitLines(["Linkoglot"], 96);
 const fitHeight = `calc(0.8 * ${fit.size} * (min(100vw, 120rem) - 2 * var(--gutter)) / 100)`;
 
@@ -36,7 +38,7 @@ const { counter } = Astro.props;
         <img src="/media/linkoglot/icon.webp" alt="" width="30" height="30" loading="lazy" decoding="async" />
         {t`Own product · solo · 2026`}
       </p>
-      <p class="outcome rv">{t`Snap a photo, get flashcards. A subscription language app, shipped solo to both stores.`}</p>
+      <p class="outcome rv">{typo(locale, t`Snap a photo, get flashcards. A subscription language app, shipped solo to both stores.`)}</p>
       <ul class="cfacts rv" style="--d:1">
         <li><span class="ib"><Icon name="si:apple" /></span>App Store</li>
         <li><span class="ib"><Icon name="si:googleplay" /></span>Google Play</li>

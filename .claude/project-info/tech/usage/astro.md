@@ -49,3 +49,17 @@
 - Astro 7 runs ONE `astro preview` per project. e2e, shots and Lighthouse share port 4322 and reuse it when it is up.
 - `markdown.smartypants` is deprecated in Astro 7; smart punctuation is set on the markdown processor when MDX arrives.
 - `exactOptionalPropertyTypes` is on (strictest): optional props that may receive `undefined` are typed `T | undefined`.
+
+## Content, Markdown and generated files (2026-10-05)
+
+- Posts: `src/content/blog/<en|pl>/<slug>.mdx`; legal: `src/content/legal/<en|pl|es>/<privacy|terms>.md`; schema in
+  `src/content.config.ts`, cross-checks in `src/content/content.test.ts` (links, translations, PstrykWeb, legal numbering).
+- Markdown runs on **Sätteri** (Astro 7's default): extend it with Sätteri mdast/hast plugin objects in `astro.config.mjs`
+  (`satteri({ mdastPlugins, hastPlugins })`), never `markdown.remarkPlugins`.
+- Shared pieces for sections: `.sbar` (3-cell bar + drawn rule, add `draw`), `.stackrow` (tool chips), `.status`, `.r-btn`,
+  `.toast` (global.css); chapters share `styles/chapters.css`; long text uses `styles/prose.css`.
+- Entrance animations carry `.rise` or `.enter` so a stored pause shows them final. Never name a class after a Tailwind
+  utility (`ring`, `shadow`, `border`, `container`...).
+- Generated and committed: icons (`bun run icons`), fonts (`bun run fonts`), CV PDFs (`bun run cv:pdf`, needs the
+  preview), share images + favicons (`bun run og`, needs a build). The launch gate fails while any is missing.
+
