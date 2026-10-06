@@ -32,6 +32,14 @@
 - Scratch tools that found this (session scratchpad, not committed): a Playwright trace of the main thread
   (`FontDataManager::onMakeFromStreamArgs` events, grouped by file size) and a gzip server serving variants of `/en/`.
 
+## Cross-browser smoke (2026-10-06, 9 pages × 390/1440, built site)
+
+- Firefox (Playwright 1543) and WebKit 26.6 (Playwright 2359): 0 page errors, 0 horizontal overflow, fitted H1 lines
+  fill 99 % like Chromium, sprite icons present. Variable-font advances are identical in all three engines.
+- WebKit on Windows paints the glyphs at the font's default instance (thin, regular width) while laying them out with
+  the real axes, so its screenshots look broken. A limitation of that port, not the site; real Safari (CoreText) still
+  needs a look on a Mac or iPhone.
+
 ## Gotchas already paid for
 
 - One `astro preview` per project (Astro 7): a second one exits with "Another astro preview server is already running".

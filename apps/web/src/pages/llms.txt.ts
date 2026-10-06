@@ -15,7 +15,9 @@ export const GET: APIRoute = async ({ site }) => {
   const lines = [
     `# ${SITE.name}`,
     "",
-    `> ${CV.title.en}. ${CV.summary.en}`,
+    `> ${CV.title.en}.`,
+    "",
+    CV.summary.en,
     "",
     `Location: ${CV.location.en}. Languages: ${CV.languages.map((l) => `${l.name.en} (${l.level.en})`).join(", ")}.`,
     `Contact: ${SITE.email}. Profiles: ${PROFILES.map((p) => `${p.label} ${p.href}`).join(", ")}.`,

@@ -52,7 +52,7 @@ Turborepo (`usage/turborepo.md`): `apps/web/` (the site; folders in `conventions
 | i18n | `bun run i18n:extract` (then fill pl/es; the build compiles `.po` and fails on a missing message) |
 | build | `bun run build` (astro build → launch gate: placeholder markers, share images + PDFs present, every internal link / asset / #anchor resolves, incl. sprite symbols) |
 | preview | `bun run preview` (4322; one per project, shared by e2e/shots/Lighthouse) |
-| e2e + a11y | `bun run e2e` |
+| e2e + a11y | `bun run e2e` (Chromium, every spec) · `bun run e2e:xb` (Firefox + WebKit, functional specs; `bunx playwright install firefox webkit` once) |
 | screenshots | `MSYS_NO_PATHCONV=1 node scripts/shots.mjs --paths /en/ --widths 390,1024,1920,2560 --themes cobalt,paper,ink` (apps/web) |
 | Lighthouse | `MSYS_NO_PATHCONV=1 bun run lhci -- --runs 3 /en/ /en/work/` (`scripts/lighthouse.mjs`, median of 3, budgets; exits 1 on a miss) |
 | fonts | `bun run fonts` (Anybody subset + metric fallbacks + `fit-metrics.gen.ts`; outputs committed) |
