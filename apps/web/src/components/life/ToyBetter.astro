@@ -32,31 +32,38 @@ const STRINGS = { next: t`+1 day`, again: t`Again`, start: t`Same you. For now.`
     data-strings={JSON.stringify(STRINGS)}
   >
     <div class="b-out">
-      <p class="b-day tabular"><small>{t`Day`}</small> <b data-day>0</b><small>/ {DAYS}</small></p>
+      <p class="b-day tabular">
+        <small>{t`Day`}</small> <b data-day>0</b>
+        <small>/ {DAYS}</small>
+      </p>
       <p class="b-up">
-        <span class="big tabular" data-up>×{fmt(1)}</span>
+        <span class="big tabular" data-up>
+          ×{fmt(1)}
+        </span>
         <small>{t`1% better every day`}</small>
       </p>
       <p class="b-down">
-        <span class="big tabular" data-down>×{fmt(1)}</span>
+        <span class="big tabular" data-down>
+          ×{fmt(1)}
+        </span>
         <small>{t`1% worse every day`}</small>
       </p>
     </div>
 
     <div class="b-stage" aria-hidden="true">
       <div class="b-plot" data-plot>
-        <span class="b-one" data-one><i>×1</i></span>
+        <span class="b-one" data-one>
+          <i>×1</i>
+        </span>
         <svg class="b-chart" viewBox="0 0 300 120" preserveAspectRatio="none">
           <polyline class="c-down" data-line-down points="0,60"></polyline>
           <polyline class="c-up" data-line-up points="0,60"></polyline>
         </svg>
-        {
-          MARKS.map((mark) => (
-            <span class="b-flag" data-flag={mark.day}>
-              <b class="tabular">{mark.day}</b>
-            </span>
-          ))
-        }
+        {MARKS.map((mark) => (
+          <span class="b-flag" data-flag={mark.day}>
+            <b class="tabular">{mark.day}</b>
+          </span>
+        ))}
         <span class="b-orb b-orb-down" data-down-orb></span>
         <span class="b-orb b-orb-up" data-up-orb>
           <span class="b-say" data-say></span>
@@ -70,14 +77,12 @@ const STRINGS = { next: t`+1 day`, again: t`Again`, start: t`Same you. For now.`
         <span data-next-label>{STRINGS.next}</span>
       </button>
       <div class="b-marks" role="group" aria-label={t`Jump to`}>
-        {
-          MARKS.map((mark) => (
-            <button class="b-chip" type="button" data-jump={mark.day}>
-              {mark.label}
-              <small class="tabular">×{fmt(1.01 ** mark.day)}</small>
-            </button>
-          ))
-        }
+        {MARKS.map((mark) => (
+          <button class="b-chip" type="button" data-jump={mark.day}>
+            {mark.label}
+            <small class="tabular">×{fmt(1.01 ** mark.day)}</small>
+          </button>
+        ))}
       </div>
     </div>
     <p class="sr-only" role="status" data-said></p>
@@ -354,8 +359,10 @@ const STRINGS = { next: t`+1 day`, again: t`Again`, start: t`Same you. For now.`
     background: var(--navy);
     color: var(--lime);
   }
-  .b-chip:hover {
-    translate: 0 -2px;
+  @media (hover: hover) {
+    .b-chip:hover {
+      translate: 0 -2px;
+    }
   }
   .b-chip:focus-visible {
     outline: 3px solid var(--navy);

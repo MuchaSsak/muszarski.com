@@ -1,0 +1,61 @@
+---
+/**
+ * The build story as a strip of versions (the case study's map): each step a thumbnail, its date, a verdict stamp,
+ * the owner's words at that point (verbatim) and one line on what it was. Every version is kept (comps/HISTORY.md);
+ * this shows them in order. Text comes from the post (per-locale MDX).
+ */
+import type { ImageMetadata } from "astro";
+import { Image } from "astro:assets";
+
+import PostCover from "~/components/blog/PostCover.astro";
+import type { BlogCover } from "~/lib/blog";
+
+interface Step {
+  date: string;
+  title: string;
+  image?: ImageMetadata;
+  alt?: string;
+  /** A drawn picture instead of a screenshot (a post cover motif). */
+  cover?: BlogCover;
+  /** The stamp: what happened to this version. */
+  verdict: string;
+  tone: "no" | "yes" | "plain";
+  said?: string;
+  note: string;
+}
+interface Props {
+  label: string;
+  steps: Step[];
+}
+
+const { label, steps } = Astro.props;
+---
+
+<ol class="tl" aria-label={label}>
+  {steps.map((step, i) => (
+    <li class:list={["tl-step", step.tone]} style={`--i:${i}`}>
+      <div class="tl-pic">
+        {step.image ? (
+          <Image
+            src={step.image}
+            alt={step.alt ?? ""}
+            widths={[320, 640]}
+            sizes="(min-width: 48rem) 15rem, 40vw"
+            loading="lazy"
+          />
+        ) : step.cover ? (
+          <PostCover cover={step.cover} />
+        ) : null}
+        <span class="tl-stamp">{step.verdict}</span>
+      </div>
+      <div class="tl-body">
+        <p class="tl-date">
+          <span class="tl-n">{String(i).padStart(2, "0")}</span> {step.date}
+        </p>
+        <h3 class="tl-title">{step.title}</h3>
+        {step.said && <p class="tl-said">“{step.said}”</p>}
+        <p class="tl-note">{step.note}</p>
+      </div>
+    </li>
+  ))}
+</ol>

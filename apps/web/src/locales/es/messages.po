@@ -413,7 +413,7 @@ msgstr "Casos de estudio"
 msgid "Case study"
 msgstr "Caso de estudio"
 
-#: src/components/cv/CvBody.astro:153
+#: src/components/cv/CvBody.astro:154
 #: src/components/home/Credentials.astro:161
 msgid "Certificate"
 msgstr "Certificado"
@@ -1163,6 +1163,10 @@ msgstr "Siguientes artículos"
 #: src/components/life/ToyBoard.astro:26
 msgid "Next stop"
 msgstr "Próxima parada"
+
+#: src/components/blog/case/Versions.astro:70
+msgid "Next version"
+msgstr "Siguiente versión"
 
 #: src/components/home/Contact.astro:34
 msgid "No connection. Your text is still here; try again, or copy my email."
@@ -1977,6 +1981,10 @@ msgstr "visitas"
 #: src/components/home/Hero.astro:48
 msgid "Web + mobile"
 msgstr "Web + móvil"
+
+#: src/components/blog/case/Versions.astro:64
+msgid "What I said"
+msgstr "Lo que dije"
 
 #: src/components/home/chapters/ChapterPstrykWeb.astro:116
 msgid "What you do"

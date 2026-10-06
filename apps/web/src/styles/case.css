@@ -1,0 +1,345 @@
+/*
+ * Case-study pieces used inside posts (components/blog/case/*): Timeline, Versions, Shots. Kept here, imported by
+ * the post page, because styles of components rendered inside MDX are inlined without a CSP hash and get blocked.
+ * Class names carry their component's prefix (cs-, v-, tl-): this is global CSS.
+ */
+
+/* Timeline */
+.tl {
+  position: relative;
+  display: grid;
+  gap: 2.25rem;
+  margin: 2em 0 2.5em;
+  padding: 0;
+  list-style: none;
+}
+/* The rail the steps hang on. */
+.tl::before {
+  content: "";
+  position: absolute;
+  top: 0.5rem;
+  bottom: 0.5rem;
+  left: calc(min(15rem, 40%) / 2);
+  width: 3px;
+  background: repeating-linear-gradient(currentColor 0 10px, transparent 10px 18px);
+  opacity: 0.35;
+}
+.tl-step {
+  position: relative;
+  display: grid;
+  grid-template-columns: min(15rem, 40%) minmax(0, 1fr);
+  gap: 1.25rem;
+  align-items: start;
+  margin: 0 !important;
+}
+.tl-pic {
+  position: relative;
+  background: var(--ice);
+  box-shadow:
+    0 0 0 3px currentColor,
+    6px 6px 0 3px var(--navy);
+  rotate: calc((var(--i) - 3) * 0.5deg);
+}
+.tl-pic img,
+.tl-pic svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+.tl-stamp {
+  position: absolute;
+  right: -0.5rem;
+  bottom: -0.75rem;
+  padding: 0.25rem 0.5rem;
+  background: var(--navy);
+  color: var(--ice);
+  font-weight: 850;
+  font-size: 0.6875rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  rotate: -4deg;
+}
+.no .tl-stamp {
+  background: var(--orange);
+  color: var(--navy);
+}
+.yes .tl-stamp {
+  background: var(--lime);
+  color: var(--navy);
+}
+.no .tl-pic img {
+  filter: grayscale(0.6);
+}
+.tl-body {
+  display: grid;
+  gap: 0.375rem;
+  min-width: 0;
+}
+.tl-date {
+  margin: 0 !important;
+  font-weight: 800;
+  font-size: 0.75rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.tl-n {
+  display: inline-block;
+  min-width: 1.75rem;
+  padding: 0.0625rem 0.3125rem;
+  text-align: center;
+  box-shadow: inset 0 0 0 2px currentColor;
+}
+.tl-title {
+  margin: 0 !important;
+  font-size: 1.25rem !important;
+  line-height: 1.1;
+}
+.tl-said {
+  justify-self: start;
+  margin: 0.125rem 0 0 !important;
+  padding: 0.25rem 0.625rem;
+  background: var(--yellow);
+  color: var(--navy);
+  font-weight: 750;
+  font-size: 1rem;
+  line-height: 1.35;
+  box-shadow: 3px 3px 0 var(--navy);
+  rotate: -0.8deg;
+}
+.tl-note {
+  margin: 0 !important;
+  font-size: 1rem;
+  line-height: 1.5;
+}
+@media (max-width: 30rem) {
+  .tl::before {
+    display: none;
+  }
+  .tl-step {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 1.25rem;
+  }
+  .tl-pic {
+    max-width: 20rem;
+  }
+}
+
+/* Versions */
+.vers {
+  margin: 2em 0 2.25em;
+  padding: 0;
+  box-shadow:
+    0 0 0 3px currentColor,
+    8px 8px 0 3px var(--accent);
+}
+.v-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem 1rem;
+  padding: 0.75rem 0.875rem;
+  border-bottom: 3px solid currentColor;
+}
+.v-kick {
+  font-weight: 850;
+  font-size: 0.8125rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.v-tabs {
+  display: none;
+  flex-wrap: wrap;
+  gap: 0.375rem;
+}
+.js .v-tabs {
+  display: flex;
+}
+.v-tabs button {
+  min-height: 2.75rem;
+  padding: 0 0.875rem;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  box-shadow: inset 0 0 0 2px currentColor;
+  font: inherit;
+  font-weight: 800;
+  font-size: 0.8125rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+.v-tabs button[aria-selected="true"] {
+  background: var(--navy);
+  color: var(--ice);
+  box-shadow: inset 0 0 0 2px var(--navy);
+}
+.v-tabs button:focus-visible,
+.v-next:focus-visible {
+  outline: 3px solid var(--focus, var(--pink));
+  outline-offset: 2px;
+}
+.v-panel + .v-panel {
+  border-top: 3px solid currentColor;
+}
+.js .v-panel:not(.on) {
+  display: none;
+}
+.js .v-panel + .v-panel {
+  border-top: 0;
+}
+.v-label {
+  margin: 0;
+  padding: 0.625rem 0.875rem 0;
+  font-weight: 850;
+  font-size: 0.8125rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.js .v-label {
+  display: none;
+}
+.v-shot {
+  aspect-ratio: var(--ratio);
+  max-width: 100%;
+  margin: 0.75rem 0.875rem 0;
+  background: color-mix(in srgb, currentColor 8%, transparent);
+  box-shadow: 0 0 0 2px currentColor;
+}
+.v-shot img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: top center;
+}
+.v-text {
+  display: grid;
+  gap: 0.75rem;
+  padding: 0.875rem;
+}
+.v-said {
+  margin: 0;
+  padding: 0.625rem 0.875rem;
+  border: 0;
+  background: var(--yellow);
+  color: var(--navy);
+  font-weight: 750;
+  font-size: 1.0625rem;
+  line-height: 1.35;
+  rotate: -0.6deg;
+  box-shadow: 4px 4px 0 var(--navy);
+}
+.v-said p {
+  margin: 0;
+}
+.v-said footer {
+  margin-top: 0.25rem;
+  font-weight: 800;
+  font-size: 0.6875rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.v-note {
+  margin: 0;
+  font-size: 1rem;
+  line-height: 1.55;
+}
+.v-next {
+  display: none;
+  justify-self: start;
+  min-height: 2.75rem;
+  padding: 0 0.875rem;
+  border: 0;
+  background: var(--navy);
+  color: var(--ice);
+  font: inherit;
+  font-weight: 800;
+  font-size: 0.8125rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  cursor: pointer;
+  box-shadow: 4px 4px 0 var(--accent);
+}
+.js .v-next {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+@media (hover: hover) {
+  .v-tabs button:not([aria-selected="true"]):hover {
+    background: color-mix(in srgb, currentColor 12%, transparent);
+  }
+  .v-next:hover {
+    translate: -1px -1px;
+    box-shadow: 5px 5px 0 var(--accent);
+  }
+}
+
+/* Shots */
+.cs-shots {
+  margin: 1.75em 0 2em;
+}
+.cs-grid {
+  display: grid;
+  gap: 1.25rem;
+}
+.cs-many .cs-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+.cs-frame {
+  position: relative;
+  box-shadow:
+    0 0 0 3px currentColor,
+    6px 6px 0 3px var(--navy);
+}
+.cs-frame.cs-picked {
+  box-shadow:
+    0 0 0 4px var(--pink),
+    8px 8px 0 4px var(--navy);
+}
+.cs-frame img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+.cs-tag {
+  position: absolute;
+  top: -0.625rem;
+  left: 0.5rem;
+  padding: 0.1875rem 0.5rem;
+  background: var(--navy);
+  color: var(--ice);
+  font-weight: 850;
+  font-size: 0.6875rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  rotate: -3deg;
+}
+.cs-picked .cs-tag {
+  background: var(--pink);
+  color: var(--navy);
+}
+.cs-name {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  padding: 0.25rem 0.5rem;
+  background: var(--ice);
+  color: var(--navy);
+  font-weight: 850;
+  font-size: 0.75rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.cs-shots figcaption {
+  margin-top: 0.875rem;
+  font-size: 0.9375rem;
+  line-height: 1.5;
+  opacity: 0.85;
+}
+@media (max-width: 26rem) {
+  .cs-many .cs-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

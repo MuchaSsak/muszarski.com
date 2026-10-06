@@ -4,6 +4,7 @@ seoTitle: "Claude Code skills vs hooks vs MCP vs subagents"
 description: "A decision guide to Claude Code's building blocks, based on the official docs, with the real hooks, skills and MCP servers behind this site."
 translationKey: "claude-code-building-blocks"
 published: 2026-10-05
+updated: 2026-10-06
 tags: [ai, claude-code]
 cover: terminal
 related: [llm-wiki, this-site]
@@ -45,7 +46,13 @@ sources:
 
 Use CLAUDE.md for what Claude must know in every session, a skill for a procedure or reference it needs only sometimes, and a hook for anything that must happen every time. Reach for an MCP server when the data or the action lives outside your repo, and a subagent when side work would flood your main context. The rest of this post explains each piece from the official Claude Code docs and shows how I combined them to build this site.
 
-## Five pieces, one paragraph each
+> **TL;DR**
+>
+> - **Request or enforcement:** CLAUDE.md and skills are instructions Claude interprets; a hook always fires on its event.
+> - **Context cost:** CLAUDE.md is paid on every request, skills and MCP tools cost little until used, and a subagent works in its own window and returns a summary.
+> - **Add pieces when their trigger appears:** a repeated correction, a pasted playbook, data copied from a browser tab, a flooded context, a rule that must hold every time.
+
+## What are the five pieces?
 
 The docs page "Extend Claude Code" describes the extension layer. In short:
 
@@ -57,7 +64,7 @@ The docs page "Extend Claude Code" describes the extension layer. In short:
 
 Plugins bundle all of these into one installable unit for reuse across repositories. I don't use one here, so I'll leave them out.
 
-## Two questions sort almost every case
+## Which two questions sort almost every case?
 
 **Who decides that it runs?** The docs put it bluntly: a hook "always fires on its event; the trigger is guaranteed", while a skill is instructions Claude interprets, so the "outcome can vary". CLAUDE.md is in the second group too: the memory docs say Claude treats it "as context, not enforced configuration". That leads to the most useful rule on the page: "never edit `.env`" in CLAUDE.md is a request, and a `PreToolUse` hook that blocks the edit is enforcement.
 
@@ -73,7 +80,7 @@ Plugins bundle all of these into one installable unit for reuse across repositor
 
 This is why a long CLAUDE.md is a bad home for reference material: you pay for it on every request, needed or not. A skill's body costs almost nothing until it's used.
 
-## Need → building block
+## Which building block fits which need?
 
 | You need | Reach for | Why |
 | --- | --- | --- |
@@ -86,15 +93,23 @@ This is why a long CLAUDE.md is a bad home for reference material: you pay for i
 | Research that reads many files, or parallel work | subagent | only the summary comes back |
 | Frequent back-and-forth on one problem | the main conversation | the docs recommend it over subagents here |
 
-The docs also suggest adding pieces when their trigger appears, not up front. A convention Claude gets wrong twice goes into CLAUDE.md. A playbook pasted for the third time becomes a skill. Data you keep copying from a browser tab becomes an MCP server. A side task that floods the conversation goes to a subagent. Anything you want every time without asking becomes a hook.
+The docs also suggest adding pieces when their trigger appears, not up front:
 
-## My setup, piece by piece
+- A convention Claude gets wrong twice goes into CLAUDE.md.
+- A playbook pasted for the third time becomes a skill.
+- Data you keep copying from a browser tab becomes an MCP server.
+- A side task that floods the conversation goes to a subagent.
+- Anything you want every time without asking becomes a hook.
+
+## What does my setup look like?
 
 This site was built with Claude Code driven by a project wiki in `.claude/project-info/`. Here is what each building block does in that repo.
 
 ### CLAUDE.md: a router, not an encyclopedia
 
-My CLAUDE.md is 76 lines. Most of it is a routing table: 31 rows that map the words I type ("locales, translation, hreflang") to wiki pages, plus ten invariants such as performance budgets, licences and "no invented facts". The paths are plain text on purpose. An `@import` would load every page into every session, and the docs confirm imports "don't reduce its context cost". The wiki has its own post: [An LLM wiki: project memory for Claude Code](/en/blog/llm-wiki-project-memory-for-claude-code/).
+My CLAUDE.md is 76 lines. Most of it is a routing table: 31 rows that map the words I type ("locales, translation, hreflang") to wiki pages, plus ten invariants such as performance budgets, licences and "no invented facts".
+
+The paths are plain text on purpose. An `@import` would load every page into every session, and the docs confirm imports "don't reduce its context cost". The wiki has its own post: [An LLM wiki: project memory for Claude Code](/en/blog/llm-wiki-project-memory-for-claude-code/).
 
 ### Three hooks
 
@@ -131,7 +146,9 @@ All three are plain Node scripts that exit cleanly on their own errors. A guard 
 | `search-registry-items` | Claude only | finds a UI component in public shadcn registries through an MCP server, then installs it |
 | `start-project-info` | me only | sets up the wiki, routing table, lessons and hooks in a new project |
 
-"Claude only" is `user-invocable: false`: background knowledge that isn't a sensible command. "Me only" is `disable-model-invocation: true`: that skill writes many files, so I want to be the one who starts it, and its description costs no context until I do. The home page currently measures 100 in all four mobile Lighthouse categories (median of 3 runs), and `lighthouse-qa` is the loop that keeps checking it.
+"Claude only" is `user-invocable: false`: background knowledge that isn't a sensible command. "Me only" is `disable-model-invocation: true`: that skill writes many files, so I want to be the one who starts it, and its description costs no context until I do.
+
+The home page currently measures 99 for performance and 100 for accessibility, best practices and SEO on mobile Lighthouse (median of 3 runs), and `lighthouse-qa` is the loop that keeps checking it.
 
 ### Three MCP servers
 
@@ -145,7 +162,7 @@ The MCP docs carry a warning worth repeating: verify you trust each server, beca
 
 I have no custom subagent files; the built-in ones were enough. I used them for research while planning: the wiki's log records one batch of 8 research agents and one of 3, each on its own topic, writing raw notes that I then condensed into the routed pages. One lesson came out of it: parallel agents share one web search budget and can run it dry, so prefer fetching URLs you already know.
 
-## How they combine
+## How do they combine?
 
 The pieces get useful when they cover each other's weak spots.
 
@@ -162,6 +179,6 @@ The pieces get useful when they cover each other's weak spots.
 - **Subagents start blank.** A subagent doesn't see your conversation, only the delegation message, so a vague brief gets a vague summary back. Its requests also count toward the same usage limits as the main session.
 - **I haven't measured the savings.** I can't give you a token or time figure for these hooks. What I can say: after a compaction, the next turn starts with the rules instead of with me repeating them.
 
-## Where to start
+## Where should you start?
 
 Write a short CLAUDE.md first. Add the next piece only when its trigger shows up: a repeated correction, a pasted playbook, a copied browser tab, a flooded context, a rule that must hold every time. How these pieces built this site, end to end, is in the [case study](/en/blog/how-this-site-was-built/). The projects themselves are on the [work page](/en/work/).

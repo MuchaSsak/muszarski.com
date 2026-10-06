@@ -76,7 +76,13 @@ const SOCIAL_ICONS: Record<string, IconName> = { discord: "si:discord", messenge
       </button>
     </div>
     <ul class="toys" role="list">
-      <ToyCard area="reps" title={t`Calisthenics`} line={L(t`Training with just my bodyweight. Bar, floor, repeat.`)} tone="var(--yellow)" hint={tap}>
+      <ToyCard
+        area="reps"
+        title={t`Calisthenics`}
+        line={L(t`Training with just my bodyweight. Bar, floor, repeat.`)}
+        tone="var(--yellow)"
+        hint={tap}
+      >
         <ToyReps />
       </ToyCard>
       <ToyCard area="beats" title={t`Music`} line={L(t`My playlist is all over the place.`)} tone="var(--pink)" hint={tap}>
@@ -85,13 +91,26 @@ const SOCIAL_ICONS: Record<string, IconName> = { discord: "si:discord", messenge
       <ToyCard area="light" title={t`Faith`} line={L(t`I'm a Christian.`)} tone="var(--navy)" ink="var(--ice)">
         <ToyLight />
       </ToyCard>
-      <ToyCard area="board" title={t`Travel`} line={L(t`I like going somewhere I haven't been yet.`)} tone="var(--lime)" hint={tap}>
+      <ToyCard
+        area="board"
+        title={t`Travel`}
+        line={L(t`I like going somewhere I haven't been yet.`)}
+        tone="var(--lime)"
+        hint={tap}
+      >
         <ToyBoard />
       </ToyCard>
       <ToyCard area="rev" title={t`Motorcycles`} line={L(t`I like bikes. Simple as that.`)} tone="var(--orange)" hint={hold}>
         <ToyRev />
       </ToyCard>
-      <ToyCard area="pong" title={t`Games with friends`} line={L(t`Gaming, but best with friends.`)} tone="var(--cobalt)" ink="var(--ice)" hint={play}>
+      <ToyCard
+        area="pong"
+        title={t`Games with friends`}
+        line={L(t`Gaming, but best with friends.`)}
+        tone="var(--cobalt)"
+        ink="var(--ice)"
+        hint={play}
+      >
         <ToyPong />
       </ToyCard>
       <ToyCard area="film" title={t`Films`} line={L(t`A good film night is hard to beat.`)} tone="var(--ice)" hint={tap}>
@@ -100,10 +119,22 @@ const SOCIAL_ICONS: Record<string, IconName> = { discord: "si:discord", messenge
       <ToyCard area="party" title={t`Parties`} line={L(t`I like a good party.`)} tone="var(--space)" ink="var(--ice)" hint={tap}>
         <ToyParty />
       </ToyCard>
-      <ToyCard area="photo" title={t`Photography`} line={L(t`I take photos. Strictly amateur, strictly for fun.`)} tone="var(--pink)" hint={slide}>
+      <ToyCard
+        area="photo"
+        title={t`Photography`}
+        line={L(t`I take photos. Strictly amateur, strictly for fun.`)}
+        tone="var(--pink)"
+        hint={slide}
+      >
         <ToyPhoto />
       </ToyCard>
-      <ToyCard area="better" title={t`Self-improvement`} line={L(t`Trying to be a bit better than yesterday.`)} tone="var(--lime)" hint={hold}>
+      <ToyCard
+        area="better"
+        title={t`Self-improvement`}
+        line={L(t`Trying to be a bit better than yesterday.`)}
+        tone="var(--lime)"
+        hint={hold}
+      >
         <ToyBetter />
       </ToyCard>
     </ul>
@@ -128,31 +159,33 @@ const SOCIAL_ICONS: Record<string, IconName> = { discord: "si:discord", messenge
         <div class="win-bar" aria-hidden="true">
           <Logo class="win-av" />
           <b>{SITE.name}</b>
-          <i class="win-dots"><b /><b /><b /></i>
+          <i class="win-dots">
+            <b />
+            <b />
+            <b />
+          </i>
         </div>
         <div class="win-body">
           <p class="m m-hi" style="--m:0" aria-hidden="true">{t`Hi!`}</p>
-          {
-            SOCIAL.map((social, i) => (
-              <a
-                class={`m bubble b-${i}`}
-                style={`--m:${i + 1}`}
-                href={social.href}
-                rel="me noopener"
-                target="_blank"
-                data-umami-event="outbound"
-                data-umami-event-target={social.id}
-              >
-                <Icon name={SOCIAL_ICONS[social.id] ?? "tb:message-circle"} />
-                <span class="b-txt">
-                  {social.label}
-                  {social.handle && <small>{social.handle}</small>}
-                </span>
-                <Icon name="tb:arrow-up-right" class="b-go" />
-                <span class="sr-only"> {t`(opens in a new tab)`}</span>
-              </a>
-            ))
-          }
+          {SOCIAL.map((social, i) => (
+            <a
+              class={`m bubble b-${i}`}
+              style={`--m:${i + 1}`}
+              href={social.href}
+              rel="me noopener"
+              target="_blank"
+              data-umami-event="outbound"
+              data-umami-event-target={social.id}
+            >
+              <Icon name={SOCIAL_ICONS[social.id] ?? "tb:message-circle"} />
+              <span class="b-txt">
+                {social.label}
+                {social.handle && <small>{social.handle}</small>}
+              </span>
+              <Icon name="tb:arrow-up-right" class="b-go" />
+              <span class="sr-only"> {t`(opens in a new tab)`}</span>
+            </a>
+          ))}
           <i class="m typing" style={`--m:${SOCIAL.length + 1}`} aria-hidden="true">
             <b />
             <b />
@@ -407,12 +440,21 @@ const SOCIAL_ICONS: Record<string, IconName> = { discord: "si:discord", messenge
     height: 1.25rem;
     transition: translate 0.35s var(--ease-pop);
   }
-  .bubble:is(:hover, :focus-visible) {
+  .bubble:focus-visible {
     translate: -3px -3px;
     rotate: -2deg;
   }
-  .bubble:is(:hover, :focus-visible) :global(.b-go) {
+  .bubble:focus-visible :global(.b-go) {
     translate: 3px -3px;
+  }
+  @media (hover: hover) {
+    .bubble:hover {
+      translate: -3px -3px;
+      rotate: -2deg;
+    }
+    .bubble:hover :global(.b-go) {
+      translate: 3px -3px;
+    }
   }
   .bubble:focus-visible {
     outline: 3px solid var(--cobalt);

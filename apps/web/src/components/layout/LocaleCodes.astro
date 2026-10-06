@@ -99,8 +99,13 @@ const locale = Astro.locals.locale;
     box-shadow: 0 0 0 1.5px currentColor;
     transition: transform var(--dur-base) var(--ease-pop);
   }
-  .locale-codes a:hover .flag {
+  .locale-codes a:focus-visible .flag {
     transform: rotate(-6deg) scale(1.08);
+  }
+  @media (hover: hover) {
+    .locale-codes a:hover .flag {
+      transform: rotate(-6deg) scale(1.08);
+    }
   }
   .flag-en {
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 60 30' preserveAspectRatio='xMidYMid slice'%3E%3CclipPath id='c'%3E%3Cpath d='M30 15h30v15zv15H0zH0V0zV0h30z'/%3E%3C/clipPath%3E%3Cpath fill='%23012169' d='M0 0h60v30H0z'/%3E%3Cpath stroke='%23fff' stroke-width='6' d='M0 0l60 30m0-30L0 30'/%3E%3Cpath stroke='%23c8102e' stroke-width='4' clip-path='url(%23c)' d='M0 0l60 30m0-30L0 30'/%3E%3Cpath stroke='%23fff' stroke-width='10' d='M30 0v30M0 15h60'/%3E%3Cpath stroke='%23c8102e' stroke-width='6' d='M30 0v30M0 15h60'/%3E%3C/svg%3E");

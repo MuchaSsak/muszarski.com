@@ -4,6 +4,7 @@ seoTitle: "How I built this portfolio (case study)"
 description: "Case study: replacing a 3D portfolio that scored 34 on mobile with an Astro site that scores 99 to 100, planned in a project wiki and built with Claude Code."
 translationKey: this-site
 published: 2026-10-05
+updated: 2026-10-06
 tags: [case-study, ai, astro, performance]
 cover: blueprint
 featured: true
@@ -23,13 +24,115 @@ sources:
     accessed: 2026-10-05
 ---
 
-My old portfolio was a WebGL flight from Earth to Neptune. It looked good on my desktop and scored 34 on mobile Lighthouse. This site replaces it: Astro, three languages, one variable font, about 8 KB of JavaScript on the home page, and 99 to 100 on mobile Lighthouse. It was planned in a project wiki before any product code, its first design was thrown away, and it was built with Claude Code under checks I can't skip.
+import Shots from "~/components/blog/case/Shots.astro";
+import Timeline from "~/components/blog/case/Timeline.astro";
+import Versions from "~/components/blog/case/Versions.astro";
+import oldSpace from "~/assets/case/old-space.webp";
+import draftingTable from "~/assets/case/drafting-table.webp";
+import reviewR1 from "~/assets/case/review-r1.webp";
+import dirOrbit from "~/assets/case/dir-orbit.webp";
+import dirPoster from "~/assets/case/dir-poster.webp";
+import dirToybox from "~/assets/case/dir-toybox.webp";
+import dirExhibit from "~/assets/case/dir-exhibit.webp";
+import heroNow from "~/assets/case/hero-now.webp";
+import aiR2 from "~/assets/case/ai-r2.webp";
+import aiR3 from "~/assets/case/ai-r3.webp";
+import aiNow from "~/assets/case/ai-now.webp";
+import credR2 from "~/assets/case/credentials-r2.webp";
+import credR3 from "~/assets/case/credentials-r3.webp";
+import credNow from "~/assets/case/credentials-now.webp";
+import contactR2 from "~/assets/case/contact-r2.webp";
+import contactR3 from "~/assets/case/contact-r3.webp";
+import contactNow from "~/assets/case/contact-now.webp";
+import howR2 from "~/assets/case/how-r2.webp";
+import howNow from "~/assets/case/how-now.webp";
+import coversBefore from "~/assets/case/covers-before.webp";
+import coversAfter from "~/assets/case/covers-after.webp";
+
+My old portfolio was a WebGL flight from Earth to Neptune. It looked good on my desktop and scored 34 on mobile Lighthouse. This site replaces it: Astro, three languages, one variable font, about 8 KB of JavaScript on the home page, and 99 to 100 on mobile Lighthouse. It was planned in a project wiki before any product code, its first design was thrown away, and every version since is kept, so this page can show you how it changed and why.
 
 > **TL;DR**
 >
 > - **Before:** 13.8 MB downloaded before the start button, mobile performance 34, no touch or keyboard navigation, no indexable text.
-> - **After (mobile, median of 3 runs):** home page Lighthouse 99 / 100 / 100 / 100, LCP about 1.95 s, CLS 0, page JavaScript about 8 KB gzip; every other page 100 on all four scores.
-> - **How:** a wiki that every session reads, one design direction picked from four live options, type fitted at build time, motion that pauses itself, and screenshots, accessibility checks and Lighthouse on every slice.
+> - **After (mobile, median of 3 runs):** home page Lighthouse 99 / 100 / 100 / 100, LCP about 1.95 s, CLS 0, page JavaScript about 8 KB gzip.
+> - **How:** a wiki that every session reads, one design picked from four live options, my notes after every round, and screenshots, accessibility checks and Lighthouse on every slice.
+
+## How did it go, version by version?
+
+Everything below happened in two days. Every version is kept: comps in the repo, code under git tags, screenshots in a folder. The quotes are what I typed at the time, typos included.
+
+<Timeline
+  label="Versions of this site, oldest first"
+  steps={[
+    {
+      date: "Before",
+      title: "The 3D space portfolio",
+      image: oldSpace,
+      alt: "The old site: a glowing planet and the word Projects in space",
+      verdict: "Replaced",
+      tone: "no",
+      note: "A WebGL flight to Neptune. Beautiful on my desktop, 34 on mobile Lighthouse, and an “Oops!” screen on phones.",
+    },
+    {
+      date: "5 Oct 2026",
+      title: "Phase 0: a wiki, no code",
+      cover: "wiki",
+      verdict: "Kept",
+      tone: "plain",
+      said: "we plan together first",
+      note: "Research, requirements, brand, legal and the rules of the project in about thirty pages, before a single component.",
+    },
+    {
+      date: "5 Oct 2026",
+      title: "Drafting Table",
+      image: draftingTable,
+      alt: "The first design: a pale paper page with a blueprint grid and a small heading",
+      verdict: "Rejected",
+      tone: "no",
+      said: "this looks so ugly",
+      note: "Paper, cyanotype and a title-block header. It passed every check and looked forgettable.",
+    },
+    {
+      date: "5 Oct 2026",
+      title: "Four live directions",
+      image: dirPoster,
+      alt: "The Poster direction: the name in huge white capitals on cobalt with a pink round sticker",
+      verdict: "Poster picked",
+      tone: "yes",
+      said: "it really has professional vibe",
+      note: "Orbit, Poster, Toybox and Exhibit as working pages. Claude recommended Orbit. I picked Poster.",
+    },
+    {
+      date: "5 Oct 2026",
+      title: "Round 2: Poster everywhere",
+      image: contactR2,
+      alt: "Round 2 of Poster: the contact section, Let's talk in huge capitals on pink",
+      verdict: "Notes",
+      tone: "plain",
+      said: "definitely progress",
+      note: "The whole home page in Poster, three colour themes and two fonts tried side by side.",
+    },
+    {
+      date: "5 Oct 2026",
+      title: "Round 3: less text",
+      image: credR3,
+      alt: "Round 3 of Poster: credentials as tall cards with sideways titles, one open",
+      verdict: "Approved",
+      tone: "yes",
+      said: "lets finally start coding",
+      note: "Tool logos with their names, a reel per project, a shorter everything. The comps stop here.",
+    },
+    {
+      date: "6 Oct 2026",
+      title: "The site you are on",
+      image: heroNow,
+      alt: "Today's hero: the name fitted edge to edge on cobalt, the role and two buttons",
+      verdict: "Live",
+      tone: "yes",
+      note: "Built in Astro one slice at a time, then reshaped by rounds of notes on the live site.",
+    },
+  ]}
+/>
 
 ## Why rebuild a site that people liked?
 
@@ -44,84 +147,206 @@ The space portfolio was my favourite thing to show and the worst thing to send t
 | On a phone | an "Oops!" screen |
 | Text in the raw HTML | none a search engine could index |
 
-A person who opens a portfolio from a LinkedIn message on a phone gets maybe ten seconds. My site spent them on a loading bar. The 3D journey proved I can write shaders; it also proved I hadn't thought about the person on the other side. The new site had to fix that without becoming boring.
+A person who opens a portfolio from a LinkedIn message on a phone gets maybe ten seconds. My site spent them on a loading bar. It proved I can write shaders; it also proved I hadn't thought about the person on the other side.
 
 ## What did the new site have to do?
 
-I wrote the requirements down before choosing a framework, and the main rule fits on one line: **impressive within 3 seconds, and usable in one tap on a phone.** No preloader, no gate, no scroll-jacking, the same content on mobile as on desktop.
+One rule, written down before choosing a framework: **impressive within 3 seconds, and usable in one tap on a phone.** No preloader, no gate, no scroll-jacking, the same content on mobile as on desktop. The budgets came from it:
 
-The budgets came from that rule:
-
-- Lighthouse mobile at least 90 on every page; LCP under 2.5 s (target 2.0), CLS under 0.05, total blocking time under 200 ms
-- under 150 KB of JavaScript (gzip) on first load, under 100 KB of fonts
-- the main heading is the largest contentful paint, so it must render final from the server, with no JavaScript in the way
-- WCAG 2.2 AA, a pause button for anything that moves longer than five seconds
+- Lighthouse mobile at least 90 on every page; LCP under 2.5 s (target 2.0), CLS under 0.05
+- under 150 KB of JavaScript and under 100 KB of fonts on first load
+- the main heading is the largest contentful paint, so it renders final from the server
+- WCAG 2.2 AA, and a pause button for anything that moves longer than five seconds
 - English, Polish and Spanish, with the CV page and the PDF generated from one data file
 
 ## How did the planning work?
 
-Before a single component existed, I spent a session building a wiki for the project in `.claude/project-info/`: about thirty pages, each owning one kind of fact. The brief, the audience, the brand voice, requirements, the site structure, SEO, legal facts, the design system, the tech stack, open questions, a log and a list of lessons. Every non-obvious fact carries its source: `[user]` when I decided it, `[research]` when an agent found it, `[assumption]` when nobody knows yet.
+Before a single component existed, I spent a session building a wiki in `.claude/project-info/`: about thirty pages, each owning one kind of fact. Every non-obvious fact carries its source: `[user]` when I decided it, `[research]` when an agent found it, `[assumption]` when nobody knows yet.
 
-Three hooks keep it alive. One loads the working rules and the lessons when a session starts or after its context is compacted. One reads each prompt and routes the right wiki pages into it. One blocks the end of a turn when code changed but the wiki didn't. I wrote about the method in [An LLM wiki: project memory for Claude Code](/en/blog/llm-wiki-project-memory-for-claude-code/).
+Three hooks keep it alive. One loads the rules and the lessons when a session starts or after compaction. One routes the right pages into each prompt. One blocks the end of a turn when code changed but the wiki didn't. The method is in [An LLM wiki: project memory for Claude Code](/en/blog/llm-wiki-project-memory-for-claude-code/).
 
-The research ran as parallel subagents: hiring from a software house's point of view, portfolio patterns, performance and accessibility, SEO for a personal name, Polish and EU law for a contact form and analytics, and the stack. Their conclusions went into the routed pages; the raw notes stayed in a research folder.
-
-The payoff showed up later. When I changed my mind about something, there was one place to change it. When a session lost its memory to compaction, the next one read the same pages and carried on.
+The payoff showed up later. When I changed my mind, there was one place to change it. When a session lost its memory to compaction, the next one read the same pages and carried on.
 
 ## Why Astro and not Next.js?
 
-I build apps in Next.js, and the internship project on this site is one. A portfolio is a content site: a few pages, mostly static, where every kilobyte of JavaScript is a cost for the person on a slow phone. Astro renders React components to HTML and ships no JavaScript unless a component asks for it. Lingui works in Astro through `lingui-for-astro`, and a missing Polish or Spanish string fails the build.
-
-The few interactive parts (the letter animation, the reels, the contact form) are small vanilla TypeScript modules. With every section built, the home page ships about 8 KB of them, gzipped. There is a longer comparison in [Astro vs Next.js for a portfolio](/en/blog/astro-vs-nextjs-for-a-portfolio/).
+A portfolio is a content site: a few pages, mostly static, where every kilobyte of JavaScript costs the person on a slow phone. Astro renders components to HTML and ships no JavaScript unless a component asks for it. Lingui works in Astro through `lingui-for-astro`, and a missing Polish or Spanish string fails the build. The longer version is in [Astro vs Next.js for a portfolio](/en/blog/astro-vs-nextjs-for-a-portfolio/).
 
 ## What happened to the first design?
 
-I built the first look properly: tokens, two typefaces, a header drawn like the title block of an engineering drawing, a footer like its revision block. It passed every check: 51 end-to-end tests, axe in light and dark mode, Lighthouse 100 on all four scores.
+I built the first look properly, and it passed everything: 51 end-to-end tests, axe in light and dark mode, Lighthouse 100 on all four scores.
 
-Then I looked at it on the screen and called it ugly. It was tidy, safe and forgettable, and it had been chosen before I had seen any alternative. A clean system is not the same as a good one.
+<Shots
+  shots={[{ image: draftingTable, alt: "The rejected first design: a pale paper page with a faint grid, a small heading and a boxed contact block" }]}
+  caption="Drafting Table, the rejected first look. Clean, tested, and chosen before I had seen a single alternative."
+/>
 
-So the process changed. Before any more product code:
+Then I looked at it and called it ugly, and I was right. A clean system is not the same as a good one. So the process changed: research for ambition, not safety; four genuinely different directions built as live pages; I pick, then the design system gets rewritten.
 
-1. Research for ambition, not safety: award-winning portfolios, product sites, motion references, measured for how quickly a visitor can actually use them.
-2. Four genuinely different directions, built as live pages with real type, colour and motion, and screenshotted at phone and desktop widths. They were called Orbit, Poster, Toybox and Exhibit.
-3. I pick, then the design system gets rewritten.
+<Shots
+  shots={[{ image: reviewR1, alt: "The round 1 review page: the heading Four directions, pick one or mix, Claude's pick box recommending Orbit, and the Orbit direction with its screenshots" }]}
+  caption="The page I reviewed the directions on, as I saw it. The box at the top is Claude's recommendation: Orbit."
+/>
 
-I picked Poster: every section is a flat colour field like a printed poster, the type is fitted edge to edge, depth is a hard offset shadow, and a fine print grain sits over everything. Two more rounds of notes followed. The ones that changed the most: less text and more to look at, tool logos always shown with their names, real video of the products instead of screenshots, and every hover effect with a twin for touch screens, because phones don't have a cursor.
+<Shots
+  shots={[
+    { image: dirOrbit, alt: "Orbit: the name over a particle planet", name: "Orbit", tag: "Claude's pick" },
+    { image: dirPoster, alt: "Poster: the name in huge capitals on cobalt", name: "Poster", tag: "My pick", picked: true },
+    { image: dirToybox, alt: "Toybox: soft 3D toy shapes next to the name", name: "Toybox" },
+    { image: dirExhibit, alt: "Exhibit: the name in a serif over a dark red glow", name: "Exhibit" },
+  ]}
+  caption="The four directions at 1440 px. Orbit was the agent's choice because the 3D carried the whole page. I picked Poster: the type itself is the picture, so the design is already there at first paint."
+/>
 
-Every version is kept, the rejected one included, tagged in git and indexed in the repo.
+## How did each part change, and why?
+
+Each round left screenshots behind. Here are five parts of the site through their versions, with what I said and what changed. Tap through them.
+
+<Versions
+  id="v-ai"
+  title="The AI section"
+  frames={[
+    {
+      label: "Round 2",
+      image: aiR2,
+      alt: "Round 2: the heading Delegate. Verify. next to a checklist of gates",
+      note: "A checklist of gates: type checking, lint, tests, Lighthouse. All true, and all the floor. It sold the checks, not the way I work.",
+    },
+    {
+      label: "Round 3",
+      image: aiR3,
+      alt: "Round 3: the heading Delegate. Automate. above a row of counters for hooks, wiki pages, subagents, MCP servers, skills and lessons",
+      note: "Counters for hooks, wiki pages, subagents, skills and lessons. Numbers that change every week and say nothing about how a task gets done.",
+    },
+    {
+      label: "Now",
+      image: aiNow,
+      alt: "Now: a team of six agent badges with roles, and an open card showing one job with an example",
+      said: "dont give precise numbers",
+      note: "The setup as a small team with one job each (memory, rules, research, tools, playbooks, review), each with a real example. No counters.",
+    },
+  ]}
+/>
+
+<Versions
+  id="v-cred"
+  title="Credentials, now Competences"
+  frames={[
+    {
+      label: "Round 2",
+      image: credR2,
+      alt: "Round 2: a grid of seven credential cards, each with a paragraph",
+      note: "Seven cards, each a paragraph. Everything visible, nothing readable at a glance.",
+    },
+    {
+      label: "Round 3",
+      image: credR3,
+      alt: "Round 3: tall collapsed cards with vertical titles and one card open with a picture",
+      note: "Collapsed cards with sideways titles that open on hover. Compact, and hard to read on a laptop.",
+    },
+    {
+      label: "Now",
+      image: credNow,
+      alt: "Now: a readable list on the left and an open card on the right showing two course certificates with Verify buttons",
+      said: "why call section Credentials and not something like Competences",
+      note: "A list you can read on the left, one open card on the right, experience first. Courses now hold their certificates, each with a link to check it.",
+    },
+  ]}
+/>
+
+<Versions
+  id="v-contact"
+  title="Contact"
+  frames={[
+    {
+      label: "Round 2",
+      image: contactR2,
+      alt: "Round 2: Let's talk, with an email field, a message field and a row of buttons",
+      note: "An email field, a message field and a row of buttons. A normal form, and every field is a reason to stop.",
+    },
+    {
+      label: "Round 3",
+      image: contactR3,
+      alt: "Round 3: Let's talk, with one message box and three topic chips",
+      said: "very quick form with as little friction and inputs as possible",
+      note: "Message first: one box and three optional topics. The reply field appears only once you start typing.",
+    },
+    {
+      label: "Now",
+      image: contactNow,
+      alt: "Now: Let's talk, with topic chips, a message box, a Send button and three direct links",
+      note: "If your message already contains an email, a phone number or a LinkedIn link, the reply field fills itself. Errors say what to do in words, and the form works without JavaScript.",
+    },
+  ]}
+/>
+
+<Versions
+  id="v-how"
+  title="How I work"
+  frames={[
+    {
+      label: "Round 2",
+      image: howR2,
+      alt: "Round 2: How I work as four numbered principles with small receipts",
+      note: "Four principles as numbered lines. Easy to write, easy to skip.",
+    },
+    {
+      label: "Now",
+      image: howNow,
+      alt: "Now: Product engineer, a ring of seven stops from client to review, and an open stop with a drawn scene of a shop and an earnings bubble",
+      said: "more visually storytelling",
+      note: "A ring of seven stops, from the client to the review. Each stop opens a drawn scene and a real example from a project.",
+    },
+  ]}
+/>
+
+<Versions
+  id="v-covers"
+  title="Blog covers"
+  frames={[
+    {
+      label: "Before",
+      image: coversBefore,
+      alt: "Six old covers: a stack of papers, two bar charts, a row of boxes, a shield, the letters A A a, and EN and PL bubbles",
+      note: "One motif per topic, but the colours came from the card's place in the list, so orange met pink and a post changed colour between pages.",
+    },
+    {
+      label: "After",
+      image: coversAfter,
+      alt: "Six new covers: linked wiki pages, a level scale, a terminal wired to helpers, a crossed-out cookie next to bars, one wide letter between two walls, and two swapped speech bubbles",
+      said: "make some of the blogs' thumbnails a bit better in terms of color harmonies and just generally intuitiveness",
+      note: "Each cover owns one palette and draws its topic literally: a scale for a comparison, a crossed-out cookie for cookieless analytics. No words on them.",
+    },
+  ]}
+/>
+
+The rule behind all five: show the thing, cut the paragraph. And every hover effect got a twin for touch, because, in my words from that round, "they dont have cursors" ([how that works](/en/blog/hover-effects-on-phones/)). The form has its own write-up too, bug included: [a contact form on a static site](/en/blog/contact-form-on-a-static-site/).
 
 ## How does the name fill the screen with no JavaScript?
 
 The hero name runs edge to edge at every width, and it is the largest contentful paint, so it can't wait for a script to measure it.
 
-The font is Anybody, a variable font with a width axis from 50 to 150. At build time a script measures every glyph's advance and the kerning at width 50 and at width 150. Between the two, the width of a line changes linearly, so for each line I can solve for the exact width setting that makes it fill its box, and for the font size as a fraction of the container. The page ships that as CSS: `font-size` in container query units and `font-stretch` per line. No measurement in the browser, no layout shift.
-
-After the page loads and the browser is idle, a small script splits the lines into letters and turns them into an accordion: letters near the pointer widen, the rest narrow, and the line stays flush. On a phone it idles as a slow wave. The full technique is in [Fit text to its container at build time](/en/blog/fit-text-to-width-at-build-time/).
+The font is Anybody, a variable font with a width axis from 50 to 150. At build time a script measures every glyph's advance and the kerning at both ends of that axis. Between them the width of a line changes linearly, so for each line I can solve for the exact width setting that fills its box. The page ships that as CSS: `font-size` in container query units and `font-stretch` per line. No measuring in the browser, no layout shift. The full technique is in [Fit text to its container at build time](/en/blog/fit-text-to-width-at-build-time/).
 
 ## How is the motion kept cheap and safe?
 
-The site moves a lot: a spinning sticker, a marquee of tools, product loops, a ring that walks through how I work. Each piece follows the same rules:
+The site moves a lot: a spinning sticker, a marquee of tools, product loops, a ring that walks through how I work. Every piece follows the same rules:
 
 - it pauses when its section is off screen
-- one "Pause motion" button in the menu and the footer stops everything, and the choice is remembered (WCAG 2.2.2)
+- one "Pause motion" button stops everything, and the choice is remembered (WCAG 2.2.2)
 - with reduced motion requested, everything shows its final state
-- nothing moves on the critical path: entrances on the first screen are CSS, and the heading never fades in
+- entrances never hide content: the first paint is the finished page
 
-One bug in that system was found by an agent that wasn't looking for bugs. A subagent drafting the [reduced-motion post](/en/blog/reduced-motion-and-a-pause-button/) read the code to describe it and noticed that a stored pause would freeze the entrance animations on their first, invisible frame, so the hero text would never appear after a reload. The fix was a rule that shows entrances in their final state when motion is paused, and a test for it.
+That last rule came from a live bug: on a cold first visit, staged entrances left only my name on screen for up to a second. Now an entrance is a short settle of a few pixels, never a fade from nothing. More in [the reduced-motion post](/en/blog/reduced-motion-and-a-pause-button/).
 
 ## What does the AI workflow look like day to day?
 
-I run Claude Code like a small team with a strict lead. A request comes in as plain words. The hooks route the relevant wiki pages into it. Research and drafts fan out to subagents in parallel, and I get their conclusions with sources, not their transcripts. MCP servers give the agent hands: real app screens for patterns, a component registry, and a real browser. Skills hold the playbooks: screenshot QA at 390, 1024 and 1920 pixels, Lighthouse runs, design research, commits.
+I run Claude Code like a small team with a strict lead. A request comes in as plain words; the hooks route the relevant wiki pages into it; research and drafts fan out to subagents in parallel; MCP servers give the agent a real browser, real app screens and a component registry; skills hold the playbooks for screenshots, Lighthouse and commits.
 
-The checks are the floor, not the pitch: type checking, lint, unit tests, Playwright end-to-end tests with axe, a layout sweep from 320 to 2560 pixels, and Lighthouse. A change isn't done until they pass and I've looked at the screenshots myself.
-
-When something goes wrong, it becomes a one-line rule in the lessons file, and the next session loads it at start. A few real ones: run the formatter from the repo root (from the app folder it ignored the shared config and reformatted untouched files), measure the variable font from its TTF source (the library can't read the compressed file's variations), and never put a visible label's text only in `aria-label`.
-
-The AI does a lot of the typing. I own the decisions, the review and anything that ships under my name, which is why the [building blocks](/en/blog/claude-code-skills-hooks-mcp-subagents/) matter more to me than the model.
+The checks are the floor: type checking, lint, unit tests, Playwright end-to-end tests with axe, a layout sweep from 320 to 2560 pixels, and Lighthouse. A change isn't done until they pass and I've looked at the screenshots myself. When something goes wrong, it becomes a one-line rule in the lessons file, and the next session loads it at start. The AI does a lot of the typing; I own the decisions and anything that ships under my name. The [building blocks post](/en/blog/claude-code-skills-hooks-mcp-subagents/) has the details.
 
 ## What did it cost?
 
-Each slice records what it spent of the budgets. The numbers below are the home page after each step, mobile Lighthouse with simulated throttling, median of three runs.
+Each slice records what it spent of the budgets: the home page after each step, mobile Lighthouse with simulated throttling, median of three runs.
 
 | Slice | HTML (gzip) | Page JavaScript | Fonts | LCP | CLS |
 | --- | --- | --- | --- | --- | --- |
@@ -131,22 +356,19 @@ Each slice records what it spent of the budgets. The numbers below are the home 
 | Poster: every section | 38.1 KB | about 9 KB | 49.9 KB in 1 file | 1.95 s | 0 |
 | Poster after a feedback round (fewer scripts) | 34.7 KB | about 8 KB | 49.9 KB in 1 file | 1.95 s | 0 |
 
-The largest contentful paint went up when Poster arrived: the heading now waits for one 49.5 KB variable font instead of an 11.8 KB static cut. It is still under the 2-second target, and one file replaced four.
-
-With every section built, the home page first measured 2.03 s. A trace showed why: the browser holds the first paint until the preloaded font arrives, and the font shares the connection with the HTML. Every byte of HTML before that paint costs time. The icons were the easiest bytes to move: their paths went into one cached sprite file instead of every page, the HTML dropped from 54.5 to 38.1 KB gzip, and the LCP went to 1.95 s. The same trace found that the font subset was missing the en and em dash, so those fell back to Arial. A test now fails when the copy uses a character the font file doesn't have.
+The LCP went up when Poster arrived: the heading now waits for one variable font instead of a small static cut. A trace showed the rest: the browser holds the first paint until the preloaded font arrives, and the font shares the connection with the HTML. Moving the icon paths into one cached sprite file cut the HTML from 54.5 to 38.1 KB gzip and the LCP from 2.03 to 1.95 s.
 
 ## What would I do differently?
 
-- **Show directions before building.** I froze the first design system before seeing an alternative and paid for two slices of work in a look I then threw away. Now comps come first.
-- **Write the budget into the first commit.** The budgets existed from day one in the wiki, but checking them per slice only started later. Measuring from the first slice made every later trade-off a number instead of an opinion.
-- **Record the product videos earlier.** Two of the four project chapters still use drawn stand-ins until the recordings exist, and a drawing explains less than ten seconds of the real thing.
+- **Show directions before building.** I froze the first design before seeing an alternative and paid two slices of work for a look I threw away.
+- **Write the budget into the first commit.** Measuring from the first slice made every later trade-off a number instead of an opinion.
+- **Record the product videos earlier.** Two project chapters still use drawn stand-ins, and a drawing explains less than ten seconds of the real thing.
 
 ## Results, and how they were measured
 
-- Lighthouse, mobile, simulated throttling, median of three runs on a local production build: the home page scores 99 for performance and 100 for accessibility, best practices and SEO, in English, Polish and Spanish; the work, blog, CV, my life and legal pages score 100 on all four.
-- On the home page: LCP about 1.95 s, CLS 0, total blocking time 0-15 ms.
-- About 8 KB gzip of page JavaScript on the home page, 49.9 KB of font.
-- End-to-end tests with axe in the site's one colour theme; no horizontal scrolling from 320 to 2560 pixels.
+- Lighthouse, mobile, simulated throttling, median of three runs on a local production build: the home page scores 99 for performance and 100 for accessibility, best practices and SEO, in all three languages.
+- On the home page: LCP about 1.95 s, CLS 0, total blocking time 0-15 ms, about 8 KB gzip of page JavaScript, one 50.4 KB font file.
+- End-to-end tests with axe; no horizontal scrolling from 320 to 2560 pixels.
 
 Real-user data will come after launch. Until then these are lab numbers, and I treat them that way.
 

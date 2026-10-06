@@ -6,7 +6,7 @@
  */
 import { t } from "lingui-for-astro/macro";
 
-import { type CvEntry, CV } from "~/data/cv";
+import { type CertItem, type CvEntry, CV } from "~/data/cv";
 import { PROFILES, SITE } from "~/data/site";
 
 interface Props {
@@ -161,12 +161,12 @@ const entries = (list: CvEntry[]) => list;
                     // The PDF keeps every certificate on one run-on line (two pages in total), codes included.
                     <p class="certs-line">
                       {credential.items
-                        .map((item) => `${item.title} (${item.when[locale]}${item.code ? `, ${item.code}` : ""})`)
+                        .map((item: CertItem) => `${item.title} (${item.when[locale]}${item.code ? `, ${item.code}` : ""})`)
                         .join("; ")}
                     </p>
                   ) : (
                     <ul class="certs">
-                      {credential.items.map((item) => (
+                      {credential.items.map((item: CertItem) => (
                         <li>
                           {item.href ? (
                             <a href={item.href} rel="noopener" target="_blank">

@@ -66,6 +66,8 @@
 - The owner works on two PCs: `git pull` first; on a merge take one side's `.po`, re-add the other side's changed msgids, `bun run i18n:extract`; regenerate PDFs, never merge them - 2026-10-06.
 - WebSearch has a budget shared by parallel agents; prefer WebFetch of known URLs, then Playwright - 2026-10-05.
 - Host redirects live in ONE place (Vercel → Domains): a www → apex rule in `vercel.json` against the dashboard's apex → www looped every font and script while the cached HTML still loaded (Arial titles overflowed) - 2026-10-06.
+- Components rendered inside MDX get their `<style>` inlined without a CSP hash (blocked in the browser): put their CSS in a stylesheet the page imports (`styles/case.css`); check the console with a real browser, the build doesn't fail - 2026-10-06.
+- `satisfies Foo[]` keeps literal types, so optional fields vanish from items that lack them (ts2339 in the consumer): annotate the map callback (`(item: CertItem) =>`) - 2026-10-06.
 - `api/` runs on Vercel as native ESM: relative imports need `.js` (`../src/lib/contact.js`) or every request 500s; tests and `tsc` don't catch it (a unit test does now). Read `vercel logs --status-code 500 -x` first - 2026-10-06.
 - Never derive analytics domains from the build origin (a preview host got baked in, Umami dropped every real visit): list the production hosts explicitly - 2026-10-06.
 - `.gitignore` must not ignore `*.txt` (it hid `robots.txt` and `llms.txt`) - 2026-10-05.

@@ -4,6 +4,7 @@ seoTitle: "LLM wiki: pamięć projektu dla Claude Code"
 description: "Jak sprawiam, że Claude Code nie zapomina: wiki z plików markdown, tabela routingu, plik lekcji i trzy hooki, które wczytują je po kompaktowaniu."
 translationKey: "llm-wiki"
 published: 2026-10-05
+updated: 2026-10-06
 tags: [ai, claude-code]
 cover: wiki
 related: [claude-code-building-blocks, claude-code-po-polsku, this-site]
@@ -27,7 +28,13 @@ sources:
 
 LLM wiki to folder krótkich stron markdown w repozytorium, które agent czyta, zamiast znowu Cię o wszystko pytać. Moje mieszka w `.claude/project-info/`: CLAUDE.md kieruje każde zadanie do właściwych stron, hooki podają te strony przy każdym prompcie i wczytują lekcje po każdym kompaktowaniu, a hook Stop nie pozwala zakończyć zmiany w kodzie bez aktualizacji wiki.
 
-## Dlaczego wiki, a nie dłuższy CLAUDE.md
+> **TL;DR**
+>
+> - **Problem:** każda sesja startuje z pustym kontekstem, kompaktowanie gubi szczegóły, a CLAUDE.md na tyle długi, żeby wszystko pomieścić, kosztuje kontekst przy każdym zapytaniu.
+> - **Zestaw:** krótkie strony w `.claude/project-info/`, CLAUDE.md na 76 linii, który kieruje słowa do stron, i trzy hooki: routing przy każdym prompcie, lekcje wczytywane po kompaktowaniu i blokada końca tury, gdy zmienił się kod, a wiki nie.
+> - **Nawyk:** każda poprawka staje się jedną datowaną regułą w `lessons.md`, a reguła, która ciągle wraca, zamienia się w test, regułę lintera albo hook.
+
+## Dlaczego wiki, a nie dłuższy CLAUDE.md?
 
 Dokumentacja pamięci zaczyna od sedna problemu: każda sesja Claude Code startuje z pustym oknem kontekstu. W długiej sesji dochodzi drugi kłopot. Kompaktowanie streszcza rozmowę, żeby zwolnić miejsce, a przewodnik po hookach ostrzega, że przy tym mogą zginąć ważne szczegóły. Najpierw znika to, co padło tylko w czacie: według sekcji o rozwiązywaniu problemów, jeśli instrukcja zniknęła po kompaktowaniu, to znaczy, że była podana wyłącznie w rozmowie.
 
@@ -35,7 +42,7 @@ Oczywisty pomysł to wpisać wszystko do CLAUDE.md. Ten plik przetrwa kompaktowa
 
 Portfolio z tonem marki, systemem projektowym, trzema językami, stronami prawnymi i CV ma faktów na dużo więcej niż 200 linii. Fakty trafiają więc do wiki, a CLAUDE.md staje się jego spisem treści.
 
-## Skąd ten pomysł
+## Skąd się wziął ten pomysł?
 
 Andrej Karpathy opublikował ten wzorzec w kwietniu 2026 roku jako „idea file” o nazwie llm-wiki. W jego wersji model językowy stopniowo buduje i utrzymuje trwałe wiki z plików markdown, które stoi między Tobą a surowymi źródłami. Ma trzy warstwy (surowe źródła, wiki i dokument ze schematem, na przykład CLAUDE.md), trzy operacje (ingest, query i lint, czyli dodanie źródła, pytanie i przegląd), katalog `index.md` i dopisywany na końcu `log.md`.
 
@@ -47,7 +54,7 @@ Mój zestaw opiera się na tej samej myśli, tylko zamiast tematu badawczego obs
 
 Wpisy w moim logu mają ten sam kształt `## [data] obszar | podsumowanie`, który proponuje gist, więc łatwo je przeszukać grepem.
 
-## Układ
+## Jak to jest ułożone?
 
 ```text
 .claude/project-info/
@@ -65,16 +72,16 @@ Wpisy w moim logu mają ten sam kształt `## [data] obszar | podsumowanie`, któ
 
 W chwili pisania to 33 strony poza `research/`. Pliki z katalogu głównego zostają tam, bo tam szukają ich hooki. Reszta jest pogrupowana według pytania, na które odpowiada: po co, co, jak to jest zorganizowane, jak wygląda, jak jest zbudowane.
 
-## Zasady, które trzymają wiki w ryzach
+## Jakie zasady trzymają wiki w ryzach?
 
 - **Jeden właściciel faktu.** Każdy fakt mieszka na jednej stronie, a inne do niej linkują. Kopie się rozjeżdżają.
-- **Fakt ma źródło.** `[user]` to moja decyzja, `[research]` wynik researchu, `[repo: ścieżka]` to, co mówi kod, `[assumption]` zgadywanie. Zgadywanie się weryfikuje, decyzji nie. Dziś wiki ma 95 tagów `[user]`, 100 `[research]` i 83 `[assumption]`. Ta ostatnia liczba jest najuczciwsza: spora część projektu wciąż stoi na domyślnych ustawieniach, których nie potwierdziłem.
+- **Fakt ma źródło.** `[user]` to moja decyzja, `[research]` wynik researchu, `[repo: ścieżka]` to, co mówi kod, `[assumption]` zgadywanie. Zgadywanie się weryfikuje, decyzji nie. Kiedy pisałem pierwszą wersję tego tekstu, wiki miało 95 tagów `[user]`, 100 `[research]` i 83 `[assumption]`. Ta ostatnia liczba jest najuczciwsza: spora część projektu wciąż stoi na domyślnych ustawieniach, których nie potwierdziłem.
 - **Lepiej „nie wiem” niż zmyślić.** Brakujący fakt zapisuję jako Unknown i przenoszę do `open-questions.md`. To tabela: pytanie, co blokuje, kto odpowiada, co domyślnie, jeśli nikt, i status. Ma 46 wierszy.
 - **Wszystko, co nieprawdziwe, jest w rejestrze.** Każdy placeholder ma wiersz w `placeholders.md`, a „wypuszczamy na produkcję” oznacza najpierw wyczyszczenie tej listy.
 - **Gęsto, nie długo.** Tabele i krótkie punkty, mniej więcej 40-150 linii na stronę. Stronę, którą da się przejrzeć w minutę, ktoś faktycznie przeczyta.
 - **Kod wygrywa.** Gdy strona i kod mówią co innego, poprawiam stronę.
 
-## Mechanika
+## Jak działa mechanika?
 
 ### CLAUDE.md jako rozdzielnik
 
@@ -91,7 +98,9 @@ Mój CLAUDE.md ma 76 linii: tabelę routingu, dziesięć niezmienników i komend
 
 ### Routing przy każdym prompcie
 
-Hook UserPromptSubmit działa, zanim Claude zajmie się promptem, a według dokumentacji jego wynik trafia do kontekstu. Mój porównuje słowa z promptu z każdym wierszem. Dokładne trafienie daje 1, liczba mnoga 0,9, wspólny początek z co najmniej pięciu liter 0,6. Każdy wynik dzielę przez pierwiastek z liczby wierszy, w których to słowo występuje, więc słowa obecne wszędzie niewiele znaczą. Hook podaje najwyżej pięć wierszy. Mały plik JSON mapuje polskie rdzenie słów na słowa z tabeli, więc polskie prompty też trafiają, gdzie trzeba. Tak to wygląda w trybie testowym:
+Hook UserPromptSubmit działa, zanim Claude zajmie się promptem, a według dokumentacji jego wynik trafia do kontekstu. Mój porównuje słowa z promptu z każdym wierszem. Dokładne trafienie daje 1, liczba mnoga 0,9, wspólny początek z co najmniej pięciu liter 0,6. Każdy wynik dzielę przez pierwiastek z liczby wierszy, w których to słowo występuje, więc słowa obecne wszędzie niewiele znaczą.
+
+Hook podaje najwyżej pięć wierszy. Mały plik JSON mapuje polskie rdzenie słów na słowa z tabeli, więc polskie prompty też trafiają, gdzie trzeba. Tak to wygląda w trybie testowym:
 
 ```text
 > przetłumacz stopkę na hiszpański
@@ -103,7 +112,12 @@ Hook UserPromptSubmit działa, zanim Claude zajmie się promptem, a według doku
 
 ### Karta sesji
 
-SessionStart odpala się na starcie, przy wznowieniu, po `/clear` i po kompaktowaniu, a hook dostaje informację, który to przypadek. Przewodnik po hookach zaleca dokładnie to: hook SessionStart z matcherem `compact`, który po każdym kompaktowaniu ponownie wstrzykuje kluczowy kontekst. Mój wypisuje krótką notkę dopasowaną do sytuacji (po kompaktowaniu: to nie jest pauza, kontynuuj bieżące zadanie, przeczytaj plik przed edycją, sprawdź gita), odnośnik do zasad współpracy, stan gita w samych liczbach i sekcję `## Rules` z `lessons.md`, przyciętą do 8000 znaków.
+SessionStart odpala się na starcie, przy wznowieniu, po `/clear` i po kompaktowaniu, a hook dostaje informację, który to przypadek. Przewodnik po hookach zaleca dokładnie to: hook SessionStart z matcherem `compact`, który po każdym kompaktowaniu ponownie wstrzykuje kluczowy kontekst. Mój wypisuje cztery rzeczy:
+
+- krótką notkę dopasowaną do sytuacji (po kompaktowaniu: to nie jest pauza, kontynuuj bieżące zadanie, przeczytaj plik przed edycją, sprawdź gita);
+- odnośnik do zasad współpracy;
+- stan gita, w samych liczbach;
+- sekcję `## Rules` z `lessons.md`, przyciętą do 8000 znaków.
 
 ### Kontrola przy końcu odpowiedzi
 
@@ -111,7 +125,7 @@ Kiedy Claude kończy turę, hook Stop porównuje, co zmieniło się w sesji (com
 
 Dokumentacja daje dwa bezpieczniki przed pętlą: pole `stop_hook_active` i limit kolejnych wznowień z rzędu. Mój skrypt dokłada trzeci: zapamiętuje stan, na którym ostatnio zablokował, więc ten sam diff nigdy nie zablokuje drugi raz.
 
-## Pętla lekcji
+## Jak działa pętla lekcji?
 
 Gdybym miał wyrzucić wszystko poza jednym plikiem, zostawiłbym `lessons.md`. Kiedy poprawiam Claude'a albo kiedy wyłoży się na jakimś narzędziu, poprawka staje się jedną linią w trybie rozkazującym, z datą, w sekcji `## Rules`:
 
@@ -124,7 +138,7 @@ Karta sesji wstrzykuje tę sekcję, więc każda nowa sesja i każde kompaktowan
 
 Claude Code ma też wbudowane auto memory: notatki, które Claude pisze sam dla siebie, ze spisem w `MEMORY.md`, którego pierwsze 200 linii albo 25 KB wczytuje się na starcie każdej sesji. Dokumentacja opisuje je jako lokalne dla danego komputera. Plik lekcji leży w gicie, więc jego zmiany przeglądam w diffach jak kod.
 
-## Jak założyć własne
+## Jak założyć własne?
 
 1. Uruchom `/init` albo napisz krótki CLAUDE.md ręcznie: komendy i zasady nienegocjowalne.
 2. Załóż `.claude/project-info/` z pięcioma plikami w katalogu głównym: `README.md` (mapa), `working-agreement.md`, `lessons.md`, `open-questions.md`, `log.md`.
@@ -136,7 +150,7 @@ Claude Code ma też wbudowane auto memory: notatki, które Claude pisze sam dla 
 
 Kroki 2-6 spakowałem w skill, więc nowy projekt startuje z tą samą mechaniką. Przy zakładaniu tego repozytorium test routingu objął 15 promptów, w tym 4 po polsku i jeden szum.
 
-## Co poszło nie tak i gdzie są granice
+## Co poszło nie tak i gdzie są granice?
 
 - **Wiki się rozjeżdża.** Jest prawdziwe tylko na tyle, na ile świeża jest ostatnia aktualizacja. Jedno czytanie całości oczami kogoś z zewnątrz, kiedy wiki miało 26 stron, wyłapało około 40 sprzeczności między stronami. Hook Stop dowodzi, że w wiki coś się zmieniło, a nie że to coś jest prawdą.
 - **Routing się myli.** To liczenie słów kluczowych, nie rozumienie. Raz ogólna fraza w jednym wierszu przebiła nazwę projektu w innym i wycięła potrzebną stronę. Poprawka: wspólne słowa zadań wpisać do każdego wiersza, którego dotyczą, i powtórzyć test.

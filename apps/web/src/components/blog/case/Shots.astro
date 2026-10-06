@@ -1,0 +1,45 @@
+---
+/**
+ * One or more screenshots in a framed figure with a caption (the case study's evidence). Two or more sit in a grid;
+ * a tag marks a frame ("Claude's pick", "My pick"). Text comes from the post (per-locale MDX).
+ */
+import type { ImageMetadata } from "astro";
+import { Image } from "astro:assets";
+
+interface Shot {
+  image: ImageMetadata;
+  alt: string;
+  /** A short name under the frame. */
+  name?: string;
+  /** A tag on the frame. */
+  tag?: string;
+  /** Highlight this frame. */
+  picked?: boolean;
+}
+interface Props {
+  shots: Shot[];
+  caption: string;
+}
+
+const { shots, caption } = Astro.props;
+const many = shots.length > 1;
+---
+
+<figure class:list={["cs-shots", { "cs-many": many }]}>
+  <div class="cs-grid">
+    {shots.map((shot) => (
+      <div class:list={["cs-frame", { "cs-picked": shot.picked }]}>
+        <Image
+          src={shot.image}
+          alt={shot.alt}
+          widths={many ? [400, 800] : [480, 800, 1200]}
+          sizes={many ? "(min-width: 64rem) 22rem, 46vw" : "(min-width: 64rem) 46rem, 94vw"}
+          loading="lazy"
+        />
+        {shot.tag && <span class="cs-tag">{shot.tag}</span>}
+        {shot.name && <span class="cs-name">{shot.name}</span>}
+      </div>
+    ))}
+  </div>
+  <figcaption>{caption}</figcaption>
+</figure>

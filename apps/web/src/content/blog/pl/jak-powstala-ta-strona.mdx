@@ -4,6 +4,7 @@ seoTitle: "Jak zbudowałem to portfolio (case study)"
 description: "Case study: portfolio 3D z wynikiem 34 na telefonie zastąpione stroną w Astro z wynikiem 99-100, zaplanowaną w wiki projektu i zbudowaną z Claude Code."
 translationKey: this-site
 published: 2026-10-05
+updated: 2026-10-06
 tags: [case-study, ai, astro, performance]
 cover: blueprint
 featured: true
@@ -23,13 +24,115 @@ sources:
     accessed: 2026-10-05
 ---
 
-Moje stare portfolio było lotem WebGL od Ziemi do Neptuna. Na moim komputerze wyglądało świetnie, a w mobilnym Lighthouse dostawało 34 punkty. Ta strona je zastępuje: Astro, trzy języki, jeden zmienny font, około 8 KB JavaScriptu na stronie głównej i 99-100 punktów w mobilnym Lighthouse. Zanim powstał pierwszy komponent, zaplanowałem ją w wiki projektu. Pierwszy projekt graficzny wyrzuciłem, a całość zbudowałem z Claude Code pod kontrolą testów, których nie da się pominąć.
+import Shots from "~/components/blog/case/Shots.astro";
+import Timeline from "~/components/blog/case/Timeline.astro";
+import Versions from "~/components/blog/case/Versions.astro";
+import oldSpace from "~/assets/case/old-space.webp";
+import draftingTable from "~/assets/case/drafting-table.webp";
+import reviewR1 from "~/assets/case/review-r1.webp";
+import dirOrbit from "~/assets/case/dir-orbit.webp";
+import dirPoster from "~/assets/case/dir-poster.webp";
+import dirToybox from "~/assets/case/dir-toybox.webp";
+import dirExhibit from "~/assets/case/dir-exhibit.webp";
+import heroNow from "~/assets/case/hero-now.webp";
+import aiR2 from "~/assets/case/ai-r2.webp";
+import aiR3 from "~/assets/case/ai-r3.webp";
+import aiNow from "~/assets/case/ai-now.webp";
+import credR2 from "~/assets/case/credentials-r2.webp";
+import credR3 from "~/assets/case/credentials-r3.webp";
+import credNow from "~/assets/case/credentials-now.webp";
+import contactR2 from "~/assets/case/contact-r2.webp";
+import contactR3 from "~/assets/case/contact-r3.webp";
+import contactNow from "~/assets/case/contact-now.webp";
+import howR2 from "~/assets/case/how-r2.webp";
+import howNow from "~/assets/case/how-now.webp";
+import coversBefore from "~/assets/case/covers-before.webp";
+import coversAfter from "~/assets/case/covers-after.webp";
+
+Moje stare portfolio było lotem WebGL od Ziemi do Neptuna. Na moim komputerze wyglądało świetnie, a w mobilnym Lighthouse dostawało 34 punkty. Ta strona je zastępuje: Astro, trzy języki, jeden zmienny font, około 8 KB JavaScriptu na stronie głównej i 99-100 punktów w mobilnym Lighthouse. Zaplanowałem ją w wiki projektu, pierwszy projekt graficzny wyrzuciłem, a każdą kolejną wersję zachowałem, więc mogę Ci tu pokazać, jak się zmieniała i dlaczego.
 
 > **W skrócie**
 >
 > - **Przed:** 13,8 MB pobrane, zanim pojawił się przycisk „start”, wydajność na telefonie 34, brak obsługi dotyku i klawiatury, brak tekstu do zaindeksowania.
-> - **Po (telefon, mediana z 3 pomiarów):** strona główna Lighthouse 99 / 100 / 100 / 100, LCP około 1,95 s, CLS 0, około 8 KB JavaScriptu po kompresji; każda inna podstrona 100 we wszystkich czterech kategoriach.
-> - **Jak:** wiki czytane w każdej sesji, jeden kierunek graficzny wybrany z czterech działających propozycji, tekst dopasowany do szerokości już przy budowaniu, animacje, które same się zatrzymują, oraz zrzuty ekranu, testy dostępności i Lighthouse po każdym kawałku pracy.
+> - **Po (telefon, mediana z 3 pomiarów):** strona główna Lighthouse 99 / 100 / 100 / 100, LCP około 1,95 s, CLS 0, około 8 KB JavaScriptu po kompresji.
+> - **Jak:** wiki czytane w każdej sesji, jeden kierunek wybrany z czterech działających propozycji, moje uwagi po każdej rundzie oraz zrzuty ekranu, testy dostępności i Lighthouse po każdym kawałku pracy.
+
+## Jak to szło, wersja po wersji?
+
+Wszystko poniżej wydarzyło się w dwa dni. Każda wersja zostaje: makiety w repozytorium, kod pod tagami w gicie, zrzuty ekranu w folderze. Cytaty to dokładnie to, co wtedy napisałem (po angielsku, z literówkami).
+
+<Timeline
+  label="Wersje tej strony, od najstarszej"
+  steps={[
+    {
+      date: "Wcześniej",
+      title: "Kosmiczne portfolio 3D",
+      image: oldSpace,
+      alt: "Stara strona: świecąca planeta i napis Projects w kosmosie",
+      verdict: "Zastąpione",
+      tone: "no",
+      note: "Lot WebGL do Neptuna. Piękny na moim komputerze, 34 punkty w mobilnym Lighthouse i ekran „Oops!” na telefonach.",
+    },
+    {
+      date: "5 paź 2026",
+      title: "Faza 0: wiki zamiast kodu",
+      cover: "wiki",
+      verdict: "Zostaje",
+      tone: "plain",
+      said: "we plan together first",
+      note: "Research, wymagania, marka, prawo i zasady projektu na około trzydziestu stronach, zanim powstał jakikolwiek komponent.",
+    },
+    {
+      date: "5 paź 2026",
+      title: "Drafting Table",
+      image: draftingTable,
+      alt: "Pierwszy projekt: jasna strona jak papier, siatka rysunku technicznego i mały nagłówek",
+      verdict: "Odrzucony",
+      tone: "no",
+      said: "this looks so ugly",
+      note: "Papier, cyjanotypia i nagłówek jak tabelka rysunku. Przechodził wszystkie testy i niczym się nie wyróżniał.",
+    },
+    {
+      date: "5 paź 2026",
+      title: "Cztery działające kierunki",
+      image: dirPoster,
+      alt: "Kierunek Poster: imię i nazwisko wielkimi białymi literami na kobaltowym tle i różowa okrągła naklejka",
+      verdict: "Wybrany Poster",
+      tone: "yes",
+      said: "it really has professional vibe",
+      note: "Orbit, Poster, Toybox i Exhibit jako działające strony. Claude polecał Orbit. Ja wybrałem Poster.",
+    },
+    {
+      date: "5 paź 2026",
+      title: "Runda 2: Poster wszędzie",
+      image: contactR2,
+      alt: "Runda 2: sekcja kontaktu, Let's talk wielkimi literami na różowym tle",
+      verdict: "Uwagi",
+      tone: "plain",
+      said: "definitely progress",
+      note: "Cała strona główna w stylu Poster, trzy motywy kolorów i dwa fonty sprawdzane obok siebie.",
+    },
+    {
+      date: "5 paź 2026",
+      title: "Runda 3: mniej tekstu",
+      image: credR3,
+      alt: "Runda 3: kwalifikacje jako wysokie karty z bocznymi tytułami, jedna otwarta",
+      verdict: "Zatwierdzone",
+      tone: "yes",
+      said: "lets finally start coding",
+      note: "Logotypy narzędzi z nazwami, krótki film dla każdego projektu, krócej wszędzie. Tu kończą się makiety.",
+    },
+    {
+      date: "6 paź 2026",
+      title: "Strona, na której jesteś",
+      image: heroNow,
+      alt: "Dzisiejszy nagłówek: imię i nazwisko od krawędzi do krawędzi na kobalcie, rola i dwa przyciski",
+      verdict: "Działa",
+      tone: "yes",
+      note: "Zbudowana w Astro kawałek po kawałku, a potem przerobiona po rundach uwag na żywej stronie.",
+    },
+  ]}
+/>
 
 ## Po co przebudowywać stronę, która się podobała?
 
@@ -44,84 +147,206 @@ Kosmiczne portfolio najbardziej lubiłem pokazywać i najmniej nadawało się do
 | Na telefonie | ekran „Oops!” |
 | Tekst w surowym HTML | żaden, który wyszukiwarka mogłaby zaindeksować |
 
-Ktoś, kto otwiera portfolio z wiadomości na LinkedInie, na telefonie, daje mu może dziesięć sekund. Moja strona wydawała je na pasek ładowania. Podróż w 3D pokazywała, że umiem pisać shadery. Pokazywała też, że nie pomyślałem o osobie po drugiej stronie. Nowa strona miała to naprawić i nie zrobić się przy tym nudna.
+Ktoś, kto otwiera portfolio z wiadomości na LinkedInie, na telefonie, daje mu może dziesięć sekund. Moja strona wydawała je na pasek ładowania. Pokazywała, że umiem pisać shadery, i że nie pomyślałem o osobie po drugiej stronie.
 
 ## Co nowa strona miała robić?
 
-Wymagania spisałem przed wyborem frameworka, a główna zasada mieści się w jednym zdaniu: **robić wrażenie w 3 sekundy i działać jednym dotknięciem na telefonie.** Bez ekranu ładowania, bez bramki na wejściu, bez przejmowania przewijania, z tą samą treścią na telefonie co na komputerze.
+Jedna zasada, spisana przed wyborem frameworka: **robić wrażenie w 3 sekundy i działać jednym dotknięciem na telefonie.** Bez ekranu ładowania, bez bramki na wejściu, bez przejmowania przewijania, z tą samą treścią na telefonie co na komputerze. Z niej wyszły budżety:
 
-Z tej zasady wyszły budżety:
-
-- Lighthouse na telefonie co najmniej 90 na każdej podstronie; LCP poniżej 2,5 s (cel 2,0), CLS poniżej 0,05, czas blokowania poniżej 200 ms
-- poniżej 150 KB JavaScriptu (po kompresji) przy pierwszym wejściu, poniżej 100 KB fontów
-- główny nagłówek jest największym elementem treści (LCP), więc musi przyjść z serwera w ostatecznej formie, bez czekania na JavaScript
+- Lighthouse na telefonie co najmniej 90 na każdej podstronie; LCP poniżej 2,5 s (cel 2,0), CLS poniżej 0,05
+- poniżej 150 KB JavaScriptu i poniżej 100 KB fontów przy pierwszym wejściu
+- główny nagłówek jest największym elementem treści, więc przychodzi z serwera w ostatecznej formie
 - WCAG 2.2 AA i przycisk pauzy dla wszystkiego, co rusza się dłużej niż pięć sekund
 - angielski, polski i hiszpański, a strona CV i plik PDF generowane z jednego pliku danych
 
 ## Jak wyglądało planowanie?
 
-Zanim powstał jakikolwiek komponent, w jednej sesji zbudowałem wiki projektu w `.claude/project-info/`: około trzydziestu stron, z których każda odpowiada za jeden rodzaj faktów. Brief, odbiorcy, styl komunikacji, wymagania, struktura strony, SEO, kwestie prawne, system projektowy, stack, otwarte pytania, dziennik zmian i lista lekcji. Każdy nieoczywisty fakt ma źródło: `[user]`, gdy to moja decyzja, `[research]`, gdy znalazł to agent, `[assumption]`, gdy jeszcze nikt nie wie.
+Zanim powstał jakikolwiek komponent, w jednej sesji zbudowałem wiki projektu w `.claude/project-info/`: około trzydziestu stron, z których każda odpowiada za jeden rodzaj faktów. Każdy nieoczywisty fakt ma źródło: `[user]`, gdy to moja decyzja, `[research]`, gdy znalazł to agent, `[assumption]`, gdy jeszcze nikt nie wie.
 
-Przy życiu trzymają je trzy hooki. Pierwszy ładuje zasady pracy i lekcje na starcie sesji i po kompresji kontekstu. Drugi czyta każde polecenie i dołącza do niego właściwe strony wiki. Trzeci blokuje zakończenie tury, jeśli zmienił się kod, a wiki nie. Opisałem tę metodę w tekście [LLM wiki: pamięć projektu dla Claude Code](/pl/blog/llm-wiki-pamiec-projektu-dla-claude-code/).
-
-Research robili równolegle subagenci: rekrutacja z punktu widzenia software house'u, wzorce portfolio, wydajność i dostępność, SEO dla imienia i nazwiska, polskie i unijne prawo dla formularza kontaktowego i analityki, wybór stacku. Wnioski trafiły do stron wiki, surowe notatki zostały w osobnym folderze.
+Przy życiu trzymają je trzy hooki. Pierwszy ładuje zasady i lekcje na starcie sesji i po kompresji kontekstu. Drugi dołącza do każdego polecenia właściwe strony wiki. Trzeci blokuje zakończenie tury, jeśli zmienił się kod, a wiki nie. Metodę opisałem w tekście [LLM wiki: pamięć projektu dla Claude Code](/pl/blog/llm-wiki-pamiec-projektu-dla-claude-code/).
 
 Opłaciło się później. Kiedy zmieniałem zdanie, była jedna strona do poprawienia. Kiedy sesja traciła pamięć przy kompresji, następna czytała te same strony i pracowała dalej.
 
 ## Dlaczego Astro, a nie Next.js?
 
-Aplikacje buduję w Next.js, w tym projekt ze stażu, który pokazuję na tej stronie. Portfolio to jednak strona z treścią: kilka podstron, głównie statycznych, gdzie każdy kilobajt JavaScriptu jest kosztem dla osoby na wolnym telefonie. Astro renderuje komponenty Reacta do HTML-a i nie wysyła JavaScriptu, dopóki komponent sam go nie potrzebuje. Lingui działa w Astro dzięki `lingui-for-astro`, a brak tłumaczenia na polski albo hiszpański wywraca build.
-
-Kilka interaktywnych elementów (animacja liter, filmy, formularz kontaktowy) to małe moduły w czystym TypeScripcie. Gdy zbudowane są już wszystkie sekcje, strona główna wysyła ich około 8 KB po kompresji. Dłuższe porównanie jest w tekście [Astro czy Next.js na portfolio](/pl/blog/astro-czy-nextjs-na-portfolio/).
+Portfolio to strona z treścią: kilka podstron, głównie statycznych, gdzie każdy kilobajt JavaScriptu kosztuje osobę na wolnym telefonie. Astro renderuje komponenty do HTML-a i nie wysyła JavaScriptu, dopóki komponent sam go nie potrzebuje. Lingui działa w Astro dzięki `lingui-for-astro`, a brak tłumaczenia na polski albo hiszpański wywraca build. Dłuższe porównanie jest w tekście [Astro czy Next.js na portfolio](/pl/blog/astro-czy-nextjs-na-portfolio/).
 
 ## Co się stało z pierwszym projektem?
 
-Pierwszą wersję zbudowałem porządnie: tokeny, dwa kroje pisma, nagłówek narysowany jak tabelka rysunku technicznego, stopka jak jego tabela zmian. Przechodziła wszystkie testy: 51 testów end-to-end, axe w trybie jasnym i ciemnym, Lighthouse 100 we wszystkich czterech kategoriach.
+Pierwszą wersję zbudowałem porządnie i przechodziła wszystko: 51 testów end-to-end, axe w trybie jasnym i ciemnym, Lighthouse 100 we wszystkich czterech kategoriach.
 
-Potem spojrzałem na nią na ekranie i uznałem, że jest brzydka. Była schludna, bezpieczna i łatwa do zapomnienia, a wybrałem ją, zanim zobaczyłem jakąkolwiek alternatywę. Czysty system to jeszcze nie dobry system.
+<Shots
+  shots={[{ image: draftingTable, alt: "Odrzucony pierwszy projekt: jasna strona z delikatną siatką, mały nagłówek i blok kontaktu w ramce" }]}
+  caption="Drafting Table, odrzucony pierwszy wygląd. Czysty, przetestowany i wybrany, zanim zobaczyłem jakąkolwiek alternatywę."
+/>
 
-Zmieniłem więc proces. Zanim powstał kolejny kawałek kodu:
+Potem spojrzałem na niego i uznałem, że jest brzydki, i miałem rację. Czysty system to jeszcze nie dobry system. Zmieniłem więc proces: research nastawiony na ambicję, a nie bezpieczeństwo; cztery naprawdę różne kierunki zbudowane jako działające strony; ja wybieram, a dopiero potem powstaje system projektowy.
 
-1. Research nastawiony na ambicję, a nie bezpieczeństwo: nagradzane portfolia, strony produktów, inspiracje ruchu, z pomiarem tego, jak szybko odwiedzający może z nich realnie skorzystać.
-2. Cztery naprawdę różne kierunki, zbudowane jako działające strony z prawdziwą typografią, kolorem i ruchem, sfotografowane w szerokości telefonu i komputera. Nazywały się Orbit, Poster, Toybox i Exhibit.
-3. Wybieram, a dopiero potem powstaje nowy system projektowy.
+<Shots
+  shots={[{ image: reviewR1, alt: "Strona przeglądu z rundy 1: nagłówek Four directions, pick one or mix, ramka z wyborem Claude polecającym Orbit i kierunek Orbit ze zrzutami" }]}
+  caption="Strona, na której oglądałem kierunki, tak jak ją wtedy widziałem. Ramka na górze to rekomendacja Claude: Orbit."
+/>
 
-Wybrałem Poster: każda sekcja to płaskie pole koloru jak drukowany plakat, tekst jest dopasowany od krawędzi do krawędzi, głębię daje twardy przesunięty cień, a nad wszystkim leży delikatne ziarno druku. Potem przyszły jeszcze dwie rundy uwag. Najwięcej zmieniły te: mniej tekstu, więcej do oglądania, logotypy narzędzi zawsze razem z nazwami, prawdziwe nagrania produktów zamiast zrzutów ekranu i dla każdego efektu po najechaniu odpowiednik na ekranach dotykowych, bo telefony nie mają kursora.
+<Shots
+  shots={[
+    { image: dirOrbit, alt: "Orbit: imię i nazwisko na tle planety z cząsteczek", name: "Orbit", tag: "Wybór Claude" },
+    { image: dirPoster, alt: "Poster: imię i nazwisko ogromnymi literami na kobalcie", name: "Poster", tag: "Mój wybór", picked: true },
+    { image: dirToybox, alt: "Toybox: miękkie zabawkowe bryły 3D obok imienia", name: "Toybox" },
+    { image: dirExhibit, alt: "Exhibit: imię i nazwisko szeryfowym krojem na ciemnoczerwonej poświacie", name: "Exhibit" },
+  ]}
+  caption="Cztery kierunki w szerokości 1440 px. Agent wybrał Orbit, bo cała strona stała na 3D. Ja wybrałem Poster: tu obrazem jest sama typografia, więc projekt widać już przy pierwszym malowaniu."
+/>
 
-Każda wersja zostaje, łącznie z odrzuconą: otagowana w gicie i opisana w repozytorium.
+## Jak zmieniała się każda część i dlaczego?
+
+Każda runda zostawiła zrzuty ekranu. Oto pięć części strony w kolejnych wersjach, z tym, co powiedziałem, i z tym, co się zmieniło. Przeklikaj je.
+
+<Versions
+  id="v-ai"
+  title="Sekcja o AI"
+  frames={[
+    {
+      label: "Runda 2",
+      image: aiR2,
+      alt: "Runda 2: nagłówek Delegate. Verify. obok listy kontroli",
+      note: "Lista kontroli: typy, lint, testy, Lighthouse. Wszystko prawda i wszystko to podłoga. Sprzedawała testy, a nie mój sposób pracy.",
+    },
+    {
+      label: "Runda 3",
+      image: aiR3,
+      alt: "Runda 3: nagłówek Delegate. Automate. nad rzędem liczników hooków, stron wiki, subagentów, serwerów MCP, skilli i lekcji",
+      note: "Liczniki hooków, stron wiki, subagentów, skilli i lekcji. Liczby, które zmieniają się co tydzień i nic nie mówią o tym, jak powstaje zadanie.",
+    },
+    {
+      label: "Teraz",
+      image: aiNow,
+      alt: "Teraz: zespół sześciu odznak agentów z rolami i otwarta karta z jednym zadaniem i przykładem",
+      said: "dont give precise numbers",
+      note: "Cały układ jako mały zespół, w którym każdy ma jedno zadanie (pamięć, zasady, research, narzędzia, procedury, przegląd) i prawdziwy przykład. Bez liczników.",
+    },
+  ]}
+/>
+
+<Versions
+  id="v-cred"
+  title="Kwalifikacje, dziś Kompetencje"
+  frames={[
+    {
+      label: "Runda 2",
+      image: credR2,
+      alt: "Runda 2: siatka siedmiu kart z kwalifikacjami, każda z akapitem",
+      note: "Siedem kart, każda z akapitem. Wszystko widać, nic nie da się przeczytać na pierwszy rzut oka.",
+    },
+    {
+      label: "Runda 3",
+      image: credR3,
+      alt: "Runda 3: wysokie zwinięte karty z pionowymi tytułami i jedna otwarta ze zdjęciem",
+      note: "Zwinięte karty z bocznymi tytułami, które otwierają się po najechaniu. Zwięźle, ale na laptopie trudno to czytać.",
+    },
+    {
+      label: "Teraz",
+      image: credNow,
+      alt: "Teraz: czytelna lista po lewej i otwarta karta po prawej z dwoma certyfikatami kursów i przyciskami Sprawdź",
+      said: "why call section Credentials and not something like Competences",
+      note: "Lista do przeczytania po lewej, jedna otwarta karta po prawej, doświadczenie na początku. Kursy mają teraz swoje certyfikaty, każdy z linkiem do sprawdzenia.",
+    },
+  ]}
+/>
+
+<Versions
+  id="v-contact"
+  title="Kontakt"
+  frames={[
+    {
+      label: "Runda 2",
+      image: contactR2,
+      alt: "Runda 2: Let's talk z polem e-mail, polem wiadomości i rzędem przycisków",
+      note: "Pole e-mail, pole wiadomości i rząd przycisków. Zwykły formularz, a każde pole to powód, żeby się zatrzymać.",
+    },
+    {
+      label: "Runda 3",
+      image: contactR3,
+      alt: "Runda 3: Let's talk z jednym polem wiadomości i trzema tematami do wyboru",
+      said: "very quick form with as little friction and inputs as possible",
+      note: "Najpierw wiadomość: jedno pole i trzy opcjonalne tematy. Pole na odpowiedź pojawia się dopiero, gdy zaczniesz pisać.",
+    },
+    {
+      label: "Teraz",
+      image: contactNow,
+      alt: "Teraz: Let's talk z tematami, polem wiadomości, przyciskiem Wyślij i trzema bezpośrednimi linkami",
+      note: "Jeśli Twoja wiadomość zawiera już e-mail, numer telefonu albo link do LinkedIna, pole na odpowiedź wypełnia się samo. Błędy mówią słowami, co zrobić, a formularz działa bez JavaScriptu.",
+    },
+  ]}
+/>
+
+<Versions
+  id="v-how"
+  title="Jak pracuję"
+  frames={[
+    {
+      label: "Runda 2",
+      image: howR2,
+      alt: "Runda 2: Jak pracuję jako cztery ponumerowane zasady z małymi dowodami",
+      note: "Cztery zasady w ponumerowanych linijkach. Łatwo je napisać, łatwo przeskoczyć.",
+    },
+    {
+      label: "Teraz",
+      image: howNow,
+      alt: "Teraz: Product engineer, pierścień siedmiu przystanków od klienta do przeglądu i otwarty przystanek z rysunkiem sklepu i dymkiem z zarobkami",
+      said: "more visually storytelling",
+      note: "Pierścień siedmiu przystanków, od klienta do przeglądu. Każdy otwiera rysowaną scenę i prawdziwy przykład z projektu.",
+    },
+  ]}
+/>
+
+<Versions
+  id="v-covers"
+  title="Okładki bloga"
+  frames={[
+    {
+      label: "Przed",
+      image: coversBefore,
+      alt: "Sześć starych okładek: stos kartek, dwa wykresy słupkowe, rząd pudełek, tarcza, litery A A a oraz dymki EN i PL",
+      note: "Jeden motyw na temat, ale kolory zależały od miejsca karty na liście, więc pomarańcz spotykał róż, a jeden wpis zmieniał kolor między stronami.",
+    },
+    {
+      label: "Po",
+      image: coversAfter,
+      alt: "Sześć nowych okładek: połączone strony wiki, waga w równowadze, terminal podpięty do pomocników, przekreślone ciastko obok słupków, jedna szeroka litera między ścianami i dwa zamienione dymki",
+      said: "make some of the blogs' thumbnails a bit better in terms of color harmonies and just generally intuitiveness",
+      note: "Każda okładka ma jedną paletę i dosłownie rysuje swój temat: wagę dla porównania, przekreślone ciastko dla analityki bez cookies. Bez słów.",
+    },
+  ]}
+/>
+
+Za wszystkimi pięcioma stoi jedna zasada: pokaż rzecz, utnij akapit. A każdy efekt po najechaniu dostał odpowiednik na ekranach dotykowych, bo, jak napisałem w tamtej rundzie, „they dont have cursors” ([jak to działa](/pl/blog/efekty-hover-na-telefonach/)). Formularz ma własny opis, razem z błędem: [formularz kontaktowy na statycznej stronie](/pl/blog/formularz-kontaktowy-na-statycznej-stronie/).
 
 ## Jak imię wypełnia ekran bez JavaScriptu?
 
 Imię i nazwisko w nagłówku biegną od krawędzi do krawędzi przy każdej szerokości i są największym elementem treści, więc nie mogą czekać, aż skrypt je zmierzy.
 
-Font to Anybody, zmienny font z osią szerokości od 50 do 150. Przy budowaniu skrypt mierzy szerokość każdego znaku i kerning przy szerokości 50 i przy 150. Pomiędzy nimi szerokość linii zmienia się liniowo, więc dla każdej linii mogę policzyć dokładną wartość osi, przy której linia wypełnia swoje pole, oraz rozmiar fontu jako ułamek kontenera. Strona dostaje to jako CSS: `font-size` w jednostkach kontenera i `font-stretch` dla każdej linii. Zero pomiarów w przeglądarce, zero przesunięć układu.
-
-Kiedy strona się załaduje, a przeglądarka ma wolną chwilę, mały skrypt dzieli linie na litery i zamienia je w akordeon: litery przy kursorze się rozszerzają, reszta zwęża, a linia nadal równo wypełnia szerokość. Na telefonie litery powoli falują same. Całą technikę opisałem w tekście [Dopasowanie tekstu do szerokości przy budowaniu](/pl/blog/dopasowanie-tekstu-do-szerokosci/).
+Font to Anybody, zmienny font z osią szerokości od 50 do 150. Przy budowaniu skrypt mierzy szerokość każdego znaku i kerning na obu końcach tej osi. Pomiędzy nimi szerokość linii zmienia się liniowo, więc dla każdej linii mogę policzyć dokładną wartość osi, przy której linia wypełnia swoje pole. Strona dostaje to jako CSS: `font-size` w jednostkach kontenera i `font-stretch` dla każdej linii. Zero pomiarów w przeglądarce, zero przesunięć układu. Całą technikę opisałem w tekście [Dopasowanie tekstu do szerokości przy budowaniu](/pl/blog/dopasowanie-tekstu-do-szerokosci/).
 
 ## Jak animacje są tanie i bezpieczne?
 
 Na tej stronie dużo się rusza: obracająca się naklejka, pasek z narzędziami, pętle z projektami, pierścień, który przechodzi przez to, jak pracuję. Każdy element trzyma się tych samych zasad:
 
 - zatrzymuje się, gdy jego sekcja jest poza ekranem
-- jeden przycisk „Zatrzymaj animacje” w menu i w stopce zatrzymuje wszystko, a wybór jest zapamiętany (WCAG 2.2.2)
+- jeden przycisk „Zatrzymaj animacje” zatrzymuje wszystko, a wybór jest zapamiętany (WCAG 2.2.2)
 - przy włączonym ograniczeniu ruchu wszystko od razu pokazuje stan końcowy
-- nic nie rusza się na ścieżce krytycznej: wejścia na pierwszym ekranie to sam CSS, a nagłówek nigdy się nie pojawia z animacją
+- wejścia nigdy nie chowają treści: pierwsze malowanie to gotowa strona
 
-Jeden błąd w tym systemie znalazł agent, który wcale nie szukał błędów. Subagent piszący [tekst o reduced motion](/pl/blog/reduced-motion-i-przycisk-pauzy/) przeczytał kod, żeby go opisać, i zauważył, że zapamiętana pauza zamrażała animacje wejścia na ich pierwszej, niewidocznej klatce. Po odświeżeniu tekst w nagłówku nigdy by się nie pojawił. Poprawka to reguła, która przy zatrzymanych animacjach pokazuje wejścia w stanie końcowym, i test, który tego pilnuje.
+Ostatnia zasada wzięła się z błędu na żywej stronie: przy pierwszej wizycie z pustą pamięcią podręczną rozłożone w czasie wejścia zostawiały na ekranie przez sekundę samo imię i nazwisko. Teraz wejście to krótkie osiadanie o kilka pikseli, nigdy pojawianie się z niczego. Więcej w [tekście o reduced motion](/pl/blog/reduced-motion-i-przycisk-pauzy/).
 
 ## Jak na co dzień wygląda praca z AI?
 
-Prowadzę Claude Code jak mały zespół z wymagającym liderem. Polecenie przychodzi zwykłymi słowami. Hooki dołączają do niego właściwe strony wiki. Research i szkice trafiają równolegle do subagentów, a ja dostaję wnioski ze źródłami, nie całe transkrypty. Serwery MCP dają agentowi ręce: prawdziwe ekrany aplikacji jako wzorce, rejestr komponentów i prawdziwą przeglądarkę. Skille zawierają gotowe procedury: kontrolę zrzutów ekranu w szerokościach 390, 1024 i 1920 pikseli, pomiary Lighthouse, research projektowy, commity.
+Prowadzę Claude Code jak mały zespół z wymagającym liderem. Polecenie przychodzi zwykłymi słowami; hooki dołączają do niego właściwe strony wiki; research i szkice trafiają równolegle do subagentów; serwery MCP dają agentowi prawdziwą przeglądarkę, prawdziwe ekrany aplikacji i rejestr komponentów; skille trzymają gotowe procedury zrzutów ekranu, Lighthouse i commitów.
 
-Testy to podłoga, a nie argument sprzedażowy: sprawdzanie typów, lint, testy jednostkowe, testy end-to-end w Playwright z axe, sprawdzenie układu od 320 do 2560 pikseli i Lighthouse. Zmiana nie jest gotowa, dopóki to nie przechodzi i dopóki sam nie obejrzę zrzutów.
-
-Gdy coś pójdzie nie tak, staje się jednozdaniową regułą w pliku lekcji, a następna sesja ładuje ją na starcie. Kilka prawdziwych: uruchamiaj formatter z katalogu głównego repozytorium (z folderu aplikacji ignorował wspólną konfigurację i przeformatował nieruszane pliki), mierz zmienny font z pliku TTF (biblioteka nie odczytuje wariantów ze skompresowanego pliku), nigdy nie wpisuj tekstu widocznej etykiety wyłącznie do `aria-label`.
-
-AI pisze dużo kodu. Decyzje, przegląd i wszystko, co wychodzi pod moim nazwiskiem, należą do mnie, i dlatego [klocki, z których składa się Claude Code](/pl/blog/claude-code-skille-hooki-mcp-subagenty/), są dla mnie ważniejsze niż sam model.
+Testy to podłoga: sprawdzanie typów, lint, testy jednostkowe, testy end-to-end w Playwright z axe, sprawdzenie układu od 320 do 2560 pikseli i Lighthouse. Zmiana nie jest gotowa, dopóki to nie przechodzi i dopóki sam nie obejrzę zrzutów. Gdy coś pójdzie nie tak, staje się jednozdaniową regułą w pliku lekcji, a następna sesja ładuje ją na starcie. AI pisze dużo kodu; decyzje i wszystko, co wychodzi pod moim nazwiskiem, należą do mnie. Szczegóły są w tekście o [klockach Claude Code](/pl/blog/claude-code-skille-hooki-mcp-subagenty/).
 
 ## Ile to kosztowało?
 
-Każdy etap zapisuje, ile wydał z budżetów. Poniżej strona główna po każdym etapie, mobilny Lighthouse z symulowanym dławieniem łącza, mediana z trzech pomiarów.
+Każdy etap zapisuje, ile wydał z budżetów: strona główna po każdym etapie, mobilny Lighthouse z symulowanym dławieniem łącza, mediana z trzech pomiarów.
 
 | Etap | HTML (po kompresji) | JavaScript | Fonty | LCP | CLS |
 | --- | --- | --- | --- | --- | --- |
@@ -131,22 +356,19 @@ Każdy etap zapisuje, ile wydał z budżetów. Poniżej strona główna po każd
 | Poster: wszystkie sekcje | 38,1 KB | około 9 KB | 49,9 KB w 1 pliku | 1,95 s | 0 |
 | Poster po rundzie poprawek (mniej skryptów) | 34,7 KB | około 8 KB | 49,9 KB w 1 pliku | 1,95 s | 0 |
 
-Największy element treści pojawia się później od wejścia Postera: nagłówek czeka teraz na jeden zmienny font o wadze 49,5 KB zamiast statycznego kroju o wadze 11,8 KB. Wciąż mieści się w celu 2 sekund, a jeden plik zastąpił cztery.
-
-Po zbudowaniu wszystkich sekcji pierwszy pomiar strony głównej dał 2,03 s. Ślad wydajności pokazał przyczynę: przeglądarka wstrzymuje pierwsze malowanie, dopóki nie dotrze wczytywany z wyprzedzeniem font, a font dzieli łącze z HTML-em. Każdy bajt HTML-a przed tym malowaniem kosztuje czas. Najłatwiej było przenieść ikony: ich ścieżki trafiły do jednego pliku sprite w pamięci podręcznej zamiast do każdej strony, HTML spadł z 54,5 do 38,1 KB po kompresji, a LCP do 1,95 s. Ten sam ślad pokazał, że w podzbiorze fontu brakowało półpauzy i pauzy, więc te znaki rysował Arial. Teraz test nie przechodzi, gdy tekst używa znaku, którego nie ma w pliku fontu.
+LCP wzrósł, gdy przyszedł Poster: nagłówek czeka teraz na jeden zmienny font zamiast małego statycznego kroju. Resztę pokazał ślad wydajności: przeglądarka wstrzymuje pierwsze malowanie, dopóki nie dotrze wczytywany z wyprzedzeniem font, a font dzieli łącze z HTML-em. Przeniesienie ścieżek ikon do jednego pliku sprite w pamięci podręcznej zmniejszyło HTML z 54,5 do 38,1 KB po kompresji, a LCP z 2,03 do 1,95 s.
 
 ## Co zrobiłbym inaczej?
 
-- **Pokazałbym kierunki przed budowaniem.** Zamroziłem pierwszy system projektowy, zanim zobaczyłem alternatywę, i zapłaciłem za dwa etapy pracy w wyglądzie, który potem wyrzuciłem. Teraz najpierw powstają makiety.
-- **Wpisałbym budżet do pierwszego commita.** Budżety były w wiki od pierwszego dnia, ale sprawdzanie ich po każdym etapie zaczęło się później. Pomiar od pierwszego etapu zamienia każdą późniejszą decyzję w liczbę zamiast opinii.
-- **Wcześniej nagrałbym filmy z produktów.** Dwa z czterech rozdziałów z projektami wciąż mają rysowane zastępstwa, dopóki nie powstaną nagrania, a rysunek wyjaśnia mniej niż dziesięć sekund prawdziwego produktu.
+- **Pokazałbym kierunki przed budowaniem.** Zamroziłem pierwszy projekt, zanim zobaczyłem alternatywę, i zapłaciłem dwoma etapami pracy za wygląd, który potem wyrzuciłem.
+- **Wpisałbym budżet do pierwszego commita.** Pomiar od pierwszego etapu zamienia każdą późniejszą decyzję w liczbę zamiast opinii.
+- **Wcześniej nagrałbym filmy z produktów.** Dwa rozdziały z projektami wciąż mają rysowane zastępstwa, a rysunek wyjaśnia mniej niż dziesięć sekund prawdziwego produktu.
 
 ## Wyniki i jak je zmierzyłem
 
-- Lighthouse, telefon, symulowane dławienie łącza, mediana z trzech pomiarów na lokalnym buildzie produkcyjnym: strona główna 99 za wydajność i 100 za dostępność, dobre praktyki i SEO, po angielsku, polsku i hiszpańsku; podstrony z projektami, blogiem, CV, „Moje życie” i dokumentami prawnymi mają 100 we wszystkich czterech.
-- Na stronie głównej: LCP około 1,95 s, CLS 0, całkowity czas blokowania 0-15 ms.
-- Około 8 KB JavaScriptu po kompresji na stronie głównej i 49,9 KB fontu.
-- Testy end-to-end z axe w jedynym motywie kolorystycznym strony; brak przewijania w poziomie od 320 do 2560 pikseli.
+- Lighthouse, telefon, symulowane dławienie łącza, mediana z trzech pomiarów na lokalnym buildzie produkcyjnym: strona główna 99 za wydajność i 100 za dostępność, dobre praktyki i SEO, we wszystkich trzech językach.
+- Na stronie głównej: LCP około 1,95 s, CLS 0, całkowity czas blokowania 0-15 ms, około 8 KB JavaScriptu po kompresji, jeden plik fontu 50,4 KB.
+- Testy end-to-end z axe; brak przewijania w poziomie od 320 do 2560 pikseli.
 
 Dane od prawdziwych użytkowników pojawią się po starcie strony. Do tego czasu to liczby z laboratorium i tak je traktuję.
 

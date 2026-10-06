@@ -33,6 +33,13 @@ const PALETTE: Record<BlogCover, readonly [string, string, string]> = {
   motion: [NAVY, ICE, YELLOW],
   cookie: [LIME, NAVY, COBALT],
   catalogs: [PINK, NAVY, YELLOW],
+  gauge: [ORANGE, NAVY, YELLOW],
+  planet: [NAVY, ICE, ORANGE],
+  signpost: [YELLOW, NAVY, ORANGE],
+  mailbox: [LIME, NAVY, PINK],
+  sheet: [COBALT, ICE, PINK],
+  rocket: [PINK, NAVY, LIME],
+  tap: [COBALT, ICE, YELLOW],
 };
 const [bg, fg, pop] = PALETTE[cover];
 
@@ -215,6 +222,118 @@ const fold = (x: number, y: number, w: number, f = 14) => `M${x + w - f} ${y}v${
         <path d={page(288, 162, 64, 60)} fill="var(--pop)" />
         <path d={fold(288, 162, 64)} />
         <path d="M300 58h32M300 72h22M300 124h32M300 138h22M300 190h32M300 204h22" stroke-width="4" />
+      </g>
+    )
+  }
+  {
+    /* Lighthouse on 16 portfolios: a score gauge reading low, and one site of sixteen in the green. */
+    cover === "gauge" && (
+      <g fill="none" stroke="var(--fg)" stroke-width="5">
+        <path d="M90 170A110 110 0 0 1 310 170" stroke-width="22" />
+        <path d="M304.6 136A110 110 0 0 1 310 170" stroke="var(--pop)" stroke-width="22" />
+        <path d="M200 170L158 85" stroke-width="8" stroke-linecap="round" />
+        <circle cx="200" cy="170" r="14" fill="var(--fg)" />
+        <g stroke-width="3">
+          {Array.from({ length: 16 }, (_, i) => (
+            <rect x={59 + i * 18} y="200" width="12" height="12" fill={i === 11 ? "var(--pop)" : "var(--bg)"} />
+          ))}
+        </g>
+      </g>
+    )
+  }
+  {
+    /* Three.js on a phone: a planet too big for the screen, and a progress bar that has barely moved. */
+    cover === "planet" && (
+      <g fill="none" stroke="var(--fg)" stroke-width="5">
+        <rect x="150" y="28" width="100" height="194" rx="14" fill="var(--bg)" />
+        <path d="M185 40h30" />
+        <circle cx="200" cy="112" r="54" fill="var(--pop)" />
+        <path d="M172 90a34 34 0 0 1 22-14" stroke="var(--bg)" stroke-width="6" stroke-linecap="round" />
+        <ellipse cx="200" cy="112" rx="96" ry="20" transform="rotate(-14 200 112)" />
+        <rect x="168" y="190" width="64" height="10" />
+        <rect x="168" y="190" width="12" height="10" fill="var(--pop)" stroke="none" />
+      </g>
+    )
+  }
+  {
+    /* A multilingual site: one post, three directions. */
+    cover === "signpost" && (
+      <g fill="none" stroke="var(--fg)" stroke-width="5" stroke-linejoin="round">
+        <rect x="192" y="58" width="16" height="164" fill="var(--fg)" />
+        <circle cx="200" cy="52" r="9" fill="var(--fg)" />
+        <path d="M140 224h120" stroke-width="7" />
+        <path d="M200 66h104l18 16-18 16H200z" fill="var(--pop)" />
+        <path d="M200 110H96l-18 16 18 16h104z" fill="var(--bg)" />
+        <path d="M200 154h84l18 16-18 16h-84z" fill="var(--fg)" />
+        <path d="M218 82h60M104 126h60M218 170h44" stroke-width="4" stroke-dasharray="10 8" />
+        <path d="M218 170h44" stroke="var(--bg)" stroke-width="4" stroke-dasharray="10 8" />
+      </g>
+    )
+  }
+  {
+    /* A contact form on a static site: the letter goes in, the flag goes up. */
+    cover === "mailbox" && (
+      <g fill="none" stroke="var(--fg)" stroke-width="5" stroke-linejoin="round">
+        <rect x="155" y="196" width="22" height="40" fill="var(--fg)" />
+        <path d="M108 200V122a58 58 0 0 1 116 0v78z" fill="var(--pop)" />
+        <path d="M128 200v-74a38 38 0 0 1 76 0v74" />
+        <path d="M232 176V88" />
+        <rect x="232" y="88" width="34" height="22" fill="var(--fg)" />
+        <rect x="282" y="104" width="82" height="54" fill="var(--bg)" />
+        <path d="M282 104l41 30 41-30" />
+        <path d="M372 92h18M376 130h16M372 168h18" stroke-width="4" />
+      </g>
+    )
+  }
+  {
+    /* One CV, two outputs: the same data becomes a web page and a PDF sheet. */
+    cover === "sheet" && (
+      <g fill="none" stroke="var(--fg)" stroke-width="5" stroke-linejoin="round">
+        <path d="M44 88v76a42 13 0 0 0 84 0V88" fill="var(--pop)" />
+        <ellipse cx="86" cy="88" rx="42" ry="13" fill="var(--pop)" />
+        <path d="M44 114a42 13 0 0 0 84 0M44 140a42 13 0 0 0 84 0" />
+        <path d="M136 112l60-44M136 140l84 44" stroke-dasharray="8 7" stroke-width="4" />
+        <rect x="200" y="28" width="160" height="92" fill="var(--bg)" />
+        <path d="M200 48H360" />
+        <rect x="216" y="62" width="70" height="18" fill="var(--pop)" stroke-width="4" />
+        <path d="M216 94h120M216 106h84" stroke-width="4" />
+        <path d={page(226, 134, 92, 108, 20)} fill="var(--bg)" />
+        <path d={fold(226, 134, 92, 20)} />
+        <rect x="240" y="152" width="50" height="14" fill="var(--pop)" stroke-width="4" />
+        <path d="M240 182h62M240 196h46M240 210h56" stroke-width="4" />
+      </g>
+    )
+  }
+  {
+    /* Shipping an app alone: a flashcard on the phone, the rocket already off. */
+    cover === "rocket" && (
+      <g fill="none" stroke="var(--fg)" stroke-width="5" stroke-linejoin="round">
+        <rect x="120" y="24" width="112" height="204" rx="16" fill="var(--bg)" />
+        <path d="M160 214h32" />
+        <rect x="140" y="70" width="72" height="96" fill="var(--pop)" transform="rotate(-8 176 118)" />
+        <path d="M156 104h40M156 120h28" transform="rotate(-8 176 118)" />
+        <path d="M236 176q46-6 58-50" stroke-dasharray="8 7" stroke-width="4" />
+        <g transform="translate(312 92) rotate(35)">
+          <path d="M-7 26l7 20 7-20z" fill="var(--pop)" />
+          <path d="M0-44c16 14 16 52 11 70h-22c-5-18-5-56 11-70z" fill="var(--bg)" />
+          <circle cx="0" cy="-10" r="7" fill="var(--pop)" />
+          <path d="M-11 8l-13 18h13zM11 8l13 18h-13z" fill="var(--fg)" />
+        </g>
+      </g>
+    )
+  }
+  {
+    /* Hover on phones: the cursor and the finger both reach the same button. */
+    cover === "tap" && (
+      <g fill="none" stroke="var(--fg)" stroke-width="5" stroke-linejoin="round">
+        <path d="M62 72v74l18-18 14 30 12-6-14-30h26z" fill="var(--bg)" />
+        <path d="M120 112h22M258 112h22" stroke-dasharray="6 6" stroke-width="4" />
+        <rect x="148" y="88" width="104" height="48" fill="var(--pop)" />
+        <path d="M172 112h56" stroke="var(--bg)" stroke-width="6" />
+        <circle cx="318" cy="112" r="12" fill="var(--pop)" />
+        <circle cx="318" cy="112" r="26" stroke-width="4" opacity=".7" />
+        <circle cx="318" cy="112" r="40" stroke-width="3" opacity=".35" />
+        <path d="M70 188h260" stroke-width="3" opacity=".35" />
       </g>
     )
   }

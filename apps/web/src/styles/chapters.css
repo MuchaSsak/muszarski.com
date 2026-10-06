@@ -397,10 +397,15 @@
   --tc: var(--yellow);
   --tilt: -1deg;
 }
-.ship:hover,
 .ship:focus-visible {
   box-shadow: 9px 9px 0 var(--ice);
   transform: translate(-3px, -3px);
+}
+@media (hover: hover) {
+  .ship:hover {
+    box-shadow: 9px 9px 0 var(--ice);
+    transform: translate(-3px, -3px);
+  }
 }
 .ship:focus-visible {
   outline: 3px solid var(--ice);
