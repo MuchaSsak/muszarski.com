@@ -37,18 +37,18 @@ const TURNSTILE = "https://challenges.cloudflare.com";
 const LEGAL_GAPS = {
   en: {
     POSTAL_ADDRESS: "postal address to be completed",
-    MAILBOX_PROVIDER: "mailbox provider to be completed",
-    MAILBOX_LOCATION: "location to be completed",
+    MAILBOX_PROVIDER: "Google Ireland Limited (Gmail)",
+    MAILBOX_LOCATION: "Google data centres, also outside the European Economic Area",
   },
   pl: {
     POSTAL_ADDRESS: "adres do korespondencji do uzupełnienia",
-    MAILBOX_PROVIDER: "dostawca skrzynki do uzupełnienia",
-    MAILBOX_LOCATION: "lokalizacja do uzupełnienia",
+    MAILBOX_PROVIDER: "Google Ireland Limited (Gmail)",
+    MAILBOX_LOCATION: "centra danych Google, także poza Europejskim Obszarem Gospodarczym",
   },
   es: {
     POSTAL_ADDRESS: "dirección postal pendiente",
-    MAILBOX_PROVIDER: "proveedor del buzón pendiente",
-    MAILBOX_LOCATION: "ubicación pendiente",
+    MAILBOX_PROVIDER: "Google Ireland Limited (Gmail)",
+    MAILBOX_LOCATION: "centros de datos de Google, también fuera del Espacio Económico Europeo",
   },
 };
 /** @param {{ fileURL?: URL }} context */

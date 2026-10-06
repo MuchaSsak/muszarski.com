@@ -2,7 +2,8 @@
  * POST /api/contact/ (requirements.md F09, tech/technologies.md § Stack, Contact). A Vercel Function next to the
  * static site: validates with the same rules as the browser (`src/lib/contact.ts`), stops bots (honeypot, minimum fill
  * time, Turnstile when its secret is set, a best-effort per-instance rate limit; the real limit is a Vercel WAF rule),
- * then sends the message to the owner through Resend. Answers JSON to the page script, or a 303 to a result page for
+ * then sends the message to the owner through EmailJS (its REST API, called from here, so no key reaches the browser
+ * and the bot checks can't be skipped) [owner 2026-10-06: EmailJS on his Gmail, no Resend]. Answers JSON to the page script, or a 303 to a result page for
  * a plain form post without JavaScript. Secrets come from the host env (names only: technologies.md § Environment).
  * Region: fra1 (vercel.json). No database: nothing is stored here.
  */
@@ -68,12 +69,8 @@ export async function POST(request: Request): Promise<Response> {
     return answer(request, locale, { ok: false, error: "turnstile" }, 400);
   }
 
-  const apiKey = process.env.RESEND_API_KEY;
-  const to = process.env.CONTACT_TO_EMAIL;
-  const from = process.env.CONTACT_FROM_EMAIL;
-  if (!apiKey || !to || !from) return answer(request, locale, { ok: false, error: "unavailable" }, 503);
-
   const kind = replyKind(reply);
+  const subject = `Portfolio message (${topic}): ${message.slice(0, 60).replace(/\s+/g, " ")}`;
   const text = [
     message,
     "",
@@ -83,23 +80,47 @@ export async function POST(request: Request): Promise<Response> {
     `Page language: ${locale}`,
     `Sent: ${new Date().toISOString()}`,
   ].join("\n");
+  const send = emailJs({ subject, text, message, reply, kind, topic, locale });
+  if (!send) return answer(request, locale, { ok: false, error: "unavailable" }, 503);
   try {
-    const response = await fetch("https://api.resend.com/emails", {
-      method: "POST",
-      headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
-      body: JSON.stringify({
-        from,
-        to: [to],
-        subject: `Portfolio message (${topic}): ${message.slice(0, 60).replace(/\s+/g, " ")}`,
-        text,
-        ...(kind === "email" ? { reply_to: reply } : {}),
-      }),
-    });
+    const response = await send;
     if (!response.ok) return answer(request, locale, { ok: false, error: "unavailable" }, 502);
   } catch {
     return answer(request, locale, { ok: false, error: "unavailable" }, 502);
   }
   return answer(request, locale, { ok: true }, 200);
+}
+
+type Mail = { subject: string; text: string; message: string; reply: string; kind: ReturnType<typeof replyKind>; topic: string; locale: Locale };
+
+/**
+ * EmailJS (tech/technologies.md § Contact): the template (dashboard) holds the recipient and the layout; it gets
+ * `subject`, `text` (the whole message with its details), `message`, `reply`, `reply_kind`, `topic`, `locale` and
+ * `reply_to` (the sender's email, or empty). Server calls need "Allow EmailJS API for non-browser applications" on.
+ */
+function emailJs(mail: Mail): Promise<Response> | undefined {
+  const { EMAILJS_SERVICE_ID: service, EMAILJS_TEMPLATE_ID: template, EMAILJS_PUBLIC_KEY: publicKey } = process.env;
+  if (!service || !template || !publicKey) return undefined;
+  return fetch("https://api.emailjs.com/api/v1.0/email/send", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      service_id: service,
+      template_id: template,
+      user_id: publicKey,
+      ...(process.env.EMAILJS_PRIVATE_KEY ? { accessToken: process.env.EMAILJS_PRIVATE_KEY } : {}),
+      template_params: {
+        subject: mail.subject,
+        text: mail.text,
+        message: mail.message,
+        reply: mail.reply,
+        reply_kind: mail.kind,
+        reply_to: mail.kind === "email" ? mail.reply : "",
+        topic: mail.topic,
+        locale: mail.locale,
+      },
+    }),
+  });
 }
 
 export function GET(request: Request): Response {

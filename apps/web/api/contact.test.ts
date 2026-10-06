@@ -1,5 +1,5 @@
 /**
- * The contact function end to end, with the network mocked: bot checks, validation, Turnstile, Resend, both answer
+ * The contact function end to end, with the network mocked: bot checks, validation, Turnstile, EmailJS, both answer
  * shapes (JSON for the page script, 303 for a plain form post). Env names only (technologies.md § Environment).
  */
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
@@ -34,31 +34,32 @@ describe("POST /api/contact/", () => {
 
   beforeEach(() => {
     vi.stubGlobal("fetch", fetchMock);
-    vi.stubEnv("RESEND_API_KEY", "test-key");
-    vi.stubEnv("CONTACT_TO_EMAIL", "owner@example.com");
-    vi.stubEnv("CONTACT_FROM_EMAIL", "site@example.com");
+    vi.stubEnv("EMAILJS_SERVICE_ID", "service_test");
+    vi.stubEnv("EMAILJS_TEMPLATE_ID", "template_test");
+    vi.stubEnv("EMAILJS_PUBLIC_KEY", "public-test");
+    vi.stubEnv("EMAILJS_PRIVATE_KEY", "private-test");
     vi.stubEnv("TURNSTILE_SECRET_KEY", "");
     fetchMock.mockReset();
-    fetchMock.mockResolvedValue(new Response(JSON.stringify({ id: "1" }), { status: 200 }));
+    fetchMock.mockResolvedValue(new Response("OK", { status: 200 }));
   });
   afterEach(() => {
     vi.unstubAllGlobals();
     vi.unstubAllEnvs();
   });
 
-  it("sends a valid message through Resend with the reply address", async () => {
+  it("sends a valid message through EmailJS, server-side, with the private key and the reply address", async () => {
     const { POST } = await load();
     const response = await POST(post(valid()));
     expect(response.status).toBe(200);
     expect(await response.json()).toEqual({ ok: true });
     expect(fetchMock).toHaveBeenCalledTimes(1);
     const [url, init] = fetchMock.mock.calls[0]!;
-    expect(url).toBe("https://api.resend.com/emails");
-    expect((init?.headers as Record<string, string>).Authorization).toBe("Bearer test-key");
+    expect(url).toBe("https://api.emailjs.com/api/v1.0/email/send");
     const payload = JSON.parse(String(init?.body));
-    expect(payload).toMatchObject({ from: "site@example.com", to: ["owner@example.com"], reply_to: "recruiter@example.com" });
-    expect(payload.subject).toContain("(job)");
-    expect(payload.text).toContain("Page language: pl");
+    expect(payload).toMatchObject({ service_id: "service_test", template_id: "template_test", user_id: "public-test", accessToken: "private-test" });
+    expect(payload.template_params).toMatchObject({ reply_to: "recruiter@example.com", reply_kind: "email", locale: "pl" });
+    expect(payload.template_params.subject).toContain("(job)");
+    expect(payload.template_params.text).toContain("Page language: pl");
   });
 
   it("answers a plain form post with a 303 to the localized result page", async () => {
@@ -74,7 +75,7 @@ describe("POST /api/contact/", () => {
     const { POST } = await load();
     const response = await POST(post({ ...valid(), reply: "", message: "Hello! Write to me at anna@example.com please." }));
     expect(response.status).toBe(200);
-    expect(JSON.parse(String(fetchMock.mock.calls[0]![1]?.body)).reply_to).toBe("anna@example.com");
+    expect(JSON.parse(String(fetchMock.mock.calls[0]![1]?.body)).template_params.reply_to).toBe("anna@example.com");
   });
 
   it("rejects bots: a filled honeypot or a form sent too fast", async () => {
@@ -111,18 +112,18 @@ describe("POST /api/contact/", () => {
     const passed = await POST(post({ ...valid(), "cf-turnstile-response": "token" }));
     expect(passed.status).toBe(200);
     expect(fetchMock.mock.calls[0]![0]).toBe("https://challenges.cloudflare.com/turnstile/v0/siteverify");
-    expect(fetchMock.mock.calls[1]![0]).toBe("https://api.resend.com/emails");
+    expect(fetchMock.mock.calls[1]![0]).toBe("https://api.emailjs.com/api/v1.0/email/send");
   });
 
-  it("says unavailable when the mail settings are missing or Resend fails", async () => {
-    vi.stubEnv("RESEND_API_KEY", "");
+  it("says unavailable when the mail settings are missing or EmailJS fails", async () => {
+    vi.stubEnv("EMAILJS_PUBLIC_KEY", "");
     const { POST } = await load();
     const unset = await POST(post(valid()));
     expect(unset.status).toBe(503);
     expect(await unset.json()).toEqual({ ok: false, error: "unavailable" });
 
-    vi.stubEnv("RESEND_API_KEY", "test-key");
-    fetchMock.mockResolvedValueOnce(new Response("{}", { status: 500 }));
+    vi.stubEnv("EMAILJS_PUBLIC_KEY", "public-test");
+    fetchMock.mockResolvedValueOnce(new Response("The Public Key is invalid", { status: 400 }));
     const failed = await POST(post(valid()));
     expect(failed.status).toBe(502);
     fetchMock.mockRejectedValueOnce(new Error("network"));

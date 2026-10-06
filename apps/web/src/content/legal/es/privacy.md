@@ -25,7 +25,7 @@ updated: 2026-10-05
 | Finalidad | Base jurídica e interés legítimo | Plazo de conservación |
 | --- | --- | --- |
 | Prestación del Sitio y garantía de su seguridad (sección 4) | artículo 6.1.f) del RGPD: seguridad de la red y de la información y correcto funcionamiento del Sitio (considerando 49 del RGPD) | el plazo fijado por Vercel para el plan del Responsable; en la fecha de la Política, registros de ejecución de las funciones de servidor: 1 día |
-| Respuesta a un mensaje del formulario de contacto (sección 5) | artículo 6.1.f) del RGPD: responder a las consultas; artículo 6.1.b) del RGPD cuando el mensaje se refiera a un empleo o a un proyecto (medidas precontractuales a petición del Usuario) | el tiempo necesario para tramitar el asunto y, después, no más de 12 meses desde el último mensaje; en el servicio Resend: 30 días |
+| Respuesta a un mensaje del formulario de contacto (sección 5) | artículo 6.1.f) del RGPD: responder a las consultas; artículo 6.1.b) del RGPD cuando el mensaje se refiera a un empleo o a un proyecto (medidas precontractuales a petición del Usuario) | el tiempo necesario para tramitar el asunto y, después, no más de 12 meses desde el último mensaje; en el servicio EmailJS: hasta 30 días |
 | Protección del formulario frente al correo no deseado y los abusos (secciones 5 y 6) | artículo 6.1.f) del RGPD: proteger el formulario frente a abusos automatizados | dirección IP: el tiempo necesario para aplicar el límite de mensajes; datos de Turnstile: según las normas de Cloudflare |
 | Estadísticas de visitas (sección 7) | artículo 6.1.f) del RGPD: conocer cómo se utiliza el Sitio; artículo 399 de la PKE, en la medida en que sea aplicable | 6 meses |
 | Formulación, ejercicio o defensa de reclamaciones | artículo 6.1.f) del RGPD: proteger los derechos del Responsable | hasta la prescripción de las acciones |
@@ -40,7 +40,7 @@ updated: 2026-10-05
 
 1. El formulario de contacto contiene los campos siguientes: el mensaje (obligatorio); los datos para la respuesta, es decir, una dirección de correo electrónico, un número de teléfono o la URL de un perfil de LinkedIn, a elección del Usuario (obligatorio); el asunto: un empleo, un proyecto o una pregunta (opcional).
 2. Al enviarse un mensaje, la función de servidor trata además la dirección IP del remitente para limitar el número de mensajes enviados desde una misma dirección (rate limiting).
-3. El mensaje se entrega por correo electrónico a través del servicio Resend, prestado por Plus Five Five, Inc. (Estados Unidos), en el buzón del Responsable gestionado por [[MAILBOX_PROVIDER]].
+3. El mensaje se entrega por correo electrónico a través del servicio EmailJS, prestado por EmailJS Pte. Ltd. (Singapur), cuyos servidores se encuentran en los Estados Unidos, en el buzón del Responsable gestionado por [[MAILBOX_PROVIDER]].
 4. El Responsable responde por el canal indicado por el Usuario. Si se indica un perfil de LinkedIn, la correspondencia tiene lugar en ese servicio, cuyo operador es un responsable independiente.
 5. Los mensajes no deben contener categorías especiales de datos personales (artículo 9, apartado 1, del RGPD) ni datos innecesarios de terceros.
 6. También es posible dirigirse al Responsable directamente en [[EMAIL]].
@@ -95,7 +95,7 @@ updated: 2026-10-05
 | Destinatario y alcance | Función | Lugar de almacenamiento |
 | --- | --- | --- |
 | Vercel Inc. (Estados Unidos): alojamiento, registros del servidor, gestión del formulario | encargado del tratamiento; responsable independiente de los datos generados por el servicio | CDN global; función del formulario: UE (Fráncfort) |
-| Plus Five Five, Inc. (Estados Unidos), operador del servicio Resend: entrega de mensajes | encargado del tratamiento | Estados Unidos |
+| EmailJS Pte. Ltd. (Singapur), operador del servicio EmailJS: entrega de mensajes | encargado del tratamiento | Estados Unidos |
 | [[MAILBOX_PROVIDER]]: buzón del Responsable | encargado del tratamiento | [[MAILBOX_LOCATION]] |
 | Cloudflare, Inc. (Estados Unidos): verificación Turnstile | encargado del tratamiento; responsable independiente para la mejora de la detección de bots | red global de Cloudflare |
 | Umami Software, Inc. (Estados Unidos): estadísticas de visitas | encargado del tratamiento | Unión Europea |
@@ -106,8 +106,8 @@ updated: 2026-10-05
 ## 12. Transferencias fuera del Espacio Económico Europeo
 
 1. Los datos pueden transferirse a los Estados Unidos sobre la base, según proceda, de:
-   1) la Decisión de Ejecución (UE) 2023/1795 de la Comisión, de 10 de julio de 2023, relativa al EU-US Data Privacy Framework (artículo 45 del RGPD), respecto de Vercel Inc. y, en la medida en que su certificación sea aplicable, de Plus Five Five, Inc. y Cloudflare, Inc.;
-   2) las cláusulas contractuales tipo adoptadas mediante la Decisión de Ejecución (UE) 2021/914 de la Comisión, de 4 de junio de 2021 (artículo 46.2.c) del RGPD), respecto de Umami Software, Inc. en caso de acceso a los datos desde los Estados Unidos y, como garantía adicional, respecto de Plus Five Five, Inc. y Cloudflare, Inc.
+   1) la Decisión de Ejecución (UE) 2023/1795 de la Comisión, de 10 de julio de 2023, relativa al EU-US Data Privacy Framework (artículo 45 del RGPD), respecto de Vercel Inc. y, en la medida en que su certificación sea aplicable, de Cloudflare, Inc.;
+   2) las cláusulas contractuales tipo adoptadas mediante la Decisión de Ejecución (UE) 2021/914 de la Comisión, de 4 de junio de 2021 (artículo 46.2.c) del RGPD), respecto de EmailJS Pte. Ltd. (Singapur y Estados Unidos) y de Umami Software, Inc. en caso de acceso a los datos desde los Estados Unidos y, como garantía adicional, respecto de Cloudflare, Inc.
 2. Si [[MAILBOX_PROVIDER]] u otro destinatario trata datos fuera del Espacio Económico Europeo, la transferencia se realiza únicamente sobre la base del artículo 45 o del artículo 46 del RGPD.
 3. Puede obtenerse del Responsable una copia de las garantías aplicadas. La lista de entidades certificadas está disponible en [dataprivacyframework.gov](https://www.dataprivacyframework.gov/list).
 

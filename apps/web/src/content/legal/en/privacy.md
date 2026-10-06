@@ -25,7 +25,7 @@ updated: 2026-10-05
 | Purpose | Legal basis and legitimate interest | Retention period |
 | --- | --- | --- |
 | Delivering the Website and ensuring its security (section 4) | Article 6(1)(f) GDPR: network and information security and the proper operation of the Website (recital 49 GDPR) | the period set by Vercel for the Controller's plan; on the date of this Policy, runtime logs of server functions: 1 day |
-| Replying to a message sent through the contact form (section 5) | Article 6(1)(f) GDPR: replying to enquiries; Article 6(1)(b) GDPR where the message concerns employment or a project (steps taken at the User's request prior to entering into a contract) | the time needed to handle the matter, then no longer than 12 months from the last message; in the Resend service: 30 days |
+| Replying to a message sent through the contact form (section 5) | Article 6(1)(f) GDPR: replying to enquiries; Article 6(1)(b) GDPR where the message concerns employment or a project (steps taken at the User's request prior to entering into a contract) | the time needed to handle the matter, then no longer than 12 months from the last message; in the EmailJS service: up to 30 days |
 | Protecting the form against spam and abuse (sections 5 and 6) | Article 6(1)(f) GDPR: protecting the form against automated abuse | IP address: as long as necessary to apply the message limit; Turnstile data: according to Cloudflare's rules |
 | Visit statistics (section 7) | Article 6(1)(f) GDPR: understanding how the Website is used; Article 399 PKE, as applicable | 6 months |
 | Establishment, exercise or defence of legal claims | Article 6(1)(f) GDPR: protecting the Controller's rights | until the limitation period for the claims expires |
@@ -40,7 +40,7 @@ updated: 2026-10-05
 
 1. The contact form contains the following fields: the message (required); reply details, that is an e-mail address, a telephone number or a LinkedIn profile URL, at the User's choice (required); the topic: a job, a project or a question (optional).
 2. When a message is sent, the server function also processes the sender's IP address in order to limit the number of messages sent from one address (rate limiting).
-3. The message is delivered by e-mail through the Resend service, provided by Plus Five Five, Inc. (United States), to the Controller's mailbox maintained by [[MAILBOX_PROVIDER]].
+3. The message is delivered by e-mail through the EmailJS service, provided by EmailJS Pte. Ltd. (Singapore), whose servers are located in the United States, to the Controller's mailbox maintained by [[MAILBOX_PROVIDER]].
 4. The Controller replies through the channel indicated by the User. Where a LinkedIn profile is indicated, the correspondence takes place on that service, whose operator is an independent controller.
 5. Messages should not contain special categories of personal data (Article 9(1) GDPR) or unnecessary data of third parties.
 6. The Controller may also be contacted directly at [[EMAIL]].
@@ -95,7 +95,7 @@ updated: 2026-10-05
 | Recipient and scope | Role | Place of data storage |
 | --- | --- | --- |
 | Vercel Inc. (United States): hosting, server logs, form handling | processor; independent controller of service-generated data | global CDN; form function: EU (Frankfurt) |
-| Plus Five Five, Inc. (United States), operator of the Resend service: message delivery | processor | United States |
+| EmailJS Pte. Ltd. (Singapore), operator of the EmailJS service: message delivery | processor | United States |
 | [[MAILBOX_PROVIDER]]: the Controller's mailbox | processor | [[MAILBOX_LOCATION]] |
 | Cloudflare, Inc. (United States): Turnstile verification | processor; independent controller for improving bot detection | Cloudflare global network |
 | Umami Software, Inc. (United States): visit statistics | processor | European Union |
@@ -106,8 +106,8 @@ updated: 2026-10-05
 ## 12. Transfers outside the European Economic Area
 
 1. Data may be transferred to the United States on the basis of, as applicable:
-   1) Commission Implementing Decision (EU) 2023/1795 of 10 July 2023 concerning the EU-US Data Privacy Framework (Article 45 GDPR), with regard to Vercel Inc. and, to the extent their certification applies, Plus Five Five, Inc. and Cloudflare, Inc.;
-   2) the standard contractual clauses adopted by Commission Implementing Decision (EU) 2021/914 of 4 June 2021 (Article 46(2)(c) GDPR), with regard to Umami Software, Inc. in the event of access to the data from the United States, and as an additional safeguard with regard to Plus Five Five, Inc. and Cloudflare, Inc.
+   1) Commission Implementing Decision (EU) 2023/1795 of 10 July 2023 concerning the EU-US Data Privacy Framework (Article 45 GDPR), with regard to Vercel Inc. and, to the extent its certification applies, Cloudflare, Inc.;
+   2) the standard contractual clauses adopted by Commission Implementing Decision (EU) 2021/914 of 4 June 2021 (Article 46(2)(c) GDPR), with regard to EmailJS Pte. Ltd. (Singapore and the United States) and Umami Software, Inc. in the event of access to the data from the United States, and as an additional safeguard with regard to Cloudflare, Inc.
 2. Where [[MAILBOX_PROVIDER]] or another recipient processes data outside the European Economic Area, the transfer takes place only on the basis of Article 45 or Article 46 GDPR.
 3. A copy of the safeguards applied may be obtained from the Controller. The list of certified entities is available at [dataprivacyframework.gov](https://www.dataprivacyframework.gov/list).
 

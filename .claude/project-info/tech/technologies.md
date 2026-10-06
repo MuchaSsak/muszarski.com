@@ -21,7 +21,7 @@
 | Page transitions | native cross-document View Transitions (`@view-transition`, `view-transition-name` for card → case) | 0 KB | Chrome 126+, Safari 18.2+; Firefox navigates without animation | [research: § 3.3] |
 | Smooth scroll | none (no Lenis) | — | native scroll; Lenis breaks anchors | [research] |
 | CV PDF | `bun run cv:pdf`: Playwright `page.pdf()` (tagged, outline) from `/<locale>/cv/print/` of a running preview | playwright 1.63.0 | **committed** to `public/files/` (the Vercel build has no browser); the print route exposes a digest of the CV data, the script records it, `src/data/cv.test.ts` fails when the data changed after the PDFs were made [decided 2026-10-05, replaces the build-time + pdfjs plan] | [measured] |
-| Contact | **`apps/web/api/contact.ts`, a plain Vercel Function** next to the static site (no Astro adapter, so `astro preview` keeps working) → `/api/contact/`; Turnstile `siteverify` + Resend REST via `fetch` (no SDK); honeypot + min fill time + a per-instance limit; the real limit is one Vercel WAF rule; region fra1 (`vercel.json`) | — | works without JS (POST → 303 to `/contact/sent/` or `/contact/error/`); no DB; validation shared with the page (`src/lib/contact.ts`) | [decided 2026-10-05] |
+| Contact | **`apps/web/api/contact.ts`, a plain Vercel Function** next to the static site (no Astro adapter, so `astro preview` keeps working) → `/api/contact/`; Turnstile `siteverify` + EmailJS REST via `fetch` from the server (no SDK; the template holds the recipient) [owner 2026-10-06: EmailJS on his Gmail, no Resend]; honeypot + min fill time + a per-instance limit; the real limit is one Vercel WAF rule; region fra1 (`vercel.json`) | — | works without JS (POST → 303 to `/contact/sent/` or `/contact/error/`); no DB; validation shared with the page (`src/lib/contact.ts`) | [decided 2026-10-05] |
 | Analytics | Umami Cloud Hobby (EU), script 2.3 KB gz, `data-domains` = prod host | — | cookieless; reads one localStorage opt-out key | [research: § 6] |
 | Media | `astro:assets` AVIF/WebP; loops AV1 (CRF 44–48) + optional HEVC + **H.264 fallback**; ffmpeg 8.1 | — | AV1 55–64% smaller; iPhone AV1 only on A17 Pro+ | [research: § 7] |
 | Testing | vitest; Playwright e2e + axe; Lighthouse script; pdfjs-dist PDF content test | — | gates in `working-agreement.md` § 2 | [research] |
@@ -73,7 +73,7 @@ Template with every name: `apps/web/.env.example`. Values live in the Vercel pro
 | --- | --- | --- | --- |
 | `PUBLIC_SITE_URL` | canonical origin; default `https://matmuszarski.space` (`seo.md` § Domain); a production deploy uses `VERCEL_PROJECT_PRODUCTION_URL`, review deploys their own `VERCEL_URL` | host env | no |
 | `PUBLIC_TURNSTILE_SITE_KEY` / `TURNSTILE_SECRET_KEY` | contact bot check | host env | yes |
-| `RESEND_API_KEY` / `CONTACT_TO_EMAIL` / `CONTACT_FROM_EMAIL` | contact delivery (`CONTACT_FROM_EMAIL` on a domain verified in Resend); unset = the form answers "can't send right now, copy my email" | host env | yes |
+| `EMAILJS_SERVICE_ID` / `EMAILJS_TEMPLATE_ID` / `EMAILJS_PUBLIC_KEY` / `EMAILJS_PRIVATE_KEY` | contact delivery through EmailJS (Account → Security: "Allow EmailJS API for non-browser applications" on, private key on); template: To = his Gmail, Reply-To `{{reply_to}}`, Subject `{{subject}}`, body `{{text}}`; unset = the form answers "can't send right now, copy my email" | host env | yes |
 | `PUBLIC_UMAMI_WEBSITE_ID` | analytics; unset = no script | host env | no |
 | `PUBLIC_UMAMI_SCRIPT_URL` / `PUBLIC_UMAMI_COLLECT_ORIGIN` | overrides for the Umami script and collector (defaults: Umami Cloud); the CSP follows them | host env | no |
 | `PUBLIC_GOOGLE_SITE_VERIFICATION` | only if not verified by DNS | host env | no |
@@ -82,7 +82,7 @@ Template with every name: `apps/web/.env.example`. Values live in the Vercel pro
 
 ## External services and limits
 
-Resend free: 3,000/month, 100/day. Umami Hobby: 100K events/month, 1 site, 6-month retention. Turnstile
+EmailJS free: 200 emails/month [web: emailjs.com/pricing, check before relying on it]. Umami Hobby: 100K events/month, 1 site, 6-month retention. Turnstile
 tokens: 300 s, single use. Vercel Pro WAF: rate-limit rules included (the exact count: check the Vercel docs in S1). Node ≥ 22.19 on the build host (Lingui native tools).
 
 ## Spikes before the build (pass conditions in research § 8.2)
