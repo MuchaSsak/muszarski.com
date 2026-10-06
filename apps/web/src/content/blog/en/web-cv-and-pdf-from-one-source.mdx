@@ -66,7 +66,7 @@ export interface CvEntry {
 }
 ```
 
-Then come the sections: title, availability, location, summary, experience, education, projects, skills, credentials, languages and interests. Values that are not final yet carry `placeholder: true` and a comment, and each one is logged in a register I clear before launch. The Spanish text is machine-assisted and marked unreviewed.
+Then come the sections: title, availability, location, summary, experience, education, projects, skills, credentials, languages and interests. Values that are not final yet carry a placeholder flag and a comment, and each one is logged in a register I clear before launch. The Spanish text is machine-assisted and marked unreviewed.
 
 The CV text lives in this file per locale because it is long-form content. Short interface strings, like the section headings "Experience" or "Skills", go through Lingui like every other label on the site. [Lingui vs i18next](/en/blog/lingui-vs-i18next/) explains why I picked it.
 

@@ -1,6 +1,6 @@
 ---
 /**
- * Latest writing (structure.md § Home 6): every post of the page's blog locale on one rail of small cards (Spanish pages
+ * Latest writing (structure.md § Home 6): the newest posts of the page's blog locale on one rail of small cards (Spanish pages
  * show the English posts, marked as English), with "All posts" beside the heading. Hidden when there are no posts.
  * [user 2026-10-06: "a pointer/pencil that actually draws/writes cards one by one, and then the pointer grabs the
  * whole container and scrolls horizontally ... in some loop"; no outline, no marks: "gradually uncover the whole card
@@ -21,7 +21,9 @@ import { postsIn } from "~/lib/posts";
 
 const locale = Astro.locals.locale;
 const links = chromeLinks(locale);
-const posts = await postsIn(links.blogLocale === "pl" ? "pl" : "en");
+// The newest eight: every card is inline HTML (its cover is an SVG), and HTML before the first paint delays the LCP
+// (16 posts took the home page from 35 to 56 KB gzip and its LCP past 2 s on 2026-10-06). "All posts" has the rest.
+const posts = (await postsIn(links.blogLocale === "pl" ? "pl" : "en")).slice(0, 8);
 const english = links.blogLocale !== locale;
 ---
 

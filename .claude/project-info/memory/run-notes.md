@@ -9,13 +9,13 @@
 | --- | --- | --- |
 | `bun install` (root, cold) | 26.6 s, 1318 packages | 2026-10-05 |
 | `bun install --frozen-lockfile` (clean clone, warm cache) | 5.3 s | 2026-10-05 |
-| `bun run build` (50 pages + launch gate with link check) | 8.0 s | 2026-10-06 |
+| `bun run build` (64 pages + launch gate with link check) | 10.4 s | 2026-10-07 |
 | `bun run test` (vitest, 152 tests in 10 files) | 1.2 s | 2026-10-06 |
 | `bun run typecheck` (astro check, ~105 files) | 16 s | 2026-10-06 |
-| `bun run e2e` (233 tests, 4 workers; the two tour tests wait ~8 s each) | 35 s | 2026-10-06 |
-| `bun run e2e:xb` (Firefox + WebKit, 158 tests) | 1.2 min | 2026-10-06 |
+| `bun run e2e` (236 tests, 4 workers; the two tour tests wait ~8 s each) | 52 s | 2026-10-07 |
+| `bun run e2e:xb` (Firefox + WebKit, 164 tests) | 1.9 min | 2026-10-07 |
 | `bun run cv:pdf` (3 PDFs, 196-210 KB, 2 pages each) | 3.5 s | 2026-10-06 |
-| `bun run og` (33 share images + 4 icons) | 3.0 s | 2026-10-06 |
+| `bun run og` (47 share images + 4 icons) | 3.7 s | 2026-10-07 |
 | `bun run lhci` (median of 3, per page) | ~25 s a page | 2026-10-06 |
 | `node scripts/fonts.mjs` (cached sources) | ~2 s | 2026-10-06 |
 
@@ -69,3 +69,14 @@
 - Git Bash: `MSYS_NO_PATHCONV=1` before any command that takes URL paths (`/en/`), or it becomes `P:/Git/en/`.
 - Binaries are per package (`apps/web/node_modules/.bin`); `npx <bin>` from elsewhere hits the npm registry.
 - `core.autocrlf=true` on this machine; `.gitattributes` forces LF. Python on Windows writes CRLF unless `newline="\n"`.
+
+## Lighthouse 2026-10-07 (mobile, simulated throttling)
+
+- Local preview, median of 3: home en/pl 98, es 99 (LCP 2.10-2.18 s: over the 2.0 s target, under the 2.5 s bar);
+  blog index, CV, work and a new post 100; the case study and My life 99. a11y / best practices / SEO 100 everywhere.
+- Live (www.matmuszarski.space, Vercel HTTP/2 + brotli, deploy of 461b66e), median of 5: home 99, LCP 1.78 s, TBT 19 ms.
+  One earlier live median read 90 / TBT 185 ms right after a local batch: a ~250 ms style + layout task on the document
+  lands just before or just after first paint, so TBT is bimodal. Real fix if it matters: a smaller home DOM (303 inline
+  SVGs, How I work scenes 41 KB raw, AI section 30 KB raw).
+- Home HTML 53 KB gzip (28 KB of it the inlined CSS in the head); it was 34.7 KB before the 2026-10-06 feedback rounds.
+  The writing rail is capped at 8 posts (16 had pushed it to 56 KB).
