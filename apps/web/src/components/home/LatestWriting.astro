@@ -64,7 +64,7 @@ const english = links.blogLocale !== locale;
       <ul class="strip" role="list" data-strip>
         {posts.map((post, i) => (
           <li class="wc drawn" style={`--i:${i % 3}`}>
-            <PostCard post={post} tone={i * 2} compact />
+            <PostCard post={post} compact />
           </li>
         ))}
       </ul>

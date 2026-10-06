@@ -18,7 +18,7 @@ export const BLOG_TAGS = [
 export type BlogTag = (typeof BLOG_TAGS)[number];
 
 /** Code-drawn covers (PostCover.astro), one motif per topic. */
-export const BLOG_COVERS = ["blueprint", "pipeline", "wiki", "translate", "compare", "type", "motion", "shield", "globe"] as const;
+export const BLOG_COVERS = ["blueprint", "terminal", "wiki", "bubbles", "scale", "type", "motion", "cookie", "catalogs"] as const;
 export type BlogCover = (typeof BLOG_COVERS)[number];
 
 /** Words per minute for technical prose on a screen (code and tables read slower; this is conservative). */

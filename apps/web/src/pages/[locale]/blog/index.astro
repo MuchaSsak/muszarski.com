@@ -108,8 +108,8 @@ const showing = t`Showing`;
     <p class="count js-only" aria-live="polite" data-count></p>
 
     <div class="grid" data-posts>
-      {posts.map((post, i) => (
-        <PostCard post={post} wide={isCase(post)} headingLevel="h2" tone={(i * 2 + 3) % 9} />
+      {posts.map((post) => (
+        <PostCard post={post} wide={isCase(post)} headingLevel="h2" />
       ))}
     </div>
     <div class="empty" data-empty hidden>

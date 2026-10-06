@@ -17,7 +17,6 @@ import { typo } from "~/lib/typography";
 
 interface Props {
   post: Post;
-  tone?: number;
   /** The big card (featured post). */
   wide?: boolean;
   /** The small card (the home teaser): a thumbnail, the date and the title. */
@@ -25,7 +24,7 @@ interface Props {
   headingLevel?: "h2" | "h3";
 }
 
-const { post, tone = 0, wide = false, compact = false, headingLevel: H = "h3" } = Astro.props;
+const { post, wide = false, compact = false, headingLevel: H = "h3" } = Astro.props;
 const locale = postLocale(post);
 const date = new Intl.DateTimeFormat(locale, {
   day: "numeric",
@@ -48,7 +47,7 @@ const search = [post.data.title, post.data.description, ...post.data.tags].join(
 >
   {caseStudy && !compact && <span class="cs-stamp" aria-hidden="true">{t`Case study`}</span>}
   <div class="art">
-    <PostCover cover={post.data.cover} tone={tone} />
+    <PostCover cover={post.data.cover} />
   </div>
   <div class="txt">
     <p class="meta">

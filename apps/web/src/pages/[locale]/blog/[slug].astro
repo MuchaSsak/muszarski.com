@@ -128,7 +128,7 @@ const tocLabel = t`On this page`;
             }
           </p>
         </div>
-        <div class="cover-wrap rise" style="--d:1"><PostCover cover={post.data.cover} tone={3} /></div>
+        <div class="cover-wrap rise" style="--d:1"><PostCover cover={post.data.cover} /></div>
       </div>
     </header>
 
@@ -204,8 +204,8 @@ const tocLabel = t`On this page`;
           </p>
         </div>
         <div class="grid">
-          {related.map((other, i) => (
-            <PostCard post={other} tone={i + 1} />
+          {related.map((other) => (
+            <PostCard post={other} />
           ))}
         </div>
       </section>

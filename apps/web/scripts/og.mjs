@@ -99,15 +99,6 @@ const SKIN = {
   article: { bg: "#0a0d33", fg: "#eef0ff" },
   case: { bg: "#ff4fb8", fg: "#0a0d33" },
 };
-const TONES = [
-  ["#ffd23f", "#0a0d33", "#2433ff"],
-  ["#ff5b1f", "#0a0d33", "#ff4fb8"],
-  ["#c9f24a", "#0a0d33", "#2433ff"],
-  ["#2433ff", "#eef0ff", "#ff4fb8"],
-  ["#ffd23f", "#0a0d33", "#ff4fb8"],
-];
-const hash = (text) => [...text].reduce((h, c) => (h * 31 + c.charCodeAt(0)) >>> 0, 7);
-const retone = (svg, i) => svg.replace(/style="[^"]*"/, `style="--bg:${TONES[i][0]};--fg:${TONES[i][1]};--pop:${TONES[i][2]}"`);
 
 const tiles = (names, colours) =>
   names
@@ -144,11 +135,10 @@ function art(job) {
   if (key === "blog")
     return `<div class="fan">${job.covers
       .slice(0, 3)
-      .map((svg, i) => `<span style="--i:${i}">${retone(svg, (i * 2) % TONES.length)}</span>`)
+      .map((svg, i) => `<span style="--i:${i}">${svg}</span>`)
       .join("")}</div>`;
-  // A post: its own cover, framed.
-  const cover = job.covers[0] ?? "";
-  return `<div class="one">${cover ? retone(cover, hash(job.key) % TONES.length) : ""}</div>`;
+  // A post: its own cover in its own palette (PostCover.astro), framed.
+  return `<div class="one">${job.covers[0] ?? ""}</div>`;
 }
 
 const template = (job) => {
@@ -184,9 +174,9 @@ h1 { font-weight: 900; line-height: .92; text-transform: uppercase; font-stretch
 .sheet u { height: 6px; margin: 6px 0; background: #2433ff; }
 .pdf { position: absolute; right: -34px; bottom: 40px; padding: 12px 20px; background: #ff4fb8; color: #0a0d33; font-weight: 900; font-size: 34px; box-shadow: 0 0 0 4px #0a0d33, 7px 7px 0 4px #0a0d33; transform: rotate(-10deg); }
 .fan { position: relative; height: 360px; }
-.fan span { position: absolute; left: calc(var(--i) * 50px); top: calc(var(--i) * 56px); width: 330px; transform: rotate(calc(-6deg + var(--i) * 6deg)); box-shadow: 0 0 0 4px #0a0d33, 10px 10px 0 4px ${skin.fg}; }
+.fan span { position: absolute; left: calc(var(--i) * 50px); top: calc(var(--i) * 56px); width: 330px; transform: rotate(calc(-6deg + var(--i) * 6deg)); box-shadow: 0 0 0 4px ${skin.fg}, 10px 10px 0 4px ${skin.fg === "#0a0d33" ? "#0a0d33" : "#ff4fb8"}; }
 .fan svg, .one svg { display: block; width: 100%; height: auto; }
-.one { transform: rotate(3deg); box-shadow: 0 0 0 4px #0a0d33, 14px 14px 0 4px ${skin.fg === "#0a0d33" ? "#0a0d33" : "#ff4fb8"}; }
+.one { transform: rotate(3deg); box-shadow: 0 0 0 4px ${skin.fg}, 14px 14px 0 4px ${skin.fg === "#0a0d33" ? "#0a0d33" : "#ff4fb8"}; }
 </style></head><body>
 <div class="top">${logo}<span>Mateusz Muszarski</span><span class="k">${escape(kicker)}</span></div>
 <div class="mid"><h1 id="t">${escape(job.title)}</h1>${art(job)}</div>
