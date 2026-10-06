@@ -2,7 +2,7 @@
 /**
  * Contact (structure.md § Home 7, requirements.md F09): message first. One text box; once something is written, a
  * "Where do I reply?" field appears and fills itself when the message holds an email, phone or LinkedIn link. Topic
- * chips are optional; "Start with a project" preselects one. Works without JS (a plain POST to /api/contact/, then a
+ * chips are optional. Works without JS (a plain POST to /api/contact/, then a
  * result page); with JS it sends in place and keeps the text on every error, with copy-email as the way out.
  * Turnstile loads only once the visitor starts typing, and only when its site key is set.
  */
@@ -11,7 +11,7 @@ import { t } from "lingui-for-astro/macro";
 
 import Fit from "~/components/ui/Fit.astro";
 import Icon from "~/components/ui/Icon.astro";
-import { cvPdfHref, PROFILES, SITE } from "~/data/site";
+import { PROFILES, SITE } from "~/data/site";
 import { LIMITS } from "~/lib/contact";
 import { chromeLinks } from "~/lib/nav";
 import { typo } from "~/lib/typography";
@@ -51,13 +51,6 @@ const found = { email: t`Found an email in your message`, phone: t`Found a phone
         <li><Icon name="tb:map-pin" />{t`Remote · Poland, CET`}</li>
         <li><Icon name="tb:language" />{t`English · Polish`}</li>
       </ul>
-      <p class="open rv" style="--d:2">
-        <span>{t`Open to selected freelance projects.`}</span>
-        <button class="btn btn-inv" type="button" data-start-project data-umami-event="cta" data-umami-event-id="open-to-projects" data-umami-event-source="contact">
-          {t`Start with a project`}
-          <Icon name="tb:arrow-right" class="nudge" />
-        </button>
-      </p>
     </div>
 
     <div class="form-col">
@@ -144,29 +137,16 @@ const found = { email: t`Found an email in your message`, phone: t`Found a phone
           <Icon name="tb:copy" />
           <span>{t`Copy email`}<small>{SITE.email}</small></span>
         </button>
-        <a class="dlink" href={linkedin.href} rel="me noopener" data-umami-event="outbound" data-umami-event-target="linkedin">
+        <a class="dlink" href={linkedin.href} rel="me noopener" target="_blank" data-umami-event="outbound" data-umami-event-target="linkedin">
           <Icon name="tb:brand-linkedin" />
           <span>LinkedIn<small>/in/{linkedin.handle}</small></span>
+          <span class="sr-only">{t`(opens in a new tab)`}</span>
         </a>
-        <a class="dlink" href={github.href} rel="me noopener" data-umami-event="outbound" data-umami-event-target="github">
+        <a class="dlink" href={github.href} rel="me noopener" target="_blank" data-umami-event="outbound" data-umami-event-target="github">
           <Icon name="si:github" />
           <span>GitHub<small>{github.handle}</small></span>
+          <span class="sr-only">{t`(opens in a new tab)`}</span>
         </a>
-        <div class="dlink cv">
-          <Icon name="tb:file-cv" />
-          <span>
-            <a href={links.cv} data-umami-event="cta" data-umami-event-id="cv" data-umami-event-source="contact">CV</a>
-            <small
-              ><a href={links.cv} tabindex="-1" aria-hidden="true">{t`Page`}</a> · <a
-                href={cvPdfHref(locale)}
-                download
-                data-umami-event="cv_download"
-                data-umami-event-source="contact"
-                data-umami-event-locale={locale}>PDF</a
-              ></small
-            >
-          </span>
-        </div>
       </div>
     </div>
   </div>
@@ -207,16 +187,6 @@ const found = { email: t`Found an email in your message`, phone: t`Found a phone
   .ifacts :global(.ico) {
     width: 1.375rem;
     height: 1.375rem;
-  }
-  .open {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 0.75rem 1rem;
-    margin: 1.75rem 0 0;
-    padding-top: 1.25rem;
-    border-top: 3px solid currentColor;
-    font-weight: 700;
   }
 
   form.msg {
@@ -390,7 +360,7 @@ const found = { email: t`Found an email in your message`, phone: t`Found a phone
   }
   .direct {
     display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 0.5rem;
     margin-top: 1.75rem;
     padding-top: 1.375rem;
@@ -426,7 +396,7 @@ const found = { email: t`Found an email in your message`, phone: t`Found a phone
     height: 1.875rem;
     transition: transform 0.45s var(--ease-pop);
   }
-  .dlink > span {
+  .dlink > span:not(.sr-only) {
     display: block;
     width: 100%;
     min-width: 0;
@@ -442,14 +412,8 @@ const found = { email: t`Found an email in your message`, phone: t`Found a phone
     letter-spacing: 0;
     text-transform: none;
   }
-  .dlink.cv {
-    cursor: default;
-  }
-  .dlink.cv a {
-    text-underline-offset: 3px;
-  }
   @media (hover: hover) {
-    .dlink:not(.cv):hover {
+    .dlink:hover {
       background: var(--sfg);
       color: var(--sbg);
     }
@@ -458,9 +422,9 @@ const found = { email: t`Found an email in your message`, phone: t`Found a phone
     }
   }
 
-  @media (max-width: 64rem) {
+  @media (max-width: 30rem) {
     .direct {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
+      grid-template-columns: minmax(0, 1fr);
     }
   }
   @media (max-width: 56.25rem) {
@@ -558,11 +522,6 @@ const found = { email: t`Found an email in your message`, phone: t`Found a phone
       foundNote.textContent = "";
       const kind = replyKind(reply.value);
       reply.inputMode = kind === "phone" ? "tel" : "email";
-    });
-
-    section.querySelector("[data-start-project]")?.addEventListener("click", () => {
-      setTopic("project");
-      message.focus();
     });
 
     form.addEventListener("submit", async (event) => {

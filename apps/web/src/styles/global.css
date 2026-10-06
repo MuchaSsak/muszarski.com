@@ -2,9 +2,9 @@
  * Poster design system (wiki: design/design.md). The page is a stack of printed posters: flat colour fields,
  * one variable face (Anybody) fitted edge to edge, hard shadows, no gradients.
  *
- * Themes: Cobalt (default, no attribute), Paper and Ink (`data-theme` on <html>, set before first paint by
- * ThemeScript). A theme only redefines the field tokens; components read `--sbg` / `--sfg` (the field they sit on)
- * and `--accent` / `--on-accent`, never a raw palette colour. tokens.test.ts checks every field pairing for AA.
+ * One theme, Cobalt [user 2026-10-06: the Paper/Ink switch was cut as clutter]. Components read `--sbg` / `--sfg`
+ * (the field they sit on) and `--accent` / `--on-accent`, never a raw palette colour. tokens.test.ts checks every
+ * field pairing for AA.
  */
 @import "tailwindcss";
 @import "./fonts.css";
@@ -29,34 +29,6 @@
   --deep-bg: #2433ff;
   --deep-fg: #eef0ff;
   --bar-bg: #0a0d33;
-  --bar-fg: #eef0ff;
-  --accent: #ff4fb8;
-  --on-accent: #0a0d33;
-}
-
-:root[data-theme="paper"] {
-  color-scheme: light;
-  --hero-bg: #f1ede2;
-  --hero-fg: #111114;
-  --alt-bg: #fbfaf6;
-  --alt-fg: #111114;
-  --deep-bg: #111114;
-  --deep-fg: #f1ede2;
-  --bar-bg: #111114;
-  --bar-fg: #f1ede2;
-  --accent: #ff4a1c;
-  --on-accent: #111114;
-}
-
-:root[data-theme="ink"] {
-  color-scheme: dark;
-  --hero-bg: #0b0c11;
-  --hero-fg: #eef0ff;
-  --alt-bg: #16171e;
-  --alt-fg: #eef0ff;
-  --deep-bg: #2433ff;
-  --deep-fg: #eef0ff;
-  --bar-bg: #0b0c11;
   --bar-fg: #eef0ff;
   --accent: #ff4fb8;
   --on-accent: #0a0d33;
@@ -184,6 +156,7 @@
   .field-accent {
     --sbg: var(--accent);
     --sfg: var(--on-accent);
+    --pop: var(--cobalt);
   }
   :is(.field-hero, .field-alt, .field-deep, .field-bar, .field-accent) {
     background: var(--sbg);
@@ -244,16 +217,23 @@
     font-size: 0.6875rem;
     font-weight: 600;
   }
+  /* Hierarchy: a primary (solid, `btn-acc` / `btn-inv`) rests on a hard shadow so the one action to take reads at a
+     glance; a secondary (`btn-line`) is an outline with no shadow; anything without a frame is a label, not a
+     control. `--pop` is the field's shadow colour (each chapter skin sets its own). */
   .btn-line {
     box-shadow: inset 0 0 0 2px currentColor;
   }
   .btn-acc {
+    --btn-shadow: var(--sfg);
     background: var(--accent);
     color: var(--on-accent);
+    box-shadow: 4px 4px 0 var(--btn-shadow);
   }
   .btn-inv {
+    --btn-shadow: var(--pop, var(--accent));
     background: var(--sfg);
     color: var(--sbg);
+    box-shadow: 4px 4px 0 var(--btn-shadow);
   }
   .btn-icon {
     width: 2.875rem;
@@ -283,16 +263,18 @@
         inset 0 0 0 2px currentColor,
         3px 3px 0 0 currentColor;
     }
-    .btn-acc:hover {
-      box-shadow: 3px 3px 0 0 var(--sfg);
-    }
+    .btn-acc:hover,
     .btn-inv:hover {
-      box-shadow: 3px 3px 0 0 var(--accent);
+      box-shadow: 7px 7px 0 var(--btn-shadow);
     }
   }
   .btn:active {
     transform: translate(1px, 1px);
     box-shadow: none;
+  }
+  /* A primary presses down into its shadow. */
+  .btn:is(.btn-acc, .btn-inv):active {
+    transform: translate(4px, 4px);
   }
 
   .ico {
@@ -355,11 +337,25 @@
     }
   }
 
-  /* Tool chips: a mark (or a monogram) and the name, always both. */
+  /* Tools: a mark (or a monogram) and the name, always both, as plain text after a small "Built with" kicker. No
+     frame and no hover, so a tool never looks like a button next to the real ones. */
+  .stack {
+    display: grid;
+    gap: 0.5rem;
+  }
+  .stack-k {
+    margin: 0;
+    font-weight: 800;
+    font-size: 0.6875rem;
+    line-height: 1.2;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    font-stretch: 125%;
+  }
   .stackrow {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.5rem;
+    gap: 0.375rem 1.125rem;
     margin: 0;
     padding: 0;
     list-style: none;
@@ -367,29 +363,16 @@
   .stackrow li {
     display: inline-flex;
     align-items: center;
-    gap: 0.5rem;
-    min-height: 2.375rem;
-    padding: 0 0.75rem 0 0.5625rem;
-    box-shadow: inset 0 0 0 2px currentColor;
-    font-weight: 800;
-    font-size: 0.8125rem;
-    letter-spacing: 0.03em;
-    text-transform: uppercase;
-    font-stretch: 110%;
-    transition:
-      background-color var(--dur-base),
-      color var(--dur-base);
+    gap: 0.4375rem;
+    font-weight: 700;
+    font-size: 0.875rem;
+    line-height: 1.5rem;
+    letter-spacing: 0.01em;
   }
   .stackrow .ico,
   .stackrow .mono {
-    width: 1.25rem;
-    height: 1.25rem;
-  }
-  @media (hover: hover) {
-    .stackrow li:hover {
-      background: var(--sfg);
-      color: var(--sbg);
-    }
+    width: 1.125rem;
+    height: 1.125rem;
   }
   /* A two-letter monogram for a tool without a free mark (Lingui, Playwright). */
   .mono {
@@ -425,34 +408,6 @@
   .status.live::before {
     background: #1fbf5b;
     box-shadow: 0 0 0 2px var(--sfg);
-  }
-
-  /* Media player controls (reels, credential media). */
-  .r-btn {
-    display: grid;
-    place-items: center;
-    width: 2.875rem;
-    height: 2.875rem;
-    padding: 0;
-    border: 0;
-    background: var(--sfg);
-    color: var(--sbg);
-    cursor: pointer;
-    transition: transform var(--dur-base) var(--ease-out);
-  }
-  .r-btn .ico {
-    width: 1.375rem;
-    height: 1.375rem;
-  }
-  .r-btn:disabled {
-    opacity: 0.35;
-    cursor: default;
-  }
-  @media (hover: hover) and (pointer: fine) {
-    .r-btn:not(:disabled):hover {
-      transform: translate(-2px, -2px);
-      box-shadow: 2px 2px 0 var(--pop, var(--accent));
-    }
   }
 
   .toast {

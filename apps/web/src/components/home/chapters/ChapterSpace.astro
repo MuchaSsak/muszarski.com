@@ -3,25 +3,21 @@
  * Chapter 04, the old 3D space portfolio (content/projects/space-portfolio.md): the honest "before" of this site.
  * The loop is cut from the owner's capture: only the Mars and Jupiter stops (planet textures by Solar System Scope,
  * CC BY 4.0, credited); the stops with third-party logos and the uncredited lens-dirt texture are left out
- * (design/assets.md, licences rule). No WebGL on this page: the site itself opens in a new tab, on desktop.
+ * (design/assets.md, licences rule). No WebGL on this page: the site itself opens in a new tab, on desktop. Its
+ * measured flaws (the Lighthouse numbers) live in the "how this site was built" post, not here [user 2026-10-06].
  */
 import { t } from "lingui-for-astro/macro";
 
+import ChapterBadge from "~/components/home/chapters/ChapterBadge.astro";
 import Fit from "~/components/ui/Fit.astro";
 import Icon from "~/components/ui/Icon.astro";
-import ReelControls from "~/components/ui/ReelControls.astro";
+import StackList from "~/components/ui/StackList.astro";
 import { WORK_LINKS } from "~/data/site";
-import { thisSitePath } from "~/lib/blog-paths";
 import { typo } from "~/lib/typography";
 
 const locale = Astro.locals.locale;
-const caseStudy = thisSitePath(locale);
-
-interface Props {
-  /** "01 / 04": this chapter's place among the visible ones. */
-  counter: string;
-}
-const { counter } = Astro.props;
+const labelPause = t`Pause video`;
+const labelPlay = t`Play video`;
 ---
 
 <section class="sec chapter c-sp" id="space" aria-labelledby="t-sp">
@@ -34,11 +30,7 @@ const { counter } = Astro.props;
       <span class="planet p1"></span><span class="planet p2"></span><span class="planet p3"></span><span class="planet p4"></span>
     </div>
   </div>
-  <div class="sbar draw">
-    <p>{counter} · {t`Selected work`}</p>
-    <p>{t`Personal · creative`}</p>
-    <p>2025</p>
-  </div>
+  <ChapterBadge icon="tb:planet" label={t`Personal · solo · 2025`} />
   <div class="sp-grid grid-2">
     <figure class="reel stage-first" data-reel>
       <div class="frame">
@@ -57,42 +49,40 @@ const { counter } = Astro.props;
               <source data-src="/media/space/flight.av1.mp4" type='video/mp4; codecs="av01.0.05M.08"' />
               <source data-src="/media/space/flight.mp4" type="video/mp4" />
             </video>
-            <button class="r-btn bigplay" type="button" data-play aria-label={t`Play video`}>
-              <Icon name="tbf:player-play" />
-            </button>
+            <span class="bigplay" aria-hidden="true"><Icon name="tbf:player-play" /></span>
+            <button
+              class="r-hit"
+              type="button"
+              data-toggle
+              aria-pressed="true"
+              aria-label={labelPlay}
+              data-label-pause={labelPause}
+              data-label-play={labelPlay}></button>
           </div>
         </div>
         <div class="stand" aria-hidden="true"></div>
       </div>
-      <ReelControls
-        chips={[
-          { label: t`Mars`, at: 0, time: "0:00" },
-          { label: t`Jupiter`, at: 3.6, time: "0:04" },
-        ]}
-      />
       <figcaption class="credit">
         {t`Desktop · WebGL2 · ~14 MB.`}
-        {t`Planet textures:`} <a href="https://www.solarsystemscope.com/textures/" rel="noopener">Solar System Scope</a>, <a
+        {t`Planet textures:`} <a href="https://www.solarsystemscope.com/textures/" rel="noopener" target="_blank">Solar System Scope</a>, <a
           href="https://creativecommons.org/licenses/by/4.0/"
-          rel="license noopener">CC BY 4.0</a
+          rel="license noopener"
+          target="_blank">CC BY 4.0</a
         >.
       </figcaption>
     </figure>
 
     <div class="ch-info">
-      <p class="tag-chip">{t`Personal · creative · 2025`}</p>
       <p class="outcome rv">{typo(locale, t`A portfolio you fly through: Earth to Neptune in 12 camera stops.`)}</p>
-      <ul class="cfacts rv" style="--d:1">
-        <li><span class="ib"><Icon name="si:webgl" /></span><span><b data-count="13">13</b>{t`GLSL shaders, by hand`}</span></li>
-        <li><span class="ib"><Icon name="tb:planet" /></span><span><b data-count="12">12</b>{t`camera stops`}</span></li>
-      </ul>
-      <ul class="stackrow rv" style="--d:2" aria-label={t`Stack`}>
-        <li><Icon name="si:threedotjs" />three.js</li>
-        <li><Icon name="si:react" />React Three Fiber</li>
-        <li><Icon name="si:gsap" />GSAP</li>
-        <li><Icon name="si:vite" />Vite</li>
-      </ul>
-      <div class="links rv" style="--d:3">
+      <p class="desc rv" style="--d:1">
+        {
+          typo(
+            locale,
+            t`My previous portfolio: a scroll-driven flight through the solar system, where each planet holds one section. 13 shaders written by hand in GLSL. Best on a computer.`,
+          )
+        }
+      </p>
+      <div class="links rv" style="--d:2">
         <a
           class="btn btn-acc fine-only"
           href={WORK_LINKS.spaceLive}
@@ -127,13 +117,16 @@ const { counter } = Astro.props;
           <Icon name="si:github" />{t`Code`}<span class="sr-only">{t`(opens in a new tab)`}</span>
         </a>
       </div>
-      <a class="receipt rv" style="--d:4" href={caseStudy} data-umami-event="cta" data-umami-event-id="this-site" data-umami-event-source="space">
-        <span class="r-h">Lighthouse · 2026-10-05</span>
-        <span class="r-l">{t`Mobile performance`}<b data-count="34">34</b></span>
-        <span class="r-l">{t`Desktop performance`}<b data-count="60">60</b></span>
-        <span class="r-l">{t`Before the start button`}<b>13.8 MB</b></span>
-        <span class="r-t">{t`So I rebuilt it. Read how`} →</span>
-      </a>
+      <StackList
+        class="rv"
+        style="--d:3"
+        items={[
+          { icon: "si:threedotjs", name: "three.js" },
+          { icon: "si:react", name: "React Three Fiber" },
+          { icon: "si:gsap", name: "GSAP" },
+          { icon: "si:vite", name: "Vite" },
+        ]}
+      />
     </div>
   </div>
   <Fit as="h2" id="t-sp" lines={["Space folio"]} class="sp-title" />
@@ -279,6 +272,7 @@ const { counter } = Astro.props;
     gap: clamp(1.75rem, 4vw, 4.5rem);
     align-items: center;
     margin-top: clamp(1.75rem, 3vw, 3rem);
+    margin-bottom: clamp(2.5rem, 5vw, 4rem);
   }
   .monitor {
     padding: 0.875rem 0.875rem 1rem;
@@ -312,9 +306,6 @@ const { counter } = Astro.props;
     margin: 0;
     font-size: 0.75rem;
     opacity: 0.75;
-  }
-  .c-sp .tag-chip {
-    background: var(--pink);
   }
   .sp-title {
     margin-top: clamp(2.5rem, 5vw, 5rem);

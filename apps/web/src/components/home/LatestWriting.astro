@@ -1,12 +1,12 @@
 ---
 /**
- * Latest writing (structure.md § Home 6): three newest posts for internal links, in the page's blog locale (Spanish
- * pages show the English posts, marked as English). Hidden when there are no posts.
+ * Latest writing (structure.md § Home 6): the three newest posts as a compact teaser [user 2026-10-06: smaller, like
+ * the pstryk landing], a plain heading with "All posts" beside it and small cards (cover thumbnail, date, title), in the
+ * page's blog locale (Spanish pages show the English posts, marked as English). Hidden when there are no posts.
  */
 import { t } from "lingui-for-astro/macro";
 
 import PostCard from "~/components/blog/PostCard.astro";
-import Fit from "~/components/ui/Fit.astro";
 import Icon from "~/components/ui/Icon.astro";
 import { chromeLinks } from "~/lib/nav";
 import { postsIn } from "~/lib/posts";
@@ -20,39 +20,58 @@ const english = links.blogLocale !== locale;
 {
   posts.length > 0 && (
     <section class="sec field-hero writing" id="writing" aria-labelledby="t-wr">
-      <div class="sbar draw">
-        <p>{t`Writing`}</p>
-        <p>{t`Notes from the work`}</p>
-        <p>{english ? t`In English` : t`Newest first`}</p>
+      <div class="w-head">
+        <div>
+          <p class="kick">
+            {t`Writing`}
+            {english && ` · ${t`In English`}`}
+          </p>
+          <h2 id="t-wr" class="w-title">
+            {t`Notes from the work`}
+          </h2>
+        </div>
+        <a class="btn btn-line" href={links.blog} data-umami-event="cta" data-umami-event-id="blog" data-umami-event-source="home">
+          {t`All posts`}
+          {english && " (EN)"}
+          <Icon name="tb:arrow-right" class="nudge" />
+        </a>
       </div>
-      <Fit as="h2" id="t-wr" lines={[t`Writing`]} motion="calm" base={[120, 150]} />
       <div class="grid">
         {posts.map((post, i) => (
-          <PostCard post={post} tone={i * 2} />
+          <PostCard post={post} tone={i * 2} compact />
         ))}
       </div>
-      <a class="btn btn-acc all" href={links.blog} data-umami-event="cta" data-umami-event-id="blog" data-umami-event-source="home">
-        {t`All posts`}
-        {english && " (EN)"}
-        <Icon name="tb:arrow-right" class="nudge" />
-      </a>
     </section>
   )
 }
 
 <style>
+  .writing {
+    padding-block: clamp(2.5rem, 5vw, 4.5rem);
+  }
+  .w-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: end;
+    justify-content: space-between;
+    gap: 1rem 2rem;
+  }
+  .kick {
+    margin: 0 0 0.5rem;
+  }
+  .w-title {
+    margin: 0;
+    font-weight: 900;
+    font-size: clamp(2rem, 4vw, 3.5rem);
+    line-height: 0.92;
+    text-transform: uppercase;
+    font-stretch: 70%;
+  }
   .grid {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: clamp(0.75rem, 1.6vw, 1.5rem);
-    margin-top: clamp(1.5rem, 3vw, 2.5rem);
-  }
-  .all {
-    max-width: 100%;
-    margin-top: clamp(1.5rem, 3vw, 2.5rem);
-    padding-block: 0.625rem;
-    line-height: 1.15;
-    white-space: normal;
+    margin-top: clamp(1.25rem, 2.4vw, 2rem);
   }
   @media (max-width: 64rem) {
     .grid {

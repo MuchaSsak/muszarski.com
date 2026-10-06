@@ -8,7 +8,7 @@ export type Locale = (typeof LOCALES)[number];
 export const SOURCE_LOCALE: Locale = "en";
 export const DEFAULT_LOCALE: Locale = "en";
 
-/** Autonyms for the switcher: each language named in itself, never flags. */
+/** Autonyms: each language named in itself; the switcher pairs them with drawn flags (site/i18n.md § Switcher). */
 export const AUTONYMS: Record<Locale, string> = {
   en: "English",
   pl: "Polski",

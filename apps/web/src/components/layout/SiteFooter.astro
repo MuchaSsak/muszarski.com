@@ -7,6 +7,7 @@
 import { type Locale } from "@package/shared/locales";
 import { t } from "lingui-for-astro/macro";
 
+import CvLink from "~/components/layout/CvLink.astro";
 import LocaleCodes from "~/components/layout/LocaleCodes.astro";
 import MotionToggle from "~/components/layout/MotionToggle.astro";
 import Fit from "~/components/ui/Fit.astro";
@@ -32,6 +33,7 @@ const english = links.blogLocale === locale ? "" : " (EN)";
 const year = BUILD_INFO.date.slice(0, 4);
 const PROFILE_ICONS: Record<string, IconName> = { github: "si:github", linkedin: "tb:brand-linkedin", npm: "si:npm" };
 const surname = SITE.name.split(" ").at(-1)!;
+const newTab = t`(opens in a new tab)`;
 
 const columns = [
   {
@@ -47,7 +49,7 @@ const columns = [
     title: t`Site`,
     items: [
       { label: t`Blog` + english, href: links.blog },
-      { label: t`CV`, href: links.cv },
+      { label: t`CV`, href: links.cv, cv: true },
       { label: t`My life`, href: links.myLife },
       { label: t`How this site was built`, href: links.thisSite },
       { label: t`RSS` + english, href: links.rss },
@@ -93,10 +95,15 @@ const columns = [
             {column.items.map((item) =>
               "outbound" in item ? (
                 <li>
-                  <a href={item.href} rel="me" data-umami-event="outbound" data-umami-event-target={item.outbound}>
+                  <a href={item.href} rel="me noopener" target="_blank" data-umami-event="outbound" data-umami-event-target={item.outbound}>
                     {PROFILE_ICONS[item.outbound] && <Icon name={PROFILE_ICONS[item.outbound]!} />}
                     {item.label}
+                    <span class="sr-only">{newTab}</span>
                   </a>
+                </li>
+              ) : "cv" in item ? (
+                <li>
+                  <CvLink source="footer" plain />
                 </li>
               ) : (
                 <li>
@@ -121,8 +128,8 @@ const columns = [
       {locale === "es" && <span>{t`This Spanish version was translated with AI and has not been reviewed by a native speaker yet.`}</span>}
       <span>
         {t`Built with`}{" "}
-        <a href="https://astro.build/" data-umami-event="outbound" data-umami-event-target="astro">
-          Astro
+        <a href="https://astro.build/" rel="noopener" target="_blank" data-umami-event="outbound" data-umami-event-target="astro">
+          Astro<span class="sr-only"> {newTab}</span>
         </a>
         · <time datetime={BUILD_INFO.date}>{BUILD_INFO.date}</time>
         {BUILD_INFO.sha && <span class="tabular">{BUILD_INFO.sha}</span>}
@@ -138,10 +145,11 @@ const columns = [
     padding-bottom: 0;
     overflow: clip;
   }
+  /* The say-line takes only its own width, so the link columns start further left [user 2026-10-06]. */
   .cols {
     display: grid;
-    grid-template-columns: minmax(0, 2fr) minmax(0, 4fr);
-    gap: 1.75rem;
+    grid-template-columns: max-content minmax(0, 1fr);
+    gap: 1.75rem clamp(2.5rem, 7vw, 7rem);
   }
   .link-cols {
     display: grid;
@@ -167,18 +175,18 @@ const columns = [
     padding: 0;
     list-style: none;
   }
-  ul a {
+  ul :global(a) {
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
     min-height: 2rem;
     text-decoration: none;
   }
-  ul a :global(.ico) {
+  ul :global(a .ico) {
     width: 1.125rem;
     height: 1.125rem;
   }
-  ul a:hover {
+  ul :global(a:hover) {
     text-decoration: underline;
     text-underline-offset: 4px;
   }

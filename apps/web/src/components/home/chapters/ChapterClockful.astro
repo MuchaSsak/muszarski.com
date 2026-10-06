@@ -6,9 +6,10 @@
  */
 import { t } from "lingui-for-astro/macro";
 
+import ChapterBadge from "~/components/home/chapters/ChapterBadge.astro";
 import Fit from "~/components/ui/Fit.astro";
 import Icon from "~/components/ui/Icon.astro";
-import ReelControls from "~/components/ui/ReelControls.astro";
+import StackList from "~/components/ui/StackList.astro";
 import { chromeLinks } from "~/lib/nav";
 import { typo } from "~/lib/typography";
 
@@ -18,20 +19,10 @@ const running = t`Running`;
 const paused = t`Paused`;
 const stop = t`Stop`;
 const start = t`Start`;
-
-interface Props {
-  /** "01 / 04": this chapter's place among the visible ones. */
-  counter: string;
-}
-const { counter } = Astro.props;
 ---
 
 <section class="sec chapter c-cf" id="clockful" aria-labelledby="t-cf">
-  <div class="sbar draw">
-    <p>{counter} · {t`Selected work`}</p>
-    <p>{t`Internship`} · Neoteric</p>
-    <p>2026</p>
-  </div>
+  <ChapterBadge icon="tb:school" label={t`Internship · Neoteric · 2026`} />
   <Fit as="h2" id="t-cf" lines={["Clockful"]} />
   <div class="cf-grid grid-2">
     <figure class="reel stage-first">
@@ -61,43 +52,42 @@ const { counter } = Astro.props;
         </div>
       </div>
       <figcaption class="sr-only">{t`Drawn stand-in for the dashboard, with a working demo timer. A walkthrough recording will replace it.`}</figcaption>
-      <ReelControls live={false} chips={[{ label: t`Timer` }, { label: t`Entries` }, { label: t`Reports` }, { label: t`Roles` }]} />
+      <ul class="mstats rv">
+        <li><b>118</b>{t`automated tests: 49 Vitest, 69 Playwright`}</li>
+        <li><b>5/5</b>{t`tables behind row-level security`}</li>
+        <li><b>15</b>{t`requirements in the spec`}</li>
+        <li><b>9</b>{t`days from spec to hand-in (an estimate)`}</li>
+      </ul>
     </figure>
 
     <div class="ch-info">
       <p class="outcome rv">{typo(locale, t`A role-based time tracker, built with AI agents under a deadline.`)}</p>
-      <ul class="stats rv" style="--d:1">
-        <li>
-          <span class="top"><Icon name="tb:test-pipe" /><b data-count="118">118</b></span>
-          <span>{t`automated tests: 49 Vitest, 69 Playwright`}</span>
-        </li>
-        <li>
-          <span class="top"><Icon name="tb:shield-lock" /><b>5/5</b></span>
-          <span>{t`tables behind row-level security`}</span>
-        </li>
-        <li>
-          <span class="top"><Icon name="tb:checklist" /><b data-count="15">15</b></span>
-          <span>{t`requirements in the spec`}</span>
-        </li>
-        <li>
-          <span class="top"><Icon name="tb:calendar" /><b>9</b></span>
-          <span>{t`days from spec to hand-in (an estimate)`}</span>
-        </li>
-      </ul>
-      <ul class="stackrow rv" style="--d:2" aria-label={t`Stack`}>
-        <li><Icon name="si:nextdotjs" />Next.js</li>
-        <li><Icon name="si:supabase" />Supabase</li>
-        <li><Icon name="si:reactquery" />TanStack Query</li>
-        <li><Icon name="si:vitest" />Vitest</li>
-        <li><span class="mono" aria-hidden="true">Pw</span>Playwright</li>
-      </ul>
-      <div class="links rv" style="--d:3">
+      <p class="desc rv" style="--d:1">
+        {
+          typo(
+            locale,
+            t`An internship brief from Neoteric, a Polish software house: a time tracker where employees log their hours and admins see the reports. The rule was to build it only with AI agents, against a deadline. I directed them and verified what they built, from the database rules to the tests.`,
+          )
+        }
+      </p>
+      <div class="links rv" style="--d:2">
         <a class="btn btn-inv" href={links.contact} data-umami-event="cta" data-umami-event-id="walkthrough" data-umami-event-source="clockful">
           {t`Ask for a walkthrough`}
           <Icon name="tb:arrow-right" class="nudge" />
         </a>
       </div>
       <p class="status">{t`Code private · no public deployment`}</p>
+      <StackList
+        class="rv"
+        style="--d:3"
+        items={[
+          { icon: "si:nextdotjs", name: "Next.js" },
+          { icon: "si:supabase", name: "Supabase" },
+          { icon: "si:reactquery", name: "TanStack Query" },
+          { icon: "si:vitest", name: "Vitest" },
+          { mono: "Pw", name: "Playwright" },
+        ]}
+      />
     </div>
   </div>
 </section>

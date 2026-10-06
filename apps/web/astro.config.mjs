@@ -79,6 +79,21 @@ const tableScroll = {
   },
 };
 
+/** Links that leave the site open in a new tab, so a reader keeps their place in the post [user 2026-10-06]. */
+const externalLinks = {
+  name: "external-links",
+  element: {
+    filter: ["a"],
+    /** @param {any} node @param {any} ctx */
+    visit(node, ctx) {
+      const href = String(node.properties?.href ?? "");
+      if (!/^https?:\/\//.test(href) || href.startsWith(SITE_URL)) return;
+      ctx.setProperty(node, "target", "_blank");
+      ctx.setProperty(node, "rel", "noopener");
+    },
+  },
+};
+
 export default defineConfig({
   site: SITE_URL,
   output: "static",
@@ -101,7 +116,7 @@ export default defineConfig({
   // Code blocks: Shiki with the css-variables theme, so token colours come from the site's tokens (style attributes
   // are allowed by the CSP). Smart punctuation is off: English curly quotes are wrong in Polish.
   markdown: {
-    processor: satteri({ mdastPlugins: [legalTokens], hastPlugins: [tableScroll], features: { smartPunctuation: false } }),
+    processor: satteri({ mdastPlugins: [legalTokens], hastPlugins: [tableScroll, externalLinks], features: { smartPunctuation: false } }),
     syntaxHighlight: "shiki",
     shikiConfig: { theme: "css-variables", wrap: false },
   },

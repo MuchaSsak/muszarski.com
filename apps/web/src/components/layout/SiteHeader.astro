@@ -4,20 +4,19 @@
  * on the hero field with the "M—M" mark; once the hero name scrolls away it turns into the navy bar and the mark
  * rolls into the full name. Other pages start in the bar state.
  *
- * ≥ 1180 px: mark · Work · How I work · AI · Blog · language codes · theme · CV | PDF · Contact.
- * Below: mark · CV · Contact · Menu; the rest (and My life, the PDF, pause motion) lives in the full-screen menu
- * (a native popover: 0 KB JS for open/close, Esc and light dismiss for free). Button type condenses on phones
- * (Anybody's width axis) so CV and Contact stay visible down to 320 px.
+ * ≥ 1180 px: mark · Work · How I work · AI · Blog · language flags · CV · Hire me. Below: mark · CV · Hire me · Menu;
+ * the rest (and My life, pause motion) lives in the full-screen menu (a native popover: 0 KB JS for open/close, Esc and
+ * light dismiss for free). Button type condenses on phones (Anybody's width axis) so CV and Hire me stay visible down
+ * to 320 px. The CV button downloads the PDF and opens the web CV (`CvLink`).
  */
 import { type Locale } from "@package/shared/locales";
 import { t } from "lingui-for-astro/macro";
 
-import CvSplit from "~/components/layout/CvSplit.astro";
+import CvLink from "~/components/layout/CvLink.astro";
 import LocaleCodes from "~/components/layout/LocaleCodes.astro";
 import MotionToggle from "~/components/layout/MotionToggle.astro";
-import ThemeCycle from "~/components/layout/ThemeCycle.astro";
 import Icon from "~/components/ui/Icon.astro";
-import { cvPdfHref, SITE } from "~/data/site";
+import { SITE } from "~/data/site";
 import { chromeLinks } from "~/lib/nav";
 import { type LocalizedPath } from "~/lib/routes";
 
@@ -82,18 +81,17 @@ const homeLabel = t`${name}, home`;
   </nav>
 
   <LocaleCodes path={path} locales={locales} fallback={fallback} class="h-loc" />
-  <ThemeCycle class="h-theme" />
 
   <div class="actions">
-    <CvSplit source="header" narrow />
+    <CvLink source="header" />
     <a
       href={links.contact}
-      class="btn btn-acc"
+      class="btn btn-acc hire"
       data-umami-event="cta"
       data-umami-event-id="contact"
       data-umami-event-source="header"
     >
-      {t`Contact`}
+      {t`Hire me`}
     </a>
     <button type="button" class="btn btn-line menu-btn" popovertarget="site-menu">
       <Icon name="tb:menu-2" />
@@ -131,21 +129,10 @@ const homeLabel = t`${name}, home`;
     </ul>
   </nav>
   <div class="sm-row">
-    <a
-      href={cvPdfHref(locale)}
-      download
-      class="btn btn-line"
-      data-umami-event="cv_download"
-      data-umami-event-source="menu"
-      data-umami-event-locale={locale}
-    >
-      <Icon name="tb:download" />
-      {t`Download CV (PDF)`}
-    </a>
-    <ThemeCycle />
+    <CvLink source="menu" long />
     <MotionToggle />
   </div>
-  <LocaleCodes path={path} locales={locales} fallback={fallback} class="sm-loc" />
+  <LocaleCodes path={path} locales={locales} fallback={fallback} names class="sm-loc" />
 </div>
 
 <style>
@@ -239,14 +226,20 @@ const homeLabel = t`${name}, home`;
     padding-inline: 0.75rem;
     font-size: 0.8125rem;
   }
+  .site-header :global(.btn-acc) {
+    box-shadow: 3px 3px 0 var(--btn-shadow);
+  }
+  .site-header :global(.cv-link .ico) {
+    width: 1.125rem;
+    height: 1.125rem;
+  }
   .menu-btn {
     display: none;
   }
 
   @media (max-width: 73.6875rem) {
     .main,
-    .site-header :global(.h-loc),
-    .site-header :global(.h-theme) {
+    .site-header :global(.h-loc) {
       display: none;
     }
     .menu-btn {
@@ -282,7 +275,8 @@ const homeLabel = t`${name}, home`;
       font-stretch: 82%;
       letter-spacing: 0.01em;
     }
-    .menu-btn :global(.ico) {
+    .menu-btn :global(.ico),
+    .site-header :global(.cv-link .ico) {
       display: none;
     }
   }

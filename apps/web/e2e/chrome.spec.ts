@@ -15,7 +15,7 @@ for (const width of WIDTHS) {
       const spills = await page.evaluate(() => {
         const header = document.querySelector("[data-site-header]")!;
         const box = header.getBoundingClientRect();
-        const kids = [...header.querySelectorAll<HTMLElement>(":scope > *, .actions > *, .cv-split > *")].filter(
+        const kids = [...header.querySelectorAll<HTMLElement>(":scope > *, .actions > *")].filter(
           (el) => getComputedStyle(el).display !== "none" && el.tagName !== "SCRIPT",
         );
         const problems = kids.flatMap((el) => {
@@ -31,9 +31,9 @@ for (const width of WIDTHS) {
         return problems;
       });
       expect(spills).toEqual([]);
-      // Name, CV and Contact are always visible (structure.md); the menu button exactly when the nav is hidden.
+      // Name, CV and Hire me are always visible (structure.md); the menu button exactly when the nav is hidden.
       await expect(page.locator(".site-header .mark")).toBeVisible();
-      await expect(page.locator(".site-header .cv-split-page")).toBeVisible();
+      await expect(page.locator(".site-header .cv-link")).toBeVisible();
       await expect(page.locator(".site-header .btn-acc")).toBeVisible();
       const navVisible = await page.locator(".site-header nav.main").isVisible();
       await expect(page.locator(".site-header .menu-btn")).toBeVisible({ visible: !navVisible });
@@ -67,12 +67,13 @@ test("mobile menu opens from the keyboard, holds every link, and closes with Esc
     "/pl/blog/",
     "/pl/my-life/",
     "/pl/#contact",
-    "/files/mateusz-muszarski-cv-pl.pdf",
+    "/pl/cv/",
     "/en/",
     "/pl/",
     "/es/",
   ]);
-  await expect(menu.locator("[data-theme-cycle]")).toBeVisible();
+  // The language links name each language in the menu (flags elsewhere).
+  await expect(menu.locator(".sm-loc a").nth(1)).toHaveText("Polski");
   await expect(menu.locator("[data-motion-toggle]")).toBeVisible();
   await page.keyboard.press("Escape");
   await expect(menu).toBeHidden();
@@ -113,11 +114,12 @@ test("the sticky header never covers the focused element", async ({ page }) => {
   }
 });
 
-test("footer: 4 labelled columns, rel=me profiles, language codes, revision", async ({ page }) => {
+test("footer: 4 labelled columns, rel=me profiles in a new tab, language flags, revision", async ({ page }) => {
   await page.goto("/en/");
   const footer = page.locator("footer.site-footer");
   await expect(footer.locator(".col-title")).toHaveText(["Work", "Site", "Elsewhere", "Legal"]);
-  await expect(footer.locator('a[rel="me"]')).toHaveCount(3);
+  await expect(footer.locator('a[rel~="me"]')).toHaveCount(3);
+  await expect(footer.locator('a[rel~="me"][target="_blank"]')).toHaveCount(3);
   await expect(footer.locator(".meta time")).toHaveAttribute("datetime", /^\d{4}-\d{2}-\d{2}$/);
   await expect(footer.locator(".f-loc a")).toHaveCount(3);
 });

@@ -3,6 +3,7 @@
  * The web CV (structure.md § /cv/, requirements.md F11): the same data and sections as the PDF (`~/data/cv`, one
  * source), laid out as a poster sheet, with a direct PDF download (size in the label) and a print stylesheet.
  * ProfilePage + Person JSON-LD. Never edit this page or the PDF alone: change the data, run `bun run cv:pdf`.
+ * The site's CV button downloads the PDF and lands here (`CvLink`); the page then confirms the download.
  */
 import { statSync } from "node:fs";
 
@@ -86,6 +87,10 @@ const graph = {
           {t`Contact`}
           <Icon name="tb:arrow-right" class="nudge" />
         </a>
+        <p class="pdf-note" role="status" data-pdf-note hidden>
+          <Icon name="tb:circle-check" />
+          {t`Your PDF is downloading. Nothing yet? Use the Download PDF button.`}
+        </p>
       </div>
     </div>
   </section>
@@ -138,6 +143,22 @@ const graph = {
     flex-wrap: wrap;
     gap: 0.625rem;
   }
+  .pdf-note {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+    flex-basis: 100%;
+    max-width: 40ch;
+    margin: 0.5rem 0 0;
+    font-weight: 700;
+    font-size: 0.9375rem;
+    line-height: 1.4;
+  }
+  .pdf-note :global(.ico) {
+    width: 1.25rem;
+    height: 1.25rem;
+    margin-top: 0.0625rem;
+  }
   @media (max-width: 56.25rem) {
     .intro {
       grid-template-columns: minmax(0, 1fr);
@@ -161,4 +182,13 @@ const graph = {
 
 <script>
   document.querySelector("[data-print]")?.addEventListener("click", () => print());
+  // Arrived from a CV button that already started the download: say so (the button above gets the file again).
+  try {
+    if (sessionStorage.getItem("cv-pdf")) {
+      sessionStorage.removeItem("cv-pdf");
+      document.querySelector<HTMLElement>("[data-pdf-note]")?.removeAttribute("hidden");
+    }
+  } catch {
+    /* storage blocked: no note */
+  }
 </script>

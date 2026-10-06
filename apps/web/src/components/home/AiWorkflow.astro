@@ -1,16 +1,15 @@
 ---
 /**
- * AI workflow (structure.md § Home 4, requirements.md F07, brand.md pillar 3): one task through the real setup behind
- * this site. The numbers are counted from the repo at build time (`~/lib/repo-stats`, placeholders.md P19), never
- * typed. Checks are "the floor", one line, never the pitch [user]. PstrykWeb is not evidence here (public info only).
- * Desktop: a row of steps with a packet carrying each step's payload; phones: a vertical run with every detail shown.
+ * AI workflow (structure.md § Home 4, requirements.md F07, brand.md pillar 3) as an org chart [user 2026-10-06: "I run
+ * AI like a team"]: I lead, Claude Code builds, and a crew of ID badges stands under it: the wiki (memory), hooks
+ * (rules), subagents (research), MCP servers (tools), skills (playbooks) and the quality gates. The counts come from the
+ * repo at build time (`~/lib/repo-stats`, placeholders.md P19), never typed. PstrykWeb is not evidence here (public
+ * info only). One CTA: the "how this site was built" post. No JS: the wires flow in CSS and pause like every loop.
  */
-import { t } from "lingui-for-astro/macro";
+import { plural, t } from "lingui-for-astro/macro";
 
 import Fit from "~/components/ui/Fit.astro";
 import Icon from "~/components/ui/Icon.astro";
-import { visibleFlagships } from "~/data/projects";
-import { WORK_LINKS } from "~/data/site";
 import { thisSitePath } from "~/lib/blog-paths";
 import { type IconName } from "~/lib/icons.gen";
 import { MCP_SERVERS, repoStats } from "~/lib/repo-stats";
@@ -18,435 +17,320 @@ import { typo } from "~/lib/typography";
 
 const locale = Astro.locals.locale;
 const stats = repoStats();
-const showClockful = visibleFlagships().some((project) => project.slug === "neoteric-clockful");
+const mcp = MCP_SERVERS.length;
+const lessons = stats?.lessons ?? 0;
+const wikiPages = stats?.wikiPages ?? 0;
+const hooks = stats?.hooks ?? 0;
+const skills = stats?.skills ?? 0;
 
-interface Step {
+interface Member {
   icon: IconName;
-  big: string;
-  count?: number | undefined;
+  role: string;
   name: string;
-  detail: string;
-  payload: string;
+  duty: string;
 }
-const num = (value: number | undefined) => (value === undefined ? "·" : String(value));
-const STEPS: Step[] = [
+// A build without the .claude folder (stats null) names the pieces without counts.
+const CREW: Member[] = [
   {
-    icon: "tb:message-circle",
-    big: "“ ”",
-    name: t`Prompt`,
-    detail: t`A request in plain words, like: make the contact form a single message box.`,
-    payload: t`“Make contact one message box”`,
+    icon: "tb:notebook",
+    role: t`Memory`,
+    name: stats ? plural(wikiPages, { one: "# wiki page", other: "# wiki pages" }) : t`Project wiki`,
+    duty: stats
+      ? t`Goals, voice, design and decisions, each with a source. Every correction adds a lesson: ${lessons} so far.`
+      : t`Goals, voice, design and decisions, each with a source. Every correction adds a lesson.`,
   },
   {
     icon: "tb:plug",
-    big: num(stats?.hooks),
-    count: stats?.hooks,
-    name: t`Hooks`,
-    detail: t`Fire on every session and prompt: load the rules, route the right wiki pages in, stop a finish when the docs did not move.`,
-    payload: t`+ the right wiki pages`,
-  },
-  {
-    icon: "tb:notebook",
-    big: num(stats?.wikiPages),
-    count: stats?.wikiPages,
-    name: t`Wiki pages`,
-    detail: t`The project's memory: goals, voice, design, decisions. Every fact carries its source.`,
-    payload: t`brand · requirements · lessons`,
+    role: t`Rules`,
+    name: stats ? plural(hooks, { one: "# hook", other: "# hooks" }) : t`Hooks`,
+    duty: t`Load the rules every session and stop a finish when the docs did not move.`,
   },
   {
     icon: "tb:users-group",
-    big: "∥",
+    role: t`Research`,
     name: t`Subagents`,
-    detail: t`Research and drafts fan out in parallel. I get conclusions, not file dumps.`,
-    payload: t`research ∥ drafts ∥ checks`,
+    duty: t`Research and drafts run in parallel. I get conclusions, not file dumps.`,
   },
   {
     icon: "tb:puzzle",
-    big: String(MCP_SERVERS.length),
-    count: MCP_SERVERS.length,
-    name: t`MCP servers`,
-    detail: t`The agent's hands: real app screens (Mobbin), a component registry and a real browser (Playwright).`,
-    payload: "Mobbin · registry · browser",
+    role: t`Tools`,
+    name: plural(mcp, { one: "# MCP server", other: "# MCP servers" }),
+    duty: t`Real app screens (Mobbin), a component registry and a real browser (Playwright).`,
   },
   {
     icon: "tb:stack-2",
-    big: num(stats?.skills),
-    count: stats?.skills,
-    name: t`Skills`,
-    detail: t`Packaged playbooks: screenshot QA, Lighthouse, design research, commits.`,
-    payload: t`shots 390 → 1920 · axe · Lighthouse`,
+    role: t`Playbooks`,
+    name: stats ? plural(skills, { one: "# skill", other: "# skills" }) : t`Skills`,
+    duty: t`Packaged routines: screenshot QA, Lighthouse, design research, commits.`,
   },
   {
-    icon: "tb:bulb",
-    big: num(stats?.lessons),
-    count: stats?.lessons,
-    name: t`Lessons`,
-    detail: t`Every correction becomes a rule the next session loads. A mistake gets paid for once.`,
-    payload: t`+1 rule · commit`,
+    icon: "tb:checklist",
+    role: t`Quality`,
+    name: t`Gates`,
+    duty: t`Typecheck, lint, tests, accessibility and Lighthouse on every change. Nothing ships red.`,
   },
 ];
-const [line1, line2] = t`Delegate.|Automate.`.split("|") as [string, string];
 ---
 
 <section class="sec field-deep ai" id="ai" aria-labelledby="t-ai">
   <div class="sbar draw">
     <p>{t`AI workflow`}</p>
-    <p>{t`One task, start to finish`}</p>
+    <p>{t`How I build with AI`}</p>
     <p>{t`The real setup behind this site`}</p>
   </div>
-  <div class="ai-top">
-    <Fit as="h2" id="t-ai" lines={[line1, line2]} />
-    <p class="lede rv">{typo(locale, t`I run Claude Code like a small team: a wiki it reads, tools it can use, checks it can't skip.`)}</p>
-  </div>
-  <ol class="pipe rv" data-pipe>
-    {
-      STEPS.map((step, i) => (
-        <li class:list={["step", { on: i === 0 }]} data-payload={step.payload}>
-          <button class="node" type="button" aria-pressed={i === 0 ? "true" : "false"} aria-describedby={`ai-dt-${i}`}>
-            <Icon name={step.icon} />
-            <span class="sr-only">{step.name}</span>
-          </button>
-          <span class="big tabular" aria-hidden={step.count === undefined ? "true" : undefined} data-count={step.count}>
-            {step.big}
-          </span>
-          <span class="nm" aria-hidden="true">
-            {step.name}
-          </span>
-          <p class="dt" id={`ai-dt-${i}`}>
-            {step.detail}
-          </p>
-          <span class="pl" aria-hidden="true">
-            {step.payload}
-          </span>
-        </li>
-      ))
-    }
-    <li class="pkt" aria-hidden="true"><Icon name="tb:send" /><span data-pkt>{STEPS[0]!.payload}</span></li>
-  </ol>
-  <div class="pipe-panel">
-    <p class="s enter" aria-hidden="true" data-pipe-s>{STEPS[0]!.detail}</p>
-    <div>
-      <p class="floor">
-        <Icon name="tb:checklist" />
-        <span>{t`Typecheck, lint, tests, accessibility and Lighthouse run on every change. That's the floor, not the pitch.`}</span>
-      </p>
-      <div class="ai-links">
-        <a class="btn btn-inv" href={thisSitePath(locale)} data-umami-event="cta" data-umami-event-id="this-site" data-umami-event-source="ai">
-          {t`How this site was built`}
-          <Icon name="tb:arrow-right" class="nudge" />
-        </a>
-        {
-          showClockful && (
-            <a class="btn btn-line" href="#clockful">
-              <Icon name="tb:test-pipe" />
-              {t`Clockful: AI-built, 118 tests`}
-            </a>
-          )
-        }
-        <a class="btn btn-line" href={WORK_LINKS.linguiTranslateAi} rel="noopener" data-umami-event="outbound" data-umami-event-target="npm-lingui-translate-ai">
-          <Icon name="si:npm" />
-          lingui-translate-ai
-        </a>
+  <Fit as="h2" id="t-ai" lines={[t`I run AI like a team.`]} />
+  <p class="lede rv">
+    {typo(locale, t`I lead, Claude Code builds. Around it works a crew of memory, rules, tools and checks, and I review every change before it ships.`)}
+  </p>
+
+  <div class="org">
+    <div class="heads">
+      <div class="idb me rv">
+        <span class="slot" aria-hidden="true"></span>
+        <span class="role">{t`Lead`}</span>
+        <Icon name="tb:user" class="idb-i" />
+        <span class="nm">{t`Me`}</span>
+        <span class="duty">{t`I brief, review every change and decide.`}</span>
+      </div>
+      <span class="wire w-x" aria-hidden="true"></span>
+      <div class="idb agent rv" style="--d:1">
+        <span class="slot" aria-hidden="true"></span>
+        <span class="role">{t`Builder`}</span>
+        <Icon name="si:claude" class="idb-i" />
+        <span class="nm">Claude Code</span>
+        <span class="duty">{t`Writes the code, inside the rules of the crew below.`}</span>
       </div>
     </div>
+    <span class="wire w-y" aria-hidden="true"></span>
+    <ul class="crew" role="list" aria-label={t`The crew`}>
+      {
+        CREW.map((member, i) => (
+          <li class="idb rv" style={`--d:${i + 2};--r:${[-2, 1.5, -1, 2, -1.5, 1][i]}deg`}>
+            <span class="slot" aria-hidden="true" />
+            <span class="role">{member.role}</span>
+            <Icon name={member.icon} class="idb-i" />
+            <span class="nm">{member.name}</span>
+            <span class="duty">{typo(locale, member.duty)}</span>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+
+  <div class="go">
+    <a class="btn btn-inv" href={thisSitePath(locale)} data-umami-event="cta" data-umami-event-id="this-site" data-umami-event-source="ai">
+      {t`How this site was built`}
+      <Icon name="tb:arrow-right" class="nudge" />
+    </a>
   </div>
 </section>
 
 <style>
-  .ai-top {
-    display: grid;
-    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
-    gap: clamp(1.75rem, 4vw, 4.5rem);
-    align-items: end;
+  .ai {
+    padding-bottom: clamp(3.5rem, 6vw, 5.5rem);
   }
   .lede {
-    margin: 0;
-    max-width: 38ch;
+    max-width: 52ch;
+    margin: clamp(1rem, 2vw, 1.75rem) auto 0;
+    text-align: center;
     font-size: clamp(1.1875rem, 1.5vw, 1.4375rem);
     line-height: 1.4;
   }
-  .pipe {
+
+  /* The org chart: two heads in a row, a wire down, a bus over the crew with a drop to each badge. */
+  .org {
+    --wire: color-mix(in srgb, currentColor 70%, transparent);
     position: relative;
-    display: grid;
-    grid-template-columns: repeat(7, minmax(0, 1fr));
-    gap: 0.625rem;
-    margin: clamp(2.25rem, 4vw, 3.75rem) 0 0;
-    padding: 4rem 0 0;
-    list-style: none;
+    margin-top: clamp(1.75rem, 3.4vw, 3rem);
   }
-  .pipe::before {
-    content: "";
-    position: absolute;
-    left: 7%;
-    right: 7%;
-    top: calc(4rem + 2.25rem);
-    height: 3px;
-    background: repeating-linear-gradient(90deg, currentColor 0 10px, transparent 10px 18px);
-    opacity: 0.55;
+  .heads {
+    display: grid;
+    grid-template-columns: minmax(0, 17rem) 4.5rem minmax(0, 17rem);
+    justify-content: center;
+    align-items: center;
+  }
+  .wire {
+    display: block;
+    background: repeating-linear-gradient(90deg, var(--wire) 0 10px, transparent 10px 18px);
     animation: flow 1s linear infinite;
+  }
+  .w-x {
+    height: 3px;
+  }
+  .w-y {
+    width: 3px;
+    height: 2.25rem;
+    margin: 0 auto;
+    margin-left: calc(50% + (17rem + 4.5rem) / 2 - 1.5px);
+    background: repeating-linear-gradient(180deg, var(--wire) 0 10px, transparent 10px 18px);
+    animation-name: flow-y;
   }
   @keyframes flow {
     to {
       background-position: 18px 0;
     }
   }
-  .step {
-    position: relative;
-    display: grid;
-    justify-items: center;
-    align-content: start;
-    gap: 0.5rem;
-    min-width: 0;
-    text-align: center;
-  }
-  .node {
-    position: relative;
-    z-index: 1;
-    display: grid;
-    place-items: center;
-    width: 4.5rem;
-    height: 4.5rem;
-    padding: 0;
-    border: 0;
-    background: var(--sbg);
-    color: var(--sfg);
-    box-shadow: inset 0 0 0 3px currentColor;
-    cursor: pointer;
-    transition:
-      transform 0.45s var(--ease-pop),
-      background-color var(--dur-base),
-      color var(--dur-base);
-  }
-  .node :global(.ico) {
-    width: 2.125rem;
-    height: 2.125rem;
-  }
-  .step.on .node {
-    background: var(--sfg);
-    color: var(--sbg);
-    transform: scale(1.12) rotate(-4deg);
-  }
-  @media (hover: hover) {
-    .node:hover {
-      transform: scale(1.08);
+  @keyframes flow-y {
+    to {
+      background-position: 0 18px;
     }
   }
-  .big {
-    font-weight: 900;
-    font-size: clamp(2.25rem, 3.6vw, 3.75rem);
-    line-height: 0.8;
-    font-stretch: 58%;
+  .crew {
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: clamp(0.75rem, 1.4vw, 1.25rem);
+    margin: 0;
+    padding: 2.25rem 0 0;
+    list-style: none;
   }
-  .nm {
-    font-weight: 800;
-    font-size: 0.875rem;
-    line-height: 1.1;
-    letter-spacing: 0.03em;
-    text-transform: uppercase;
-    font-stretch: 105%;
-  }
-  .dt,
-  .pl {
-    display: none;
-  }
-  .dt {
-    margin: 0.25rem 0 0;
-    font-size: 1rem;
-    line-height: 1.4;
-  }
-  .pl {
-    align-items: center;
-    gap: 0.375rem;
-    margin-top: 0.375rem;
-    padding: 0.3125rem 0.5625rem;
-    background: var(--accent);
-    color: var(--on-accent);
-    font-weight: 800;
-    font-size: 0.75rem;
-  }
-  .pkt {
-    position: absolute;
-    z-index: 2;
-    left: 0;
-    top: 0;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    max-width: 46vw;
-    padding: 0.5625rem 0.8125rem;
-    background: var(--accent);
-    color: var(--on-accent);
-    box-shadow: 4px 4px 0 var(--navy);
-    font-weight: 800;
-    font-size: 0.8125rem;
-    letter-spacing: 0.02em;
-    white-space: nowrap;
-    transform: translateX(var(--px, 0px));
-    transition: transform 0.9s var(--ease-out);
-  }
-  .pkt::after {
+  /* The bus over the crew and a drop to each badge. */
+  .crew::before {
     content: "";
     position: absolute;
-    left: var(--tip, 50%);
-    bottom: -0.5rem;
-    width: 0.875rem;
-    height: 0.5625rem;
-    margin-left: -0.4375rem;
-    background: var(--accent);
-    clip-path: polygon(0 0, 100% 0, 50% 100%);
+    top: 0;
+    left: calc(100% / 12);
+    right: calc(100% / 12);
+    height: 3px;
+    background: repeating-linear-gradient(90deg, var(--wire) 0 10px, transparent 10px 18px);
+    animation: flow 1s linear infinite;
   }
-  .pkt :global(.ico) {
-    width: 1rem;
-    height: 1rem;
-  }
-  .pipe-panel {
-    display: grid;
-    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
-    gap: clamp(1.75rem, 4vw, 4.5rem);
-    align-items: start;
-    margin-top: clamp(1.75rem, 3vw, 2.75rem);
-    padding-top: 1.25rem;
-    border-top: 3px solid currentColor;
-  }
-  .pipe-panel .s {
-    min-height: 2.1em;
-    margin: 0;
-    font-weight: 800;
-    font-size: clamp(1.5rem, 2.4vw, 2.375rem);
-    line-height: 1.05;
-    font-stretch: 85%;
-    text-wrap: balance;
-  }
-  .pipe-panel .s.swap {
-    animation: swap 0.5s var(--ease-out);
-  }
-  @keyframes swap {
-    from {
-      opacity: 0;
-      transform: translateY(0.75rem);
-    }
-  }
-  .floor {
-    display: flex;
-    align-items: flex-start;
-    gap: 0.75rem;
-    margin: 0;
-    font-size: 1rem;
-    line-height: 1.4;
-  }
-  .floor :global(.ico) {
-    width: 1.75rem;
-    height: 1.75rem;
-    margin-top: 0.125rem;
-  }
-  .ai-links {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.625rem;
-    margin-top: 1.625rem;
+  .crew > li::before {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: -2.25rem;
+    width: 3px;
+    height: 2.25rem;
+    margin-left: -1.5px;
+    background: repeating-linear-gradient(180deg, var(--wire) 0 10px, transparent 10px 18px);
+    animation: flow-y 1s linear infinite;
   }
 
-  @media (max-width: 56.25rem) {
-    .ai-top,
-    .pipe-panel {
-      grid-template-columns: minmax(0, 1fr);
+  /* An ID badge on a lanyard: a slot, the role, an icon, the name, one line of duty. */
+  .idb {
+    position: relative;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-content: start;
+    gap: 0.375rem 0.5rem;
+    padding: 1.375rem 1rem 1.125rem;
+    background: var(--ice);
+    color: var(--navy);
+    box-shadow: 6px 6px 0 var(--navy);
+    transform: rotate(var(--r, 0deg));
+    transform-origin: 50% 0;
+    transition: transform 0.5s var(--ease-pop);
+  }
+  .slot {
+    position: absolute;
+    left: 50%;
+    top: 0.5rem;
+    width: 2.25rem;
+    height: 0.4375rem;
+    margin-left: -1.125rem;
+    border-radius: 1rem;
+    background: var(--deep-bg);
+    box-shadow: inset 0 0 0 2px var(--navy);
+  }
+  .role {
+    align-self: center;
+    font-weight: 800;
+    font-size: 0.6875rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    font-stretch: 125%;
+  }
+  .idb :global(.idb-i) {
+    width: 1.5rem;
+    height: 1.5rem;
+  }
+  .nm {
+    grid-column: 1 / -1;
+    font-weight: 900;
+    font-size: clamp(1.25rem, 1.5vw, 1.625rem);
+    line-height: 0.95;
+    font-stretch: 72%;
+    text-transform: uppercase;
+  }
+  .duty {
+    grid-column: 1 / -1;
+    font-size: 0.875rem;
+    line-height: 1.4;
+  }
+  .me {
+    background: var(--accent);
+    color: var(--on-accent);
+    --r: -2deg;
+  }
+  .agent {
+    --r: 1.5deg;
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .idb:hover {
+      transform: rotate(0deg) translateY(-4px);
     }
-    .pipe {
-      grid-template-columns: minmax(0, 1fr);
-      gap: 0;
-      padding: 0;
+  }
+  .go {
+    display: flex;
+    justify-content: center;
+    margin-top: clamp(2rem, 3.6vw, 3rem);
+  }
+
+  /* Tablets: the crew in three columns, one bus per row is too busy, so the bus becomes a frame line on top. */
+  @media (max-width: 75rem) {
+    .crew {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      row-gap: clamp(1.25rem, 2.4vw, 2rem);
     }
-    .pipe::before {
-      left: 2.1875rem;
-      right: auto;
-      top: 1.25rem;
-      bottom: 1.25rem;
-      width: 3px;
-      height: auto;
-      background: repeating-linear-gradient(180deg, currentColor 0 10px, transparent 10px 18px);
-      animation: flow-y 1s linear infinite;
+    .crew::before {
+      left: calc(100% / 6);
+      right: calc(100% / 6);
     }
-    @keyframes flow-y {
-      to {
-        background-position: 0 18px;
-      }
-    }
-    .step {
-      grid-template-columns: 4.5rem minmax(0, 1fr);
-      justify-items: start;
-      align-items: start;
-      gap: 0.25rem 1rem;
-      padding: 0.625rem 0 1.125rem;
-      text-align: left;
-    }
-    .node {
-      grid-row: span 4;
-    }
-    .big {
-      font-size: 2.75rem;
-    }
-    .dt {
-      display: block;
-    }
-    .pl {
-      display: inline-flex;
-    }
-    .pkt,
-    .pipe-panel .s {
+    .crew > li:nth-child(n + 4)::before {
       display: none;
     }
-    .pipe-panel {
-      margin-top: 0.5rem;
-      padding-top: 0;
-      border-top: 0;
+  }
+  /* Phones: the heads stack with a wire between them; the crew in two columns without wires. */
+  @media (max-width: 40rem) {
+    .lede {
+      text-align: left;
+    }
+    .heads {
+      grid-template-columns: minmax(0, 1fr);
+      justify-items: stretch;
+      max-width: 22rem;
+      margin-inline: auto;
+    }
+    .w-x {
+      width: 3px;
+      height: 1.5rem;
+      margin: 0 auto;
+      background: repeating-linear-gradient(180deg, var(--wire) 0 10px, transparent 10px 18px);
+      animation-name: flow-y;
+    }
+    .w-y {
+      margin-left: auto;
+      height: 1.5rem;
+    }
+    .crew {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 1rem 0.75rem;
+      padding-top: 1rem;
+    }
+    .crew::before,
+    .crew > li::before {
+      display: none;
+    }
+    .idb {
+      padding: 1.25rem 0.75rem 0.875rem;
+      box-shadow: 4px 4px 0 var(--navy);
+    }
+    .nm {
+      font-size: 1.25rem;
+    }
+    .duty {
+      font-size: 0.8125rem;
     }
   }
 </style>
-
-<script>
-  import { motionStill } from "~/scripts/motion";
-
-  const narrow = matchMedia("(max-width: 56.25rem)");
-  for (const pipe of document.querySelectorAll<HTMLElement>("[data-pipe]")) {
-    const steps = [...pipe.querySelectorAll<HTMLElement>(".step")];
-    const packet = pipe.querySelector<HTMLElement>(".pkt")!;
-    const packetText = pipe.querySelector<HTMLElement>("[data-pkt]")!;
-    const panel = pipe.parentElement!.querySelector<HTMLElement>("[data-pipe-s]")!;
-    let current = 0;
-    let visible = false;
-    let holdUntil = 0;
-
-    const place = () => {
-      if (narrow.matches) return;
-      const node = steps[current]!.querySelector<HTMLElement>(".node")!;
-      const host = pipe.getBoundingClientRect();
-      const box = node.getBoundingClientRect();
-      const center = box.left + box.width / 2 - host.left;
-      const width = packet.offsetWidth;
-      const x = Math.max(0, Math.min(host.width - width, center - width / 2));
-      packet.style.setProperty("--px", `${x}px`);
-      packet.style.setProperty("--tip", `${center - x}px`);
-    };
-    const show = (i: number, byUser: boolean) => {
-      current = i;
-      steps.forEach((step, j) => {
-        step.classList.toggle("on", j === i);
-        step.querySelector(".node")!.setAttribute("aria-pressed", String(j === i));
-      });
-      packetText.textContent = steps[i]!.dataset.payload ?? "";
-      panel.textContent = steps[i]!.querySelector(".dt")!.textContent;
-      panel.classList.remove("swap");
-      void panel.offsetWidth;
-      panel.classList.add("swap");
-      if (byUser) holdUntil = performance.now() + 9000;
-      place();
-    };
-    steps.forEach((step, i) => step.querySelector(".node")!.addEventListener("click", () => show(i, true)));
-    new ResizeObserver(place).observe(pipe);
-    new IntersectionObserver(([entry]) => (visible = !!entry?.isIntersecting), { threshold: 0.3 }).observe(pipe);
-    setInterval(() => {
-      if (visible && !narrow.matches && !motionStill() && !document.hidden && performance.now() > holdUntil) show((current + 1) % steps.length, false);
-    }, 2600);
-    show(0, false);
-  }
-</script>
