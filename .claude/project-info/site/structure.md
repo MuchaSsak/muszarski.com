@@ -99,8 +99,13 @@
 
 ## `/<locale>/my-life/`
 
-Photo · short intro · interests grid (content-model § Life item) · "hang out" links (Discord,
-Messenger) · back to work / contact. Secondary nav item; not in the hero path.
+Hero (the title over a goo shader, the owner's photo when `src/assets/photos/life.*` exists) · a playground of
+toys, one per interest, each a card with a title, one line and a small game: calisthenics reps, music beats, faith
+(light), travel board, motorcycles (hold to rev), games with friends (Pong), films (roll a night: picture only, no
+text [user 2026-10-06]), parties, photography (slide to develop a print), self-improvement (an orb race of 1.01ⁿ vs
+0.99ⁿ with milestone chips, no figures [user 2026-10-06]) · socials · back to work / contact. The "hang out"
+overload (moving windows, notifications) was called off [user 2026-10-06]. Toy scripts load with the page section
+(no framework). Secondary nav item; not in the hero path.
 
 ## Legal
 

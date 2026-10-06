@@ -19,7 +19,9 @@
   means the asset is not used. This covers comps, the site, the CV PDF and OG images. Record the licence in the inventory.
 - **Allowed:**
   - the owner's own recordings and screenshots of his own products
-  - code-drawn SVG and shaders made for this site
+  - code-drawn SVG and shaders made for this site (blog covers, My life scenes, the case-study frames)
+  - sounds synthesised at run time with Web Audio (the My life toys): no audio files, nothing to license
+  - screenshots of this site's own earlier versions (`comps/`, `src/assets/case/`) for the case study
   - official store badges, unmodified
   - fonts with a verified licence (licence file next to the font)
   - the owner's own photos (or with the photographer's OK)

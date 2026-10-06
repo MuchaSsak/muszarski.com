@@ -42,9 +42,11 @@
 ## CV (ONE source → `/cv/` page AND the PDF)
 
 - **The rule:** `cv` data is the single source. The `/<locale>/cv/` page and `mateusz-muszarski-cv-<locale>.pdf`
-  are both generated from it. **Never edit one without regenerating the other.** The build renders both
-  from the data in the same run, and a pdfjs content test fails the build when the PDF text ≠ the CV data
-  (mechanism: `technologies.md` § Stack, CV PDF row) [user] 2026-10-05.
+  are both generated from it. **Never edit one without regenerating the other.** The PDFs are made by
+  `bun run cv:pdf` (Playwright prints `/<locale>/cv/print/`) and committed; each records a digest of `cv.ts`, and
+  `cv.test.ts` fails while a PDF was made from older data (mechanism: `technologies.md` § Stack, CV PDF row)
+  [user] 2026-10-05. The digest covers `cv.ts` only: after a change to `CvBody.astro`, the print CSS, `SITE` or the
+  CV headings, run `bun run cv:pdf` by hand. Keep each PDF at two pages (`cv-pages` check in the run notes).
 - **Sections:** header (name, title, location, email, links, availability) · summary ·
   experience (freelance / own products / client projects, each with outcomes) · selected projects ·
   skills (grouped) · education + qualifications (INF.02/.03/.04) · certifications · volunteering +
