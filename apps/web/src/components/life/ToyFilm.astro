@@ -1,0 +1,233 @@
+---
+/**
+ * Films: roll the film [user 2026-10-06: "actual films rolled ... parodies/indications so that everybody knows what
+ * it's about"]. The old countdown leader plays (a sweep around the circle, 3, 2, 1) under grain and flicker, then
+ * tonight's film, told as a one-line parody with its genre: no titles, no posters, no stills. At rest, and with paused
+ * motion, the title card sits there.
+ */
+import { t } from "lingui-for-astro/macro";
+
+import Icon from "~/components/ui/Icon.astro";
+
+const FILMS = [
+  { genre: t`Sci-fi`, line: t`Space wizards with laser swords.` },
+  { genre: t`Fantasy`, line: t`One ring. One volcano. A very long walk.` },
+  { genre: t`Adventure`, line: t`Bringing dinosaurs back was a bad idea.` },
+  { genre: t`Romance`, line: t`The ship sinks. There was room on that door.` },
+  { genre: t`Sci-fi`, line: t`Red pill or blue pill?` },
+  { genre: t`Thriller`, line: t`A shark, a beach, and a boat that's too small.` },
+  { genre: t`Sci-fi`, line: t`A dream inside a dream inside a dream.` },
+  { genre: t`Animation`, line: t`The toys come alive when you leave the room.` },
+  { genre: t`Comedy`, line: t`A car, 88 miles per hour, and 1955.` },
+  { genre: t`Action`, line: t`He said he'd be back. He was.` },
+];
+---
+
+<div class="film" data-film data-films={JSON.stringify(FILMS)} data-tonight={t`Tonight`}>
+  <div class="screen" aria-hidden="true">
+    <span class="sweep"></span>
+    <span class="cross"></span>
+    <span class="ring"></span>
+    <b class="num" data-num>3</b>
+    <span class="end" data-end>
+      <span class="e-top" data-top>{t`Movie night.`}</span>
+      <span class="e-line" data-line></span>
+    </span>
+    <span class="grain"></span>
+  </div>
+  <p class="sr-only" role="status" data-said></p>
+  <button class="toy-btn f-btn" type="button" data-roll>
+    <Icon name="tb:movie" />
+    {t`Roll it`}
+  </button>
+</div>
+
+<style>
+  .film {
+    display: grid;
+    gap: 0.875rem;
+  }
+  .screen {
+    position: relative;
+    display: grid;
+    place-items: center;
+    aspect-ratio: 4 / 3;
+    overflow: hidden;
+    background: #d9d4c4;
+    color: var(--navy);
+    box-shadow:
+      inset 0 0 0 0.5rem var(--navy),
+      5px 5px 0 rgb(10 13 51 / 0.35);
+  }
+  .screen > * {
+    grid-area: 1 / 1;
+  }
+  .sweep,
+  .cross,
+  .ring,
+  .num {
+    visibility: hidden;
+  }
+  .sweep {
+    position: absolute;
+    inset: -20%;
+    background: conic-gradient(from 0deg, rgb(10 13 51 / 0.45) var(--a, 0deg), transparent 0);
+  }
+  .cross {
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(var(--navy), var(--navy)) 50% 0 / 3px 100% no-repeat,
+      linear-gradient(var(--navy), var(--navy)) 0 50% / 100% 3px no-repeat;
+  }
+  .ring {
+    width: 70%;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    box-shadow:
+      0 0 0 4px var(--navy),
+      inset 0 0 0 12px #d9d4c4,
+      inset 0 0 0 15px var(--navy);
+  }
+  .num {
+    position: relative;
+    font-weight: 900;
+    font-size: clamp(4rem, 9vw, 6.5rem);
+    line-height: 1;
+    font-stretch: 80%;
+  }
+  .end {
+    display: grid;
+    justify-items: center;
+    gap: 0.5rem;
+    padding: 0 1.25rem;
+    text-align: center;
+  }
+  .e-top {
+    font-weight: 900;
+    font-size: clamp(1.75rem, 3.4vw, 2.75rem);
+    line-height: 0.95;
+    text-transform: uppercase;
+    font-style: italic;
+    font-stretch: 70%;
+  }
+  /* Once a film has rolled: the genre is the small line on top, the parody the big one. */
+  .picked .e-top {
+    padding: 0.125rem 0.5rem;
+    background: var(--navy);
+    color: #d9d4c4;
+    font-size: 0.75rem;
+    font-style: normal;
+    letter-spacing: 0.1em;
+    font-stretch: 100%;
+  }
+  .e-line {
+    font-weight: 900;
+    font-size: clamp(1.25rem, 2.3vw, 1.75rem);
+    line-height: 1.02;
+    font-stretch: 80%;
+    text-wrap: balance;
+  }
+  .e-line:empty {
+    display: none;
+  }
+  .grain {
+    position: absolute;
+    inset: -50%;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='.5'/%3E%3C/svg%3E");
+    mix-blend-mode: multiply;
+    opacity: 0.35;
+    pointer-events: none;
+  }
+  .rolling .grain {
+    animation: fm-grain 0.25s steps(3) infinite;
+  }
+  @keyframes fm-grain {
+    33% {
+      translate: -12% 8%;
+    }
+    66% {
+      translate: 9% -11%;
+    }
+  }
+  .rolling :is(.sweep, .cross, .ring, .num) {
+    visibility: visible;
+  }
+  .rolling .end {
+    visibility: hidden;
+  }
+  .rolling .screen {
+    animation: fm-flicker 0.12s steps(2) infinite;
+  }
+  @keyframes fm-flicker {
+    50% {
+      filter: brightness(1.08);
+    }
+  }
+  .ended .end {
+    animation: fm-title 0.5s var(--ease-pop);
+  }
+  @keyframes fm-title {
+    from {
+      transform: scale(1.4);
+      opacity: 0;
+    }
+  }
+  .f-btn {
+    justify-self: start;
+  }
+</style>
+
+<script>
+  import { audio, blip } from "~/scripts/life-audio";
+  import { motionStill } from "~/scripts/motion";
+
+  for (const root of document.querySelectorAll<HTMLElement>("[data-film]")) {
+    const num = root.querySelector<HTMLElement>("[data-num]")!;
+    const sweep = root.querySelector<HTMLElement>(".sweep")!;
+    const top = root.querySelector<HTMLElement>("[data-top]")!;
+    const line = root.querySelector<HTMLElement>("[data-line]")!;
+    const said = root.querySelector<HTMLElement>("[data-said]")!;
+    const films: { genre: string; line: string }[] = JSON.parse(root.dataset.films ?? "[]");
+    let last = -1;
+    let raf = 0;
+    const reveal = () => {
+      let k = last;
+      while (k === last && films.length > 1) k = Math.floor(Math.random() * films.length);
+      last = k;
+      const film = films[k]!;
+      root.classList.add("picked");
+      top.textContent = `${root.dataset.tonight ?? ""} · ${film.genre}`;
+      line.textContent = film.line;
+      said.textContent = `${top.textContent}: ${film.line}`;
+    };
+    root.querySelector("[data-roll]")!.addEventListener("click", () => {
+      if (raf) return;
+      if (motionStill()) return reveal();
+      root.classList.remove("ended");
+      root.classList.add("rolling");
+      const start = performance.now();
+      let shown = 0;
+      const frame = (now: number) => {
+        const s = (now - start) / 1000;
+        const left = 3 - Math.floor(s);
+        if (left > 0) {
+          if (left !== shown) {
+            shown = left;
+            num.textContent = String(left);
+            const ac = audio();
+            if (ac) blip(ac, 880);
+          }
+          sweep.style.setProperty("--a", `${(s % 1) * 360}deg`);
+          raf = requestAnimationFrame(frame);
+        } else {
+          raf = 0;
+          reveal();
+          root.classList.remove("rolling");
+          root.classList.add("ended");
+        }
+      };
+      raf = requestAnimationFrame(frame);
+    });
+  }
+</script>

@@ -1,0 +1,172 @@
+---
+/**
+ * Music: a little step sequencer. Four tracks (kick, snare, hi-hat, bass) over eight steps, a groove already in;
+ * press Play, then switch steps on and off while it loops. All sound is synthesised (`life-audio.ts`); it stops when it
+ * leaves the screen. Each step is a toggle button, so it works by keyboard too.
+ */
+import { t } from "lingui-for-astro/macro";
+
+import Icon from "~/components/ui/Icon.astro";
+
+const TRACKS = [
+  { id: "kick", name: t`kick`, steps: [1, 0, 0, 0, 1, 0, 1, 0] },
+  { id: "snare", name: t`snare`, steps: [0, 0, 1, 0, 0, 0, 1, 1] },
+  { id: "hat", name: t`hi-hat`, steps: [1, 1, 1, 1, 1, 1, 1, 1] },
+  { id: "bass", name: t`bass`, steps: [1, 0, 0, 1, 0, 0, 1, 0] },
+];
+const play = t`Play`;
+const stop = t`Stop`;
+---
+
+<div class="beats" data-beats>
+  <div class="bt-grid" role="group" aria-label={t`Beat`}>
+    {
+      TRACKS.map((track, r) => (
+        <div class="bt-row">
+          <span class="bt-name">{track.name}</span>
+          {track.steps.map((on, s) => (
+            <button
+              class={`bt-step tr-${track.id}`}
+              type="button"
+              aria-pressed={on ? "true" : "false"}
+              aria-label={`${track.name} ${s + 1}`}
+              data-r={r}
+              data-s={s}
+            />
+          ))}
+        </div>
+      ))
+    }
+  </div>
+  <button class="toy-btn bt-play" type="button" aria-pressed="false" data-play data-play-label={play} data-stop-label={stop}>
+    <Icon name="tbf:player-play" class="i-play" />
+    <Icon name="tbf:player-pause" class="i-stop" />
+    <span data-label>{play}</span>
+  </button>
+</div>
+
+<style>
+  .beats {
+    display: grid;
+    gap: 0.875rem;
+  }
+  .bt-grid {
+    display: grid;
+    gap: 0.375rem;
+    padding: 0.625rem;
+    background: var(--navy);
+    box-shadow: 5px 5px 0 rgb(10 13 51 / 0.35);
+  }
+  .bt-row {
+    display: grid;
+    grid-template-columns: 4.25rem repeat(8, minmax(0, 1fr));
+    align-items: center;
+    gap: 0.375rem;
+  }
+  .bt-name {
+    color: var(--ice);
+    font-weight: 800;
+    font-size: 0.6875rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+  .bt-step {
+    aspect-ratio: 1;
+    min-height: 1.75rem;
+    padding: 0;
+    border: 0;
+    border-radius: 0.25rem;
+    background: #22265e;
+    cursor: pointer;
+    touch-action: manipulation;
+    transition:
+      background-color 0.12s,
+      transform 0.12s var(--ease-pop);
+  }
+  /* Every fourth step a shade lighter, so the beat reads. */
+  .bt-step:nth-of-type(4n + 1) {
+    background: #2d3275;
+  }
+  .bt-step[aria-pressed="true"].tr-kick {
+    background: var(--pink);
+  }
+  .bt-step[aria-pressed="true"].tr-snare {
+    background: var(--yellow);
+  }
+  .bt-step[aria-pressed="true"].tr-hat {
+    background: var(--lime);
+  }
+  .bt-step[aria-pressed="true"].tr-bass {
+    background: var(--orange);
+  }
+  .bt-step:focus-visible {
+    outline: 2px solid var(--ice);
+    outline-offset: 2px;
+  }
+  /* The playhead: the column now playing lifts and glows. */
+  .bt-step.now {
+    transform: scale(1.12);
+    box-shadow: 0 0 0 2px var(--ice);
+  }
+  .bt-play {
+    justify-self: start;
+  }
+  .bt-play :global(.i-stop),
+  .bt-play[aria-pressed="true"] :global(.i-play) {
+    display: none;
+  }
+  .bt-play[aria-pressed="true"] :global(.i-stop) {
+    display: block;
+  }
+</style>
+
+<script>
+  import { audio, bass, hat, kick, snare } from "~/scripts/life-audio";
+
+  const BPM = 116;
+  const STEP = 60 / BPM / 2;
+  const NOTES = [55, 55, 55, 65.41, 65.41, 49, 49, 49];
+  for (const root of document.querySelectorAll<HTMLElement>("[data-beats]")) {
+    const steps = [...root.querySelectorAll<HTMLButtonElement>(".bt-step")];
+    const grid = [0, 1, 2, 3].map((r) => steps.filter((b) => b.dataset.r === String(r)));
+    const play = root.querySelector<HTMLButtonElement>("[data-play]")!;
+    const label = play.querySelector<HTMLElement>("[data-label]")!;
+    let timer = 0;
+    let at = 0;
+    for (const step of steps) {
+      step.addEventListener("click", () => step.setAttribute("aria-pressed", String(step.getAttribute("aria-pressed") !== "true")));
+    }
+    const on = (r: number, s: number) => grid[r]![s]!.getAttribute("aria-pressed") === "true";
+    const tick = () => {
+      const ac = audio();
+      const t = ac ? ac.currentTime + 0.02 : 0;
+      if (ac) {
+        if (on(0, at)) kick(ac, t);
+        if (on(1, at)) snare(ac, t);
+        if (on(2, at)) hat(ac, t);
+        if (on(3, at)) bass(ac, t, NOTES[at]);
+      }
+      steps.forEach((b) => b.classList.toggle("now", Number(b.dataset.s) === at));
+      at = (at + 1) % 8;
+    };
+    const stop = () => {
+      window.clearInterval(timer);
+      timer = 0;
+      steps.forEach((b) => b.classList.remove("now"));
+      play.setAttribute("aria-pressed", "false");
+      label.textContent = play.dataset.playLabel ?? "";
+    };
+    play.addEventListener("click", () => {
+      if (timer) return stop();
+      at = 0;
+      tick();
+      timer = window.setInterval(tick, STEP * 1000);
+      play.setAttribute("aria-pressed", "true");
+      label.textContent = play.dataset.stopLabel ?? "";
+    });
+    // Out of sight, the music stops.
+    new IntersectionObserver(([entry]) => {
+      if (!entry?.isIntersecting && timer) stop();
+    }).observe(root);
+  }
+</script>

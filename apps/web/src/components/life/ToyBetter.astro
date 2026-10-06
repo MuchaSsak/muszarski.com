@@ -1,0 +1,143 @@
+---
+/**
+ * Self-improvement: the 1 % idea, as a slider. Pick a number of days and see what a little better (1.01ⁿ) and a
+ * little worse (0.99ⁿ) every day add up to. Plain arithmetic, nothing claimed. The chart draws both curves; a marker
+ * follows the slider.
+ */
+import { t } from "lingui-for-astro/macro";
+
+const locale = Astro.locals.locale;
+const DAYS = 365;
+const fmt = (v: number) => new Intl.NumberFormat(locale, { maximumFractionDigits: 2, minimumFractionDigits: 2 }).format(v);
+const W = 300;
+const H = 120;
+const MAX = 40;
+const curve = (base: number) =>
+  Array.from({ length: 74 }, (_, k) => {
+    const d = Math.min(DAYS, k * 5);
+    return `${((d / DAYS) * W).toFixed(1)},${(H - (Math.min(MAX, base ** d) / MAX) * H).toFixed(1)}`;
+  }).join(" ");
+---
+
+<div class="better" data-better data-locale={locale}>
+  <div class="b-out">
+    <p class="b-up">
+      <span class="big tabular" data-up>×{fmt(1.01 ** DAYS)}</span>
+      <small>{t`1% better every day`}</small>
+    </p>
+    <p class="b-down">
+      <span class="big tabular" data-down>×{fmt(0.99 ** DAYS)}</span>
+      <small>{t`1% worse every day`}</small>
+    </p>
+  </div>
+  <svg class="chart" viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="none" aria-hidden="true">
+    <polyline class="c-up" points={curve(1.01)}></polyline>
+    <polyline class="c-down" points={curve(0.99)}></polyline>
+    <line class="mark" x1={W} x2={W} y1="0" y2={H} data-mark></line>
+  </svg>
+  <label class="b-l">
+    <span>{t`Days`}</span>
+    <output class="tabular" data-days>{DAYS}</output>
+    <input type="range" min="0" max={DAYS} value={DAYS} step="1" data-range />
+  </label>
+</div>
+
+<style>
+  .better {
+    display: grid;
+    gap: 0.75rem;
+  }
+  .b-out {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 2rem;
+  }
+  .b-out p {
+    display: grid;
+    margin: 0;
+  }
+  .big {
+    font-weight: 900;
+    font-size: clamp(2.5rem, 5vw, 4rem);
+    line-height: 0.9;
+    font-stretch: 70%;
+  }
+  .b-down .big {
+    opacity: 0.55;
+  }
+  .b-out small {
+    font-weight: 800;
+    font-size: 0.75rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+  .chart {
+    display: block;
+    width: 100%;
+    height: 7.5rem;
+    overflow: visible;
+    background:
+      linear-gradient(rgb(10 13 51 / 0.12) 1px, transparent 1px) 0 0 / 100% 25%,
+      transparent;
+  }
+  .chart polyline {
+    fill: none;
+    stroke-width: 4;
+    stroke-linejoin: round;
+    vector-effect: non-scaling-stroke;
+  }
+  .c-up {
+    stroke: var(--navy);
+  }
+  .c-down {
+    stroke: var(--pink);
+  }
+  .mark {
+    stroke: var(--navy);
+    stroke-width: 2;
+    stroke-dasharray: 4 4;
+    vector-effect: non-scaling-stroke;
+  }
+  .b-l {
+    display: grid;
+    grid-template-columns: auto auto 1fr;
+    align-items: center;
+    gap: 0.75rem;
+    font-weight: 800;
+    font-size: 0.875rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+  .b-l output {
+    min-width: 3ch;
+    font-size: 1.25rem;
+  }
+  input[type="range"] {
+    width: 100%;
+    accent-color: var(--navy);
+    height: 2rem;
+    cursor: pointer;
+  }
+</style>
+
+<script>
+  for (const root of document.querySelectorAll<HTMLElement>("[data-better]")) {
+    const range = root.querySelector<HTMLInputElement>("[data-range]")!;
+    const up = root.querySelector<HTMLElement>("[data-up]")!;
+    const down = root.querySelector<HTMLElement>("[data-down]")!;
+    const days = root.querySelector<HTMLElement>("[data-days]")!;
+    const mark = root.querySelector<SVGLineElement>("[data-mark]")!;
+    const fmt = new Intl.NumberFormat(root.dataset.locale, { maximumFractionDigits: 2, minimumFractionDigits: 2 });
+    const max = Number(range.max);
+    const update = () => {
+      const d = Number(range.value);
+      up.textContent = `×${fmt.format(1.01 ** d)}`;
+      down.textContent = `×${fmt.format(0.99 ** d)}`;
+      days.textContent = String(d);
+      const x = String((d / max) * 300);
+      mark.setAttribute("x1", x);
+      mark.setAttribute("x2", x);
+    };
+    range.addEventListener("input", update);
+  }
+</script>

@@ -1,0 +1,140 @@
+---
+/**
+ * One toy on the My life playground: the interest's name, a casual line, and something to play with (the slot). The
+ * hint chip says how (tap, hold, slide, play). Colours come in as tokens: `tone` the card, `ink` its text.
+ */
+import Icon from "~/components/ui/Icon.astro";
+import { type IconName } from "~/lib/icons.gen";
+
+interface Props {
+  area: string;
+  title: string;
+  line: string;
+  tone: string;
+  ink?: string;
+  hint?: { label: string; icon: IconName } | undefined;
+}
+const { area, title, line, tone, ink = "var(--navy)", hint } = Astro.props;
+---
+
+<li class="tc" style={`--a:${area};--tone:${tone};--ink:${ink}`} data-toy={area}>
+  <div class="tc-head">
+    <h3>{title}</h3>
+    {
+      hint && (
+        <span class="tc-hint" aria-hidden="true">
+          <Icon name={hint.icon} />
+          {hint.label}
+        </span>
+      )
+    }
+  </div>
+  <p class="tc-line">{line}</p>
+  <div class="tc-play">
+    <slot />
+  </div>
+</li>
+
+<style>
+  .tc {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    min-width: 0;
+    padding: 1rem 1rem 1.125rem;
+    grid-area: var(--a);
+    background: var(--tone);
+    color: var(--ink);
+    box-shadow:
+      0 0 0 3px var(--navy),
+      9px 9px 0 3px var(--navy);
+  }
+  .tc-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 0.75rem;
+  }
+  .tc h3 {
+    margin: 0;
+    font-weight: 900;
+    font-size: clamp(1.625rem, 2.6vw, 2.5rem);
+    line-height: 0.9;
+    text-transform: uppercase;
+    font-stretch: 66%;
+  }
+  .tc-hint {
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    gap: 0.3125rem;
+    padding: 0.25rem 0.5rem;
+    background: var(--ink);
+    color: var(--tone);
+    font-weight: 800;
+    font-size: 0.6875rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    rotate: 3deg;
+  }
+  .tc-hint :global(.ico) {
+    width: 0.9375rem;
+    height: 0.9375rem;
+  }
+  .tc-line {
+    margin: 0;
+    font-weight: 600;
+    font-size: 1rem;
+    line-height: 1.35;
+  }
+  .tc-play {
+    position: relative;
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    justify-content: center;
+    min-height: 0;
+    margin-top: 0.5rem;
+  }
+  /* The toys' buttons: chunky, pressed in when held. */
+  :global(.toy-btn) {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    min-height: 3rem;
+    padding: 0.625rem 1.125rem;
+    border: 0;
+    background: var(--navy);
+    color: var(--ice);
+    font: inherit;
+    font-weight: 900;
+    font-size: 1.0625rem;
+    line-height: 1;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    font-stretch: 80%;
+    box-shadow: 4px 4px 0 rgb(10 13 51 / 0.35);
+    cursor: pointer;
+    touch-action: manipulation;
+    user-select: none;
+    -webkit-user-select: none;
+    transition:
+      translate 0.12s var(--ease-out),
+      box-shadow 0.12s var(--ease-out);
+  }
+  :global(.toy-btn:active),
+  :global(.toy-btn.down) {
+    translate: 3px 3px;
+    box-shadow: 1px 1px 0 rgb(10 13 51 / 0.35);
+  }
+  :global(.toy-btn:focus-visible) {
+    outline: 3px solid var(--ink, var(--navy));
+    outline-offset: 3px;
+  }
+  :global(.toy-btn .ico) {
+    width: 1.25rem;
+    height: 1.25rem;
+  }
+</style>

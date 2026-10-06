@@ -1,30 +1,35 @@
 ---
 /**
- * My life (structure.md § /my-life/, requirements.md F13): the person behind the work, off the clock. Casual lines,
- * not a pitch [user 2026-10-06: "more chilled out", web development cut]. Kinetic type instead of drawings [user
- * 2026-10-06: "dont want to overdo the illustrations ... way more creative and stunning"]:
- * - the head: the fitted title, one line and the photo (the owner's own, placeholders.md P15)
- * - "Stuff I like": one full-bleed band per interest he named [user 2026-10-05], its name set huge in the variable
- *   font, and each word moves its own way while it is in view: reps (calisthenics), a passing light (faith), a
- *   departures board (travel), speed (motorcycles), an equaliser (music), a letterbox (films), letters that hop in
- *   two players' colours (games with friends), colours that change like party lights (parties), a staircase of
- *   weights (self-improvement). A hover or a tap gives it a boost.
- * - hang out: a yellow band, so it stands apart from the footer; the two chats arrive as messages (P5), back to the
- *   work, contact.
- * Every word is a real heading (the letters are a decorative copy). Paused or reduced motion: still posters. Party
- * colours change at most twice a second (WCAG 2.3.1). AboutPage JSON-LD → the Person. Faith is his own decision to
- * publish (compliance-and-data.md: GDPR art. 9(2)(e)); no third persons on this page.
- * PLACEHOLDER: the lines are drafts for the owner to rewrite in his voice (P6).
+ * My life (structure.md § /my-life/, requirements.md F13): the person behind the work, off the clock, and the one
+ * page that is pure show-off [user 2026-10-06: "purely show off page and for fun ... something nuts and going big",
+ * "lightweight shaders and ... very fun components"; no drawn illustrations; casual lines, not a pitch]:
+ * - the head (`LifeHero`): the title over a goo shader that follows the pointer
+ * - the playground: one toy per interest he named [user 2026-10-05], each something to do, not to watch: pull-ups to
+ *   count, light to move (faith), a departures board, an engine to rev, a beat to make, a film to roll, Pong to play,
+ *   a party to start, a slider for the 1 % idea. Sound is synthesised and only plays after a press; one switch mutes it.
+ * - hang out: a yellow band, so it stands apart from the footer; the two chats arrive as messages (P5).
+ * Every toy works by keyboard and says what it is in text; paused or reduced motion keeps them usable and still.
+ * AboutPage JSON-LD → the Person. Faith is his own decision to publish (compliance-and-data.md: GDPR art. 9(2)(e)); no
+ * third persons on this page. PLACEHOLDER: the lines are drafts for the owner to rewrite in his voice (P6).
  */
 import { t } from "lingui-for-astro/macro";
 
 import BaseLayout from "~/components/layout/BaseLayout.astro";
+import LifeHero from "~/components/life/LifeHero.astro";
+import ToyBeats from "~/components/life/ToyBeats.astro";
+import ToyBetter from "~/components/life/ToyBetter.astro";
+import ToyBoard from "~/components/life/ToyBoard.astro";
+import ToyCard from "~/components/life/ToyCard.astro";
+import ToyFilm from "~/components/life/ToyFilm.astro";
+import ToyLight from "~/components/life/ToyLight.astro";
+import ToyParty from "~/components/life/ToyParty.astro";
+import ToyPong from "~/components/life/ToyPong.astro";
+import ToyReps from "~/components/life/ToyReps.astro";
+import ToyRev from "~/components/life/ToyRev.astro";
 import JsonLd from "~/components/seo/JsonLd.astro";
-import Fit from "~/components/ui/Fit.astro";
 import Icon from "~/components/ui/Icon.astro";
 import Logo from "~/components/ui/Logo.astro";
 import { SITE, SOCIAL } from "~/data/site";
-import { fitLines } from "~/lib/fit";
 import { type IconName } from "~/lib/icons.gen";
 import { chromeLinks } from "~/lib/nav";
 import { localeStaticPaths, pathTo } from "~/lib/routes";
@@ -39,47 +44,11 @@ const site = Astro.site ?? new URL("http://localhost:4321");
 const url = new URL(pathTo(locale, "my-life"), site).href;
 const title = t`My life`;
 const description = t`Mateusz Muszarski off the clock: calisthenics, faith, travel, motorcycles, films, music, games with friends and parties. And where to find him.`;
-const [line1, line2] = t`My|life`.split("|") as [string, string];
-
-type Move = "reps" | "glow" | "board" | "speed" | "eq" | "film" | "hop" | "flash" | "climb";
-const LIKES: { move: Move; title: string; line: string; bg: string; fg: string }[] = [
-  { move: "reps", title: t`Calisthenics`, line: t`Training with just my bodyweight. Bar, floor, repeat.`, bg: "var(--yellow)", fg: "var(--navy)" },
-  { move: "glow", title: t`Faith`, line: t`I'm a Christian.`, bg: "var(--navy)", fg: "var(--ice)" },
-  { move: "board", title: t`Travel`, line: t`I like going somewhere I haven't been yet.`, bg: "var(--lime)", fg: "var(--navy)" },
-  { move: "speed", title: t`Motorcycles`, line: t`I like bikes. Simple as that.`, bg: "var(--orange)", fg: "var(--navy)" },
-  { move: "eq", title: t`Music`, line: t`My playlist is all over the place.`, bg: "var(--pink)", fg: "var(--navy)" },
-  { move: "film", title: t`Films`, line: t`A good film night is hard to beat.`, bg: "var(--ice)", fg: "var(--navy)" },
-  { move: "hop", title: t`Games with friends`, line: t`Gaming, but best with friends.`, bg: "var(--cobalt)", fg: "var(--ice)" },
-  { move: "flash", title: t`Parties`, line: t`I like a good party.`, bg: "var(--space)", fg: "var(--ice)" },
-  { move: "climb", title: t`Self-improvement`, line: t`Trying to be a bit better than yesterday.`, bg: "var(--lime)", fg: "var(--navy)" },
-];
-/** A long name goes on two lines (at the space or hyphen nearest the middle), so it stays big on a phone. */
-const split = (text: string) => {
-  if (text.length <= 11) return [text];
-  const cuts = [...text.matchAll(/[ -]/g)].map((m) => m.index);
-  if (!cuts.length) return [text];
-  const mid = text.length / 2;
-  const at = cuts.reduce((a, b) => (Math.abs(b - mid) < Math.abs(a - mid) ? b : a));
-  const cut = text[at] === "-" ? at + 1 : at;
-  return [text.slice(0, cut).trim(), text.slice(cut).trim()];
-};
-const NBSP = String.fromCharCode(160);
-const words = LIKES.map((like) => {
-  const lines = split(like.title).map((line) => line.toLocaleUpperCase(locale));
-  const narrow = fitLines(lines, 70, locale, 0.97);
-  const wide = fitLines(lines, 92, locale, 0.97);
-  let k = 0;
-  return {
-    narrow,
-    wide,
-    lines: lines.map((line, li) => ({
-      wn: narrow.wdth[li],
-      ww: wide.wdth[li],
-      chars: [...line].map((ch) => ({ ch: ch === " " ? NBSP : ch, k: k++ })),
-    })),
-  };
-});
-const pad = (n: number) => String(n).padStart(2, "0");
+const tap = { label: t`Tap`, icon: "tb:hand-click" as IconName };
+const hold = { label: t`Hold`, icon: "tb:hand-click" as IconName };
+const play = { label: t`Play`, icon: "tb:device-gamepad-2" as IconName };
+const slide = { label: t`Slide`, icon: "tb:arrows-maximize" as IconName };
+const L = (text: string) => typo(locale, text);
 const SOCIAL_ICONS: Record<string, IconName> = { discord: "si:discord", messenger: "si:messenger" };
 ---
 
@@ -91,64 +60,48 @@ const SOCIAL_ICONS: Record<string, IconName> = { discord: "si:discord", messenge
       { name: title, url },
     ])}
   />
-  <section class="sec field-accent top" aria-labelledby="t-life">
-    <div class="sbar draw">
-      <p>{t`My life`}</p>
-      <p>{t`Off the clock`}</p>
-      <p>{t`Poland`}</p>
-    </div>
-    <div class="head">
-      <div class="h-txt">
-        <Fit as="h1" id="t-life" lines={[line1, line2]} base={[100, 140]} />
-        <p class="lede rise" style="--d:2">{typo(locale, t`I'm Mateusz. Code is the job. This page is the rest.`)}</p>
-      </div>
-      <figure class="photo enter" aria-hidden="true">
-        <div class="ph">
-          <Icon name="tb:camera" />
-          <span>{t`Photo soon`}</span>
-        </div>
-        <figcaption>{t`me, probably smiling`}</figcaption>
-      </figure>
-    </div>
-  </section>
+  <LifeHero />
 
-  <section class="likes" aria-labelledby="t-likes">
-    <h2 class="likes-t" id="t-likes">
-      {t`Stuff I like`}
-      <Icon name="tb:arrow-down" />
-    </h2>
-    <ol class="rows" role="list" data-rows>
-      {
-        LIKES.map((like, i) => {
-          const word = words[i]!;
-          return (
-            <li
-              class={`row m-${like.move}`}
-              style={`--bg:${like.bg};--fg:${like.fg};--fs-n:${word.narrow.size};--fs-w:${word.wide.size};--n:${Math.max(...word.lines.map((line) => line.chars.length))}`}
-            >
-              <h3 class="word">
-                <span class="sr-only">{like.title}</span>
-                <span class="w-art" aria-hidden="true">
-                  {word.lines.map((line) => (
-                    <span class="w-line" style={`--wn:${line.wn}%;--ww:${line.ww}%`}>
-                      {line.chars.map((c) => (
-                        <span class="ch" style={`--k:${c.k}`} data-ch={c.ch}>
-                          {c.ch}
-                        </span>
-                      ))}
-                    </span>
-                  ))}
-                </span>
-              </h3>
-              <p class="meta">
-                <span class="n tabular">{pad(i + 1)}</span>
-                <span>{typo(locale, like.line)}</span>
-              </p>
-            </li>
-          );
-        })
-      }
-    </ol>
+  <section class="sec field-alt play" aria-labelledby="t-likes">
+    <div class="p-head">
+      <h2 class="p-title" id="t-likes">{t`Stuff I like`}</h2>
+      <p class="p-sub">{t`Go on, play with them.`}</p>
+      <button class="sound" type="button" aria-pressed="true" data-sound>
+        <Icon name="tb:music" />
+        <span>{t`Sound`}</span>
+        <b class="s-on">{t`on`}</b>
+        <b class="s-off">{t`off`}</b>
+      </button>
+    </div>
+    <ul class="toys" role="list">
+      <ToyCard area="reps" title={t`Calisthenics`} line={L(t`Training with just my bodyweight. Bar, floor, repeat.`)} tone="var(--yellow)" hint={tap}>
+        <ToyReps />
+      </ToyCard>
+      <ToyCard area="beats" title={t`Music`} line={L(t`My playlist is all over the place.`)} tone="var(--pink)" hint={tap}>
+        <ToyBeats />
+      </ToyCard>
+      <ToyCard area="light" title={t`Faith`} line={L(t`I'm a Christian.`)} tone="var(--navy)" ink="var(--ice)">
+        <ToyLight />
+      </ToyCard>
+      <ToyCard area="board" title={t`Travel`} line={L(t`I like going somewhere I haven't been yet.`)} tone="var(--lime)" hint={tap}>
+        <ToyBoard />
+      </ToyCard>
+      <ToyCard area="rev" title={t`Motorcycles`} line={L(t`I like bikes. Simple as that.`)} tone="var(--orange)" hint={hold}>
+        <ToyRev />
+      </ToyCard>
+      <ToyCard area="pong" title={t`Games with friends`} line={L(t`Gaming, but best with friends.`)} tone="var(--cobalt)" ink="var(--ice)" hint={play}>
+        <ToyPong />
+      </ToyCard>
+      <ToyCard area="film" title={t`Films`} line={L(t`A good film night is hard to beat.`)} tone="var(--ice)" hint={tap}>
+        <ToyFilm />
+      </ToyCard>
+      <ToyCard area="party" title={t`Parties`} line={L(t`I like a good party.`)} tone="var(--space)" ink="var(--ice)" hint={tap}>
+        <ToyParty />
+      </ToyCard>
+      <ToyCard area="better" title={t`Self-improvement`} line={L(t`Trying to be a bit better than yesterday.`)} tone="var(--lime)" hint={slide}>
+        <ToyBetter />
+      </ToyCard>
+    </ul>
   </section>
 
   <section class="sec hang" aria-labelledby="t-hang">
@@ -204,439 +157,95 @@ const SOCIAL_ICONS: Record<string, IconName> = { discord: "si:discord", messenge
 </BaseLayout>
 
 <style>
-  /* ---- Head: the title and the line on the left, the photo on the right. */
-  .head {
-    display: grid;
-    grid-template-columns: minmax(0, 1.25fr) minmax(0, 0.75fr);
-    gap: clamp(1.5rem, 4vw, 4rem);
-    align-items: end;
-  }
-  .lede {
-    max-width: 30ch;
-    margin: clamp(1rem, 2.4vw, 2rem) 0 0;
-    font-weight: 700;
-    font-size: clamp(1.375rem, 2.2vw, 2.125rem);
-    line-height: 1.2;
-    text-wrap: balance;
-  }
-  .photo {
-    position: relative;
-    justify-self: center;
-    width: min(100%, 22rem);
-    margin: 0;
-    padding: 0.875rem 0.875rem 0;
-    background: #fff;
-    color: var(--navy);
-    box-shadow: 10px 10px 0 var(--navy);
-    rotate: 3deg;
-  }
-  /* Tape on the top edge. */
-  .photo::before {
-    content: "";
-    position: absolute;
-    left: 50%;
-    top: -0.75rem;
-    width: 6rem;
-    height: 1.5rem;
-    background: color-mix(in srgb, var(--yellow) 80%, transparent);
-    transform: translateX(-50%) rotate(-3deg);
-  }
-  .ph {
-    display: grid;
-    place-content: center;
-    justify-items: center;
-    gap: 0.5rem;
-    aspect-ratio: 4 / 5;
-    background: repeating-linear-gradient(-45deg, rgb(10 13 51 / 0.1) 0 0.75rem, transparent 0.75rem 1.5rem), var(--ice);
-    font-weight: 800;
-    font-size: 0.8125rem;
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
-  }
-  .ph :global(.ico) {
-    width: 2.5rem;
-    height: 2.5rem;
-  }
-  .photo figcaption {
-    padding: 0.75rem 0 1rem;
-    text-align: center;
-    font-weight: 700;
-    font-size: 1.0625rem;
-    font-style: italic;
-    font-stretch: 85%;
-  }
-
-  /* ---- Stuff I like: a stack of full-bleed bands, one per interest, each with its name set huge. */
-  /* Bands: the colour runs full width (a clipped shadow), the type stops at the poster cap like every section. */
-  .likes {
-    overflow-x: clip;
-  }
-  .likes-t {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 1rem;
-    width: min(100%, var(--container-poster));
-    margin: 0 auto;
-    padding: clamp(1.25rem, 2.4vw, 2rem) var(--gutter);
-    background: var(--navy);
-    box-shadow: 0 0 0 100vmax var(--navy);
-    clip-path: inset(0 -100vmax);
-    color: var(--ice);
-    font-weight: 900;
-    font-size: clamp(1.5rem, 3vw, 2.5rem);
-    line-height: 1;
-    text-transform: uppercase;
-    font-stretch: 70%;
-  }
-  .likes-t :global(.ico) {
-    width: 1.5em;
-    height: 1.5em;
-    animation: ml-nod 1.6s ease-in-out infinite;
-  }
-  @keyframes ml-nod {
-    50% {
-      translate: 0 0.2em;
-    }
-  }
-  /* The navy between the bands is the list's own background, showing through the gaps. */
-  .rows {
-    display: grid;
-    gap: 3px;
-    margin: 0;
-    padding: 3px 0 0;
-    background: var(--navy);
-    list-style: none;
-  }
-  .row {
-    --spd: 1;
-    position: relative;
+  /* ---- The playground: a bento of toys, bigger where the toy needs room (the beat, the board, Pong). */
+  .p-head {
     display: flex;
     flex-wrap: wrap;
     align-items: flex-end;
-    justify-content: space-between;
-    gap: 0.75rem 2rem;
-    width: min(100%, var(--container-poster));
-    margin: 0 auto;
-    padding: clamp(1.25rem, 3vw, 2.75rem) var(--gutter) clamp(1.5rem, 3vw, 2.5rem);
-    container-type: inline-size;
-    background: var(--bg);
-    color: var(--fg);
-    box-shadow: 0 0 0 100vmax var(--bg);
-    clip-path: inset(0 -100vmax);
-    cursor: default;
+    gap: 0.5rem 1.5rem;
+    margin-bottom: clamp(1.5rem, 3vw, 2.5rem);
   }
-  .row.boost {
-    --spd: 2.2;
-  }
-  @media (hover: hover) and (pointer: fine) {
-    .row:hover {
-      --spd: 2.2;
-    }
-  }
-  /* The word: fitted to the band's width from the font's metrics (like Fit), capped so short names stay a size a
-     band can hold. */
-  .word {
-    position: relative;
-    z-index: 1;
+  .p-title {
     margin: 0;
     font-weight: 900;
-    line-height: 0.8;
+    font-size: clamp(2.75rem, 7vw, 6.5rem);
+    line-height: 0.85;
     text-transform: uppercase;
-    font-size: min(calc(var(--fs-n) * 1cqi), 30cqi, 15rem);
+    font-stretch: 62%;
   }
-  .w-art {
-    display: block;
-  }
-  .w-line {
-    display: block;
-    width: max-content;
-    white-space: nowrap;
-    font-stretch: var(--wn);
-  }
-  @container (min-width: 700px) {
-    .word {
-      font-size: min(calc(var(--fs-w) * 1cqi), 17cqi, 15rem);
-    }
-    .w-line {
-      font-stretch: var(--ww);
-    }
-  }
-  .ch {
-    display: inline-block;
-  }
-  .meta {
-    position: relative;
-    z-index: 1;
-    display: flex;
-    align-items: baseline;
-    gap: 0.75rem;
-    max-width: 26rem;
-    margin: 0;
+  .p-sub {
+    margin: 0 0 0.375rem;
     font-weight: 700;
-    font-size: clamp(1.0625rem, 1.4vw, 1.25rem);
-    line-height: 1.3;
+    font-size: clamp(1.125rem, 1.6vw, 1.375rem);
   }
-  .meta .n {
-    flex: none;
-    padding: 0.125rem 0.4375rem;
-    background: var(--fg);
-    color: var(--bg);
+  .sound {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    min-height: 2.75rem;
+    margin: 0 0 0.25rem auto;
+    padding: 0.375rem 0.875rem;
+    border: 0;
+    background: var(--navy);
+    color: var(--ice);
+    font: inherit;
     font-weight: 800;
     font-size: 0.8125rem;
     letter-spacing: 0.06em;
+    text-transform: uppercase;
+    cursor: pointer;
   }
-  /* The moves run only while a band is in view (.live), and never when paused or under reduced motion. */
-  :global(.still) .row *,
-  :global(.still) .row::before,
-  :global(.still) .row::after {
-    animation: none !important;
+  .sound :global(.ico) {
+    width: 1.125rem;
+    height: 1.125rem;
   }
-  @media (prefers-reduced-motion: reduce) {
-    .row *,
-    .row::before,
-    .row::after {
-      animation: none !important;
-    }
-  }
-  .row:not(.live) *,
-  .row:not(.live)::before,
-  .row:not(.live)::after {
-    animation-play-state: paused !important;
-  }
-
-  /* Calisthenics: the word does reps. */
-  .m-reps .w-art {
-    transform-origin: 50% 100%;
-    animation: ml-reps calc(1.8s / var(--spd)) ease-in-out infinite;
-  }
-  @keyframes ml-reps {
-    0%,
-    100% {
-      transform: none;
-    }
-    35% {
-      transform: translateY(4%) scale(1.03, 0.84);
-    }
-    60% {
-      transform: translateY(-6%) scale(0.98, 1.05);
-    }
-  }
-
-  /* Faith: a warm light passes through the letters. */
-  .m-glow .ch {
-    animation: ml-glow calc(3.6s / var(--spd)) ease-in-out infinite;
-    animation-delay: calc(var(--k) * 0.16s);
-  }
-  @keyframes ml-glow {
-    0%,
-    34%,
-    100% {
-      color: var(--fg);
-      text-shadow: none;
-    }
-    14% {
-      color: var(--yellow);
-      text-shadow: 0 0 0.18em color-mix(in srgb, var(--yellow) 55%, transparent);
-    }
-  }
-
-  /* Travel: a departures board. Each letter sits on its own flap; now and then they spin (the script) and land. */
-  /* The board is sized by its flaps (0.92em each), not by the letters' own widths. */
-  .m-board .word {
-    font-size: min(calc(96cqi / (var(--n) * 0.92)), 22cqi, 11rem);
-  }
-  @container (min-width: 700px) {
-    .m-board .word {
-      font-size: min(calc(96cqi / (var(--n) * 0.92)), 13cqi, 11rem);
-    }
-  }
-  /* Fixed flaps, so a spinning letter never changes the board's width. */
-  .m-board .ch {
-    position: relative;
-    width: 0.86em;
-    overflow: hidden;
-    margin-right: 0.06em;
-    padding: 0.08em 0.06em 0.02em;
-    background: var(--navy);
-    color: var(--yellow);
-    text-align: center;
-    border-radius: 0.06em;
-  }
-  .m-board .ch::after {
-    content: "";
-    position: absolute;
-    left: 0;
-    right: 0;
-    top: 50%;
-    height: 0.025em;
+  .sound b {
+    padding: 0.125rem 0.375rem;
     background: var(--lime);
-    opacity: 0.5;
+    color: var(--navy);
   }
-  .m-board .ch.flip {
-    animation: ml-flap 0.09s linear;
+  .sound .s-off,
+  .sound[aria-pressed="false"] .s-on {
+    display: none;
   }
-  @keyframes ml-flap {
-    50% {
-      transform: scaleY(0.1);
+  .sound[aria-pressed="false"] .s-off {
+    display: inline;
+    background: var(--pink);
+  }
+  .sound:focus-visible {
+    outline: 3px solid var(--navy);
+    outline-offset: 3px;
+  }
+  .toys {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    grid-template-areas:
+      "reps beats beats light"
+      "board board rev light"
+      "pong pong film party"
+      "pong pong better better";
+    gap: clamp(1.25rem, 2.2vw, 2rem);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  @media (max-width: 64rem) {
+    .toys {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      grid-template-areas:
+        "reps rev"
+        "beats beats"
+        "board board"
+        "light film"
+        "pong pong"
+        "better better"
+        "party party";
     }
   }
-
-  /* Motorcycles: leaning into speed, streaks rushing past. */
-  .m-speed .w-art {
-    transform: skewX(-12deg);
-    animation: ml-rev calc(2.2s / var(--spd)) ease-in-out infinite;
-  }
-  @keyframes ml-rev {
-    0%,
-    100% {
-      transform: skewX(-12deg) translateX(0);
-    }
-    50% {
-      transform: skewX(-16deg) translateX(1.5%);
-    }
-  }
-  .m-speed::before {
-    content: "";
-    position: absolute;
-    inset: 0 -100vmax;
-    background: repeating-linear-gradient(
-      180deg,
-      transparent 0 1.5rem,
-      color-mix(in srgb, var(--navy) 24%, transparent) 1.5rem 1.7rem,
-      transparent 1.7rem 3.1rem
-    );
-    -webkit-mask: repeating-linear-gradient(90deg, #000 0 5rem, transparent 5rem 9rem);
-    mask: repeating-linear-gradient(90deg, #000 0 5rem, transparent 5rem 9rem);
-    animation: ml-streak calc(0.6s / var(--spd)) linear infinite;
-  }
-  @keyframes ml-streak {
-    to {
-      -webkit-mask-position: -9rem 0;
-      mask-position: -9rem 0;
-    }
-  }
-
-  /* Music: the letters are an equaliser. */
-  .m-eq .ch {
-    transform-origin: 50% 100%;
-    animation: ml-eq calc(0.8s / var(--spd)) ease-in-out infinite alternate;
-    animation-delay: calc(var(--k) * -0.23s);
-  }
-  @keyframes ml-eq {
-    from {
-      transform: scaleY(0.62);
-    }
-    to {
-      transform: scaleY(1.06);
-    }
-  }
-
-  /* Films: a letterbox closes in and opens; the picture flickers a little. */
-  .m-film::before,
-  .m-film::after {
-    content: "";
-    position: absolute;
-    left: -100vmax;
-    right: -100vmax;
-    z-index: 2;
-    height: 22%;
-    background: #000;
-    transform: scaleY(0);
-    animation: ml-box calc(5s / var(--spd)) ease-in-out infinite;
-  }
-  .m-film::before {
-    top: 0;
-    transform-origin: 50% 0;
-  }
-  .m-film::after {
-    bottom: 0;
-    transform-origin: 50% 100%;
-  }
-  @keyframes ml-box {
-    0%,
-    20%,
-    100% {
-      transform: scaleY(0);
-    }
-    35%,
-    80% {
-      transform: scaleY(1);
-    }
-  }
-  .m-film .w-art {
-    animation: ml-flicker calc(0.5s / var(--spd)) steps(2) infinite;
-  }
-  @keyframes ml-flicker {
-    50% {
-      opacity: 0.88;
-    }
-  }
-
-  /* Games with friends: two players' colours; the letters hop one after another. */
-  .m-hop .ch:nth-child(even) {
-    color: var(--yellow);
-  }
-  .m-hop .ch {
-    animation: ml-hop calc(2.4s / var(--spd)) ease-in-out infinite;
-    animation-delay: calc(var(--k) * 0.08s);
-  }
-  @keyframes ml-hop {
-    0%,
-    18%,
-    100% {
-      transform: none;
-    }
-    7% {
-      transform: translateY(-16%) rotate(-4deg);
-    }
-  }
-
-  /* Parties: a dark room; the letters dance and take the lights' colours (each changes at most twice a second). */
-  .m-flash .ch {
-    animation:
-      ml-lights calc(2s / var(--spd)) steps(1) infinite,
-      ml-dance calc(1s / var(--spd)) ease-in-out infinite alternate;
-    animation-delay: calc(var(--k) * -0.5s), calc(var(--k) * -0.25s);
-  }
-  @keyframes ml-lights {
-    0% {
-      color: var(--pink);
-    }
-    25% {
-      color: var(--lime);
-    }
-    50% {
-      color: var(--yellow);
-    }
-    75% {
-      color: var(--ice);
-    }
-  }
-  @keyframes ml-dance {
-    from {
-      transform: rotate(-5deg) translateY(2%);
-    }
-    to {
-      transform: rotate(5deg) translateY(-3%);
-    }
-  }
-
-  /* Self-improvement: each letter a step heavier and higher than the one before; a step-up runs along them. */
-  .m-climb .ch {
-    font-weight: calc(400 + var(--k) * 32);
-    translate: 0 calc(var(--k) * -1.2%);
-    animation: ml-step calc(3s / var(--spd)) ease-in-out infinite;
-    animation-delay: calc(var(--k) * 0.12s);
-  }
-  @keyframes ml-step {
-    0%,
-    16%,
-    100% {
-      transform: none;
-    }
-    8% {
-      transform: translateY(-12%);
+  @media (max-width: 40rem) {
+    .toys {
+      grid-template-columns: minmax(0, 1fr);
+      grid-template-areas: "reps" "beats" "light" "board" "rev" "pong" "film" "party" "better";
     }
   }
 
@@ -833,67 +442,22 @@ const SOCIAL_ICONS: Record<string, IconName> = { discord: "si:discord", messenge
   }
 
   @media (max-width: 48rem) {
-    .head,
     .hang-grid {
       grid-template-columns: minmax(0, 1fr);
-    }
-    .photo {
-      width: min(62%, 15rem);
     }
   }
 </style>
 
 <script>
+  import { isMuted, onMute, setMuted } from "~/scripts/life-audio";
   import { motionStill } from "~/scripts/motion";
 
-  // A band moves only while it is in view.
-  const rows = [...document.querySelectorAll<HTMLElement>("[data-rows] .row")];
-  const seen = new IntersectionObserver((entries) => {
-    for (const entry of entries) entry.target.classList.toggle("live", entry.isIntersecting);
-  });
-  for (const row of rows) {
-    seen.observe(row);
-    // A tap boosts the band for a moment (the hover twin for touch screens).
-    let timer = 0;
-    row.addEventListener("click", () => {
-      row.classList.add("boost");
-      clearTimeout(timer);
-      timer = window.setTimeout(() => row.classList.remove("boost"), 2400);
-    });
-  }
-
-  // The departures board: every few seconds, while in view, each flap spins through letters and lands on its own,
-  // left to right.
-  const ABC = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-  for (const board of document.querySelectorAll<HTMLElement>(".m-board")) {
-    const flaps = [...board.querySelectorAll<HTMLElement>(".ch")];
-    let busy = false;
-    const spin = () => {
-      if (busy || motionStill() || document.hidden || !board.classList.contains("live")) return;
-      busy = true;
-      let left = flaps.length;
-      flaps.forEach((flap, k) => {
-        const own = flap.dataset.ch ?? "";
-        if (own.trim() === "" || own === String.fromCharCode(160)) return void (left -= 1);
-        let turns = 5 + k * 2;
-        const tick = () => {
-          flap.classList.remove("flip");
-          void flap.offsetWidth;
-          flap.classList.add("flip");
-          if (turns-- > 0 && !motionStill()) {
-            flap.textContent = ABC[Math.floor(Math.random() * ABC.length)]!;
-            window.setTimeout(tick, 70);
-          } else {
-            flap.textContent = own;
-            if (--left <= 0) busy = false;
-          }
-        };
-        window.setTimeout(tick, k * 40);
-      });
-      if (left <= 0) busy = false;
-    };
-    window.setInterval(spin, 4800);
-    board.addEventListener("click", spin);
+  // One switch mutes every toy; the choice is remembered in this browser.
+  for (const button of document.querySelectorAll<HTMLButtonElement>("[data-sound]")) {
+    const sync = (muted: boolean) => button.setAttribute("aria-pressed", String(!muted));
+    sync(isMuted());
+    onMute(sync);
+    button.addEventListener("click", () => setMuted(!isMuted()));
   }
 
   // The chat's messages arrive in turn as it scrolls into view. Without the script, or with motion paused, they are

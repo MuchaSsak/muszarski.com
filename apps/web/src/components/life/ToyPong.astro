@@ -1,0 +1,227 @@
+---
+/**
+ * Games with friends: a real game of Pong against the computer (it's better with a friend, he says). Press Play,
+ * then move the pointer or a finger over the court, or use the arrow keys; first to five. The court only takes the
+ * pointer while a game is on, so it never traps a phone's scroll.
+ */
+import { t } from "lingui-for-astro/macro";
+
+import Icon from "~/components/ui/Icon.astro";
+---
+
+<div class="pong" data-pong data-you={t`You`} data-cpu={t`CPU`} data-won={t`You win!`} data-lost={t`CPU wins. Again?`}>
+  <div class="court">
+    <canvas aria-label={t`Pong court`} role="img" tabindex="-1" data-court></canvas>
+    <div class="cover" data-cover>
+      <p class="msg" role="status" data-msg></p>
+      <button class="toy-btn p-btn" type="button" data-start>
+        <Icon name="tbf:player-play" />
+        {t`Play`}
+      </button>
+      <small>{t`Move over the court, or use the arrow keys. First to 5.`}</small>
+    </div>
+  </div>
+</div>
+
+<style>
+  .pong {
+    display: grid;
+    flex: 1;
+  }
+  .court {
+    position: relative;
+    min-height: 18rem;
+    height: 100%;
+    background: var(--navy);
+    box-shadow: 5px 5px 0 rgb(10 13 51 / 0.35);
+  }
+  canvas {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    outline: none;
+  }
+  .playing canvas {
+    touch-action: none;
+    cursor: none;
+  }
+  .cover {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-content: center;
+    justify-items: center;
+    gap: 0.75rem;
+    padding: 1rem;
+    background: rgb(10 13 51 / 0.55);
+    color: var(--ice);
+    text-align: center;
+  }
+  .playing .cover {
+    display: none;
+  }
+  .msg {
+    min-height: 1.2em;
+    margin: 0;
+    font-weight: 900;
+    font-size: 1.5rem;
+    text-transform: uppercase;
+    font-stretch: 70%;
+  }
+  .p-btn {
+    background: var(--yellow);
+    color: var(--navy);
+  }
+  .cover small {
+    max-width: 22rem;
+    font-weight: 700;
+    font-size: 0.875rem;
+  }
+</style>
+
+<script>
+  import { audio, blip } from "~/scripts/life-audio";
+
+  const COL = { navy: "#0a0d33", ice: "#eef0ff", yellow: "#ffd23f", pink: "#ff4fb8", lime: "#c9f24a" };
+  for (const root of document.querySelectorAll<HTMLElement>("[data-pong]")) {
+    const canvas = root.querySelector<HTMLCanvasElement>("[data-court]")!;
+    const cover = root.querySelector<HTMLElement>("[data-cover]")!;
+    const msg = root.querySelector<HTMLElement>("[data-msg]")!;
+    const g = canvas.getContext("2d")!;
+    const text = root.dataset;
+    let W = 0;
+    let H = 0;
+    let raf = 0;
+    let playing = false;
+    const keys = { up: false, down: false };
+    const s = { you: 0, cpu: 0, py: 0.5, cy: 0.5, bx: 0.5, by: 0.5, vx: 0, vy: 0 };
+    const PAD = 0.2;
+
+    const size = () => {
+      const ratio = Math.min(window.devicePixelRatio || 1, 2);
+      W = canvas.clientWidth;
+      H = canvas.clientHeight;
+      canvas.width = Math.round(W * ratio);
+      canvas.height = Math.round(H * ratio);
+      g.setTransform(ratio, 0, 0, ratio, 0, 0);
+      draw();
+    };
+    const serve = (dir: number) => {
+      s.bx = 0.5;
+      s.by = 0.5;
+      const a = (Math.random() - 0.5) * 0.9;
+      s.vx = dir * 0.55 * Math.cos(a);
+      s.vy = 0.55 * Math.sin(a);
+    };
+    const draw = () => {
+      g.fillStyle = COL.navy;
+      g.fillRect(0, 0, W, H);
+      // The net.
+      g.fillStyle = "rgba(238,240,255,.25)";
+      for (let y = 6; y < H; y += 18) g.fillRect(W / 2 - 2, y, 4, 10);
+      // The score.
+      g.font = `900 ${Math.round(H * 0.16)}px Anybody, system-ui, sans-serif`;
+      g.textAlign = "center";
+      g.fillStyle = "rgba(238,240,255,.35)";
+      g.fillText(String(s.you), W * 0.32, H * 0.2);
+      g.fillText(String(s.cpu), W * 0.68, H * 0.2);
+      g.font = `800 ${Math.max(10, Math.round(H * 0.045))}px Anybody, system-ui, sans-serif`;
+      g.fillText((text.you ?? "").toUpperCase(), W * 0.32, H * 0.27);
+      g.fillText((text.cpu ?? "").toUpperCase(), W * 0.68, H * 0.27);
+      const ph = H * PAD;
+      const pw = Math.max(8, W * 0.022);
+      g.fillStyle = COL.yellow;
+      g.fillRect(W * 0.04, s.py * H - ph / 2, pw, ph);
+      g.fillStyle = COL.pink;
+      g.fillRect(W * 0.96 - pw, s.cy * H - ph / 2, pw, ph);
+      const r = Math.max(6, Math.min(W, H) * 0.028);
+      g.fillStyle = COL.lime;
+      g.fillRect(s.bx * W - r, s.by * H - r, r * 2, r * 2);
+    };
+    let last = 0;
+    const step = (now: number) => {
+      raf = 0;
+      const dt = Math.min(0.033, (now - last) / 1000 || 0.016);
+      last = now;
+      if (keys.up) s.py -= dt * 1.4;
+      if (keys.down) s.py += dt * 1.4;
+      s.py = Math.max(PAD / 2, Math.min(1 - PAD / 2, s.py));
+      // The computer follows the ball, but not perfectly.
+      const aim = s.vx > 0 ? s.by : 0.5;
+      s.cy += Math.max(-dt * 0.75, Math.min(dt * 0.75, aim - s.cy));
+      s.bx += s.vx * dt;
+      s.by += s.vy * dt * (W / H);
+      if (s.by < 0.02 || s.by > 0.98) {
+        s.vy *= -1;
+        s.by = Math.max(0.02, Math.min(0.98, s.by));
+      }
+      const hit = (y: number) => Math.abs(s.by - y) < PAD / 2 + 0.02;
+      const ac = audio();
+      if (s.vx < 0 && s.bx < 0.07 && s.bx > 0.03 && hit(s.py)) {
+        s.vx = Math.abs(s.vx) * 1.06;
+        s.vy += (s.by - s.py) * 2.2;
+        if (ac) blip(ac, 520);
+      }
+      if (s.vx > 0 && s.bx > 0.93 && s.bx < 0.97 && hit(s.cy)) {
+        s.vx = -Math.abs(s.vx) * 1.06;
+        s.vy += (s.by - s.cy) * 2.2;
+        if (ac) blip(ac, 390);
+      }
+      if (s.bx < -0.03 || s.bx > 1.03) {
+        if (s.bx < 0) s.cpu += 1;
+        else s.you += 1;
+        if (ac) blip(ac, s.bx < 0 ? 180 : 990);
+        if (s.you >= 5 || s.cpu >= 5) return end(s.you >= 5);
+        serve(s.bx < 0 ? 1 : -1);
+      }
+      draw();
+      if (playing) raf = requestAnimationFrame(step);
+    };
+    const end = (won: boolean) => {
+      playing = false;
+      root.classList.remove("playing");
+      msg.textContent = (won ? text.won : text.lost) ?? "";
+      draw();
+    };
+    const start = () => {
+      s.you = 0;
+      s.cpu = 0;
+      s.py = 0.5;
+      s.cy = 0.5;
+      serve(Math.random() < 0.5 ? -1 : 1);
+      playing = true;
+      root.classList.add("playing");
+      canvas.focus({ preventScroll: true });
+      last = performance.now();
+      if (!raf) raf = requestAnimationFrame(step);
+    };
+    root.querySelector("[data-start]")!.addEventListener("click", start);
+    canvas.addEventListener("pointermove", (event) => {
+      if (!playing) return;
+      const box = canvas.getBoundingClientRect();
+      s.py = (event.clientY - box.top) / box.height;
+    });
+    canvas.addEventListener("keydown", (event) => {
+      if (event.key === "ArrowUp") keys.up = true;
+      else if (event.key === "ArrowDown") keys.down = true;
+      else if (event.key === "Escape") return end(false);
+      else return;
+      event.preventDefault();
+    });
+    canvas.addEventListener("keyup", (event) => {
+      if (event.key === "ArrowUp") keys.up = false;
+      if (event.key === "ArrowDown") keys.down = false;
+    });
+    // Off screen, the game pauses where it is.
+    new IntersectionObserver(([entry]) => {
+      if (!entry?.isIntersecting && playing) {
+        playing = false;
+        root.classList.remove("playing");
+        msg.textContent = "";
+      }
+    }).observe(root);
+    new ResizeObserver(size).observe(canvas);
+    cover.addEventListener("pointerdown", (event) => event.stopPropagation());
+  }
+</script>

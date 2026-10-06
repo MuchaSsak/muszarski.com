@@ -84,6 +84,35 @@ test("how I work: a stop shows its line and its practices", async ({ page }) => 
   await expect(page.locator("#stop-3")).toContainText("RevenueCat");
 });
 
+test("AI story: the chip pauses it, and a step plays from that step", async ({ page }) => {
+  await page.goto("/en/#ai");
+  const story = page.locator("#ai [data-story]");
+  await page.locator("#ai").getByRole("button", { name: "Pause", exact: true }).click();
+  await expect(story).toHaveClass(/paused/);
+  await expect(page.locator("#ai").getByRole("button", { name: "Play", exact: true })).toBeVisible();
+  await page.locator('#ai [data-beat="4"]').click();
+  await expect(story).not.toHaveClass(/paused/);
+  await expect(page.locator('#ai [data-beat="4"]')).toHaveAttribute("aria-pressed", "true");
+  await expect(page.locator("#beat-4")).toBeVisible();
+});
+
+test("my life: the toys answer (a rep, the 1% slider, the sound switch, a game of Pong)", async ({ page }) => {
+  await page.goto("/en/my-life/");
+  const reps = page.locator("[data-reps]");
+  await reps.getByRole("button", { name: "Pull-up" }).click();
+  await expect(reps.locator("[data-n]")).toHaveText("1");
+  const range = page.locator("[data-better] input[type=range]");
+  await range.fill("100");
+  await expect(page.locator("[data-better] [data-up]")).toHaveText("×2.70");
+  const sound = page.getByRole("button", { name: /Sound/ });
+  await sound.click();
+  await expect(sound).toHaveAttribute("aria-pressed", "false");
+  await sound.click();
+  await expect(sound).toHaveAttribute("aria-pressed", "true");
+  await page.locator("[data-pong]").getByRole("button", { name: "Play" }).click();
+  await expect(page.locator("[data-pong]")).toHaveClass(/playing/);
+});
+
 test("credentials: a card opens on click and says where to verify", async ({ page }) => {
   await page.goto("/en/#credentials");
   const card = page.getByRole("button", { name: /Hackathons/ });

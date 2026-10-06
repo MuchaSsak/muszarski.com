@@ -1,0 +1,297 @@
+---
+/**
+ * Calisthenics: train [user 2026-10-06: "a tiny bit of gamification and different kinds of exercises and level system
+ * ... not too much or overwhelming ui, just clean"]. Pick an exercise; each press is a rep (the card lifts, the ring
+ * fills, a blip climbs); a full set is thrown in confetti. Reps earn XP (harder moves more), XP earns levels, both kept
+ * in this browser only.
+ */
+import { t } from "lingui-for-astro/macro";
+
+import Icon from "~/components/ui/Icon.astro";
+
+const MOVES = [
+  { id: "pull", name: t`Pull-ups`, one: t`Pull-up`, set: 8, xp: 3 },
+  { id: "dip", name: t`Dips`, one: t`Dip`, set: 12, xp: 2 },
+  { id: "push", name: t`Push-ups`, one: t`Push-up`, set: 15, xp: 1 },
+  { id: "squat", name: t`Squats`, one: t`Squat`, set: 20, xp: 1 },
+];
+const LEVELS = [t`Rookie`, t`Regular`, t`Strong`, t`Beast`, t`Legend`];
+const first = MOVES[0]!;
+---
+
+<div class="reps" data-reps data-moves={JSON.stringify(MOVES)} data-levels={JSON.stringify(LEVELS)} data-done-label={t`Set done!`} data-up-label={t`Level up!`}>
+  <div class="r-moves" role="group" aria-label={t`Exercise`}>
+    {
+      MOVES.map((move, i) => (
+        <button class="r-move" type="button" aria-pressed={i === 0 ? "true" : "false"} data-move={i}>
+          {move.name}
+        </button>
+      ))
+    }
+  </div>
+  <div class="r-dial" aria-hidden="true">
+    <svg class="r-svg" viewBox="0 0 40 40">
+      <circle class="r-bg" cx="20" cy="20" r="16"></circle>
+      <circle class="r-fg" cx="20" cy="20" r="16" pathLength="100" transform="rotate(-90 20 20)"></circle>
+    </svg>
+    <span class="r-n tabular" data-n>0</span>
+    <small class="tabular" data-of>/ {first.set}</small>
+  </div>
+  <button class="toy-btn r-btn" type="button" data-rep>
+    <Icon name="tb:barbell" />
+    <span data-one>{first.one}</span>
+  </button>
+  <div class="r-lvl">
+    <span class="r-badge tabular" data-lvl>1</span>
+    <span class="r-name" data-name>{LEVELS[0]}</span>
+    <span class="r-xp tabular"><span data-xp>0</span> XP</span>
+    <span class="r-bar" aria-hidden="true"><i data-bar></i></span>
+  </div>
+  <p class="r-done" role="status" data-done></p>
+</div>
+
+<style>
+  .reps {
+    display: grid;
+    justify-items: center;
+    gap: 0.75rem;
+  }
+  .r-moves {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.25rem;
+  }
+  .r-move {
+    min-height: 2rem;
+    padding: 0.25rem 0.5rem;
+    border: 2px solid var(--navy);
+    background: transparent;
+    color: var(--navy);
+    font: inherit;
+    font-weight: 800;
+    font-size: 0.6875rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    cursor: pointer;
+  }
+  .r-move[aria-pressed="true"] {
+    background: var(--navy);
+    color: var(--yellow);
+  }
+  .r-move:focus-visible {
+    outline: 3px solid var(--navy);
+    outline-offset: 2px;
+  }
+  .r-dial {
+    position: relative;
+    display: grid;
+    place-items: center;
+    width: min(100%, 8.5rem);
+    aspect-ratio: 1;
+  }
+  .r-svg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+  .r-bg,
+  .r-fg {
+    fill: none;
+    stroke-width: 5;
+  }
+  .r-bg {
+    stroke: rgb(10 13 51 / 0.16);
+  }
+  .r-fg {
+    stroke: var(--navy);
+    stroke-linecap: round;
+    stroke-dasharray: 100;
+    stroke-dashoffset: calc(100 - var(--p, 0) * 100);
+    transition: stroke-dashoffset 0.3s var(--ease-pop);
+  }
+  .r-n {
+    font-weight: 900;
+    font-size: 3rem;
+    line-height: 1;
+    font-stretch: 70%;
+  }
+  .r-dial small {
+    position: absolute;
+    bottom: 22%;
+    font-weight: 800;
+    font-size: 0.75rem;
+    letter-spacing: 0.06em;
+  }
+  /* The level: a badge, its name, the XP and a thin bar to the next level. */
+  .r-lvl {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: 0.25rem 0.5rem;
+    width: min(100%, 15rem);
+    font-weight: 800;
+    font-size: 0.75rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+  .r-badge {
+    display: grid;
+    place-items: center;
+    width: 1.75rem;
+    height: 1.75rem;
+    border-radius: 50%;
+    background: var(--navy);
+    color: var(--yellow);
+    font-size: 0.875rem;
+  }
+  .r-badge.pop {
+    animation: rp-pop 0.5s var(--ease-pop);
+  }
+  @keyframes rp-pop {
+    40% {
+      transform: scale(1.5) rotate(-12deg);
+    }
+  }
+  .r-bar {
+    grid-column: 1 / -1;
+    height: 0.375rem;
+    background: rgb(10 13 51 / 0.16);
+  }
+  .r-bar i {
+    display: block;
+    width: calc(var(--x, 0) * 100%);
+    height: 100%;
+    background: var(--navy);
+    transition: width 0.35s var(--ease-out);
+  }
+  .r-done {
+    min-height: 1.25em;
+    margin: 0;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  /* A rep: the whole card goes up and comes back down. */
+  :global(.tc.lift) {
+    animation: rp-lift 0.42s var(--ease-pop);
+  }
+  @keyframes rp-lift {
+    45% {
+      translate: 0 -14px;
+    }
+  }
+  .r-n.roll {
+    animation: rp-roll 0.25s var(--ease-pop);
+  }
+  @keyframes rp-roll {
+    from {
+      transform: translateY(40%);
+      opacity: 0;
+    }
+  }
+  :global(.still) :global(.tc.lift),
+  :global(.still) .r-n.roll,
+  :global(.still) .r-badge.pop {
+    animation: none;
+  }
+</style>
+
+<script>
+  import { audio, blip } from "~/scripts/life-audio";
+  import { confetti } from "~/scripts/life-confetti";
+  import { motionStill } from "~/scripts/motion";
+
+  /** XP needed for each level (level 1 starts at 0). */
+  const STEPS = [0, 40, 110, 220, 400];
+  for (const root of document.querySelectorAll<HTMLElement>("[data-reps]")) {
+    const card = root.closest<HTMLElement>(".tc")!;
+    const moves: { id: string; one: string; set: number; xp: number }[] = JSON.parse(root.dataset.moves ?? "[]");
+    const levels: string[] = JSON.parse(root.dataset.levels ?? "[]");
+    const $ = (sel: string) => root.querySelector<HTMLElement>(sel)!;
+    const n = $("[data-n]");
+    const of = $("[data-of]");
+    const one = $("[data-one]");
+    const done = $("[data-done]");
+    const badge = $("[data-lvl]");
+    const name = $("[data-name]");
+    const xpOut = $("[data-xp]");
+    const bar = $("[data-bar]");
+    const button = root.querySelector<HTMLButtonElement>("[data-rep]")!;
+    const chips = [...root.querySelectorAll<HTMLButtonElement>("[data-move]")];
+    let move = 0;
+    let reps = 0;
+    let resting = false;
+    let xp = 0;
+    try {
+      xp = Number(localStorage.getItem("life-xp")) || 0;
+    } catch {
+      /* storage blocked: start at 0 */
+    }
+    const levelOf = (value: number) => STEPS.filter((step) => value >= step).length;
+    const restart = (el: HTMLElement, cls: string) => {
+      if (motionStill()) return;
+      el.classList.remove(cls);
+      void el.offsetWidth;
+      el.classList.add(cls);
+    };
+    const showLevel = () => {
+      const level = levelOf(xp);
+      const from = STEPS[level - 1] ?? 0;
+      const to = STEPS[level];
+      badge.textContent = String(level);
+      name.textContent = levels[level - 1] ?? "";
+      xpOut.textContent = String(xp);
+      bar.style.setProperty("--x", to ? String((xp - from) / (to - from)) : "1");
+    };
+    const showSet = () => {
+      n.textContent = String(reps);
+      of.textContent = `/ ${moves[move]!.set}`;
+      one.textContent = moves[move]!.one;
+      root.style.setProperty("--p", String(reps / moves[move]!.set));
+    };
+    showLevel();
+    chips.forEach((chip, i) =>
+      chip.addEventListener("click", () => {
+        move = i;
+        reps = 0;
+        chips.forEach((c, j) => c.setAttribute("aria-pressed", String(j === i)));
+        showSet();
+      }),
+    );
+    button.addEventListener("click", () => {
+      if (resting) return;
+      const before = levelOf(xp);
+      reps += 1;
+      xp += moves[move]!.xp;
+      showSet();
+      restart(card, "lift");
+      restart(n, "roll");
+      const ac = audio();
+      if (ac) blip(ac, 330 + reps * 40);
+      const set = reps >= moves[move]!.set;
+      if (set) xp += 10;
+      try {
+        localStorage.setItem("life-xp", String(xp));
+      } catch {
+        /* storage blocked: the XP lasts for this page */
+      }
+      showLevel();
+      const up = levelOf(xp) > before;
+      if (up) restart(badge, "pop");
+      if (!set && !up) return;
+      done.textContent = [set ? root.dataset.doneLabel : "", up ? root.dataset.upLabel : ""].filter(Boolean).join(" ");
+      const box = button.getBoundingClientRect();
+      confetti(up ? 140 : 80, { x: box.left + box.width / 2, y: box.top });
+      if (!set) return void window.setTimeout(() => (done.textContent = ""), 1800);
+      resting = true;
+      window.setTimeout(() => {
+        reps = 0;
+        resting = false;
+        done.textContent = "";
+        showSet();
+      }, 2000);
+    });
+  }
+</script>
