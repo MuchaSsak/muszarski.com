@@ -1,11 +1,13 @@
 ---
 /**
- * AI workflow (structure.md § Home 4, requirements.md F07, brand.md pillar 3) as an org chart [user 2026-10-06: "I run
- * AI like a team"]: I lead, Claude Code builds, and a crew of ID badges hangs under it on lanyards: the wiki (memory),
- * hooks (rules), subagents (research), MCP servers (tools), skills (playbooks) and the quality gates. Each badge says
- * what it does with examples, never a count [user 2026-10-06: "dont give precise numbers"], and wears enamel pins with
- * the tools' marks. PstrykWeb is not evidence here (public info only). One CTA: the "how this site was built" post.
- * No JS: the wires flow and the badges swing in CSS, and pause like every loop.
+ * AI workflow (structure.md § Home 4, requirements.md F07, brand.md pillar 3): how one change gets made, told as a
+ * story in seven beats [user 2026-10-06: "explainer animations ... how that workflow looks like in practice step by
+ * step", the crew as Claude Code agents and me leading them; less text than the badges]. The team sits on top (me and
+ * the agents, each with its job); each beat lights up who works, plays a drawn scene and says one line, with the real
+ * tools as marks. Never counts [user 2026-10-06]. PstrykWeb is not evidence here (public info only).
+ * Every beat's text is in the HTML (crawlable, readable without JS, then all seven read as a list); the script shows
+ * one beat at a time and advances while the section is visible, like a story (pauses on tap, the pause button and
+ * reduced motion). One CTA: the "how this site was built" post.
  */
 import { t } from "lingui-for-astro/macro";
 
@@ -17,68 +19,109 @@ import { typo } from "~/lib/typography";
 
 const locale = Astro.locals.locale;
 
-/** An enamel pin on a badge: a tool's mark (Simple Icons, nominative use) or a two-letter monogram. */
-type Pin = { icon: IconName } | { mono: string };
-interface Member {
-  icon: IconName;
-  role: string;
+type Actor = "me" | "lead" | "memory" | "research" | "tools" | "rules" | "checks";
+/** The team: me, the lead agent and the agents around it, each with its job. */
+const TEAM: { id: Actor; name: string; job: string; icon: IconName }[] = [
+  { id: "me", name: t`Me`, job: t`lead`, icon: "tb:user" },
+  { id: "lead", name: "Claude Code", job: t`builds`, icon: "tb:code" },
+  { id: "memory", name: t`Wiki`, job: t`remembers`, icon: "tb:notebook" },
+  { id: "research", name: t`Subagents`, job: t`research`, icon: "tb:users-group" },
+  { id: "tools", name: t`MCP`, job: t`bring data`, icon: "tb:plug" },
+  { id: "rules", name: t`Hooks`, job: t`guard`, icon: "tb:shield-lock" },
+  { id: "checks", name: t`Skills + gates`, job: t`check`, icon: "tb:checklist" },
+];
+
+type Scene = "brief" | "wiki" | "research" | "tools" | "build" | "checks" | "review";
+interface Beat {
+  scene: Scene;
   name: string;
   line: string;
-  examples: string[];
-  pins: Pin[];
+  color: string;
+  actors: Actor[];
+  /** The real tools behind the beat: a mark where one exists, a plain chip where not. */
+  marks: { label: string; icon?: IconName }[];
 }
-const CREW: Member[] = [
+const BEATS: Beat[] = [
   {
-    icon: "tb:notebook",
-    role: t`Memory`,
-    name: t`Project wiki`,
-    line: t`A Karpathy-style LLM wiki the agent reads first and updates after.`,
-    examples: [t`goals`, t`design`, t`decisions`, t`lessons`],
-    pins: [{ icon: "si:markdown" }],
+    scene: "brief",
+    name: t`Brief`,
+    line: t`I brief the lead agent: the goal, the limits, what done looks like.`,
+    color: "var(--yellow)",
+    actors: ["me", "lead"],
+    marks: [{ label: t`goal` }, { label: t`limits` }, { label: t`definition of done` }],
   },
   {
-    icon: "tb:plug",
-    role: t`Rules`,
-    name: t`Hooks`,
-    line: t`Guardrails and scripts that run on their own.`,
-    examples: [t`safety`, t`rules each session`, t`finish check`],
-    pins: [{ icon: "tb:shield-lock" }, { icon: "tb:terminal-2" }],
+    scene: "wiki",
+    name: t`Memory`,
+    line: t`It reads the project wiki first, so no session starts from zero.`,
+    color: "var(--lime)",
+    actors: ["lead", "memory"],
+    marks: [{ label: t`Karpathy-style LLM wiki`, icon: "si:markdown" }, { label: t`decisions` }, { label: t`lessons` }],
   },
   {
-    icon: "tb:users-group",
-    role: t`Research`,
-    name: t`Subagents`,
-    line: t`Research in parallel. I get conclusions, not file dumps.`,
-    examples: [t`docs`, t`references`, t`audits`],
-    pins: [{ icon: "si:claude" }],
+    scene: "research",
+    name: t`Research`,
+    line: t`Subagents research in parallel and bring back conclusions.`,
+    color: "var(--pink)",
+    actors: ["lead", "research"],
+    marks: [{ label: t`subagents`, icon: "si:claude" }, { label: t`docs` }, { label: t`references` }, { label: t`audits` }],
   },
   {
-    icon: "tb:puzzle",
-    role: t`Tools`,
-    name: t`MCP servers`,
-    line: t`Real data in place of guesses.`,
-    examples: ["Mobbin", t`component registry`, "Playwright"],
-    pins: [{ icon: "si:modelcontextprotocol" }, { mono: "Pw" }],
+    scene: "tools",
+    name: t`Tools`,
+    line: t`MCP servers bring real data: real app screens, components, a browser.`,
+    color: "var(--orange)",
+    actors: ["lead", "tools"],
+    marks: [
+      { label: "MCP", icon: "si:modelcontextprotocol" },
+      { label: "Mobbin" },
+      { label: t`shadcn registry`, icon: "si:shadcnui" },
+      { label: "Playwright", icon: "mk:playwright" },
+    ],
   },
   {
-    icon: "tb:stack-2",
-    role: t`Playbooks`,
-    name: t`Skills`,
-    line: t`Routines I start with one command.`,
-    examples: [t`screenshot QA`, "Lighthouse", t`design research`, t`commits`],
-    pins: [{ icon: "si:lighthouse" }],
+    scene: "build",
+    name: t`Build`,
+    line: t`It builds inside the rules. Hooks stop the risky moves.`,
+    color: "var(--ice)",
+    actors: ["lead", "rules"],
+    marks: [
+      { label: t`safety hooks`, icon: "tb:shield-lock" },
+      { label: t`scripts`, icon: "tb:terminal-2" },
+    ],
   },
   {
-    icon: "tb:checklist",
-    role: t`Quality`,
-    name: t`Gates`,
-    line: t`Every change runs them. Nothing ships red.`,
-    examples: ["TypeScript", "ESLint", t`tests`, "axe", "Lighthouse"],
-    pins: [{ icon: "si:typescript" }, { icon: "si:eslint" }, { icon: "si:vitest" }],
+    scene: "checks",
+    name: t`Check`,
+    line: t`Skills and gates check every change: types, tests, accessibility, speed.`,
+    color: "var(--yellow)",
+    actors: ["checks"],
+    marks: [
+      { label: "TypeScript", icon: "si:typescript" },
+      { label: "ESLint", icon: "si:eslint" },
+      { label: "Vitest", icon: "si:vitest" },
+      { label: "axe", icon: "tb:accessible" },
+      { label: "Lighthouse", icon: "si:lighthouse" },
+    ],
+  },
+  {
+    scene: "review",
+    name: t`Review`,
+    line: t`I review and decide. What we learned goes back into the wiki.`,
+    color: "var(--lime)",
+    actors: ["me", "memory"],
+    marks: [
+      { label: t`code review`, icon: "tb:git-pull-request" },
+      { label: t`lessons`, icon: "tb:bulb" },
+    ],
   },
 ];
-const TILT = [-2, 1.5, -1, 2, -1.5, 1];
-const PIN_TILT = [-12, 9, -6];
+const SOURCES: IconName[] = ["tb:book-2", "tb:world", "tb:list-check"];
+const TOOLS: IconName[] = ["tb:device-mobile", "si:shadcnui", "mk:playwright"];
+const CHECKS: IconName[] = ["si:typescript", "si:eslint", "si:vitest", "mk:playwright", "tb:accessible", "si:lighthouse"];
+const pad = (n: number) => String(n).padStart(2, "0");
+const blocked = t`blocked`;
+const approved = t`approved`;
 ---
 
 <section class="sec field-deep ai" id="ai" aria-labelledby="t-ai">
@@ -89,57 +132,226 @@ const PIN_TILT = [-12, 9, -6];
   </div>
   <Fit as="h2" id="t-ai" lines={[t`I run AI like a team.`]} />
   <p class="lede rv">
-    {typo(locale, t`I lead, Claude Code builds. Around it works a crew of memory, rules, tools and checks, and I review every change before it ships.`)}
+    {typo(locale, t`I lead. Claude Code agents do the work, each with its own job, and nothing ships before I review it.`)}
   </p>
 
-  <div class="org">
-    <div class="heads">
-      <div class="idb me rv" style="--r:-2deg">
-        <span class="slot" aria-hidden="true"></span>
-        <span class="role">{t`Lead`}</span>
-        <Icon name="tb:user" class="idb-i" />
-        <span class="nm">{t`Me`}</span>
-        <span class="duty">{t`I brief, review every change and decide.`}</span>
-      </div>
-      <span class="wire w-x" aria-hidden="true"></span>
-      <div class="idb agent rv" style="--d:1;--r:1.5deg">
-        <span class="slot" aria-hidden="true"></span>
-        <span class="role">{t`Builder`}</span>
-        <Icon name="si:claude" class="idb-i spark" />
-        <span class="nm">Claude Code</span>
-        <span class="duty">{t`Writes the code, inside the rules of the crew below.`}</span>
-      </div>
-    </div>
-    <span class="wire w-y" aria-hidden="true"></span>
-    <ul class="crew" role="list" aria-label={t`The crew`}>
-      {
-        CREW.map((member, i) => (
-          <li class="idb rv" style={`--d:${i + 2};--r:${TILT[i]}deg`}>
-            <span class="slot" aria-hidden="true" />
-            <span class="pins" aria-hidden="true">
-              {member.pins.map((pin, k) => (
-                <span class="pin" style={`--k:${k};--pr:${PIN_TILT[(i + k) % PIN_TILT.length]}deg`}>
-                  {"icon" in pin ? <Icon name={pin.icon} /> : <b>{pin.mono}</b>}
-                </span>
-              ))}
-            </span>
-            <span class="role">{member.role}</span>
-            <Icon name={member.icon} class="idb-i" />
-            <span class="nm">{member.name}</span>
-            <span class="duty">{typo(locale, member.line)}</span>
-            <ul class="ex" role="list">
-              {member.examples.map((example) => (
-                <li>{example}</li>
-              ))}
-            </ul>
-          </li>
-        ))
-      }
+  <div class="story rv" data-story data-on={BEATS[0]!.actors.join(" ")}>
+    <ul class="team" role="list" aria-label={t`The team`}>
+      {TEAM.map((member) => (
+        <li class={`tm tm-${member.id}`}>
+          <span class:list={["av", { "av-me": member.id === "me" }]} aria-hidden="true">
+            <Icon name={member.id === "me" ? "tb:user" : "si:claude"} />
+            {member.id !== "me" && (
+              <i>
+                <Icon name={member.icon} />
+              </i>
+            )}
+          </span>
+          <b>{member.name}</b>
+          <small>{member.job}</small>
+        </li>
+      ))}
     </ul>
+
+    <ol class="beats" aria-label={t`One change, step by step`}>
+      {BEATS.map((beat, i) => (
+        <li>
+          <button class="beat" type="button" aria-pressed={i === 0 ? "true" : "false"} aria-controls={`beat-${i}`} data-beat={i}>
+            <span class="prog" aria-hidden="true">
+              <i />
+            </span>
+            <span class="bn tabular">{pad(i + 1)}</span>
+            <span class="bl">{beat.name}</span>
+          </button>
+        </li>
+      ))}
+    </ol>
+
+    <div class="shows">
+      {BEATS.map((beat, i) => (
+        <div class="bt" id={`beat-${i}`} data-bt={i} data-actors={beat.actors.join(" ")}>
+          <div class={`sc sc-${beat.scene}`} style={`--c:${beat.color}`} aria-hidden="true">
+            {beat.scene === "brief" && (
+              <div class="row">
+                <span class="av av-me">
+                  <Icon name="tb:user" />
+                </span>
+                <span class="paper">
+                  <Icon name="tb:target" />
+                  <i style="--k:0" />
+                  <i style="--k:1" />
+                  <i style="--k:2" />
+                </span>
+                <span class="av nod">
+                  <Icon name="si:claude" />
+                </span>
+              </div>
+            )}
+            {beat.scene === "wiki" && (
+              <div class="row">
+                <span class="av">
+                  <Icon name="si:claude" />
+                </span>
+                <span class="beam" />
+                <span class="pages">
+                  <i style="--k:2" />
+                  <i style="--k:1" />
+                  <span class="page">
+                    <Icon name="si:markdown" />
+                    <i class="hl" />
+                    <i class="ln2" />
+                    <i class="add" />
+                  </span>
+                </span>
+              </div>
+            )}
+            {beat.scene === "research" && (
+              <div class="row">
+                <span class="av">
+                  <Icon name="si:claude" />
+                </span>
+                <span class="fan">
+                  {SOURCES.map((icon, k) => (
+                    <span class="lane" style={`--k:${k}`}>
+                      <span class="av">
+                        <Icon name="si:claude" />
+                      </span>
+                      <span class="src">
+                        <Icon name={icon} />
+                      </span>
+                    </span>
+                  ))}
+                </span>
+                <span class="sum">
+                  {[0, 1, 2].map(() => (
+                    <i>
+                      <Icon name="tb:check" />
+                    </i>
+                  ))}
+                </span>
+              </div>
+            )}
+            {beat.scene === "tools" && (
+              <div class="plug">
+                <span class="tools">
+                  {TOOLS.map((icon, k) => (
+                    <span class="tool" style={`--k:${k}`}>
+                      <Icon name={icon} />
+                      <i class="cable">
+                        <b />
+                      </i>
+                    </span>
+                  ))}
+                </span>
+                <span class="hub">
+                  <span class="av">
+                    <Icon name="si:claude" />
+                  </span>
+                  <span class="mcp">
+                    <Icon name="si:modelcontextprotocol" />
+                  </span>
+                </span>
+              </div>
+            )}
+            {beat.scene === "build" && (
+              <div class="row">
+                <span class="av">
+                  <Icon name="si:claude" />
+                </span>
+                <span class="term">
+                  <span class="tl" style="--k:0">
+                    write Hero.astro
+                    <b>
+                      <Icon name="tb:check" />
+                    </b>
+                  </span>
+                  <span class="tl" style="--k:1">
+                    write hero.css
+                    <b>
+                      <Icon name="tb:check" />
+                    </b>
+                  </span>
+                  <span class="tl bad" style="--k:2">
+                    $ git push --force
+                  </span>
+                  <span class="tl" style="--k:3">
+                    format + lint
+                    <b>
+                      <Icon name="tb:check" />
+                    </b>
+                  </span>
+                  <span class="stamp no">
+                    <Icon name="tb:shield-lock" />
+                    {blocked}
+                  </span>
+                </span>
+              </div>
+            )}
+            {beat.scene === "checks" && (
+              <div class="row">
+                <span class="cam">
+                  <Icon name="tb:camera" />
+                </span>
+                <span class="gates">
+                  {CHECKS.map((icon, k) => (
+                    <span class="gate" style={`--k:${k}`}>
+                      <Icon name={icon} />
+                      <i>
+                        <Icon name="tb:check" />
+                      </i>
+                    </span>
+                  ))}
+                  <span class="snap" />
+                </span>
+              </div>
+            )}
+            {beat.scene === "review" && (
+              <div class="row">
+                <span class="av av-me">
+                  <Icon name="tb:user" />
+                </span>
+                <span class="pr">
+                  <Icon name="tb:git-pull-request" />
+                  <i class="add" />
+                  <i class="add" />
+                  <i class="del" />
+                  <i class="add" />
+                  <span class="stamp yes">{approved}</span>
+                </span>
+                <span class="wiki">
+                  <Icon name="si:markdown" />
+                  <span class="lesson">
+                    <Icon name="tb:bulb" />
+                  </span>
+                </span>
+              </div>
+            )}
+          </div>
+          <p class="cap">
+            <span class="cap-n tabular">{pad(i + 1)}</span>
+            <span>{typo(locale, beat.line)}</span>
+          </p>
+          <ul class="marks" role="list">
+            {beat.marks.map((mark) => (
+              <li>
+                {mark.icon && <Icon name={mark.icon} />}
+                {mark.label}
+              </li>
+            ))}
+          </ul>
+        </div>
+      ))}
+    </div>
   </div>
 
   <div class="go">
-    <a class="btn btn-inv" href={thisSitePath(locale)} data-umami-event="cta" data-umami-event-id="this-site" data-umami-event-source="ai">
+    <a
+      class="btn btn-inv"
+      href={thisSitePath(locale)}
+      data-umami-event="cta"
+      data-umami-event-id="this-site"
+      data-umami-event-source="ai"
+    >
       {t`How this site was built`}
       <Icon name="tb:arrow-right" class="nudge" />
     </a>
@@ -158,291 +370,883 @@ const PIN_TILT = [-12, 9, -6];
     line-height: 1.4;
   }
 
-  /* The org chart: two heads in a row, a wire down, a bus over the crew with a drop to each badge. */
-  .org {
-    --wire: color-mix(in srgb, currentColor 70%, transparent);
-    position: relative;
-    margin-top: clamp(1.75rem, 3.4vw, 3rem);
-  }
-  .heads {
+  /* The story: the team on top, the beats as story bars, one scene at a time. */
+  .story {
+    --beat: 4.6s;
     display: grid;
-    grid-template-columns: minmax(0, 17rem) 4.5rem minmax(0, 17rem);
-    justify-content: center;
-    align-items: center;
-  }
-  .wire {
-    display: block;
-    background: repeating-linear-gradient(90deg, var(--wire) 0 10px, transparent 10px 18px);
-    animation: flow 1s linear infinite;
-  }
-  .w-x {
-    height: 3px;
-  }
-  .w-y {
-    width: 3px;
-    height: 2.25rem;
-    margin: 0 auto;
-    margin-left: calc(50% + (17rem + 4.5rem) / 2 - 1.5px);
-    background: repeating-linear-gradient(180deg, var(--wire) 0 10px, transparent 10px 18px);
-    animation-name: flow-y;
-  }
-  @keyframes flow {
-    to {
-      background-position: 18px 0;
-    }
-  }
-  @keyframes flow-y {
-    to {
-      background-position: 0 18px;
-    }
-  }
-  .crew {
-    position: relative;
-    display: grid;
-    grid-template-columns: repeat(6, minmax(0, 1fr));
-    gap: clamp(0.75rem, 1.4vw, 1.25rem);
-    margin: 0;
-    padding: 2.25rem 0 0;
-    list-style: none;
-  }
-  /* The bus over the crew and a drop to each badge. */
-  .crew::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: calc(100% / 12);
-    right: calc(100% / 12);
-    height: 3px;
-    background: repeating-linear-gradient(90deg, var(--wire) 0 10px, transparent 10px 18px);
-    animation: flow 1s linear infinite;
-  }
-  .crew > li::before {
-    content: "";
-    position: absolute;
-    left: 50%;
-    top: -2.25rem;
-    width: 3px;
-    height: 2.25rem;
-    margin-left: -1.5px;
-    background: repeating-linear-gradient(180deg, var(--wire) 0 10px, transparent 10px 18px);
-    animation: flow-y 1s linear infinite;
+    gap: 1.75rem;
+    max-width: 68rem;
+    margin: clamp(1.75rem, 3.4vw, 3rem) auto 0;
   }
 
-  /* An ID badge on a lanyard: a slot, pins, the role, an icon, the name, one line and examples. It swings a little
-     (the `rotate` property, so the reveal and the hover lift keep `transform`). */
-  .idb {
-    position: relative;
+  /* The team: me and the agents. Who works in the current beat steps forward; the others wait, a little faded. */
+  .team {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) auto;
-    align-content: start;
-    gap: 0.375rem 0.5rem;
-    padding: 1.375rem 1rem 1.125rem;
-    background: var(--ice);
-    color: var(--navy);
-    box-shadow: 6px 6px 0 var(--navy);
-    rotate: var(--r, 0deg);
-    transform-origin: 50% 0;
-    animation: ai-swing 5s ease-in-out infinite;
-    animation-delay: calc(var(--d, 0) * -0.85s);
-    transition: transform 0.5s var(--ease-pop);
-  }
-  @keyframes ai-swing {
-    0%,
-    100% {
-      rotate: var(--r, 0deg);
-    }
-    50% {
-      rotate: calc(var(--r, 0deg) * -0.5);
-    }
-  }
-  .slot {
-    position: absolute;
-    left: 50%;
-    top: 0.5rem;
-    width: 2.25rem;
-    height: 0.4375rem;
-    margin-left: -1.125rem;
-    border-radius: 1rem;
-    background: var(--deep-bg);
-    box-shadow: inset 0 0 0 2px var(--navy);
-  }
-  .role {
-    align-self: center;
-    font-weight: 800;
-    font-size: 0.6875rem;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    font-stretch: 125%;
-  }
-  .idb :global(.idb-i) {
-    width: 1.5rem;
-    height: 1.5rem;
-    transition: transform 0.45s var(--ease-pop);
-  }
-  .nm {
-    grid-column: 1 / -1;
-    font-weight: 900;
-    font-size: clamp(1.25rem, 1.5vw, 1.625rem);
-    line-height: 0.95;
-    font-stretch: 72%;
-    text-transform: uppercase;
-  }
-  .duty {
-    grid-column: 1 / -1;
-    font-size: 0.875rem;
-    line-height: 1.4;
-  }
-  .ex {
-    grid-column: 1 / -1;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.3125rem;
-    margin: 0.25rem 0 0;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: 0.75rem;
+    margin: 0;
     padding: 0;
     list-style: none;
   }
-  .ex li {
-    padding: 0.1875rem 0.4375rem;
-    background: rgb(10 13 51 / 0.08);
-    box-shadow: inset 0 0 0 1.5px rgb(10 13 51 / 0.25);
-    font-weight: 800;
-    font-size: 0.6875rem;
-    line-height: 1.2;
-    letter-spacing: 0.03em;
+  .tm {
+    display: grid;
+    justify-items: center;
+    align-content: start;
+    gap: 0.375rem;
+    text-align: center;
+    transition: transform 0.45s var(--ease-pop);
+  }
+  .tm .av {
+    --av: 3.5rem;
+    margin-bottom: 0.25rem;
+    transition:
+      opacity var(--dur-base),
+      box-shadow var(--dur-base);
+  }
+  .tm b {
+    font-weight: 900;
+    font-size: 0.9375rem;
+    line-height: 1.05;
+    font-stretch: 75%;
+    text-transform: uppercase;
+  }
+  .tm small {
+    font-weight: 700;
+    font-size: 0.75rem;
+    letter-spacing: 0.02em;
+  }
+  :global(.js) .tm .av {
+    opacity: 0.5;
+  }
+  .story[data-on~="me"] .tm-me,
+  .story[data-on~="lead"] .tm-lead,
+  .story[data-on~="memory"] .tm-memory,
+  .story[data-on~="research"] .tm-research,
+  .story[data-on~="tools"] .tm-tools,
+  .story[data-on~="rules"] .tm-rules,
+  .story[data-on~="checks"] .tm-checks {
+    transform: translateY(-0.375rem);
+  }
+  .story[data-on~="me"] .tm-me .av,
+  .story[data-on~="lead"] .tm-lead .av,
+  .story[data-on~="memory"] .tm-memory .av,
+  .story[data-on~="research"] .tm-research .av,
+  .story[data-on~="tools"] .tm-tools .av,
+  .story[data-on~="rules"] .tm-rules .av,
+  .story[data-on~="checks"] .tm-checks .av {
+    opacity: 1;
+    box-shadow:
+      0 0 0 3px var(--navy),
+      0 0 0 6px var(--yellow),
+      5px 5px 0 6px var(--navy);
   }
 
-  /* Enamel pins: round, tilted, each its own colour, stuck over the badge's top right corner. */
-  .pins {
-    position: absolute;
-    top: -1.375rem;
-    right: -0.625rem;
-    z-index: 1;
-    display: flex;
-    flex-direction: row-reverse;
-  }
-  .pin {
+  /* An avatar: an agent is a tile with the Claude mark and its job's badge; I am the pink circle. */
+  /* Sized by --av: a percentage padding would resolve against the parent's width. */
+  .av {
+    position: relative;
     display: grid;
     place-items: center;
-    width: 2.375rem;
-    height: 2.375rem;
-    margin-left: -0.625rem;
+    width: var(--av, 3rem);
+    aspect-ratio: 1;
+    padding: calc(var(--av, 3rem) * 0.2);
+    border-radius: 22%;
+    background: var(--ice);
+    color: #d97757;
+    box-shadow:
+      0 0 0 3px var(--navy),
+      4px 4px 0 3px var(--navy);
+  }
+  .av > :global(.ico) {
+    width: 100%;
+    height: 100%;
+  }
+  .av-me {
     border-radius: 50%;
-    background: var(--pin, var(--yellow));
+    background: var(--pink);
+    color: var(--navy);
+  }
+  .av i {
+    position: absolute;
+    right: -18%;
+    bottom: -18%;
+    display: grid;
+    place-items: center;
+    width: 48%;
+    aspect-ratio: 1;
+    padding: calc(var(--av, 3rem) * 0.08);
+    border-radius: 50%;
+    background: var(--navy);
+    color: var(--ice);
+  }
+  .av i :global(.ico) {
+    width: 100%;
+    height: 100%;
+  }
+
+  /* Story bars: one per beat; the current one fills while it plays. */
+  .beats {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: 0.5rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .beat {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: center;
+    gap: 0.375rem 0.5rem;
+    width: 100%;
+    min-height: 2.75rem;
+    padding: 0 0 0.25rem;
+    border: 0;
+    background: none;
+    color: inherit;
+    text-align: left;
+    cursor: pointer;
+  }
+  .prog {
+    grid-column: 1 / -1;
+    height: 0.375rem;
+    background: color-mix(in srgb, currentColor 28%, transparent);
+    overflow: hidden;
+  }
+  .prog i {
+    display: block;
+    height: 100%;
+    background: var(--yellow);
+    transform: scaleX(0);
+    transform-origin: 0 50%;
+  }
+  .beat.done .prog i,
+  .story.held .beat[aria-pressed="true"] .prog i,
+  :global(.still) .beat[aria-pressed="true"] .prog i {
+    transform: none;
+  }
+  .beat[aria-pressed="true"] .prog i {
+    animation: ai-fill var(--beat) linear both;
+  }
+  .story.held .beat[aria-pressed="true"] .prog i,
+  :global(.still) .beat .prog i {
+    animation: none;
+  }
+  @keyframes ai-fill {
+    to {
+      transform: none;
+    }
+  }
+  .bn {
+    font-weight: 800;
+    font-size: 0.75rem;
+    letter-spacing: 0.06em;
+  }
+  .bl {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-weight: 900;
+    font-size: 0.9375rem;
+    font-stretch: 78%;
+    text-transform: uppercase;
+  }
+  .beat[aria-pressed="true"] :is(.bn, .bl) {
+    color: var(--yellow);
+  }
+  .beat:focus-visible {
+    outline: 3px solid currentColor;
+    outline-offset: 3px;
+  }
+
+  /* With the script, one beat at a time; without it, all seven read as a list. */
+  .shows {
+    display: grid;
+    gap: 2.5rem;
+  }
+  :global(.js) .bt:not(.on) {
+    display: none;
+  }
+  :global(.js) .bt.on {
+    animation: ai-swap 0.45s var(--ease-out);
+  }
+  @keyframes ai-swap {
+    from {
+      opacity: 0;
+      transform: translateY(0.75rem);
+    }
+  }
+  .bt {
+    display: grid;
+    gap: 1.125rem;
+  }
+  .cap {
+    display: flex;
+    align-items: baseline;
+    gap: 0.75rem;
+    margin: 0.5rem 0 0;
+    font-weight: 800;
+    font-size: clamp(1.25rem, 1.9vw, 1.75rem);
+    line-height: 1.12;
+    font-stretch: 85%;
+    text-wrap: balance;
+  }
+  .cap-n {
+    flex: none;
+    padding: 0.125rem 0.4375rem;
+    background: var(--yellow);
+    color: var(--navy);
+    font-size: 0.875rem;
+    font-stretch: 100%;
+  }
+  .marks {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .marks li {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4375rem;
+    padding: 0.375rem 0.625rem;
+    background: var(--ice);
+    color: var(--navy);
+    font-weight: 800;
+    font-size: 0.8125rem;
+    line-height: 1.2;
+  }
+  .marks :global(.ico) {
+    flex: none;
+    width: 1rem;
+    height: 1rem;
+  }
+
+  /* ---- The scenes: drawn in container units so each scales as one picture. Paused or reduced motion shows the
+     finished picture at once. Keyframes carry the ai- prefix (Astro does not scope them). */
+  .sc {
+    position: relative;
+    display: grid;
+    place-items: center;
+    aspect-ratio: 16 / 7;
+    overflow: hidden;
+    container-type: inline-size;
+    background: var(--c);
     color: var(--navy);
     box-shadow:
-      inset 0 0 0 2px var(--navy),
-      inset 0 0 0 4px rgb(255 255 255 / 0.45),
-      2px 3px 0 var(--navy);
-    rotate: var(--pr);
-    transition: transform 0.45s var(--ease-pop);
-    transition-delay: calc(var(--k) * 60ms);
+      0 0 0 3px var(--navy),
+      12px 12px 0 3px var(--navy);
   }
-  .pin:nth-child(3n + 2) {
-    --pin: var(--lime);
+  .sc::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(rgb(10 13 51 / 0.16) 1.2px, transparent 1.7px) 0 0 / 2.8cqw 2.8cqw;
   }
-  .pin:nth-child(3n + 3) {
-    --pin: var(--pink);
+  :global(.still) .sc *,
+  :global(.still) .sc *::before,
+  :global(.still) .sc *::after {
+    animation: none !important;
   }
-  .pin :global(.ico) {
-    width: 1.125rem;
-    height: 1.125rem;
+  @media (prefers-reduced-motion: reduce) {
+    .sc *,
+    .sc *::before,
+    .sc *::after {
+      animation: none !important;
+    }
   }
-  .pin b {
+  .row {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 5cqw;
+  }
+  .sc .av {
+    --av: 11cqw;
+    box-shadow:
+      0 0 0 0.45cqw var(--navy),
+      1.1cqw 1.1cqw 0 0.45cqw var(--navy);
+  }
+  .sc :global(.ico) {
+    width: 100%;
+    height: 100%;
+  }
+  .paper,
+  .page,
+  .pages > i,
+  .src,
+  .sum,
+  .tool,
+  .gate,
+  .pr,
+  .wiki {
+    background: var(--ice);
+    box-shadow:
+      0 0 0 0.45cqw var(--navy),
+      1.1cqw 1.1cqw 0 0.45cqw var(--navy);
+  }
+  @keyframes ai-pop {
+    from {
+      transform: scale(0);
+    }
+  }
+  @keyframes ai-type {
+    from {
+      background-size: 0 100%;
+    }
+  }
+  @keyframes ai-nod {
+    0%,
+    100% {
+      transform: none;
+    }
+    40% {
+      transform: translateY(-1.2cqw) rotate(-6deg);
+    }
+  }
+
+  /* 1. Brief: the brief flies from me to the lead agent and fills in; the agent nods. */
+  .paper {
+    display: grid;
+    gap: 1.6cqw;
+    width: 26cqw;
+    padding: 2.6cqw;
+    transform: rotate(-3deg);
+    animation: ai-fly 0.9s var(--ease-out) 0.15s both;
+  }
+  .paper > :global(.ico) {
+    width: 5cqw;
+    height: 5cqw;
+  }
+  .paper i {
+    height: 1.4cqw;
+    background: linear-gradient(var(--navy), var(--navy)) 0 0 / 100% 100% no-repeat;
+    animation: ai-type 0.5s ease-out both;
+    animation-delay: calc(0.9s + var(--k) * 0.3s);
+  }
+  .paper i:nth-of-type(2) {
+    width: 80%;
+  }
+  .paper i:nth-of-type(3) {
+    width: 60%;
+  }
+  @keyframes ai-fly {
+    from {
+      transform: translateX(-24cqw) scale(0.3) rotate(-20deg);
+    }
+  }
+  .nod {
+    animation: ai-nod 0.6s ease-in-out 2s;
+  }
+
+  /* 2. Memory: the agent reads the wiki (pages fan out, a line lights up), then adds a line. */
+  .beam {
+    width: 10cqw;
+    height: 0.6cqw;
+    background: repeating-linear-gradient(90deg, var(--navy) 0 1.4cqw, transparent 1.4cqw 2.6cqw);
+    transform-origin: 0 50%;
+    animation: ai-grow-x 0.45s ease-out 0.2s both;
+  }
+  @keyframes ai-grow-x {
+    from {
+      transform: scaleX(0);
+    }
+  }
+  .pages {
+    position: relative;
+    display: grid;
+    width: 22cqw;
+    aspect-ratio: 3 / 4;
+  }
+  .pages > * {
+    grid-area: 1 / 1;
+  }
+  .pages > i {
+    transform: rotate(calc(var(--k) * 6deg)) translateX(calc(var(--k) * 1.6cqw));
+    animation: ai-fan 0.6s var(--ease-pop) 0.3s both;
+  }
+  @keyframes ai-fan {
+    from {
+      transform: none;
+    }
+  }
+  .page {
+    position: relative;
+    display: grid;
+    align-content: start;
+    gap: 1.8cqw;
+    padding: 2.6cqw;
+  }
+  .page > :global(.ico) {
+    width: 6cqw;
+    height: 6cqw;
+  }
+  .page i {
+    height: 1.4cqw;
+    background: rgb(10 13 51 / 0.3);
+  }
+  .page .hl {
+    background:
+      linear-gradient(var(--yellow), var(--yellow)) 0 0 / 100% 100% no-repeat,
+      rgb(10 13 51 / 0.3);
+    box-shadow: 0 0 0 0.35cqw var(--navy);
+    animation: ai-type 0.6s ease-out 0.9s both;
+  }
+  .page .ln2 {
+    width: 70%;
+  }
+  .page .add {
+    width: 85%;
+    background: linear-gradient(var(--pink), var(--pink)) 0 0 / 100% 100% no-repeat;
+    animation: ai-type 0.5s ease-out 1.9s both;
+  }
+
+  /* 3. Research: three subagents fan out to their sources and come back with one summary. */
+  .fan {
+    display: grid;
+    gap: 2cqw;
+  }
+  .lane {
+    display: flex;
+    align-items: center;
+    gap: 2.4cqw;
+  }
+  .sc .lane .av {
+    --av: 7cqw;
+    animation: ai-out 0.7s var(--ease-pop) both;
+    animation-delay: calc(0.2s + var(--k) * 0.15s);
+  }
+  @keyframes ai-out {
+    from {
+      transform: translate(-14cqw, calc((1 - var(--k)) * 9cqw)) scale(0.2);
+    }
+  }
+  .src {
+    display: grid;
+    place-items: center;
+    width: 7cqw;
+    aspect-ratio: 1;
+    padding: 1.6cqw;
+    border-radius: 50%;
+    animation: ai-pop 0.4s var(--ease-pop) both;
+    animation-delay: calc(0.75s + var(--k) * 0.15s);
+  }
+  .sum {
+    display: grid;
+    gap: 1.4cqw;
+    width: 18cqw;
+    padding: 2.2cqw;
+    transform: rotate(3deg);
+    animation: ai-pop-r 0.5s var(--ease-pop) 1.7s both;
+  }
+  @keyframes ai-pop-r {
+    from {
+      transform: rotate(3deg) scale(0);
+    }
+  }
+  .sum i {
+    display: flex;
+    align-items: center;
+    gap: 1cqw;
+    height: 3.2cqw;
+  }
+  .sum i::after {
+    content: "";
+    flex: 1;
+    height: 1.2cqw;
+    background: rgb(10 13 51 / 0.3);
+  }
+  .sum i :global(.ico) {
+    flex: none;
+    width: 3.2cqw;
+    height: 3.2cqw;
+    color: #0a8a4a;
+  }
+
+  /* 4. Tools: real data drips down the cables from the tools into the agent. */
+  .plug {
+    display: grid;
+    justify-items: center;
+  }
+  .tools {
+    display: flex;
+    gap: 9cqw;
+  }
+  .tool {
+    position: relative;
+    display: grid;
+    place-items: center;
+    width: 10cqw;
+    aspect-ratio: 1;
+    padding: 2.4cqw;
+    animation: ai-pop 0.45s var(--ease-pop) both;
+    animation-delay: calc(var(--k) * 0.15s);
+  }
+  .cable {
+    position: absolute;
+    left: 50%;
+    top: calc(100% + 0.45cqw);
+    width: 0.6cqw;
+    height: 7cqw;
+    margin-left: -0.3cqw;
+    background: var(--navy);
+    transform-origin: 50% 0;
+    animation: ai-grow-y 0.4s ease-out both;
+    animation-delay: calc(0.5s + var(--k) * 0.15s);
+  }
+  @keyframes ai-grow-y {
+    from {
+      transform: scaleY(0);
+    }
+  }
+  /* The outer cables reach the hub at an angle. */
+  .tool:nth-child(1) .cable {
+    rotate: -52deg;
+    transform-origin: 50% 0;
+    height: 15cqw;
+  }
+  .tool:nth-child(3) .cable {
+    rotate: 52deg;
+    height: 15cqw;
+  }
+  .cable b {
+    position: absolute;
+    left: 50%;
+    top: 0;
+    width: 1.8cqw;
+    height: 1.8cqw;
+    margin-left: -0.9cqw;
+    background: var(--ice);
+    box-shadow: 0 0 0 0.35cqw var(--navy);
+    opacity: 0;
+    animation: ai-drip 1.3s ease-in infinite;
+    animation-delay: calc(1.1s + var(--k) * 0.35s);
+  }
+  @keyframes ai-drip {
+    0% {
+      opacity: 1;
+      top: 0;
+    }
+    90% {
+      opacity: 1;
+      top: calc(100% - 1.8cqw);
+    }
+    100% {
+      opacity: 0;
+      top: calc(100% - 1.8cqw);
+    }
+  }
+  .hub {
+    position: relative;
+    margin-top: 8cqw;
+  }
+  .mcp {
+    position: absolute;
+    right: -3cqw;
+    bottom: -2cqw;
+    display: grid;
+    width: 5cqw;
+    height: 5cqw;
+    padding: 1cqw;
+    border-radius: 50%;
+    background: var(--navy);
+    color: var(--ice);
+  }
+
+  /* 5. Build: the agent writes; a risky command meets a hook and is stopped; the work goes on. */
+  .term {
+    position: relative;
+    display: grid;
+    gap: 1.3cqw;
+    min-width: 44cqw;
+    padding: 2.4cqw 2.6cqw;
+    background: var(--navy);
+    color: var(--ice);
+    box-shadow: 1.1cqw 1.1cqw 0 rgb(10 13 51 / 0.35);
+    font-family: ui-monospace, "Cascadia Mono", Consolas, monospace;
+    font-size: 2.6cqw;
+    white-space: nowrap;
+  }
+  .tl {
+    display: flex;
+    align-items: center;
+    gap: 2cqw;
+    clip-path: inset(0 0 0 0);
+    animation: ai-line 0.45s steps(12, end) both;
+    animation-delay: calc(0.3s + var(--k) * 0.5s);
+  }
+  @keyframes ai-line {
+    from {
+      clip-path: inset(0 100% 0 0);
+    }
+  }
+  .tl b {
+    display: grid;
+    width: 3cqw;
+    height: 3cqw;
+    margin-left: auto;
+    color: var(--lime);
+  }
+  .tl.bad {
+    color: #ff8a8a;
+    text-decoration: line-through 0.4cqw;
+  }
+  .stamp {
+    position: absolute;
+    display: inline-flex;
+    align-items: center;
+    gap: 1cqw;
+    padding: 1cqw 1.8cqw;
+    font-family: var(--font-sans, inherit);
     font-weight: 900;
-    font-size: 0.8125rem;
-    font-stretch: 80%;
+    font-size: 3cqw;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    white-space: nowrap;
   }
-  .me {
-    background: var(--accent);
-    color: var(--on-accent);
+  .stamp :global(.ico) {
+    width: 3.4cqw;
+    height: 3.4cqw;
   }
-  .agent :global(.spark) {
-    animation: ai-pulse 2.4s ease-in-out infinite;
+  .stamp.no {
+    right: -7cqw;
+    top: 9cqw;
+    background: var(--pink);
+    color: var(--navy);
+    box-shadow:
+      0 0 0 0.45cqw var(--navy),
+      0.8cqw 0.8cqw 0 0.45cqw var(--navy);
+    transform: rotate(-6deg);
+    animation: ai-stamp 0.4s var(--ease-pop) 1.45s both;
   }
-  @keyframes ai-pulse {
-    50% {
-      transform: scale(1.18);
+  @keyframes ai-stamp {
+    from {
+      opacity: 0;
+      transform: rotate(-6deg) scale(2.2);
     }
   }
-  @media (hover: hover) and (pointer: fine) {
-    .idb:hover {
-      transform: translateY(-4px);
-      animation-play-state: paused;
-    }
-    .idb:hover :global(.idb-i) {
-      transform: rotate(-10deg) scale(1.15);
-    }
-    .idb:hover .pin {
-      transform: translateY(-3px) rotate(14deg) scale(1.1);
+
+  /* 6. Check: a screenshot flash, then every gate turns green in turn. */
+  .gates {
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(3, 10cqw);
+    gap: 3cqw;
+  }
+  .gate {
+    position: relative;
+    display: grid;
+    place-items: center;
+    aspect-ratio: 1;
+    padding: 2.4cqw;
+    animation: ai-pop 0.4s var(--ease-pop) both;
+    animation-delay: calc(var(--k) * 0.08s);
+  }
+  .gate i {
+    position: absolute;
+    right: -1.8cqw;
+    top: -1.8cqw;
+    display: grid;
+    width: 4.6cqw;
+    height: 4.6cqw;
+    padding: 0.8cqw;
+    border-radius: 50%;
+    background: var(--lime);
+    color: var(--navy);
+    box-shadow: 0 0 0 0.4cqw var(--navy);
+    animation: ai-pop 0.35s var(--ease-pop) both;
+    animation-delay: calc(0.9s + var(--k) * 0.22s);
+  }
+  .snap {
+    position: absolute;
+    inset: -3cqw;
+    background: #fff;
+    opacity: 0;
+    pointer-events: none;
+    animation: ai-flash 0.45s ease-out 0.55s;
+  }
+  @keyframes ai-flash {
+    20% {
+      opacity: 0.9;
     }
   }
+  .cam {
+    display: grid;
+    width: 10cqw;
+    height: 10cqw;
+    padding: 2.2cqw;
+    border-radius: 50%;
+    background: var(--navy);
+    color: var(--ice);
+    animation: ai-nod 0.6s ease-in-out 0.4s;
+  }
+
+  /* 7. Review: I approve the change; a lesson flies back into the wiki. */
+  .pr {
+    position: relative;
+    display: grid;
+    gap: 1.5cqw;
+    width: 30cqw;
+    padding: 2.6cqw;
+  }
+  .pr > :global(.ico) {
+    width: 5cqw;
+    height: 5cqw;
+  }
+  .pr i {
+    height: 1.4cqw;
+  }
+  .pr .add {
+    width: 80%;
+    background: #0a8a4a;
+  }
+  .pr .del {
+    width: 55%;
+    background: #e8331f;
+  }
+  .stamp.yes {
+    right: -4cqw;
+    top: 2.6cqw;
+    background: var(--ice);
+    color: #0a8a4a;
+    box-shadow: inset 0 0 0 0.5cqw #0a8a4a;
+    transform: rotate(-10deg);
+    animation: ai-stamp-y 0.4s var(--ease-pop) 0.7s both;
+  }
+  @keyframes ai-stamp-y {
+    from {
+      opacity: 0;
+      transform: rotate(-10deg) scale(2.2);
+    }
+  }
+  .wiki {
+    position: relative;
+    display: grid;
+    place-items: center;
+    width: 12cqw;
+    aspect-ratio: 3 / 4;
+    padding: 2.6cqw;
+  }
+  .lesson {
+    position: absolute;
+    right: -2.4cqw;
+    top: -2.4cqw;
+    display: grid;
+    width: 6cqw;
+    height: 6cqw;
+    padding: 1.2cqw;
+    border-radius: 50%;
+    background: var(--yellow);
+    box-shadow: 0 0 0 0.4cqw var(--navy);
+    animation: ai-learn 0.9s var(--ease-out) 1.4s both;
+  }
+  @keyframes ai-learn {
+    from {
+      transform: translate(-22cqw, 4cqw) scale(0.4);
+    }
+  }
+
   .go {
     display: flex;
     justify-content: center;
     margin-top: clamp(2rem, 3.6vw, 3rem);
   }
 
-  /* Tablets: the crew in three columns, one bus per row is too busy, so the bus becomes a frame line on top. */
-  @media (max-width: 75rem) {
-    .crew {
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      row-gap: clamp(1.75rem, 3vw, 2.5rem);
+  /* Tablets and phones: the team in four columns, the beats as numbers only; the scene grows taller. */
+  @media (max-width: 56.25rem) {
+    .team {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      row-gap: 1.25rem;
     }
-    .crew::before {
-      left: calc(100% / 6);
-      right: calc(100% / 6);
-    }
-    .crew > li:nth-child(n + 4)::before {
+    .bl {
       display: none;
     }
+    .beat {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .sc {
+      aspect-ratio: 16 / 9;
+    }
   }
-  /* Phones: the heads stack with a wire between them; the crew in two columns without wires. */
   @media (max-width: 40rem) {
     .lede {
       text-align: left;
     }
-    .heads {
-      grid-template-columns: minmax(0, 1fr);
-      justify-items: stretch;
-      max-width: 22rem;
-      margin-inline: auto;
+    .team {
+      gap: 1.125rem 0.375rem;
     }
-    .w-x {
-      width: 3px;
-      height: 1.5rem;
-      margin: 0 auto;
-      background: repeating-linear-gradient(180deg, var(--wire) 0 10px, transparent 10px 18px);
-      animation-name: flow-y;
+    .tm .av {
+      --av: 2.75rem;
     }
-    .w-y {
-      margin-left: auto;
-      height: 1.5rem;
-    }
-    .crew {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 1.75rem 0.875rem;
-      padding-top: 1.25rem;
-    }
-    .crew::before,
-    .crew > li::before {
-      display: none;
-    }
-    .idb {
-      padding: 1.25rem 0.75rem 0.875rem;
-      box-shadow: 4px 4px 0 var(--navy);
-    }
-    .pins {
-      right: -0.375rem;
-    }
-    .pin {
-      width: 2rem;
-      height: 2rem;
-    }
-    .nm {
-      font-size: 1.25rem;
-    }
-    .duty {
+    .tm b {
       font-size: 0.8125rem;
+    }
+    .tm small {
+      font-size: 0.6875rem;
+    }
+    .beats {
+      gap: 0.3125rem;
+    }
+    .sc {
+      aspect-ratio: 4 / 3;
+      box-shadow:
+        0 0 0 3px var(--navy),
+        7px 7px 0 3px var(--navy);
+    }
+    /* The taller frame leaves room: the picture grows a third. */
+    .sc > * {
+      scale: 1.3;
     }
   }
 </style>
+
+<script>
+  import { motionStill } from "~/scripts/motion";
+
+  for (const story of document.querySelectorAll<HTMLElement>("[data-story]")) {
+    const buttons = [...story.querySelectorAll<HTMLButtonElement>("[data-beat]")];
+    const beats = [...story.querySelectorAll<HTMLElement>("[data-bt]")];
+    const step = parseFloat(getComputedStyle(story).getPropertyValue("--beat")) * 1000 || 4600;
+    let current = 0;
+    let visible = false;
+    let holdUntil = 0;
+    let shownAt = performance.now();
+
+    const show = (i: number, byUser: boolean) => {
+      current = i;
+      // Re-showing the same beat restarts its scene and its bar.
+      buttons.forEach((b) => b.setAttribute("aria-pressed", "false"));
+      beats.forEach((d) => d.classList.remove("on"));
+      void story.offsetWidth;
+      buttons.forEach((b, j) => {
+        b.setAttribute("aria-pressed", String(j === i));
+        b.classList.toggle("done", j < i);
+      });
+      beats[i]!.classList.add("on");
+      story.dataset.on = beats[i]!.dataset.actors;
+      story.classList.toggle("held", byUser);
+      shownAt = performance.now();
+      if (byUser) holdUntil = shownAt + 12000;
+    };
+    buttons.forEach((b, i) => b.addEventListener("click", () => show(i, true)));
+    show(0, false);
+
+    new IntersectionObserver(
+      ([entry]) => {
+        const was = visible;
+        visible = !!entry?.isIntersecting;
+        // Coming into view restarts the current beat, so its scene plays where it can be seen.
+        if (visible && !was && performance.now() > holdUntil) show(current, false);
+      },
+      { threshold: 0.35 },
+    ).observe(story);
+    setInterval(() => {
+      const now = performance.now();
+      if (!visible || motionStill() || document.hidden || now < holdUntil || now - shownAt < step) return;
+      show((current + 1) % buttons.length, false);
+    }, 250);
+  }
+</script>

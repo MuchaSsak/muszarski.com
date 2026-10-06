@@ -1,10 +1,12 @@
 ---
 /**
- * Latest writing (structure.md § Home 6): the three newest posts as a compact teaser [user 2026-10-06: smaller, like
- * the pstryk landing], a plain heading with "All posts" beside it and small cards (cover thumbnail, date, title), in the
- * page's blog locale (Spanish pages show the English posts, marked as English). Hidden when there are no posts.
- * The field carries a faint dot grid (notebook paper), the title a drawn underline, and the cards are taped notes
- * [user 2026-10-06: too flat].
+ * Latest writing (structure.md § Home 6): every post of the page's blog locale on one rail of small cards (Spanish pages
+ * show the English posts, marked as English), with "All posts" beside the heading. Hidden when there are no posts.
+ * [user 2026-10-06: "animated drawing them", a pointer that drags them like a marquee]: a card sketches itself in (a
+ * pencil outline, then the paper, the tape and the content) when it scrolls into view; while the rail sits in view
+ * untouched, a drawn cursor grabs it and drags it one card on, and back to the start at the end. Visitors drag it
+ * with the mouse, swipe it, use the arrows or tab through the links. Without JS, paused or reduced motion: every card
+ * is simply there and nothing moves on its own.
  */
 import { t } from "lingui-for-astro/macro";
 
@@ -15,46 +17,74 @@ import { postsIn } from "~/lib/posts";
 
 const locale = Astro.locals.locale;
 const links = chromeLinks(locale);
-const posts = (await postsIn(links.blogLocale === "pl" ? "pl" : "en")).slice(0, 3);
+const posts = await postsIn(links.blogLocale === "pl" ? "pl" : "en");
 const english = links.blogLocale !== locale;
+/** A hand-drawn rectangle: corners a little off, so the outline reads as pencil. */
+const SKETCH =
+  "M1.2 2.4 C 30 0.8, 70 1.6, 98.6 1 C 99.4 30, 98.6 70, 99 98.2 C 70 99.4, 30 98.6, 1.6 99 C 0.6 70, 1.4 30, 1.2 2.4";
 ---
 
-{
-  posts.length > 0 && (
-    <section class="sec field-hero writing" id="writing" aria-labelledby="t-wr">
-      <div class="w-head">
-        <div>
-          <p class="kick">
-            {t`Writing`}
-            {english && ` · ${t`In English`}`}
-          </p>
-          <h2 id="t-wr" class="w-title">
-            {t`Notes from the work`}
-          </h2>
-          <svg class="w-line" viewBox="0 0 320 16" preserveAspectRatio="none" aria-hidden="true">
-            <path d="M3 11 C 50 3, 90 15, 140 8 S 230 2, 317 9" />
-          </svg>
-        </div>
-        <a class="btn btn-line" href={links.blog} data-umami-event="cta" data-umami-event-id="blog" data-umami-event-source="home">
+{posts.length > 0 && (
+  <section class="sec field-hero writing" id="writing" aria-labelledby="t-wr">
+    <div class="w-head">
+      <div>
+        <p class="kick">
+          {t`Writing`}
+          {english && ` · ${t`In English`}`}
+        </p>
+        <h2 id="t-wr" class="w-title">
+          {t`Notes from the work`}
+        </h2>
+        <svg class="w-line" viewBox="0 0 320 16" preserveAspectRatio="none" aria-hidden="true">
+          <path d="M3 11 C 50 3, 90 15, 140 8 S 230 2, 317 9" />
+        </svg>
+      </div>
+      <div class="w-act">
+        <button class="btn btn-line btn-icon" type="button" data-step="-1" aria-label={t`Previous posts`}>
+          <Icon name="tb:arrow-left" />
+        </button>
+        <button class="btn btn-line btn-icon" type="button" data-step="1" aria-label={t`Next posts`}>
+          <Icon name="tb:arrow-right" />
+        </button>
+        <a
+          class="btn btn-line"
+          href={links.blog}
+          data-umami-event="cta"
+          data-umami-event-id="blog"
+          data-umami-event-source="home"
+        >
           {t`All posts`}
           {english && " (EN)"}
           <Icon name="tb:arrow-right" class="nudge" />
         </a>
       </div>
-      <div class="grid">
+    </div>
+    <div class="rail" data-rail>
+      <ul class="strip" role="list" data-strip>
         {posts.map((post, i) => (
-          <PostCard post={post} tone={i * 2} compact />
+          <li class="wc drawn" style={`--i:${i % 3}`}>
+            <svg class="sketch" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+              <path d={SKETCH} pathLength="100" />
+            </svg>
+            <PostCard post={post} tone={i * 2} compact />
+          </li>
         ))}
-      </div>
-    </section>
-  )
-}
+      </ul>
+      <span class="ghost" data-ghost hidden aria-hidden="true">
+        <svg viewBox="0 0 24 24">
+          <path d="M4 2.5 20 11l-7 1.6-3.4 6.4z" />
+        </svg>
+      </span>
+    </div>
+  </section>
+)}
 
 <style>
   .writing {
-    padding-block: clamp(2.5rem, 5vw, 4.5rem) clamp(3rem, 6vw, 5.5rem);
+    padding-block: clamp(2.5rem, 5vw, 4.5rem) clamp(2.5rem, 5vw, 4.5rem);
     background-image: radial-gradient(color-mix(in srgb, var(--sfg) 13%, transparent) 1.2px, transparent 1.7px);
     background-size: 1.5rem 1.5rem;
+    overflow: clip;
   }
   .w-line {
     display: block;
@@ -77,6 +107,11 @@ const english = links.blogLocale !== locale;
     justify-content: space-between;
     gap: 1rem 2rem;
   }
+  .w-act {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.625rem;
+  }
   .kick {
     margin: 0 0 0.5rem;
   }
@@ -93,25 +128,315 @@ const english = links.blogLocale !== locale;
     text-transform: uppercase;
     font-stretch: 70%;
   }
-  .grid {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+
+  /* The rail: full bleed, scrolls sideways (snap per card), room above and below for the tape and the shadows. */
+  .rail {
+    position: relative;
+    margin: clamp(0.75rem, 1.6vw, 1.5rem) calc(-1 * var(--pad-x)) 0;
+  }
+  .strip {
+    display: flex;
     gap: clamp(1.5rem, 2.4vw, 2.25rem);
-    margin-top: clamp(1.75rem, 3vw, 2.75rem);
+    margin: 0;
+    padding: 1.75rem var(--pad-x) 1.75rem;
+    list-style: none;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scroll-snap-type: x mandatory;
+    scroll-padding-inline: var(--pad-x);
+    scrollbar-width: none;
+  }
+  .strip::-webkit-scrollbar {
+    display: none;
+  }
+  .strip.dragging {
+    scroll-snap-type: none;
+    cursor: grabbing;
+    user-select: none;
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .strip {
+      cursor: grab;
+    }
+  }
+  .wc {
+    position: relative;
+    flex: 0 0 min(23.5rem, 82vw);
+    scroll-snap-align: start;
+  }
+  .wc > :global(.card) {
+    height: 100%;
   }
   /* Each note its own tape colour and tilt. */
-  .grid > :global(.card:nth-child(2)) {
+  .wc:nth-child(3n + 2) > :global(.card) {
     --tape: var(--lime);
     --tilt: 1deg;
   }
-  .grid > :global(.card:nth-child(3)) {
+  .wc:nth-child(3n + 3) > :global(.card) {
     --tape: var(--pink);
     --tilt: -0.75deg;
   }
-  @media (max-width: 64rem) {
-    .grid {
-      grid-template-columns: minmax(0, 1fr);
-      gap: 1.75rem;
-    }
+
+  /* The pencil outline under the note, a little looser than the paper. */
+  .sketch {
+    position: absolute;
+    inset: -0.5rem -0.375rem;
+    width: calc(100% + 0.75rem);
+    height: calc(100% + 1rem);
+    overflow: visible;
+    pointer-events: none;
+  }
+  .sketch path {
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-dasharray: 100;
+    vector-effect: non-scaling-stroke;
+    opacity: 0.55;
+    transition: stroke-dashoffset 0.75s var(--ease-out);
+  }
+  /* Drawing in: outline → paper → tape → content. The scripted state only: without it every card is drawn. The staged
+     delays live on `.inking` (the moment of drawing), so hover never waits for them. */
+  .wc.inking > :global(.card.compact) {
+    transition:
+      transform var(--dur-base) var(--ease-out),
+      box-shadow 0.3s var(--ease-out) 0.55s,
+      background-color 0.3s var(--ease-out) 0.5s;
+  }
+  .wc.inking > :global(.card.compact)::before {
+    transition: transform 0.4s var(--ease-pop) 0.85s;
+  }
+  .wc.inking > :global(.card) > :global(*) {
+    transition:
+      opacity 0.35s var(--ease-out) 0.7s,
+      translate 0.45s var(--ease-out) 0.7s;
+  }
+  .wc:not(.drawn) .sketch path {
+    stroke-dashoffset: 100;
+  }
+  .wc:not(.drawn) > :global(.card.compact) {
+    background-color: transparent;
+    box-shadow: none;
+  }
+  .wc:not(.drawn) > :global(.card.compact)::before {
+    transform: translateX(-50%) rotate(-3deg) scaleX(0);
+  }
+  .wc:not(.drawn) > :global(.card) > :global(*) {
+    opacity: 0;
+    translate: 0 0.5rem;
+  }
+
+  /* The drawn cursor that drags the rail. */
+  .ghost {
+    position: absolute;
+    left: 0;
+    top: 0;
+    z-index: 6;
+    width: 2.75rem;
+    height: 2.75rem;
+    pointer-events: none;
+  }
+  .ghost svg {
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+  }
+  .ghost path {
+    fill: var(--ice);
+    stroke: var(--navy);
+    stroke-width: 1.8;
+    stroke-linejoin: round;
+    filter: drop-shadow(2px 2px 0 var(--navy));
+  }
+  .ghost::before {
+    content: "";
+    position: absolute;
+    left: -0.875rem;
+    top: -0.875rem;
+    width: 1.75rem;
+    height: 1.75rem;
+    border: 4px solid var(--pink);
+    border-radius: 50%;
+    opacity: 0;
+    transition:
+      opacity var(--dur-fast),
+      transform var(--dur-fast);
+  }
+  /* Holding: a ring stays under the tip while it drags. */
+  .ghost.grab::before {
+    opacity: 1;
+    transform: scale(0.8);
   }
 </style>
+
+<script>
+  import { motionStill } from "~/scripts/motion";
+
+  const ease = (x: number) => (x < 0.5 ? 4 * x * x * x : 1 - (-2 * x + 2) ** 3 / 2);
+  const frames = (ms: number, step: (p: number) => void) =>
+    new Promise<void>((done) => {
+      const start = performance.now();
+      const tick = (now: number) => {
+        const p = Math.min(1, (now - start) / ms);
+        step(ease(p));
+        if (p < 1) requestAnimationFrame(tick);
+        else done();
+      };
+      requestAnimationFrame(tick);
+    });
+
+  for (const rail of document.querySelectorAll<HTMLElement>("[data-rail]")) {
+    const section = rail.closest<HTMLElement>("section")!;
+    const strip = rail.querySelector<HTMLElement>("[data-strip]")!;
+    const ghost = rail.querySelector<HTMLElement>("[data-ghost]")!;
+    const cards = [...strip.querySelectorAll<HTMLElement>(".wc")];
+    const stepSize = () => cards[0]!.offsetWidth + parseFloat(getComputedStyle(strip).columnGap || "0");
+    const atEnd = () => strip.scrollLeft + strip.clientWidth >= strip.scrollWidth - 4;
+
+    // Sketch in: with motion, each card draws itself the first time most of it is in view.
+    if (!motionStill()) {
+      for (const card of cards) card.classList.remove("drawn");
+      const seen = new IntersectionObserver(
+        (entries) => {
+          let delay = 0;
+          for (const entry of entries) {
+            if (!entry.isIntersecting) continue;
+            const card = entry.target as HTMLElement;
+            seen.unobserve(card);
+            setTimeout(() => {
+              card.classList.add("drawn", "inking");
+              setTimeout(() => card.classList.remove("inking"), 1600);
+            }, delay);
+            delay += 180;
+          }
+        },
+        { threshold: 0.55 },
+      );
+      for (const card of cards) seen.observe(card);
+    }
+
+    // The arrows: one card per press.
+    for (const button of section.querySelectorAll<HTMLButtonElement>("[data-step]")) {
+      button.addEventListener("click", () => {
+        hold();
+        const dir = Number(button.dataset.step);
+        const to =
+          dir > 0 && atEnd() ? 0 : dir < 0 && strip.scrollLeft <= 4 ? strip.scrollWidth : strip.scrollLeft + dir * stepSize();
+        strip.scrollTo({ left: to, behavior: motionStill() ? "auto" : "smooth" });
+      });
+    }
+
+    // Mouse drag (touch scrolls natively). A drag never counts as a click on the card under it.
+    let down = false;
+    let moved = false;
+    let startX = 0;
+    let startLeft = 0;
+    strip.addEventListener("pointerdown", (event) => {
+      hold();
+      if (event.pointerType !== "mouse" || event.button !== 0) return;
+      down = true;
+      moved = false;
+      startX = event.clientX;
+      startLeft = strip.scrollLeft;
+    });
+    addEventListener("pointermove", (event) => {
+      if (!down) return;
+      const dx = event.clientX - startX;
+      if (!moved && Math.abs(dx) < 6) return;
+      moved = true;
+      strip.classList.add("dragging");
+      strip.scrollLeft = startLeft - dx;
+    });
+    addEventListener("pointerup", () => {
+      if (!down) return;
+      down = false;
+      if (!moved) return;
+      // Snap to the nearest card, then let snapping take over again.
+      const to = Math.round(strip.scrollLeft / stepSize()) * stepSize();
+      strip.classList.remove("dragging");
+      strip.scrollTo({ left: to, behavior: motionStill() ? "auto" : "smooth" });
+    });
+    strip.addEventListener(
+      "click",
+      (event) => {
+        if (!moved) return;
+        event.preventDefault();
+        moved = false;
+      },
+      true,
+    );
+    strip.addEventListener("dragstart", (event) => event.preventDefault());
+
+    // The tour: in view and untouched for a moment, the drawn cursor drags the rail one card on (back at the end).
+    let visible = false;
+    let inside = false;
+    let busy = false;
+    let idleSince = performance.now();
+    let idleFor = 2500;
+    function hold(ms = 8000) {
+      idleSince = performance.now();
+      idleFor = ms;
+    }
+    rail.addEventListener("pointerenter", () => ((inside = true), hold(2500)));
+    rail.addEventListener("pointerleave", () => ((inside = false), hold(2000)));
+    strip.addEventListener("focusin", () => hold());
+    strip.addEventListener("wheel", () => hold(), { passive: true });
+    strip.addEventListener("touchstart", () => hold(), { passive: true });
+    new IntersectionObserver(([entry]) => ((visible = !!entry?.isIntersecting), hold(2500)), { threshold: 0.6 }).observe(rail);
+
+    const idle = () =>
+      visible && !inside && !down && !motionStill() && !document.hidden && !rail.contains(document.activeElement);
+    const drag = async () => {
+      const box = rail.getBoundingClientRect();
+      const x = box.width * (innerWidth < 640 ? 0.62 : 0.7);
+      const y = box.height * 0.5;
+      const from = strip.scrollLeft;
+      const to = atEnd() ? 0 : Math.min(from + stepSize(), strip.scrollWidth - strip.clientWidth);
+      // The hand moves with the paper, capped so a rewind stays on screen.
+      const reach = Math.max(-box.width * 0.4, Math.min(box.width * 0.25, from - to));
+      const at = (dx: number, dy: number, s = 1) => `translate(${x + dx}px, ${y + dy}px) scale(${s})`;
+      ghost.hidden = false;
+      await ghost.animate(
+        [
+          { transform: at(160, 150), opacity: 0 },
+          { opacity: 1, offset: 0.4 },
+          { transform: at(0, 0), opacity: 1 },
+        ],
+        {
+          duration: 850,
+          easing: "cubic-bezier(0.2, 0.75, 0.1, 1)",
+          fill: "forwards",
+        },
+      ).finished;
+      if (!idle()) return void (ghost.hidden = true);
+      ghost.classList.add("grab");
+      strip.classList.add("dragging");
+      await frames(Math.abs(to - from) > stepSize() * 1.5 ? 1300 : 900, (p) => {
+        strip.scrollLeft = from + (to - from) * p;
+        ghost.getAnimations().forEach((a) => a.cancel());
+        ghost.style.transform = at(reach * p, 0);
+      });
+      strip.classList.remove("dragging");
+      ghost.classList.remove("grab");
+      await ghost.animate(
+        [
+          { transform: at(reach, 0), opacity: 1 },
+          { transform: at(reach + 120, 170), opacity: 0 },
+        ],
+        {
+          duration: 650,
+          easing: "cubic-bezier(0.2, 0.75, 0.1, 1)",
+          fill: "forwards",
+        },
+      ).finished;
+      ghost.style.transform = "";
+      ghost.hidden = true;
+    };
+    setInterval(() => {
+      if (busy || !idle() || performance.now() - idleSince < idleFor) return;
+      busy = true;
+      drag().finally(() => ((busy = false), hold(3200)));
+    }, 250);
+  }
+</script>

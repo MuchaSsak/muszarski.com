@@ -4,7 +4,7 @@
  * Flags are drawn SVGs, not emoji: Windows renders flag emoji as two letters. Each link is named by its autonym
  * ("Polski"; visible with `names`, a tooltip and screen-reader text otherwise), keeps the page when it exists in the
  * target locale (`switchPath`) and is counted as `locale_switch` (analytics.md). English is the UK flag (a
- * European audience), Spanish the plain civil flag of Spain.
+ * European audience), Spanish the flag of Spain with a simplified coat of arms.
  */
 import { AUTONYMS, type Locale, LOCALES } from "@package/shared/locales";
 import { t } from "lingui-for-astro/macro";
@@ -25,25 +25,23 @@ const locale = Astro.locals.locale;
 ---
 
 <ul role="list" class:list={["locale-codes", { names }, className]} aria-label={t`Language`}>
-  {
-    LOCALES.map((to) => (
-      <li>
-        <a
-          href={switchPath(path, to, fallback, locales)}
-          hreflang={to}
-          lang={to}
-          title={names ? undefined : AUTONYMS[to]}
-          aria-current={to === locale ? "true" : undefined}
-          data-umami-event="locale_switch"
-          data-umami-event-from={locale}
-          data-umami-event-to={to}
-        >
-          <span class:list={["flag", `flag-${to}`]} aria-hidden="true" />
-          <span class:list={{ "sr-only": !names }}>{AUTONYMS[to]}</span>
-        </a>
-      </li>
-    ))
-  }
+  {LOCALES.map((to) => (
+    <li>
+      <a
+        href={switchPath(path, to, fallback, locales)}
+        hreflang={to}
+        lang={to}
+        title={names ? undefined : AUTONYMS[to]}
+        aria-current={to === locale ? "true" : undefined}
+        data-umami-event="locale_switch"
+        data-umami-event-from={locale}
+        data-umami-event-to={to}
+      >
+        <span class:list={["flag", `flag-${to}`]} aria-hidden="true" />
+        <span class:list={{ "sr-only": !names }}>{AUTONYMS[to]}</span>
+      </a>
+    </li>
+  ))}
 </ul>
 
 <style>
@@ -110,7 +108,8 @@ const locale = Astro.locals.locale;
   .flag-pl {
     background-image: linear-gradient(#fff 50%, #dc143c 50%);
   }
+  /* Spain: the civil stripes with a simplified coat of arms (pillars, shield, crown) [user 2026-10-06]. */
   .flag-es {
-    background-image: linear-gradient(#c60b1e 25%, #ffc400 25% 75%, #c60b1e 75%);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 750 500'%3E%3Cpath fill='%23c60b1e' d='M0 0h750v500H0z'/%3E%3Cpath fill='%23ffc400' d='M0 125h750v250H0z'/%3E%3Cg stroke='%23ad1519' stroke-width='6'%3E%3Cpath fill='%23ccc' d='M168 196h22v124h-22zM296 196h22v124h-22z'/%3E%3Cpath fill='%23ad1519' stroke='%23c8b100' stroke-width='10' d='M200 190h86v76a43 43 0 0 1-86 0z'/%3E%3Cpath fill='%23c8b100' stroke='none' d='M206 150h74l-8 30h-58z'/%3E%3C/g%3E%3C/svg%3E");
   }
 </style>

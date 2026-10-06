@@ -26,8 +26,14 @@ const labelPlay = t`Play video`;
     <div class="stars s2"></div>
     <div class="orbits">
       <span class="sun"></span>
-      <span class="orbit r1"></span><span class="orbit r2"></span><span class="orbit r3"></span><span class="orbit r4"></span>
-      <span class="planet p1"></span><span class="planet p2"></span><span class="planet p3"></span><span class="planet p4"></span>
+      <span class="orbit r1"></span>
+      <span class="orbit r2"></span>
+      <span class="orbit r3"></span>
+      <span class="orbit r4"></span>
+      <span class="planet p1"></span>
+      <span class="planet p2"></span>
+      <span class="planet p3"></span>
+      <span class="planet p4"></span>
     </div>
   </div>
   <ChapterBadge icon="tb:planet" label={t`Personal · solo · 2025`} />
@@ -50,7 +56,9 @@ const labelPlay = t`Play video`;
               <source data-src="/media/space/flight.av1.mp4" type='video/mp4; codecs="av01.0.05M.08"' />
               <source data-src="/media/space/flight.mp4" type="video/mp4" />
             </video>
-            <span class="bigplay" aria-hidden="true"><Icon name="tbf:player-play" /></span>
+            <span class="bigplay" aria-hidden="true">
+              <Icon name="tbf:player-play" />
+            </span>
             <button
               class="r-hit"
               type="button"
@@ -58,30 +66,33 @@ const labelPlay = t`Play video`;
               aria-pressed="true"
               aria-label={labelPlay}
               data-label-pause={labelPause}
-              data-label-play={labelPlay}></button>
+              data-label-play={labelPlay}
+            ></button>
           </div>
         </div>
         <div class="stand" aria-hidden="true"></div>
       </div>
       <figcaption class="credit">
         {t`Desktop · WebGL2 · ~14 MB.`}
-        {t`Planet textures:`} <a href="https://www.solarsystemscope.com/textures/" rel="noopener" target="_blank">Solar System Scope<span class="sr-only"> {t`(opens in a new tab)`}</span></a>, <a
-          href="https://creativecommons.org/licenses/by/4.0/"
-          rel="license noopener"
-          target="_blank">CC BY 4.0<span class="sr-only"> {t`(opens in a new tab)`}</span></a
-        >.
+        {t`Planet textures:`}{" "}
+        <a href="https://www.solarsystemscope.com/textures/" rel="noopener" target="_blank">
+          Solar System Scope<span class="sr-only"> {t`(opens in a new tab)`}</span>
+        </a>
+        ,{" "}
+        <a href="https://creativecommons.org/licenses/by/4.0/" rel="license noopener" target="_blank">
+          CC BY 4.0<span class="sr-only"> {t`(opens in a new tab)`}</span>
+        </a>
+        .
       </figcaption>
     </figure>
 
     <div class="ch-info">
       <p class="outcome rv">{typo(locale, t`A portfolio you fly through: Earth to Neptune in 12 camera stops.`)}</p>
       <p class="desc rv" style="--d:1">
-        {
-          typo(
-            locale,
-            t`My previous portfolio: a scroll-driven flight through the solar system, where each planet holds one section. 13 shaders written by hand in GLSL. Best on a computer.`,
-          )
-        }
+        {typo(
+          locale,
+          t`My previous portfolio: a scroll-driven flight through the solar system, where each planet holds one section. 13 shaders written by hand in GLSL. Best on a computer.`,
+        )}
       </p>
       <div class="links rv" style="--d:2">
         <a
@@ -115,7 +126,9 @@ const labelPlay = t`Play video`;
           data-umami-event-target="space-code"
           data-umami-event-project="space-portfolio"
         >
-          <Icon name="si:github" />{t`Code`}<span class="sr-only">{t`(opens in a new tab)`}</span>
+          <Icon name="si:github" />
+          {t`Code`}
+          <span class="sr-only">{t`(opens in a new tab)`}</span>
         </a>
       </div>
       <StackList

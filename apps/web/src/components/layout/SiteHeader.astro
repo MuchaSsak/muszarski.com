@@ -1,8 +1,8 @@
 ---
 /**
  * The header (structure.md § Navigation, requirements.md F01; design.md § Header). Sticky. On the home page it sits
- * on the hero field with the "M—M" mark; once the hero name scrolls away it turns into the navy bar and the mark
- * rolls into the full name. Other pages start in the bar state.
+ * on the hero field; once the hero name scrolls away it turns into the navy bar. Other pages start in the bar state.
+ * The logo (tile + name) is the same on every page and in every state [user 2026-10-06: "make logo consistent"].
  *
  * ≥ 1180 px: mark · Work · How I work · AI · Blog · language flags · CV · Hire me. Below: mark · CV · Hire me · Menu;
  * the rest (and My life, pause motion) lives in the full-screen menu (a native popover: 0 KB JS for open/close, Esc and
@@ -16,6 +16,7 @@ import CvLink from "~/components/layout/CvLink.astro";
 import LocaleCodes from "~/components/layout/LocaleCodes.astro";
 import MotionToggle from "~/components/layout/MotionToggle.astro";
 import Icon from "~/components/ui/Icon.astro";
+import Logo from "~/components/ui/Logo.astro";
 import { SITE } from "~/data/site";
 import { chromeLinks } from "~/lib/nav";
 import { type LocalizedPath } from "~/lib/routes";
@@ -53,9 +54,7 @@ const homeLabel = t`${name}, home`;
 <header class:list={["site-header", { stuck: !home }]} data-site-header data-home={home ? "" : undefined}>
   <a href={links.home} class="mark">
     <span class="sr-only">{homeLabel}</span>
-    <span class="m-s" aria-hidden="true">
-      M—M
-    </span>
+    <Logo />
     <span class="m-l" aria-hidden="true">
       {SITE.name.split(" ").map((word) => (
         <span>{word} </span>
@@ -158,40 +157,33 @@ const homeLabel = t`${name}, home`;
     --sfg: var(--bar-fg);
   }
 
-  /* The mark: "M—M" wide, rolling into the condensed full name once stuck. */
+  /* The logo: the tile and the condensed full name, the same everywhere. The tile straightens a tilt on hover. */
   .mark {
-    display: grid;
+    display: flex;
     flex: none;
+    align-items: center;
+    gap: 0.625rem;
     text-decoration: none;
     font-weight: 900;
     font-size: 1.375rem;
     line-height: 1;
     text-transform: uppercase;
-    overflow: hidden;
     padding-block: 0.25rem;
   }
-  .mark > span {
-    grid-area: 1 / 1;
-    white-space: nowrap;
-    transition:
-      opacity var(--dur-base) var(--ease-out),
-      transform 0.45s var(--ease-out);
+  .mark :global(.logo) {
+    flex: none;
+    width: 2rem;
+    height: 2rem;
+    box-shadow: 0 0 0 2px var(--sfg);
+    rotate: -4deg;
+    transition: rotate 0.4s var(--ease-pop);
   }
-  .m-s {
-    font-stretch: 150%;
+  .mark:is(:hover, :focus-visible) :global(.logo) {
+    rotate: 0deg;
   }
   .m-l {
+    white-space: nowrap;
     font-stretch: 72%;
-    opacity: 0;
-    transform: translateY(60%);
-  }
-  .stuck .m-s {
-    opacity: 0;
-    transform: translateY(-60%);
-  }
-  .stuck .m-l {
-    opacity: 1;
-    transform: none;
   }
 
   .main {
@@ -256,7 +248,12 @@ const homeLabel = t`${name}, home`;
       gap: 0.5rem;
     }
     .mark {
+      gap: 0.4375rem;
       font-size: 1.125rem;
+    }
+    .mark :global(.logo) {
+      width: 1.625rem;
+      height: 1.625rem;
     }
     /* The full name stacks in two short lines so it fits next to CV + Contact + Menu. */
     .m-l {
@@ -281,6 +278,10 @@ const homeLabel = t`${name}, home`;
     }
   }
   @media (max-width: 22.4375rem) {
+    /* The narrowest phones keep the tile; the name is in the link's label. */
+    .m-l {
+      display: none;
+    }
     .site-header :global(.btn) {
       padding-inline: 0.5rem;
       font-stretch: 72%;

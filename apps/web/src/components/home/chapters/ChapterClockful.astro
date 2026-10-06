@@ -6,7 +6,6 @@
  */
 import { t } from "lingui-for-astro/macro";
 
-import ChapterBackdrop from "~/components/home/chapters/ChapterBackdrop.astro";
 import ChapterBadge from "~/components/home/chapters/ChapterBadge.astro";
 import Fit from "~/components/ui/Fit.astro";
 import Icon from "~/components/ui/Icon.astro";
@@ -23,30 +22,58 @@ const start = t`Start`;
 ---
 
 <section class="sec chapter c-cf" id="clockful" aria-labelledby="t-cf">
-  <ChapterBackdrop icons={["tb:clock", "tb:calendar", "tb:chart-bar", "tb:clock-hour-4", "tb:users", "tb:shield-lock"]} />
+  <div class="ch-bg" aria-hidden="true"></div>
   <ChapterBadge icon="tb:school" label={t`Internship · Neoteric · 2026`} />
   <Fit as="h2" id="t-cf" lines={["Clockful"]} />
   <div class="cf-grid grid-2">
     <figure class="reel stage-first">
       <div class="frame">
         <div class="browser">
-          <div class="b-top" aria-hidden="true"><i></i><i></i><i></i><span class="b-url"></span></div>
+          <div class="b-top" aria-hidden="true">
+            <i></i>
+            <i></i>
+            <i></i>
+            <span class="b-url"></span>
+          </div>
           <div class="dash" data-clock>
-            <div class="d-side" aria-hidden="true"><i></i><i class="on"></i><i></i><i></i><i></i><i></i></div>
+            <div class="d-side" aria-hidden="true">
+              <i></i>
+              <i class="on"></i>
+              <i></i>
+              <i></i>
+              <i></i>
+              <i></i>
+            </div>
             <div class="d-main">
               <div class="d-head">
-                <span class="rec" data-rec data-running={running} data-paused={paused}>{running}</span>
-                <button class="d-stop" type="button" data-clock-toggle aria-pressed="false" data-stop={stop} data-start={start}>{stop}</button>
-                <span class="d-role" aria-hidden="true"><b>{t`Employee`}</b><b>Admin</b></span>
+                <span class="rec" data-rec data-running={running} data-paused={paused}>
+                  {running}
+                </span>
+                <button class="d-stop" type="button" data-clock-toggle aria-pressed="false" data-stop={stop} data-start={start}>
+                  {stop}
+                </button>
+                <span class="d-role" aria-hidden="true">
+                  <b>{t`Employee`}</b>
+                  <b>Admin</b>
+                </span>
               </div>
               <p class="timer tabular" aria-hidden="true"></p>
               <span class="sr-only">{t`A demo timer that counts up.`}</span>
               <div class="d-low" aria-hidden="true">
                 <div class="bars">
-                  <i style="--h:40%;--i:0"></i><i style="--h:72%;--i:1"></i><i style="--h:55%;--i:2"></i><i style="--h:90%;--i:3"></i><i
-                    style="--h:64%;--i:4"></i><i style="--h:30%;--i:5"></i><i style="--h:48%;--i:6"></i>
+                  <i style="--h:40%;--i:0"></i>
+                  <i style="--h:72%;--i:1"></i>
+                  <i style="--h:55%;--i:2"></i>
+                  <i style="--h:90%;--i:3"></i>
+                  <i style="--h:64%;--i:4"></i>
+                  <i style="--h:30%;--i:5"></i>
+                  <i style="--h:48%;--i:6"></i>
                 </div>
-                <div class="rows"><i style="--i:0"></i><i style="--i:1;width:84%"></i><i style="--i:2;width:66%"></i></div>
+                <div class="rows">
+                  <i style="--i:0"></i>
+                  <i style="--i:1;width:84%"></i>
+                  <i style="--i:2;width:66%"></i>
+                </div>
               </div>
             </div>
           </div>
@@ -55,25 +82,53 @@ const start = t`Start`;
       </div>
       <figcaption class="sr-only">{t`Drawn stand-in for the dashboard, with a working demo timer. A walkthrough recording will replace it.`}</figcaption>
       <ul class="mstats rv">
-        <li><span class="top"><Icon name="tb:test-pipe" /><b>118</b></span>{t`automated tests: 49 Vitest, 69 Playwright`}</li>
-        <li><span class="top"><Icon name="tb:shield-lock" /><b>5/5</b></span>{t`tables behind row-level security`}</li>
-        <li><span class="top"><Icon name="tb:checklist" /><b>15</b></span>{t`requirements in the spec`}</li>
-        <li><span class="top"><Icon name="tb:calendar" /><b>9</b></span>{t`days from spec to hand-in (an estimate)`}</li>
+        <li>
+          <span class="top">
+            <Icon name="tb:test-pipe" />
+            <b>118</b>
+          </span>
+          {t`automated tests: 49 Vitest, 69 Playwright`}
+        </li>
+        <li>
+          <span class="top">
+            <Icon name="tb:shield-lock" />
+            <b>5/5</b>
+          </span>
+          {t`tables behind row-level security`}
+        </li>
+        <li>
+          <span class="top">
+            <Icon name="tb:checklist" />
+            <b>15</b>
+          </span>
+          {t`requirements in the spec`}
+        </li>
+        <li>
+          <span class="top">
+            <Icon name="tb:calendar" />
+            <b>9</b>
+          </span>
+          {t`days from spec to hand-in (an estimate)`}
+        </li>
       </ul>
     </figure>
 
     <div class="ch-info">
       <p class="outcome rv">{typo(locale, t`A role-based time tracker, built with AI agents under a deadline.`)}</p>
       <p class="desc rv" style="--d:1">
-        {
-          typo(
-            locale,
-            t`An internship brief from Neoteric, a Polish software house: a time tracker where employees log their hours and admins see the reports. The rule was to build it only with AI agents, against a deadline. I directed them and verified what they built, from the database rules to the tests.`,
-          )
-        }
+        {typo(
+          locale,
+          t`An internship brief from Neoteric, a Polish software house: a time tracker where employees log their hours and admins see the reports. The rule was to build it only with AI agents, against a deadline. I directed them and verified what they built, from the database rules to the tests.`,
+        )}
       </p>
       <div class="links rv" style="--d:2">
-        <a class="btn btn-inv" href={links.contact} data-umami-event="cta" data-umami-event-id="walkthrough" data-umami-event-source="clockful">
+        <a
+          class="btn btn-inv"
+          href={links.contact}
+          data-umami-event="cta"
+          data-umami-event-id="walkthrough"
+          data-umami-event-source="clockful"
+        >
           {t`Ask for a walkthrough`}
           <Icon name="tb:arrow-right" class="nudge" />
         </a>
@@ -87,7 +142,7 @@ const start = t`Start`;
           { icon: "si:supabase", name: "Supabase" },
           { icon: "si:reactquery", name: "TanStack Query" },
           { icon: "si:vitest", name: "Vitest" },
-          { mono: "Pw", name: "Playwright" },
+          { icon: "mk:playwright", name: "Playwright" },
         ]}
       />
     </div>

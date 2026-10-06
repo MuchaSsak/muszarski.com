@@ -15,7 +15,6 @@ import ChapterPstrykWeb from "~/components/home/chapters/ChapterPstrykWeb.astro"
 import ChapterSpace from "~/components/home/chapters/ChapterSpace.astro";
 import Icon from "~/components/ui/Icon.astro";
 import { visibleFlagships, visibleProjects } from "~/data/projects";
-import type { IconName } from "~/lib/icons.gen";
 import { chromeLinks } from "~/lib/nav";
 
 const links = chromeLinks(Astro.locals.locale);
@@ -27,11 +26,26 @@ const CHAPTERS = {
 } as const;
 const shown = visibleFlagships().filter((project) => project.slug in CHAPTERS);
 
-// "Also shipped" [user 2026-10-06]: fun first, the npm CLI last. Names and links come from the project data.
-const EXTRAS: { slug: string; icon: IconName; target: string; line: string }[] = [
-  { slug: "malatro", icon: "tb:cards", target: "malatro-live", line: t`Balatro, but every card is a real maths exam task.` },
-  { slug: "yws", icon: "tb:home-heart", target: "yws-live", line: t`A 3D site for a Luxembourg non-profit that houses young people.` },
-  { slug: "lingui-translate-ai", icon: "si:npm", target: "npm-lingui-translate-ai", line: t`My npm CLI that translates Lingui catalogs with an LLM.` },
+// "Also shipped" [user 2026-10-06]: fun first, the npm CLI last. Names and links come from the project data. Each
+// ticket shows a small preview [user 2026-10-06]: a crop of the live site, or for the CLI a drawn terminal running it.
+const EXTRAS: { slug: string; shot?: string; target: string; line: string }[] = [
+  {
+    slug: "malatro",
+    shot: "/media/shipped/malatro.webp",
+    target: "malatro-live",
+    line: t`Balatro, but every card is a real maths exam task.`,
+  },
+  {
+    slug: "yws",
+    shot: "/media/shipped/yws.webp",
+    target: "yws-live",
+    line: t`A 3D site for a Luxembourg non-profit that houses young people.`,
+  },
+  {
+    slug: "lingui-translate-ai",
+    target: "npm-lingui-translate-ai",
+    line: t`My npm CLI that translates Lingui catalogs with an LLM.`,
+  },
 ];
 const extras = EXTRAS.flatMap((extra) => {
   const project = visibleProjects().find((item) => item.slug === extra.slug);
@@ -41,46 +55,60 @@ const extras = EXTRAS.flatMap((extra) => {
 ---
 
 <div class="chapters" id="work" aria-label={t`Selected work`} role="region">
-  {
-    shown.map((project) => {
-      const Chapter = CHAPTERS[project.slug as keyof typeof CHAPTERS];
-      return <Chapter />;
-    })
-  }
+  {shown.map((project) => {
+    const Chapter = CHAPTERS[project.slug as keyof typeof CHAPTERS];
+    return <Chapter />;
+  })}
 </div>
 
 <div class="sec field-bar more">
   <p class="more-label" id="more-label">{t`Also shipped`}</p>
   <ul class="shipped" role="list" aria-labelledby="more-label">
-    {
-      extras.map((extra) => (
-        <li>
-          <a
-            class="ship"
-            href={extra.href}
-            rel="noopener"
-            target="_blank"
-            data-umami-event="outbound"
-            data-umami-event-target={extra.target}
-            data-umami-event-project={extra.slug}
-          >
-            <span class="ship-ico">
-              <Icon name={extra.icon} />
-            </span>
-            <span class="ship-text">
-              <b>
-                {extra.name}
-                <Icon name="tb:arrow-up-right" class="nudge" />
-              </b>
-              <small>{extra.line}</small>
-            </span>
-            <span class="sr-only"> {t`(opens in a new tab)`}</span>
-          </a>
-        </li>
-      ))
-    }
+    {extras.map((extra) => (
+      <li>
+        <a
+          class="ship"
+          href={extra.href}
+          rel="noopener"
+          target="_blank"
+          data-umami-event="outbound"
+          data-umami-event-target={extra.target}
+          data-umami-event-project={extra.slug}
+        >
+          <span class="ship-shot" aria-hidden="true">
+            {extra.shot ? (
+              <img src={extra.shot} alt="" width="320" height="200" loading="lazy" decoding="async" />
+            ) : (
+              <span class="ship-term">
+                <i>
+                  <b>$</b> npx
+                </i>
+                <i>lingui-translate-ai</i>
+                <i class="ok">
+                  pl <Icon name="tb:check" /> es <Icon name="tb:check" />
+                </i>
+              </span>
+            )}
+          </span>
+          <span class="ship-text">
+            <b>
+              {extra.name}
+              <Icon name="tb:arrow-up-right" class="nudge" />
+            </b>
+            <small>{extra.line}</small>
+          </span>
+          <span class="sr-only"> {t`(opens in a new tab)`}</span>
+        </a>
+      </li>
+    ))}
   </ul>
-  <a class="btn btn-acc" href={links.workIndex} data-umami-event="cta" data-umami-event-id="all-projects" data-umami-event-source="chapters">
+  <a
+    class="btn btn-acc"
+    href={links.workIndex}
+    data-umami-event="cta"
+    data-umami-event-id="all-projects"
+    data-umami-event-source="chapters"
+  >
     {t`All projects`}
     <Icon name="tb:arrow-right" class="nudge" />
   </a>
@@ -95,7 +123,8 @@ const extras = EXTRAS.flatMap((extra) => {
   const header = document.querySelector<HTMLElement>(".site-header");
   const stick = () => {
     const top = header?.offsetHeight ?? 0;
-    for (const chapter of chapters) chapter.style.setProperty("--stick", `${Math.min(top, innerHeight - chapter.offsetHeight)}px`);
+    for (const chapter of chapters)
+      chapter.style.setProperty("--stick", `${Math.min(top, innerHeight - chapter.offsetHeight)}px`);
   };
   stick();
   new ResizeObserver(stick).observe(document.documentElement);

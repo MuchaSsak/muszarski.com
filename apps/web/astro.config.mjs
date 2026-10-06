@@ -35,9 +35,21 @@ const TURNSTILE = "https://challenges.cloudflare.com";
  */
 /** @type {Record<string, Record<string, string>>} */
 const LEGAL_GAPS = {
-  en: { POSTAL_ADDRESS: "postal address to be completed", MAILBOX_PROVIDER: "mailbox provider to be completed", MAILBOX_LOCATION: "location to be completed" },
-  pl: { POSTAL_ADDRESS: "adres do korespondencji do uzupełnienia", MAILBOX_PROVIDER: "dostawca skrzynki do uzupełnienia", MAILBOX_LOCATION: "lokalizacja do uzupełnienia" },
-  es: { POSTAL_ADDRESS: "dirección postal pendiente", MAILBOX_PROVIDER: "proveedor del buzón pendiente", MAILBOX_LOCATION: "ubicación pendiente" },
+  en: {
+    POSTAL_ADDRESS: "postal address to be completed",
+    MAILBOX_PROVIDER: "mailbox provider to be completed",
+    MAILBOX_LOCATION: "location to be completed",
+  },
+  pl: {
+    POSTAL_ADDRESS: "adres do korespondencji do uzupełnienia",
+    MAILBOX_PROVIDER: "dostawca skrzynki do uzupełnienia",
+    MAILBOX_LOCATION: "lokalizacja do uzupełnienia",
+  },
+  es: {
+    POSTAL_ADDRESS: "dirección postal pendiente",
+    MAILBOX_PROVIDER: "proveedor del buzón pendiente",
+    MAILBOX_LOCATION: "ubicación pendiente",
+  },
 };
 /** @param {{ fileURL?: URL }} context */
 function legalTokens(context) {
@@ -97,7 +109,12 @@ function externalLinks(context) {
         ctx.setProperty(node, "target", "_blank");
         ctx.setProperty(node, "rel", "noopener");
         // Screen readers hear it after the link text (WCAG 2.5.3: the visible words still start the name).
-        ctx.appendChild(node, { type: "element", tagName: "span", properties: { className: ["sr-only"] }, children: [{ type: "text", value: ` ${note}` }] });
+        ctx.appendChild(node, {
+          type: "element",
+          tagName: "span",
+          properties: { className: ["sr-only"] },
+          children: [{ type: "text", value: ` ${note}` }],
+        });
       },
     },
   };
@@ -125,7 +142,11 @@ export default defineConfig({
   // Code blocks: Shiki with the css-variables theme, so token colours come from the site's tokens (style attributes
   // are allowed by the CSP). Smart punctuation is off: English curly quotes are wrong in Polish.
   markdown: {
-    processor: satteri({ mdastPlugins: [legalTokens], hastPlugins: [tableScroll, externalLinks], features: { smartPunctuation: false } }),
+    processor: satteri({
+      mdastPlugins: [legalTokens],
+      hastPlugins: [tableScroll, externalLinks],
+      features: { smartPunctuation: false },
+    }),
     syntaxHighlight: "shiki",
     shikiConfig: { theme: "css-variables", wrap: false },
   },
@@ -159,7 +180,13 @@ export default defineConfig({
   env: {
     schema: {
       PUBLIC_SITE_URL: envField.string({ context: "client", access: "public", default: SITE_URL }),
-      PUBLIC_UMAMI_WEBSITE_ID: envField.string({ context: "client", access: "public", optional: true }),
+      // The Umami Cloud website id [user 2026-10-06]. Public by design (it ships in every page's HTML); the script only
+      // counts on the production host (`data-domains`), so previews and local runs send nothing.
+      PUBLIC_UMAMI_WEBSITE_ID: envField.string({
+        context: "client",
+        access: "public",
+        default: "ceeca8b5-55ea-4bce-a1f2-a9f7c45c3590",
+      }),
       PUBLIC_UMAMI_SCRIPT_URL: envField.string({ context: "client", access: "public", default: UMAMI_SCRIPT }),
       // Turnstile's public site key; unset = the form sends without the widget (the function then skips the check
       // only when its secret is unset too).

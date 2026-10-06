@@ -1,39 +1,31 @@
 ---
 /**
- * How I work (structure.md § Home 3, requirements.md F06): the product loop. Seven stops on a ring, code is one of
- * them; each stop has a drawn scene (what the stop looks like in a real project, so it reads without reading [user
- * 2026-10-06]), one line and a receipt that links to its chapter. Every stop's text is in
- * the HTML (crawlable, readable without JS); the script shows one at a time, moves the dot along the ring and
- * advances while the section is visible (pauses on tap, the pause button and reduced motion).
- * A receipt whose project is hidden by the rights gate falls back to another true one.
+ * How I work (structure.md § Home 3, requirements.md F06): the loop I run on every project, web, mobile or backend.
+ * Seven stops on a ring, code is one of them. Each stop is a drawn scene (the stop as a picture, so it reads without
+ * reading), one line and the practices behind it. Generic on purpose [user 2026-10-06: "more general", no project
+ * receipts; shipping is pipelines, the web and the stores, not only app review]. Every stop's text is in the HTML
+ * (crawlable, readable without JS); the script shows one at a time, moves the dot along the ring and advances while
+ * the section is visible (pauses on tap, the pause button and reduced motion).
  */
 import { t } from "lingui-for-astro/macro";
 
 import Fit from "~/components/ui/Fit.astro";
 import Icon from "~/components/ui/Icon.astro";
-import { visibleFlagships } from "~/data/projects";
 import { type IconName } from "~/lib/icons.gen";
-import { thisSitePath } from "~/lib/blog-paths";
 import { typo } from "~/lib/typography";
 
 const locale = Astro.locals.locale;
-const visible = new Set(visibleFlagships().map((project) => project.slug));
-const caseStudy = thisSitePath(locale);
 
-interface Receipt {
-  project: string;
-  text: string;
-  href: string;
-  color: string;
-}
 type Scene = "client" | "users" | "conversion" | "revenue" | "code" | "ship" | "measure";
 interface Stop {
   icon: IconName;
   scene: Scene;
+  /** The scene's colour. */
+  color: string;
   name: string;
   line: string;
-  receipt: Receipt;
-  fallback?: Receipt;
+  /** What I do at this stop, as short chips; a tool's mark where a real tool does the job. */
+  does: { label: string; icon?: IconName }[];
   code?: boolean;
 }
 
@@ -41,83 +33,93 @@ const STOPS: Stop[] = [
   {
     icon: "tb:briefcase",
     scene: "client",
+    color: "var(--yellow)",
     name: t`Client`,
     line: t`I start with the person paying for it, and what they need to earn.`,
-    receipt: { project: "pstrykweb", text: t`PstrykWeb: built for Cetuspro and the businesses it serves.`, href: "#pstrykweb", color: "var(--yellow)" },
-    fallback: { project: "linkoglot", text: t`Linkoglot: built for learners who pay for a plan.`, href: "#linkoglot", color: "var(--orange)" },
+    does: [{ label: t`goals in numbers` }, { label: t`budget` }, { label: t`deadline` }],
   },
   {
     icon: "tb:users",
     scene: "users",
+    color: "var(--orange)",
     name: t`Users`,
     line: t`Who uses it, what they want done, and where they give up.`,
-    receipt: { project: "linkoglot", text: t`Linkoglot: snap a photo, get flashcards and quizzes.`, href: "#linkoglot", color: "var(--orange)" },
+    does: [{ label: t`user flows` }, { label: t`real app references` }, { label: t`drop-off points` }],
   },
   {
     icon: "tb:target",
     scene: "conversion",
+    color: "var(--pink)",
     name: t`Conversion`,
-    line: t`Fewer steps between interest and a paid order.`,
-    receipt: { project: "pstrykweb", text: t`PstrykWeb: a website, ordered through one online form.`, href: "#pstrykweb", color: "var(--yellow)" },
-    fallback: { project: "linkoglot", text: t`Linkoglot: a free trial that leads into a plan.`, href: "#linkoglot", color: "var(--orange)" },
+    line: t`Fewer steps between interest and action.`,
+    does: [{ label: t`one clear CTA` }, { label: t`short forms` }, { label: t`fast pages` }],
   },
   {
     icon: "tb:coins",
     scene: "revenue",
+    color: "var(--lime)",
     name: t`Revenue`,
     line: t`How it earns is designed in from day one.`,
-    receipt: {
-      project: "linkoglot",
-      text: t`Linkoglot: free trial, then monthly or yearly plans through RevenueCat.`,
-      href: "#linkoglot",
-      color: "var(--orange)",
-    },
+    does: [{ label: t`pricing` }, { label: t`payments`, icon: "tb:credit-card" }, { label: "RevenueCat", icon: "si:revenuecat" }],
   },
   {
     icon: "tb:code",
     scene: "code",
+    color: "var(--cobalt)",
     name: t`Code`,
     line: t`Then the code: web, mobile and backend, end to end, tested.`,
-    receipt: {
-      project: "neoteric-clockful",
-      text: t`Clockful: 118 automated tests, row-level security on every table.`,
-      href: "#clockful",
-      color: "var(--lime)",
-    },
-    fallback: { project: "site", text: t`This site: checked on every change, 99+ on mobile Lighthouse.`, href: caseStudy, color: "var(--cobalt)" },
+    does: [
+      { label: "TypeScript", icon: "si:typescript" },
+      { label: t`automated tests`, icon: "tb:test-pipe" },
+      { label: t`code review`, icon: "tb:git-pull-request" },
+    ],
     code: true,
   },
   {
     icon: "tb:rocket",
     scene: "ship",
+    color: "var(--yellow)",
     name: t`Ship`,
-    line: t`Shipping is part of the job: stores, reviews, releases.`,
-    receipt: { project: "linkoglot", text: t`Linkoglot: through App Store and Google Play review.`, href: "#linkoglot", color: "var(--orange)" },
+    line: t`Shipping is part of the job: pipelines, deploys, store releases.`,
+    does: [
+      { label: "GitLab CI/CD", icon: "si:gitlab" },
+      { label: "Vercel", icon: "si:vercel" },
+      { label: t`App Store and Google Play`, icon: "tb:device-mobile" },
+      { label: "Search Console", icon: "si:googlesearchconsole" },
+    ],
   },
   {
     icon: "tb:chart-line",
     scene: "measure",
+    color: "var(--pink)",
     name: t`Measure`,
     line: t`Measure, then decide what changes next.`,
-    receipt: { project: "space-portfolio", text: t`My old site scored 34 on mobile. So I rebuilt it.`, href: "#space", color: "var(--pink)" },
+    does: [
+      { label: t`analytics`, icon: "si:umami" },
+      { label: "Lighthouse", icon: "si:lighthouse" },
+      { label: t`user feedback` },
+    ],
   },
 ];
 
-const stops = STOPS.map((stop) => ({
-  ...stop,
-  receipt: visible.has(stop.receipt.project) || !stop.fallback ? stop.receipt : stop.fallback,
-}));
 const pad = (n: number) => String(n).padStart(2, "0");
 const stopLabel = t({ message: "Stop", context: "a stop on the product loop, as in a bus stop" });
 const [line1, line2] = t`Product|engineer`.split("|") as [string, string];
-const plan = { trial: t`Free trial`, monthly: t`Monthly`, yearly: t`Yearly` };
+/** The ship scene's pipeline. */
+const pipeline: { icon: IconName; label: string }[] = [
+  { icon: "tb:hammer", label: t`build` },
+  { icon: "tb:test-pipe", label: t`test` },
+  { icon: "tb:rocket", label: t`deploy` },
+];
+/** Where a release lands: the web, both stores, Google. */
+const DESTS: IconName[] = ["tb:world", "si:apple", "si:googleplay", "si:google"];
 ---
 
 <section class="sec field-alt how" id="how-i-work" aria-labelledby="t-how">
   <div class="sbar draw">
     <p>{t`How I work`}</p>
     <p>{t`Code is one stop of seven`}</p>
-    <p>{t`Each with a receipt`}</p>
+    <p>{t`The same loop on every project`}</p>
   </div>
   <Fit as="h2" id="t-how" lines={[line1, line2]} motion="calm" base={[90, 130]} />
   <div class="loop" data-loop>
@@ -125,186 +127,181 @@ const plan = { trial: t`Free trial`, monthly: t`Monthly`, yearly: t`Yearly` };
       <svg class="lp-svg" viewBox="0 0 500 500">
         <circle class="track" cx="250" cy="250" r="200"></circle>
         <circle class="trail" cx="250" cy="250" r="200" pathLength="700" transform="rotate(-90 250 250)"></circle>
-        <g class="dot-arm"><circle class="dot" r="11" cx="250" cy="50"></circle></g>
+        <g class="dot-arm">
+          <circle class="dot" r="11" cx="250" cy="50"></circle>
+        </g>
       </svg>
       <div class="core">
-        <span class="n tabular" data-core-n>01 / {pad(stops.length)}</span>
-        {stops.map((stop, i) => <Icon name={stop.icon} data-core-icon={i} hidden={i > 0} />)}
-        <span class="nm" data-core-nm>{stops[0]!.name}</span>
+        <span class="n tabular" data-core-n>
+          01 / {pad(STOPS.length)}
+        </span>
+        {STOPS.map((stop, i) => (
+          <Icon name={stop.icon} data-core-icon={i} hidden={i > 0} />
+        ))}
+        <span class="nm" data-core-nm>
+          {STOPS[0]!.name}
+        </span>
       </div>
     </div>
     <ol class="stops" aria-label={t`The loop`}>
-      {
-        stops.map((stop, i) => (
-          <li class:list={["stop", { code: stop.code }]} style={`--i:${i}`}>
-            <button class="stn" type="button" aria-pressed={i === 0 ? "true" : "false"} aria-controls={`stop-${i}`} data-stop={i}>
-              <Icon name={stop.icon} />
-              <span class="lbl">{stop.name}</span>
-            </button>
-          </li>
-        ))
-      }
+      {STOPS.map((stop, i) => (
+        <li class:list={["stop", { code: stop.code }]} style={`--i:${i}`}>
+          <button class="stn" type="button" aria-pressed={i === 0 ? "true" : "false"} aria-controls={`stop-${i}`} data-stop={i}>
+            <Icon name={stop.icon} />
+            <span class="lbl">{stop.name}</span>
+          </button>
+        </li>
+      ))}
     </ol>
     <div class="panel">
-      {
-        stops.map((stop, i) => (
-          <div class="pd enter" id={`stop-${i}`} data-pd={i}>
-            <p class="kick k">
-              {stopLabel} {pad(i + 1)} · {stop.name}
-            </p>
-            <div class={`scene sc-${stop.scene}`} style={`--c:${stop.receipt.color}`} aria-hidden="true">
-              {stop.scene === "client" && (
-                <div class="row">
-                  <span class="tile enter">
-                    <Icon name="tb:building-store" />
+      {STOPS.map((stop, i) => (
+        <div class="pd enter" id={`stop-${i}`} data-pd={i}>
+          <p class="kick k">
+            {stopLabel} {pad(i + 1)} · {stop.name}
+          </p>
+          <div class={`scene sc-${stop.scene}`} style={`--c:${stop.color}`} aria-hidden="true">
+            {stop.scene === "client" && (
+              <div class="row">
+                <span class="tile enter">
+                  <Icon name="tb:building-store" />
+                </span>
+                <span class="bubble enter">
+                  <Icon name="tb:coins" class="coin" />
+                  <Icon name="tb:trending-up" />
+                </span>
+              </div>
+            )}
+            {stop.scene === "users" && (
+              <div class="journey">
+                {[0, 1, 2].map((k) => (
+                  <span class="scr enter" style={`--k:${k};--ok:${[0.6, 2.05, 3.45][k]}s`}>
+                    {k === 1 && <Icon name="tb:alert-triangle" class="warn" />}
+                    <Icon name="tb:check" class="ok" />
                   </span>
-                  <span class="bubble enter">
-                    <Icon name="tb:coins" class="coin" />
-                    <Icon name="tb:trending-up" />
+                ))}
+                <span class="walker">
+                  <Icon name="tb:user" />
+                </span>
+              </div>
+            )}
+            {stop.scene === "conversion" && (
+              <div class="row">
+                <span class="form enter">
+                  {[0, 1, 2].map((k) => (
+                    <i style={`--k:${k}`} />
+                  ))}
+                  <b>
+                    <Icon name="tb:hand-click" />
+                  </b>
+                </span>
+                <span class="done enter">
+                  <Icon name="tb:check" />
+                </span>
+              </div>
+            )}
+            {stop.scene === "revenue" && (
+              <div class="row">
+                <span class="ccard enter">
+                  <i />
+                </span>
+                <Icon name="tb:arrow-right" class="arw" />
+                <span class="bars">
+                  {[0, 1, 2, 3].map((k) => (
+                    <i style={`--k:${k}`} />
+                  ))}
+                  <Icon name="tb:coins" class="coin" />
+                </span>
+              </div>
+            )}
+            {stop.scene === "code" && (
+              <div class="row">
+                <span class="term enter">
+                  <span class="tbar">
+                    <i />
+                    <i />
+                    <i />
                   </span>
-                </div>
-              )}
-              {stop.scene === "users" && (
-                <div class="row">
-                  <span class="phone enter">
-                    <i class="vf" />
-                    <Icon name="tb:camera" />
-                    <i class="flash" />
-                  </span>
-                  <span class="fc">
-                    {[0, 1, 2].map((k) => (
-                      <i class="enter" style={`--k:${k}`} />
-                    ))}
-                  </span>
-                </div>
-              )}
-              {stop.scene === "conversion" && (
-                <div class="row">
-                  <span class="form enter">
-                    {[0, 1, 2].map((k) => (
-                      <i style={`--k:${k}`} />
-                    ))}
+                  <span class="ln" style="--k:0">
+                    <Icon name="si:typescript" />
+                    typecheck
                     <b>
-                      <Icon name="tb:hand-click" />
+                      <Icon name="tb:check" />
                     </b>
                   </span>
-                  <span class="done enter">
+                  <span class="ln" style="--k:1">
+                    <Icon name="tb:test-pipe" />
+                    unit tests
+                    <b>
+                      <Icon name="tb:check" />
+                    </b>
+                  </span>
+                  <span class="ln" style="--k:2">
+                    <Icon name="mk:playwright" />
+                    e2e + a11y
+                    <b>
+                      <Icon name="tb:check" />
+                    </b>
+                  </span>
+                </span>
+                <span class="pr enter">
+                  <Icon name="tb:git-pull-request" />
+                  <i>
                     <Icon name="tb:check" />
-                  </span>
-                </div>
-              )}
-              {stop.scene === "revenue" && (
-                <div class="row">
-                  <span class="chip enter">{plan.trial}</span>
-                  <Icon name="tb:arrow-right" class="arw" />
-                  <span class="plans">
-                    <span class="plan enter" style="--k:0">
-                      {plan.monthly}
+                  </i>
+                </span>
+              </div>
+            )}
+            {stop.scene === "ship" && (
+              <div class="launch">
+                <span class="pipe">
+                  {pipeline.map((step, k) => (
+                    <span class="step" style={`--k:${k}`}>
+                      <span class="stage">
+                        <Icon name={step.icon} />
+                      </span>
+                      <small>{step.label}</small>
                     </span>
-                    <span class="plan best enter" style="--k:1">
-                      {plan.yearly}
+                  ))}
+                </span>
+                <span class="dests">
+                  {DESTS.map((icon, k) => (
+                    <span class="dest" style={`--k:${k}`}>
+                      <Icon name={icon} />
                     </span>
-                  </span>
-                  <span class="mark">
-                    <Icon name="si:revenuecat" />
-                  </span>
-                </div>
-              )}
-              {stop.scene === "code" && (
-                <div class="row">
-                  <span class="term enter">
-                    <span class="tbar">
-                      <i />
-                      <i />
-                      <i />
-                    </span>
-                    {stop.receipt.project === "neoteric-clockful" ? (
-                      <>
-                        <span class="ln" style="--k:0">
-                          <Icon name="si:vitest" />
-                          vitest<b>49 <Icon name="tb:check" /></b>
-                        </span>
-                        <span class="ln" style="--k:1">
-                          <span class="pw">Pw</span>
-                          playwright<b>69 <Icon name="tb:check" /></b>
-                        </span>
-                        <span class="ln" style="--k:2">
-                          <Icon name="tb:shield-lock" />
-                          RLS<b>5/5</b>
-                        </span>
-                      </>
-                    ) : (
-                      <>
-                        <span class="ln" style="--k:0">
-                          <Icon name="si:typescript" />
-                          typecheck<b><Icon name="tb:check" /></b>
-                        </span>
-                        <span class="ln" style="--k:1">
-                          <span class="pw">Pw</span>
-                          e2e + axe<b><Icon name="tb:check" /></b>
-                        </span>
-                        <span class="ln" style="--k:2">
-                          <Icon name="tb:chart-line" />
-                          Lighthouse<b>99+</b>
-                        </span>
-                      </>
-                    )}
-                  </span>
-                  {stop.receipt.project === "neoteric-clockful" && <span class="big enter">118</span>}
-                </div>
-              )}
-              {stop.scene === "ship" && (
-                <div class="row">
-                  <span class="stores">
-                    <span class="store enter" style="--k:0">
-                      <Icon name="si:apple" />
-                      App Store
-                      <i>
-                        <Icon name="tb:check" />
-                      </i>
-                    </span>
-                    <span class="store enter" style="--k:1">
-                      <Icon name="si:googleplay" />
-                      Google Play
-                      <i>
-                        <Icon name="tb:check" />
-                      </i>
-                    </span>
-                  </span>
-                  <span class="rocket">
-                    <Icon name="tb:rocket" />
-                  </span>
-                </div>
-              )}
-              {stop.scene === "measure" && (
-                <div class="row">
-                  <span class="gauge low enter" style="--v:34">
-                    <svg viewBox="0 0 40 40">
-                      <circle class="g-bg" cx="20" cy="20" r="16" />
-                      <circle class="g-fg" cx="20" cy="20" r="16" pathLength="100" transform="rotate(-90 20 20)" />
-                    </svg>
-                    <b class="tabular">34</b>
-                  </span>
-                  <Icon name="tb:arrow-right" class="arw" />
-                  <span class="gauge high enter" style="--v:99">
-                    <svg viewBox="0 0 40 40">
-                      <circle class="g-bg" cx="20" cy="20" r="16" />
-                      <circle class="g-fg" cx="20" cy="20" r="16" pathLength="100" transform="rotate(-90 20 20)" />
-                    </svg>
-                    <b class="tabular">99</b>
-                  </span>
-                </div>
-              )}
-            </div>
-            <p class="s">{typo(locale, stop.line)}</p>
-            <a class="receipt-row" href={stop.receipt.href} style={`--c:${stop.receipt.color}`}>
-              <i aria-hidden="true" />
-              <span>{stop.receipt.text}</span>
-              <Icon name="tb:arrow-right" />
-            </a>
+                  ))}
+                </span>
+              </div>
+            )}
+            {stop.scene === "measure" && (
+              <div class="row">
+                <span class="chart enter">
+                  <svg class="c-svg" viewBox="0 0 100 60">
+                    <path class="c-grid" d="M0 15H100M0 30H100M0 45H100" />
+                    <polyline class="c-line" points="5,52 22,43 38,46 55,30 72,25 93,9" pathLength="100" />
+                    <circle class="c-dot" cx="93" cy="9" r="3.4" />
+                  </svg>
+                </span>
+                <span class="gauge enter" style="--v:96">
+                  <svg class="g-ring" viewBox="0 0 40 40">
+                    <circle class="g-bg" cx="20" cy="20" r="16" />
+                    <circle class="g-fg" cx="20" cy="20" r="16" pathLength="100" transform="rotate(-90 20 20)" />
+                  </svg>
+                  <Icon name="tb:check" class="g-ok" />
+                </span>
+              </div>
+            )}
           </div>
-        ))
-      }
+          <p class="s">{typo(locale, stop.line)}</p>
+          <ul class="does" role="list">
+            {stop.does.map((item) => (
+              <li>
+                {item.icon && <Icon name={item.icon} />}
+                {item.label}
+              </li>
+            ))}
+          </ul>
+        </div>
+      ))}
       <p class="after">
         <Icon name="tb:refresh" />
         {t`Then back to the client, with numbers.`}
@@ -555,13 +552,12 @@ const plan = { trial: t`Free trial`, monthly: t`Monthly`, yearly: t`Yearly` };
   }
   .tile,
   .bubble,
-  .phone,
-  .fc i,
+  .scr,
   .form,
-  .chip,
-  .plan,
-  .term,
-  .store,
+  .ccard,
+  .pr,
+  .dest,
+  .chart,
   .gauge {
     background: var(--ice);
     box-shadow:
@@ -604,9 +600,9 @@ const plan = { trial: t`Free trial`, monthly: t`Monthly`, yearly: t`Yearly` };
     border-left: 0;
   }
   /* Navy pieces cast a see-through shadow (a navy one would read as a second box). */
-  .phone,
   .term,
-  .store {
+  .walker,
+  .stage {
     box-shadow: 1.4cqw 1.4cqw 0 rgb(10 13 51 / 0.35);
   }
   @keyframes hw-pop {
@@ -625,65 +621,94 @@ const plan = { trial: t`Free trial`, monthly: t`Monthly`, yearly: t`Yearly` };
     }
   }
 
-  /* Users: snap a photo, get flashcards. */
-  .phone {
+  /* Users: someone walks through three screens; the middle one stops them, then it is fixed. */
+  .journey {
     position: relative;
-    display: grid;
-    place-items: center;
+    display: flex;
+    gap: 7cqw;
+    padding-top: 10cqw;
+  }
+  .journey::before {
+    content: "";
+    position: absolute;
+    left: 7.5cqw;
+    right: 7.5cqw;
+    top: calc(10cqw + 11cqw);
+    height: 0.6cqw;
+    background: repeating-linear-gradient(90deg, var(--navy) 0 1.6cqw, transparent 1.6cqw 3cqw);
+  }
+  .scr {
+    position: relative;
     width: 15cqw;
-    aspect-ratio: 9 / 16;
-    padding: 4cqw 3.5cqw;
-    border-radius: 2.4cqw;
-    background: var(--navy);
-    color: var(--ice);
-    animation: hw-pop 0.5s var(--ease-pop) both;
-  }
-  .vf {
-    position: absolute;
-    inset: 3.5cqw 2.5cqw;
+    height: 22cqw;
+    border-radius: 1.4cqw;
     background:
-      linear-gradient(var(--ice), var(--ice)) 0 0 / 2.4cqw 0.5cqw no-repeat,
-      linear-gradient(var(--ice), var(--ice)) 0 0 / 0.5cqw 2.4cqw no-repeat,
-      linear-gradient(var(--ice), var(--ice)) 100% 100% / 2.4cqw 0.5cqw no-repeat,
-      linear-gradient(var(--ice), var(--ice)) 100% 100% / 0.5cqw 2.4cqw no-repeat;
+      linear-gradient(var(--navy), var(--navy)) 0 0 / 100% 3.2cqw no-repeat,
+      linear-gradient(rgb(10 13 51 / 0.3), rgb(10 13 51 / 0.3)) 2cqw 6.2cqw / 9cqw 1cqw no-repeat,
+      linear-gradient(rgb(10 13 51 / 0.3), rgb(10 13 51 / 0.3)) 2cqw 9cqw / 6.5cqw 1cqw no-repeat,
+      linear-gradient(var(--c), var(--c)) 2cqw 15cqw / 11cqw 3.6cqw no-repeat,
+      var(--ice);
+    animation: hw-pop 0.45s var(--ease-pop) both;
+    animation-delay: calc(var(--k) * 0.14s);
   }
-  .flash {
+  .scr :global(.ico) {
     position: absolute;
-    inset: 0;
-    border-radius: inherit;
-    background: #fff;
-    opacity: 0;
-    animation: hw-flash 0.5s ease-out 0.55s;
+    right: -2.4cqw;
+    top: -2.4cqw;
+    width: 6.4cqw;
+    height: 6.4cqw;
+    padding: 1.1cqw;
+    border-radius: 50%;
+    color: var(--navy);
+    box-shadow: 0 0 0 0.5cqw var(--navy);
   }
-  @keyframes hw-flash {
-    20% {
-      opacity: 0.95;
+  .scr :global(.ok) {
+    background: var(--lime);
+    animation: hw-pop 0.45s var(--ease-pop) var(--ok) both;
+  }
+  .scr :global(.warn) {
+    z-index: 1;
+    background: var(--pink);
+    transform: scale(0);
+    animation: hw-warn 0.95s ease-in-out 1.15s both;
+  }
+  @keyframes hw-warn {
+    0% {
+      transform: scale(0);
+    }
+    18%,
+    78% {
+      transform: scale(1) rotate(-8deg);
+    }
+    100% {
+      transform: scale(0);
     }
   }
-  .fc {
-    position: relative;
-    width: 30cqw;
-    height: 22cqw;
-  }
-  .fc i {
-    --r: calc((var(--k) - 1) * 8deg);
+  .walker {
     position: absolute;
-    left: 4cqw;
-    top: 3cqw;
-    width: 22cqw;
-    height: 14cqw;
-    background:
-      linear-gradient(var(--navy), var(--navy)) 2.5cqw 3cqw / 10cqw 1cqw no-repeat,
-      linear-gradient(rgb(10 13 51 / 0.35), rgb(10 13 51 / 0.35)) 2.5cqw 6.5cqw / 15cqw 0.8cqw no-repeat,
-      linear-gradient(rgb(10 13 51 / 0.35), rgb(10 13 51 / 0.35)) 2.5cqw 9cqw / 12cqw 0.8cqw no-repeat,
-      var(--ice);
-    transform: translate(calc(var(--k) * 2.5cqw), calc((var(--k) - 1) * 2.5cqw)) rotate(var(--r));
-    animation: hw-deal 0.6s var(--ease-pop) both;
-    animation-delay: calc(0.9s + var(--k) * 0.16s);
+    left: 3cqw;
+    top: 0;
+    display: grid;
+    place-items: center;
+    width: 9cqw;
+    height: 9cqw;
+    padding: 2cqw;
+    border-radius: 50%;
+    background: var(--navy);
+    color: var(--ice);
+    transform: translateX(44cqw);
+    animation: hw-walk 3s ease-in-out 0.45s both;
   }
-  @keyframes hw-deal {
-    from {
-      transform: translateX(-22cqw) scale(0) rotate(0deg);
+  @keyframes hw-walk {
+    0% {
+      transform: translateX(0);
+    }
+    25%,
+    58% {
+      transform: translateX(22cqw);
+    }
+    100% {
+      transform: translateX(44cqw);
     }
   }
 
@@ -736,46 +761,63 @@ const plan = { trial: t`Free trial`, monthly: t`Monthly`, yearly: t`Yearly` };
     animation: hw-pop 0.6s var(--ease-pop) 1.85s both;
   }
 
-  /* Revenue: a free trial that leads into a plan. */
-  .chip,
-  .plan {
-    padding: 1.6cqw 2.6cqw;
-    font-weight: 900;
-    font-size: 3.4cqw;
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
-    font-stretch: 85%;
-    white-space: nowrap;
-    animation: hw-pop 0.5s var(--ease-pop) both;
+  /* Revenue: a card pays, the bars grow, a coin hops. */
+  .ccard {
+    position: relative;
+    width: 26cqw;
+    aspect-ratio: 1.6;
+    border-radius: 1.8cqw;
+    background:
+      linear-gradient(var(--navy), var(--navy)) 0 3cqw / 100% 3.4cqw no-repeat,
+      linear-gradient(rgb(10 13 51 / 0.3), rgb(10 13 51 / 0.3)) 2.4cqw 12cqw / 12cqw 1cqw no-repeat,
+      var(--ice);
+    animation: hw-slide-in 0.6s var(--ease-pop) both;
   }
-  .plans {
-    display: grid;
-    gap: 3cqw;
+  .ccard i {
+    position: absolute;
+    left: 2.4cqw;
+    top: 7.2cqw;
+    width: 4.6cqw;
+    height: 3.4cqw;
+    border-radius: 0.6cqw;
+    background: var(--yellow);
+    box-shadow: inset 0 0 0 0.4cqw var(--navy);
   }
-  .plan {
-    animation-delay: calc(0.5s + var(--k) * 0.2s);
-  }
-  .plan.best {
-    background: var(--navy);
-    color: var(--ice);
-    transform: rotate(-3deg);
-    animation-name: hw-pop-tilt;
-  }
-  @keyframes hw-pop-tilt {
+  @keyframes hw-slide-in {
     from {
-      transform: rotate(-3deg) scale(0);
+      transform: translateX(-50cqw) rotate(-12deg);
     }
   }
-  .mark {
+  .bars {
+    position: relative;
+    display: flex;
+    align-items: flex-end;
+    gap: 2cqw;
+    height: 26cqw;
+  }
+  .bars i {
+    width: 5.5cqw;
+    height: calc(30% + var(--k) * 22%);
+    background: var(--navy);
+    transform-origin: 50% 100%;
+    animation: hw-grow 0.5s var(--ease-pop) both;
+    animation-delay: calc(0.65s + var(--k) * 0.14s);
+  }
+  @keyframes hw-grow {
+    from {
+      transform: scaleY(0);
+    }
+  }
+  .bars :global(.coin) {
     position: absolute;
-    right: -9cqw;
-    top: -8cqw;
-    width: 7cqw;
-    height: 7cqw;
-    animation: hw-hop 1.6s ease-in-out 1.2s infinite;
+    right: -1cqw;
+    top: -9cqw;
+    width: 8cqw;
+    height: 8cqw;
+    animation: hw-hop 1.4s ease-in-out 1.4s infinite;
   }
 
-  /* Code: the checks that run on every change. */
+  /* Code: the checks that run on every change, then an approved review. */
   .term {
     display: grid;
     gap: 1.4cqw;
@@ -814,24 +856,14 @@ const plan = { trial: t`Free trial`, monthly: t`Monthly`, yearly: t`Yearly` };
     animation: hw-line 0.45s steps(12, end) both;
     animation-delay: calc(0.45s + var(--k) * 0.4s);
   }
-  .ln :global(.ico),
-  .pw {
+  .ln :global(.ico) {
     flex: none;
     width: 3.4cqw;
     height: 3.4cqw;
   }
-  .pw {
-    display: grid;
-    place-items: center;
-    font-family: var(--font-sans, inherit);
-    font-weight: 900;
-    font-size: 2cqw;
-    box-shadow: inset 0 0 0 0.35cqw currentColor;
-  }
   .ln b {
     display: inline-flex;
     align-items: center;
-    gap: 0.8cqw;
     margin-left: auto;
     padding-left: 3cqw;
     color: var(--lime);
@@ -845,18 +877,24 @@ const plan = { trial: t`Free trial`, monthly: t`Monthly`, yearly: t`Yearly` };
       clip-path: inset(0 100% 0 0);
     }
   }
-  .big {
-    padding: 1.6cqw 2.6cqw;
-    background: var(--ice);
-    font-weight: 900;
-    font-size: 11cqw;
-    line-height: 0.9;
-    font-stretch: 62%;
-    box-shadow:
-      0 0 0 0.5cqw var(--navy),
-      1.4cqw 1.4cqw 0 0.5cqw var(--navy);
+  .pr {
+    position: relative;
+    width: 15cqw;
+    height: 15cqw;
+    padding: 3cqw;
     transform: rotate(5deg);
     animation: hw-pop-tilt-r 0.6s var(--ease-pop) 1.75s both;
+  }
+  .pr i {
+    position: absolute;
+    right: -2.4cqw;
+    bottom: -2.4cqw;
+    width: 6.4cqw;
+    height: 6.4cqw;
+    padding: 1.1cqw;
+    border-radius: 50%;
+    background: var(--lime);
+    box-shadow: 0 0 0 0.5cqw var(--navy);
   }
   @keyframes hw-pop-tilt-r {
     from {
@@ -864,75 +902,128 @@ const plan = { trial: t`Free trial`, monthly: t`Monthly`, yearly: t`Yearly` };
     }
   }
 
-  /* Ship: through both stores' review. */
-  .stores {
+  /* Ship: build, test, deploy light up in turn; then the release lands on the web, both stores and Google. */
+  .launch {
+    position: relative;
     display: grid;
-    gap: 3cqw;
+    justify-items: center;
+    gap: 5cqw;
   }
-  .store {
+  .pipe {
     display: flex;
-    align-items: center;
-    gap: 2cqw;
-    padding: 2cqw 2.6cqw;
-    background: var(--navy);
-    color: var(--ice);
+    gap: 7cqw;
+  }
+  .step {
+    position: relative;
+    display: grid;
+    justify-items: center;
+    gap: 1.4cqw;
     font-weight: 800;
-    font-size: 3.6cqw;
-    white-space: nowrap;
-    animation: hw-slide-in 0.55s var(--ease-pop) both;
-    animation-delay: calc(0.2s + var(--k) * 0.25s);
+    font-size: 2.8cqw;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
   }
-  .store > :global(.ico) {
-    width: 4.6cqw;
-    height: 4.6cqw;
+  /* The link to the next stage fills in as the work moves on. */
+  .step + .step::before {
+    content: "";
+    position: absolute;
+    right: calc(100% + 0.8cqw);
+    top: 5.4cqw;
+    width: 5.4cqw;
+    height: 0.8cqw;
+    background: var(--navy);
+    transform-origin: 0 50%;
+    animation: hw-fill-x 0.3s ease-out both;
+    animation-delay: calc(var(--k) * 0.5s);
   }
-  .store i {
+  @keyframes hw-fill-x {
+    from {
+      transform: scaleX(0);
+    }
+  }
+  .stage {
     display: grid;
     place-items: center;
-    width: 5cqw;
-    height: 5cqw;
-    margin-left: 2cqw;
-    padding: 0.9cqw;
-    border-radius: 50%;
-    background: var(--lime);
-    color: var(--navy);
-    animation: hw-pop 0.5s var(--ease-pop) both;
-    animation-delay: calc(0.9s + var(--k) * 0.3s);
+    width: 11cqw;
+    height: 11cqw;
+    padding: 2.6cqw;
+    background: var(--navy);
+    color: var(--lime);
+    animation:
+      hw-pop 0.4s var(--ease-pop) both,
+      hw-lit 0.01s steps(1) both;
+    animation-delay: calc(var(--k) * 0.5s), calc(0.35s + var(--k) * 0.5s);
   }
-  @keyframes hw-slide-in {
+  @keyframes hw-lit {
     from {
-      transform: translateX(-60cqw);
+      background: var(--ice);
+      color: var(--navy);
     }
   }
-  .rocket {
-    width: 15cqw;
-    height: 15cqw;
-    animation: hw-launch 2.4s ease-in-out infinite;
+  .dests {
+    display: flex;
+    gap: 3cqw;
+    padding-top: 3cqw;
+    border-top: 0.6cqw dashed var(--navy);
   }
-  @keyframes hw-launch {
-    0%,
-    100% {
-      transform: translate(0, 0);
-    }
-    50% {
-      transform: translate(1.4cqw, -2.4cqw);
-    }
+  .dest {
+    display: grid;
+    place-items: center;
+    width: 8.5cqw;
+    height: 8.5cqw;
+    padding: 2cqw;
+    border-radius: 50%;
+    animation: hw-pop 0.45s var(--ease-pop) both;
+    animation-delay: calc(1.55s + var(--k) * 0.12s);
   }
 
-  /* Measure: my old site's mobile score, then this one's. */
+  /* Measure: the numbers draw in, the score fills, then the next decision. */
+  .chart {
+    width: 40cqw;
+    padding: 2cqw;
+  }
+  .c-svg {
+    display: block;
+    width: 100%;
+    overflow: visible;
+  }
+  .c-grid {
+    fill: none;
+    stroke: rgb(10 13 51 / 0.14);
+    stroke-width: 1;
+  }
+  .c-line {
+    fill: none;
+    stroke: var(--navy);
+    stroke-width: 3.4;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-dasharray: 100;
+    animation: hw-draw 1.2s var(--ease-out) 0.4s both;
+  }
+  @keyframes hw-draw {
+    from {
+      stroke-dashoffset: 100;
+    }
+  }
+  .c-dot {
+    fill: var(--c);
+    stroke: var(--navy);
+    stroke-width: 2;
+    transform-box: fill-box;
+    transform-origin: center;
+    animation: hw-pop 0.4s var(--ease-pop) 1.5s both;
+  }
   .gauge {
     position: relative;
     display: grid;
     place-items: center;
-    width: 24cqw;
+    width: 22cqw;
     aspect-ratio: 1;
     border-radius: 50%;
-    animation: hw-pop 0.5s var(--ease-pop) both;
+    animation: hw-pop 0.5s var(--ease-pop) 0.3s both;
   }
-  .gauge.high {
-    animation-delay: 0.5s;
-  }
-  .gauge svg {
+  .g-ring {
     position: absolute;
     inset: 0;
   }
@@ -945,56 +1036,47 @@ const plan = { trial: t`Free trial`, monthly: t`Monthly`, yearly: t`Yearly` };
     stroke: rgb(10 13 51 / 0.12);
   }
   .g-fg {
-    stroke: #e8331f;
+    stroke: #0a8a4a;
     stroke-linecap: round;
     stroke-dasharray: var(--v) 100;
-    animation: hw-fill-gauge 1.1s var(--ease-out) 0.4s both;
-  }
-  .high .g-fg {
-    stroke: #0a8a4a;
-    animation-delay: 0.9s;
+    animation: hw-fill-gauge 1.1s var(--ease-out) 0.7s both;
   }
   @keyframes hw-fill-gauge {
     from {
       stroke-dasharray: 0 100;
     }
   }
-  .gauge b {
-    font-weight: 900;
-    font-size: 9cqw;
-    line-height: 1;
-    font-stretch: 70%;
+  .gauge :global(.g-ok) {
+    width: 9cqw;
+    height: 9cqw;
+    color: #0a8a4a;
   }
-  .receipt-row {
+
+  /* The practices behind the stop: small chips, a tool's mark where one does the job. */
+  .does {
     display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .does li {
+    display: inline-flex;
     align-items: center;
-    gap: 0.875rem;
-    padding: 0.875rem 1rem;
+    gap: 0.4375rem;
+    padding: 0.375rem 0.625rem;
     background: var(--sfg);
     color: var(--sbg);
-    text-decoration: none;
-    font-weight: 700;
-    font-size: 1.0625rem;
-    line-height: 1.3;
-    transition: transform var(--dur-base) var(--ease-out);
+    font-weight: 800;
+    font-size: 0.8125rem;
+    line-height: 1.2;
+    letter-spacing: 0.02em;
   }
-  .receipt-row i {
+  .does :global(.ico) {
     flex: none;
-    width: 1.125rem;
-    height: 1.125rem;
-    background: var(--c);
-    box-shadow: 0 0 0 2px var(--sbg);
-  }
-  .receipt-row :global(.ico) {
-    width: 1.375rem;
-    height: 1.375rem;
-    margin-left: auto;
-  }
-  @media (hover: hover) and (pointer: fine) {
-    .receipt-row:hover {
-      transform: translate(-3px, -3px);
-      box-shadow: 3px 3px 0 var(--accent);
-    }
+    width: 1rem;
+    height: 1rem;
   }
   .after {
     display: flex;

@@ -7,7 +7,6 @@
  */
 import { t } from "lingui-for-astro/macro";
 
-import ChapterBackdrop from "~/components/home/chapters/ChapterBackdrop.astro";
 import ChapterBadge from "~/components/home/chapters/ChapterBadge.astro";
 import Fit from "~/components/ui/Fit.astro";
 import Icon from "~/components/ui/Icon.astro";
@@ -22,23 +21,20 @@ const orderLabel = t`Order website`;
 const RADIUS = 62;
 const circumference = 2 * Math.PI * RADIUS;
 const fontSize = Math.min(14, circumference / (lineEm(ring, 120) + 0.16 * [...ring].length));
-
 ---
 
 <section class="sec chapter c-pw" id="pstrykweb" aria-labelledby="t-pw">
-  <ChapterBackdrop icons={["tb:hand-click", "tb:sparkles", "tb:browser", "tb:forms", "tb:building-store", "tb:check"]} />
+  <div class="ch-bg" aria-hidden="true"></div>
   <ChapterBadge icon="tb:briefcase" label={t`Commercial · Cetuspro · 2026`} />
   <Fit as="h2" id="t-pw" lines={["PstrykWeb"]} />
   <div class="pw-grid grid-2">
     <div class="ch-info">
       <p class="outcome rv">{typo(locale, t`Bespoke websites for local businesses, ordered through one online form.`)}</p>
       <p class="desc rv" style="--d:1">
-        {
-          typo(
-            locale,
-            t`A local business owner answers a few questions in one online form and orders a website made for their business. I built PstrykWeb for Cetuspro, a Polish software house.`,
-          )
-        }
+        {typo(
+          locale,
+          t`A local business owner answers a few questions in one online form and orders a website made for their business. I built PstrykWeb for Cetuspro, a Polish software house.`,
+        )}
       </p>
       <div class="links rv" style="--d:2">
         <a
@@ -75,23 +71,39 @@ const fontSize = Math.min(14, circumference / (lineEm(ring, 120) + 0.16 * [...ri
               class="burst"
               points="100,0 113,20 135,8 140,32 164,28 160,52 184,58 172,79 194,92 176,108 190,128 168,136 172,160 148,160 144,184 122,174 110,196 96,178 78,194 70,170 46,176 46,152 22,148 32,126 10,112 28,96 12,78 34,68 26,46 50,44 52,20 74,28 86,6"
             ></polygon>
-            <path id="pw-ring" d={`M100,100 m-${RADIUS},0 a${RADIUS},${RADIUS} 0 1,1 ${2 * RADIUS},0 a${RADIUS},${RADIUS} 0 1,1 -${2 * RADIUS},0`} fill="none"
+            <path
+              id="pw-ring"
+              d={`M100,100 m-${RADIUS},0 a${RADIUS},${RADIUS} 0 1,1 ${2 * RADIUS},0 a${RADIUS},${RADIUS} 0 1,1 -${2 * RADIUS},0`}
+              fill="none"
             ></path>
             <text font-size={fontSize.toFixed(2)} textLength={circumference.toFixed(1)} lengthAdjust="spacing">
               <textPath href="#pw-ring">{ring}</textPath>
             </text>
           </svg>
-          <div class="core"><span>#1<small>{t`Featured`}</small></span></div>
+          <div class="core">
+            <span>
+              #1<small>{t`Featured`}</small>
+            </span>
+          </div>
         </div>
         <div class="browser">
-          <div class="b-top" aria-hidden="true"><i></i><i></i><i></i><span class="b-url"></span></div>
+          <div class="b-top" aria-hidden="true">
+            <i></i>
+            <i></i>
+            <i></i>
+            <span class="b-url"></span>
+          </div>
           <div class="b-site" aria-hidden="true">
             <div class="w w-nav" style="--i:0"></div>
             <div class="w w-h1" style="--i:1"></div>
             <div class="w w-h2" style="--i:2"></div>
             <div class="w w-btn" style="--i:3"></div>
             <div class="w w-img" style="--i:2"></div>
-            <div class="w-cards"><div class="w" style="--i:4"></div><div class="w" style="--i:5"></div><div class="w" style="--i:6"></div></div>
+            <div class="w-cards">
+              <div class="w" style="--i:4"></div>
+              <div class="w" style="--i:5"></div>
+              <div class="w" style="--i:6"></div>
+            </div>
           </div>
           <span class="live-stamp" aria-hidden="true" data-t="• LIVE"></span>
           <span class="soon">{t`Video soon`}</span>
@@ -99,13 +111,20 @@ const fontSize = Math.min(14, circumference / (lineEm(ring, 120) + 0.16 * [...ri
         <div class="order" aria-hidden="true">
           <!-- Drawn text: set as generated content, so a mid-fade frame isn't read as page text. -->
           <p class="o-k" data-t={t`Order a website`}></p>
-          <span class="o-l" data-t={t`Business name`}></span><span class="o-f" style="--fw:52%"></span>
-          <span class="o-l" data-t={t`What you do`}></span><span class="o-f f2" style="--fw:74%"></span>
+          <span class="o-l" data-t={t`Business name`}></span>
+          <span class="o-f" style="--fw:52%"></span>
+          <span class="o-l" data-t={t`What you do`}></span>
+          <span class="o-f f2" style="--fw:74%"></span>
           <span class="o-l" data-t={t`Style`}></span>
-          <div class="o-chips"><span class="on" data-t={t`Bold`}></span><span data-t={t`Calm`}></span><span data-t={t`Classic`}></span></div>
+          <div class="o-chips">
+            <span class="on" data-t={t`Bold`}></span>
+            <span data-t={t`Calm`}></span>
+            <span data-t={t`Classic`}></span>
+          </div>
           <span class="o-btn" data-t={`${orderLabel} →`}></span>
-          <svg class="pointer" viewBox="0 0 24 24"><path d="M5 3l14 7-6 2-2 6z" fill="#fff" stroke="#0a0d33" stroke-width="1.6" stroke-linejoin="round"
-            ></path></svg>
+          <svg class="pointer" viewBox="0 0 24 24">
+            <path d="M5 3l14 7-6 2-2 6z" fill="#fff" stroke="#0a0d33" stroke-width="1.6" stroke-linejoin="round"></path>
+          </svg>
         </div>
       </div>
       <figcaption class="sr-only">

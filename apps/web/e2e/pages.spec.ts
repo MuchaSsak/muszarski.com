@@ -76,7 +76,7 @@ test("contact: an error keeps the text and points to the email", async ({ page }
   await expect(page.locator("[data-note]")).toContainText("Write a message first");
 });
 
-test("how I work: a stop shows its line and its receipt", async ({ page }) => {
+test("how I work: a stop shows its line and its practices", async ({ page }) => {
   await page.goto("/en/#how-i-work");
   await page.getByRole("button", { name: "Revenue" }).click();
   await expect(page.getByRole("button", { name: "Revenue" })).toHaveAttribute("aria-pressed", "true");

@@ -57,38 +57,17 @@
   color: var(--sfg);
 }
 
-/* Backdrop (ChapterBackdrop.astro): faint motifs that drift, over a faint pattern; under everything in the chapter. */
+/* Backdrop: a faint pattern from the project's world, under everything in the chapter. The drifting motif icons
+   were cut [user 2026-10-06: maybe too distracting]; Space keeps its stars. */
 .ch-bg {
   position: absolute;
   inset: 0;
   z-index: -1;
-  overflow: hidden;
   opacity: 0.1;
   pointer-events: none;
-}
-.ch-bg span {
-  position: absolute;
-  left: var(--x);
-  top: var(--y);
-  width: var(--s);
-  height: var(--s);
-  rotate: var(--r);
-  animation: ch-float 9s ease-in-out infinite;
-  animation-delay: calc(var(--i) * -1.3s);
-}
-.ch-bg .ico {
-  width: 100%;
-  height: 100%;
-}
-@keyframes ch-float {
-  50% {
-    translate: 0 -0.875rem;
-  }
-}
-/* PstrykWeb: a layout grid of dots; Linkoglot: a flashcard's ruled lines; Clockful: a timesheet's cells. */
-.ch-bg {
   --line: color-mix(in srgb, currentColor 60%, transparent);
 }
+/* PstrykWeb: a layout grid of dots; Linkoglot: a flashcard's ruled lines; Clockful: a timesheet's cells. */
 .c-pw .ch-bg {
   background: radial-gradient(currentColor 1.6px, transparent 2px) 0 0 / 1.75rem 1.75rem;
 }
@@ -397,7 +376,7 @@
   --tc: var(--lime);
   --tilt: -2deg;
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   gap: 0.75rem;
   height: 100%;
   padding: 0.875rem 1rem 1rem;
@@ -427,18 +406,60 @@
   outline: 3px solid var(--ice);
   outline-offset: 4px;
 }
-.ship-ico {
-  display: grid;
+/* The preview: a crop of the live site in a navy frame, tilted against the ticket; it zooms in on hover or focus. */
+.ship-shot {
   flex: none;
-  place-items: center;
-  width: 2.5rem;
-  height: 2.5rem;
+  width: 6.75rem;
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
   background: var(--navy);
+  box-shadow: 0 0 0 2px var(--navy);
+  rotate: calc(var(--tilt) * -1.5);
+  transition: rotate 0.35s var(--ease-pop);
+}
+.ship-shot img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s var(--ease-out);
+}
+.ship:hover .ship-shot,
+.ship:focus-visible .ship-shot {
+  rotate: 0deg;
+}
+.ship:hover .ship-shot img,
+.ship:focus-visible .ship-shot img {
+  transform: scale(1.08);
+}
+/* The CLI's preview: a terminal running it, drawn. */
+.ship-term {
+  display: grid;
+  align-content: center;
+  gap: 0.1875rem;
+  height: 100%;
+  padding: 0 0.4375rem;
+  color: var(--ice);
+  font-family: ui-monospace, "Cascadia Mono", Consolas, monospace;
+  font-size: 0.5625rem;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+.ship-term i {
+  font-style: normal;
+}
+.ship-term b {
   color: var(--tc);
 }
-.ship-ico .ico {
-  width: 1.5rem;
-  height: 1.5rem;
+.ship-term .ok {
+  display: flex;
+  align-items: center;
+  gap: 0.1875rem;
+  color: var(--lime);
+}
+.ship-term .ico {
+  width: 0.625rem;
+  height: 0.625rem;
 }
 .ship-text {
   display: grid;
