@@ -7,9 +7,10 @@
  */
 import { t } from "lingui-for-astro/macro";
 
+import ChapterBadge from "~/components/home/chapters/ChapterBadge.astro";
 import Fit from "~/components/ui/Fit.astro";
 import Icon from "~/components/ui/Icon.astro";
-import ReelControls from "~/components/ui/ReelControls.astro";
+import StackList from "~/components/ui/StackList.astro";
 import { WORK_LINKS } from "~/data/site";
 import { lineEm } from "~/lib/fit";
 import { typo } from "~/lib/typography";
@@ -21,50 +22,23 @@ const RADIUS = 62;
 const circumference = 2 * Math.PI * RADIUS;
 const fontSize = Math.min(14, circumference / (lineEm(ring, 120) + 0.16 * [...ring].length));
 
-interface Props {
-  /** "01 / 04": this chapter's place among the visible ones. */
-  counter: string;
-}
-const { counter } = Astro.props;
 ---
 
 <section class="sec chapter c-pw" id="pstrykweb" aria-labelledby="t-pw">
-  <div class="sbar draw">
-    <p>{counter} · {t`Featured`}</p>
-    <p>{t`Client work`} · Cetuspro</p>
-    <p>{t`Latest · built solo`}</p>
-  </div>
+  <ChapterBadge icon="tb:briefcase" label={t`Commercial · solo · 2026`} />
   <Fit as="h2" id="t-pw" lines={["PstrykWeb"]} />
   <div class="pw-grid grid-2">
     <div class="ch-info">
       <p class="outcome rv">{typo(locale, t`Bespoke websites for local businesses, ordered through one online form. Built solo for Cetuspro.`)}</p>
-      <ol class="how rv" style="--d:1" aria-label={t`How it works`}>
-        <li>
-          <Icon name="tb:forms" />
-          {t`Fill one form`}
-          <small>{t`The konfigurator, online`}</small>
-        </li>
-        <li>
-          <Icon name="tb:hand-click" />
-          {t`Order`}
-          <small>{t`One button`}</small>
-        </li>
-        <li>
-          <Icon name="tb:rocket" />
-          {t`Site goes live`}
-          <small>{t`Bespoke, for that business`}</small>
-        </li>
-      </ol>
-      <ul class="cfacts rv" style="--d:2">
-        <li><span class="ib"><Icon name="tb:building-store" /></span>{t`For local businesses`}</li>
-        <li><span class="ib"><Icon name="tb:user" /></span>{t`Built solo, for a software house`}</li>
-      </ul>
-      <ul class="stackrow rv" style="--d:3" aria-label={t`Stack`}>
-        <li><Icon name="si:nextdotjs" />Next.js</li>
-        <li><Icon name="si:typescript" />TypeScript</li>
-        <li><Icon name="si:vercel" />Vercel</li>
-      </ul>
-      <div class="links rv" style="--d:4">
+      <p class="desc rv" style="--d:1">
+        {
+          typo(
+            locale,
+            t`A local business owner answers a few questions in one online form, the konfigurator, and orders a website made for their business. I built PstrykWeb for Cetuspro, a Polish software house, as its only developer.`,
+          )
+        }
+      </p>
+      <div class="links rv" style="--d:2">
         <a
           class="btn btn-inv"
           href={WORK_LINKS.pstrykwebKonfigurator}
@@ -80,6 +54,15 @@ const { counter } = Astro.props;
         </a>
       </div>
       <p class="status live">{t`Konfigurator live`}</p>
+      <StackList
+        class="rv"
+        style="--d:3"
+        items={[
+          { icon: "si:nextdotjs", name: "Next.js" },
+          { icon: "si:typescript", name: "TypeScript" },
+          { icon: "si:vercel", name: "Vercel" },
+        ]}
+      />
     </div>
 
     <figure class="reel pw-stage stage-first">
@@ -126,7 +109,6 @@ const { counter } = Astro.props;
       <figcaption class="sr-only">
         {t`Illustration of the order flow: fill in the form, press order, the website goes live. A screen recording of the public konfigurator will replace it.`}
       </figcaption>
-      <ReelControls live={false} chips={[{ label: t`Fill` }, { label: t`Order` }, { label: t`Live` }]} />
     </figure>
   </div>
 </section>
@@ -141,37 +123,6 @@ const { counter } = Astro.props;
     gap: clamp(1.75rem, 4vw, 4.5rem);
     margin-top: clamp(1.375rem, 2.6vw, 2.5rem);
     align-items: start;
-  }
-  .how {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 0.5rem;
-    margin: 0;
-    padding: 0;
-    list-style: none;
-  }
-  .how li {
-    display: grid;
-    gap: 0.5rem;
-    align-content: start;
-    padding: 0.75rem 0.75rem 0.875rem;
-    box-shadow: inset 0 0 0 2px currentColor;
-    font-weight: 800;
-    font-size: 0.875rem;
-    line-height: 1.15;
-    letter-spacing: 0.02em;
-    text-transform: uppercase;
-  }
-  .how :global(.ico) {
-    width: 1.75rem;
-    height: 1.75rem;
-  }
-  .how small {
-    display: block;
-    font-weight: 600;
-    font-size: 0.8125rem;
-    letter-spacing: 0;
-    text-transform: none;
   }
   .pw-stage {
     position: relative;
@@ -436,15 +387,6 @@ const { counter } = Astro.props;
     .c-pw .live-stamp {
       animation: o-live var(--loop) var(--ease-pop) infinite;
     }
-    .c-pw :global(.chap-loop::after) {
-      animation: o-chap var(--loop) linear infinite;
-    }
-    .c-pw :global(.chap-loop.k2::after) {
-      animation-name: o-chap2;
-    }
-    .c-pw :global(.chap-loop.k3::after) {
-      animation-name: o-chap3;
-    }
   }
   @keyframes o-card {
     0% {
@@ -567,64 +509,12 @@ const { counter } = Astro.props;
       opacity: 0;
     }
   }
-  @keyframes o-chap {
-    0% {
-      transform: scaleX(0);
-    }
-    31%,
-    99.9% {
-      transform: scaleX(1);
-    }
-    100% {
-      transform: scaleX(0);
-    }
-  }
-  @keyframes o-chap2 {
-    0%,
-    31% {
-      transform: scaleX(0);
-    }
-    40%,
-    99.9% {
-      transform: scaleX(1);
-    }
-    100% {
-      transform: scaleX(0);
-    }
-  }
-  @keyframes o-chap3 {
-    0%,
-    40% {
-      transform: scaleX(0);
-    }
-    93%,
-    99.9% {
-      transform: scaleX(1);
-    }
-    100% {
-      transform: scaleX(0);
-    }
-  }
 
   @media (max-width: 40rem) {
     .award {
       width: 5.75rem;
       left: -0.625rem;
       top: -2.75rem;
-    }
-    .how {
-      gap: 0.375rem;
-    }
-    .how li {
-      padding: 0.625rem 0.5rem 0.75rem;
-      font-size: 0.75rem;
-    }
-    .how small {
-      font-size: 0.75rem;
-    }
-    .how :global(.ico) {
-      width: 1.5rem;
-      height: 1.5rem;
     }
     .order {
       left: auto;

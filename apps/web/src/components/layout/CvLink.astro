@@ -1,0 +1,66 @@
+---
+/**
+ * The one CV control [user 2026-10-06: "just one button for CV"] (requirements.md F11, structure.md § CTA inventory).
+ * A click downloads this locale's PDF (a direct `download` inside the tap, so iOS allows it) and then opens the web CV,
+ * which confirms the download and offers the file again. Without JS it is a plain link to the web CV, whose first
+ * button is the PDF. Modified clicks (new tab, middle click) just open the page. Event: `cv_download` with the source
+ * (analytics.md), sent from the script: Umami's own click handler would race the navigation.
+ */
+import { t } from "lingui-for-astro/macro";
+
+import Icon from "~/components/ui/Icon.astro";
+import { cvPdfHref } from "~/data/site";
+import { chromeLinks } from "~/lib/nav";
+
+interface Props {
+  source: "header" | "hero" | "menu" | "footer";
+  /** "Download CV" instead of "CV" (the hero). */
+  long?: boolean;
+  /** A text link (the footer) instead of a button. */
+  plain?: boolean;
+  class?: string | undefined;
+}
+
+const { source, long = false, plain = false, class: className } = Astro.props;
+const locale = Astro.locals.locale;
+const links = chromeLinks(locale);
+---
+
+<a
+  href={links.cv}
+  class:list={[{ "btn btn-line": !plain }, "cv-link", className]}
+  data-cv-pdf={cvPdfHref(locale)}
+  data-cv-source={source}
+>
+  {!plain && <Icon inline name="tb:download" class="nudge-down" />}
+  {long ? t`Download CV` : t`CV`}
+  <span class="sr-only">{t`(PDF, then the CV page)`}</span>
+</a>
+
+<script>
+  for (const link of document.querySelectorAll<HTMLAnchorElement>("a[data-cv-pdf]")) {
+    link.addEventListener("click", (event) => {
+      if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+      event.preventDefault();
+      // The download starts inside the tap (user activation), then the page changes.
+      const file = document.createElement("a");
+      file.href = link.dataset.cvPdf!;
+      file.download = "";
+      document.body.append(file);
+      file.click();
+      file.remove();
+      window.umami?.track("cv_download", { source: link.dataset.cvSource ?? "", locale: document.documentElement.lang });
+      // Already on the web CV: confirm in place. Elsewhere: leave a note for the CV page, then go there.
+      if (new URL(link.href).pathname === location.pathname) {
+        document.querySelector("[data-pdf-note]")?.removeAttribute("hidden");
+        return;
+      }
+      try {
+        sessionStorage.setItem("cv-pdf", "1");
+      } catch {
+        /* storage blocked: the CV page just doesn't confirm the download */
+      }
+      setTimeout(() => location.assign(link.href), 400);
+    });
+  }
+</script>

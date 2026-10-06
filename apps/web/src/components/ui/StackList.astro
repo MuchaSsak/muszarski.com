@@ -1,0 +1,39 @@
+---
+/**
+ * The tools a project is built with (design.md § Components, Stack): a "Built with" kicker and one-colour marks with
+ * their names as plain text (`.stack` in global.css). Never framed, so a tool never reads as a button next to the
+ * chapter's real CTA [user 2026-10-06]. A tool without a free mark gets a two-letter monogram.
+ */
+import { t } from "lingui-for-astro/macro";
+
+import Icon from "~/components/ui/Icon.astro";
+import { type IconName } from "~/lib/icons.gen";
+
+interface Props {
+  items: readonly ({ name: string } & ({ icon: IconName } | { mono: string }))[];
+  class?: string | undefined;
+  style?: string | undefined;
+}
+
+const { items, class: className, style } = Astro.props;
+---
+
+<div class:list={["stack", className]} style={style}>
+  <p class="stack-k">{t`Built with`}</p>
+  <ul class="stackrow" role="list">
+    {
+      items.map((item) => (
+        <li>
+          {"icon" in item ? (
+            <Icon name={item.icon} />
+          ) : (
+            <span class="mono" aria-hidden="true">
+              {item.mono}
+            </span>
+          )}
+          {item.name}
+        </li>
+      ))
+    }
+  </ul>
+</div>

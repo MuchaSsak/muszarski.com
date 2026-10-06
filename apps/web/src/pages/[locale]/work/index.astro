@@ -124,31 +124,31 @@ const count = projects.length;
                 </a>
               )}
               {project.links.live && (
-                <a class="btn btn-line" href={project.links.live} rel="noopener" data-umami-event="outbound" data-umami-event-target="live" data-umami-event-project={project.slug}>
+                <a class="btn btn-line" href={project.links.live} rel="noopener" target="_blank" data-umami-event="outbound" data-umami-event-target="live" data-umami-event-project={project.slug}>
                   {t`Live`}
                   <Icon name="tb:arrow-up-right" />
                 </a>
               )}
               {project.links.appStore && (
-                <a class="btn btn-line" href={project.links.appStore} rel="noopener" data-umami-event="outbound" data-umami-event-target="app-store" data-umami-event-project={project.slug}>
+                <a class="btn btn-line" href={project.links.appStore} rel="noopener" target="_blank" data-umami-event="outbound" data-umami-event-target="app-store" data-umami-event-project={project.slug}>
                   <Icon name="si:apple" />
                   App Store
                 </a>
               )}
               {project.links.googlePlay && (
-                <a class="btn btn-line" href={project.links.googlePlay} rel="noopener" data-umami-event="outbound" data-umami-event-target="google-play" data-umami-event-project={project.slug}>
+                <a class="btn btn-line" href={project.links.googlePlay} rel="noopener" target="_blank" data-umami-event="outbound" data-umami-event-target="google-play" data-umami-event-project={project.slug}>
                   <Icon name="si:googleplay" />
                   Google Play
                 </a>
               )}
               {project.links.npm && (
-                <a class="btn btn-line" href={project.links.npm} rel="noopener" data-umami-event="outbound" data-umami-event-target="npm" data-umami-event-project={project.slug}>
+                <a class="btn btn-line" href={project.links.npm} rel="noopener" target="_blank" data-umami-event="outbound" data-umami-event-target="npm" data-umami-event-project={project.slug}>
                   <Icon name="si:npm" />
                   npm
                 </a>
               )}
               {project.links.code && (
-                <a class="btn btn-line" href={project.links.code} rel="noopener" data-umami-event="outbound" data-umami-event-target="code" data-umami-event-project={project.slug}>
+                <a class="btn btn-line" href={project.links.code} rel="noopener" target="_blank" data-umami-event="outbound" data-umami-event-target="code" data-umami-event-project={project.slug}>
                   <Icon name="si:github" />
                   {t`Code`}
                 </a>

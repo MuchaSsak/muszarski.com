@@ -6,9 +6,10 @@
  */
 import { t } from "lingui-for-astro/macro";
 
+import ChapterBadge from "~/components/home/chapters/ChapterBadge.astro";
 import Fit from "~/components/ui/Fit.astro";
 import Icon from "~/components/ui/Icon.astro";
-import ReelControls from "~/components/ui/ReelControls.astro";
+import StackList from "~/components/ui/StackList.astro";
 import { WORK_LINKS } from "~/data/site";
 import { fitLines } from "~/lib/fit";
 import { typo } from "~/lib/typography";
@@ -17,36 +18,24 @@ import { typo } from "~/lib/typography";
 const locale = Astro.locals.locale;
 const fit = fitLines(["Linkoglot"], 96);
 const fitHeight = `calc(0.8 * ${fit.size} * (min(100vw, 120rem) - 2 * var(--gutter)) / 100)`;
-
-interface Props {
-  /** "01 / 04": this chapter's place among the visible ones. */
-  counter: string;
-}
-const { counter } = Astro.props;
+const labelPause = t`Pause video`;
+const labelPlay = t`Play video`;
 ---
 
 <section class="sec chapter c-lk" id="linkoglot" aria-labelledby="t-lk" style={`--fit-h:${fitHeight}`}>
-  <div class="sbar draw">
-    <p>{counter} · {t`Selected work`}</p>
-    <p>{t`Own product`}</p>
-    <p>2026</p>
-  </div>
+  <ChapterBadge img="/media/linkoglot/icon.webp" label={t`Own product · solo · 2026`} />
   <Fit as="h2" id="t-lk" lines={["Linkoglot"]} />
   <div class="board">
     <div class="side ch-info">
-      <p class="tag-chip">
-        <img src="/media/linkoglot/icon.webp" alt="" width="30" height="30" loading="lazy" decoding="async" />
-        {t`Own product · solo · 2026`}
-      </p>
       <p class="outcome rv">{typo(locale, t`Snap a photo, get flashcards. A subscription language app, shipped solo to both stores.`)}</p>
-      <ul class="cfacts rv" style="--d:1">
-        <li><span class="ib"><Icon name="si:apple" /></span>App Store</li>
-        <li><span class="ib"><Icon name="si:googleplay" /></span>Google Play</li>
-        <li>
-          <span class="ib"><Icon name="tb:language" /></span><span><b data-count="30">30</b>{t`languages`}</span>
-        </li>
-        <li><span class="ib"><Icon name="tb:receipt-2" /></span>{t`Free trial, then a plan`}</li>
-      </ul>
+      <p class="desc rv" style="--d:1">
+        {
+          typo(
+            locale,
+            t`Point the camera at a street, a room or your breakfast, and Linkoglot turns what it sees into flashcards and quizzes. Free to try, then a monthly or yearly plan; the app comes in 30 languages. I built and published it alone.`,
+          )
+        }
+      </p>
     </div>
 
     <div class="stage">
@@ -67,6 +56,15 @@ const { counter } = Astro.props;
               <source data-src="/media/linkoglot/camera.av1.mp4" type='video/mp4; codecs="av01.0.05M.08"' />
               <source data-src="/media/linkoglot/camera.mp4" type="video/mp4" />
             </video>
+            <span class="bigplay" aria-hidden="true"><Icon name="tbf:player-play" /></span>
+            <button
+              class="r-hit"
+              type="button"
+              data-toggle
+              aria-pressed="true"
+              aria-label={labelPlay}
+              data-label-pause={labelPause}
+              data-label-play={labelPlay}></button>
           </div>
           <div class="flash" aria-hidden="true">
             <div class="card">
@@ -74,31 +72,12 @@ const { counter } = Astro.props;
               <div class="face back"><span>{t`Spanish → English`}</span><b>{t`the flowerpot`}</b></div>
             </div>
           </div>
-          <button class="r-btn bigplay" type="button" data-play aria-label={t`Play video`}>
-            <Icon name="tbf:player-play" />
-          </button>
         </div>
-        <ReelControls
-          chips={[
-            { label: t`City`, at: 0 },
-            { label: t`Home`, at: 3 },
-            { label: t`Food`, at: 6 },
-            { label: t`Book`, at: 10.5 },
-            { label: t`Park`, at: 13.5 },
-          ]}
-        />
       </figure>
     </div>
 
     <div class="side ch-info">
-      <ul class="stackrow rv" aria-label={t`Stack`}>
-        <li><Icon name="si:expo" />Expo</li>
-        <li><Icon name="si:react" />React Native</li>
-        <li><Icon name="si:supabase" />Supabase</li>
-        <li><Icon name="si:revenuecat" />RevenueCat</li>
-        <li><span class="mono" aria-hidden="true">Li</span>Lingui</li>
-      </ul>
-      <div class="links rv" style="--d:1">
+      <div class="links rv">
         <a
           class="btn btn-inv"
           href={WORK_LINKS.linkoglotAppStore}
@@ -111,7 +90,7 @@ const { counter } = Astro.props;
           <Icon name="si:apple" />App Store<span class="sr-only">{t`(opens in a new tab)`}</span>
         </a>
         <a
-          class="btn btn-line"
+          class="btn btn-inv"
           href={WORK_LINKS.linkoglotPlay}
           rel="noopener"
           target="_blank"
@@ -123,6 +102,17 @@ const { counter } = Astro.props;
         </a>
       </div>
       <p class="status live">{t`Live · pre-traction`}</p>
+      <StackList
+        class="rv"
+        style="--d:1"
+        items={[
+          { icon: "si:expo", name: "Expo" },
+          { icon: "si:react", name: "React Native" },
+          { icon: "si:supabase", name: "Supabase" },
+          { icon: "si:revenuecat", name: "RevenueCat" },
+          { mono: "Li", name: "Lingui" },
+        ]}
+      />
     </div>
   </div>
 </section>
@@ -186,9 +176,6 @@ const { counter } = Astro.props;
       }
     }
   }
-  .stage :global(.chap) {
-    padding: 0 0.375rem;
-  }
   .flash {
     position: absolute;
     z-index: 3;
@@ -249,9 +236,6 @@ const { counter } = Astro.props;
     100% {
       transform: rotate(7deg) rotateY(360deg);
     }
-  }
-  .tag-chip img {
-    border-radius: 0.5rem;
   }
 
   @media (max-width: 56.25rem) {

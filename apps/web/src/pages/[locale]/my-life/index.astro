@@ -99,7 +99,7 @@ const SOCIAL_ICONS: Record<string, IconName> = { discord: "si:discord", messenge
       <div class="hang-links">
         {
           SOCIAL.map((social) => (
-            <a class="btn btn-acc" href={social.href} rel="me noopener" data-umami-event="outbound" data-umami-event-target={social.id}>
+            <a class="btn btn-acc" href={social.href} rel="me noopener" target="_blank" data-umami-event="outbound" data-umami-event-target={social.id}>
               <Icon name={SOCIAL_ICONS[social.id] ?? "tb:message-circle"} />
               {social.label}
             </a>

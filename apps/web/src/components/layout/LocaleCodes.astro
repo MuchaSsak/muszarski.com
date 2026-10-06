@@ -1,8 +1,10 @@
 ---
 /**
- * The compact language switch: the three codes in a row, the current one underlined (site/i18n.md § Switcher).
- * Each link reads "PL Polski" to assistive tech (the visible code first, WCAG 2.5.3, then the autonym), keeps the page when it exists in
- * the target locale (`switchPath`) and is counted as `locale_switch` (analytics.md).
+ * The language switch: a flag per language [user 2026-10-06], the current one underlined (site/i18n.md § Switcher).
+ * Flags are drawn SVGs, not emoji: Windows renders flag emoji as two letters. Each link is named by its autonym
+ * ("Polski"; visible with `names`, a tooltip and screen-reader text otherwise), keeps the page when it exists in the
+ * target locale (`switchPath`) and is counted as `locale_switch` (analytics.md). English is the UK flag (a
+ * European audience), Spanish the plain civil flag of Spain.
  */
 import { AUTONYMS, type Locale, LOCALES } from "@package/shared/locales";
 import { t } from "lingui-for-astro/macro";
@@ -13,55 +15,102 @@ interface Props {
   path: LocalizedPath;
   locales?: readonly Locale[] | undefined;
   fallback?: LocalizedPath;
+  /** Show the autonym next to each flag (the mobile menu). */
+  names?: boolean;
   class?: string | undefined;
 }
 
-const { path, locales = LOCALES, fallback = "", class: className } = Astro.props;
+const { path, locales = LOCALES, fallback = "", names = false, class: className } = Astro.props;
 const locale = Astro.locals.locale;
 ---
 
-<ul role="list" class:list={["locale-codes", className]} aria-label={t`Language`}>
-  {LOCALES.map((to) => (
-    <li>
-      <a
-        href={switchPath(path, to, fallback, locales)}
-        hreflang={to}
-        lang={to}
-        class="draw-line"
-        aria-current={to === locale ? "true" : undefined}
-        data-umami-event="locale_switch"
-        data-umami-event-from={locale}
-        data-umami-event-to={to}
-      >
-        {to.toUpperCase()}
-        <span class="sr-only"> {AUTONYMS[to]}</span>
-      </a>
-    </li>
-  ))}
+<ul role="list" class:list={["locale-codes", { names }, className]} aria-label={t`Language`}>
+  {
+    LOCALES.map((to) => (
+      <li>
+        <a
+          href={switchPath(path, to, fallback, locales)}
+          hreflang={to}
+          lang={to}
+          title={names ? undefined : AUTONYMS[to]}
+          aria-current={to === locale ? "true" : undefined}
+          data-umami-event="locale_switch"
+          data-umami-event-from={locale}
+          data-umami-event-to={to}
+        >
+          <span class:list={["flag", `flag-${to}`]} aria-hidden="true" />
+          <span class:list={{ "sr-only": !names }}>{AUTONYMS[to]}</span>
+        </a>
+      </li>
+    ))
+  }
 </ul>
 
 <style>
   .locale-codes {
     display: flex;
-    gap: 0.25rem;
+    gap: 0.125rem;
     margin: 0;
     padding: 0;
     list-style: none;
     font-weight: 700;
-    font-size: 0.8125rem;
-    font-stretch: 118%;
-    letter-spacing: 0.04em;
+    font-size: 0.9375rem;
   }
   .locale-codes a {
+    position: relative;
     display: inline-flex;
     align-items: center;
-    min-height: 2.75rem;
-    min-width: 2rem;
     justify-content: center;
-    background-position: 50% calc(100% - 0.6rem);
-    background-size: 0 2px;
+    gap: 0.625rem;
+    min-height: 2.75rem;
+    min-width: 2.5rem;
+    text-decoration: none;
   }
-  .locale-codes a:is(:hover, :focus-visible, [aria-current]) {
-    background-size: 1.1rem 2px;
+  .names {
+    flex-wrap: wrap;
+    gap: 0.25rem 1.25rem;
+  }
+  .names a {
+    justify-content: flex-start;
+  }
+  /* The underline marks the current language and follows hover and focus. */
+  .locale-codes a::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    bottom: 0.3rem;
+    width: 1.5rem;
+    height: 2px;
+    margin-left: -0.75rem;
+    background: currentColor;
+    transform: scaleX(0);
+    transition: transform var(--dur-base) var(--ease-out);
+  }
+  .names a::after {
+    left: 0;
+    margin-left: 0;
+  }
+  .locale-codes a:is(:hover, :focus-visible, [aria-current])::after {
+    transform: none;
+  }
+  .flag {
+    flex: none;
+    width: 1.5rem;
+    height: 1rem;
+    background: center / cover no-repeat;
+    box-shadow: 0 0 0 1.5px currentColor;
+    transition: transform var(--dur-base) var(--ease-pop);
+  }
+  .locale-codes a:hover .flag {
+    transform: rotate(-6deg) scale(1.08);
+  }
+  .flag-en {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 60 30' preserveAspectRatio='xMidYMid slice'%3E%3CclipPath id='c'%3E%3Cpath d='M30 15h30v15zv15H0zH0V0zV0h30z'/%3E%3C/clipPath%3E%3Cpath fill='%23012169' d='M0 0h60v30H0z'/%3E%3Cpath stroke='%23fff' stroke-width='6' d='M0 0l60 30m0-30L0 30'/%3E%3Cpath stroke='%23c8102e' stroke-width='4' clip-path='url(%23c)' d='M0 0l60 30m0-30L0 30'/%3E%3Cpath stroke='%23fff' stroke-width='10' d='M30 0v30M0 15h60'/%3E%3Cpath stroke='%23c8102e' stroke-width='6' d='M30 0v30M0 15h60'/%3E%3C/svg%3E");
+  }
+  .flag-pl {
+    background-image: linear-gradient(#fff 50%, #dc143c 50%);
+  }
+  .flag-es {
+    background-image: linear-gradient(#c60b1e 25%, #ffc400 25% 75%, #c60b1e 75%);
   }
 </style>

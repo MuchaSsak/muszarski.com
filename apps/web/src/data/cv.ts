@@ -223,7 +223,7 @@ export const CV = {
       id: "jonas",
       kind: "course",
       icon: "si:udemy",
-      title: { en: "JavaScript and React courses", pl: "Kursy JavaScript i React", es: "Cursos de JavaScript y React" },
+      title: { en: "Full-stack development courses", pl: "Kursy programowania full-stack", es: "Cursos de desarrollo full-stack" },
       issuer: { en: "Courses by Jonas Schmedtmann, Udemy", pl: "Kursy Jonasa Schmedtmanna, Udemy", es: "Cursos de Jonas Schmedtmann, Udemy" },
       summary: {
         en: "JavaScript and React from the fundamentals up. Course certificates, not an accredited qualification.",

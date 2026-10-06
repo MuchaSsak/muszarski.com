@@ -8,9 +8,10 @@
 import { t } from "lingui-for-astro/macro";
 
 import Sticker from "~/components/home/Sticker.astro";
+import CvLink from "~/components/layout/CvLink.astro";
 import Fit from "~/components/ui/Fit.astro";
 import Icon from "~/components/ui/Icon.astro";
-import { cvPdfHref, SITE } from "~/data/site";
+import { SITE } from "~/data/site";
 import { typo } from "~/lib/typography";
 
 const locale = Astro.locals.locale;
@@ -25,12 +26,9 @@ const [first, last] = SITE.name.split(" ") as [string, string];
   <div class="info">
     <Sticker />
     <p class="role rise" style="--d:1">{t`Full-stack product engineer`}</p>
-    <!-- PLACEHOLDER: draft subline from brand.md; the owner rewrites it (placeholders.md P6). -->
+    <!-- PLACEHOLDER: the owner's direction 2026-10-06, Claude's wording; the owner confirms it (placeholders.md P6). -->
     <p class="lede rise" style="--d:2">
-      {typo(
-        locale,
-        t`I turn a business problem into a shipped web or mobile product, and I tell you early what it will cost and what can wait.`,
-      )}
+      {typo(locale, t`Code is the tool. I build products that solve real business problems, at a cost that makes sense.`)}
     </p>
     <div class="cta-col rise" style="--d:3">
       <div class="ctas">
@@ -38,18 +36,7 @@ const [first, last] = SITE.name.split(" ") as [string, string];
           {t`See the work`}
           <Icon inline name="tb:arrow-down" class="nudge-down" />
         </a>
-        <a
-          class="btn btn-line"
-          href={cvPdfHref(locale)}
-          download
-          data-umami-event="cv_download"
-          data-umami-event-source="hero"
-          data-umami-event-locale={locale}
-        >
-          <Icon inline name="tb:file-cv" />
-          {t`Download CV`}
-          <small>PDF</small>
-        </a>
+        <CvLink source="hero" long />
       </div>
       <ul class="facts" role="list">
         <li>

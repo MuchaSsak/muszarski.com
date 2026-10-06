@@ -99,6 +99,19 @@ test("a stored pause never hides the entrances (hero text, sticker)", async ({ p
   await expect(page.locator(".hero .sticker")).toHaveCSS("opacity", "1");
 });
 
+test("the CV button downloads the PDF, then opens the web CV and confirms", async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto("/en/");
+  const download = page.waitForEvent("download");
+  await page.locator(".site-header .cv-link").click();
+  expect((await download).suggestedFilename()).toMatch(/\.pdf$/);
+  await expect(page).toHaveURL(/\/en\/cv\/$/);
+  await expect(page.locator("[data-pdf-note]")).toBeVisible();
+  // A second visit without the button shows no note.
+  await page.reload();
+  await expect(page.locator("[data-pdf-note]")).toBeHidden();
+});
+
 test("CV: the PDF downloads directly and the page and PDF come from the same data", async ({ page, request }) => {
   await page.goto("/pl/cv/");
   const pdf = page.getByRole("link", { name: /Pobierz PDF/ });

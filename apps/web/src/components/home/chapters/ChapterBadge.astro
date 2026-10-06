@@ -1,0 +1,31 @@
+---
+/**
+ * The tilted label that opens a chapter [user 2026-10-06]: what kind of work it was (commercial, own product,
+ * internship, personal), who built it and when, so a recruiter reads the context before the title. Replaces the
+ * three-cell section bar the chapters used to open with. A project with its own icon shows it; the others get a mark.
+ */
+import Icon from "~/components/ui/Icon.astro";
+import { type IconName } from "~/lib/icons.gen";
+
+interface Props {
+  label: string;
+  icon?: IconName;
+  /** A project icon image (its own artwork), instead of a mark. */
+  img?: string;
+}
+
+const { label, icon = "tb:briefcase", img } = Astro.props;
+---
+
+<p class="tag-chip ch-badge">
+  {
+    img ? (
+      <img src={img} alt="" width="30" height="30" loading="lazy" decoding="async" />
+    ) : (
+      <span class="b-ico">
+        <Icon name={icon} />
+      </span>
+    )
+  }
+  {label}
+</p>

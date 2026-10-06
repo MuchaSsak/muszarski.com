@@ -25,14 +25,13 @@ const CHAPTERS = {
   "space-portfolio": ChapterSpace,
 } as const;
 const shown = visibleFlagships().filter((project) => project.slug in CHAPTERS);
-const pad = (n: number) => String(n).padStart(2, "0");
 ---
 
 <div class="chapters" id="work" aria-label={t`Selected work`} role="region">
   {
-    shown.map((project, i) => {
+    shown.map((project) => {
       const Chapter = CHAPTERS[project.slug as keyof typeof CHAPTERS];
-      return <Chapter counter={`${pad(i + 1)} / ${pad(shown.length)}`} />;
+      return <Chapter />;
     })
   }
 </div>
@@ -42,8 +41,12 @@ const pad = (n: number) => String(n).padStart(2, "0");
     <Icon name="si:npm" />
     <span>
       <b>{t`Also shipped:`}</b>
-      <a href={WORK_LINKS.linguiTranslateAi} rel="noopener" data-umami-event="outbound" data-umami-event-target="npm-lingui-translate-ai"
-        >lingui-translate-ai</a
+      <a
+        href={WORK_LINKS.linguiTranslateAi}
+        rel="noopener"
+        target="_blank"
+        data-umami-event="outbound"
+        data-umami-event-target="npm-lingui-translate-ai">lingui-translate-ai<span class="sr-only"> {t`(opens in a new tab)`}</span></a
       >, {t`my npm CLI that translates Lingui catalogs with an LLM.`}
     </span>
   </p>
@@ -52,13 +55,6 @@ const pad = (n: number) => String(n).padStart(2, "0");
     <Icon name="tb:arrow-right" class="nudge" />
   </a>
 </div>
-
-<dialog class="lb" data-lightbox aria-label={t`Video`}>
-  <div class="lb-in">
-    <video controls muted loop playsinline></video>
-    <button class="r-btn" type="button" data-close aria-label={t`Close video`}><Icon name="tb:x" /></button>
-  </div>
-</dialog>
 
 <script>
   import "~/scripts/reel";
