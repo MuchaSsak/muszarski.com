@@ -10,8 +10,9 @@ The owner's rule, until he says otherwise ("maybe one day we will disclose more"
 already public about PstrykWeb, plus innocent facts.
 - **The site may show:**
   - the product as its public pages describe it: bespoke websites for local businesses, ordered through an online form
-  - the public links: the landing `pstrykweb.pl` and the public konfigurator (a code link only if one ever exists; the repo is private)
-  - his role: built it solo for Cetuspro (pending the OK, Q21)
+  - the public link: the landing `pstrykweb.pl`; the chapter and /work/ link it, never the konfigurator [user 2026-10-06]
+    (a code link only if one ever exists; the repo is private)
+  - his role: "built for Cetuspro"; never "solo", never "team" [user 2026-10-06] (naming Cetuspro pending the OK, Q21)
   - tech that is visible from outside (Next.js, Vercel)
 - **Not on the site (internal):**
   - how the sites are made: AI generation, Claude Code / agents, the pipeline (queue, runner, gates, control plane)
@@ -45,17 +46,17 @@ asked for more explanation and a stack list; the public-info rule above still ap
 
 Public info only (see the rule above):
 - **Outcome** (recommended first):
-  1. "Built PstrykWeb for Cetuspro solo: bespoke websites for local businesses, ordered through one online form."
-  2. "Solo developer of PstrykWeb, a website product for local businesses (Cetuspro)."
-- **Proof chip:** "Client work · built solo".
+  1. "Bespoke websites for local businesses, ordered through one online form." (in use; the badge and the text say "for Cetuspro")
+  2. "Built PstrykWeb for Cetuspro: bespoke websites for local businesses, ordered through one online form." (/work/, CV)
+- **Badge:** "Commercial · Cetuspro · 2026" (in use).
 - **Stack chips:** Next.js · TypeScript · Vercel.
 - **Context tag:** "Client work · Cetuspro" (pending OK).
-- **Links:** "Live ↗ pstrykweb.pl" (it currently shows Cetuspro's older landing, see the caveat in Facts) + the public konfigurator.
+- **Links:** "Visit pstrykweb.pl" only [user 2026-10-06] (it currently shows Cetuspro's older landing, see the caveat in Facts).
 - **Held back (internal):** the pipeline, AI, internal tools, "13 sites live", the v2 benchmarks.
 
 ## What it proves (→ `audience.md` pillars)
 
-- Public: a commercial product for a software house's clients, built solo.
+- Public: a commercial product for a software house's clients, built for Cetuspro.
 - Internal only, for when the story opens up: end-to-end ownership of the whole system, AI engineering with quality
   gates, conversion thinking in the konfigurator flow, work with the marketing team.
 
@@ -63,7 +64,7 @@ Public info only (see the rule above):
 
 - **The contract:** Q21 and the legal research. Get a one-line email OK from Cetuspro.
 - **Needs the owner's and Cetuspro's OK:**
-  - naming them, and saying he built it solo
+  - naming them (the role is said as "built for Cetuspro", never "solo" or "team" [user 2026-10-06])
   - numbers, screenshots, live client sites (none has consent)
 - **Not said for now (owner, 2026-10-05):** that the sites are AI-generated. The old landing also says "not an
   automatic generator", a marketing sensitivity for Cetuspro (Q32).

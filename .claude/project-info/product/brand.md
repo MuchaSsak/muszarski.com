@@ -23,7 +23,7 @@
   because rule 1 below bans "I don't just…" phrasing. It replaced the earlier draft "I turn a business problem into a
   shipped web or mobile product, and I tell you early what it will cost and what can wait."
 - **Proof line** (above the fold, pending the Cetuspro OK; public info only, `content/projects/pstrykweb.md`):
-  "Built PstrykWeb for Cetuspro, solo: bespoke websites for local businesses, ordered through one online form."
+  "Built PstrykWeb for Cetuspro: bespoke websites for local businesses, ordered through one online form."
 - **Titles elsewhere:**
   - SEO / CV: "Full-Stack Developer (React, Node.js, TypeScript)"
   - LinkedIn headline mirrors the H1 + stack
@@ -32,7 +32,7 @@
 ## Four proof pillars (each maps to a site section; evidence per pillar: `audience.md`)
 
 1. **I build for the business result:** Linkoglot monetisation (free trial → subscription), PstrykWeb as client work.
-2. **I build the whole thing:** PstrykWeb built solo, Linkoglot on both stores.
+2. **I build the whole thing:** PstrykWeb built for Cetuspro (never "solo" or "team" [user 2026-10-06]), Linkoglot on both stores.
 3. **I use AI as leverage, and I verify it:** Clockful AI-only at Neoteric (118 tests), this site's public Claude Code setup,
    `lingui-translate-ai`.
 4. **I make the work visible and predictable:** decisions with rejected options, "cut from v1", estimate vs actual.

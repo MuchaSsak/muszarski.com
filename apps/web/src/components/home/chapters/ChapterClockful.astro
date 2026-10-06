@@ -6,6 +6,7 @@
  */
 import { t } from "lingui-for-astro/macro";
 
+import ChapterBackdrop from "~/components/home/chapters/ChapterBackdrop.astro";
 import ChapterBadge from "~/components/home/chapters/ChapterBadge.astro";
 import Fit from "~/components/ui/Fit.astro";
 import Icon from "~/components/ui/Icon.astro";
@@ -22,6 +23,7 @@ const start = t`Start`;
 ---
 
 <section class="sec chapter c-cf" id="clockful" aria-labelledby="t-cf">
+  <ChapterBackdrop icons={["tb:clock", "tb:calendar", "tb:chart-bar", "tb:clock-hour-4", "tb:users", "tb:shield-lock"]} />
   <ChapterBadge icon="tb:school" label={t`Internship · Neoteric · 2026`} />
   <Fit as="h2" id="t-cf" lines={["Clockful"]} />
   <div class="cf-grid grid-2">
@@ -53,10 +55,10 @@ const start = t`Start`;
       </div>
       <figcaption class="sr-only">{t`Drawn stand-in for the dashboard, with a working demo timer. A walkthrough recording will replace it.`}</figcaption>
       <ul class="mstats rv">
-        <li><b>118</b>{t`automated tests: 49 Vitest, 69 Playwright`}</li>
-        <li><b>5/5</b>{t`tables behind row-level security`}</li>
-        <li><b>15</b>{t`requirements in the spec`}</li>
-        <li><b>9</b>{t`days from spec to hand-in (an estimate)`}</li>
+        <li><span class="top"><Icon name="tb:test-pipe" /><b>118</b></span>{t`automated tests: 49 Vitest, 69 Playwright`}</li>
+        <li><span class="top"><Icon name="tb:shield-lock" /><b>5/5</b></span>{t`tables behind row-level security`}</li>
+        <li><span class="top"><Icon name="tb:checklist" /><b>15</b></span>{t`requirements in the spec`}</li>
+        <li><span class="top"><Icon name="tb:calendar" /><b>9</b></span>{t`days from spec to hand-in (an estimate)`}</li>
       </ul>
     </figure>
 

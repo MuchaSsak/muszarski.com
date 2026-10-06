@@ -110,6 +110,31 @@ test("credentials: wide screens open a row on focus or hover, phones toggle an a
   await expect(rows.nth(1)).toHaveAttribute("aria-expanded", "false");
 });
 
+test("credentials: left idle on a wide screen, a cursor opens the next card", async ({ page }) => {
+  test.slow();
+  await page.emulateMedia({ reducedMotion: "no-preference" });
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto("/en/");
+  await page.locator("#credentials .xcards").scrollIntoViewIfNeeded();
+  await page.mouse.move(5, 5);
+  const rows = page.locator("#credentials .xc-btn");
+  await expect(rows.nth(0)).toHaveAttribute("aria-expanded", "true");
+  await expect(rows.nth(1)).toHaveAttribute("aria-expanded", "true", { timeout: 12_000 });
+  await expect(page.locator("#credentials [data-ghost]")).toBeHidden({ timeout: 5_000 });
+});
+
+test("credentials: the tour stays put while motion is paused", async ({ page }) => {
+  test.slow();
+  await page.addInitScript(() => localStorage.setItem("motion", "still"));
+  await page.emulateMedia({ reducedMotion: "no-preference" });
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto("/en/");
+  await page.locator("#credentials .xcards").scrollIntoViewIfNeeded();
+  await page.mouse.move(5, 5);
+  await page.waitForTimeout(7_500);
+  await expect(page.locator("#credentials .xc-btn").nth(0)).toHaveAttribute("aria-expanded", "true");
+});
+
 test("a stored pause never hides the entrances (hero text, sticker)", async ({ page }) => {
   await page.addInitScript(() => localStorage.setItem("motion", "still"));
   await page.goto("/en/");

@@ -1,8 +1,9 @@
 ---
 /**
  * Selected work (structure.md § Home 2, requirements.md F03): the flagship chapters as a stack of posters, then the
- * "All projects" strip. The rights gate (CLAUDE.md invariants) drops client/internship chapters whose rights are not
- * `ok` from the launch build; review builds show all four (placeholders.md P10).
+ * "Also shipped" strip (three side projects as tilted tickets) and "All projects". The rights gate (CLAUDE.md
+ * invariants) drops client/internship work whose rights are not `ok` from the launch build, chapters and tickets
+ * alike; review builds show all (placeholders.md P10).
  */
 import "~/styles/chapters.css";
 
@@ -13,8 +14,8 @@ import ChapterLinkoglot from "~/components/home/chapters/ChapterLinkoglot.astro"
 import ChapterPstrykWeb from "~/components/home/chapters/ChapterPstrykWeb.astro";
 import ChapterSpace from "~/components/home/chapters/ChapterSpace.astro";
 import Icon from "~/components/ui/Icon.astro";
-import { visibleFlagships } from "~/data/projects";
-import { WORK_LINKS } from "~/data/site";
+import { visibleFlagships, visibleProjects } from "~/data/projects";
+import type { IconName } from "~/lib/icons.gen";
 import { chromeLinks } from "~/lib/nav";
 
 const links = chromeLinks(Astro.locals.locale);
@@ -25,6 +26,18 @@ const CHAPTERS = {
   "space-portfolio": ChapterSpace,
 } as const;
 const shown = visibleFlagships().filter((project) => project.slug in CHAPTERS);
+
+// "Also shipped" [user 2026-10-06]: fun first, the npm CLI last. Names and links come from the project data.
+const EXTRAS: { slug: string; icon: IconName; target: string; line: string }[] = [
+  { slug: "malatro", icon: "tb:cards", target: "malatro-live", line: t`Balatro, but every card is a real maths exam task.` },
+  { slug: "yws", icon: "tb:home-heart", target: "yws-live", line: t`A 3D site for a Luxembourg non-profit that houses young people.` },
+  { slug: "lingui-translate-ai", icon: "si:npm", target: "npm-lingui-translate-ai", line: t`My npm CLI that translates Lingui catalogs with an LLM.` },
+];
+const extras = EXTRAS.flatMap((extra) => {
+  const project = visibleProjects().find((item) => item.slug === extra.slug);
+  const href = project?.links.npm ?? project?.links.live;
+  return project && href ? [{ ...extra, name: project.name, href }] : [];
+});
 ---
 
 <div class="chapters" id="work" aria-label={t`Selected work`} role="region">
@@ -37,19 +50,36 @@ const shown = visibleFlagships().filter((project) => project.slug in CHAPTERS);
 </div>
 
 <div class="sec field-bar more">
-  <p>
-    <Icon name="si:npm" />
-    <span>
-      <b>{t`Also shipped:`}</b>
-      <a
-        href={WORK_LINKS.linguiTranslateAi}
-        rel="noopener"
-        target="_blank"
-        data-umami-event="outbound"
-        data-umami-event-target="npm-lingui-translate-ai">lingui-translate-ai<span class="sr-only"> {t`(opens in a new tab)`}</span></a
-      >, {t`my npm CLI that translates Lingui catalogs with an LLM.`}
-    </span>
-  </p>
+  <p class="more-label" id="more-label">{t`Also shipped`}</p>
+  <ul class="shipped" role="list" aria-labelledby="more-label">
+    {
+      extras.map((extra) => (
+        <li>
+          <a
+            class="ship"
+            href={extra.href}
+            rel="noopener"
+            target="_blank"
+            data-umami-event="outbound"
+            data-umami-event-target={extra.target}
+            data-umami-event-project={extra.slug}
+          >
+            <span class="ship-ico">
+              <Icon name={extra.icon} />
+            </span>
+            <span class="ship-text">
+              <b>
+                {extra.name}
+                <Icon name="tb:arrow-up-right" class="nudge" />
+              </b>
+              <small>{extra.line}</small>
+            </span>
+            <span class="sr-only"> {t`(opens in a new tab)`}</span>
+          </a>
+        </li>
+      ))
+    }
+  </ul>
   <a class="btn btn-acc" href={links.workIndex} data-umami-event="cta" data-umami-event-id="all-projects" data-umami-event-source="chapters">
     {t`All projects`}
     <Icon name="tb:arrow-right" class="nudge" />

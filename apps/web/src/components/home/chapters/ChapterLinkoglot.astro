@@ -6,6 +6,7 @@
  */
 import { t } from "lingui-for-astro/macro";
 
+import ChapterBackdrop from "~/components/home/chapters/ChapterBackdrop.astro";
 import ChapterBadge from "~/components/home/chapters/ChapterBadge.astro";
 import Fit from "~/components/ui/Fit.astro";
 import Icon from "~/components/ui/Icon.astro";
@@ -23,6 +24,7 @@ const labelPlay = t`Play video`;
 ---
 
 <section class="sec chapter c-lk" id="linkoglot" aria-labelledby="t-lk" style={`--fit-h:${fitHeight}`}>
+  <ChapterBackdrop icons={["tb:cards", "tb:language", "tb:camera", "tb:world", "tb:message-circle", "tb:sparkles"]} />
   <ChapterBadge img="/media/linkoglot/icon.webp" label={t`Own product · solo · 2026`} />
   <Fit as="h2" id="t-lk" lines={["Linkoglot"]} />
   <div class="board">

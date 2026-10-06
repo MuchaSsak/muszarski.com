@@ -11,6 +11,7 @@
 | 0-2 Poster (tokens, header, hero, band, footer) | `/en/` (`/pl/`, `/es/` equal) | 22.9 KB (CSS + inline icons) | 3.0 KB gz in 5 modules (fit 1.7, motion 0.5, pause 0.4, band 0.3, layout 0.1) | 49.5 KB (1 variable file, preloaded) | 79 KB | 100 / 100 / 100 / 100 | 1.65 s (FCP 1.17 s) | 0 | 0-2 ms | 2026-10-05 |
 | whole site | `/en/` (`/pl/`, `/es/` equal) | 38.1 KB (CSS inline; icons in a cached 21 KB sprite) | ~9.0 KB gz (10 modules + 1 KB inline) | 49.9 KB (1 variable file, preloaded) | 152 KB | 99 / 100 / 100 / 100 | 1.95 s (FCP 1.21 s) | 0 | 0-15 ms | 2026-10-06 |
 | whole site | inner pages (`/en/work/`, `/en/blog/`, `/pl/blog/`, `/es/work/`, `/en/my-life/`, `/en/privacy/`, case study, `/pl/cv/`) | 14.3-22.6 KB | 2.9-3.1 KB | 49.9 KB | 91-99 KB | 100 / 100 / 100 / 100 | 1.65-1.73 s | 0 | 0 ms | 2026-10-06 |
+| feedback round 2 (scenes, badges with pins, tickets, backdrops, credentials tour) | `/en/` (`/pl/` 41.8, `/es/` 41.6) | 40.6 KB | ~8.5 KB gz (7.6 KB in 9 modules + 0.9 KB inline; the tour +0.6 KB) | 49.9 KB | 154 KB | 99 / 100 / 100 / 100 (desktop 100 × 4) | 1.95 s | 0 | 0 ms | 2026-10-06 |
 | owner feedback pass | `/en/` (`/pl/`, `/es/` equal) | 34.7 KB | ~7.8 KB gz (6.7 KB in 9 modules + 1.1 KB inline) | 49.9 KB | 148 KB | 99 / 100 / 100 / 100 (desktop 100 × 4) | 1.95 s | 0 | 0-38 ms | 2026-10-06 |
 
 Notes:

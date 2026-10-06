@@ -38,6 +38,8 @@ Wired so far (no-ops until `PUBLIC_UMAMI_WEBSITE_ID` is set):
   navigation to `/cv/`; the `cv` cta id, `theme_toggle` (theme switch cut) and the `open-to-projects` cta (line removed)
   are gone, and so is the contact section's `cv_download` (its CV tile was removed); the post author box uses the
   same button (source `blog`) instead of its old CV + PDF pair
+- 2026-10-06 (second round): `outbound` targets `pstrykweb-site` (was `pstrykweb-konfigurator`; the chapter links the
+  landing now), `malatro-live`, `yws-live` and `npm-lingui-translate-ai` (the "Also shipped" tickets, with `project`)
 - The script loads after `load`, never with DNT/GPC or the `umami.disabled` opt-out (`layout/UmamiLoader.astro`); the
   privacy page has the opt-out switch (`legal/AnalyticsOptOut.astro`)
 

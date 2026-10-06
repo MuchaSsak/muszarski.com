@@ -12,8 +12,8 @@
 | `bun run build` (50 pages + launch gate with link check) | 8.0 s | 2026-10-06 |
 | `bun run test` (vitest, 152 tests in 10 files) | 1.2 s | 2026-10-06 |
 | `bun run typecheck` (astro check, ~105 files) | 16 s | 2026-10-06 |
-| `bun run e2e` (231 tests, 4 workers) | 30 s | 2026-10-06 |
-| `bun run e2e:xb` (Firefox + WebKit, 154 tests) | 59 s | 2026-10-06 |
+| `bun run e2e` (233 tests, 4 workers; the two tour tests wait ~8 s each) | 35 s | 2026-10-06 |
+| `bun run e2e:xb` (Firefox + WebKit, 158 tests) | 1.2 min | 2026-10-06 |
 | `bun run cv:pdf` (3 PDFs, 196-210 KB, 2 pages each) | 3.5 s | 2026-10-06 |
 | `bun run og` (33 share images + 4 icons) | 3.0 s | 2026-10-06 |
 | `bun run lhci` (median of 3, per page) | ~25 s a page | 2026-10-06 |

@@ -40,12 +40,12 @@ export const PROJECTS: Project[] = [
     anchor: "pstrykweb",
     // Public info only (content/projects/pstrykweb.md § Public disclosure).
     line: {
-      en: "Bespoke websites for local businesses, ordered through one online form. Built solo for Cetuspro.",
-      pl: "Strony na zamówienie dla lokalnych firm, zamawiane przez jeden formularz online. Zbudowane samodzielnie dla Cetuspro.",
-      es: "Webs a medida para negocios locales, encargadas con un solo formulario online. Hecho en solitario para Cetuspro.",
+      en: "Bespoke websites for local businesses, ordered through one online form. Built for Cetuspro.",
+      pl: "Strony na zamówienie dla lokalnych firm, zamawiane przez jeden formularz online. Zbudowane dla Cetuspro.",
+      es: "Webs a medida para negocios locales, encargadas con un solo formulario online. Hecho para Cetuspro.",
     },
     stack: ["Next.js", "TypeScript", "Vercel"],
-    links: { live: "https://app.pstrykweb.pl/" },
+    links: { live: "https://pstrykweb.pl/" },
   },
   {
     slug: "linkoglot",

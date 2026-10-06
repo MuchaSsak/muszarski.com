@@ -68,9 +68,9 @@ export const CV = {
       placeholder: true,
       bullets: [
         {
-          en: "Built PstrykWeb solo for the software house Cetuspro: bespoke websites for local businesses, ordered through one online form.",
-          pl: "Samodzielnie zbudowałem PstrykWeb dla software house'u Cetuspro: strony na zamówienie dla lokalnych firm, zamawiane przez jeden formularz online.",
-          es: "Construí PstrykWeb en solitario para la software house Cetuspro: webs a medida para negocios locales, encargadas con un solo formulario online.",
+          en: "Built PstrykWeb for the software house Cetuspro: bespoke websites for local businesses, ordered through one online form.",
+          pl: "Zbudowałem PstrykWeb dla software house'u Cetuspro: strony na zamówienie dla lokalnych firm, zamawiane przez jeden formularz online.",
+          es: "Construí PstrykWeb para la software house Cetuspro: webs a medida para negocios locales, encargadas con un solo formulario online.",
         },
         {
           en: "Built the public konfigurator, the online order form (Next.js, TypeScript, Vercel).",

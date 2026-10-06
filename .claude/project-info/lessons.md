@@ -16,11 +16,12 @@
 - Legal pages: formal "lawyer grade" text, noindex,follow, cited statutes, recommend a lawyer review - 2026-10-05.
 - The owner can't verify Spanish: AI-translate es, mark it unreviewed, never claim it was reviewed - 2026-10-05.
 - Build one slice at a time, looped to near-prod (shots, axe, Lighthouse, design score) before the next (`working-agreement.md` § 9) - 2026-10-05.
-- PstrykWeb = public info only (landing, public konfigurator, his solo role, outside-visible tech); never AI generation, the pipeline, internal tools or counts - 2026-10-05.
+- PstrykWeb = public info only (the landing, "built for Cetuspro", outside-visible tech); never "solo" or "team", never a konfigurator link [2026-10-06], AI generation, the pipeline, internal tools or counts - 2026-10-05.
 - Owner-stated numbers can be off (~6 years was ~4, since 2022): when an owner fact and a public source disagree, show both and ask - 2026-10-05.
 - Visuals must be ambitious first, then practical: the safe minimal first look was rejected. Show bold live directions (`comps/`, artifact page, desktop + phone) and let the owner pick before freezing a system - 2026-10-05.
 - HARD RULE: only fonts/assets free for commercial use (OFL, Apache, MIT, CC0, CC BY with credit) or the owner's own; unknown licence = not used; record it in `assets.md` - 2026-10-05.
-- Less text, more to see: tools as one-colour marks WITH names, products as video ("sometimes less is more"); in chapters a short text description beats icon tiles [2026-10-06] - 2026-10-05.
+- Less text, more to see: tools as one-colour marks WITH names, products as video ("sometimes less is more"); in chapters a short text description beats icon tiles; How I work tells each stop with a drawn scene, not a headline [2026-10-06] - 2026-10-05.
+- AI section: examples, tool marks as pins and one line per piece; never counts ("7 skills", "3 MCP servers") - 2026-10-06.
 - Every hover has a tap, focus or scroll twin; phones get the same content and a premium feel ("they dont have cursors") - 2026-10-05.
 - AI section = the system (wiki, hooks, MCPs, skills, subagents). Typecheck/lint/tests are "the floor": one line, never the pitch - 2026-10-05.
 - Heavy media loads near visibility, plays only when visible and after a first interaction (a load-time loop cost 270–480 ms TBT) - 2026-10-05.
@@ -39,6 +40,9 @@
 - Chrome holds first paint for a preloaded font, and HTML bytes compete with it: keep page HTML lean (icons live in the cached sprite; first-screen icons `inline`) - 2026-10-06.
 - A child rule like `.dlink > span { width: 100% }` also hits an added `.sr-only` span (a 1,193 px overflow): exclude `.sr-only` or wrap the visible text - 2026-10-06.
 - A focus target taller than the viewport minus the header always sits under the sticky header: cap media by viewport height (`100svh - var(--header-h)`) - 2026-10-06.
+
+- Astro does not scope `@keyframes` names: two components' `bob` collided. Prefix keyframes per component (`hw-`, `cr-`, `ai-`) - 2026-10-06.
+- Reduced motion keeps `animation-delay`: staged entrances stay hidden for their delay. Switch staged scenes off under reduced motion and `.still` - 2026-10-06.
 
 ### Privacy of inputs
 - `context/` is private and gitignored: copy patterns, not files; never quote the memo or name its author in committed files - 2026-10-05.

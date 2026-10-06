@@ -3,6 +3,8 @@
  * Latest writing (structure.md § Home 6): the three newest posts as a compact teaser [user 2026-10-06: smaller, like
  * the pstryk landing], a plain heading with "All posts" beside it and small cards (cover thumbnail, date, title), in the
  * page's blog locale (Spanish pages show the English posts, marked as English). Hidden when there are no posts.
+ * The field carries a faint dot grid (notebook paper), the title a drawn underline, and the cards are taped notes
+ * [user 2026-10-06: too flat].
  */
 import { t } from "lingui-for-astro/macro";
 
@@ -29,6 +31,9 @@ const english = links.blogLocale !== locale;
           <h2 id="t-wr" class="w-title">
             {t`Notes from the work`}
           </h2>
+          <svg class="w-line" viewBox="0 0 320 16" preserveAspectRatio="none" aria-hidden="true">
+            <path d="M3 11 C 50 3, 90 15, 140 8 S 230 2, 317 9" />
+          </svg>
         </div>
         <a class="btn btn-line" href={links.blog} data-umami-event="cta" data-umami-event-id="blog" data-umami-event-source="home">
           {t`All posts`}
@@ -47,7 +52,23 @@ const english = links.blogLocale !== locale;
 
 <style>
   .writing {
-    padding-block: clamp(2.5rem, 5vw, 4.5rem);
+    padding-block: clamp(2.5rem, 5vw, 4.5rem) clamp(3rem, 6vw, 5.5rem);
+    background-image: radial-gradient(color-mix(in srgb, var(--sfg) 13%, transparent) 1.2px, transparent 1.7px);
+    background-size: 1.5rem 1.5rem;
+  }
+  .w-line {
+    display: block;
+    width: min(100%, 16rem);
+    height: 0.875rem;
+    margin-top: 0.5rem;
+    overflow: visible;
+  }
+  .w-line path {
+    fill: none;
+    stroke: var(--pink);
+    stroke-width: 4;
+    stroke-linecap: round;
+    vector-effect: non-scaling-stroke;
   }
   .w-head {
     display: flex;
@@ -75,12 +96,22 @@ const english = links.blogLocale !== locale;
   .grid {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: clamp(0.75rem, 1.6vw, 1.5rem);
-    margin-top: clamp(1.25rem, 2.4vw, 2rem);
+    gap: clamp(1.5rem, 2.4vw, 2.25rem);
+    margin-top: clamp(1.75rem, 3vw, 2.75rem);
+  }
+  /* Each note its own tape colour and tilt. */
+  .grid > :global(.card:nth-child(2)) {
+    --tape: var(--lime);
+    --tilt: 1deg;
+  }
+  .grid > :global(.card:nth-child(3)) {
+    --tape: var(--pink);
+    --tilt: -0.75deg;
   }
   @media (max-width: 64rem) {
     .grid {
       grid-template-columns: minmax(0, 1fr);
+      gap: 1.75rem;
     }
   }
 </style>

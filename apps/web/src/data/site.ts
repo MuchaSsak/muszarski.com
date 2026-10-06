@@ -37,9 +37,8 @@ export const SOCIAL = [
 
 /** Public links of the work shown on the site (content/projects/*.md § Facts). */
 export const WORK_LINKS = {
+  /** The landing; the chapter and /work/ link here, not to the konfigurator [user 2026-10-06]. */
   pstrykweb: "https://pstrykweb.pl/",
-  /** The public konfigurator (his part; the landing at pstrykweb.pl is Cetuspro's older site: pstrykweb.md § Facts). */
-  pstrykwebKonfigurator: "https://app.pstrykweb.pl/",
   linkoglotAppStore: "https://apps.apple.com/app/id6768303316",
   linkoglotPlay: "https://play.google.com/store/apps/details?id=com.linkoglot.app",
   spaceLive: "https://3d-space-folio.vercel.app/",

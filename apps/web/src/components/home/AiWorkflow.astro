@@ -1,75 +1,84 @@
 ---
 /**
  * AI workflow (structure.md § Home 4, requirements.md F07, brand.md pillar 3) as an org chart [user 2026-10-06: "I run
- * AI like a team"]: I lead, Claude Code builds, and a crew of ID badges stands under it: the wiki (memory), hooks
- * (rules), subagents (research), MCP servers (tools), skills (playbooks) and the quality gates. The counts come from the
- * repo at build time (`~/lib/repo-stats`, placeholders.md P19), never typed. PstrykWeb is not evidence here (public
- * info only). One CTA: the "how this site was built" post. No JS: the wires flow in CSS and pause like every loop.
+ * AI like a team"]: I lead, Claude Code builds, and a crew of ID badges hangs under it on lanyards: the wiki (memory),
+ * hooks (rules), subagents (research), MCP servers (tools), skills (playbooks) and the quality gates. Each badge says
+ * what it does with examples, never a count [user 2026-10-06: "dont give precise numbers"], and wears enamel pins with
+ * the tools' marks. PstrykWeb is not evidence here (public info only). One CTA: the "how this site was built" post.
+ * No JS: the wires flow and the badges swing in CSS, and pause like every loop.
  */
-import { plural, t } from "lingui-for-astro/macro";
+import { t } from "lingui-for-astro/macro";
 
 import Fit from "~/components/ui/Fit.astro";
 import Icon from "~/components/ui/Icon.astro";
 import { thisSitePath } from "~/lib/blog-paths";
 import { type IconName } from "~/lib/icons.gen";
-import { MCP_SERVERS, repoStats } from "~/lib/repo-stats";
 import { typo } from "~/lib/typography";
 
 const locale = Astro.locals.locale;
-const stats = repoStats();
-const mcp = MCP_SERVERS.length;
-const lessons = stats?.lessons ?? 0;
-const wikiPages = stats?.wikiPages ?? 0;
-const hooks = stats?.hooks ?? 0;
-const skills = stats?.skills ?? 0;
 
+/** An enamel pin on a badge: a tool's mark (Simple Icons, nominative use) or a two-letter monogram. */
+type Pin = { icon: IconName } | { mono: string };
 interface Member {
   icon: IconName;
   role: string;
   name: string;
-  duty: string;
+  line: string;
+  examples: string[];
+  pins: Pin[];
 }
-// A build without the .claude folder (stats null) names the pieces without counts.
 const CREW: Member[] = [
   {
     icon: "tb:notebook",
     role: t`Memory`,
-    name: stats ? plural(wikiPages, { one: "# wiki page", other: "# wiki pages" }) : t`Project wiki`,
-    duty: stats
-      ? t`Goals, voice, design and decisions, each with a source. Every correction adds a lesson: ${lessons} so far.`
-      : t`Goals, voice, design and decisions, each with a source. Every correction adds a lesson.`,
+    name: t`Project wiki`,
+    line: t`A Karpathy-style LLM wiki the agent reads first and updates after.`,
+    examples: [t`goals`, t`design`, t`decisions`, t`lessons`],
+    pins: [{ icon: "si:markdown" }],
   },
   {
     icon: "tb:plug",
     role: t`Rules`,
-    name: stats ? plural(hooks, { one: "# hook", other: "# hooks" }) : t`Hooks`,
-    duty: t`Load the rules every session and stop a finish when the docs did not move.`,
+    name: t`Hooks`,
+    line: t`Guardrails and scripts that run on their own.`,
+    examples: [t`safety`, t`rules each session`, t`finish check`],
+    pins: [{ icon: "tb:shield-lock" }, { icon: "tb:terminal-2" }],
   },
   {
     icon: "tb:users-group",
     role: t`Research`,
     name: t`Subagents`,
-    duty: t`Research and drafts run in parallel. I get conclusions, not file dumps.`,
+    line: t`Research in parallel. I get conclusions, not file dumps.`,
+    examples: [t`docs`, t`references`, t`audits`],
+    pins: [{ icon: "si:claude" }],
   },
   {
     icon: "tb:puzzle",
     role: t`Tools`,
-    name: plural(mcp, { one: "# MCP server", other: "# MCP servers" }),
-    duty: t`Real app screens (Mobbin), a component registry and a real browser (Playwright).`,
+    name: t`MCP servers`,
+    line: t`Real data in place of guesses.`,
+    examples: ["Mobbin", t`component registry`, "Playwright"],
+    pins: [{ icon: "si:modelcontextprotocol" }, { mono: "Pw" }],
   },
   {
     icon: "tb:stack-2",
     role: t`Playbooks`,
-    name: stats ? plural(skills, { one: "# skill", other: "# skills" }) : t`Skills`,
-    duty: t`Packaged routines: screenshot QA, Lighthouse, design research, commits.`,
+    name: t`Skills`,
+    line: t`Routines I start with one command.`,
+    examples: [t`screenshot QA`, "Lighthouse", t`design research`, t`commits`],
+    pins: [{ icon: "si:lighthouse" }],
   },
   {
     icon: "tb:checklist",
     role: t`Quality`,
     name: t`Gates`,
-    duty: t`Typecheck, lint, tests, accessibility and Lighthouse on every change. Nothing ships red.`,
+    line: t`Every change runs them. Nothing ships red.`,
+    examples: ["TypeScript", "ESLint", t`tests`, "axe", "Lighthouse"],
+    pins: [{ icon: "si:typescript" }, { icon: "si:eslint" }, { icon: "si:vitest" }],
   },
 ];
+const TILT = [-2, 1.5, -1, 2, -1.5, 1];
+const PIN_TILT = [-12, 9, -6];
 ---
 
 <section class="sec field-deep ai" id="ai" aria-labelledby="t-ai">
@@ -85,7 +94,7 @@ const CREW: Member[] = [
 
   <div class="org">
     <div class="heads">
-      <div class="idb me rv">
+      <div class="idb me rv" style="--r:-2deg">
         <span class="slot" aria-hidden="true"></span>
         <span class="role">{t`Lead`}</span>
         <Icon name="tb:user" class="idb-i" />
@@ -93,10 +102,10 @@ const CREW: Member[] = [
         <span class="duty">{t`I brief, review every change and decide.`}</span>
       </div>
       <span class="wire w-x" aria-hidden="true"></span>
-      <div class="idb agent rv" style="--d:1">
+      <div class="idb agent rv" style="--d:1;--r:1.5deg">
         <span class="slot" aria-hidden="true"></span>
         <span class="role">{t`Builder`}</span>
-        <Icon name="si:claude" class="idb-i" />
+        <Icon name="si:claude" class="idb-i spark" />
         <span class="nm">Claude Code</span>
         <span class="duty">{t`Writes the code, inside the rules of the crew below.`}</span>
       </div>
@@ -105,12 +114,24 @@ const CREW: Member[] = [
     <ul class="crew" role="list" aria-label={t`The crew`}>
       {
         CREW.map((member, i) => (
-          <li class="idb rv" style={`--d:${i + 2};--r:${[-2, 1.5, -1, 2, -1.5, 1][i]}deg`}>
+          <li class="idb rv" style={`--d:${i + 2};--r:${TILT[i]}deg`}>
             <span class="slot" aria-hidden="true" />
+            <span class="pins" aria-hidden="true">
+              {member.pins.map((pin, k) => (
+                <span class="pin" style={`--k:${k};--pr:${PIN_TILT[(i + k) % PIN_TILT.length]}deg`}>
+                  {"icon" in pin ? <Icon name={pin.icon} /> : <b>{pin.mono}</b>}
+                </span>
+              ))}
+            </span>
             <span class="role">{member.role}</span>
             <Icon name={member.icon} class="idb-i" />
             <span class="nm">{member.name}</span>
-            <span class="duty">{typo(locale, member.duty)}</span>
+            <span class="duty">{typo(locale, member.line)}</span>
+            <ul class="ex" role="list">
+              {member.examples.map((example) => (
+                <li>{example}</li>
+              ))}
+            </ul>
           </li>
         ))
       }
@@ -207,7 +228,8 @@ const CREW: Member[] = [
     animation: flow-y 1s linear infinite;
   }
 
-  /* An ID badge on a lanyard: a slot, the role, an icon, the name, one line of duty. */
+  /* An ID badge on a lanyard: a slot, pins, the role, an icon, the name, one line and examples. It swings a little
+     (the `rotate` property, so the reveal and the hover lift keep `transform`). */
   .idb {
     position: relative;
     display: grid;
@@ -218,9 +240,20 @@ const CREW: Member[] = [
     background: var(--ice);
     color: var(--navy);
     box-shadow: 6px 6px 0 var(--navy);
-    transform: rotate(var(--r, 0deg));
+    rotate: var(--r, 0deg);
     transform-origin: 50% 0;
+    animation: ai-swing 5s ease-in-out infinite;
+    animation-delay: calc(var(--d, 0) * -0.85s);
     transition: transform 0.5s var(--ease-pop);
+  }
+  @keyframes ai-swing {
+    0%,
+    100% {
+      rotate: var(--r, 0deg);
+    }
+    50% {
+      rotate: calc(var(--r, 0deg) * -0.5);
+    }
   }
   .slot {
     position: absolute;
@@ -244,6 +277,7 @@ const CREW: Member[] = [
   .idb :global(.idb-i) {
     width: 1.5rem;
     height: 1.5rem;
+    transition: transform 0.45s var(--ease-pop);
   }
   .nm {
     grid-column: 1 / -1;
@@ -258,17 +292,88 @@ const CREW: Member[] = [
     font-size: 0.875rem;
     line-height: 1.4;
   }
+  .ex {
+    grid-column: 1 / -1;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.3125rem;
+    margin: 0.25rem 0 0;
+    padding: 0;
+    list-style: none;
+  }
+  .ex li {
+    padding: 0.1875rem 0.4375rem;
+    background: rgb(10 13 51 / 0.08);
+    box-shadow: inset 0 0 0 1.5px rgb(10 13 51 / 0.25);
+    font-weight: 800;
+    font-size: 0.6875rem;
+    line-height: 1.2;
+    letter-spacing: 0.03em;
+  }
+
+  /* Enamel pins: round, tilted, each its own colour, stuck over the badge's top right corner. */
+  .pins {
+    position: absolute;
+    top: -1.375rem;
+    right: -0.625rem;
+    z-index: 1;
+    display: flex;
+    flex-direction: row-reverse;
+  }
+  .pin {
+    display: grid;
+    place-items: center;
+    width: 2.375rem;
+    height: 2.375rem;
+    margin-left: -0.625rem;
+    border-radius: 50%;
+    background: var(--pin, var(--yellow));
+    color: var(--navy);
+    box-shadow:
+      inset 0 0 0 2px var(--navy),
+      inset 0 0 0 4px rgb(255 255 255 / 0.45),
+      2px 3px 0 var(--navy);
+    rotate: var(--pr);
+    transition: transform 0.45s var(--ease-pop);
+    transition-delay: calc(var(--k) * 60ms);
+  }
+  .pin:nth-child(3n + 2) {
+    --pin: var(--lime);
+  }
+  .pin:nth-child(3n + 3) {
+    --pin: var(--pink);
+  }
+  .pin :global(.ico) {
+    width: 1.125rem;
+    height: 1.125rem;
+  }
+  .pin b {
+    font-weight: 900;
+    font-size: 0.8125rem;
+    font-stretch: 80%;
+  }
   .me {
     background: var(--accent);
     color: var(--on-accent);
-    --r: -2deg;
   }
-  .agent {
-    --r: 1.5deg;
+  .agent :global(.spark) {
+    animation: ai-pulse 2.4s ease-in-out infinite;
+  }
+  @keyframes ai-pulse {
+    50% {
+      transform: scale(1.18);
+    }
   }
   @media (hover: hover) and (pointer: fine) {
     .idb:hover {
-      transform: rotate(0deg) translateY(-4px);
+      transform: translateY(-4px);
+      animation-play-state: paused;
+    }
+    .idb:hover :global(.idb-i) {
+      transform: rotate(-10deg) scale(1.15);
+    }
+    .idb:hover .pin {
+      transform: translateY(-3px) rotate(14deg) scale(1.1);
     }
   }
   .go {
@@ -281,7 +386,7 @@ const CREW: Member[] = [
   @media (max-width: 75rem) {
     .crew {
       grid-template-columns: repeat(3, minmax(0, 1fr));
-      row-gap: clamp(1.25rem, 2.4vw, 2rem);
+      row-gap: clamp(1.75rem, 3vw, 2.5rem);
     }
     .crew::before {
       left: calc(100% / 6);
@@ -315,8 +420,8 @@ const CREW: Member[] = [
     }
     .crew {
       grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 1rem 0.75rem;
-      padding-top: 1rem;
+      gap: 1.75rem 0.875rem;
+      padding-top: 1.25rem;
     }
     .crew::before,
     .crew > li::before {
@@ -325,6 +430,13 @@ const CREW: Member[] = [
     .idb {
       padding: 1.25rem 0.75rem 0.875rem;
       box-shadow: 4px 4px 0 var(--navy);
+    }
+    .pins {
+      right: -0.375rem;
+    }
+    .pin {
+      width: 2rem;
+      height: 2rem;
     }
     .nm {
       font-size: 1.25rem;
