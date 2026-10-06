@@ -31,10 +31,11 @@
 | Option | Cost | Fits |
 | --- | --- | --- |
 | Vercel Hobby | $0 | **only** while the copy is employment-only. Vercel counts "advertising the sale of a product or service" as commercial [web: vercel.com/docs/limits/fair-use-guidelines, 2026-09-14] |
-| Vercel Pro | $20/month | the "open to projects" line; the same tooling as pstryk (`vercel.json`, WAF rate-limit rule) |
+| Vercel Pro | $20/month | commercial use (project enquiries through the contact form; the "open to projects" line itself was removed 2026-10-06); the same tooling as pstryk (`vercel.json`, WAF rate-limit rule) |
 | Cloudflare Workers (static assets + 1 Worker) | $0 | free and tolerates a freelance CTA; `@astrojs/cloudflare` 14.3.3; Turnstile is Cloudflare's; costs a port of redirects/headers |
 
-- **Decided:** Vercel Pro ($20/month). It allows the "open to projects" line, and Vercel's DPA covers only Pro and Enterprise (`legal/compliance-and-data.md`).
+- **Decided:** Vercel Pro ($20/month). It allows commercial use (decided for the "open to projects" line, removed 2026-10-06;
+  the form still takes project enquiries), and Vercel's DPA covers only Pro and Enterprise (`legal/compliance-and-data.md`).
 - **Setup:** set the serverless function region to an EU region (`fra1`); add one WAF rate-limit rule on `/api/contact/`.
 
 ## Repo layout
@@ -53,7 +54,7 @@ Turborepo (`usage/turborepo.md`): `apps/web/` (the site; folders in `conventions
 | build | `bun run build` (astro build → launch gate: placeholder markers, share images + PDFs present, every internal link / asset / #anchor resolves, incl. sprite symbols) |
 | preview | `bun run preview` (4322; one per project, shared by e2e/shots/Lighthouse) |
 | e2e + a11y | `bun run e2e` (Chromium, every spec) · `bun run e2e:xb` (Firefox + WebKit, functional specs; `bunx playwright install firefox webkit` once) |
-| screenshots | `MSYS_NO_PATHCONV=1 node scripts/shots.mjs --paths /en/ --widths 390,1024,1920,2560 --themes cobalt,paper,ink` (apps/web) |
+| screenshots | `MSYS_NO_PATHCONV=1 node scripts/shots.mjs --paths /en/ --widths 390,1024,1920,2560` (apps/web; one theme, so no `--themes`; `--full`, `--reduced`, `--accept`: `usage/visual-qa.md`) |
 | Lighthouse | `MSYS_NO_PATHCONV=1 bun run lhci -- --runs 3 /en/ /en/work/` (`scripts/lighthouse.mjs`, median of 3, budgets; exits 1 on a miss) |
 | fonts | `bun run fonts` (Anybody subset + metric fallbacks + `fit-metrics.gen.ts`; outputs committed) |
 | icons | `bun run icons` (the listed Simple Icons / Tabler icons → `src/lib/icons.gen.ts`; committed) |

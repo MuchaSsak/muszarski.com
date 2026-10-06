@@ -10,9 +10,10 @@
 | `bun install` (root, cold) | 26.6 s, 1318 packages | 2026-10-05 |
 | `bun install --frozen-lockfile` (clean clone, warm cache) | 5.3 s | 2026-10-05 |
 | `bun run build` (50 pages + launch gate with link check) | 8.0 s | 2026-10-06 |
-| `bun run test` (vitest, 156 tests in 10 files) | 0.8 s | 2026-10-06 |
+| `bun run test` (vitest, 152 tests in 10 files) | 1.2 s | 2026-10-06 |
 | `bun run typecheck` (astro check, ~105 files) | 16 s | 2026-10-06 |
-| `bun run e2e` (279 tests, 4 workers) | 46 s | 2026-10-06 |
+| `bun run e2e` (231 tests, 4 workers) | 30 s | 2026-10-06 |
+| `bun run e2e:xb` (Firefox + WebKit, 154 tests) | 59 s | 2026-10-06 |
 | `bun run cv:pdf` (3 PDFs, 196-210 KB, 2 pages each) | 3.5 s | 2026-10-06 |
 | `bun run og` (33 share images + 4 icons) | 3.0 s | 2026-10-06 |
 | `bun run lhci` (median of 3, per page) | ~25 s a page | 2026-10-06 |
@@ -31,6 +32,19 @@
   first Vercel preview deploy.
 - Scratch tools that found this (session scratchpad, not committed): a Playwright trace of the main thread
   (`FontDataManager::onMakeFromStreamArgs` events, grouped by file size) and a gzip server serving variants of `/en/`.
+
+## Focus and the sticky header across engines (2026-10-06, `/en/` at 1440×700, Tab × 40)
+
+- `content-visibility: auto` (900 px placeholders) made WebKit drift focus 300-700 px after the jump: the skipped
+  Writing (1044 → 354 px) and Contact (1058 → 739 px) swapped to real heights with no scroll compensation, though
+  WebKit reports `overflow-anchor` support. Removed: Lighthouse mobile stayed 99, LCP 1953 ms, TBT 0.
+- WebKit scrolls focus to where a stuck chapter is drawn (the Linkoglot tap target sat at 5 px under the next
+  poster); Firefox leaves an element that is only partly under the header in place when focus moves up (a
+  credentials row at 23 px). Both corrected in script (`tech/usage/astro.md`); the e2e focus test now runs in all
+  three engines and passes.
+- The motion runtime pauses every animation in offscreen sections (`.off`), so a one-shot fade on load froze the
+  credentials panel at opacity 0.42 until scrolled into view; Lighthouse's axe read 1.6:1 (es desktop a11y 97, a
+  race). Fixed by fading only on a real card change.
 
 ## Cross-browser smoke (2026-10-06, 9 pages × 390/1440, built site)
 

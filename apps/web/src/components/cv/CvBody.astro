@@ -16,6 +16,8 @@ interface Props {
 
 const { variant, siteUrl } = Astro.props;
 const locale = Astro.locals.locale;
+// Screen-reader note on links that open a new tab (none in the print/PDF variant).
+const newTab = variant === "print" ? "" : t`(opens in a new tab)`;
 const KIND = { qualification: t`Qualification`, course: t`Course`, volunteering: t`International`, hackathon: t`Teamwork` } as const;
 const sections = {
   summary: t`Profile`,
@@ -58,7 +60,7 @@ const entries = (list: CvEntry[]) => list;
               {entry.links && (
                 <p class="elinks">
                   {entry.links.map((link) => (
-                    <a href={link.href} rel="noopener" target="_blank">{variant === "print" ? `${link.label}: ${link.href}` : link.label}</a>
+                    <a href={link.href} rel="noopener" target="_blank">{variant === "print" ? `${link.label}: ${link.href}` : link.label}{newTab && <span class="sr-only"> {newTab}</span>}</a>
                   ))}
                 </p>
               )}
@@ -86,7 +88,7 @@ const entries = (list: CvEntry[]) => list;
               {entry.links && (
                 <p class="elinks">
                   {entry.links.map((link) => (
-                    <a href={link.href} rel="noopener" target="_blank">{variant === "print" ? `${link.label}: ${link.href}` : link.label}</a>
+                    <a href={link.href} rel="noopener" target="_blank">{variant === "print" ? `${link.label}: ${link.href}` : link.label}{newTab && <span class="sr-only"> {newTab}</span>}</a>
                   ))}
                 </p>
               )}
@@ -126,7 +128,7 @@ const entries = (list: CvEntry[]) => list;
             PROFILES.map((profile) => (
               <li>
                 <a href={profile.href} rel="me noopener" target="_blank">
-                  {variant === "print" ? profile.href.replace(/^https:\/\/(www\.)?/, "") : `${profile.label}: ${profile.handle}`}
+                  {variant === "print" ? profile.href.replace(/^https:\/\/(www\.)?/, "") : `${profile.label}: ${profile.handle}`}{newTab && <span class="sr-only"> {newTab}</span>}
                 </a>
               </li>
             ))

@@ -147,9 +147,9 @@ export const CV = {
       when: same("2026"),
       bullets: [
         {
-          en: "Astro, React, Lingui (en/pl/es); Lighthouse mobile 100 on the home page, about 3 KB of page JavaScript; built with a Claude Code setup of a project wiki, hooks and skills.",
-          pl: "Astro, React, Lingui (en/pl/es); Lighthouse mobile 100 na stronie głównej, około 3 KB JavaScriptu; zbudowana z Claude Code, wiki projektu, hookami i skillami.",
-          es: "Astro, React, Lingui (en/pl/es); Lighthouse móvil 100 en la portada, unos 3 KB de JavaScript; hecho con Claude Code, una wiki del proyecto, hooks y skills.",
+          en: "Astro, React, Lingui (en/pl/es); Lighthouse mobile 99 on the home page and 100 on the other pages, about 8 KB of JavaScript; built with a Claude Code setup of a project wiki, hooks and skills.",
+          pl: "Astro, React, Lingui (en/pl/es); Lighthouse mobile 99 na stronie głównej i 100 na pozostałych, około 8 KB JavaScriptu; zbudowana z Claude Code, wiki projektu, hookami i skillami.",
+          es: "Astro, React, Lingui (en/pl/es); Lighthouse móvil 99 en la portada y 100 en las demás páginas, unos 8 KB de JavaScript; hecho con Claude Code, una wiki del proyecto, hooks y skills.",
         },
       ],
     },

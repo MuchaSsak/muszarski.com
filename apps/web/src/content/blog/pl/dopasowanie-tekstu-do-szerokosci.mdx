@@ -46,7 +46,7 @@ Typowe podejście to skrypt: wyrenderuj tekst, zmierz go, zwiększaj rozmiar fon
 - **Najpierw pokaż, potem dopasuj.** Tekst pojawia się w zgadniętym rozmiarze, a potem skacze, razem ze wszystkim, co jest pod nim. To przesunięcie układu: web.dev definiuje je jako zmianę pozycji widocznego elementu między kolejnymi klatkami.
 - **Ukryj, dopóki nie pasuje.** web.dev wyklucza z LCP elementy z `opacity: 0`, więc LCP czeka wtedy na skrypt, font i pomiar.
 
-Nie chciałem żadnej z nich. Strona główna wysyła około 9 KB JavaScriptu (gzip) i nic z tego nie jest potrzebne do narysowania nagłówka. W mobilnym Lighthouse (mediana z 3 pomiarów) ma 99 za wydajność i 100 w pozostałych kategoriach, LCP około 1,95 s i CLS 0.
+Nie chciałem żadnej z nich. Strona główna wysyła około 8 KB JavaScriptu (gzip) i nic z tego nie jest potrzebne do narysowania nagłówka. W mobilnym Lighthouse (mediana z 3 pomiarów) ma 99 za wydajność i 100 w pozostałych kategoriach, LCP około 1,95 s i CLS 0.
 
 ## Obserwacja, która to umożliwia
 

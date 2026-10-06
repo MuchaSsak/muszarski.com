@@ -20,7 +20,7 @@
 - Owner-stated numbers can be off (~6 years was ~4, since 2022): when an owner fact and a public source disagree, show both and ask - 2026-10-05.
 - Visuals must be ambitious first, then practical: the safe minimal first look was rejected. Show bold live directions (`comps/`, artifact page, desktop + phone) and let the owner pick before freezing a system - 2026-10-05.
 - HARD RULE: only fonts/assets free for commercial use (OFL, Apache, MIT, CC0, CC BY with credit) or the owner's own; unknown licence = not used; record it in `assets.md` - 2026-10-05.
-- Less text, more to see: tools as one-colour marks WITH names, facts as icon tiles, products as video ("sometimes less is more") - 2026-10-05.
+- Less text, more to see: tools as one-colour marks WITH names, products as video ("sometimes less is more"); in chapters a short text description beats icon tiles [2026-10-06] - 2026-10-05.
 - Every hover has a tap, focus or scroll twin; phones get the same content and a premium feel ("they dont have cursors") - 2026-10-05.
 - AI section = the system (wiki, hooks, MCPs, skills, subagents). Typecheck/lint/tests are "the floor": one line, never the pitch - 2026-10-05.
 - Heavy media loads near visibility, plays only when visible and after a first interaction (a load-time loop cost 270–480 ms TBT) - 2026-10-05.
@@ -37,6 +37,8 @@
 - A grid-stacked hidden label still sets the grid's width (it pushed the header off a 320 px screen); size stacks for the visible state - 2026-10-05.
 - The font subset must hold every character the copy uses (en/em dash were missing and fell back to Arial): after `bun run fonts`, check coverage - 2026-10-06.
 - Chrome holds first paint for a preloaded font, and HTML bytes compete with it: keep page HTML lean (icons live in the cached sprite; first-screen icons `inline`) - 2026-10-06.
+- A child rule like `.dlink > span { width: 100% }` also hits an added `.sr-only` span (a 1,193 px overflow): exclude `.sr-only` or wrap the visible text - 2026-10-06.
+- A focus target taller than the viewport minus the header always sits under the sticky header: cap media by viewport height (`100svh - var(--header-h)`) - 2026-10-06.
 
 ### Privacy of inputs
 - `context/` is private and gitignored: copy patterns, not files; never quote the memo or name its author in committed files - 2026-10-05.
@@ -47,12 +49,16 @@
 - Splicing text by slices or offsets drops or misplaces content: replace named blocks, then `node --check` / build and render-check at once - 2026-10-05.
 - Run prettier from the repo root (`bunx prettier --write <paths>`); from `apps/web` it ignores the root config - 2026-10-05.
 - fontkit can't instance a variable WOFF2; measure from the TTF source and ship the WOFF2 - 2026-10-05.
-- Bash heredocs break on quotes and lose backslashes; Write/Edit decode `\uXXXX` into raw characters: write scripts with Write, emit invisible characters from code with `chr()` - 2026-10-05.
+- Bash heredocs break on quotes and lose backslashes, and `cat > /dev/null &&` before one hangs on stdin; Write/Edit decode `\uXXXX` into raw characters: write scripts with Write, emit invisible characters from code with `chr()` - 2026-10-05.
 - Python on Windows writes CRLF: always `open(..., "w", newline="\n")` (a fixer pass caught 6 files on 2026-10-06) - 2026-10-05.
 - Git Bash rewrites URL-path arguments (`/en/` → `P:/Git/en/`): prefix with `MSYS_NO_PATHCONV=1`, also for `bun run lhci` - 2026-10-05.
 - The Bash tool's `cd` persists: use absolute paths - 2026-10-05.
 - Playwright WebKit on Windows paints variable fonts at the default instance (layout is right): judge Safari by measured widths, never by those screenshots - 2026-10-06.
 - One `astro preview` per project: e2e, shots and Lighthouse share port 4322 and reuse a running server - 2026-10-05.
+- After a Playwright update, run `./node_modules/.bin/playwright install chromium` in `apps/web` (browser version mismatch) - 2026-10-06.
+- No `content-visibility: auto` here: its 900 px placeholders made WebKit land focus 300–700 px off, and Lighthouse gained nothing (99, LCP 1953 ms with or without) - 2026-10-06.
+- WebKit scrolls focus to where a stuck sticky chapter is drawn (under the next poster): `Chapters.astro` re-scrolls to the flow position; test focus in Firefox + WebKit (`bun run e2e:xb`) - 2026-10-06.
+- The owner works on two PCs: `git pull` first; on a merge take one side's `.po`, re-add the other side's changed msgids, `bun run i18n:extract`; regenerate PDFs, never merge them - 2026-10-06.
 - WebSearch has a budget shared by parallel agents; prefer WebFetch of known URLs, then Playwright - 2026-10-05.
 - `.gitignore` must not ignore `*.txt` (it hid `robots.txt` and `llms.txt`) - 2026-10-05.
 - Routing: a generic phrase in one row outscores a project name; put shared task words in every row they apply to and re-run `wiki-context.mjs --test` - 2026-10-05.

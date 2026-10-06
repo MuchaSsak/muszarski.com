@@ -8,7 +8,8 @@
 - Every localized page lives under `src/pages/[locale]/`, exports `getStaticPaths = localeStaticPaths` (or its own list for
   pages that exist in fewer locales) and renders inside `BaseLayout` with `title`, `description` and `path` (the locale-free
   path, `""` for home). `BaseLayout` owns `<html lang>`, title (`Page – Mateusz Muszarski`, home = `Mateusz Muszarski – …`),
-  description, robots, canonical, hreflang, OG basics, theme script, font preload, Umami and the skip link.
+  description, robots, canonical, hreflang, OG basics, the head script (`ThemeScript.astro`: sets `html.js` + the stored
+  motion pause; there is one colour theme), font preload, Umami and the skip link.
 - Pass `locales` when a page exists in fewer locales; `path={null}` only for pages without a canonical (404).
 - URLs: only through `~/lib/routes` (`pathTo`, `alternates`, `switchPath`). Never hand-write `/en/...`.
 - Internal QA pages (the `/specimen/` token sheet) are built only in review builds (`getStaticPaths` returns `[]` when `LAUNCH_BUILD`).
@@ -17,7 +18,8 @@
 
 - `.astro` for routes, layout, head and static chrome. React `.tsx` for sections (server-rendered, no directive) when they
   carry logic; hydrate (`client:visible` / `client:idle` / `client:media`) only for real interaction, never `client:load` by default.
-- Small interactions are vanilla `<script>` in the `.astro` component (bundled, deferred): the theme toggle is ~1 KB this way.
+- Small interactions are vanilla `<script>` in the `.astro` component (bundled, deferred), like the CV button (`CvLink`) or
+  the pause-motion toggle.
   Anything that needs JS must be usable or hidden-without-shifting when JS is off (`visibility: hidden` until ready).
 - Facts (name, links, dates) come from `src/data/site.ts`; copy comes from Lingui. No inline facts, no inline copy.
 
@@ -52,7 +54,8 @@
 ## Gotchas (paid for)
 
 - Astro 7 runs ONE `astro preview` per project. e2e, shots and Lighthouse share port 4322 and reuse it when it is up.
-- `markdown.smartypants` is deprecated in Astro 7; smart punctuation is set on the markdown processor when MDX arrives.
+- `markdown.smartypants` is deprecated in Astro 7; smart punctuation is switched off on the processor instead
+  (`satteri({ features: { smartPunctuation: false } })`: English curly quotes are wrong in Polish).
 - `exactOptionalPropertyTypes` is on (strictest): optional props that may receive `undefined` are typed `T | undefined`.
 
 ## Content, Markdown and generated files (2026-10-05)
@@ -60,9 +63,20 @@
 - Posts: `src/content/blog/<en|pl>/<slug>.mdx`; legal: `src/content/legal/<en|pl|es>/<privacy|terms>.md`; schema in
   `src/content.config.ts`, cross-checks in `src/content/content.test.ts` (links, translations, PstrykWeb, legal numbering).
 - Markdown runs on **Sätteri** (Astro 7's default): extend it with Sätteri mdast/hast plugin objects in `astro.config.mjs`
-  (`satteri({ mdastPlugins, hastPlugins })`), never `markdown.remarkPlugins`.
-- Shared pieces for sections: `.sbar` (3-cell bar + drawn rule, add `draw`), `.stackrow` (tool chips), `.status`, `.r-btn`,
-  `.toast` (global.css); chapters share `styles/chapters.css`; long text uses `styles/prose.css`.
+  (`satteri({ mdastPlugins, hastPlugins })`), never `markdown.remarkPlugins`. In use: `legalTokens` (mdast, the legal
+  gap tokens), `tableScroll` and `externalLinks` (hast, a factory reading the post's locale from `fileURL`: an off-site
+  `http(s)` link gets `target="_blank" rel="noopener"` and an `sr-only` "(opens in a new tab)" child via
+  `ctx.appendChild` with a hast element; `rawHtml` is refused there) [user 2026-10-06]. Links in `.astro` components
+  set the same attributes and note by hand (Lingui; hoist the string to the frontmatter when the macro sits in a nested
+  conditional, or the build throws "t is not defined"). The launch gate fails a new-tab link without the note.
+- Keyboard focus and the sticky header: `scroll-padding-top` does most of it; `SiteHeader.astro` re-scrolls a focused
+  element left partly under the header (Firefox, focus moving up) and `Chapters.astro` re-scrolls to the flow position
+  when WebKit leaves focus in a stuck chapter under the next poster. No `content-visibility: auto` (it threw WebKit's
+  focus 300-700 px off and Lighthouse gained nothing). One-shot fades in offscreen sections freeze (`.off` pauses all
+  animations): don't fade what is visible on load (credentials' first card has no fade; axe read it at 1.6:1).
+- Shared pieces for sections: `.sbar` (3-cell bar + drawn rule, add `draw`), `ui/StackList.astro` (`.stack`: "Built
+  with" + plain marks and names, never chips), `.status`, `.toast` (global.css); chapters share `styles/chapters.css`
+  (`ChapterBadge`, `.desc`, `.mstats`, reels with a `.r-hit` tap target); long text uses `styles/prose.css`.
 - Entrance animations carry `.rise` or `.enter` so a stored pause shows them final. Never name a class after a Tailwind
   utility (`ring`, `shadow`, `border`, `container`...).
 - Generated and committed: icons (`bun run icons`), fonts (`bun run fonts`), CV PDFs (`bun run cv:pdf`, needs the

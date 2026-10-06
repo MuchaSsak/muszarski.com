@@ -105,9 +105,9 @@ export const PROJECTS: Project[] = [
     year: 2026,
     rights: "ok",
     line: {
-      en: "This site: Astro, Lingui in three languages, 100 on mobile Lighthouse, built with a Claude Code setup I can show.",
-      pl: "Ta strona: Astro, Lingui w trzech językach, 100 w mobilnym Lighthouse, zbudowana z Claude Code w sposób, który mogę pokazać.",
-      es: "Este sitio: Astro, Lingui en tres idiomas, 100 en Lighthouse móvil, hecho con una configuración de Claude Code que puedo enseñar.",
+      en: "This site: Astro, Lingui in three languages, 99+ on mobile Lighthouse, built with a Claude Code setup I can show.",
+      pl: "Ta strona: Astro, Lingui w trzech językach, 99+ w mobilnym Lighthouse, zbudowana z Claude Code w sposób, który mogę pokazać.",
+      es: "Este sitio: Astro, Lingui en tres idiomas, 99+ en Lighthouse móvil, hecho con una configuración de Claude Code que puedo enseñar.",
     },
     stack: ["Astro", "TypeScript", "Lingui", "Tailwind CSS", "Claude Code"],
     links: { caseStudy: true },

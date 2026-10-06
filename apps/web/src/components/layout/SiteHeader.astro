@@ -376,4 +376,15 @@ const homeLabel = t`${name}, home`;
   // Same-page anchors in the menu close it (the popover stays open otherwise).
   const menu = document.getElementById("site-menu");
   menu?.querySelectorAll("[data-close-menu]").forEach((a) => a.addEventListener("click", () => menu.hidePopover()));
+  // Keyboard focus lands clear of the sticky header (WCAG 2.4.11). `scroll-padding-top` covers most moves, but Firefox
+  // leaves an element that is only partly under the header where it is (focus moving up). Chapters handle their own.
+  document.addEventListener("focusin", (event) => {
+    const el = event.target;
+    if (!header || !(el instanceof HTMLElement) || !el.matches(":focus-visible")) return;
+    if (el.closest("[data-site-header], [popover], .chapter") || el.matches(".sr-only-focusable")) return;
+    requestAnimationFrame(() => {
+      const top = el.getBoundingClientRect().top - header.offsetHeight;
+      if (document.activeElement === el && top < 0) scrollBy(0, top - 8);
+    });
+  });
 </script>

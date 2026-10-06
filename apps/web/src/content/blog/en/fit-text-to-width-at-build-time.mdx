@@ -46,7 +46,7 @@ The usual way to fit a headline is a script: render the text, measure it, scale 
 - **Render first, fit later.** The text appears at a guessed size and then jumps, and everything under it moves too. That is a layout shift: web.dev defines one as a visible element changing its position from one rendered frame to the next.
 - **Hide it until it fits.** web.dev excludes elements with an opacity of 0 from LCP, so the LCP now waits for the script, the font and the measurement.
 
-I wanted neither. The home page ships about 9 KB of page JavaScript (gzip), and none of it is needed to draw the heading. On mobile Lighthouse (median of 3 runs) it scores 99 for performance and 100 in the other three categories, with an LCP of about 1.95 s and a CLS of 0.
+I wanted neither. The home page ships about 8 KB of page JavaScript (gzip), and none of it is needed to draw the heading. On mobile Lighthouse (median of 3 runs) it scores 99 for performance and 100 in the other three categories, with an LCP of about 1.95 s and a CLS of 0.
 
 ## The observation that makes it possible
 

@@ -60,6 +60,9 @@ verifyUrl?, skills[], summary, image? }`.
 - Instructors appear as text: "Course — Instructor". No photos unless permission is in writing
   (`compliance-and-data.md`).
 - INF.02/.03/.04 get an English explanation line (wording from the legal/naming research).
+- Data: `apps/web/src/data/cv.ts` `credentials`. The Jonas Schmedtmann (Udemy) entry is titled "Full-stack development
+  courses" (pl "Kursy programowania full-stack", es "Cursos de desarrollo full-stack"), not "JavaScript and React
+  courses" [user 2026-10-06]; the summary still names JavaScript and React. PDFs regenerated with the rename.
 
 ## Skill
 

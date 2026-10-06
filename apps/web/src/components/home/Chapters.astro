@@ -69,4 +69,25 @@ const shown = visibleFlagships().filter((project) => project.slug in CHAPTERS);
   };
   stick();
   new ResizeObserver(stick).observe(document.documentElement);
+
+  // Keyboard focus in a chapter must be visible (WCAG 2.4.11). WebKit scrolls to where a stuck chapter is drawn, which
+  // can be under the header or the next poster; then scroll to the element's place in the flow instead.
+  document.addEventListener("focusin", (event) => {
+    const el = event.target;
+    if (!(el instanceof HTMLElement) || !el.matches(":focus-visible")) return;
+    const chapter = el.closest<HTMLElement>(".chapter");
+    if (!chapter) return;
+    requestAnimationFrame(() => {
+      if (document.activeElement !== el) return;
+      const top = header?.offsetHeight ?? 0;
+      const box = el.getBoundingClientRect();
+      const later = chapters.slice(chapters.indexOf(chapter) + 1);
+      const covered = later.some((next) => next.getBoundingClientRect().top < box.top + box.height / 2);
+      if (box.top >= top && !covered) return;
+      chapter.style.position = "static";
+      const flowTop = el.getBoundingClientRect().top + scrollY;
+      chapter.style.position = "";
+      scrollTo(0, flowTop - top - 8);
+    });
+  });
 </script>

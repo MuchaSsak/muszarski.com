@@ -91,6 +91,25 @@ test("credentials: a card opens on click and says where to verify", async ({ pag
   await expect(card).toHaveAttribute("aria-expanded", "true");
 });
 
+test("credentials: wide screens open a row on focus or hover, phones toggle an accordion", async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto("/en/#credentials");
+  const rows = page.locator("#credentials .xc-btn");
+  await rows.nth(2).focus();
+  await expect(rows.nth(2)).toHaveAttribute("aria-expanded", "true");
+  await expect(rows.nth(0)).toHaveAttribute("aria-expanded", "false");
+  await expect(page.locator("#credentials .xc.open .xc-body")).toBeVisible();
+  await rows.nth(4).hover();
+  await expect(rows.nth(4)).toHaveAttribute("aria-expanded", "true");
+  // A fresh phone load: resizing under a parked mouse fires a stale hover in WebKit.
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/en/#credentials");
+  await rows.nth(1).click();
+  await expect(rows.nth(1)).toHaveAttribute("aria-expanded", "true");
+  await rows.nth(1).click();
+  await expect(rows.nth(1)).toHaveAttribute("aria-expanded", "false");
+});
+
 test("a stored pause never hides the entrances (hero text, sticker)", async ({ page }) => {
   await page.addInitScript(() => localStorage.setItem("motion", "still"));
   await page.goto("/en/");

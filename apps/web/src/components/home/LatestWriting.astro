@@ -59,6 +59,11 @@ const english = links.blogLocale !== locale;
   .kick {
     margin: 0 0 0.5rem;
   }
+  /* "Todos los artículos (EN)" is wider than a 320 px column: let it wrap there instead of overflowing. */
+  .w-head .btn {
+    max-width: 100%;
+    white-space: normal;
+  }
   .w-title {
     margin: 0;
     font-weight: 900;

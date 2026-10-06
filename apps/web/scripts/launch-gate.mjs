@@ -123,9 +123,18 @@ if (existsSync(dist)) {
     seo.push(`more than one origin in canonicals, hreflang, og:url and the sitemap: ${[...origins].join(", ")}`);
 }
 
+// A link that opens a new tab says so to screen readers (structure.md § External links); the print CV has no readers.
+if (existsSync(dist)) {
+  for (const page of pages(dist)) {
+    if (/cv[\\/]print/.test(page)) continue;
+    for (const [tag, body] of readFileSync(page, "utf8").matchAll(/<a\b[^>]*target="_blank"[^>]*>([\s\S]*?)<\/a>/g))
+      if (!/class="sr-only"/.test(body ?? ""))
+        broken.push(`${relative(ROOT, page)}: ${/href="([^"]+)"/.exec(tag)?.[1]} opens a new tab without saying so`);
+  }
+}
+
 if (broken.length || seo.length) {
-  if (broken.length)
-    console.error(`launch-gate: ${broken.length} broken internal link(s):\n  ${broken.slice(0, 30).join("\n  ")}`);
+  if (broken.length) console.error(`launch-gate: ${broken.length} link problem(s):\n  ${broken.slice(0, 30).join("\n  ")}`);
   if (seo.length) console.error(`launch-gate: ${seo.length} SEO problem(s):\n  ${seo.slice(0, 30).join("\n  ")}`);
   process.exit(1);
 }

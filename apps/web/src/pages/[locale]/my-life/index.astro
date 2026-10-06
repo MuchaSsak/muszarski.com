@@ -101,7 +101,7 @@ const SOCIAL_ICONS: Record<string, IconName> = { discord: "si:discord", messenge
           SOCIAL.map((social) => (
             <a class="btn btn-acc" href={social.href} rel="me noopener" target="_blank" data-umami-event="outbound" data-umami-event-target={social.id}>
               <Icon name={SOCIAL_ICONS[social.id] ?? "tb:message-circle"} />
-              {social.label}
+              {social.label}<span class="sr-only"> {t`(opens in a new tab)`}</span>
             </a>
           ))
         }

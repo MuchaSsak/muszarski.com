@@ -14,8 +14,15 @@
 - **Signature moment (F20):** the fitted name in the hero. It renders final from the server (no JS on the LCP path);
   after load the letters breathe as an accordion that follows the pointer and idles as a slow wave. No WebGL in the
   hero; 3D lives only inside the space chapter's own media.
-- **Less text, more to see** [user, round 3]: tools as one-colour marks with names, facts as icon tiles, products as
-  video, one line of copy where a paragraph was.
+- **Less text, more to see** [user, round 3]: tools as one-colour marks with names, products as video, one line of
+  copy where a paragraph was. Inside a chapter, a short plain description (`.desc`, 2-3 sentences) now beats icon tiles
+  [user 2026-10-06: PstrykWeb's tiles and icon facts were replaced by text].
+- **Composition and focal points first** [user 2026-10-06, his words: "think about composition and focal/focus points
+  more, so that its not overwhelming, more intuitive and obvious where the CTA is, prioritize things by importance and
+  the order we want users to look at them. I just want this site to be easy to use and intuitive for recruiters."]:
+  - one primary action per block, read in a fixed order (§ Components, Chapters)
+  - what the landing no longer emphasises moves to a blog post or case study, never deleted (e.g. the space site's
+    Lighthouse numbers live in the "how this site was built" post)
 - **Alive, cheaply** [user]: many small loops and micro-interactions, each pausing offscreen, on the pause button and
   under reduced motion; none on the load path.
 - **Same on every device** [user]: phones get the same content and a premium feel; every hover has a tap, focus or
@@ -23,23 +30,23 @@
 
 ## Themes and fields
 
-Cobalt is the brand and the default for everyone (not tied to the system light/dark setting). The theme switch cycles
-Cobalt → Paper → Ink; the choice is stored per viewer and applied before first paint (`ThemeScript.astro`) [user kept
-Cobalt + the Paper/Ink toggle, round 3, no objection]. Tokens: `apps/web/src/styles/global.css`; `tokens.test.ts`
-checks AA for every field in every theme.
+**One theme: Cobalt**, for everyone, not tied to the system light/dark setting [user 2026-10-06: the Paper/Ink switch
+was cut as clutter]. `ThemeCycle.astro`, `e2e/theme.spec.ts` and the Paper/Ink tokens are deleted; `ThemeScript.astro`
+still runs before first paint, but only sets `html.js` and the stored motion pause [repo: layout/ThemeScript.astro].
+Tokens: `apps/web/src/styles/global.css` `:root`; `tokens.test.ts` checks AA for every field pairing.
 
-| Field (`.field-*`) | Cobalt | Paper | Ink | Used for |
-| --- | --- | --- | --- | --- |
-| hero | `#2433FF` / `#EEF0FF` | `#F1EDE2` / `#111114` | `#0B0C11` / `#EEF0FF` | hero, header at rest |
-| alt | `#EEF0FF` / `#0A0D33` | `#FBFAF6` / `#111114` | `#16171E` / `#EEF0FF` | How I work, credentials |
-| deep | `#2433FF` / `#EEF0FF` | `#111114` / `#F1EDE2` | `#2433FF` / `#EEF0FF` | AI |
-| bar | `#0A0D33` / `#EEF0FF` | `#111114` / `#F1EDE2` | `#0B0C11` / `#EEF0FF` | header when stuck, tool band, menu, footer |
-| accent | `#FF4FB8` / `#0A0D33` | `#FF4A1C` / `#111114` | `#FF4FB8` / `#0A0D33` | contact section, CTAs, sticker |
+| Field (`.field-*`) | Background / text | Used for |
+| --- | --- | --- |
+| hero | `#2433FF` / `#EEF0FF` | hero, header at rest, latest writing |
+| alt | `#EEF0FF` / `#0A0D33` | How I work, credentials |
+| deep | `#2433FF` / `#EEF0FF` | AI |
+| bar | `#0A0D33` / `#EEF0FF` | header when stuck, tool band, menu, footer |
+| accent | `#FF4FB8` / `#0A0D33` | contact section, CTAs, sticker |
 
 - Components read `--sbg` / `--sfg` (the field they sit on) and `--accent` / `--on-accent`, never a raw colour.
-- **Project skins** (one per chapter, all themes): PstrykWeb yellow `#FFD23F` on navy, Linkoglot orange `#FF5B1F`,
-  Clockful lime `#C9F24A`, Space `#07081C` with ice text; each has a `--pop` colour for its shadows. Defined when the
-  chapter slices land.
+- **Project skins** (one per chapter, `styles/chapters.css`): PstrykWeb yellow `#FFD23F` with navy text, Linkoglot
+  orange `#FF5B1F`, Clockful lime `#C9F24A`, Space `#07081C` with ice text; each sets `--pop`, the colour of its
+  primary buttons' resting shadow (the accent field sets cobalt).
 - Content caps at 1920 px (`--container-poster`), centred with `--pad-x`; fields bleed full width.
 
 ## Typography
@@ -61,36 +68,40 @@ checks AA for every field in every theme.
 
 | Component | File | Notes |
 | --- | --- | --- |
-| Header | `layout/SiteHeader.astro` | sticky; on home starts on the hero field with "M—M", turns into the bar and rolls the mark into the full name once the hero name scrolls away (IntersectionObserver). ≥ 1180: Work · How I work · AI · Blog · EN PL ES · theme · CV/PDF · Contact. Below: mark · CV · Contact · Menu; phones condense button type (`wdth` 72-82) so all fit at 320 |
-| Menu | same file | native popover, full-screen bar field, giant condensed links that widen on hover/focus and stagger in; CV PDF, theme, pause motion, language codes |
-| Hero | `home/Hero.astro` | fitted name (H1 = LCP), 3 px rule that draws in, three columns: role · one-line lede · CTAs (See the work, Download CV) + icon facts. Entrances are CSS (`.rise`) |
+| Header | `layout/SiteHeader.astro` | sticky; on home starts on the hero field with "M—M", turns into the bar and rolls the mark into the full name once the hero name scrolls away (IntersectionObserver). ≥ 1180 px: mark → home · Work · How I work · AI · Blog · flags · CV · **Hire me** (the primary) [user 2026-10-06]. Below 1180: mark · CV · Hire me · Menu; under 480 the button type condenses (`wdth` 82, 72 under 360) and the CV + Menu icons drop, so all fit at 320 |
+| Menu | same file | native popover, full-screen bar field, giant condensed links that widen on hover/focus and stagger in: Work · How I work · AI · Blog · My life · Contact; then Download CV + pause motion; flags with names ("Polski") |
+| CV button | `layout/CvLink.astro` | the one CV control [user 2026-10-06], replaces the split button (`CvSplit.astro` deleted): header "CV", hero + menu "Download CV" (secondary outline), footer as a text link. Behaviour: `structure.md` § `/cv/` |
+| Language switch | `layout/LocaleCodes.astro` | drawn flags (CSS gradients + an SVG data URI, never emoji), current one underlined, a small tilt on hover; the autonym is screen-reader text + a `title` tooltip, visible next to the flag with `names` (menu). Why flags: `i18n.md` § Switcher |
+| Hero | `home/Hero.astro` | fitted name (H1 = LCP), 3 px rule that draws in, three columns: role · one-line lede (P6) · CTAs (See the work = primary, Download CV = `CvLink`) + three icon facts. Entrances are CSS (`.rise`) |
 | Sticker | `home/Sticker.astro` | accent disc, ring text fitted to the circle at build time per locale, "Shipping since 2022", slow spin; over the name's last letter on desktop, beside the role on phones |
 | Tool band | `home/ToolBand.astro` | bar-field marquee of one-colour marks + names, edge to edge; one row from first paint (no shift), copy appended by JS; never stops on hover and has no button of its own [user 2026-10-05]: the site-wide Pause motion (menu, footer) covers WCAG 2.2.2; wraps without JS or under reduced motion |
-| Footer | `layout/SiteFooter.astro` | say-line + Contact, 4 link columns, codes, pause, credits (marks, icons, font), build revision, the surname fitted in accent |
-| Buttons | `global.css` `.btn` | square, uppercase, wide; `btn-line` / `btn-acc` / `btn-inv`; 3 px offset shadow on hover (fine pointers), press on tap |
+| Footer | `layout/SiteFooter.astro` | say-line + Contact, 4 link columns pulled left (`.cols` = `max-content` + `1fr`) [user 2026-10-06], flags, pause, credits (marks, icons, font), build revision, the surname fitted in accent |
+| Buttons | `global.css` `.btn` | square, uppercase, wide. Hierarchy [user 2026-10-06]: **primary** `btn-acc` / `btn-inv` rests on a 4 px hard shadow (`--btn-shadow`; `btn-inv` takes `--pop`, set per field and chapter skin; 3 px in the header); **secondary** `btn-line` is an outline (a 3 px shadow only on hover); anything unframed is a label, not a control. Hover (fine pointers) lifts a primary and grows its shadow to 7 px; a press sinks it into the shadow |
+| Tools | `ui/StackList.astro` + `.stack` (`global.css`) | a "Built with" kicker, then one-colour mark (or a two-letter monogram) + name as plain text; no frame, no hover, so a tool never reads as a button next to the real CTA [user 2026-10-06]; the last item of each chapter |
 | Icons | `ui/Icon.astro`, `bun run icons` | Simple Icons marks (`si:`), Tabler outline (`tb:`) and filled (`tbf:`) from a generated list; `<use>` into one cached, content-hashed sprite (`/icons/sprite-<hash>.svg`, `~/lib/sprite.ts`); header and hero icons are `inline` so the first screen never waits for it |
-| Theme switch | `layout/ThemeCycle.astro` | shows the current theme's name; cross-fade View Transition |
 | Pause motion | `layout/MotionToggle.astro` + `scripts/motion.ts` | every copy in sync; stored; hidden under reduced motion |
 
 **Built 2026-10-05 (overnight build [user: "build everything ... in one go"]):**
 
 | Component | File | Notes |
 | --- | --- | --- |
-| Chapters | `home/Chapters.astro`, `home/chapters/*.astro`, `styles/chapters.css` | 4 skins (yellow, orange, lime, space); sticky stack (JS sets `--stick` so each poster sticks when its bottom meets the viewport); rights gate drops client/internship chapters at launch; "All projects" strip + npm line |
-| Reel | `ui/ReelControls.astro`, `scripts/reel.ts` | sources attach after the first interaction AND near view; plays at 50% visible; chips seek + fill; expand → `<dialog>`; drawn stand-ins use the same row, inert (`live={false}`) |
-| PstrykWeb stage | chapter 01 | #1 burst (ring text fitted at build), drawn order loop (CSS, 10 s), "Video soon" (P18); public info only |
-| Linkoglot stage | chapter 02 | phone breaks into the title (overlap computed from the build-time fit), flash card flip, the owner's store preview as interim loop (AV1 + H.264, 0.5 MB, P8) |
-| Clockful stage | chapter 03 | drawn dashboard; a real demo timer in CSS only (`@property` integer + counters), Start/Stop |
-| Space stage | chapter 04 | monitor + loop cut to Mars and Jupiter (planet textures CC BY 4.0, credited; the stops with third-party logos and the uncredited lens-dirt texture are left out); CSS orrery (offset-path ellipses); Lighthouse receipt → case study |
+| Chapters | `home/Chapters.astro`, `home/chapters/*.astro`, `styles/chapters.css` | 4 skins (yellow, orange, lime, space); sticky stack (JS sets `--stick` so each poster sticks when its bottom meets the viewport); rights gate drops client/internship chapters at launch; "All projects" strip + npm line. **Reading order** [user 2026-10-06]: badge → title → media → outcome → description (`.desc`) → one primary CTA → status → tools. ≤ 900 px stacks exactly so (`.stage-first`); wider, copy and media sit side by side (Linkoglot: copy · phone · CTAs, three columns). Linkoglot shows App Store + Google Play as two equal primaries; Space shows Launch (primary; "Desktop only · copy link" on touch) + Code (secondary), and its fitted title comes last, closing the poster |
+| Chapter badge | `home/chapters/ChapterBadge.astro` | the tilted chip that opens a chapter: kind · who · year, so the context reads before the title [user 2026-10-06]. Replaced the 3-cell bar ("OWN PRODUCT" + a "01 / 04" counter). PstrykWeb "Commercial · solo · 2026", Linkoglot "Own product · solo · 2026" (with its app icon), Clockful "Internship · Neoteric · 2026", Space "Personal · solo · 2025" |
+| Reel | `scripts/reel.ts` | sources attach after the first interaction AND near view; plays at 50% visible, pauses offscreen, on Pause motion and under reduced motion. **No playback bar** [user 2026-10-06: `ReelControls.astro` and the lightbox deleted]: a `.r-hit` button over the frame pauses or resumes (labelled Play / Pause video); the big play glyph is visual only; the site-wide Pause motion still covers WCAG 2.2.2 |
+| PstrykWeb stage | chapter 01 | #1 burst (ring text fitted at build), drawn order loop (CSS, 10 s), "Video soon" (P18); public info only. Copy: a short `.desc` (public info) in place of the 3 icon tiles and the "For local businesses" / "Built solo" icon facts [user 2026-10-06] |
+| Linkoglot stage | chapter 02 | phone breaks into the title (overlap computed from the build-time fit), flash card flip, the owner's store preview as interim loop (AV1 + H.264, 0.5 MB, P8). The phone's width is capped by the viewport height (`(100svh - header - 4.5rem) × 320/694`), so the whole phone fits under the sticky header on short laptop screens |
+| Clockful stage | chapter 03 | drawn dashboard; a real demo timer in CSS only (`@property` integer + counters), Start/Stop. The 4 stats (118 tests, 5/5 RLS tables, 15 requirements, 9 days) sit under the stage, small (`.mstats`, 2 columns on phones); an explainer `.desc` took their old place [user 2026-10-06] |
+| Space stage | chapter 04 | monitor + loop cut to Mars and Jupiter (planet textures CC BY 4.0, credited; the stops with third-party logos and the uncredited lens-dirt texture are left out); CSS orrery (offset-path ellipses). The Lighthouse receipt (34 / 60 / 13.8 MB) is removed: those numbers live only in the "how this site was built" post [user 2026-10-06] |
 | How I work | `home/HowIWork.astro` | 7-stop ring (CSS trig), every stop's text in the HTML, auto-advance while visible, tap holds 9 s; receipts fall back when a project is hidden by the rights gate |
-| AI workflow | `home/AiWorkflow.astro`, `lib/repo-stats.ts` | 7 steps, packet on desktop, vertical run on phones; hooks/wiki/skills/lessons counted from the repo at build; MCP servers named |
-| Credentials | `home/Credentials.astro` | expanding cards from `data/cv.ts`; media loads on open; vertical accordion < 900 px; all open without JS |
-| Latest writing | `home/LatestWriting.astro`, `blog/PostCard.astro`, `blog/PostCover.astro` | 3 newest posts; covers are code-drawn SVG motifs |
-| Contact | `home/Contact.astro`, `lib/contact.ts`, `api/contact.ts` | message first; reply field appears after typing and fills itself from the message; topic chips; Turnstile on first keystroke; works without JS (303 to `/contact/sent/` or `/contact/error/`) |
+| AI workflow | `home/AiWorkflow.astro`, `lib/repo-stats.ts` | an org chart [user 2026-10-06: "I run AI like a team"]: one fitted line "I run AI like a team.", a centred lede, ID badges on lanyards: Me (Lead) → Claude Code (Builder), then a crew of six: Memory (wiki pages + lessons count), Rules (hooks), Research (subagents), Tools (MCP servers), Playbooks (skills), Quality (gates). Counts from the repo at build. Dashed wires flow in CSS (pause like every loop); no JS, no glyph counts, no packet; one CTA, "How this site was built". Crew in 6 → 3 → 2 columns (≤ 1200 / ≤ 640 px) |
+| Credentials | `home/Credentials.astro` | from `data/cv.ts`. > 900 px: a readable list on the left, the open row's media + details on the right (hover on fine pointers, focus or tap opens a row; one is always open). ≤ 900 px: an accordion [user 2026-10-06: collapsed vertical cards were unreadable]. Media loads on open; all open without JS |
+| Latest writing | `home/LatestWriting.astro`, `blog/PostCard.astro` (`compact`), `blog/PostCover.astro` | compact [user 2026-10-06]: kicker + plain h2 + "All posts" on the right, three small horizontal cards (cover thumbnail, date, title); covers are code-drawn SVG motifs. Pattern guessed (the pstrykweb.pl blog it was to copy returned 404) |
+| Contact | `home/Contact.astro`, `lib/contact.ts`, `api/contact.ts` | the Copy email tile is the widest and wraps the address at the "@", never cuts it [2026-10-06]; message first; reply field appears after typing and fills itself from the message; optional topic chips (A job / A project / A question); Turnstile on first keystroke; works without JS (303 to `/contact/sent/` or `/contact/error/`). Three direct tiles: Copy email, LinkedIn, GitHub (the CV tile and the "Open to selected freelance projects" line are removed [user 2026-10-06]) |
 | Pages | `pages/[locale]/{work,cv,cv/print,my-life,privacy,terms,blog,blog/[slug]}` | Poster headers (fitted titles), prose on the alt field (`styles/prose.css`), sticky TOC on wide screens |
 
 The Stack section is cut [user 2026-10-05: recruiters don't need a whole section for it]; tools show in the band and in each
-chapter. Patterns came from `comps/poster-r3.html`.
+chapter (`StackList`). Patterns came from `comps/poster-r3.html`; the owner's feedback pass of 2026-10-06 (header, CV
+button, flags, single theme, chapters, AI, credentials, writing, contact, footer) is folded into the rows above.
 
 ## Motion
 
@@ -110,12 +121,16 @@ chapter. Patterns came from `comps/poster-r3.html`.
 - **Tool marks:** Simple Icons, one colour (`currentColor`), unaltered, always with the name; nominative use only.
 - **Product media:** real recordings of the real UI only; "Video soon" stand-ins are logged placeholders.
 - **Photos:** the owner's own. No stock or AI people, no fake screenshots.
-- **Grain:** one fixed SVG-noise layer at 13% overlay; never lowers text below AA (axe checks all themes).
+- **Grain:** one fixed SVG-noise layer at 13% overlay; never lowers text below AA (axe checks it).
 
 ## Accessibility
 
-- WCAG 2.2 AA in all three themes (axe in e2e). Visible 3 px focus; nothing under the sticky header.
-- A visible label starts the accessible name (2.5.3): the mark reads "Mateusz Muszarski, home", codes read "PL Polski".
+- WCAG 2.2 AA in the one theme, Cobalt (axe in e2e). Visible 3 px focus; nothing under the sticky header, in
+  Chromium, Firefox and WebKit (`bun run e2e:xb`; the header and chapter scripts correct engines that misplace focus).
+- A visible label starts the accessible name (2.5.3): the mark reads "Mateusz Muszarski, home"; a flag link is named by
+  its autonym ("Polski"), which the menu also shows as text.
+- A link that leaves the site opens in a new tab and says so to screen readers ("(opens in a new tab)"), checked by the
+  launch gate: `structure.md` § Navigation and footer.
 - Fitted and split text exposes one accessible name; decorative copies (`decorative`) are `aria-hidden`.
 - Targets ≥ 40 px in the header, ≥ 44 px elsewhere on touch.
 
@@ -127,6 +142,7 @@ chapter. Patterns came from `comps/poster-r3.html`.
 | Flat fields, hard offset shadows, grain | Gradients, glows, glassmorphism, blur shadows |
 | Fit at build time, animate after load | Fit with JS on the LCP path, fade the H1 |
 | Marks with names, in context | A wall of coloured logos without names |
+| One primary per block on a resting shadow; tools as plain text [user 2026-10-06] | Framed tool chips that read as buttons; a row of equal buttons with no clear first action |
 | Many small loops, all pausable and offscreen-aware | Loops that run unseen or ignore the pause button |
 | Same content on phones, tap twins for every hover | Hover-only reveals, cursor effects, scroll-jacking |
 | Native cursor always [user 2026-10-05: "we not building custom cursor"] | Replacing or hiding the cursor, a follower blob, cursor labels |

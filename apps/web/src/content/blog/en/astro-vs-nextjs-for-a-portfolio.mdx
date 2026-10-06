@@ -42,7 +42,7 @@ sources:
     accessed: 2026-10-05
 ---
 
-For a portfolio or a landing page, Astro is the better default: it pre-renders every page to HTML and sends no JavaScript unless a component asks for it. Next.js is the better call when the site is really an application, with logins, per-user data and server-side mutations. This site is Astro and scores 99 to 100 on mobile Lighthouse with about 9 KB of JavaScript on the home page; Clockful, the time tracker I built during my internship at Neoteric, is Next.js.
+For a portfolio or a landing page, Astro is the better default: it pre-renders every page to HTML and sends no JavaScript unless a component asks for it. Next.js is the better call when the site is really an application, with logins, per-user data and server-side mutations. This site is Astro and scores 99 to 100 on mobile Lighthouse with about 8 KB of JavaScript on the home page; Clockful, the time tracker I built during my internship at Neoteric, is Next.js.
 
 ## What each framework says it is for
 
@@ -90,7 +90,7 @@ Read it as a picture of two populations, not a verdict on two frameworks. By the
 
 ## What this site measured
 
-This site is Astro 7 with React components written in TSX and rendered on the server, Tailwind 4 and one variable font, deployed as static files on Vercel. I still write React; it just renders to HTML at build time. The home page on mobile Lighthouse, median of 3 runs: 99 for performance and 100 for accessibility, best practices and SEO, LCP about 1.95 s, CLS 0, and about 9 KB of page JavaScript, gzipped. The other pages score 100 on all four.
+This site is Astro 7 with React components written in TSX and rendered on the server, Tailwind 4 and one variable font, deployed as static files on Vercel. I still write React; it just renders to HTML at build time. The home page on mobile Lighthouse, median of 3 runs: 99 for performance and 100 for accessibility, best practices and SEO, LCP about 1.95 s, CLS 0, and about 8 KB of page JavaScript, gzipped. The other pages score 100 on all four.
 
 Two honest notes. First, I did not build the same site in Next.js, so I cannot tell you what it would have scored; that is why the comparison above uses public data. Second, the framework did not earn those numbers alone. The H1 is the LCP element by design, there is one font file, and every visual effect loads after the text. Astro made that easy because it starts from zero JavaScript instead of asking me to remove it. The full build story is in [how this site was built](/en/blog/how-this-site-was-built/).
 

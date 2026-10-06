@@ -20,6 +20,7 @@ const locale = Astro.locals.locale;
 const links = chromeLinks(locale);
 const linkedin = PROFILES.find((profile) => profile.id === "linkedin")!;
 const github = PROFILES.find((profile) => profile.id === "github")!;
+const [emailUser, emailDomain] = SITE.email.split("@") as [string, string];
 const [line1, line2] = t`Let's|talk`.split("|") as [string, string];
 const errors = {
   "message-empty": t`Write a message first. One line is enough.`,
@@ -135,7 +136,7 @@ const found = { email: t`Found an email in your message`, phone: t`Found a phone
           data-copy-source="contact"
         >
           <Icon name="tb:copy" />
-          <span>{t`Copy email`}<small>{SITE.email}</small></span>
+          <span>{t`Copy email`}<small>{emailUser}@<wbr />{emailDomain}</small></span>
         </button>
         <a class="dlink" href={linkedin.href} rel="me noopener" target="_blank" data-umami-event="outbound" data-umami-event-target="linkedin">
           <Icon name="tb:brand-linkedin" />
@@ -360,7 +361,8 @@ const found = { email: t`Found an email in your message`, phone: t`Found a phone
   }
   .direct {
     display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    /* The email tile is wider: the address is read whole, never cut. */
+    grid-template-columns: minmax(0, 1.45fr) minmax(0, 1fr) minmax(0, 1fr);
     gap: 0.5rem;
     margin-top: 1.75rem;
     padding-top: 1.375rem;
@@ -404,9 +406,7 @@ const found = { email: t`Found an email in your message`, phone: t`Found a phone
   .dlink small {
     display: block;
     max-width: 100%;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+    overflow-wrap: anywhere;
     font-weight: 600;
     font-size: 0.75rem;
     letter-spacing: 0;

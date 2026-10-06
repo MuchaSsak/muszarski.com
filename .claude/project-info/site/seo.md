@@ -86,7 +86,8 @@ Success signal: Google autocomplete starts completing "mateusz muszarski" to "â€
   post and `/cv/`.
 - **Bing Webmaster:** import from GSC + **IndexNow** ping (key file in `public/`) after every deploy.
 - **`/llms.txt`:** P2, generated from the CV data; Google doesn't use it. Zero expectation, zero cost.
-- **Launch gate** (`apps/web/scripts/launch-gate.mjs`, after every build): fails on a missing title, description or
+- **Launch gate** (`apps/web/scripts/launch-gate.mjs`, after every build; also fails on a new-tab link without its
+  screen-reader note, `structure.md`): fails on a missing title, description or
   canonical, more than one origin across canonicals / hreflang / og:url / sitemap, JSON-LD that does not parse, a
   broken internal link or #anchor, a missing share image or PDF; in a launch build also on placeholder markers and on
   wrong robots (legal, print and contact-result pages noindex, everything else indexable).

@@ -65,10 +65,10 @@ const labelPlay = t`Play video`;
       </div>
       <figcaption class="credit">
         {t`Desktop · WebGL2 · ~14 MB.`}
-        {t`Planet textures:`} <a href="https://www.solarsystemscope.com/textures/" rel="noopener" target="_blank">Solar System Scope</a>, <a
+        {t`Planet textures:`} <a href="https://www.solarsystemscope.com/textures/" rel="noopener" target="_blank">Solar System Scope<span class="sr-only"> {t`(opens in a new tab)`}</span></a>, <a
           href="https://creativecommons.org/licenses/by/4.0/"
           rel="license noopener"
-          target="_blank">CC BY 4.0</a
+          target="_blank">CC BY 4.0<span class="sr-only"> {t`(opens in a new tab)`}</span></a
         >.
       </figcaption>
     </figure>
@@ -308,12 +308,11 @@ const labelPlay = t`Play video`;
     font-size: 0.75rem;
     opacity: 0.75;
   }
-  .sp-title {
-    margin-top: clamp(2.5rem, 5vw, 5rem);
-  }
-  .sp-title :global(.fit) {
-    color: transparent;
-    -webkit-text-stroke: 2px var(--ice);
+  /* The orrery passes behind the copy: a halo in the sky colour keeps every letter clear of a planet. */
+  .ch-info :is(.outcome, .desc) {
+    text-shadow:
+      0 0 0.5rem var(--space),
+      0 0 0.1875rem var(--space);
   }
 
   @media (max-width: 40rem) {
@@ -326,9 +325,6 @@ const labelPlay = t`Play video`;
     }
     .stand {
       height: 1.5rem;
-    }
-    .sp-title :global(.fit) {
-      -webkit-text-stroke-width: 1.5px;
     }
     .orbits {
       opacity: 0.45;

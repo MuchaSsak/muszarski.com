@@ -23,12 +23,12 @@ sources:
     accessed: 2026-10-05
 ---
 
-Moje stare portfolio było lotem WebGL od Ziemi do Neptuna. Na moim komputerze wyglądało świetnie, a w mobilnym Lighthouse dostawało 34 punkty. Ta strona je zastępuje: Astro, trzy języki, jeden zmienny font, około 9 KB JavaScriptu na stronie głównej i 99-100 punktów w mobilnym Lighthouse. Zanim powstał pierwszy komponent, zaplanowałem ją w wiki projektu. Pierwszy projekt graficzny wyrzuciłem, a całość zbudowałem z Claude Code pod kontrolą testów, których nie da się pominąć.
+Moje stare portfolio było lotem WebGL od Ziemi do Neptuna. Na moim komputerze wyglądało świetnie, a w mobilnym Lighthouse dostawało 34 punkty. Ta strona je zastępuje: Astro, trzy języki, jeden zmienny font, około 8 KB JavaScriptu na stronie głównej i 99-100 punktów w mobilnym Lighthouse. Zanim powstał pierwszy komponent, zaplanowałem ją w wiki projektu. Pierwszy projekt graficzny wyrzuciłem, a całość zbudowałem z Claude Code pod kontrolą testów, których nie da się pominąć.
 
 > **W skrócie**
 >
 > - **Przed:** 13,8 MB pobrane, zanim pojawił się przycisk „start”, wydajność na telefonie 34, brak obsługi dotyku i klawiatury, brak tekstu do zaindeksowania.
-> - **Po (telefon, mediana z 3 pomiarów):** strona główna Lighthouse 99 / 100 / 100 / 100, LCP około 1,95 s, CLS 0, około 9 KB JavaScriptu po kompresji; każda inna podstrona 100 we wszystkich czterech kategoriach.
+> - **Po (telefon, mediana z 3 pomiarów):** strona główna Lighthouse 99 / 100 / 100 / 100, LCP około 1,95 s, CLS 0, około 8 KB JavaScriptu po kompresji; każda inna podstrona 100 we wszystkich czterech kategoriach.
 > - **Jak:** wiki czytane w każdej sesji, jeden kierunek graficzny wybrany z czterech działających propozycji, tekst dopasowany do szerokości już przy budowaniu, animacje, które same się zatrzymują, oraz zrzuty ekranu, testy dostępności i Lighthouse po każdym kawałku pracy.
 
 ## Po co przebudowywać stronę, która się podobała?
@@ -55,7 +55,7 @@ Z tej zasady wyszły budżety:
 - Lighthouse na telefonie co najmniej 90 na każdej podstronie; LCP poniżej 2,5 s (cel 2,0), CLS poniżej 0,05, czas blokowania poniżej 200 ms
 - poniżej 150 KB JavaScriptu (po kompresji) przy pierwszym wejściu, poniżej 100 KB fontów
 - główny nagłówek jest największym elementem treści (LCP), więc musi przyjść z serwera w ostatecznej formie, bez czekania na JavaScript
-- WCAG 2.2 AA w każdym motywie kolorystycznym i przycisk pauzy dla wszystkiego, co rusza się dłużej niż pięć sekund
+- WCAG 2.2 AA i przycisk pauzy dla wszystkiego, co rusza się dłużej niż pięć sekund
 - angielski, polski i hiszpański, a strona CV i plik PDF generowane z jednego pliku danych
 
 ## Jak wyglądało planowanie?
@@ -72,7 +72,7 @@ Opłaciło się później. Kiedy zmieniałem zdanie, była jedna strona do popra
 
 Aplikacje buduję w Next.js, w tym projekt ze stażu, który pokazuję na tej stronie. Portfolio to jednak strona z treścią: kilka podstron, głównie statycznych, gdzie każdy kilobajt JavaScriptu jest kosztem dla osoby na wolnym telefonie. Astro renderuje komponenty Reacta do HTML-a i nie wysyła JavaScriptu, dopóki komponent sam go nie potrzebuje. Lingui działa w Astro dzięki `lingui-for-astro`, a brak tłumaczenia na polski albo hiszpański wywraca build.
 
-Kilka interaktywnych elementów (animacja liter, filmy, formularz kontaktowy) to małe moduły w czystym TypeScripcie. Gdy zbudowane są już wszystkie sekcje, strona główna wysyła ich około 9 KB po kompresji. Dłuższe porównanie jest w tekście [Astro czy Next.js na portfolio](/pl/blog/astro-czy-nextjs-na-portfolio/).
+Kilka interaktywnych elementów (animacja liter, filmy, formularz kontaktowy) to małe moduły w czystym TypeScripcie. Gdy zbudowane są już wszystkie sekcje, strona główna wysyła ich około 8 KB po kompresji. Dłuższe porównanie jest w tekście [Astro czy Next.js na portfolio](/pl/blog/astro-czy-nextjs-na-portfolio/).
 
 ## Co się stało z pierwszym projektem?
 
@@ -113,7 +113,7 @@ Jeden błąd w tym systemie znalazł agent, który wcale nie szukał błędów. 
 
 Prowadzę Claude Code jak mały zespół z wymagającym liderem. Polecenie przychodzi zwykłymi słowami. Hooki dołączają do niego właściwe strony wiki. Research i szkice trafiają równolegle do subagentów, a ja dostaję wnioski ze źródłami, nie całe transkrypty. Serwery MCP dają agentowi ręce: prawdziwe ekrany aplikacji jako wzorce, rejestr komponentów i prawdziwą przeglądarkę. Skille zawierają gotowe procedury: kontrolę zrzutów ekranu w szerokościach 390, 1024 i 1920 pikseli, pomiary Lighthouse, research projektowy, commity.
 
-Testy to podłoga, a nie argument sprzedażowy: sprawdzanie typów, lint, testy jednostkowe, testy end-to-end w Playwright z axe we wszystkich trzech motywach, sprawdzenie układu od 320 do 2560 pikseli i Lighthouse. Zmiana nie jest gotowa, dopóki to nie przechodzi i dopóki sam nie obejrzę zrzutów.
+Testy to podłoga, a nie argument sprzedażowy: sprawdzanie typów, lint, testy jednostkowe, testy end-to-end w Playwright z axe, sprawdzenie układu od 320 do 2560 pikseli i Lighthouse. Zmiana nie jest gotowa, dopóki to nie przechodzi i dopóki sam nie obejrzę zrzutów.
 
 Gdy coś pójdzie nie tak, staje się jednozdaniową regułą w pliku lekcji, a następna sesja ładuje ją na starcie. Kilka prawdziwych: uruchamiaj formatter z katalogu głównego repozytorium (z folderu aplikacji ignorował wspólną konfigurację i przeformatował nieruszane pliki), mierz zmienny font z pliku TTF (biblioteka nie odczytuje wariantów ze skompresowanego pliku), nigdy nie wpisuj tekstu widocznej etykiety wyłącznie do `aria-label`.
 
@@ -129,6 +129,7 @@ Każdy etap zapisuje, ile wydał z budżetów. Poniżej strona główna po każd
 | Pierwszy projekt, nagłówek i stopka | 10,7 KB | 0,8 KB | 47,2 KB | 1,21 s | 0,011 |
 | Poster: nagłówek, hero, pasek narzędzi, stopka | 22,9 KB | 3,0 KB | 49,5 KB w 1 pliku | 1,65 s | 0 |
 | Poster: wszystkie sekcje | 38,1 KB | około 9 KB | 49,9 KB w 1 pliku | 1,95 s | 0 |
+| Poster po rundzie poprawek (mniej skryptów) | 34,7 KB | około 8 KB | 49,9 KB w 1 pliku | 1,95 s | 0 |
 
 Największy element treści pojawia się później od wejścia Postera: nagłówek czeka teraz na jeden zmienny font o wadze 49,5 KB zamiast statycznego kroju o wadze 11,8 KB. Wciąż mieści się w celu 2 sekund, a jeden plik zastąpił cztery.
 
@@ -144,8 +145,8 @@ Po zbudowaniu wszystkich sekcji pierwszy pomiar strony głównej dał 2,03 s. Ś
 
 - Lighthouse, telefon, symulowane dławienie łącza, mediana z trzech pomiarów na lokalnym buildzie produkcyjnym: strona główna 99 za wydajność i 100 za dostępność, dobre praktyki i SEO, po angielsku, polsku i hiszpańsku; podstrony z projektami, blogiem, CV, „Moje życie” i dokumentami prawnymi mają 100 we wszystkich czterech.
 - Na stronie głównej: LCP około 1,95 s, CLS 0, całkowity czas blokowania 0-15 ms.
-- Około 9 KB JavaScriptu po kompresji na stronie głównej i 49,9 KB fontu.
-- Testy end-to-end z axe we wszystkich trzech motywach; brak przewijania w poziomie od 320 do 2560 pikseli.
+- Około 8 KB JavaScriptu po kompresji na stronie głównej i 49,9 KB fontu.
+- Testy end-to-end z axe w jedynym motywie kolorystycznym strony; brak przewijania w poziomie od 320 do 2560 pikseli.
 
 Dane od prawdziwych użytkowników pojawią się po starcie strony. Do tego czasu to liczby z laboratorium i tak je traktuję.
 

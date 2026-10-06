@@ -143,7 +143,9 @@ const labelPlay = t`Play video`;
   .phone {
     position: relative;
     z-index: 1;
-    width: clamp(13.75rem, 21vw, 18.75rem);
+    /* The whole phone fits under the header on a short laptop screen (it is also the tap-to-pause target). */
+    width: clamp(12rem, min(21vw, (100vh - var(--header-h) - 4.5rem) * 0.461), 18.75rem);
+    width: clamp(12rem, min(21vw, (100svh - var(--header-h) - 4.5rem) * 0.461), 18.75rem);
     aspect-ratio: 320 / 694;
     border-radius: 2.125rem;
     overflow: hidden;

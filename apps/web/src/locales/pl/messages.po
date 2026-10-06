@@ -7,20 +7,31 @@ msgstr ""
 "X-Generator: @lingui/cli\n"
 "Language: pl\n"
 
+#: src/components/cv/CvBody.astro:61
+#: src/components/cv/CvBody.astro:89
 #: src/components/home/Chapters.astro:49
 #: src/components/home/chapters/ChapterLinkoglot.astro:90
 #: src/components/home/chapters/ChapterLinkoglot.astro:101
 #: src/components/home/chapters/ChapterPstrykWeb.astro:53
+#: src/components/home/chapters/ChapterSpace.astro:68
+#: src/components/home/chapters/ChapterSpace.astro:71
 #: src/components/home/chapters/ChapterSpace.astro:98
 #: src/components/home/chapters/ChapterSpace.astro:118
-#: src/components/home/Contact.astro:143
-#: src/components/home/Contact.astro:148
+#: src/components/home/Contact.astro:144
+#: src/components/home/Contact.astro:149
 #: src/components/home/Credentials.astro:101
 #: src/components/layout/SiteFooter.astro:36
+#: src/pages/[locale]/blog/[slug].astro:163
+#: src/pages/[locale]/my-life/index.astro:104
+#: src/pages/[locale]/work/index.astro:129
+#: src/pages/[locale]/work/index.astro:135
+#: src/pages/[locale]/work/index.astro:141
+#: src/pages/[locale]/work/index.astro:147
+#: src/pages/[locale]/work/index.astro:153
 msgid "(opens in a new tab)"
 msgstr "(otwiera się w nowej karcie)"
 
-#: src/components/home/Contact.astro:74
+#: src/components/home/Contact.astro:75
 msgid "(optional)"
 msgstr "(opcjonalnie)"
 
@@ -41,7 +52,7 @@ msgid "{mcp, plural, one {# MCP server} other {# MCP servers}}"
 msgstr "{mcp, plural, one {# serwer MCP} few {# serwery MCP} many {# serwerów MCP} other {# serwera MCP}}"
 
 #: src/components/blog/PostCard.astro:41
-#: src/pages/[locale]/blog/[slug].astro:120
+#: src/pages/[locale]/blog/[slug].astro:121
 msgid "{minutes} min read"
 msgstr "{minutes} min czytania"
 
@@ -65,7 +76,7 @@ msgstr "Trochę lepszy niż wczoraj, w kodzie i poza nim."
 msgid "A demo timer that counts up."
 msgstr "Demonstracyjny stoper, który odmierza czas."
 
-#: src/components/home/Contact.astro:75
+#: src/components/home/Contact.astro:76
 msgid "A job"
 msgstr "Praca"
 
@@ -81,11 +92,11 @@ msgstr "Tu będzie zdjęcie Mateusza."
 msgid "A portfolio you fly through: Earth to Neptune in 12 camera stops."
 msgstr "Portfolio, przez które przelatujesz: od Ziemi do Neptuna w 12 przystankach kamery."
 
-#: src/components/home/Contact.astro:76
+#: src/components/home/Contact.astro:77
 msgid "A project"
 msgstr "Projekt"
 
-#: src/components/home/Contact.astro:77
+#: src/components/home/Contact.astro:78
 msgid "A question"
 msgstr "Pytanie"
 
@@ -93,19 +104,19 @@ msgstr "Pytanie"
 msgid "A role-based time tracker, built with AI agents under a deadline."
 msgstr "Rejestrator czasu pracy oparty na rolach, zbudowany z agentami AI pod presją terminu."
 
-#: src/components/home/Contact.astro:47
+#: src/components/home/Contact.astro:48
 msgid "A role, a project or a question. One line is fine."
 msgstr "Stanowisko, projekt albo pytanie. Wystarczy jedno zdanie."
 
-#: src/components/home/Contact.astro:74
+#: src/components/home/Contact.astro:75
 msgid "About"
 msgstr "Temat"
 
-#: src/pages/[locale]/blog/[slug].astro:175
+#: src/pages/[locale]/blog/[slug].astro:176
 msgid "About the author"
 msgstr "O autorze"
 
-#: src/pages/[locale]/blog/[slug].astro:166
+#: src/pages/[locale]/blog/[slug].astro:167
 msgid "accessed"
 msgstr "dostęp:"
 
@@ -185,7 +196,7 @@ msgstr "Lepiej razem, na jednej kanapie albo na jednym kanale głosowym."
 
 #: src/components/layout/SiteFooter.astro:51
 #: src/components/layout/SiteHeader.astro:45
-#: src/pages/[locale]/blog/[slug].astro:50
+#: src/pages/[locale]/blog/[slug].astro:51
 #: src/pages/[locale]/blog/index.astro:31
 #: src/pages/[locale]/blog/index.astro:46
 msgid "Blog"
@@ -203,7 +214,7 @@ msgstr "Mocny"
 msgid "Both app stores"
 msgstr "Oba sklepy z aplikacjami"
 
-#: src/pages/[locale]/blog/[slug].astro:90
+#: src/pages/[locale]/blog/[slug].astro:91
 msgid "Breadcrumb"
 msgstr "Ścieżka nawigacyjna"
 
@@ -224,7 +235,7 @@ msgstr "Zbudowane dzięki niemu: moje kosmiczne portfolio"
 msgid "Business name"
 msgstr "Nazwa firmy"
 
-#: src/pages/[locale]/blog/[slug].astro:110
+#: src/pages/[locale]/blog/[slug].astro:111
 msgid "By"
 msgstr "Autor:"
 
@@ -237,7 +248,7 @@ msgid "Calm"
 msgstr "Cichy"
 
 #: src/components/blog/TagLabel.astro:15
-#: src/pages/[locale]/blog/[slug].astro:93
+#: src/pages/[locale]/blog/[slug].astro:94
 #: src/pages/[locale]/work/index.astro:122
 msgid "Case study"
 msgstr "Case study"
@@ -313,7 +324,7 @@ msgid "Commercial · solo · 2026"
 msgstr "Komercyjny · solo · 2026"
 
 #: src/components/cv/CvBody.astro:28
-#: src/components/home/Contact.astro:40
+#: src/components/home/Contact.astro:41
 #: src/components/layout/SiteFooter.astro:86
 #: src/components/layout/SiteHeader.astro:121
 #: src/pages/[locale]/blog/[slug].astro:186
@@ -330,7 +341,7 @@ msgstr "Spis treści"
 msgid "Conversion"
 msgstr "Konwersja"
 
-#: src/components/home/Contact.astro:138
+#: src/components/home/Contact.astro:139
 msgid "Copy email"
 msgstr "Skopiuj e-mail"
 
@@ -401,7 +412,7 @@ msgstr "Eklektycznie: to, co pasuje do chwili."
 msgid "Elsewhere"
 msgstr "W sieci"
 
-#: src/components/home/Contact.astro:132
+#: src/components/home/Contact.astro:133
 msgid "Email copied"
 msgstr "Skopiowano e-mail"
 
@@ -409,7 +420,7 @@ msgstr "Skopiowano e-mail"
 msgid "Email me"
 msgstr "Wyślij e-mail"
 
-#: src/components/home/Contact.astro:102
+#: src/components/home/Contact.astro:103
 msgid "Email, phone or LinkedIn"
 msgstr "E-mail, telefon lub LinkedIn"
 
@@ -417,7 +428,7 @@ msgstr "E-mail, telefon lub LinkedIn"
 msgid "Employee"
 msgstr "Pracownik"
 
-#: src/components/home/Contact.astro:52
+#: src/components/home/Contact.astro:53
 msgid "English · Polish"
 msgstr "Angielski · polski"
 
@@ -457,15 +468,15 @@ msgstr "Stopka"
 msgid "For games, talks and everything that isn't a job offer."
 msgstr "Na gry, rozmowy i wszystko, co nie jest ofertą pracy."
 
-#: src/components/home/Contact.astro:35
+#: src/components/home/Contact.astro:36
 msgid "Found a phone number in your message"
 msgstr "Znalazłem numer telefonu w Twojej wiadomości"
 
-#: src/components/home/Contact.astro:35
+#: src/components/home/Contact.astro:36
 msgid "Found an email in your message"
 msgstr "Znalazłem e-mail w Twojej wiadomości"
 
-#: src/components/home/Contact.astro:35
+#: src/components/home/Contact.astro:36
 msgid "Found your LinkedIn in your message"
 msgstr "Znalazłem Twój profil LinkedIn w wiadomości"
 
@@ -473,7 +484,7 @@ msgstr "Znalazłem Twój profil LinkedIn w wiadomości"
 msgid "Full-stack Developer · TypeScript, React, three.js"
 msgstr "Programista full stack · TypeScript, React, three.js"
 
-#: src/pages/[locale]/blog/[slug].astro:180
+#: src/pages/[locale]/blog/[slug].astro:181
 msgid "Full-stack developer from Poland. I build web and mobile products end to end, and I write down what I learn while doing it."
 msgstr "Programista full stack z Polski. Buduję produkty webowe i mobilne od początku do końca i zapisuję, czego się przy tym uczę."
 
@@ -481,7 +492,7 @@ msgstr "Programista full stack z Polski. Buduję produkty webowe i mobilne od po
 msgid "Full-stack product engineer"
 msgstr "Full-stack product engineer"
 
-#: src/components/home/Contact.astro:50
+#: src/components/home/Contact.astro:51
 msgid "Full-time or contract"
 msgstr "Etat lub kontrakt"
 
@@ -521,7 +532,7 @@ msgstr "Dobre historie, dobrze opowiedziane."
 msgid "Hang out"
 msgstr "Pogadajmy"
 
-#: src/components/home/Contact.astro:87
+#: src/components/home/Contact.astro:88
 msgid "Hi Mateusz, we're hiring for…"
 msgstr "Cześć Mateusz, szukamy kogoś do…"
 
@@ -555,7 +566,7 @@ msgstr "Jak powstała ta strona"
 msgid "I brief, review every change and decide."
 msgstr "Zlecam, sprawdzam każdą zmianę i decyduję."
 
-#: src/components/home/Contact.astro:28
+#: src/components/home/Contact.astro:29
 msgid "I can't reply to that. Use an email, a phone number or a LinkedIn profile link."
 msgstr "Na to nie mogę odpowiedzieć. Podaj e-mail, numer telefonu albo link do profilu LinkedIn."
 
@@ -571,7 +582,7 @@ msgstr "Prowadzę AI jak zespół."
 msgid "I start with the person paying for it, and what they need to earn."
 msgstr "Zaczynam od tego, kto płaci, i od tego, na czym ma zarobić."
 
-#: src/components/home/Contact.astro:123
+#: src/components/home/Contact.astro:124
 msgid "I'll reply to the address you gave me."
 msgstr "Odpowiem na podany przez Ciebie adres."
 
@@ -656,7 +667,7 @@ msgstr "Informacje prawne · regulamin"
 msgid "Let's talk about what you're building."
 msgstr "Porozmawiajmy o tym, co budujesz."
 
-#: src/components/home/Contact.astro:23
+#: src/components/home/Contact.astro:24
 msgid "Let's|talk"
 msgstr "Napisz|do mnie"
 
@@ -746,7 +757,7 @@ msgstr "Nie wysłano wiadomości"
 msgid "Message sent"
 msgstr "Wiadomość wysłana"
 
-#: src/pages/[locale]/blog/[slug].astro:183
+#: src/pages/[locale]/blog/[slug].astro:184
 msgid "More about me"
 msgstr "Więcej o mnie"
 
@@ -793,7 +804,7 @@ msgstr "Moje|życie"
 msgid "New places, new languages, other ways of living."
 msgstr "Nowe miejsca, nowe języki, inne sposoby życia."
 
-#: src/components/home/Contact.astro:33
+#: src/components/home/Contact.astro:34
 msgid "No connection. Your text is still here; try again, or copy my email."
 msgstr "Brak połączenia. Twój tekst nadal tu jest; spróbuj ponownie albo skopiuj mój e-mail."
 
@@ -814,11 +825,11 @@ msgstr "Notatki z budowania produktów webowych i mobilnych: programowanie z AI 
 msgid "Notes from the work"
 msgstr "Notatki z pracy"
 
-#: src/pages/[locale]/blog/[slug].astro:51
+#: src/pages/[locale]/blog/[slug].astro:52
 msgid "On this page"
 msgstr "Na tej stronie"
 
-#: src/components/home/Contact.astro:41
+#: src/components/home/Contact.astro:42
 msgid "One message is enough"
 msgstr "Wystarczy jedna wiadomość"
 
@@ -933,7 +944,7 @@ msgstr "Skieruj aparat na ulicę, pokój albo śniadanie, a Linkoglot zamieni to
 msgid "Poland"
 msgstr "Polska"
 
-#: src/components/home/Contact.astro:42
+#: src/components/home/Contact.astro:43
 msgid "Poland · CET"
 msgstr "Polska · CET"
 
@@ -953,7 +964,7 @@ msgstr "Drukuj"
 msgid "Privacy"
 msgstr "Prywatność"
 
-#: src/components/home/Contact.astro:116
+#: src/components/home/Contact.astro:117
 #: src/components/layout/SiteFooter.astro:67
 msgid "Privacy policy"
 msgstr "Polityka prywatności"
@@ -1011,7 +1022,7 @@ msgstr "Prawdziwe ekrany aplikacji (Mobbin), rejestr komponentów i prawdziwa pr
 msgid "Remote"
 msgstr "Zdalnie"
 
-#: src/components/home/Contact.astro:51
+#: src/components/home/Contact.astro:52
 msgid "Remote · Poland, CET"
 msgstr "Zdalnie · Polska, CET"
 
@@ -1059,11 +1070,11 @@ msgstr "Wybrane projekty"
 msgid "Self-improvement"
 msgstr "Rozwój osobisty"
 
-#: src/components/home/Contact.astro:109
+#: src/components/home/Contact.astro:110
 msgid "Send"
 msgstr "Wyślij"
 
-#: src/components/home/Contact.astro:64
+#: src/components/home/Contact.astro:65
 msgid "Sending…"
 msgstr "Wysyłam…"
 
@@ -1071,7 +1082,7 @@ msgstr "Wysyłam…"
 msgid "Sent"
 msgstr "Wysłano"
 
-#: src/components/home/Contact.astro:122
+#: src/components/home/Contact.astro:123
 msgid "Sent. Thank you."
 msgstr "Wysłano. Dziękuję."
 
@@ -1120,7 +1131,7 @@ msgstr "Zdjęcie → fiszka"
 msgid "Solo, end to end"
 msgstr "Solo, od A do Z"
 
-#: src/pages/[locale]/blog/[slug].astro:157
+#: src/pages/[locale]/blog/[slug].astro:158
 msgid "Sources"
 msgstr "Źródła"
 
@@ -1178,11 +1189,11 @@ msgstr "Regulamin"
 msgid "Thank you. I'll reply to the address you gave me."
 msgstr "Dziękuję. Odpowiem na podany przez Ciebie adres."
 
-#: src/components/home/Contact.astro:29
+#: src/components/home/Contact.astro:30
 msgid "That looked automated. Please try again in a moment."
 msgstr "To wyglądało na bota. Spróbuj ponownie za chwilę."
 
-#: src/components/home/Contact.astro:26
+#: src/components/home/Contact.astro:27
 msgid "That's a long one. Please keep it under 4,000 characters."
 msgstr "To długa wiadomość. Skróć ją, proszę, poniżej 4000 znaków."
 
@@ -1202,7 +1213,7 @@ msgstr "CV Mateusza Muszarskiego, programisty full stack: doświadczenie, projek
 msgid "the flowerpot"
 msgstr "doniczka"
 
-#: src/components/home/Contact.astro:32
+#: src/components/home/Contact.astro:33
 msgid "The form can't send right now. Copy my email instead; your text is still here."
 msgstr "Formularz nie może teraz wysłać wiadomości. Skopiuj mój e-mail; Twój tekst nadal tu jest."
 
@@ -1238,7 +1249,7 @@ msgstr "Adres do odpowiedzi nie był e-mailem, numerem telefonu ani linkiem do p
 msgid "The space portfolio: the camera flies past Mars to Jupiter"
 msgstr "Kosmiczne portfolio: kamera przelatuje obok Marsa do Jowisza"
 
-#: src/components/home/Contact.astro:30
+#: src/components/home/Contact.astro:31
 msgid "The spam check didn't pass. Please try again."
 msgstr "Test antyspamowy się nie powiódł. Spróbuj ponownie."
 
@@ -1270,7 +1281,7 @@ msgstr "Ten hiszpański tekst to tłumaczenie wspomagane maszynowo, czeka na wer
 msgid "This Spanish version was translated with AI and has not been reviewed by a native speaker yet."
 msgstr "Hiszpańską wersję przetłumaczono z pomocą AI i nie sprawdził jej jeszcze rodzimy użytkownik języka."
 
-#: src/components/home/Contact.astro:31
+#: src/components/home/Contact.astro:32
 msgid "Too many messages from here. Please wait a few minutes, or copy my email."
 msgstr "Za dużo wiadomości z tego połączenia. Odczekaj kilka minut albo skopiuj mój e-mail."
 
@@ -1317,11 +1328,11 @@ msgstr "Typy, lint, testy, dostępność i Lighthouse przy każdej zmianie. Nic 
 msgid "Typography"
 msgstr "Typografia"
 
-#: src/pages/[locale]/blog/[slug].astro:116
+#: src/pages/[locale]/blog/[slug].astro:117
 msgid "Updated"
 msgstr "Zaktualizowano"
 
-#: src/components/home/Contact.astro:115
+#: src/components/home/Contact.astro:116
 msgid "Used only to reply."
 msgstr "Posłuży tylko do odpowiedzi."
 
@@ -1358,11 +1369,11 @@ msgstr "Co mnie kręci"
 msgid "What you do"
 msgstr "Czym się zajmujesz"
 
-#: src/components/home/Contact.astro:93
+#: src/components/home/Contact.astro:94
 msgid "Where do I reply?"
 msgstr "Gdzie mam odpowiedzieć?"
 
-#: src/components/home/Contact.astro:27
+#: src/components/home/Contact.astro:28
 msgid "Where should I reply? Add an email, a phone number or your LinkedIn."
 msgstr "Gdzie mam odpowiedzieć? Podaj e-mail, numer telefonu albo swój LinkedIn."
 
@@ -1376,11 +1387,11 @@ msgstr "Kto z tego korzysta, co chce załatwić i gdzie się poddaje."
 msgid "Work"
 msgstr "Projekty"
 
-#: src/components/home/Contact.astro:25
+#: src/components/home/Contact.astro:26
 msgid "Write a message first. One line is enough."
 msgstr "Najpierw napisz wiadomość. Wystarczy jedno zdanie."
 
-#: src/components/home/Contact.astro:124
+#: src/components/home/Contact.astro:125
 msgid "Write another message"
 msgstr "Napisz kolejną wiadomość"
 
@@ -1400,7 +1411,7 @@ msgstr "Tak, także dla frajdy: sceny w three.js i projekty poboczne."
 msgid "Your browser sends Do Not Track or Global Privacy Control, so statistics are already off."
 msgstr "Twoja przeglądarka wysyła Do Not Track lub Global Privacy Control, więc statystyki są już wyłączone."
 
-#: src/components/home/Contact.astro:80
+#: src/components/home/Contact.astro:81
 msgid "Your message"
 msgstr "Twoja wiadomość"
 

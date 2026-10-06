@@ -1,6 +1,6 @@
 # Design quality: the 0–10 rubric
 
-> Owns: scoring a rendered **view** (one route × one width × one theme) 0–10 against the **Poster** art
+> Owns: scoring a rendered **view** (one route × one width; the site has one theme, Cobalt) 0–10 against the **Poster** art
 > direction (ported from the rejected Drafting Table 2026-10-05), plus the craft floor, accessibility gates, instant-fail list and score log behind that number. Used in
 > step 3 of the slice loop (`working-agreement.md` § 9): a Phase 1 slice closes only at **≥ 8/10 with the weakest
 > point named** [user]. The system being judged (tokens, type, motion, imagery, do/don't) is `design.md`, and its
@@ -34,7 +34,7 @@ are judged on type, measure and rhythm instead.
 | Color | Fields only: a section takes one field (`field-hero / alt / deep / bar / accent` or a project skin) and its children read `--sbg` / `--sfg`; no ad-hoc hex in components; no opacity-faded text | `design.md` |
 | Color | Flat colour fields, no gradients (the band's edge mask is the one exception); text is the field's `--sfg` at full strength, ≥ 4.5:1 | `design.md`, `tokens.test.ts` |
 | Color | **Field rhythm:** neighbouring sections differ by field (a chapter's skin counts); two neighbours on the same field need a drawn 3 px rule or a band between them | `design.md` |
-| Color | The accent recurs: in ≥ half the sections and in ≥ 1 non-CTA form (sticker, stamp, footer name, focus/hover shadow). One accent per theme; project skins add their own colour only inside their chapter | `design.md` |
+| Color | The accent recurs: in ≥ half the sections and in ≥ 1 non-CTA form (sticker, stamp, footer name, focus/hover shadow). One accent (pink); project skins add their own colour only inside their chapter | `design.md` |
 | Layout | A real column grid on the **4 px** scale, every edge snaps; one deliberate break per view (a drawing past its frame, a dimension line across the gutter), with a one-line reason | [research] |
 | Layout | Section padding and gaps from ≤ 3 steps of the scale, the same steps page-wide | [assumption] |
 | Layout | **≤ 2 sections per archetype.** Menu: sticky-stacked chapters · ledger / table · process loop · editorial split · numbered index · expanding cards · large-type feature · filterable list. Repetition is the enemy, not the grid; "so it isn't a grid" is no reason | [research] |
@@ -59,7 +59,7 @@ are judged on type, measure and rhythm instead.
 
 | Gate | Bar | Source |
 | --- | --- | --- |
-| Standard | WCAG 2.2 AA; axe zero violations in Cobalt, Paper AND Ink (`e2e/a11y.spec.ts`) | [research] |
+| Standard | WCAG 2.2 AA; axe zero violations on every route in `e2e/routes.ts` (one theme, Cobalt: `e2e/a11y.spec.ts`) | [research] |
 | Contrast | 4.5:1 body; 3:1 large text (≥ 24 px, or ≥ 19 px bold), UI and informative drawings, on every field incl. project skins; colour never the only signal | [research] |
 | Focus | visible on every control, never obscured by the sticky header (2.4.11) | [research] |
 | Targets | ≥ 24 × 24 px (2.5.8), ≥ 8 px apart; aim 44 × 44 on primary touch controls; nothing essential on hover | [research] |
@@ -92,19 +92,19 @@ Any hit means not done, unless `design.md` asks for it by name.
 | Fitted type | every fitted line runs edge to edge of its host in en / pl / es at 320-2560 (build-time `cqi` + `font-stretch`, `e2e/motion.spec.ts`); never clipped, never wrapped |
 | Width axis | Anybody's `wdth` carries hierarchy (fitted 900 display, condensed roles, wide kickers); no second family, no faux bold |
 | Fields | each section is one flat field; neighbours differ or a 3 px rule separates them; project skins stay inside their chapter |
-| One accent | the theme's accent (pink / orange) on CTAs, stickers, the footer name, hover shadows; never body text |
-| Hard shadows | depth is a flat offset shadow (3 px on hover, 10-12 px on frames), never a blur glow |
+| One accent | the accent (pink) on CTAs, stickers, the footer name, button shadows; never body text |
+| Hard shadows | depth is a flat offset shadow (a primary button rests on 4 px and grows to 7 on hover, 10-12 px on frames), never a blur glow |
 | Tool marks | one colour, unaltered, always with the tool's name next to them (Simple Icons, nominative use) |
-| Header | M—M mark on the hero, the full name once stuck; CV + Contact visible at every width; the menu is the full-screen poster on phones |
+| Header | M—M mark on the hero, the full name once stuck; CV + Hire me visible at every width; the menu is the full-screen poster below 1180 px |
 | Motion twins | every hover effect has a tap, focus or scroll twin; loops pause offscreen, on the button and under reduced motion |
-| Themes | Paper and Ink judged as their own designs, not inversions: the fitted name, accent and fields still read |
+| Focal order | each block has one primary action and a clear reading order (chapters: badge → title → media → outcome → description → CTA → status → tools, `design.md`) [user 2026-10-06] |
 
 ## The score
 
 `score = Typography×0.22 + Composition×0.28 + Motion×0.18 + Color×0.17 + Details/craft×0.15` [research]
 
 - **Composition** (heaviest, where most failures land): grid + break, archetype variety, surface rhythm, media mass,
-  fill, whitespace, mobile layout. **Color:** the field roles, field rhythm, accent recurrence, Paper and Ink.
+  fill, whitespace, mobile layout. **Color:** the field roles, field rhythm, accent recurrence.
   **Details/craft:** the Poster checks, focus, selection, states, forms, lean copy [research].
 - Per category: 0–3 default or broken · 4–6 generic but clean · 7–8 clearly crafted · 9–10 exceptional [research].
 
@@ -128,7 +128,7 @@ Any hit means not done, unless `design.md` asks for it by name.
 | A bare-media section (no heading, copy or action) | Composition ≤ 4 [research] |
 | ≥ 3 sections on the same uniform N-up grid | Composition ≤ 5 [research] |
 | Full-bleed media > 85 vh outside the hero; > 3 consecutive sections on one surface; > 25% of sections without a visual; a section < 55% height or < 50% shell fill | Composition ≤ 6 [research] |
-| Neighbouring sections on the same field with no rule or band between them, in **any** theme | Color ≤ 4 [research] |
+| Neighbouring sections on the same field with no rule or band between them | Color ≤ 4 [research] |
 | Accent missing from > half the sections, only above the fold, or > 1 accent in a view | Color ≤ 6 [research] |
 | The H1 is not the LCP, an LCP candidate fades, or canvas/video paints first | Motion ≤ 4 [assumption] |
 | Under reduced motion anything still moves, or content stays hidden | Motion ≤ 5 [assumption] |
@@ -140,7 +140,7 @@ average around a cap [research; "whatever the total": assumption, since the weig
 ## Quick diagnostic (yes/no per view; any "no" is a concrete fix, not an opinion)
 
 1. Is the H1 the first thing painted and read, and large enough to carry the view?
-2. At 390, are Contact and CV one tap away without scrolling?
+2. At 390, are Hire me (contact) and CV one tap away without scrolling?
 3. Is there exactly one signature moment, with everything else quiet?
 4. Does it read as a printed poster (fitted type, flat fields, hard shadows), not a template with big text?
 5. Body 17–18 px, 60–75 ch, line-height 1.5–1.7 at every width, on a 4 px grid with one intentional break?
@@ -148,7 +148,7 @@ average around a cap [research; "whatever the total": assumption, since the weig
 7. Does the surface flip at least every third section, with ≤ 2 sections per archetype?
 8. On a visual-led route: media 20–50%, ≤ 25% of sections without a visual, every section filling its box?
 9. Custom easing, purposeful motion, and the final state shown instantly under reduced motion?
-10. Were Paper and Ink opened and judged as their own designs (home + two subpages)?
+10. Is it obvious where the one primary action of each block is, and does the eye meet things in the order of importance?
 11. Gates met at 390 / 1024 / 1920: contrast, focus, targets, nothing under the header?
 12. No horizontal overflow at 320, no text smearing at 2560?
 13. Is the copy lean, and does pl fit without breaking the layout?
@@ -157,12 +157,12 @@ average around a cap [research; "whatever the total": assumption, since the weig
 
 ## How to record a score
 
-- Score every width the loop shoots (390 / 1024 / 1920) in Cobalt; Paper and Ink at 390 + 1920. The 2560 sweep,
+- Score every width the loop shoots (390 / 1024 / 1920). The 2560 sweep,
   reduced motion and the en / pl / es pass are pass/fail notes, not scores.
 - One line per view in `screenshots/VISUAL-QA.md`, newest first; Ty/Co/Mo/Cl/De are the five category scores. The
-  slice report quotes its lowest line.
+  slice report quotes its lowest line. Theme is always `cobalt` since 2026-10-06 (older rows may name Paper / Ink).
 
 ```
 | Date | Route | Width | Theme | Score | Ty/Co/Mo/Cl/De | Weakest point |
-| YYYY-MM-DD | /en/ | 1920 | ink | 7.6 | 8/7/8/7/8 | (format example) credentials ledger: flat table, no visual |
+| YYYY-MM-DD | /en/ | 1920 | cobalt | 7.6 | 8/7/8/7/8 | (format example) credentials ledger: flat table, no visual |
 ```

@@ -15,9 +15,10 @@ import PostCard from "~/components/blog/PostCard.astro";
 import PostCover from "~/components/blog/PostCover.astro";
 import TagLabel from "~/components/blog/TagLabel.astro";
 import BaseLayout from "~/components/layout/BaseLayout.astro";
+import CvLink from "~/components/layout/CvLink.astro";
 import JsonLd from "~/components/seo/JsonLd.astro";
 import Icon from "~/components/ui/Icon.astro";
-import { cvPdfHref, SITE } from "~/data/site";
+import { SITE } from "~/data/site";
 import { proseWords, tocOf } from "~/lib/blog";
 import { chromeLinks } from "~/lib/nav";
 import { allPosts, type Post, postLocale, postMinutes, postPath, postSlug, relatedTo, translationsOf } from "~/lib/posts";
@@ -159,7 +160,7 @@ const tocLabel = t`On this page`;
                 {post.data.sources.map((source) => (
                   <li>
                     <a href={source.url} rel="noopener" target="_blank">
-                      {source.title}
+                      {source.title}<span class="sr-only"> {t`(opens in a new tab)`}</span>
                     </a>
                     <span class="acc">
                       {" "}
@@ -181,8 +182,7 @@ const tocLabel = t`On this page`;
             </p>
             <p class="a-links">
               <a href={links.myLife}>{t`More about me`}</a>
-              <a href={links.cv}>CV</a>
-              <a href={cvPdfHref(locale)} download data-umami-event="cv_download" data-umami-event-source="blog" data-umami-event-locale={locale}>PDF</a>
+              <CvLink source="blog" plain />
               <a href={links.contact} data-umami-event="cta" data-umami-event-id="contact" data-umami-event-source="blog">{t`Contact`}</a>
             </p>
           </div>

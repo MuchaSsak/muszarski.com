@@ -80,19 +80,28 @@ const tableScroll = {
 };
 
 /** Links that leave the site open in a new tab, so a reader keeps their place in the post [user 2026-10-06]. */
-const externalLinks = {
-  name: "external-links",
-  element: {
-    filter: ["a"],
-    /** @param {any} node @param {any} ctx */
-    visit(node, ctx) {
-      const href = String(node.properties?.href ?? "");
-      if (!/^https?:\/\//.test(href) || href.startsWith(SITE_URL)) return;
-      ctx.setProperty(node, "target", "_blank");
-      ctx.setProperty(node, "rel", "noopener");
+/** @type {Record<string, string>} The same words as the catalogs' "(opens in a new tab)". */
+const NEW_TAB = { en: "(opens in a new tab)", pl: "(otwiera się w nowej karcie)", es: "(se abre en una pestaña nueva)" };
+/** @param {{ fileURL?: URL }} context */
+function externalLinks(context) {
+  const path = context.fileURL ? decodeURIComponent(context.fileURL.pathname) : "";
+  const note = NEW_TAB[/\/content\/\w+\/(en|pl|es)\//.exec(path)?.[1] ?? "en"];
+  return {
+    name: "external-links",
+    element: {
+      filter: ["a"],
+      /** @param {any} node @param {any} ctx */
+      visit(node, ctx) {
+        const href = String(node.properties?.href ?? "");
+        if (!/^https?:\/\//.test(href) || href.startsWith(SITE_URL)) return;
+        ctx.setProperty(node, "target", "_blank");
+        ctx.setProperty(node, "rel", "noopener");
+        // Screen readers hear it after the link text (WCAG 2.5.3: the visible words still start the name).
+        ctx.appendChild(node, { type: "element", tagName: "span", properties: { className: ["sr-only"] }, children: [{ type: "text", value: ` ${note}` }] });
+      },
     },
-  },
-};
+  };
+}
 
 export default defineConfig({
   site: SITE_URL,

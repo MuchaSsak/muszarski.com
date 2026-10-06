@@ -23,7 +23,7 @@
   - **UI:** Playwright screenshots at **390 / 1024 / 1920**, actually evaluated:
     - overflow, text under the sticky header, unreadable text over media, generic look
   - **Layout sweep** 390/1024/1920/2560: horizontal overflow, text hit-tested under fixed chrome, ultrawide smear
-  - **light AND dark**, **reduced motion**, axe contrast AA
+  - **reduced motion**, axe contrast AA (one colour theme, Cobalt, since 2026-10-06: the light/dark pass is gone)
   - **Lighthouse mobile ≥ 90** (`lighthouse-qa` skill) when a change can move a score
   - **design score ≥ 8/10** (`design-quality.md`, ported in Phase 1)
   - Keep the accepted 1920 + 390 shots in `screenshots/<route>/` (webp) and `screenshots/VISUAL-QA.md`
@@ -136,7 +136,7 @@ landing (study it first: `context/pstryk-turborepo/apps/pstrykweb.pl`, patterns 
 1. **Research** the section (Mobbin, Awwwards, registry, `design-references.md`): a short plan naming the adopted patterns.
 2. **Build** with real content where it exists; every placeholder logged (`placeholders.md`).
 3. **Evaluate:**
-   - screenshots 390 / 1024 / 1920 + the 2560 sweep, light + dark, reduced motion, en / pl / es (pl runs longest)
+   - screenshots 390 / 1024 / 1920 + the 2560 sweep, reduced motion, en / pl / es (pl runs longest)
    - axe AA, the keyboard path, visible focus
    - Lighthouse mobile on the page: ≥ 90 (aim 95+), within the `requirements.md` budgets; record the slice's own
      cost (JS KB, LCP/CLS delta) in `memory/` so later slices know what's left

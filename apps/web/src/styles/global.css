@@ -480,13 +480,6 @@ html:not(.js) .js-only {
   }
 }
 
-/* Below-the-fold home sections skip rendering until they come near (the first paint only lays out the hero and the
-   chapters). Not the chapters: their sticky offsets are measured from real heights. */
-:is(#how-i-work, #ai, #credentials, #writing, #contact, .site-footer) {
-  content-visibility: auto;
-  contain-intrinsic-size: auto 900px;
-}
-
 /* Reveal on first view. `html.rv-ready` is set by the motion script once its observer runs (it adds .in), so a
    failed script never hides content; under reduced motion or paused motion everything is simply there. The first
    screen never uses .rv: it enters with the CSS `rise` animation instead (no JS on the LCP path). */

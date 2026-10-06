@@ -15,9 +15,13 @@
 
 ## Positioning (default = option A; options B and C in `research/2026-10-05-software-house-hiring.md` § 7.1)
 
-- **H1:** "Full-stack product engineer".
-- **Subline draft:** "I turn a business problem into a shipped web or mobile product, and I tell you early
-  what it will cost and what can wait." This is a draft; the owner rewrites it in his own voice.
+- **Role line** (under the fitted-name H1): "Full-stack product engineer".
+- **Hero line** (2026-10-06, `home/Hero.astro`; P6, waits for the owner's OK): "Code is the tool. I build products
+  that solve real business problems, at a cost that makes sense." (pl "Kod to narzędzie. Buduję produkty, które
+  rozwiązują prawdziwe problemy firm, w rozsądnym budżecie.", es translated, unreviewed). A positive rewrite of the
+  owner's draft "I don't simply code. I build businesses and solutions to problems affordably." [user 2026-10-06],
+  because rule 1 below bans "I don't just…" phrasing. It replaced the earlier draft "I turn a business problem into a
+  shipped web or mobile product, and I tell you early what it will cost and what can wait."
 - **Proof line** (above the fold, pending the Cetuspro OK; public info only, `content/projects/pstrykweb.md`):
   "Built PstrykWeb for Cetuspro, solo: bespoke websites for local businesses, ordered through one online form."
 - **Titles elsewhere:**
@@ -58,6 +62,11 @@
    - "Shortcut on purpose: [A] instead of [B]; revisit when [trigger]."
 3. **CTAs are verbs plus object:** "See the work", "Download CV (PDF, 70 KB)", "Copy email", "Read the case study".
    Never "Click here" or "Let's build something amazing together!".
+   - The header's primary says **"Hire me"** (pl "Zatrudnij mnie", es "Contrátame") [user 2026-10-06]; the menu, the
+     footer and other pages keep "Contact".
+   - **"CV", never "Resume"**, in every locale [decided 2026-10-06]: the primary audience is Polish / EU software
+     houses, whose English job ads say "CV"; "resume" is US usage. Switching is a catalog change only: the Lingui message `CV` (header, footer, page title) plus
+     the few phrases that contain it ("Download CV", "Details on the CV").
 4. **AI wording:** the employers' verbs: delegate, verify, explain every line, gates. Never: "10×",
    "AI-powered developer", "prompt engineer", "AI wrote 90% of my code", or defensive denials.
 5. **Same words on the site, LinkedIn and the CV** for the role, years and flagship names.

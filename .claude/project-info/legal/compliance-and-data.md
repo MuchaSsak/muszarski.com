@@ -68,7 +68,7 @@
 | Page | Needed? | Basis | Status |
 | --- | --- | --- | --- |
 | Privacy policy `/privacy/` | **Yes** in every scenario | GDPR art. 12–13; link visible on every page + next to the form (WP260 para 11) | outline in research § 9(b) (16 sections, PL/EN headings); draft in Phase 1 |
-| Terms (regulamin) `/terms/` | **Only if** he offers paid work through the site **and** it provides an e-service (newsletter, comments, booking). Whether a contact form alone counts is disputed | UŚUDE art. 2 pkt 6, 8 | With the "open to projects" line + JDG: **recommended as a short, conservative regulamin** [research reading; owner decides, Q16]. Outline: research § 9(c) |
+| Terms (regulamin) `/terms/` | **Only if** he offers paid work through the site **and** it provides an e-service (newsletter, comments, booking). Whether a contact form alone counts is disputed | UŚUDE art. 2 pkt 6, 8 | With project enquiries (the contact form's "A project" topic; the "open to projects" line was removed 2026-10-06) + JDG: **recommended as a short, conservative regulamin** [research reading; owner decides, Q16]. Outline: research § 9(c) |
 | Service-provider info (name, address, e-mail, NIP) | if he is a usługodawca (freelance) | UŚUDE art. 5 | which address to publish: owner (Q36) |
 | Consumer info (UPK art. 12) | only for B2C distance contracts in an "organised system" (Unknown) | UPK | not planned (B2B focus) |
 
