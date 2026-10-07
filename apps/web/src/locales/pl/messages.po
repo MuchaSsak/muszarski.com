@@ -139,7 +139,7 @@ msgstr "działanie"
 msgid "AI"
 msgstr "AI"
 
-#: src/components/home/AiWorkflow.astro:182
+#: src/components/home/AiWorkflow.astro:186
 msgid "AI workflow"
 msgstr "Praca z AI"
 
@@ -192,7 +192,7 @@ msgstr "ekrany aplikacji"
 msgid "App Store and Google Play"
 msgstr "App Store i Google Play"
 
-#: src/components/home/AiWorkflow.astro:175
+#: src/components/home/AiWorkflow.astro:179
 msgid "approved"
 msgstr "zatwierdzone"
 
@@ -244,7 +244,7 @@ msgstr "Balatro, w którym każda karta to prawdziwe zadanie z matury z matematy
 msgid "Bespoke websites for local businesses, ordered through one online form."
 msgstr "Strony szyte na miarę dla lokalnych firm, zamawiane przez jeden formularz online."
 
-#: src/components/home/AiWorkflow.astro:174
+#: src/components/home/AiWorkflow.astro:178
 msgid "blocked by a hook"
 msgstr "hook zablokował"
 
@@ -714,7 +714,7 @@ msgstr "Zatrudnij mnie"
 msgid "Hooks"
 msgstr "Hooki"
 
-#: src/components/home/AiWorkflow.astro:183
+#: src/components/home/AiWorkflow.astro:187
 msgid "How I build with AI"
 msgstr "Jak buduję z AI"
 
@@ -727,7 +727,7 @@ msgstr "Jak pracuję"
 msgid "How it earns is designed in from day one."
 msgstr "To, jak produkt zarabia, projektuję od pierwszego dnia."
 
-#: src/components/home/AiWorkflow.astro:466
+#: src/components/home/AiWorkflow.astro:470
 #: src/components/layout/SiteFooter.astro:65
 msgid "How this site was built"
 msgstr "Jak powstała ta strona"
@@ -740,27 +740,35 @@ msgstr "Daję briefa głównemu agentowi: cel, ograniczenia i jak wygląda ukoń
 msgid "I can't reply to that. Use an email, a phone number or a LinkedIn profile link."
 msgstr "Na to nie mogę odpowiedzieć. Podaj e-mail, numer telefonu albo link do profilu LinkedIn."
 
-#: src/components/home/AiWorkflow.astro:188
+#: src/components/life/LifePrints.astro:50
+msgid "I have eclectic taste, so I listen to all genres."
+msgstr "Mam eklektyczny gust, więc słucham wszystkich gatunków."
+
+#: src/components/life/LifePrints.astro:113
+msgid "I have fun taking and editing photos."
+msgstr "Robienie i edytowanie zdjęć sprawia mi frajdę."
+
+#: src/components/home/AiWorkflow.astro:192
 msgid "I lead. Claude Code agents do the work, each with its own job, and nothing ships before I review it."
 msgstr "Ja prowadzę. Agenci Claude Code wykonują pracę, każdy ma swoje zadanie, a nic nie wychodzi, zanim tego nie sprawdzę."
 
 #: src/components/life/LifePrints.astro:104
-msgid "I like a good party."
-msgstr "Lubię dobrą imprezę."
-
-#: src/components/life/LifePrints.astro:77
-msgid "I like bikes. Simple as that."
-msgstr "Lubię motocykle. Tyle."
+msgid "I like a good party and plenty of drinks."
+msgstr "Lubię dobrą imprezę i dużo drinków."
 
 #: src/components/life/LifePrints.astro:68
-msgid "I like going somewhere I haven't been yet."
-msgstr "Lubię jechać tam, gdzie jeszcze nie byłem."
+msgid "I like getting out there in the world."
+msgstr "Lubię ruszać w świat."
+
+#: src/components/life/LifePrints.astro:59
+msgid "I love Jesus."
+msgstr "Kocham Jezusa."
 
 #: src/components/home/AiWorkflow.astro:118
 msgid "I review and decide. What we learned goes back into the wiki."
 msgstr "Sprawdzam i decyduję. Czego się nauczyliśmy, wraca do wiki."
 
-#: src/components/home/AiWorkflow.astro:186
+#: src/components/home/AiWorkflow.astro:190
 msgid "I run AI like a team."
 msgstr "Prowadzę AI jak zespół."
 
@@ -768,17 +776,9 @@ msgstr "Prowadzę AI jak zespół."
 msgid "I start with the person paying for it, and what they need to earn."
 msgstr "Zaczynam od tego, kto płaci, i od tego, na czym ma zarobić."
 
-#: src/components/life/LifePrints.astro:113
-msgid "I take photos. Strictly amateur, strictly for fun."
-msgstr "Robię zdjęcia. Czysto amatorsko, czysto dla frajdy."
-
 #: src/components/home/Contact.astro:151
 msgid "I'll reply to the address you gave me."
 msgstr "Odpowiem na podany przez Ciebie adres."
-
-#: src/components/life/LifePrints.astro:59
-msgid "I'm a Christian."
-msgstr "Jestem chrześcijaninem."
 
 #: src/components/life/LifeHero.astro:41
 msgid "I'm Mateusz. Code is the job. This page is the rest."
@@ -1028,10 +1028,6 @@ msgstr "Mój ulubiony"
 msgid "My life"
 msgstr "Moje życie"
 
-#: src/components/life/LifePrints.astro:50
-msgid "My playlist is all over the place."
-msgstr "Moja playlista to totalny miks."
-
 #: src/components/home/chapters/ChapterSpace.astro:94
 msgid "My previous portfolio: a scroll-driven flight through the solar system, where each planet holds one section. 13 shaders written by hand in GLSL. Best on a computer."
 msgstr "Moje poprzednie portfolio: lot przez Układ Słoneczny sterowany przewijaniem, w którym każda planeta to jedna sekcja. 13 shaderów napisanych ręcznie w GLSL. Najlepiej na komputerze."
@@ -1107,13 +1103,17 @@ msgstr "Działam. Zbieram zespół."
 msgid "On this page"
 msgstr "Na tej stronie"
 
-#: src/components/home/AiWorkflow.astro:211
+#: src/components/home/AiWorkflow.astro:215
 msgid "One change, step by step"
 msgstr "Jedna zmiana, krok po kroku"
 
 #: src/components/home/HowIWork.astro:55
 msgid "one clear CTA"
 msgstr "jedno jasne CTA"
+
+#: src/components/life/LifePrints.astro:77
+msgid "One man once said: “Riding is living, everything else is waiting.”"
+msgstr "Pewien człowiek powiedział kiedyś: „Jazda to życie, wszystko inne to czekanie”."
 
 #: src/components/home/Contact.astro:46
 msgid "One message is enough"
@@ -1164,7 +1164,7 @@ msgstr "Zdane"
 msgid "password"
 msgstr "hasło"
 
-#: src/components/home/AiWorkflow.astro:229
+#: src/components/home/AiWorkflow.astro:233
 msgid "Pause"
 msgstr "Pauza"
 
@@ -1223,7 +1223,7 @@ msgstr "Miejsca, w których byłem, przypięte. Otwórz zdjęcie, żeby poznać 
 msgid "Planet textures:"
 msgstr "Tekstury planet:"
 
-#: src/components/home/AiWorkflow.astro:230
+#: src/components/home/AiWorkflow.astro:234
 msgid "Play"
 msgstr "Odtwórz"
 
@@ -1597,7 +1597,7 @@ msgstr "Regulamin"
 msgid "test"
 msgstr "test"
 
-#: src/components/home/AiWorkflow.astro:177
+#: src/components/home/AiWorkflow.astro:181
 msgid "Test focus in Safari too"
 msgstr "Testuj focus też w Safari"
 
@@ -1667,7 +1667,7 @@ msgstr "Wiadomość miała ponad 4000 znaków."
 msgid "The Polish version of this document prevails."
 msgstr "Wiążąca jest polska wersja tego dokumentu."
 
-#: src/components/home/AiWorkflow.astro:184
+#: src/components/home/AiWorkflow.astro:188
 msgid "The real setup behind this site"
 msgstr "Prawdziwy setup tej strony"
 
@@ -1688,7 +1688,7 @@ msgstr "Kosmiczne portfolio: kamera przelatuje obok Marsa do Jowisza"
 msgid "The spam check didn't pass. Please try again."
 msgstr "Test antyspamowy się nie powiódł. Spróbuj ponownie."
 
-#: src/components/home/AiWorkflow.astro:192
+#: src/components/home/AiWorkflow.astro:196
 msgid "The team"
 msgstr "Zespół"
 

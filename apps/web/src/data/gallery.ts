@@ -38,17 +38,6 @@ const TURKIYE: Text = { en: "Türkiye", pl: "Turcja", es: "Turquía" };
 
 export const GALLERY: GalleryPhoto[] = [
   {
-    // PLACEHOLDER (P15): where this one was taken, owner to say (the coast looks Turkish; not guessed).
-    file: "mateusz-muszarski-coast",
-    alt: {
-      en: "Mateusz Muszarski in a straw hat and sunglasses, the sea and a rocky coast behind him",
-      pl: "Mateusz Muszarski w słomkowym kapeluszu i okularach przeciwsłonecznych, za nim morze i skaliste wybrzeże",
-      es: "Mateusz Muszarski con sombrero de paja y gafas de sol, con el mar y una costa rocosa detrás",
-    },
-    caption: { en: "me, probably smiling", pl: "ja, chyba uśmiechnięty", es: "yo, probablemente sonriendo" },
-    hero: true,
-  },
-  {
     // [user 2026-10-07] Palanga, on the Baltic, on an Erasmus+ project (cv.ts: Youth Entrepreneurship 2025, June 2025).
     file: "mateusz-muszarski-palanga",
     alt: {
