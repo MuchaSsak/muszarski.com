@@ -1,7 +1,7 @@
 ---
-title: "Jak powstała ta strona: najpierw wiki, potem odrzucony projekt i Lighthouse 98+ na telefonie"
+title: "Jak powstała ta strona: najpierw wiki, potem odrzucony projekt i Lighthouse 95+ na telefonie"
 seoTitle: "Jak zbudowałem to portfolio (case study)"
-description: "Case study: portfolio 3D z wynikiem 34 na telefonie przebudowane w Astro na 98 i więcej. Stack, wiki projektu, research i testy, które za tym stoją."
+description: "Case study: portfolio 3D z wynikiem 34 na telefonie przebudowane w Astro na 95 i więcej. Stack, wiki projektu, research i testy, które za tym stoją."
 translationKey: this-site
 published: 2026-10-05
 updated: 2026-10-07
@@ -68,12 +68,12 @@ import coversAfter from "~/assets/case/covers-after.webp";
 import qaSweep from "~/assets/case/qa-sweep.webp";
 import lighthouseReport from "~/assets/case/lighthouse.webp";
 
-Moje stare portfolio było lotem WebGL od Ziemi do Neptuna. Na moim komputerze wyglądało świetnie, a w mobilnym Lighthouse dostawało 34 punkty. Ta strona je zastępuje: Astro, trzy języki, jeden zmienny font, około 8 KB JavaScriptu na stronie głównej i od 98 do 100 punktów w mobilnym Lighthouse. Zaplanowałem ją w wiki projektu, zanim powstała pierwsza linijka kodu, pierwszy projekt graficzny wyrzuciłem, a każdą kolejną wersję zachowałem. Dzięki temu mogę Ci tu pokazać, jak się zmieniała, jakie narzędzia wykonały pracę i dlaczego.
+Moje stare portfolio było lotem WebGL od Ziemi do Neptuna. Na moim komputerze wyglądało świetnie, a w mobilnym Lighthouse dostawało 34 punkty. Ta strona je zastępuje: Astro, trzy języki, jeden zmienny font, około 8 KB JavaScriptu na stronie głównej i od 95 do 100 punktów w mobilnym Lighthouse. Zaplanowałem ją w wiki projektu, zanim powstała pierwsza linijka kodu, pierwszy projekt graficzny wyrzuciłem, a każdą kolejną wersję zachowałem. Dzięki temu mogę Ci tu pokazać, jak się zmieniała, jakie narzędzia wykonały pracę i dlaczego.
 
 > **W skrócie**
 >
 > - **Przed:** 13,8 MB pobrane, zanim pojawił się przycisk „start”, wydajność na telefonie 34, brak obsługi dotyku i klawiatury, brak tekstu do zaindeksowania.
-> - **Po (telefon, mediana z 3 pomiarów):** strona główna Lighthouse 98 / 100 / 100 / 100, każda inna zmierzona podstrona 99 lub 100, około 8 KB JavaScriptu strony po kompresji gzip.
+> - **Po (telefon, mediana z 3 pomiarów):** strona główna Lighthouse 95 / 100 / 100 / 100, każda inna zmierzona podstrona od 96 do 100, około 8 KB JavaScriptu strony po kompresji gzip.
 > - **Jak:** wiki projektu, które każda sesja Claude Code czyta na początku, research nagradzanych portfolio i prawdziwych ekranów produktów, cztery działające projekty do wyboru oraz Playwright, axe i Lighthouse przy każdej zmianie.
 
 ## Jak to szło, wersja po wersji?
@@ -550,7 +550,7 @@ LCP wzrósł, gdy przyszedł Poster: nagłówek czeka teraz na jeden zmienny fon
 
 ## Wyniki i jak je zmierzyłem
 
-- Lighthouse, telefon, symulowane dławienie łącza, mediana z trzech pomiarów na lokalnym buildzie produkcyjnym (7 października 2026): strona główna dostaje 98 za wydajność i 100 za dostępność, dobre praktyki i SEO; ten wpis, CV i blog od 99 do 100.
+- Lighthouse, telefon, symulowane dławienie łącza, mediana z trzech pomiarów na lokalnym buildzie produkcyjnym (7 października 2026): strona główna dostaje od 95 do 96 za wydajność i 100 za dostępność, dobre praktyki i SEO; ten wpis, CV i blog od 98 do 100.
 - Na stronie głównej: LCP około 2,1 s, CLS 0, około 8 KB JavaScriptu strony po kompresji gzip, jeden plik fontu 50 KB. Strona na produkcji dostała w pomiarze 99 przy LCP 1,78 s.
 - 236 testów end-to-end z axe, najważniejsze ścieżki także w Firefoksie i WebKicie oraz brak przewijania w poziomie od 320 do 2560 pikseli.
 

@@ -1,7 +1,7 @@
 ---
-title: "How I built this site: a wiki first, a rejected design, and Lighthouse 98+ on mobile"
+title: "How I built this site: a wiki first, a rejected design, and Lighthouse 95+ on mobile"
 seoTitle: "How I built this portfolio (case study)"
-description: "Case study: a 3D portfolio that scored 34 on mobile, rebuilt in Astro to score 98 and up. The stack, the project wiki, the research and the tests behind it."
+description: "Case study: a 3D portfolio that scored 34 on mobile, rebuilt in Astro to score 95 and up. The stack, the project wiki, the research and the tests behind it."
 translationKey: this-site
 published: 2026-10-05
 updated: 2026-10-07
@@ -68,12 +68,12 @@ import coversAfter from "~/assets/case/covers-after.webp";
 import qaSweep from "~/assets/case/qa-sweep.webp";
 import lighthouseReport from "~/assets/case/lighthouse.webp";
 
-My old portfolio was a WebGL flight from Earth to Neptune. It looked good on my desktop and scored 34 on mobile Lighthouse. This site replaces it: Astro, three languages, one variable font, about 8 KB of JavaScript on the home page, and 98 to 100 on mobile Lighthouse. It was planned in a project wiki before any product code, its first design was thrown away, and every version since is kept, so this page can show you how it changed, which tools did the work, and why.
+My old portfolio was a WebGL flight from Earth to Neptune. It looked good on my desktop and scored 34 on mobile Lighthouse. This site replaces it: Astro, three languages, one variable font, about 8 KB of JavaScript on the home page, and 95 to 100 on mobile Lighthouse. It was planned in a project wiki before any product code, its first design was thrown away, and every version since is kept, so this page can show you how it changed, which tools did the work, and why.
 
 > **TL;DR**
 >
 > - **Before:** 13.8 MB downloaded before the start button, mobile performance 34, no touch or keyboard navigation, no indexable text.
-> - **After (mobile, median of 3 runs):** home page Lighthouse 98 / 100 / 100 / 100, every other page I measured 99 or 100, page JavaScript about 8 KB gzip.
+> - **After (mobile, median of 3 runs):** home page Lighthouse 95 / 100 / 100 / 100, every other page I measured 96 to 100, page JavaScript about 8 KB gzip.
 > - **How:** a project wiki that every Claude Code session reads first, research on award-winning portfolios and real product screens, four live designs to pick from, and Playwright, axe and Lighthouse on every change.
 
 ## How did it go, version by version?
@@ -550,7 +550,7 @@ The LCP went up when Poster arrived: the heading now waits for one variable font
 
 ## Results, and how they were measured
 
-- Lighthouse, mobile, simulated throttling, median of three runs on a local production build (7 October 2026): the home page scores 98 for performance and 100 for accessibility, best practices and SEO; this post, the CV and the blog score 99 to 100.
+- Lighthouse, mobile, simulated throttling, median of three runs on a local production build (7 October 2026): the home page scores 95 to 96 for performance and 100 for accessibility, best practices and SEO; this post, the CV and the blog score 98 to 100.
 - On the home page: LCP about 2.1 s, CLS 0, about 8 KB gzip of page JavaScript, one 50 KB font file. The live site measured 99 with an LCP of 1.78 s.
 - 236 end-to-end tests with axe, the core flows in Firefox and WebKit too, and no horizontal scrolling from 320 to 2560 pixels.
 

@@ -41,7 +41,9 @@
   character to `PUNCT` in `scripts/fonts.mjs` (or use one the font has), then `bun run fonts`.
 - Breakpoints: `sm` 480 · `md` 768 · `lg` 1024 · `xl` 1440 · `2xl` 1920; the header collapses below 1180 (73.75rem).
 - Motion: `--ease-out`, `--ease-pop`, `--dur-fast/base/slow` (200/350/800 ms). JS loops import `~/scripts/motion`
-  (`motionStill`, `onMotion`); CSS loops pause through `.off` / `.still`. The reduced-motion rule shortens every transition
+  (`motionStill`, `onMotion`); CSS loops run only in a section near the viewport (`.sec.near`, set by the motion
+  script; a page's first section carries `near` in its markup) and pause under `.still`; the chapters' loops also
+  wait for the first move (`html.woke`). The reduced-motion rule shortens every transition
   to 0.01 ms (read colours in tests with a poll).
 
 ## Head, CSP, SEO
@@ -57,6 +59,11 @@
 - `markdown.smartypants` is deprecated in Astro 7; smart punctuation is switched off on the processor instead
   (`satteri({ features: { smartPunctuation: false } })`: English curly quotes are wrong in Polish).
 - `exactOptionalPropertyTypes` is on (strictest): optional props that may receive `undefined` are typed `T | undefined`.
+- `satisfies Foo[]` keeps literal types, so optional fields vanish from items that lack them (ts2339 in the consumer):
+  annotate the map callback (`(item: CertItem) =>`) (2026-10-06).
+- Components rendered inside MDX get their `<style>` inlined without a CSP hash (blocked in the browser): put their CSS
+  in a stylesheet the page imports (`styles/case.css`); check the console in a real browser, the build doesn't fail
+  (2026-10-06).
 
 ## Content, Markdown and generated files (2026-10-05)
 
@@ -71,9 +78,10 @@
   conditional, or the build throws "t is not defined"). The launch gate fails a new-tab link without the note.
 - Keyboard focus and the sticky header: `scroll-padding-top` does most of it; `SiteHeader.astro` re-scrolls a focused
   element left partly under the header (Firefox, focus moving up) and `Chapters.astro` re-scrolls to the flow position
-  when WebKit leaves focus in a stuck chapter under the next poster. No `content-visibility: auto` (it threw WebKit's
-  focus 300-700 px off and Lighthouse gained nothing). One-shot fades in offscreen sections freeze (`.off` pauses all
-  animations): don't fade what is visible on load (credentials' first card has no fade; axe read it at 1.6:1).
+  when WebKit leaves focus in a stuck chapter under the next poster; test focus in Firefox + WebKit (`bun run e2e:xb`).
+  No `content-visibility: auto` (it threw WebKit's focus 300-700 px off and Lighthouse gained nothing). Animations in a
+  section that is not `.near` wait on their first frame: don't fade what is visible on load (credentials' first card
+  has no fade; axe once read a frozen fade at 1.6:1).
 - Shared pieces for sections: `.sbar` (3-cell bar + drawn rule, add `draw`), `ui/StackList.astro` (`.stack`: "Built
   with" + plain marks and names, never chips), `.status`, `.toast` (global.css); chapters share `styles/chapters.css`
   (`ChapterBadge`, `.desc`, `.mstats`, reels with a `.r-hit` tap target); long text uses `styles/prose.css`.

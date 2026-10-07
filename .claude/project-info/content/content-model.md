@@ -91,7 +91,7 @@ cover (code-drawn or real), coverAlt, author: "mateusz", draft, canonical? }`.
 - Posts may import the case-study pieces (`components/blog/case/`): `Timeline` (versions in order: thumbnail, date,
   verdict stamp, the owner's words verbatim, one line), `Versions` (one part of the site through its rounds as tabs:
   screenshot, what the owner said, why it changed) and `Shots` (framed screenshots with tags such as "Claude's pick").
-  All text is passed from the per-locale MDX; their CSS lives in `styles/case.css` (see lessons: MDX component styles
+  All text is passed from the per-locale MDX; their CSS lives in `styles/case.css` (see `tech/usage/astro.md` § Gotchas: MDX component styles
   and the CSP). Images live in `src/assets/case/` (1200 px webp, made from `comps/` and fresh shots of the site).
 - 2026-10-06 round [user: "make sure all of the blogs are quality and nice to read, write a bunch more"]: every post
   has a TL;DR, question headings and short paragraphs; seven new posts in en + pl (portfolio Lighthouse data, the

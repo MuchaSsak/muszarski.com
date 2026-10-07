@@ -51,7 +51,7 @@ are judged on type, measure and rhythm instead.
 | Motion | Custom ease-out curves only, never `ease`/`linear`; durations 200–900 ms | `design.md`, [research] |
 | Motion | The H1 paints final in the first frame (never faded); lead and CTAs enter in CSS, cascade done ≤ 600 ms after first paint; animate transform, opacity, `font-stretch` on display letters and SVG strokes only | [research], `design.md` |
 | Motion | A living layer the owner asked for ("a lot of micro animations or loops"): the letter accordion, hover/press shadows, small loops per section, one scroll moment (the chapter stack). Dead-static fails; so do scroll-jacking, a trapping pin or any intro | [user], `CLAUDE.md` |
-| Motion | Loops > 5 s carry the global pause control; loops stop offscreen (`.off`); JS loops never read layout per frame | [research], `design.md` |
+| Motion | Loops > 5 s carry the global pause control; loops stop offscreen (a `.sec` without `.near`); JS loops never read layout per frame | [research], `design.md` |
 | Forms | A visible field surface with a 2 px border, label above, ≥ 44 px tall, a designed focus ring | [research] |
 | Craft | Branded `::selection`; a 3 px focus ring, never removed; hover never shifts layout; every hover effect has a tap, focus or scroll twin; crafted 404, empty, error, loading and toast states | [research], [user] |
 

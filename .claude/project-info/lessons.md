@@ -3,8 +3,9 @@
 > Mistakes already paid for, as one-line rules. `.claude/hooks/session-start.mjs` injects the "Rules"
 > section into every session and after every compaction, so it stays short: no more than 60 rules and
 > under the 8,000-character card, merged and pruned. How to add, place and promote one: `working-agreement.md` § 7.
-> Product facts live in their own page, not here. Promoted 2026-10-07 (still in their pages): Sätteri plugins
-> (astro.md), fontkit, `api/` ESM imports and host redirects (technologies.md), production hosts (analytics.md), the
+> Product facts live in their own page, not here. Promoted 2026-10-07 (still in their pages): Sätteri plugins,
+> `content-visibility`, the stuck-chapter focus, MDX component CSS and `satisfies` (astro.md), fontkit, `api/` ESM
+> imports and host redirects (technologies.md), production hosts (analytics.md), WebKit font shots (visual-qa.md), the
 > foldered wiki (README.md).
 
 ## Rules
@@ -34,12 +35,12 @@
 - `Icon.astro` forwards Astro's scope attribute, so a scoped `svg` selector also hits icons; target drawn SVGs by class - 2026-10-05.
 - Inline `<script>`s render between sibling sections: count siblings with `:nth-of-type`, not `:nth-child` - 2026-10-05.
 - A grid-stacked hidden label still sets the grid's width (it pushed the header off a 320 px screen); size stacks for the visible state - 2026-10-05.
-- Chrome holds first paint for a preloaded font, and HTML bytes compete with it: keep page HTML lean (icons live in the cached sprite; first-screen icons `inline`) - 2026-10-06.
+- Chrome holds first paint for a preloaded font, and HTML bytes compete with it: keep page HTML lean (icons in the cached sprite; first-screen icons `inline`). Keep the preload: without it home LCP fell 0.6 s but the parse landed after first paint (TBT 33 → 775 ms) - 2026-10-06.
 - A child rule like `.dlink > span { width: 100% }` also hits an added `.sr-only` span (a 1,193 px overflow): exclude `.sr-only` or wrap the visible text - 2026-10-06.
 - A focus target taller than the viewport minus the header always sits under the sticky header: cap media by viewport height (`100svh - var(--header-h)`) - 2026-10-06.
 - Astro does not scope `@keyframes` names: two components' `bob` collided. Prefix keyframes per component (`hw-`, `cr-`, `ai-`) - 2026-10-06.
 - Reduced motion keeps `animation-delay`: staged entrances stay hidden for their delay. Switch staged scenes off under reduced motion and `.still` - 2026-10-06.
-- Animate an HTML wrapper, never an `<svg>`: the spinning sticker forced a full-page layout every frame (~1 s TBT). Find such loops by pausing `document.getAnimations()` one name at a time - 2026-10-07.
+- Load cost hides in style and layout: animate an HTML wrapper, never an `<svg>` (a layout per frame); no grid around a `container-type` box (~1 s layouts); set `top`, not an inherited custom property, on big subtrees; never toggle a class a `*` rule reads on a big ancestor (`.off *` restyled 1,658 elements: start paused, mark what is near); transition only the revealed state. Find each with traces and CSS A/B via `page.route` - 2026-10-07.
 
 ### Privacy of inputs
 - Images pasted in chat never reach the disk: ask the owner to drop the files in the repo, and build the slot so it switches on when they land - 2026-10-06.
@@ -47,19 +48,14 @@
 
 ### Tools and environment
 - Splicing text by slices or offsets drops or misplaces content: replace named blocks, then `node --check` / build and render-check at once - 2026-10-05.
-- Run prettier from the repo root (`bunx prettier --write <paths>`; from `apps/web` it ignores the root config), never on generated files (`og.mjs` parses `icons.gen.ts` as JSON) - 2026-10-05.
+- Run prettier from the repo root (`bunx prettier --write <paths>`; from `apps/web` it ignores the root config), never on generated files (`og.mjs` parses `icons.gen.ts` as JSON); after formatting an Astro template, diff the rendered HTML (it put a visible space in `All<sup>`) - 2026-10-05.
 - Bash heredocs break on quotes and lose backslashes (again 2026-10-07), and `cd` persists: write scripts with Write, use absolute paths; Write/Edit decode `\uXXXX`, so emit invisible characters with `chr()` - 2026-10-05.
 - Python on Windows writes CRLF: always `open(..., "w", newline="\n")` (a fixer pass caught 6 files on 2026-10-06) - 2026-10-05.
 - Git Bash rewrites URL-path arguments (`/en/` → `P:/Git/en/`): prefix with `MSYS_NO_PATHCONV=1`, also for `bun run lhci` - 2026-10-05.
 - `bun run check` stops at the first failing task: a red test hid a typecheck error that got committed. Read every task's result, re-run `astro check` after fixing a test - 2026-10-06.
 - e2e role queries match substrings ("Pull-up" hit "Pull-ups"): pass `exact: true` for short names - 2026-10-06.
-- Playwright WebKit on Windows paints variable fonts at the default instance (layout is right): judge Safari by measured widths, never by those screenshots - 2026-10-06.
-- One `astro preview` per project: e2e, shots and Lighthouse share port 4322. A busy machine fakes regressions (leftover headless Chrome at 100% CPU): kill leftovers, check the load, rerun - 2026-10-07.
+- One `astro preview` per project: e2e, shots and Lighthouse share port 4322; for speed work build to a scratch `--outDir` and serve it on its own port (`E2E_PORT`, `lhci --base`). A busy machine fakes regressions (other sessions' headless Chrome at 100% CPU): check the load, rerun - 2026-10-07.
 - After a Playwright update, run `./node_modules/.bin/playwright install chromium` in `apps/web` (browser version mismatch) - 2026-10-06.
-- No `content-visibility: auto`: WebKit landed focus 300-700 px off and Lighthouse gained nothing - 2026-10-06.
-- WebKit scrolls focus to where a stuck sticky chapter is drawn (under the next poster): `Chapters.astro` re-scrolls to the flow position; test focus in Firefox + WebKit (`bun run e2e:xb`) - 2026-10-06.
 - The owner works on two PCs and runs parallel sessions (one committed another's WIP, 2026-10-07): `git pull`/`git log` first, stage your own paths only; on a merge take one side's `.po`, re-add the other's msgids, extract; regenerate PDFs - 2026-10-06.
 - WebSearch has a budget shared by parallel agents; prefer WebFetch of known URLs, then Playwright - 2026-10-05.
-- Components rendered inside MDX get their `<style>` inlined without a CSP hash (blocked in the browser): put their CSS in a stylesheet the page imports (`styles/case.css`); check the console with a real browser, the build doesn't fail - 2026-10-06.
-- `satisfies Foo[]` keeps literal types, so optional fields vanish from items that lack them (ts2339 in the consumer): annotate the map callback (`(item: CertItem) =>`) - 2026-10-06.
 - Routing: a generic phrase in one row outscores a project name; put shared task words in every row they apply to and re-run `wiki-context.mjs --test` - 2026-10-05.

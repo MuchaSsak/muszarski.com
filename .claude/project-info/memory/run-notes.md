@@ -83,3 +83,24 @@
 - My life after the hobby prints (local preview, median of 3-5): en 92 / es 92 / pl 96, TBT 0-8 ms, LCP 2.8-3.3 s
   (photos; see `slice-costs.md`). One en median read 89 / TBT 190 ms while another session's headless Chrome ran;
   the rerun was clean. `bun run e2e` on the touched specs: 206/206 in ~2.1 min; i18n 30/30.
+
+## Home speed regression and fix (2026-10-07 afternoon)
+
+- Regression: home 67-74, TBT 0.7-1.1 s after the day's home rounds. Found by tracing (4x CPU, phone) and A/B CSS
+  overrides injected with `page.route` on a private build (`astro build --outDir <scratch>` on its own port),
+  interleaved runs, medians. Each cause and its fix:
+  - the PstrykWeb chapter's loops ran while the page loaded (~2 s of main thread): loops wait for the first move;
+  - the AI scene's size container inside two grids (~1 s per full layout): block flow;
+  - `.off` added to every offscreen section on load restyled 1,658 elements (`.off *`): sections start paused, `.near`
+    marks the visible ones;
+  - Chapters set an inherited custom property (`--stick`), restyling everything inside: it sets `top`;
+  - `rv-ready` faded every `.rv` block out through its transition (also the `.sbar` rules and the writing cards'
+    undraw): only the reveal transitions;
+  - How I work and the AI story ran `show(0)` on load (forced layouts): the first state is in the markup.
+- After (quiet machine, local build, median of 3): home en 96 / pl 95 / es 95, TBT 33-93 ms, LCP 2.3-2.6 s, CLS 0; CV
+  99-100, blog 98-100, work 96-97, the case study 99 (en, pl). e2e 236/236 on that build.
+- LCP is the font preload: Chrome holds first paint until the preloaded font arrives, then the next frame waits for the
+  parse of what is below the fold. Without the preload LCP was 1.96 s but TBT 775 ms (score 80): keep it. What would
+  help: less below-the-fold DOM and CSS (home HTML 60 KB gz; 149 KB inline CSS: global 34, How I work 26, AI 25,
+  credentials 19). Hidden scenes as `<template>` gained nothing (display:none costs no layout).
+- The case study quotes this run (home 95+, the other pages 96-100); its report image is a real home report.

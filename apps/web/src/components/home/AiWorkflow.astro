@@ -169,7 +169,11 @@ const CHECKS: { icon: IconName; label: string }[] = [
   { icon: "si:lighthouse", label: t`Speed` },
 ];
 /** The step that shows a scene: a click on a team member jumps there. */
-const beatOf = (scene: Scene) => Math.max(0, BEATS.findIndex((beat) => beat.scene === scene));
+const beatOf = (scene: Scene) =>
+  Math.max(
+    0,
+    BEATS.findIndex((beat) => beat.scene === scene),
+  );
 const pad = (n: number) => String(n).padStart(2, "0");
 const blocked = t`blocked by a hook`;
 const approved = t`approved`;
