@@ -376,10 +376,6 @@ msgstr "Trabajo para cliente"
 msgid "Client work, my own products, open source and experiments. The four flagships have their own chapter on the home page."
 msgstr "Trabajo para clientes, productos propios, código abierto y experimentos. Los cuatro proyectos principales tienen su propio capítulo en la página de inicio."
 
-#: src/components/life/LifeBoard.astro:113
-msgid "Close"
-msgstr "Cerrar"
-
 #: src/components/layout/SiteHeader.astro:110
 msgid "Close menu"
 msgstr "Cerrar menú"
@@ -762,8 +758,8 @@ msgid "I like getting out there in the world."
 msgstr "Me gusta salir a recorrer el mundo."
 
 #: src/components/life/LifePrints.astro:59
-msgid "I love Jesus."
-msgstr "Amo a Jesús."
+msgid "I love Jesus Christ :)"
+msgstr "Amo a Jesucristo :)"
 
 #: src/components/home/AiWorkflow.astro:118
 msgid "I review and decide. What we learned goes back into the wiki."
@@ -1049,7 +1045,6 @@ msgstr "Más recientes"
 msgid "next change"
 msgstr "siguiente cambio"
 
-#: src/components/life/LifeBoard.astro:109
 #: src/components/life/LifeHero.astro:68
 msgid "Next photo"
 msgstr "Siguiente foto"
@@ -1211,14 +1206,14 @@ msgstr "Fotografía"
 msgid "Pick one"
 msgstr "Elige uno"
 
-#: src/components/life/LifeBoard.astro:31
+#: src/components/life/LifeBoard.astro:30
 #: src/pages/[locale]/my-life/index.astro:42
 msgid "Pin board"
 msgstr "Tablón"
 
-#: src/components/life/LifeBoard.astro:33
-msgid "Places I've been, pinned. Open a photo for the story."
-msgstr "Lugares donde he estado, con chincheta. Abre una foto para ver la historia."
+#: src/components/life/LifeBoard.astro:32
+msgid "Places I've been, pinned."
+msgstr "Los sitios donde he estado, en el tablón."
 
 #: src/components/home/chapters/ChapterSpace.astro:77
 msgid "Planet textures:"
@@ -1261,10 +1256,6 @@ msgstr "Polonia, CET"
 #: src/pages/[locale]/blog/index.astro:64
 msgid "Posts"
 msgstr "Artículos"
-
-#: src/components/life/LifeBoard.astro:105
-msgid "Previous photo"
-msgstr "Foto anterior"
 
 #: src/components/home/LatestWriting.astro:52
 msgid "Previous posts"

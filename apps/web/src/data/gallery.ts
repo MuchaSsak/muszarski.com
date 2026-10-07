@@ -1,6 +1,6 @@
 /**
  * The My life photo gallery (site/structure.md § /my-life/): the owner's own photos, newest facts from him only. One list
- * feeds the hero's stack of prints (`hero: true`), the gallery wall + lightbox and the page's `ImageGallery` JSON-LD
+ * feeds the hero's stack of prints (`hero: true`), the pin board and the page's `ImageGallery` JSON-LD
  * (place, description, creator), so what a visitor reads and what Google reads never drift.
  *
  * To add a photo: drop `src/assets/photos/mateusz-muszarski-<place>.jpg` (his name in the file name helps image search)
@@ -23,7 +23,7 @@ export interface GalleryPhoto {
   alt: Text;
   /** The short line on the print. */
   caption: Text;
-  /** The owner's words about it, shown in the lightbox and in the JSON-LD. */
+  /** The owner's words about it, shown on the board's index card and in the JSON-LD. */
   description?: Text;
   place?: Place;
   /** "2025-06": shown as a month; only from the owner or a dated source. */

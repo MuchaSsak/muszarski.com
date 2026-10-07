@@ -375,10 +375,6 @@ msgstr "Client work"
 msgid "Client work, my own products, open source and experiments. The four flagships have their own chapter on the home page."
 msgstr "Client work, my own products, open source and experiments. The four flagships have their own chapter on the home page."
 
-#: src/components/life/LifeBoard.astro:113
-msgid "Close"
-msgstr "Close"
-
 #: src/components/layout/SiteHeader.astro:110
 msgid "Close menu"
 msgstr "Close menu"
@@ -761,8 +757,8 @@ msgid "I like getting out there in the world."
 msgstr "I like getting out there in the world."
 
 #: src/components/life/LifePrints.astro:59
-msgid "I love Jesus."
-msgstr "I love Jesus."
+msgid "I love Jesus Christ :)"
+msgstr "I love Jesus Christ :)"
 
 #: src/components/home/AiWorkflow.astro:118
 msgid "I review and decide. What we learned goes back into the wiki."
@@ -1048,7 +1044,6 @@ msgstr "Newest"
 msgid "next change"
 msgstr "next change"
 
-#: src/components/life/LifeBoard.astro:109
 #: src/components/life/LifeHero.astro:68
 msgid "Next photo"
 msgstr "Next photo"
@@ -1210,14 +1205,14 @@ msgstr "Photography"
 msgid "Pick one"
 msgstr "Pick one"
 
-#: src/components/life/LifeBoard.astro:31
+#: src/components/life/LifeBoard.astro:30
 #: src/pages/[locale]/my-life/index.astro:42
 msgid "Pin board"
 msgstr "Pin board"
 
-#: src/components/life/LifeBoard.astro:33
-msgid "Places I've been, pinned. Open a photo for the story."
-msgstr "Places I've been, pinned. Open a photo for the story."
+#: src/components/life/LifeBoard.astro:32
+msgid "Places I've been, pinned."
+msgstr "Places I've been, pinned."
 
 #: src/components/home/chapters/ChapterSpace.astro:77
 msgid "Planet textures:"
@@ -1260,10 +1255,6 @@ msgstr "Poland, CET"
 #: src/pages/[locale]/blog/index.astro:64
 msgid "Posts"
 msgstr "Posts"
-
-#: src/components/life/LifeBoard.astro:105
-msgid "Previous photo"
-msgstr "Previous photo"
 
 #: src/components/home/LatestWriting.astro:52
 msgid "Previous posts"

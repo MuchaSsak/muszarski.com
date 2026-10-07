@@ -1,0 +1,44 @@
+---
+/**
+ * A country flag, drawn as an inline SVG from simple shapes (not emoji: Windows renders flag emoji as two letters).
+ * Decorative: the country is always named in the text beside it. Add a country by its ISO 3166-1 alpha-2 code.
+ */
+interface Props {
+  code: string;
+  class?: string;
+}
+
+const { code, class: className } = Astro.props;
+---
+
+{code === "LT" && (
+  <svg class:list={["flag", className]} viewBox="0 0 5 3" preserveAspectRatio="none" aria-hidden="true">
+    <path fill="#fdb913" d="M0 0h5v1H0z" />
+    <path fill="#006a44" d="M0 1h5v1H0z" />
+    <path fill="#c1272d" d="M0 2h5v1H0z" />
+  </svg>
+)}
+{code === "TR" && (
+  <svg class:list={["flag", className]} viewBox="0 0 1200 800" aria-hidden="true">
+    <path fill="#e30a17" d="M0 0h1200v800H0z" />
+    <circle cx="400" cy="400" r="200" fill="#fff" />
+    <circle cx="450" cy="400" r="160" fill="#e30a17" />
+    <polygon fill="#fff" points="540,400 609,378 609,305 652,364 721,341 678,400 721,459 652,436 609,495 609,422" />
+  </svg>
+)}
+{code === "PL" && (
+  <svg class:list={["flag", className]} viewBox="0 0 8 5" preserveAspectRatio="none" aria-hidden="true">
+    <path fill="#fff" d="M0 0h8v2.5H0z" />
+    <path fill="#dc143c" d="M0 2.5h8V5H0z" />
+  </svg>
+)}
+
+<style>
+  .flag {
+    flex: none;
+    display: block;
+    width: 1.5rem;
+    height: 1rem;
+    box-shadow: 0 0 0 1.5px var(--navy);
+  }
+</style>

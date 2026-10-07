@@ -110,9 +110,9 @@ Components, All projects.
 Hero (the title over a goo shader, a fanned stack of the owner's prints: tap, click or "Next photo" deals the next;
 entries marked `hero` in `src/data/gallery.ts`) · **pin board** [user 2026-10-07: "an actual real life pinboard ...
 evidence board", "great for seo and google knowledge panel"]: a cork board in a wooden frame, every photo from
-`gallery.ts` as a tacked print with its caption, the place + month on yellow tape and his story on an index card
-(real text next to the image), red yarn tying the prints of a row; a print links to the large file and opens a
-`<dialog>` lightbox (previous / next, arrow keys, Esc); `LifeBoard.astro` · a playground of
+`gallery.ts` as a tacked print with its caption, the country flag (`ui/Flag.astro`, drawn SVG) + place + month on
+yellow tape and his story on an index card (real text next to the image), red yarn tying the prints of a row, on a
+light plaster wall; prints are not links, no lightbox [user 2026-10-07]; `LifeBoard.astro` · a playground of
 toys, one per interest, each a card with a title, one line and a small game: calisthenics reps, music beats, faith
 (light), travel board, motorcycles (hold to rev), games with friends (Pong), films (roll a night: picture only, no
 text [user 2026-10-06]), parties, photography (slide to develop a print), self-improvement (an orb race of 1.01ⁿ vs

@@ -5,7 +5,7 @@ import { type Locale } from "@package/shared/locales";
 import { GALLERY } from "~/data/gallery";
 import { photoFile } from "~/lib/photos";
 
-/** One pin on the My life board, in one locale, with the large file the lightbox, JSON-LD and sitemap share. */
+/** One pin on the My life board, in one locale, with the large file the JSON-LD and the image sitemap share. */
 export interface Pin {
   file: string;
   src: ImageMetadata;
