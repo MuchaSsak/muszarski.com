@@ -1,0 +1,77 @@
+---
+/**
+ * Two 1-5 scores as a grid (the case study's Awwwards study: Wow by Practicality). A real table, so it reads without
+ * colour and in a screen reader: rows are the y score (high first), columns the x score, each cell lists the names.
+ * Cells at or above `good` on both scores are marked (pattern + border, not colour alone). Text comes from the post.
+ * CSS: styles/case.css (prefix `mx-`).
+ */
+interface Point {
+  name: string;
+  x: number;
+  y: number;
+}
+interface Props {
+  caption: string;
+  xLabel: string;
+  yLabel: string;
+  points: Point[];
+  /** Both scores at or above this mark a cell as the sweet spot. */
+  good: number;
+  goodLabel: string;
+}
+
+const { caption, xLabel, yLabel, points, good, goodLabel } = Astro.props;
+const SCORES = [1, 2, 3, 4, 5];
+const at = (x: number, y: number) => points.filter((p) => p.x === x && p.y === y).map((p) => p.name);
+---
+
+<figure class="mx">
+  {/* The visible title sits outside the scroll box (a phone scrolls the table, never its title); the table keeps
+      its own caption for screen readers. */}
+  <p class="mx-title" aria-hidden="true">{caption}</p>
+  <div class="mx-scroll">
+    <table class="mx-table">
+      <caption class="sr-only">{caption}</caption>
+      <thead>
+        <tr>
+          <td class="mx-blank"></td>
+          <th scope="colgroup" colspan={SCORES.length} class="mx-axis">
+            {xLabel} →
+          </th>
+        </tr>
+        <tr>
+          <th scope="col" class="mx-axis mx-y">{yLabel} ↓</th>
+          {SCORES.map((x) => (
+            <th scope="col">{x}</th>
+          ))}
+        </tr>
+      </thead>
+      <tbody>
+        {[...SCORES].reverse().map((y) => (
+          <tr>
+            <th scope="row">{y}</th>
+            {SCORES.map((x) => {
+              const names = at(x, y);
+              const sweet = x >= good && y >= good;
+              return (
+                <td class:list={{ "mx-good": sweet, "mx-empty": !names.length }}>
+                  {names.length > 0 && (
+                    <ul role="list">
+                      {names.map((name) => (
+                        <li>{name}</li>
+                      ))}
+                    </ul>
+                  )}
+                </td>
+              );
+            })}
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+  <p class="mx-key">
+    <span class="mx-swatch" aria-hidden="true"></span>
+    {goodLabel}
+  </p>
+</figure>

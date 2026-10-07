@@ -6,7 +6,7 @@
  */
 import { t } from "lingui-for-astro/macro";
 
-import { type CvEntry, CV } from "~/data/cv";
+import { type CertItem, type CvEntry, CV } from "~/data/cv";
 import { PROFILES, SITE } from "~/data/site";
 
 interface Props {
@@ -16,10 +16,19 @@ interface Props {
 
 const { variant, siteUrl } = Astro.props;
 const locale = Astro.locals.locale;
-const KIND = { qualification: t`Qualification`, course: t`Course`, volunteering: t`International`, hackathon: t`Teamwork` } as const;
+// Screen-reader note on links that open a new tab (none in the print/PDF variant).
+const newTab = variant === "print" ? "" : t`(opens in a new tab)`;
+const KIND = {
+  qualification: t`Qualification`,
+  course: t`Course`,
+  volunteering: t`International`,
+  hackathon: t`Teamwork`,
+  knowledge: t`Knowledge`,
+} as const;
 const sections = {
   summary: t`Profile`,
   experience: t`Experience`,
+  education: t`Education`,
   projects: t`Selected projects`,
   credentials: t`Qualifications and training`,
   skills: t`Skills`,
@@ -40,77 +49,151 @@ const entries = (list: CvEntry[]) => list;
     <div class="cv-main">
       <section class="cv-sec" aria-labelledby="cv-experience">
         <h2 id="cv-experience">{sections.experience}</h2>
-        {
-          entries(CV.experience).map((entry) => (
-            <article class="entry">
-              <header>
-                <h3>{entry.title[locale]}</h3>
-                <p class="when">
-                  {entry.org && <span>{entry.org[locale]}</span>}
-                  <span>{entry.when[locale]}</span>
-                </p>
-              </header>
+        {entries(CV.experience).map((entry) => (
+          <article class="entry">
+            <header>
+              <h3>{entry.title[locale]}</h3>
+              <p class="when">
+                {entry.org && <span>{entry.org[locale]}</span>}
+                <span>{entry.when[locale]}</span>
+              </p>
+            </header>
+            <ul>
+              {entry.bullets.map((bullet) => (
+                <li>{bullet[locale]}</li>
+              ))}
+            </ul>
+            {entry.links && (
+              <p class="elinks">
+                {entry.links.map((link) => (
+                  <a href={link.href} rel="noopener" target="_blank">
+                    {variant === "print" ? `${link.label}: ${link.href}` : link.label}
+                    {newTab && <span class="sr-only"> {newTab}</span>}
+                  </a>
+                ))}
+              </p>
+            )}
+          </article>
+        ))}
+      </section>
+
+      <section class="cv-sec" aria-labelledby="cv-education">
+        <h2 id="cv-education">{sections.education}</h2>
+        {entries(CV.education).map((entry) => (
+          <article class="entry">
+            <header>
+              <h3>{entry.title[locale]}</h3>
+              <p class="when">
+                {entry.org && <span>{entry.org[locale]}</span>}
+                <span>{entry.when[locale]}</span>
+              </p>
+            </header>
+            {entry.bullets.length > 0 && (
               <ul>
                 {entry.bullets.map((bullet) => (
                   <li>{bullet[locale]}</li>
                 ))}
               </ul>
-              {entry.links && (
-                <p class="elinks">
-                  {entry.links.map((link) => (
-                    <a href={link.href} rel="noopener" target="_blank">{variant === "print" ? `${link.label}: ${link.href}` : link.label}</a>
-                  ))}
-                </p>
-              )}
-            </article>
-          ))
-        }
+            )}
+          </article>
+        ))}
       </section>
 
       <section class="cv-sec" aria-labelledby="cv-projects">
         <h2 id="cv-projects">{sections.projects}</h2>
-        {
-          entries(CV.projects).map((entry) => (
-            <article class="entry">
-              <header>
-                <h3>{entry.title[locale]}</h3>
-                <p class="when">
-                  <span>{entry.when[locale]}</span>
-                </p>
-              </header>
-              <ul>
-                {entry.bullets.map((bullet) => (
-                  <li>{bullet[locale]}</li>
+        {entries(CV.projects).map((entry) => (
+          <article class="entry">
+            <header>
+              <h3>{entry.title[locale]}</h3>
+              <p class="when">
+                <span>{entry.when[locale]}</span>
+              </p>
+            </header>
+            <ul>
+              {entry.bullets.map((bullet) => (
+                <li>{bullet[locale]}</li>
+              ))}
+            </ul>
+            {entry.links && (
+              <p class="elinks">
+                {entry.links.map((link) => (
+                  <a href={link.href} rel="noopener" target="_blank">
+                    {variant === "print" ? `${link.label}: ${link.href}` : link.label}
+                    {newTab && <span class="sr-only"> {newTab}</span>}
+                  </a>
                 ))}
-              </ul>
-              {entry.links && (
-                <p class="elinks">
-                  {entry.links.map((link) => (
-                    <a href={link.href} rel="noopener" target="_blank">{variant === "print" ? `${link.label}: ${link.href}` : link.label}</a>
-                  ))}
-                </p>
-              )}
-            </article>
-          ))
-        }
+              </p>
+            )}
+          </article>
+        ))}
       </section>
 
       <section class="cv-sec" id="credentials" aria-labelledby="cv-credentials">
         <h2 id="cv-credentials">{sections.credentials}</h2>
         {
-          CV.credentials.map((credential) => (
-            <article class="entry">
-              <header>
-                <h3>{credential.title[locale]}</h3>
-                <p class="when">
-                  <span>{KIND[credential.kind]}</span>
-                  <span>{credential.when[locale]}</span>
-                </p>
-              </header>
-              <p class="issuer">{credential.issuer[locale]}</p>
-              <p>{credential.summary[locale]}</p>
-            </article>
-          ))
+          // The home "Experience" card sums up the two sections above; the CV lists them in full.
+          CV.credentials
+            .filter((credential) => credential.kind !== "experience")
+            .map((credential) => (
+              <article class="entry">
+                <header>
+                  <h3>{credential.title[locale]}</h3>
+                  <p class="when">
+                    <span>{KIND[credential.kind as keyof typeof KIND]}</span>
+                    <span>{credential.when[locale]}</span>
+                  </p>
+                </header>
+                <p class="issuer">{credential.issuer[locale]}</p>
+                {/* In the PDF the certificates themselves carry a card's facts; its summary would cost the second page. */}
+                {!(variant === "print" && credential.items) && <p>{credential.summary[locale]}</p>}
+                {credential.verifyUrl && (
+                  <p class="elinks">
+                    {variant === "print" ? (
+                      credential.verifyUrl.replace(/^https:\/\/(www\.)?/, "")
+                    ) : (
+                      <>
+                        <a href={credential.verifyUrl} rel="noopener" target="_blank">
+                          {t`Certificate`} <span class="sr-only">{newTab}</span>
+                        </a>
+                        {credential.courseUrl && (
+                          <a href={credential.courseUrl} rel="noopener" target="_blank">
+                            {t`The course`} <span class="sr-only">{newTab}</span>
+                          </a>
+                        )}
+                      </>
+                    )}
+                  </p>
+                )}
+                {credential.items &&
+                  (variant === "print" ? (
+                    // The PDF keeps every certificate on one run-on line (two pages in total), codes included.
+                    <p class="certs-line">
+                      {credential.items
+                        .map((item: CertItem) => `${item.title} (${item.when[locale]}${item.code ? `, ${item.code}` : ""})`)
+                        .join("; ")}
+                    </p>
+                  ) : (
+                    <ul class="certs">
+                      {credential.items.map((item: CertItem) => (
+                        <li>
+                          {item.href || item.site ? (
+                            <a href={item.href ?? item.site} rel="noopener" target="_blank">
+                              {item.title} <span class="sr-only">{newTab}</span>
+                            </a>
+                          ) : (
+                            item.title
+                          )}
+                          <span class="cert-meta">
+                            {" · "}
+                            {item.when[locale]}
+                            {item.code && ` · ${item.code}`}
+                          </span>
+                        </li>
+                      ))}
+                    </ul>
+                  ))}
+              </article>
+            ))
         }
       </section>
     </div>
@@ -121,41 +204,38 @@ const entries = (list: CvEntry[]) => list;
         <ul class="plain">
           <li>{SITE.email}</li>
           <li>{CV.location[locale]}</li>
-          <li><a href={siteUrl}>{siteUrl.replace(/^https?:\/\//, "").replace(/\/$/, "")}</a></li>
-          {
-            PROFILES.map((profile) => (
-              <li>
-                <a href={profile.href} rel="me noopener" target="_blank">
-                  {variant === "print" ? profile.href.replace(/^https:\/\/(www\.)?/, "") : `${profile.label}: ${profile.handle}`}
-                </a>
-              </li>
-            ))
-          }
+          <li>
+            <a href={siteUrl}>{siteUrl.replace(/^https?:\/\//, "").replace(/\/$/, "")}</a>
+          </li>
+          {PROFILES.map((profile) => (
+            <li>
+              <a href={profile.href} rel="me noopener" target="_blank">
+                {variant === "print" ? profile.href.replace(/^https:\/\/(www\.)?/, "") : `${profile.label}: ${profile.handle}`}
+                {newTab && <span class="sr-only"> {newTab}</span>}
+              </a>
+            </li>
+          ))}
         </ul>
       </section>
       <section class="cv-sec" aria-labelledby="cv-skills">
         <h2 id="cv-skills">{sections.skills}</h2>
         <dl class="skills">
-          {
-            CV.skills.map((group) => (
-              <div>
-                <dt>{group.group[locale]}</dt>
-                <dd>{group.items.join(", ")}</dd>
-              </div>
-            ))
-          }
+          {CV.skills.map((group) => (
+            <div>
+              <dt>{group.group[locale]}</dt>
+              <dd>{group.items.join(", ")}</dd>
+            </div>
+          ))}
         </dl>
       </section>
       <section class="cv-sec" aria-labelledby="cv-languages">
         <h2 id="cv-languages">{sections.languages}</h2>
         <ul class="plain">
-          {
-            CV.languages.map((language) => (
-              <li>
-                {language.name[locale]}: {language.level[locale]}
-              </li>
-            ))
-          }
+          {CV.languages.map((language) => (
+            <li>
+              {language.name[locale]}: {language.level[locale]}
+            </li>
+          ))}
         </ul>
       </section>
       <section class="cv-sec" aria-labelledby="cv-interests">
@@ -231,6 +311,17 @@ const entries = (list: CvEntry[]) => list;
     font-weight: 700;
     font-size: 0.875rem;
   }
+  .certs {
+    margin-top: 0.375rem;
+    font-size: 0.9375rem;
+  }
+  .cert-meta {
+    font-size: 0.875em;
+  }
+  .certs-line {
+    margin-top: 2pt;
+    font-size: 8pt;
+  }
   .plain {
     padding: 0;
     list-style: none;
@@ -270,7 +361,8 @@ const entries = (list: CvEntry[]) => list;
 
   /* One column for the PDF: plain, selectable, ATS-safe. */
   .print {
-    font-size: 9.75pt;
+    overflow-wrap: anywhere;
+    font-size: 9.5pt;
     line-height: 1.35;
   }
   .print .summary p {

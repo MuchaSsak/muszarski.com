@@ -6,8 +6,10 @@
  * translations (`translationKey`); the language switch falls back to the other blog's index.
  */
 import "~/styles/prose.css";
+import "~/styles/case.css";
 
 import type { Locale } from "@package/shared/locales";
+import { Image } from "astro:assets";
 import { render } from "astro:content";
 import { t } from "lingui-for-astro/macro";
 
@@ -15,10 +17,12 @@ import PostCard from "~/components/blog/PostCard.astro";
 import PostCover from "~/components/blog/PostCover.astro";
 import TagLabel from "~/components/blog/TagLabel.astro";
 import BaseLayout from "~/components/layout/BaseLayout.astro";
+import CvLink from "~/components/layout/CvLink.astro";
 import JsonLd from "~/components/seo/JsonLd.astro";
 import Icon from "~/components/ui/Icon.astro";
-import { cvPdfHref, SITE } from "~/data/site";
+import { SITE } from "~/data/site";
 import { proseWords, tocOf } from "~/lib/blog";
+import { portrait } from "~/lib/photos";
 import { chromeLinks } from "~/lib/nav";
 import { allPosts, type Post, postLocale, postMinutes, postPath, postSlug, relatedTo, translationsOf } from "~/lib/posts";
 import { pathTo } from "~/lib/routes";
@@ -36,6 +40,7 @@ const { post } = Astro.props;
 const locale = postLocale(post);
 const links = chromeLinks(locale);
 const { Content, headings } = await render(post);
+const me = portrait();
 const toc = tocOf(headings);
 const translations = await translationsOf(post);
 const otherLocale = locale === "en" ? "pl" : "en";
@@ -44,7 +49,8 @@ const related = await relatedTo(post);
 const minutes = postMinutes(post);
 const site = Astro.site ?? new URL("http://localhost:4321");
 const url = new URL(postPath(post), site).href;
-const fmt = (date: Date) => new Intl.DateTimeFormat(locale, { day: "numeric", month: "long", year: "numeric", timeZone: "Europe/Warsaw" }).format(date);
+const fmt = (date: Date) =>
+  new Intl.DateTimeFormat(locale, { day: "numeric", month: "long", year: "numeric", timeZone: "Europe/Warsaw" }).format(date);
 const ogKey = `blog-${postSlug(post)}`;
 const isCaseStudy = post.data.tags.includes("case-study");
 const blogTitle = t`Blog`;
@@ -95,85 +101,86 @@ const tocLabel = t`On this page`;
       <div class="head-grid">
         <div>
           <p class="tags rise">
-            {
-              post.data.tags.map((tag) => (
-                <span>
-                  <TagLabel tag={tag} />
-                </span>
-              ))
-            }
+            {post.data.tags.map((tag) => (
+              <span>
+                <TagLabel tag={tag} />
+              </span>
+            ))}
           </p>
           <h1 class="title">{post.data.title}</h1>
-          <p class="desc rise" style="--d:1">{post.data.description}</p>
+          <p class="desc rise" style="--d:1">
+            {post.data.description}
+          </p>
           <p class="meta rise" style="--d:2">
             <span>
               {t`By`} <a href={links.myLife}>{SITE.name}</a>
             </span>
             <time datetime={post.data.published.toISOString()}>{fmt(post.data.published)}</time>
-            {
-              post.data.updated && (
-                <span>
-                  {t`Updated`} <time datetime={post.data.updated.toISOString()}>{fmt(post.data.updated)}</time>
-                </span>
-              )
-            }
+            {post.data.updated && (
+              <span>
+                {t`Updated`} <time datetime={post.data.updated.toISOString()}>{fmt(post.data.updated)}</time>
+              </span>
+            )}
             <span>{t`${minutes} min read`}</span>
-            {
-              otherPath && (
-                <a href={pathTo(otherLocale, otherPath)} hreflang={otherLocale} lang={otherLocale}>
-                  {locale === "en" ? "Po polsku" : "In English"}
-                </a>
-              )
-            }
+            {otherPath && (
+              <a href={pathTo(otherLocale, otherPath)} hreflang={otherLocale} lang={otherLocale}>
+                {locale === "en" ? "Po polsku" : "In English"}
+              </a>
+            )}
           </p>
         </div>
-        <div class="cover-wrap rise" style="--d:1"><PostCover cover={post.data.cover} tone={3} /></div>
+        <div class="cover-wrap rise" style="--d:1">
+          <PostCover cover={post.data.cover} />
+        </div>
       </div>
     </header>
 
     <div class="sec field-alt body">
       <aside class="toc" aria-label={tocLabel}>
-        {
-          toc.length > 2 && (
-            <details open class="toc-box">
-              <summary class="kick">{tocLabel}</summary>
-              <ol>
-                {toc.map((heading) => (
-                  <li class:list={{ sub: heading.depth === 3 }}>
-                    <a href={`#${heading.slug}`}>{heading.text}</a>
-                  </li>
-                ))}
-              </ol>
-            </details>
-          )
-        }
+        {toc.length > 2 && (
+          <details open class="toc-box">
+            <summary class="kick">{tocLabel}</summary>
+            <ol>
+              {toc.map((heading) => (
+                <li class:list={{ sub: heading.depth === 3 }}>
+                  <a href={`#${heading.slug}`}>{heading.text}</a>
+                </li>
+              ))}
+            </ol>
+          </details>
+        )}
       </aside>
       <div class="prose">
         <Content />
 
-        {
-          post.data.sources.length > 0 && (
-            <section class="sources" aria-labelledby="sources">
-              <h2 id="sources">{t`Sources`}</h2>
-              <ol>
-                {post.data.sources.map((source) => (
-                  <li>
-                    <a href={source.url} rel="noopener" target="_blank">
-                      {source.title}
-                    </a>
-                    <span class="acc">
-                      {" "}
-                      ({t`accessed`} <time datetime={source.accessed.toISOString().slice(0, 10)}>{fmt(source.accessed)}</time>)
-                    </span>
-                  </li>
-                ))}
-              </ol>
-            </section>
-          )
-        }
+        {post.data.sources.length > 0 && (
+          <section class="sources" aria-labelledby="sources">
+            <h2 id="sources">{t`Sources`}</h2>
+            <ol>
+              {post.data.sources.map((source) => (
+                <li>
+                  <a href={source.url} rel="noopener" target="_blank">
+                    {source.title}
+                    <span class="sr-only"> {t`(opens in a new tab)`}</span>
+                  </a>
+                  <span class="acc">
+                    {" "}
+                    ({t`accessed`} <time datetime={source.accessed.toISOString().slice(0, 10)}>{fmt(source.accessed)}</time>)
+                  </span>
+                </li>
+              ))}
+            </ol>
+          </section>
+        )}
 
         <aside class="author" aria-label={t`About the author`}>
-          <div class="avatar" aria-hidden="true">MM</div>
+          {me ? (
+            <Image class="avatar photo" src={me} alt={SITE.name} width={144} height={144} loading="lazy" />
+          ) : (
+            <div class="avatar" aria-hidden="true">
+              MM
+            </div>
+          )}
           <div>
             <p class="a-name">{SITE.name}</p>
             <p>
@@ -181,9 +188,13 @@ const tocLabel = t`On this page`;
             </p>
             <p class="a-links">
               <a href={links.myLife}>{t`More about me`}</a>
-              <a href={links.cv}>CV</a>
-              <a href={cvPdfHref(locale)} download data-umami-event="cv_download" data-umami-event-source="blog" data-umami-event-locale={locale}>PDF</a>
-              <a href={links.contact} data-umami-event="cta" data-umami-event-id="contact" data-umami-event-source="blog">{t`Contact`}</a>
+              <CvLink source="blog" plain />
+              <a
+                href={links.contact}
+                data-umami-event="cta"
+                data-umami-event-id="contact"
+                data-umami-event-source="blog"
+              >{t`Contact`}</a>
             </p>
           </div>
         </aside>
@@ -191,26 +202,24 @@ const tocLabel = t`On this page`;
     </div>
   </article>
 
-  {
-    related.length > 0 && (
-      <section class="sec field-hero more" aria-labelledby="related">
-        <div class="sbar draw">
-          <p id="related">{t`Read next`}</p>
-          <p />
-          <p>
-            <a href={links.blog}>
-              {t`All posts`} <Icon name="tb:arrow-right" />
-            </a>
-          </p>
-        </div>
-        <div class="grid">
-          {related.map((other, i) => (
-            <PostCard post={other} tone={i + 1} />
-          ))}
-        </div>
-      </section>
-    )
-  }
+  {related.length > 0 && (
+    <section class="sec field-hero more" aria-labelledby="related">
+      <div class="sbar draw">
+        <p id="related">{t`Read next`}</p>
+        <p />
+        <p>
+          <a href={links.blog}>
+            {t`All posts`} <Icon name="tb:arrow-right" />
+          </a>
+        </p>
+      </div>
+      <div class="grid">
+        {related.map((other) => (
+          <PostCard post={other} />
+        ))}
+      </div>
+    </section>
+  )}
 </BaseLayout>
 
 <style>
@@ -349,6 +358,10 @@ const tocLabel = t`On this page`;
     font-weight: 900;
     font-size: 1.5rem;
     font-stretch: 70%;
+  }
+  .avatar.photo {
+    object-fit: cover;
+    box-shadow: 4px 4px 0 var(--accent);
   }
   .a-name {
     font-weight: 900;

@@ -67,7 +67,7 @@ const count = projects.length;
   </section>
 
   <section class="sec field-alt list" aria-label={t`Projects`}>
-    <div class="filters" data-filters hidden>
+    <div class="filters js-only" data-filters>
       <div class="frow" role="group" aria-label={t`Type`}>
         <span class="kick">{t`Type`}</span>
         <button class="fchip" type="button" aria-pressed="true" data-kind="context" data-value="">{t`All`} <b>{count}</b></button>
@@ -126,31 +126,31 @@ const count = projects.length;
               {project.links.live && (
                 <a class="btn btn-line" href={project.links.live} rel="noopener" target="_blank" data-umami-event="outbound" data-umami-event-target="live" data-umami-event-project={project.slug}>
                   {t`Live`}
-                  <Icon name="tb:arrow-up-right" />
+                  <Icon name="tb:arrow-up-right" /><span class="sr-only"> {t`(opens in a new tab)`}</span>
                 </a>
               )}
               {project.links.appStore && (
                 <a class="btn btn-line" href={project.links.appStore} rel="noopener" target="_blank" data-umami-event="outbound" data-umami-event-target="app-store" data-umami-event-project={project.slug}>
                   <Icon name="si:apple" />
-                  App Store
+                  App Store<span class="sr-only"> {t`(opens in a new tab)`}</span>
                 </a>
               )}
               {project.links.googlePlay && (
                 <a class="btn btn-line" href={project.links.googlePlay} rel="noopener" target="_blank" data-umami-event="outbound" data-umami-event-target="google-play" data-umami-event-project={project.slug}>
                   <Icon name="si:googleplay" />
-                  Google Play
+                  Google Play<span class="sr-only"> {t`(opens in a new tab)`}</span>
                 </a>
               )}
               {project.links.npm && (
                 <a class="btn btn-line" href={project.links.npm} rel="noopener" target="_blank" data-umami-event="outbound" data-umami-event-target="npm" data-umami-event-project={project.slug}>
                   <Icon name="si:npm" />
-                  npm
+                  npm<span class="sr-only"> {t`(opens in a new tab)`}</span>
                 </a>
               )}
               {project.links.code && (
                 <a class="btn btn-line" href={project.links.code} rel="noopener" target="_blank" data-umami-event="outbound" data-umami-event-target="code" data-umami-event-project={project.slug}>
                   <Icon name="si:github" />
-                  {t`Code`}
+                  {t`Code`}<span class="sr-only"> {t`(opens in a new tab)`}</span>
                 </a>
               )}
               {project.slug === "neoteric-clockful" && <span class="private">{t`Code private · walkthrough on request`}</span>}
@@ -333,7 +333,6 @@ const count = projects.length;
     const rows = [...document.querySelectorAll<HTMLElement>("[data-rows] > .row")];
     const empty = document.querySelector<HTMLElement>("[data-empty]")!;
     const state = { context: "", tool: "" };
-    filters.hidden = false;
     for (const button of filters.querySelectorAll<HTMLButtonElement>("[data-kind]")) {
       button.addEventListener("click", () => {
         const kind = button.dataset.kind as "context" | "tool";

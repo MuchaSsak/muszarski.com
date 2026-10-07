@@ -28,10 +28,13 @@ for (const route of LOCALIZED) {
     const codes = page.locator(".site-header .h-loc");
     await expect(codes).toHaveAttribute("aria-label", /\S/);
     await expect(codes.locator('a[aria-current="true"]')).toHaveAttribute("hreflang", locale);
+    // A drawn flag per link, named by its autonym (screen-reader text + tooltip; no visible code).
     const links = await codes
       .locator("a")
       .evaluateAll((all) => all.map((a) => `${a.getAttribute("href")} ${a.textContent!.replace(/\s+/g, " ").trim()}`));
-    expect(links).toEqual(["/en/ EN English", "/pl/ PL Polski", "/es/ ES Español"]);
+    expect(links).toEqual(["/en/ English", "/pl/ Polski", "/es/ Español"]);
+    await expect(codes.locator(".flag")).toHaveCount(3);
+    await expect(codes.locator("a").first()).toHaveAttribute("title", "English");
   });
 }
 

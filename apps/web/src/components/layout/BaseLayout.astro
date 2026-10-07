@@ -14,9 +14,10 @@ import SiteFooter from "~/components/layout/SiteFooter.astro";
 import SiteHeader from "~/components/layout/SiteHeader.astro";
 import ThemeScript from "~/components/layout/ThemeScript.astro";
 import UmamiLoader from "~/components/layout/UmamiLoader.astro";
-import IconSprite from "~/components/ui/IconSprite.astro";
 import { SITE } from "~/data/site";
 import { FONT_FILES } from "~/lib/fonts.gen";
+
+import { SITE_HOSTS } from "../../../scripts/launch.mjs";
 import { alternates, type LocalizedPath, localesOf, pathTo } from "~/lib/routes";
 
 interface Props {
@@ -69,7 +70,10 @@ const ogImage = new URL(`/og/${ogLocale ?? locale}/${og}.png`, site).href;
 // Every build but the launch is noindex (scripts/launch.mjs); legal pages stay out of the index.
 const robots = !LAUNCH_BUILD ? "noindex, nofollow" : noindex ? "noindex, follow" : "index, follow, max-image-preview:large";
 const preloads = FONT_FILES.filter((font) => font.preload);
-const umamiDomain = new URL(site).hostname;
+// Umami counts visits on the production domain only, apex or www (site/analytics.md): never a preview or localhost.
+// The build's own origin is no good here: a production deploy built before the domain existed baked in its preview
+// host, and every real visit was dropped.
+const umamiDomains = SITE_HOSTS.flatMap((host) => [host, `www.${host}`]).join(",");
 ---
 
 <!doctype html>
@@ -113,7 +117,7 @@ const umamiDomain = new URL(site).hostname;
     {article?.tags.map((tag) => <meta property="article:tag" content={tag} />)}
     <link rel="alternate" type="application/rss+xml" title={`${SITE.name} – Blog`} href={`/${locale === "pl" ? "pl" : "en"}/rss.xml`} />
     {PUBLIC_GOOGLE_SITE_VERIFICATION && <meta name="google-site-verification" content={PUBLIC_GOOGLE_SITE_VERIFICATION} />}
-    {PUBLIC_UMAMI_WEBSITE_ID && <UmamiLoader src={PUBLIC_UMAMI_SCRIPT_URL} id={PUBLIC_UMAMI_WEBSITE_ID} domains={umamiDomain} />}
+    {PUBLIC_UMAMI_WEBSITE_ID && <UmamiLoader src={PUBLIC_UMAMI_SCRIPT_URL} id={PUBLIC_UMAMI_WEBSITE_ID} domains={umamiDomains} />}
     <slot name="head" />
   </head>
   <body>
@@ -124,7 +128,6 @@ const umamiDomain = new URL(site).hostname;
       <slot />
     </main>
     <SiteFooter path={path ?? ""} locales={locales} fallback={fallback} />
-    <IconSprite />
     <script>
       import "~/scripts/motion";
     </script>

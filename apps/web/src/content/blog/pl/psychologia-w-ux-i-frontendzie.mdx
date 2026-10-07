@@ -1,0 +1,279 @@
+---
+title: "Psychologia w UX i na frontendzie: perswazja, której możesz bronić"
+seoTitle: "Psychologia w UX: uczciwa perswazja na frontendzie"
+description: "Niedobór, dowód społeczny, kotwice, ustawienia domyślne i paski postępu w kodzie, uczciwie. I gdzie prawo UE i UOKiK stawiają granicę dark patterns."
+translationKey: "ux-psychology"
+published: 2026-10-07
+updated: 2026-10-07
+tags: [design]
+cover: anchor
+related: [solo-app, cookieless-analytics, hover-tap]
+sources:
+  - title: "Kahneman, D. i Tversky, A. (1979). Prospect Theory: An Analysis of Decision under Risk. Econometrica 47(2), 263-291"
+    url: "https://doi.org/10.2307/1914185"
+    accessed: 2026-10-07
+  - title: "Prospect Theory and Loss Aversion: How Users Make Decisions (Nielsen Norman Group)"
+    url: "https://www.nngroup.com/articles/prospect-theory/"
+    accessed: 2026-10-07
+  - title: "Dr. Robert Cialdini's Seven Principles of Persuasion (Influence at Work)"
+    url: "https://www.influenceatwork.com/7-principles-of-persuasion/"
+    accessed: 2026-10-07
+  - title: "Social Proof in the User Experience (Nielsen Norman Group)"
+    url: "https://www.nngroup.com/articles/social-proof-ux/"
+    accessed: 2026-10-07
+  - title: "The Anchoring Principle (Nielsen Norman Group)"
+    url: "https://www.nngroup.com/articles/anchoring-principle/"
+    accessed: 2026-10-07
+  - title: "The Power of Defaults (Nielsen Norman Group)"
+    url: "https://www.nngroup.com/articles/the-power-of-defaults/"
+    accessed: 2026-10-07
+  - title: "Huber, J., Payne, J. W. i Puto, C. (1982). Adding Asymmetrically Dominated Alternatives. Journal of Consumer Research 9(1), 90-98"
+    url: "https://doi.org/10.1086/208899"
+    accessed: 2026-10-07
+  - title: "Kivetz, R., Urminsky, O. i Zheng, Y. (2006). The Goal-Gradient Hypothesis Resurrected. Journal of Marketing Research 43(1), 39-58"
+    url: "https://home.uchicago.edu/ourminsky/Goal-Gradient_Illusionary_Goal_Progress.pdf"
+    accessed: 2026-10-07
+  - title: "Zawiadomienie Komisji 2021/C 526/01: Wytyczne dotyczące wykładni i stosowania dyrektywy 2005/29/WE (EUR-Lex)"
+    url: "https://eur-lex.europa.eu/legal-content/PL/TXT/HTML/?uri=CELEX:52021XC1229(05)"
+    accessed: 2026-10-07
+  - title: "Rozporządzenie (UE) 2022/2065 (akt o usługach cyfrowych), EUR-Lex"
+    url: "https://eur-lex.europa.eu/legal-content/PL/TXT/HTML/?uri=CELEX:32022R2065"
+    accessed: 2026-10-07
+  - title: "Dyrektywa (UE) 2019/2161 (dyrektywa Omnibus), EUR-Lex"
+    url: "https://eur-lex.europa.eu/legal-content/PL/TXT/HTML/?uri=CELEX:32019L2161"
+    accessed: 2026-10-07
+  - title: "UOKiK: Informacje o obniżkach cen (portal Prawa konsumenta)"
+    url: "https://prawakonsumenta.uokik.gov.pl/prawo-do-informacji/informacje-o-obnizkach-cen/"
+    accessed: 2026-10-07
+  - title: "UOKiK: Endless \"promotions\", decision by the President of UOKiK (27.05.2025)"
+    url: "https://uokik.gov.pl/en/endless-promotions-decision-by-the-president-of-uokik"
+    accessed: 2026-10-07
+  - title: "Decyzja Prezesa UOKiK nr RKR-1/2025 (Azagroup) z 21 maja 2025 r."
+    url: "https://decyzje.uokik.gov.pl/bp/dec_prez.nsf/0/6E04EB15C3652886C1258CA4003E8ACC/$file/Decyzja%20RKR%201_2025%20Azagroup%20wer.%20jawna.pdf"
+    accessed: 2026-10-07
+  - title: "UOKiK: Lowest price in the 30 days before the discount, penalties for Zalando and Temu (14.01.2026)"
+    url: "https://uokik.gov.pl/en/is-the-discount-obvious-to-everyone-not-necessarily-lowest-price-in-the-30-days-before-the-discount-penalties-for-zalando-and-temu"
+    accessed: 2026-10-07
+  - title: "<del>: The Deleted Text element (MDN)"
+    url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/del"
+    accessed: 2026-10-07
+  - title: "<progress>: The Progress Indicator element (MDN)"
+    url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/progress"
+    accessed: 2026-10-07
+---
+
+Każdy interfejs coś komuś sprzedaje. Kolejność planów, plan zaznaczony z góry, kolor przycisku „Kup” obok „Nie, dziękuję”, liczba pod gwiazdkami: ktoś wybrał każdą z tych rzeczy i często był to programista, który pisał komponent. Psychologia, która za nimi stoi, jest dobrze zbadana i większości da się używać uczciwie. Granicę łatwo opisać, trudniej jej pilnować: prawdziwe dane, pełna cena i „nie” tak samo łatwe jak „tak”. Tę samą granicę wyznacza prawo UE, a UOKiK karze sklepy, które ją przekraczają.
+
+> **TL;DR**
+> - Na ekranach najwięcej robi osiem efektów: awersja do straty, niedobór, dowód społeczny, kotwiczenie, ustawienia domyślne, efekt wabika, efekt gradientu celu i wzajemność.
+> - Uczciwa wersja czyta prawdziwe dane: stan magazynu z bazy, odliczanie do faktycznego końca oferty, przekreśloną cenę, która jest najniższą ceną z 30 dni.
+> - Nieuczciwa je wymyśla: liczniki, które startują od nowa, zmyślone „ogląda teraz 12 osób”, zaznaczone z góry pola, poczucie winy na przycisku „nie”. Wytyczne do dyrektywy UCPD nazywają te praktyki wprost, a UOKiK ukarał polski sklep za zegar, który odliczał w kółko.
+
+> To nie jest porada prawna. Jestem programistą, który przeczytał źródła. Jeśli od strony z cennikiem zależy Twój biznes, zapytaj prawnika.
+
+## Dlaczego to problem programisty frontendu?
+
+Bo te decyzje lądują w kodzie. Który przycisk opcji ma `checked`, czy pole wyboru startuje zaznaczone, co mówi link do rezygnacji, skąd pochodzi przekreślona cena: to propsy, wartości domyślne i powiązania z danymi, a nie tylko pliki z projektem.
+
+Wytyczne Komisji Europejskiej do dyrektywy o nieuczciwych praktykach handlowych (UCPD) mówią dwie rzeczy bez owijania w bawełnę. Po pierwsze: „W dyrektywie o nieuczciwych praktykach handlowych nie wymaga się zamiaru stosowania praktyk typu »dark patterns«”. Po drugie, w ramach staranności zawodowej przedsiębiorcy „powinni przedsięwziąć odpowiednie środki w celu zapewnienia, aby projekt ich interfejsu nie zniekształcał decyzji transakcyjnych konsumentów”. Dark pattern wdrożony przypadkiem nadal jest dark patternem.
+
+Doszedłem do tego z dwóch stron. W 2025 roku przeszedłem dwa kursy na Udemy, Marketing Psychology and Consumer Behavior oraz UX Writing, a buduję produkty, w których ekran musi coś sprzedać. Moja aplikacja Linkoglot ma darmowy okres próbny, a potem subskrypcję miesięczną albo roczną, czyli dokładnie taki ekran, o jakim jest ten wpis.
+
+## Które efekty najczęściej widać na ekranach?
+
+| Efekt | Co mówi źródło | Uczciwe użycie | Nieuczciwe użycie |
+| --- | --- | --- | --- |
+| Awersja do straty | Straty ważą więcej niż równe im zyski (Kahneman i Tversky, 1979) | Powiedz wprost, co ktoś zachowa, a co straci | Zawstydzanie na przycisku „nie” |
+| Niedobór | Chcemy bardziej tego, czego może zabraknąć (Cialdini) | Informacja o stanie z prawdziwego magazynu | Licznik, który startuje od nowa przy każdej wizycie |
+| Dowód społeczny | Patrzymy na zachowanie innych, żeby zdecydować o swoim (NN/g) | Prawdziwa liczba opinii ze źródłem | Wymyślone „ogląda teraz 12 osób” |
+| Kotwiczenie | Decyzję opieramy na jednej informacji, „kotwicy” (NN/g) | Przekreślona cena, która naprawdę obowiązywała | Cena „regularna”, której nikt nigdy nie zapłacił |
+| Ustawienia domyślne | Ludzie zostają przy tym, co ustawione z góry (NN/g) | Domyślna opcja, która pasuje większości | Zaznaczony z góry płatny dodatek |
+| Efekt wabika | Opcja wyraźnie gorsza od jednej z pozostałych zwiększa szansę wyboru tej lepszej (Huber, Payne i Puto, 1982) | Trzy prawdziwe plany, porównane rzetelnie | Plan, który istnieje tylko po to, żeby go odrzucić |
+| Gradient celu | Przyspieszamy, im bliżej nagrody (Kivetz, Urminsky i Zheng, 2006) | Pasek postępu liczony z prawdziwych kroków | „90% gotowe”, kiedy tak nie jest |
+| Wzajemność | Czujemy się zobowiązani oddać to, co dostaliśmy najpierw (Cialdini) | Okres próbny, który naprawdę się przydaje | „Prezent”, pod którym kryje się subskrypcja |
+
+Dalej przechodzę przez nie tam, gdzie programista frontendu na nie trafia.
+
+## Jak pokazać niedobór i nie skłamać?
+
+Niedobór działa tylko wtedy, gdy jest prawdziwy, więc komponent nie powinien dać się wyrenderować bez prawdy. Oto informacja o stanie, która bierze liczbę z magazynu i nie pokazuje niczego, gdy jej nie ma:
+
+```astro
+---
+// StockNote.astro: liczba pochodzi z magazynu albo nic się nie renderuje.
+interface Props {
+  stock: number | null; // null = w tej chwili nie wiemy
+  threshold?: number;
+}
+const { stock, threshold = 5 } = Astro.props;
+const low = stock !== null && stock > 0 && stock <= threshold;
+---
+
+{low && <p class="stock-note">Na stanie: {stock} szt.</p>}
+```
+
+Jest jeden haczyk na stronie statycznej: liczba wpisana w czasie budowania się starzeje. Albo renderuj stronę na żądanie, albo pobieraj stan po stronie klienta i pokazuj, kiedy go sprawdzono, albo zrezygnuj z tej informacji. Nieaktualne „zostały 2 sztuki” też jest nieprawdą.
+
+Z odliczaniem jest tak samo. Termin pochodzi z tych samych danych, z których korzysta koszyk, a kiedy minie, oferta się kończy:
+
+```ts
+// endsAt to prawdziwy koniec oferty, z tego samego źródła co cena w koszyku.
+export function startCountdown(el: HTMLElement, endsAt: Date) {
+  const tick = () => {
+    const left = endsAt.getTime() - Date.now();
+    if (left <= 0) {
+      el.textContent = "Ta oferta już się zakończyła.";
+      return;
+    }
+    const hours = Math.floor(left / 3_600_000);
+    const minutes = Math.floor((left % 3_600_000) / 60_000);
+    el.textContent = `Koniec za ${hours} h ${minutes} min`;
+    setTimeout(tick, 30_000);
+  };
+  tick();
+}
+```
+
+Nieuczciwa wersja to jedna linijka: `const endsAt = new Date(Date.now() + 15 * 60_000)`, czyli świeże piętnaście minut przy każdym wczytaniu strony. Wytyczne wymieniają wśród praktyk zakazanych w każdych okolicznościach „stwarzanie pilnej potrzeby poprzez fałszywe twierdzenie, że produkt będzie dostępny tylko przez ograniczony czas” (załącznik I, nr 7) i dodają: „Dotyczy to na przykład fałszywych liczników czasu i informacji o ograniczonej ilości towaru na stronach internetowych”.
+
+## Jak uczciwie korzystać z dowodu społecznego?
+
+Pokazuj liczby z własnej bazy i mów, skąd pochodzą. Podsumowanie opinii, które bym wdrożył, brzmi mniej więcej tak: „4,6 na podstawie 312 opinii z potwierdzonych zamówień” (liczby wymyślone na potrzeby przykładu), z linkiem do opisu, jak opinie są weryfikowane.
+
+Ten link to nie ozdoba. Od dyrektywy Omnibus (2019/2161) przedsiębiorca, który udostępnia opinie konsumentów, musi poinformować, czy i jak sprawdza, że pochodzą od prawdziwych klientów (art. 7 ust. 6 UCPD). Załącznik I dokłada dwa zakazy: twierdzenie, że opinie pochodzą od osób, które produkt kupiły lub używały, bez rozsądnych kroków, żeby to sprawdzić (nr 23b), oraz zamieszczanie lub zlecanie fałszywych opinii albo przeinaczanie prawdziwych (nr 23c).
+
+Nielsen Norman Group zwraca uwagę na uczciwe ryzyko: dowód społeczny może zadziałać odwrotnie, gdy pokazuje, że coś podoba się zbyt małej liczbie osób. To powód, żeby poczekać, aż liczba będzie warta pokazania, a nie powód, żeby ją zaokrąglić w górę.
+
+Plakietka „ogląda teraz 12 osób” to wersja, której trzeba unikać. Jeśli liczba powstaje w przeglądarce, jest nieprawdziwym twierdzeniem. Wytyczne wymieniają wśród zakazanych praktyk „podawanie niedokładnych informacji o warunkach rynkowych” w celu nakłonienia do zakupu na gorszych warunkach (załącznik I, nr 18). Nie umiem sobie wyobrazić fałszywego licznika oglądających, który by się w tej idei nie mieścił.
+
+## Jak tabela cen powinna używać kotwic i wabików?
+
+Kotwica to pierwsza liczba, którą ktoś zobaczy, i to ona ustawia odbiór kolejnej. NN/g podaje klasyczny przykład: cena pierwotna obok ceny po obniżce. To w porządku, o ile cena pierwotna jest prawdziwa.
+
+Co znaczy „prawdziwa”, określa prawo UE. Art. 6a dyrektywy w sprawie podawania cen, dodany dyrektywą Omnibus, mówi, że każde ogłoszenie o obniżce podaje wcześniejszą cenę, a „Wcześniejsza cena oznacza najniższą cenę stosowaną przez podmiot gospodarczy w okresie, który nie może być krótszy niż 30 dni przed zastosowaniem obniżki ceny”. W Polsce to art. 4 ustawy o informowaniu o cenach towarów i usług, a UOKiK podkreśla, że dotyczy zarówno towarów, jak i usług.
+
+Przekreślona liczba pochodzi więc z historii cen, a nie z pola „cena regularna”, które ktoś wpisał ręcznie:
+
+```astro
+---
+interface Props {
+  price: number;
+  lowest30: number; // najniższa cena z 30 dni przed obniżką
+  locale: string; // "pl-PL", "en-GB"...
+  currency: string; // "PLN", "EUR"...
+}
+const { price, lowest30, locale, currency } = Astro.props;
+const money = new Intl.NumberFormat(locale, { style: "currency", currency });
+const off = Math.floor((1 - price / lowest30) * 100);
+---
+
+<p class="price">
+  <strong>{money.format(price)}</strong>
+  <del><span class="sr-only">Najniższa cena z 30 dni przed obniżką: </span>{money.format(lowest30)}</del>
+  <span>-{off}%</span>
+</p>
+```
+
+Trzy szczegóły. `Intl.NumberFormat` zapisuje cenę tak, jak robi to język czytelnika, więc polska strona dostaje przecinek dziesiętny i „zł” bez ręcznego formatowania. `Math.floor` zaokrągla procent w dół, więc etykieta nigdy nie obiecuje więcej, niż wynika z rachunku. A ukryty tekst jest dlatego, że, jak zauważa MDN, większość czytników ekranu domyślnie nie ogłasza `<del>`. Bez niego osoba z czytnikiem usłyszy dwie ceny i nie będzie wiedziała, która jest stara.
+
+W Polsce to nie teoria. W styczniu 2026 roku Prezes UOKiK nałożył na Zalando prawie 31 mln zł kary, a na Whaleco (Temu) prawie 6 mln zł, za sposób informowania o obniżkach. Według UOKiK Zalando pokazywało rabaty liczone od cen „początkowych” albo „regularnych” zamiast od najniższej ceny z 30 dni, a Temu nie zawsze podawało najniższą cenę z 30 dni albo podawało błędną. UOKiK zaznaczył, że obie decyzje są nieprawomocne.
+
+Przy przełączniku „miesięcznie / rocznie” uczciwą kotwicą jest cena miesięczna, którą naprawdę pobierasz, razy dwanaście:
+
+```ts
+type Plan = { price: number; months: number };
+
+/** Oszczędność dłuższego planu względem płacenia co miesiąc przez ten sam okres, zaokrąglona w dół. */
+export function savingPercent(monthly: Plan, long: Plan): number {
+  const sameTermMonthly = monthly.price * long.months;
+  return Math.floor(((sameTermMonthly - long.price) / sameTermMonthly) * 100);
+}
+```
+
+Karta planu rocznego mówi potem, co i kiedy zostanie pobrane: pełna kwota roczna, raz, z odnowieniem co rok, a kwota „w przeliczeniu na miesiąc” jako druga linijka, nie jako nagłówek. Wytyczne o okresach próbnych i subskrypcjach mówią, że nieprzejrzyste informacje o cyklicznych opłatach mogą naruszać dyrektywę, a konsumentowi trzeba wyraźnie wskazać zarówno kwotę jednorazową, jak i kwoty płatności cyklicznych.
+
+Wabiki to przypadek subtelniejszy. Huber, Payne i Puto pokazali w 1982 roku, że dodanie opcji wyraźnie gorszej od jednego planu (ale nie od drugiego) potrafi przesunąć wybory w stronę planu, który ją pokonuje. Tabela z trzema poziomami robi to prawie sama. Mój test to jedno pytanie: jeśli ktoś kupi środkowy plan, czy chętnie go dostarczę? Jeśli plan jest prawdziwy i uczciwie wyceniony, porównanie jest informacją. Jeśli istnieje tylko po to, żeby go odrzucić, tabela ma mylić i bym go wyciął.
+
+## Czy ustawienia domyślne i zaznaczone z góry pola są dozwolone?
+
+Ustawienia domyślne mają siłę, bo ludzie przy nich zostają, jak pisał Jakob Nielsen w 2005 roku. Dopuszczał też użycie sprzedażowe: zaznaczenie z góry planu rocznego w interfejsie subskrypcji jest w porządku. I od razu podał granicę: jeśli zawsze ustawiasz domyślnie najdroższą opcję, tracisz wiarygodność.
+
+Prawo jest surowsze tam, gdzie chodzi o pieniądze. Wytyczne przypominają, że stosowanie „z góry zaznaczonych pól wyboru, w tym w celu pobrania opłaty za dodatkowe usługi” jest zabronione na mocy art. 22 dyrektywy w sprawie praw konsumentów. Tę samą zasadę stosuję do zgód na newsletter i marketing: pole, które trzeba odznaczyć, to nie jest wybór, którego ktoś dokonał.
+
+```html
+<label>
+  <input type="checkbox" name="newsletter" />
+  Wysyłaj mi comiesięczny newsletter (wypiszesz się jednym kliknięciem)
+</label>
+```
+
+Bez `checked`. Etykieta mówi, co się stanie i jak to cofnąć.
+
+## Jak paski postępu korzystają z gradientu celu?
+
+Im bliżej celu, tym bardziej się staramy. W badaniu Kivetza, Urminsky'ego i Zhenga klienci kawiarni, którzy dostali kartę na 12 pieczątek z 2 „bonusowymi” już przybitymi, szybciej robili potrzebne 10 zakupów niż ci ze zwykłą kartą na 10 pieczątek. Ta sama praca, ale wydawało się, że jest się dalej.
+
+Na ekranie ten efekt tłumaczy, czemu paski postępu pomagają w długich formularzach i onboardingu. Uczciwa wersja liczy prawdziwe kroki:
+
+```ts
+const required = [...form.querySelectorAll<HTMLInputElement>("input[required]")];
+const bar = form.querySelector<HTMLProgressElement>("progress")!;
+
+const update = () => {
+  bar.max = required.length;
+  bar.value = required.filter((input) => input.value.trim() !== "").length;
+};
+form.addEventListener("input", update);
+update();
+```
+
+Natywny `<progress>` z `<label>` jest dostępny od ręki, tak jak opisuje to MDN. Fory są w porządku, jeśli są prawdziwe, na przykład profil, który ma już pola wypełnione przy rejestracji. Pasek, który na pierwszym ekranie skacze do 80%, albo „Krok 2 z 3”, który okazuje się mieć sześć kroków, pożycza efekt, nie płacąc za niego.
+
+## Kiedy awersja do straty zamienia się w zawstydzanie?
+
+Odkrycie Kahnemana i Tversky'ego, że straty ważą więcej niż równe im zyski, tłumaczy, czemu „Stracisz zapisane listy” działa mocniej niż „Zachowaj zapisane listy”. Powiedzenie, co ktoś straci, to uczciwa informacja. Problem zaczyna się, gdy opcję „nie” pisze się tak, żeby człowiek poczuł się źle.
+
+Wytyczne to nazywają: wykorzystywanie emocji, żeby odwieść użytkownika od wyboru („wzbudzanie” u konsumenta poczucia winy, ang. confirmshaming), może stanowić praktykę agresywną w rozumieniu art. 8 UCPD. Ich przykład to rezygnacja z subskrypcji z powtarzanymi komunikatami „Przykro nam, że odchodzisz” i „Oto korzyści, które stracisz” oraz obrazkami, które pchają w stronę zostania.
+
+Moje zasady dla ekranu rezygnacji albo odmowy:
+
+- Przycisk „nie” mówi, co robi: „Anuluj subskrypcję”, „Nie, dziękuję”. A nie „Nie, nie chcę uczyć się szybciej”.
+- Jeden uczciwy ekran o tym, co się zmieni, a potem akcja. Bez pętli.
+- Rezygnacja nie wymaga więcej kroków niż zapis. Wytyczne ujmują to jako zasadę: „anulowanie subskrypcji powinno być równie łatwe, jak jej rozpoczęcie”.
+- Oba przyciski da się przeczytać i kliknąć. Wytyczne podają „jeden przycisk bardzo widoczny, inny ukryty” jako przykład praktyki manipulacyjnej.
+
+## A wzajemność i darmowe okresy próbne?
+
+Wzajemność to najżyczliwszy z tych efektów, o ile jest prawdziwa: daj najpierw coś użytecznego, a ludzie chętniej się odwdzięczą. Naprawdę przydatna darmowa wersja, dobry artykuł, okres próbny, w którym produkt pokazuje, co potrafi.
+
+Pułapką staje się wtedy, gdy pod prezentem kryje się umowa. Wytyczne opisują „wprowadzające w błąd bezpłatne okresy próbne i pułapki subskrypcyjne”: jeśli przedsiębiorca nie powie jasno, że okres próbny przechodzi w subskrypcję, może to być zaniechanie wprowadzające w błąd. Dla ekranu takiego jak w Linkoglocie (okres próbny, potem plan miesięczny albo roczny) trzymam się takiej listy:
+
+- Pierwszy ekran oferty mówi, że okres próbny się skończy i zacznie się subskrypcja, i kiedy.
+- Pokazana cena to cena, która zostanie pobrana, za okres, w formacie waluty danego kraju (po polsku z przecinkiem dziesiętnym).
+- Przycisk zamówienia mówi, że rozpoczyna płatną subskrypcję.
+- Jak zrezygnować, jest napisane obok oferty, a nie tylko w regulaminie.
+
+## Co o dark patterns mówią przepisy UE i polskie?
+
+- **UCPD i wytyczne Komisji.** Dyrektywa nie definiuje „dark patterns”, ale obejmuje każdą nieuczciwą praktykę handlową, jakkolwiek ją nazwać. Część dark patterns jest zakazana wprost w załączniku I: fałszywe „tylko przez ograniczony czas” (nr 7), w tym fałszywe liczniki i informacje o ilości towaru, niedokładne informacje o warunkach rynkowych (nr 18) i nagabywanie (nr 26). W Polsce dyrektywę wdraża ustawa o przeciwdziałaniu nieuczciwym praktykom rynkowym.
+- **Akt o usługach cyfrowych (DSA), art. 25.** Dostawcy platform internetowych „nie mogą projektować, organizować ani obsługiwać swoich interfejsów internetowych w sposób, który wprowadza w błąd odbiorców usługi lub nimi manipuluje”. Polska wersja motywu 67 nazywa dark patterns „zwodniczymi interfejsami” i jako jeden z przykładów podaje „znacznie bardziej uciążliwą procedurę anulowania usługi niż jej wybór”. Dla większości programistów liczą się dwa ograniczenia: art. 25 ust. 2 wyłącza praktyki objęte UCPD lub RODO, a art. 19 wyłącza mikro i małe platformy, o ile nie są bardzo dużymi platformami internetowymi. W zwykłym sklepie zastosowanie ma przede wszystkim UCPD.
+- **Zasada cenowa z Omnibusa.** Przy obniżce pokazujesz najniższą cenę z 30 dni przed nią (art. 6a dyrektywy w sprawie podawania cen). W Polsce: art. 4 ustawy o informowaniu o cenach towarów i usług.
+- **UOKiK w praktyce.** 21 maja 2025 roku Prezes UOKiK uznał, że Azagroup, właściciel sklepów born2be.pl i renee.pl, wprowadzał konsumentów w błąd, sugerując ograniczony czas trwania promocji, podczas gdy towary były w cenach promocyjnych przez cały czas, i nałożył karę 14 910 599 zł. Decyzja opisuje zegar odliczający, który pokazywał inny koniec promocji niż faktyczny i był resetowany, oraz kody rabatowe stosowane w trybie ciągłym. Podstawą był art. 5 ustawy o przeciwdziałaniu nieuczciwym praktykom rynkowym w związku z art. 24 ustawy o ochronie konkurencji i konsumentów. UOKiK zaznaczył, że decyzja jest nieprawomocna.
+
+## Co sprawdzam, zanim wypuszczę ekran, który ma przekonywać?
+
+1. **Każda liczba ma źródło.** Stan magazynu, opinie, „kupiło już”, terminy: każda czytana z danych, a gdy danych brak, nie pokazuje się nic.
+2. **Przekreślone ceny pochodzą z historii cen.** Najniższa cena z 30 dni i procent zaokrąglony w dół.
+3. **Żadnych zaznaczonych z góry pól** przy czymkolwiek płatnym i przy zgodach marketingowych.
+4. **„Nie” to prawdziwy przycisk** z neutralnym tekstem, równie widoczny i z równie krótką ścieżką jak „tak”.
+5. **Postęp jest liczony, nie rysowany.**
+6. **Pełna cena jest na pierwszym ekranie**, łącznie z tym, co i kiedy się odnawia.
+7. **Czy byłbym spokojny, gdyby użytkownik zobaczył kod?** Jeśli komponent działa tylko dopóty, dopóki nikt go nie czyta, nie wypuszczam go.
+
+## Ograniczenia
+
+- Do tego wpisu przeczytałem przepisy, wytyczne Komisji i strony UOKiK. Nie czytałem orzecznictwa, a decyzje UOKiK, które cytuję, były w chwili ogłoszenia nieprawomocne.
+- Badania to konkretne eksperymenty, jak karta lojalnościowa w kawiarni czy wybory między zestawami produktów. Pokazują, że efekty istnieją, a nie to, jak duże będą na Twojej stronie. Zanim ogłosisz wzrost, przetestuj.
+- Ten wpis nie jest audytem żadnego z moich ekranów. To lista, której używam, kiedy je buduję.
+
+Jeśli budujesz produkty, w których ekran musi kogoś przekonać, chętnie posłucham, gdzie Ty stawiasz te granice. [Tu znajdziesz kontakt do mnie](/pl/#contact). Więcej o aplikacji z subskrypcją, o której tu wspominam, przeczytasz we wpisie o tym, [jak w pojedynkę wypuściłem Linkoglota](/pl/blog/aplikacja-mobilna-w-pojedynke/), a inny przepis UE czytany prosto ze źródła znajdziesz w tekście o [analityce bez cookies w Polsce](/pl/blog/analityka-bez-cookies-w-polsce/).

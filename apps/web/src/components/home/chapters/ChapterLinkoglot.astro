@@ -23,18 +23,19 @@ const labelPlay = t`Play video`;
 ---
 
 <section class="sec chapter c-lk" id="linkoglot" aria-labelledby="t-lk" style={`--fit-h:${fitHeight}`}>
+  <div class="ch-bg" aria-hidden="true"></div>
   <ChapterBadge img="/media/linkoglot/icon.webp" label={t`Own product · solo · 2026`} />
   <Fit as="h2" id="t-lk" lines={["Linkoglot"]} />
   <div class="board">
     <div class="side ch-info">
-      <p class="outcome rv">{typo(locale, t`Snap a photo, get flashcards. A subscription language app, shipped solo to both stores.`)}</p>
+      <p class="outcome rv">
+        {typo(locale, t`Snap a photo, get flashcards. A subscription language app, shipped solo to both stores.`)}
+      </p>
       <p class="desc rv" style="--d:1">
-        {
-          typo(
-            locale,
-            t`Point the camera at a street, a room or your breakfast, and Linkoglot turns what it sees into flashcards and quizzes. Free to try, then a monthly or yearly plan; the app comes in 30 languages. I built and published it alone.`,
-          )
-        }
+        {typo(
+          locale,
+          t`Point the camera at a street, a room or your breakfast, and Linkoglot turns what it sees into flashcards and quizzes. Free to try, then a monthly or yearly plan; the app comes in 30 languages. I built and published it alone.`,
+        )}
       </p>
     </div>
 
@@ -43,6 +44,7 @@ const labelPlay = t`Play video`;
         <div class="frame">
           <div class="phone enter">
             <video
+              tabindex="-1"
               muted
               loop
               playsinline
@@ -55,7 +57,9 @@ const labelPlay = t`Play video`;
               <source data-src="/media/linkoglot/camera.av1.mp4" type='video/mp4; codecs="av01.0.05M.08"' />
               <source data-src="/media/linkoglot/camera.mp4" type="video/mp4" />
             </video>
-            <span class="bigplay" aria-hidden="true"><Icon name="tbf:player-play" /></span>
+            <span class="bigplay" aria-hidden="true">
+              <Icon name="tbf:player-play" />
+            </span>
             <button
               class="r-hit"
               type="button"
@@ -63,12 +67,19 @@ const labelPlay = t`Play video`;
               aria-pressed="true"
               aria-label={labelPlay}
               data-label-pause={labelPause}
-              data-label-play={labelPlay}></button>
+              data-label-play={labelPlay}
+            ></button>
           </div>
           <div class="flash" aria-hidden="true">
             <div class="card">
-              <div class="face"><span>{t`Snapped → card`}</span><b>{t`la maceta`}</b></div>
-              <div class="face back"><span>{t`Spanish → English`}</span><b>{t`the flowerpot`}</b></div>
+              <div class="face">
+                <span>{t`Snapped → card`}</span>
+                <b>{t`la maceta`}</b>
+              </div>
+              <div class="face back">
+                <span>{t`Spanish → English`}</span>
+                <b>{t`the flowerpot`}</b>
+              </div>
             </div>
           </div>
         </div>
@@ -86,7 +97,8 @@ const labelPlay = t`Play video`;
           data-umami-event-target="app-store"
           data-umami-event-project="linkoglot"
         >
-          <Icon name="si:apple" />App Store<span class="sr-only">{t`(opens in a new tab)`}</span>
+          <Icon name="si:apple" />
+          App Store<span class="sr-only">{t`(opens in a new tab)`}</span>
         </a>
         <a
           class="btn btn-inv"
@@ -97,7 +109,8 @@ const labelPlay = t`Play video`;
           data-umami-event-target="google-play"
           data-umami-event-project="linkoglot"
         >
-          <Icon name="si:googleplay" />Google Play<span class="sr-only">{t`(opens in a new tab)`}</span>
+          <Icon name="si:googleplay" />
+          Google Play<span class="sr-only">{t`(opens in a new tab)`}</span>
         </a>
       </div>
       <p class="status live">{t`Live · pre-traction`}</p>
@@ -142,7 +155,9 @@ const labelPlay = t`Play video`;
   .phone {
     position: relative;
     z-index: 1;
-    width: clamp(13.75rem, 21vw, 18.75rem);
+    /* The whole phone fits under the header on a short laptop screen (it is also the tap-to-pause target). */
+    width: clamp(12rem, min(21vw, (100vh - var(--header-h) - 4.5rem) * 0.461), 18.75rem);
+    width: clamp(12rem, min(21vw, (100svh - var(--header-h) - 4.5rem) * 0.461), 18.75rem);
     aspect-ratio: 320 / 694;
     border-radius: 2.125rem;
     overflow: hidden;

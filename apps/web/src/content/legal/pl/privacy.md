@@ -25,7 +25,7 @@ updated: 2026-10-05
 | Cel | Podstawa prawna i prawnie uzasadniony interes | Okres przechowywania |
 | --- | --- | --- |
 | Dostarczanie Serwisu i zapewnienie jego bezpieczeństwa (pkt 4) | art. 6 ust. 1 lit. f RODO: bezpieczeństwo sieci i informacji oraz prawidłowe działanie Serwisu (motyw 49 RODO) | okres określony przez Vercel dla planu Administratora; w dniu sporządzenia Polityki dzienniki wykonania funkcji serwerowych: 1 dzień |
-| Odpowiedź na wiadomość z formularza kontaktowego (pkt 5) | art. 6 ust. 1 lit. f RODO: udzielanie odpowiedzi na kierowane zapytania; art. 6 ust. 1 lit. b RODO, gdy wiadomość dotyczy zatrudnienia albo projektu (działania na żądanie Użytkownika przed zawarciem umowy) | czas obsługi sprawy, a następnie nie dłużej niż 12 miesięcy od ostatniej wiadomości; w usłudze Resend: 30 dni |
+| Odpowiedź na wiadomość z formularza kontaktowego (pkt 5) | art. 6 ust. 1 lit. f RODO: udzielanie odpowiedzi na kierowane zapytania; art. 6 ust. 1 lit. b RODO, gdy wiadomość dotyczy zatrudnienia albo projektu (działania na żądanie Użytkownika przed zawarciem umowy) | czas obsługi sprawy, a następnie nie dłużej niż 12 miesięcy od ostatniej wiadomości; w usłudze EmailJS: do 30 dni |
 | Ochrona formularza przed spamem i nadużyciami (pkt 5 i 6) | art. 6 ust. 1 lit. f RODO: ochrona formularza przed zautomatyzowanymi nadużyciami | adres IP: przez czas niezbędny do stosowania limitu wiadomości; dane Turnstile: zgodnie z zasadami Cloudflare |
 | Statystyki odwiedzin (pkt 7) | art. 6 ust. 1 lit. f RODO: poznanie sposobu korzystania z Serwisu; art. 399 PKE w zakresie, w jakim ma zastosowanie | 6 miesięcy |
 | Ustalenie, dochodzenie lub obrona roszczeń | art. 6 ust. 1 lit. f RODO: ochrona praw Administratora | do upływu terminu przedawnienia roszczeń |
@@ -40,7 +40,7 @@ updated: 2026-10-05
 
 1. Formularz kontaktowy zawiera pola: treść wiadomości (obowiązkowe); dane do odpowiedzi, tj. adres e-mail, numer telefonu albo adres profilu w serwisie LinkedIn, według wyboru Użytkownika (obowiązkowe); temat: praca, projekt albo pytanie (nieobowiązkowe).
 2. Przy wysyłaniu wiadomości funkcja serwerowa przetwarza ponadto adres IP nadawcy w celu ograniczenia liczby wiadomości wysyłanych z jednego adresu (rate limiting).
-3. Wiadomość jest doręczana pocztą elektroniczną za pośrednictwem usługi Resend, świadczonej przez Plus Five Five, Inc. (Stany Zjednoczone), do skrzynki pocztowej Administratora prowadzonej przez [[MAILBOX_PROVIDER]].
+3. Wiadomość jest doręczana pocztą elektroniczną za pośrednictwem usługi EmailJS, świadczonej przez EmailJS Pte. Ltd. (Singapur), której serwery znajdują się w Stanach Zjednoczonych, do skrzynki pocztowej Administratora prowadzonej przez [[MAILBOX_PROVIDER]].
 4. Administrator odpowiada za pośrednictwem kanału wskazanego przez Użytkownika. W przypadku profilu LinkedIn korespondencja odbywa się w tym serwisie, którego operator jest odrębnym administratorem.
 5. W wiadomości nie należy przekazywać danych szczególnych kategorii (art. 9 ust. 1 RODO) ani zbędnych danych osób trzecich.
 6. Z Administratorem można kontaktować się także bezpośrednio pod adresem e-mail [[EMAIL]].
@@ -81,7 +81,7 @@ updated: 2026-10-05
 ## 9. Odnośniki do serwisów zewnętrznych
 
 1. Serwis nie osadza treści podmiotów trzecich. Czcionki i nagrania wideo są udostępniane z infrastruktury Serwisu.
-2. Odnośniki do serwisów GitHub, LinkedIn, npm, App Store, Google Play, Discord i Messenger są zwykłymi hiperłączami; do chwili kliknięcia żadne dane nie są przekazywane operatorom tych serwisów. Po kliknięciu operator danego serwisu przetwarza dane jako odrębny administrator, na zasadach określonych we własnej polityce prywatności.
+2. Odnośniki do serwisów GitHub, LinkedIn, npm, Instagram, Facebook, Telegram, App Store, Google Play, Discord i Messenger są zwykłymi hiperłączami; do chwili kliknięcia żadne dane nie są przekazywane operatorom tych serwisów. Po kliknięciu operator danego serwisu przetwarza dane jako odrębny administrator, na zasadach określonych we własnej polityce prywatności.
 
 ## 10. Dane Administratora publikowane w Serwisie
 
@@ -95,7 +95,7 @@ updated: 2026-10-05
 | Odbiorca i zakres | Rola | Miejsce przechowywania danych |
 | --- | --- | --- |
 | Vercel Inc. (Stany Zjednoczone): hosting, dzienniki serwera, obsługa formularza | podmiot przetwarzający; odrębny administrator danych generowanych przez usługę | globalna sieć CDN; funkcja formularza: UE (Frankfurt) |
-| Plus Five Five, Inc. (Stany Zjednoczone), operator usługi Resend: doręczanie wiadomości | podmiot przetwarzający | Stany Zjednoczone |
+| EmailJS Pte. Ltd. (Singapur), operator usługi EmailJS: doręczanie wiadomości | podmiot przetwarzający | Stany Zjednoczone |
 | [[MAILBOX_PROVIDER]]: skrzynka pocztowa Administratora | podmiot przetwarzający | [[MAILBOX_LOCATION]] |
 | Cloudflare, Inc. (Stany Zjednoczone): weryfikacja Turnstile | podmiot przetwarzający; odrębny administrator w zakresie doskonalenia wykrywania botów | globalna sieć Cloudflare |
 | Umami Software, Inc. (Stany Zjednoczone): statystyki odwiedzin | podmiot przetwarzający | Unia Europejska |
@@ -106,8 +106,8 @@ updated: 2026-10-05
 ## 12. Przekazywanie danych poza Europejski Obszar Gospodarczy
 
 1. Dane mogą być przekazywane do Stanów Zjednoczonych, odpowiednio na podstawie:
-   1) decyzji wykonawczej Komisji (UE) 2023/1795 z dnia 10 lipca 2023 r. dotyczącej EU-US Data Privacy Framework (art. 45 RODO), w odniesieniu do Vercel Inc. oraz, w zakresie, w jakim ich certyfikacja ma zastosowanie, Plus Five Five, Inc. i Cloudflare, Inc.;
-   2) standardowych klauzul umownych przyjętych decyzją wykonawczą Komisji (UE) 2021/914 z dnia 4 czerwca 2021 r. (art. 46 ust. 2 lit. c RODO), w odniesieniu do Umami Software, Inc. w razie dostępu do danych z terytorium Stanów Zjednoczonych oraz jako zabezpieczenie dodatkowe w odniesieniu do Plus Five Five, Inc. i Cloudflare, Inc.
+   1) decyzji wykonawczej Komisji (UE) 2023/1795 z dnia 10 lipca 2023 r. dotyczącej EU-US Data Privacy Framework (art. 45 RODO), w odniesieniu do Vercel Inc. oraz, w zakresie, w jakim jej certyfikacja ma zastosowanie, Cloudflare, Inc.;
+   2) standardowych klauzul umownych przyjętych decyzją wykonawczą Komisji (UE) 2021/914 z dnia 4 czerwca 2021 r. (art. 46 ust. 2 lit. c RODO), w odniesieniu do EmailJS Pte. Ltd. (Singapur i Stany Zjednoczone) oraz Umami Software, Inc. w razie dostępu do danych z terytorium Stanów Zjednoczonych, a także jako zabezpieczenie dodatkowe w odniesieniu do Cloudflare, Inc.
 2. Jeżeli [[MAILBOX_PROVIDER]] lub inny odbiorca przetwarza dane poza Europejskim Obszarem Gospodarczym, przekazanie następuje wyłącznie na podstawie art. 45 albo art. 46 RODO.
 3. Kopię stosowanych zabezpieczeń można uzyskać od Administratora. Wykaz podmiotów certyfikowanych jest dostępny pod adresem [dataprivacyframework.gov](https://www.dataprivacyframework.gov/list).
 

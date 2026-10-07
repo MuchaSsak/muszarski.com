@@ -1,0 +1,552 @@
+---
+/**
+ * Films: roll the film [user 2026-10-06: "actual films rolled ... parodies/indications so that everybody knows what
+ * it's about"; then "detailed illustrations ... instead of boring text ... of course everything performant still"].
+ * The old countdown leader plays (a sweep around the circle, 3, 2, 1) under grain and flicker, then tonight's film:
+ * a drawn parody still (scripts/life-films.ts, own work: no titles, posters, characters or likenesses), picture only
+ * [user 2026-10-06: "shouldnt include all that text when rolled"]; its genre and one-line parody go to screen readers.
+ * The drawings load on the first roll; at rest, and with paused motion, the title card sits there and a roll shows the
+ * still at once.
+ */
+import { t } from "lingui-for-astro/macro";
+
+import Icon from "~/components/ui/Icon.astro";
+
+/** `id` keys the drawing in scripts/life-films.ts. */
+const FILMS = [
+  { id: "swords", genre: t`Sci-fi`, line: t`Space wizards with laser swords.` },
+  { id: "ring", genre: t`Fantasy`, line: t`One ring. One volcano. A very long walk.` },
+  { id: "dino", genre: t`Adventure`, line: t`Bringing dinosaurs back was a bad idea.` },
+  { id: "ship", genre: t`Romance`, line: t`The ship sinks. There was room on that door.` },
+  { id: "pills", genre: t`Sci-fi`, line: t`Red pill or blue pill?` },
+  { id: "shark", genre: t`Thriller`, line: t`A shark, a beach, and a boat that's too small.` },
+  { id: "top", genre: t`Sci-fi`, line: t`A dream inside a dream inside a dream.` },
+  { id: "toys", genre: t`Animation`, line: t`The toys come alive when you leave the room.` },
+  { id: "car", genre: t`Comedy`, line: t`A car, 88 miles per hour, and 1955.` },
+  { id: "shades", genre: t`Action`, line: t`He said he'd be back. He was.` },
+];
+---
+
+<div class="film" data-film data-films={JSON.stringify(FILMS)} data-tonight={t`Tonight`}>
+  <div class="screen" aria-hidden="true">
+    <span class="sweep"></span>
+    <span class="cross"></span>
+    <span class="ring"></span>
+    <b class="num" data-num>
+      3
+    </b>
+    <span class="end" data-end>
+      <span class="e-scene" data-scene></span>
+      <span class="e-top">{t`Movie night.`}</span>
+    </span>
+    <span class="grain"></span>
+  </div>
+  <p class="sr-only" role="status" data-said></p>
+  <button class="toy-btn f-btn" type="button" data-roll>
+    <Icon name="tb:movie" />
+    {t`Roll it`}
+  </button>
+</div>
+
+<style>
+  .film {
+    display: grid;
+    gap: 0.875rem;
+  }
+  .screen {
+    position: relative;
+    display: grid;
+    place-items: center;
+    aspect-ratio: 4 / 3;
+    overflow: hidden;
+    background: #d9d4c4;
+    color: var(--navy);
+    box-shadow:
+      inset 0 0 0 0.5rem var(--navy),
+      5px 5px 0 rgb(10 13 51 / 0.35);
+  }
+  .screen > * {
+    grid-area: 1 / 1;
+  }
+  .sweep,
+  .cross,
+  .ring,
+  .num {
+    visibility: hidden;
+  }
+  .sweep {
+    position: absolute;
+    inset: -20%;
+    background: conic-gradient(from 0deg, rgb(10 13 51 / 0.45) var(--a, 0deg), transparent 0);
+  }
+  .cross {
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(var(--navy), var(--navy)) 50% 0 / 3px 100% no-repeat,
+      linear-gradient(var(--navy), var(--navy)) 0 50% / 100% 3px no-repeat;
+  }
+  .ring {
+    width: 70%;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    box-shadow:
+      0 0 0 4px var(--navy),
+      inset 0 0 0 12px #d9d4c4,
+      inset 0 0 0 15px var(--navy);
+  }
+  .num {
+    position: relative;
+    font-weight: 900;
+    font-size: clamp(4rem, 9vw, 6.5rem);
+    line-height: 1;
+    font-stretch: 80%;
+  }
+  .end {
+    display: grid;
+    justify-items: center;
+    gap: 0.5rem;
+    padding: 0 1.25rem;
+    text-align: center;
+  }
+  .e-top {
+    font-weight: 900;
+    font-size: clamp(1.75rem, 3.4vw, 2.75rem);
+    line-height: 0.95;
+    text-transform: uppercase;
+    font-style: italic;
+    font-stretch: 70%;
+  }
+  .e-scene:empty,
+  .picked .e-top {
+    display: none;
+  }
+  /* Once a film has rolled: the still fills the screen inside its frame, nothing written over it. */
+  .picked .end {
+    position: absolute;
+    inset: 0.5rem;
+    display: block;
+    padding: 0;
+  }
+  .e-scene {
+    position: absolute;
+    inset: 0;
+  }
+  .e-scene :global(.fs) {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+  .grain {
+    position: absolute;
+    inset: -50%;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='.5'/%3E%3C/svg%3E");
+    mix-blend-mode: multiply;
+    opacity: 0.35;
+    pointer-events: none;
+  }
+  .rolling .grain {
+    animation: fm-grain 0.25s steps(3) infinite;
+  }
+  @keyframes fm-grain {
+    33% {
+      translate: -12% 8%;
+    }
+    66% {
+      translate: 9% -11%;
+    }
+  }
+  .rolling :is(.sweep, .cross, .ring, .num) {
+    visibility: visible;
+  }
+  .rolling .end {
+    visibility: hidden;
+  }
+  .rolling .screen {
+    animation: fm-flicker 0.12s steps(2) infinite;
+  }
+  @keyframes fm-flicker {
+    50% {
+      filter: brightness(1.08);
+    }
+  }
+  .ended .end {
+    animation: fm-title 0.45s var(--ease-pop);
+  }
+  @keyframes fm-title {
+    from {
+      transform: scale(1.25);
+      opacity: 0;
+    }
+  }
+  .f-btn {
+    justify-self: start;
+  }
+
+  /* ---- The stills move a little while they show (classes from scripts/life-films.ts). Small areas, soft changes,
+     nothing near 3 flashes a second (WCAG 2.3.1); paused or reduced motion shows the drawing as it is. */
+  .e-scene
+    :global(:is(.fm-spark, .fm-eye, .fm-rip ellipse, .fm-door, .fm-heart, .fm-boat, .fm-blink, .fm-fire, .fm-red, .fm-ret)) {
+    transform-box: fill-box;
+    transform-origin: center;
+  }
+  .e-scene :global(.fm-tw) {
+    animation: fm-fade 2.4s ease-in-out infinite alternate;
+  }
+  .e-scene :global(:is(.fm-hum, .fm-lava, .fm-hud)) {
+    animation: fm-fade 0.9s ease-in-out infinite alternate;
+  }
+  @keyframes fm-fade {
+    to {
+      opacity: 0.45;
+    }
+  }
+  .e-scene :global(.fm-spark) {
+    animation: fm-spark 0.8s ease-in-out infinite alternate;
+  }
+  @keyframes fm-spark {
+    to {
+      scale: 0.75;
+    }
+  }
+  .e-scene :global(:is(.fm-bob, .fm-dino, .fm-pill)) {
+    animation: fm-bob 2.6s ease-in-out infinite alternate;
+  }
+  .e-scene :global(.fm-pill + .fm-pill) {
+    animation-delay: -1.3s;
+  }
+  @keyframes fm-bob {
+    to {
+      translate: 0 -3px;
+    }
+  }
+  .e-scene :global(.fm-smoke) {
+    animation: fm-drift 4s ease-in-out infinite alternate;
+  }
+  @keyframes fm-drift {
+    to {
+      translate: 4px -2px;
+    }
+  }
+  .e-scene :global(:is(.fm-eye, .fm-blink)) {
+    animation: fm-blink 3.4s infinite;
+  }
+  @keyframes fm-blink {
+    0%,
+    90%,
+    100% {
+      scale: 1;
+    }
+    94% {
+      scale: 1 0.1;
+    }
+  }
+  .e-scene :global(.fm-rip ellipse) {
+    animation: fm-rip 1.8s ease-out infinite;
+  }
+  .e-scene :global(.fm-rip ellipse:nth-child(2)) {
+    animation-delay: -0.6s;
+  }
+  .e-scene :global(.fm-rip ellipse:nth-child(3)) {
+    animation-delay: -1.2s;
+  }
+  @keyframes fm-rip {
+    from {
+      scale: 0.15;
+      opacity: 1;
+    }
+    to {
+      scale: 1;
+      opacity: 0;
+    }
+  }
+  .e-scene :global(.fm-door) {
+    animation: fm-float 2.8s ease-in-out infinite alternate;
+  }
+  @keyframes fm-float {
+    from {
+      rotate: -2deg;
+    }
+    to {
+      rotate: 2deg;
+      translate: 0 1.5px;
+    }
+  }
+  .e-scene :global(.fm-heart) {
+    animation: fm-beat 1.2s ease-in-out infinite;
+  }
+  @keyframes fm-beat {
+    15% {
+      scale: 1.2;
+    }
+    30% {
+      scale: 1;
+    }
+    45% {
+      scale: 1.12;
+    }
+    60% {
+      scale: 1;
+    }
+  }
+  .e-scene :global(.fm-waves) {
+    animation: fm-sway 3s ease-in-out infinite alternate;
+  }
+  @keyframes fm-sway {
+    to {
+      translate: -4px 0;
+    }
+  }
+  .e-scene :global(.fm-rain > g) {
+    animation: fm-fall 3.2s linear infinite;
+  }
+  .e-scene :global(.fm-rain > g:nth-child(3n)) {
+    animation-duration: 2.3s;
+  }
+  .e-scene :global(.fm-rain > g:nth-child(3n + 1)) {
+    animation-duration: 4.1s;
+  }
+  .e-scene :global(.fm-rain > g:nth-child(4n)) {
+    animation-delay: -1.4s;
+  }
+  .e-scene :global(.fm-rain > g:nth-child(5n + 2)) {
+    animation-delay: -2.2s;
+  }
+  @keyframes fm-fall {
+    to {
+      translate: 0 120px;
+    }
+  }
+  .e-scene :global(.fm-boat) {
+    transform-origin: 50% 100%;
+    animation: fm-rock 2.4s ease-in-out infinite alternate;
+  }
+  @keyframes fm-rock {
+    from {
+      rotate: -4deg;
+    }
+    to {
+      rotate: 4deg;
+      translate: 0 1px;
+    }
+  }
+  .e-scene :global(.fm-shark) {
+    animation: fm-glide 5s ease-in-out infinite alternate;
+  }
+  @keyframes fm-glide {
+    to {
+      translate: -6px -2px;
+    }
+  }
+  .e-scene :global(.fm-surf) {
+    animation: fm-surf 1.6s linear infinite;
+  }
+  @keyframes fm-surf {
+    to {
+      translate: -10px 0;
+    }
+  }
+  .e-scene :global(.fm-top) {
+    transform-origin: 80px 84px;
+    animation: fm-wobble 1.4s ease-in-out infinite alternate;
+  }
+  @keyframes fm-wobble {
+    from {
+      rotate: -5deg;
+    }
+    to {
+      rotate: 5deg;
+    }
+  }
+  .e-scene :global(.fm-band) {
+    animation: fm-spin 0.35s linear infinite;
+  }
+  @keyframes fm-spin {
+    to {
+      stroke-dashoffset: -5;
+    }
+  }
+  .e-scene :global(.fm-whirl) {
+    animation: fm-fade 0.7s ease-in-out infinite alternate;
+  }
+  .e-scene :global(.fm-robot) {
+    animation: fm-hop 1.2s ease-in-out infinite;
+  }
+  @keyframes fm-hop {
+    0%,
+    60%,
+    100% {
+      translate: 0 0;
+    }
+    30% {
+      translate: 0 -3px;
+    }
+  }
+  .e-scene :global(.fm-wave) {
+    transform-origin: 62px 58px;
+    animation: fm-wave 0.6s ease-in-out infinite alternate;
+  }
+  @keyframes fm-wave {
+    from {
+      rotate: -14deg;
+    }
+    to {
+      rotate: 18deg;
+    }
+  }
+  .e-scene :global(.fm-tilt) {
+    transform-origin: 92px 66px;
+    animation: fm-tilt 3s ease-in-out infinite alternate;
+  }
+  @keyframes fm-tilt {
+    from {
+      rotate: -8deg;
+    }
+    to {
+      rotate: 6deg;
+    }
+  }
+  .e-scene :global(.fm-fire) {
+    transform-origin: 50% 0;
+    animation: fm-fire 0.3s ease-in-out infinite alternate;
+  }
+  @keyframes fm-fire {
+    to {
+      scale: 1 0.88;
+      opacity: 0.85;
+    }
+  }
+  .e-scene :global(.fm-car) {
+    animation: fm-rumble 0.2s steps(2) infinite;
+  }
+  @keyframes fm-rumble {
+    50% {
+      translate: 0 -0.4px;
+    }
+  }
+  .e-scene :global(.fm-zap) {
+    animation: fm-zap 1.4s steps(1) infinite;
+  }
+  @keyframes fm-zap {
+    50% {
+      opacity: 0;
+    }
+  }
+  /* The bolt strikes once every 3 s: two quick blinks of a small shape. */
+  .e-scene :global(.fm-bolt) {
+    opacity: 0;
+    animation: fm-bolt 3s infinite;
+  }
+  @keyframes fm-bolt {
+    0%,
+    86%,
+    100% {
+      opacity: 0;
+    }
+    88%,
+    93% {
+      opacity: 1;
+    }
+    90.5% {
+      opacity: 0.3;
+    }
+  }
+  .e-scene :global(.fm-red) {
+    animation: fm-red 1.3s ease-in-out infinite alternate;
+  }
+  @keyframes fm-red {
+    to {
+      scale: 0.82;
+      opacity: 0.6;
+    }
+  }
+  .e-scene :global(.fm-ret) {
+    animation: fm-turn 5s linear infinite;
+  }
+  @keyframes fm-turn {
+    to {
+      rotate: 360deg;
+    }
+  }
+  .e-scene :global(.fm-scan) {
+    animation: fm-scan 2.8s linear infinite;
+  }
+  @keyframes fm-scan {
+    to {
+      translate: 0 120px;
+    }
+  }
+  :global(.still) .e-scene :global(*) {
+    animation: none !important;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .e-scene :global(*) {
+      animation: none !important;
+    }
+  }
+</style>
+
+<script>
+  import { audio, blip } from "~/scripts/life-audio";
+  import { motionStill } from "~/scripts/motion";
+
+  type Film = { id: string; genre: string; line: string };
+  let scenes: Promise<Record<string, () => string>> | undefined;
+  /** The drawings load when a roll is near (a hover, a focus, a press), never with the page. */
+  const loadScenes = () =>
+    (scenes ??= import("~/scripts/life-films").then((m) => m.SCENES).catch((): Record<string, () => string> => ({})));
+
+  for (const root of document.querySelectorAll<HTMLElement>("[data-film]")) {
+    const num = root.querySelector<HTMLElement>("[data-num]")!;
+    const sweep = root.querySelector<HTMLElement>(".sweep")!;
+    const scene = root.querySelector<HTMLElement>("[data-scene]")!;
+    const said = root.querySelector<HTMLElement>("[data-said]")!;
+    const button = root.querySelector<HTMLButtonElement>("[data-roll]")!;
+    const films: Film[] = JSON.parse(root.dataset.films ?? "[]");
+    let last = -1;
+    let busy = false;
+    const reveal = async () => {
+      let k = last;
+      while (k === last && films.length > 1) k = Math.floor(Math.random() * films.length);
+      last = k;
+      const film = films[k]!;
+      const draw = (await loadScenes())[film.id];
+      // Static markup from our own module, never from input.
+      scene.innerHTML = draw ? draw() : "";
+      root.classList.add("picked");
+      said.textContent = `${root.dataset.tonight ?? ""} · ${film.genre}: ${film.line}`;
+    };
+    for (const type of ["pointerenter", "focus"]) button.addEventListener(type, () => void loadScenes(), { once: true });
+    button.addEventListener("click", () => {
+      if (busy) return;
+      busy = true;
+      void loadScenes();
+      if (motionStill()) return void reveal().finally(() => (busy = false));
+      root.classList.remove("ended");
+      root.classList.add("rolling");
+      const start = performance.now();
+      let shown = 0;
+      const frame = (now: number) => {
+        const s = (now - start) / 1000;
+        const left = 3 - Math.floor(s);
+        if (left > 0) {
+          if (left !== shown) {
+            shown = left;
+            num.textContent = String(left);
+            const ac = audio();
+            if (ac) blip(ac, 880);
+          }
+          sweep.style.setProperty("--a", `${(s % 1) * 360}deg`);
+          requestAnimationFrame(frame);
+          return;
+        }
+        void reveal().finally(() => {
+          busy = false;
+          root.classList.remove("rolling");
+          root.classList.add("ended");
+        });
+      };
+      requestAnimationFrame(frame);
+    });
+  }
+</script>

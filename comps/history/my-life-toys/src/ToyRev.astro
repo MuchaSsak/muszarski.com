@@ -1,0 +1,184 @@
+---
+/**
+ * Motorcycles: hold to rev. The needle climbs (a little shaky), the card trembles at the red line and an engine
+ * (synthesised, `life-audio.ts`) follows the throttle; let go and it drops back to idle. Works with a held mouse,
+ * finger, Space or Enter.
+ */
+import { t } from "lingui-for-astro/macro";
+
+const CX = 100;
+const CY = 104;
+const R = 82;
+/** The dial runs 240° from 0 at the bottom left to 12 at the bottom right. */
+const at = (v: number, r: number) => {
+  const a = ((210 - 240 * v) * Math.PI) / 180;
+  return [CX + r * Math.cos(a), CY - r * Math.sin(a)] as const;
+};
+const ticks = Array.from({ length: 13 }, (_, k) => ({
+  k,
+  inner: at(k / 12, R - 12),
+  outer: at(k / 12, R),
+  label: at(k / 12, R - 27),
+}));
+const [rx1, ry1] = at(10 / 12, R - 4);
+const [rx2, ry2] = at(1, R - 4);
+const red = `M${rx1.toFixed(1)} ${ry1.toFixed(1)} A${R - 4} ${R - 4} 0 0 1 ${rx2.toFixed(1)} ${ry2.toFixed(1)}`;
+---
+
+<div class="rev" data-rev>
+  <svg class="gauge" viewBox="0 0 200 168" aria-hidden="true">
+    <circle class="g-face" cx={CX} cy={CY} r={R + 8}></circle>
+    <path class="g-red" d={red}></path>
+    {ticks.map((tick) => (
+      <>
+        <line class="g-tick" x1={tick.inner[0]} y1={tick.inner[1]} x2={tick.outer[0]} y2={tick.outer[1]} />
+        <text class="g-num" x={tick.label[0]} y={tick.label[1] + 4}>
+          {tick.k}
+        </text>
+      </>
+    ))}
+    <text class="g-unit" x={CX} y={CY + 34}>
+      ×1000 rpm
+    </text>
+    <g class="needle" data-needle>
+      <line x1={CX} y1={CY} x2={CX + R - 14} y2={CY}></line>
+    </g>
+    <circle class="g-hub" cx={CX} cy={CY} r="7"></circle>
+  </svg>
+  <button class="toy-btn rev-btn" type="button" data-throttle>{t`Hold to rev`}</button>
+</div>
+
+<style>
+  .rev {
+    display: grid;
+    justify-items: center;
+    gap: 0.5rem;
+  }
+  .gauge {
+    display: block;
+    width: min(100%, 16rem);
+    overflow: hidden;
+  }
+  .g-face {
+    fill: var(--navy);
+  }
+  .g-red {
+    fill: none;
+    stroke: var(--pink);
+    stroke-width: 8;
+  }
+  .g-tick {
+    stroke: var(--ice);
+    stroke-width: 3;
+  }
+  .g-num {
+    fill: var(--ice);
+    font-weight: 800;
+    font-size: 12px;
+    text-anchor: middle;
+  }
+  .g-unit {
+    fill: var(--yellow);
+    font-weight: 800;
+    font-size: 9px;
+    letter-spacing: 0.08em;
+    text-anchor: middle;
+    text-transform: uppercase;
+  }
+  .needle {
+    transform-box: view-box;
+    transform-origin: 100px 104px;
+    rotate: -219.6deg;
+  }
+  .needle line {
+    stroke: var(--yellow);
+    stroke-width: 4;
+    stroke-linecap: round;
+  }
+  .g-hub {
+    fill: var(--ice);
+    stroke: var(--navy);
+    stroke-width: 3;
+  }
+  .rev-btn {
+    min-width: 11rem;
+  }
+  :global(.tc.redline) {
+    animation: rv-shake 0.07s linear infinite;
+  }
+  @keyframes rv-shake {
+    25% {
+      translate: 1.5px -1px;
+    }
+    75% {
+      translate: -1.5px 1px;
+    }
+  }
+  :global(.still) :global(.tc.redline) {
+    animation: none;
+  }
+</style>
+
+<script>
+  import { audio, engine } from "~/scripts/life-audio";
+  import { motionStill } from "~/scripts/motion";
+
+  for (const root of document.querySelectorAll<HTMLElement>("[data-rev]")) {
+    const card = root.closest<HTMLElement>(".tc")!;
+    const needle = root.querySelector<SVGGElement>("[data-needle]")!;
+    const button = root.querySelector<HTMLButtonElement>("[data-throttle]")!;
+    let held = false;
+    let rpm = 0;
+    let raf = 0;
+    let motor: ReturnType<typeof engine> | null = null;
+    const draw = () => {
+      raf = 0;
+      const target = held ? 1 : 0;
+      rpm += (target - rpm) * (held ? 0.045 : 0.06);
+      if (held) rpm += (Math.random() - 0.5) * 0.025 * rpm;
+      rpm = Math.max(0, Math.min(1.02, rpm));
+      // Paused motion: the needle jumps instead of sweeping.
+      const shown = motionStill() ? target : rpm;
+      // At rest the needle lies on its peg, just under 0.
+      needle.style.rotate = `${-(210 - 240 * (shown - 0.04))}deg`;
+      card.classList.toggle("redline", held && rpm > 0.86 && !motionStill());
+      motor?.set(rpm);
+      if (held || rpm > 0.005) raf = requestAnimationFrame(draw);
+      else {
+        motor?.stop();
+        motor = null;
+      }
+    };
+    const press = () => {
+      if (held) return;
+      held = true;
+      button.classList.add("down");
+      const ac = audio();
+      if (ac && !motor) motor = engine(ac);
+      if (!raf) raf = requestAnimationFrame(draw);
+    };
+    const release = () => {
+      held = false;
+      button.classList.remove("down");
+      if (!raf) raf = requestAnimationFrame(draw);
+    };
+    button.addEventListener("pointerdown", (event) => {
+      button.setPointerCapture(event.pointerId);
+      press();
+    });
+    button.addEventListener("pointerup", release);
+    button.addEventListener("pointercancel", release);
+    button.addEventListener("lostpointercapture", release);
+    button.addEventListener("keydown", (event) => {
+      if (event.key === " " || event.key === "Enter") {
+        event.preventDefault();
+        press();
+      }
+    });
+    button.addEventListener("keyup", (event) => {
+      if (event.key === " " || event.key === "Enter") release();
+    });
+    button.addEventListener("blur", release);
+    button.addEventListener("contextmenu", (event) => event.preventDefault());
+  }
+</script>

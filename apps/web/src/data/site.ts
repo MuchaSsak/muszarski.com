@@ -10,8 +10,8 @@ export const SITE = {
   initials: "MM",
   /** Building software since (product/project-brief.md: ~4 years, since 2022). */
   since: 2022,
-  // PLACEHOLDER (P5): the public mailbox is not set up yet; the owner confirms the address.
-  email: "hello@matmuszarski.space",
+  /** Public contact address [owner, 2026-10-07]. */
+  email: "hi@matmuszarski.space",
   // PLACEHOLDER (P3): the public city line (open-questions Q27); region + country only, never a street.
   region: "Pomorskie",
   countryCode: "PL",
@@ -19,7 +19,7 @@ export const SITE = {
   timeZone: "Europe/Warsaw",
 } as const;
 
-/** Profiles for the footer "Elsewhere" column, the contact links and `sameAs` (rel="me"). Order = display order. */
+/** Work profiles: the CV, the contact links, and the first of ELSEWHERE. Order = display order. */
 export const PROFILES = [
   { id: "github", label: "GitHub", handle: "MuchaSsak", href: "https://github.com/MuchaSsak" },
   // PLACEHOLDER: found by the SEO research (his profile, research/2026-10-05-seo-entity-discoverability.md); owner to confirm (P5).
@@ -28,18 +28,36 @@ export const PROFILES = [
   { id: "npm", label: "npm", handle: "muchassakkk", href: "https://www.npmjs.com/~muchassakkk" },
 ] as const;
 
-/** "Hang out" links on /my-life/ (content-model.md § Site facts `social`). */
+/**
+ * "Hang out" links on /my-life/ (content-model.md § Site facts `social`) [owner, 2026-10-06]. Discord opens his profile
+ * (with "Add friend" once signed in) and shows the username to add by hand; m.me opens the Messenger app on phones
+ * (it redirects to messenger.com/t/<id>, his Facebook profile).
+ */
 export const SOCIAL = [
-  // PLACEHOLDER (P5): the owner sends his Discord and Messenger links (open-questions Q11).
-  { id: "discord", label: "Discord", href: "https://discord.example/mateusz-muszarski", placeholder: true },
-  { id: "messenger", label: "Messenger", href: "https://messenger.example/mateusz-muszarski", placeholder: true },
+  { id: "discord", label: "Discord", handle: "muchassak", href: "https://discord.com/users/440900720334602242" },
+  { id: "messenger", label: "Messenger", handle: undefined, href: "https://m.me/100072259775217" },
+  { id: "telegram", label: "Telegram", handle: "@MateuszMuszarski", href: "https://t.me/MateuszMuszarski" },
 ] as const;
+
+/**
+ * Personal accounts [owner, 2026-10-07]: in the footer "Elsewhere" column and `sameAs`, not on the CV. Facebook is the
+ * profile behind the Messenger link above.
+ */
+export const PERSONAL = [
+  { id: "instagram", label: "Instagram", handle: "mat.muszarski", href: "https://www.instagram.com/mat.muszarski/" },
+  { id: "facebook", label: "Facebook", handle: undefined, href: "https://www.facebook.com/profile.php?id=100072259775217" },
+] as const;
+
+/**
+ * Every public profile: the footer "Elsewhere" column, `sameAs` (rel="me") and llms.txt, so search engines tie them to
+ * one person (seo.md § Entity). Messenger is left out: Facebook already names that profile.
+ */
+export const ELSEWHERE = [...PROFILES, ...PERSONAL, ...SOCIAL.filter((social) => social.id !== "messenger")];
 
 /** Public links of the work shown on the site (content/projects/*.md § Facts). */
 export const WORK_LINKS = {
+  /** The landing; the chapter and /work/ link here, not to the konfigurator [user 2026-10-06]. */
   pstrykweb: "https://pstrykweb.pl/",
-  /** The public konfigurator (his part; the landing at pstrykweb.pl is Cetuspro's older site: pstrykweb.md § Facts). */
-  pstrykwebKonfigurator: "https://app.pstrykweb.pl/",
   linkoglotAppStore: "https://apps.apple.com/app/id6768303316",
   linkoglotPlay: "https://play.google.com/store/apps/details?id=com.linkoglot.app",
   spaceLive: "https://3d-space-folio.vercel.app/",

@@ -1,0 +1,242 @@
+---
+/**
+ * Travel: a departures board [user 2026-10-06: "display some actual cities"]. Shuffle and every flap spins through the
+ * alphabet before it lands on the next stop, a city picked at random (a daydream, not a claim he's been), with a
+ * fresh gate and time. The names are each locale's own (Lisbon, Lizbona, Lisboa).
+ */
+import { t } from "lingui-for-astro/macro";
+
+import Icon from "~/components/ui/Icon.astro";
+
+const locale = Astro.locals.locale;
+const CITIES: Record<string, string[]> = {
+  en: [
+    "Lisbon",
+    "Tokyo",
+    "Reykjavik",
+    "New York",
+    "Marrakech",
+    "Kyoto",
+    "Cape Town",
+    "Istanbul",
+    "Seoul",
+    "Rome",
+    "Havana",
+    "Sydney",
+    "Oslo",
+    "Lima",
+    "Hanoi",
+    "Barcelona",
+  ],
+  pl: [
+    "Lizbona",
+    "Tokio",
+    "Reykjavik",
+    "Nowy Jork",
+    "Marrakesz",
+    "Kioto",
+    "Kapsztad",
+    "Stambuł",
+    "Seul",
+    "Rzym",
+    "Hawana",
+    "Sydney",
+    "Oslo",
+    "Lima",
+    "Hanoi",
+    "Barcelona",
+  ],
+  es: [
+    "Lisboa",
+    "Tokio",
+    "Reikiavik",
+    "Nueva York",
+    "Marrakech",
+    "Kioto",
+    "Ciudad del Cabo",
+    "Estambul",
+    "Seúl",
+    "Roma",
+    "La Habana",
+    "Sídney",
+    "Oslo",
+    "Lima",
+    "Hanói",
+    "Barcelona",
+  ],
+};
+const cities = (CITIES[locale] ?? CITIES.en!).map((city) => city.toLocaleUpperCase(locale));
+const first = cities[0]!;
+const width = Math.max(...cities.map((city) => city.length));
+const NBSP = String.fromCharCode(160);
+/** A name centred on the board's flaps. */
+const centre = (text: string) => {
+  const left = Math.floor((width - text.length) / 2);
+  return [...(NBSP.repeat(left) + text + NBSP.repeat(width - text.length - left))];
+};
+const nextStop = t`Next stop`;
+---
+
+<div class="board" data-board data-cities={JSON.stringify(cities)} data-width={width}>
+  <div class="b-head" aria-hidden="true">
+    <span>{nextStop}</span>
+    <span>
+      <Icon name="tb:plane" /> <b data-gate>B7</b> ·{" "}
+      <b class="tabular" data-time>
+        21:40
+      </b>
+    </span>
+  </div>
+  <p class="b-row" style={`--n:${width}`}>
+    <span class="sr-only">
+      {nextStop}: <span data-say>{first}</span>
+    </span>
+    {centre(first).map((ch) => (
+      <span class="flap" aria-hidden="true">
+        {ch}
+      </span>
+    ))}
+  </p>
+  <button class="toy-btn b-btn" type="button" data-shuffle>
+    <Icon name="tb:refresh" />
+    {t`Shuffle`}
+  </button>
+</div>
+
+<style>
+  .board {
+    display: grid;
+    gap: 0.75rem;
+    container-type: inline-size;
+  }
+  .b-head {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    font-weight: 800;
+    font-size: 0.75rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .b-head span {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+  }
+  .b-head :global(.ico) {
+    width: 1rem;
+    height: 1rem;
+  }
+  .b-row {
+    display: flex;
+    gap: 0.25cqi;
+    margin: 0;
+    padding: 0.5rem;
+    background: var(--navy);
+    box-shadow: 5px 5px 0 rgb(10 13 51 / 0.35);
+  }
+  .flap {
+    position: relative;
+    display: grid;
+    flex: 1;
+    place-items: center;
+    min-width: 0;
+    height: min(4.5rem, calc(96cqi / var(--n) * 1.45));
+    overflow: hidden;
+    background: #161a4a;
+    color: var(--yellow);
+    font-weight: 900;
+    font-size: min(2.75rem, calc(96cqi / var(--n) * 0.95));
+    line-height: 1;
+    font-stretch: 75%;
+    border-radius: 0.2rem;
+  }
+  .flap::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: calc(50% - 1px);
+    height: 2px;
+    background: var(--navy);
+  }
+  .flap.flip {
+    animation: bd-flip 0.08s linear;
+  }
+  @keyframes bd-flip {
+    50% {
+      transform: scaleY(0.15);
+    }
+  }
+  .b-btn {
+    justify-self: start;
+  }
+</style>
+
+<script>
+  import { audio, blip } from "~/scripts/life-audio";
+  import { motionStill } from "~/scripts/motion";
+
+  const ABC = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+  const NBSP = String.fromCharCode(160);
+  const pick = <T,>(list: ArrayLike<T>) => list[Math.floor(Math.random() * list.length)]!;
+  for (const root of document.querySelectorAll<HTMLElement>("[data-board]")) {
+    const flaps = [...root.querySelectorAll<HTMLElement>(".flap")];
+    const gate = root.querySelector<HTMLElement>("[data-gate]")!;
+    const time = root.querySelector<HTMLElement>("[data-time]")!;
+    const say = root.querySelector<HTMLElement>("[data-say]")!;
+    const cities: string[] = JSON.parse(root.dataset.cities ?? "[]");
+    const width = Number(root.dataset.width) || flaps.length;
+    let current = cities[0] ?? "";
+    let busy = false;
+    const centre = (text: string) => {
+      const left = Math.floor((width - text.length) / 2);
+      return [...(NBSP.repeat(left) + text + NBSP.repeat(width - text.length - left))];
+    };
+    const shuffle = (sound: boolean) => {
+      if (busy || cities.length < 2) return;
+      let next = current;
+      while (next === current) next = pick(cities);
+      current = next;
+      say.textContent = next;
+      gate.textContent = `${pick("ABCDEF")}${1 + Math.floor(Math.random() * 24)}`;
+      time.textContent = `${String(Math.floor(Math.random() * 24)).padStart(2, "0")}:${pick("012345")}${pick("05")}`;
+      const target = centre(next);
+      if (motionStill()) {
+        flaps.forEach((flap, k) => (flap.textContent = target[k] ?? NBSP));
+        return;
+      }
+      busy = true;
+      let left = flaps.length;
+      const ac = sound ? audio() : null;
+      flaps.forEach((flap, k) => {
+        const own = target[k] ?? NBSP;
+        let turns = 3 + k * 2;
+        const tick = () => {
+          flap.classList.remove("flip");
+          void flap.offsetWidth;
+          flap.classList.add("flip");
+          if (turns-- > 0) {
+            flap.textContent = pick(ABC);
+            if (ac && k === 0) blip(ac, 1800 + Math.random() * 400);
+            window.setTimeout(tick, 55);
+          } else {
+            flap.textContent = own;
+            if (--left === 0) busy = false;
+          }
+        };
+        window.setTimeout(tick, k * 25);
+      });
+    };
+    root.querySelector("[data-shuffle]")!.addEventListener("click", () => shuffle(true));
+    // The first time it comes into view, it spins once by itself (silently).
+    new IntersectionObserver(
+      ([entry], observer) => {
+        if (!entry?.isIntersecting) return;
+        observer.disconnect();
+        window.setTimeout(() => shuffle(false), 400);
+      },
+      { threshold: 0.6 },
+    ).observe(root);
+  }
+</script>

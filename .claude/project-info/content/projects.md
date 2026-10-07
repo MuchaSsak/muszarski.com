@@ -8,7 +8,7 @@
 
 | # | Project | Dossier | What it is | Media kind | Public links |
 | --- | --- | --- | --- | --- | --- |
-| 1 | PstrykWeb | `content/projects/pstrykweb.md` | commercial website product for local businesses, built solo for Cetuspro (the site shows public info only: dossier § Public disclosure) | `both` | pstrykweb.pl |
+| 1 | PstrykWeb | `content/projects/pstrykweb.md` | commercial website product for local businesses, built for Cetuspro (never "solo" or "team" on the site [user 2026-10-06]; the site shows public info only: dossier § Public disclosure) | `both` | pstrykweb.pl |
 | 2 | Linkoglot | `content/projects/linkoglot.md` | own AI language-learning mobile app (App Store + Google Play) | `phone` | linkoglot.eu/Download |
 | 3 | Neoteric Clockful | `content/projects/neoteric-clockful.md` | internship time-tracking dashboard, built AI-only under a deadline | `desktop` | none (repo private) |
 | 4 | 3D space portfolio | `content/projects/space-portfolio.md` | the old immersive three.js site | `live` (desktop) | 3d-space-folio.vercel.app + repo `MuchaSsak/3d-space-portfolio` [user] 2026-10-05 |

@@ -7,8 +7,8 @@
 
 | Gate | Command | Fails on |
 | --- | --- | --- |
-| static | `bun run typecheck && bun run lint && bun run test` | type errors, lint, unit tests (routes, tokens AA + parity, catalogs, typography) |
-| browser | `bun run e2e` | axe WCAG 2.2 AA in Cobalt, Paper AND Ink, skip link, overflow 320–2560, 1920 cap, header fit per control, menu, theme cycle, motion (pause, reduced, fitted name flush), head/hreflang/switcher, console + CSP errors |
+| static | `bun run typecheck && bun run lint && bun run test` | type errors, lint, unit tests (routes, field tokens defined + AA, catalogs, typography) |
+| browser | `bun run e2e` | axe WCAG 2.2 AA on every route (one theme, Cobalt), skip link, overflow 320–2560, 1920 cap, header fit per control, menu, footer, focus not under the header, motion (pause, reduced, fitted name flush), head/hreflang/switcher, console + CSP errors, page flows (the CV button's download + `/cv/` confirmation, contact, credentials, work filters) |
 | Lighthouse | `MSYS_NO_PATHCONV=1 node scripts/lighthouse.mjs --runs 3 --desktop /en/ /pl/ /es/` | mobile perf < 95, a11y/bp/seo < 100, LCP > 2000 ms, CLS > 0.05, TBT > 100 ms |
 | launch | part of `bun run build` | a launch build with any `PLACEHOLDER` marker or a noindex home |
 
@@ -18,7 +18,7 @@
 ## The eyes (screenshots)
 
 1. `MSYS_NO_PATHCONV=1 node scripts/shots.mjs --paths /en/,/pl/,/es/ --widths 390,1024,1920,2560 --full`
-   (Cobalt, Paper and Ink by default via the stored theme; `--settle` waits for entrances; `--reduced` for the reduced-motion pass). Scratch PNGs land in `screenshots/.work/<route>/`.
+   (one theme, Cobalt: there is no `--themes` flag any more; `--settle` waits for entrances; `--reduced` for the reduced-motion pass). Scratch PNGs land in `screenshots/.work/<route>/<width>-cobalt.png`.
 2. Read each shot. Look for: overflow, text under fixed chrome, unreadable text over media, Polish line breaks (pl runs longest),
    orphans, ultrawide emptiness, generic look. Score the view with `design-quality.md` and name the weakest point.
 3. Fix the weakest point, rebuild, re-shoot. Repeat until ≥ 8 and one more pass finds nothing worth fixing.

@@ -100,9 +100,8 @@ test("the sticky header never covers the focused element", async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 700 });
   await page.goto("/en/");
   const header = await page.locator("[data-site-header]").boundingBox();
-  for (let i = 0; i < 40; i++) {
-    await page.keyboard.press("Tab");
-    const box = await page.evaluate(() => {
+  const focused = () =>
+    page.evaluate(() => {
       const el = document.activeElement as HTMLElement | null;
       // The skip link sits over the header on purpose (it is the first stop and leaves on Enter).
       if (!el || el === document.body || el.closest("[data-site-header], [popover]") || el.matches(".sr-only-focusable"))
@@ -110,8 +109,35 @@ test("the sticky header never covers the focused element", async ({ page }) => {
       const rect = el.getBoundingClientRect();
       return { top: rect.top, name: el.textContent?.trim().slice(0, 30) };
     });
-    if (box) expect(box.top, `focus on "${box.name}" sits under the header`).toBeGreaterThanOrEqual(header!.height - 1);
+  for (let i = 0; i < 40; i++) {
+    await page.keyboard.press("Tab");
+    const box = await focused();
+    // WebKit scrolls a focused element into view a frame later: wait for the scroll to settle.
+    if (box)
+      await expect
+        .poll(async () => (await focused())?.top ?? Infinity, {
+          message: `focus on "${box.name}" sits under the header`,
+          timeout: 2000,
+        })
+        .toBeGreaterThanOrEqual(header!.height - 1);
   }
+});
+
+test("Hire me lands on the contact form, clear of the header", async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 800 });
+  await page.goto("/en/");
+  await page.locator(".site-header .btn-acc").click();
+  await expect(page).toHaveURL(/#contact$/);
+  const header = (await page.locator("[data-site-header]").boundingBox())!;
+  // Engines without scroll anchoring must not drift once the sections above render (global.css § content-visibility).
+  await expect
+    .poll(async () => (await page.locator("#contact").boundingBox())!.y, { timeout: 3000 })
+    .toBeGreaterThanOrEqual(header.height - 1);
+  await page.waitForTimeout(800);
+  const box = (await page.locator("#contact").boundingBox())!;
+  expect(box.y).toBeGreaterThanOrEqual(header.height - 1);
+  expect(box.y).toBeLessThan(header.height + 40);
+  await expect(page.locator("#contact textarea")).toBeInViewport();
 });
 
 test("footer: 4 labelled columns, rel=me profiles in a new tab, language flags, revision", async ({ page }) => {

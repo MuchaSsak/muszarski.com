@@ -1,0 +1,148 @@
+---
+/**
+ * Parties: drop the beat. Confetti over the whole page, coloured lights sweep the screen for a few seconds, the ball
+ * spins faster and (with sound on) four bars of kick. Paused or reduced motion: just the lights come on, still.
+ */
+import { t } from "lingui-for-astro/macro";
+
+import Icon from "~/components/ui/Icon.astro";
+---
+
+<div class="party" data-party>
+  <div class="ball" aria-hidden="true">
+    <span class="cord"></span>
+    <span class="sphere"></span>
+  </div>
+  <button class="toy-btn d-btn" type="button" data-drop>
+    <Icon name="tb:music" />
+    {t`Drop the beat`}
+  </button>
+</div>
+
+<style>
+  .party {
+    display: grid;
+    justify-items: center;
+    gap: 1rem;
+  }
+  .ball {
+    display: grid;
+    justify-items: center;
+  }
+  .cord {
+    width: 3px;
+    height: 1.75rem;
+    background: var(--ice);
+  }
+  /* A mirror ball in CSS: a grid of tiles over a shaded sphere, the tiles sliding round as it turns. */
+  .sphere {
+    width: 7.5rem;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    background:
+      radial-gradient(circle at 35% 30%, rgb(255 255 255 / 0.85) 0 6%, transparent 22%),
+      repeating-linear-gradient(90deg, rgb(10 13 51 / 0.35) 0 2px, transparent 2px 13px),
+      repeating-linear-gradient(0deg, rgb(10 13 51 / 0.35) 0 2px, transparent 2px 13px),
+      radial-gradient(circle at 40% 35%, #f4f5ff, #9aa0d6 55%, #3b4079);
+    background-size:
+      100% 100%,
+      26px 100%,
+      100% 13px,
+      100% 100%;
+    box-shadow:
+      0 0 0 3px var(--navy),
+      0 0 2.5rem color-mix(in srgb, var(--pink) 50%, transparent);
+    animation: pt-turn 3s linear infinite;
+  }
+  @keyframes pt-turn {
+    to {
+      background-position:
+        0 0,
+        26px 0,
+        0 0,
+        0 0;
+    }
+  }
+  :global(.party-on) .sphere {
+    animation-duration: 0.6s;
+  }
+  .d-btn {
+    background: var(--pink);
+    color: var(--navy);
+  }
+  /* The lights: three coloured spots sweeping the whole screen, made by the script while the party is on. */
+  :global(.party-lights) {
+    position: fixed;
+    inset: 0;
+    z-index: 89;
+    pointer-events: none;
+    background:
+      radial-gradient(circle at var(--x1, 20%) var(--y1, 30%), rgb(255 79 184 / 0.45), transparent 22%),
+      radial-gradient(circle at var(--x2, 70%) var(--y2, 60%), rgb(36 51 255 / 0.4), transparent 24%),
+      radial-gradient(circle at var(--x3, 45%) var(--y3, 80%), rgb(201 242 74 / 0.4), transparent 20%);
+    mix-blend-mode: hard-light;
+    animation: pt-fade 4.2s ease-in-out forwards;
+  }
+  @keyframes pt-fade {
+    0%,
+    100% {
+      opacity: 0;
+    }
+    8%,
+    85% {
+      opacity: 1;
+    }
+  }
+</style>
+
+<script>
+  import { audio, hat, kick } from "~/scripts/life-audio";
+  import { confetti } from "~/scripts/life-confetti";
+  import { motionStill } from "~/scripts/motion";
+
+  for (const root of document.querySelectorAll<HTMLElement>("[data-party]")) {
+    let on = false;
+    root.querySelector("[data-drop]")!.addEventListener("click", () => {
+      if (on) return;
+      on = true;
+      document.documentElement.classList.add("party-on");
+      const lights = document.createElement("div");
+      lights.className = "party-lights";
+      lights.setAttribute("aria-hidden", "true");
+      document.body.append(lights);
+      const start = performance.now();
+      const still = motionStill();
+      // The spots wander on slow circles; paused motion leaves them where they start.
+      const move = (now: number) => {
+        const s = (now - start) / 1000;
+        const spot = (k: number, r: number) => [
+          50 + Math.cos(s * (1.3 + k * 0.4) + k * 2) * r,
+          50 + Math.sin(s * (1.1 + k * 0.5) + k) * r * 0.8,
+        ];
+        [1, 2, 3].forEach((k) => {
+          const [x, y] = spot(k, 30 + k * 6);
+          lights.style.setProperty(`--x${k}`, `${x}%`);
+          lights.style.setProperty(`--y${k}`, `${y}%`);
+        });
+        if (s < 4.2) requestAnimationFrame(move);
+      };
+      if (!still) {
+        requestAnimationFrame(move);
+        confetti(220);
+      }
+      const ac = audio();
+      if (ac) {
+        const beat = 60 / 124;
+        for (let i = 0; i < 8; i++) {
+          kick(ac, ac.currentTime + 0.05 + i * beat);
+          hat(ac, ac.currentTime + 0.05 + i * beat + beat / 2);
+        }
+      }
+      window.setTimeout(() => {
+        lights.remove();
+        document.documentElement.classList.remove("party-on");
+        on = false;
+      }, 4300);
+    });
+  }
+</script>

@@ -1,131 +1,362 @@
 ---
 /**
- * A post's cover, drawn in code (content-model.md § Blog post: "cover: code-drawn or real"): one poster motif per
- * topic on a project colour, no images to fetch. Decorative: the title next to it carries the meaning.
+ * A post's cover, drawn in code (content-model.md § Blog post: "cover: code-drawn or real"): one picture per topic,
+ * no words on it, no images to fetch. Each cover owns its palette (a brand ground, one ink, one accent), so a post
+ * looks the same on the index, on the home teaser, on its own page and in its OG image [user 2026-10-06: "better
+ * colour harmonies", "more intuitive", "don't blast text there"]. Decorative: the title next to it carries the meaning.
  */
 import type { BlogCover } from "~/lib/blog";
 
 interface Props {
   cover: BlogCover;
-  /** A stable index to vary the colour between neighbours. */
-  tone?: number;
   class?: string | undefined;
 }
 
-const { cover, tone = 0, class: className } = Astro.props;
-const TONES = [
-  ["#ffd23f", "#0a0d33", "#2433ff"],
-  ["#ff5b1f", "#0a0d33", "#ff4fb8"],
-  ["#c9f24a", "#0a0d33", "#2433ff"],
-  ["#2433ff", "#eef0ff", "#ff4fb8"],
-  ["#ff4fb8", "#0a0d33", "#eef0ff"],
-  ["#07081c", "#eef0ff", "#ffd23f"],
-] as const;
-const [bg, fg, pop] = TONES[tone % TONES.length]!;
+const { cover, class: className } = Astro.props;
+
+const COBALT = "#2433ff";
+const ICE = "#eef0ff";
+const NAVY = "#0a0d33";
+const YELLOW = "#ffd23f";
+const LIME = "#c9f24a";
+const ORANGE = "#ff5b1f";
+const PINK = "#ff4fb8";
+
+/** [ground, ink, accent] per cover: cool or warm pairs, never orange next to pink. */
+const PALETTE: Record<BlogCover, readonly [string, string, string]> = {
+  blueprint: [COBALT, ICE, YELLOW],
+  terminal: [NAVY, ICE, LIME],
+  wiki: [YELLOW, NAVY, COBALT],
+  bubbles: [COBALT, ICE, LIME],
+  scale: [ORANGE, NAVY, ICE],
+  type: [YELLOW, NAVY, PINK],
+  motion: [NAVY, ICE, YELLOW],
+  cookie: [LIME, NAVY, COBALT],
+  catalogs: [PINK, NAVY, YELLOW],
+  gauge: [ORANGE, NAVY, YELLOW],
+  planet: [NAVY, ICE, ORANGE],
+  signpost: [YELLOW, NAVY, ORANGE],
+  mailbox: [LIME, NAVY, PINK],
+  sheet: [COBALT, ICE, PINK],
+  rocket: [PINK, NAVY, LIME],
+  tap: [COBALT, ICE, YELLOW],
+  anchor: [PINK, NAVY, ICE],
+};
+const [bg, fg, pop] = PALETTE[cover];
+
+/** A page with a folded corner. */
+const page = (x: number, y: number, w: number, h: number, f = 14) => `M${x} ${y}h${w - f}l${f} ${f}v${h - f}h${-w}z`;
+const fold = (x: number, y: number, w: number, f = 14) => `M${x + w - f} ${y}v${f}h${f}`;
 ---
 
-<svg class:list={["cover", className]} viewBox="0 0 400 250" aria-hidden="true" focusable="false" style={`--bg:${bg};--fg:${fg};--pop:${pop}`}>
+<svg
+  class:list={["cover", className]}
+  viewBox="0 0 400 250"
+  aria-hidden="true"
+  focusable="false"
+  style={`--bg:${bg};--fg:${fg};--pop:${pop}`}
+>
   <rect width="400" height="250" fill="var(--bg)"></rect>
   {
+    /* How this site was built: a page being drawn on a blueprint, measured, with the cursor still on it. */
     cover === "blueprint" && (
-      <g fill="none" stroke="var(--fg)" stroke-width="2">
-        <path d="M0 50H400M0 100H400M0 150H400M0 200H400M50 0V250M100 0V250M150 0V250M200 0V250M250 0V250M300 0V250M350 0V250" opacity=".18" />
-        <rect x="90" y="60" width="220" height="130" stroke-width="5" />
-        <path d="M90 215H310M90 207v16M310 207v16M335 60V190M327 60h16M327 190h16" stroke-width="3" />
-        <circle cx="200" cy="125" r="34" fill="var(--pop)" stroke-width="5" />
-        <path d="M120 85h60M120 100h40" stroke-width="5" />
+      <g fill="none" stroke="var(--fg)" stroke-width="5">
+        <path
+          d="M0 50H400M0 100H400M0 150H400M0 200H400M50 0V250M100 0V250M150 0V250M200 0V250M250 0V250M300 0V250M350 0V250"
+          stroke-width="2"
+          opacity=".2"
+        />
+        <rect x="80" y="40" width="220" height="155" fill="var(--bg)" />
+        <path d="M80 66H300" />
+        <circle cx="96" cy="53" r="4" fill="var(--fg)" stroke="none" />
+        <circle cx="110" cy="53" r="4" fill="var(--fg)" stroke="none" />
+        <circle cx="124" cy="53" r="4" fill="var(--fg)" stroke="none" />
+        <rect x="100" y="84" width="140" height="30" fill="var(--pop)" stroke-width="4" />
+        <path d="M100 132h96M100 147h64" />
+        <rect x="100" y="160" width="52" height="20" stroke-width="4" />
+        <rect x="162" y="160" width="52" height="20" stroke-width="4" />
+        <rect x="224" y="160" width="52" height="20" stroke-width="4" stroke-dasharray="7 6" />
+        <path d="M80 218H300M80 210v16M300 210v16M326 40V195M318 40h16M318 195h16" stroke-width="3" />
+        <path
+          d="M222 100v40l10-10 8 17 8-4-8-17h14z"
+          fill="var(--fg)"
+          stroke="var(--bg)"
+          stroke-width="3"
+          stroke-linejoin="round"
+        />
       </g>
     )
   }
   {
-    cover === "pipeline" && (
-      <g stroke="var(--fg)" stroke-width="5">
-        <path d="M40 125H360" stroke-dasharray="14 10" />
-        <rect x="30" y="100" width="50" height="50" fill="var(--bg)" />
-        <rect x="125" y="100" width="50" height="50" fill="var(--fg)" />
-        <rect x="220" y="100" width="50" height="50" fill="var(--bg)" />
-        <rect x="315" y="100" width="50" height="50" fill="var(--bg)" />
-        <path d="M150 50h90l14 14v26h-104z" fill="var(--pop)" />
-        <path d="M195 90l-12 12" />
+    /* Claude Code's building blocks: one terminal, with a skill, a hook, an MCP plug and subagents wired to it. */
+    cover === "terminal" && (
+      <g fill="none" stroke="var(--fg)" stroke-width="5">
+        <path d="M150 95L96 70M250 95l58-25M150 155l-54 28M250 155l58 28" stroke-dasharray="8 7" stroke-width="4" />
+        <rect x="145" y="80" width="110" height="88" fill="var(--bg)" />
+        <path d="M145 100H255" />
+        <path d="M162 116l14 12-14 12" stroke-width="6" />
+        <rect x="184" y="136" width="22" height="6" fill="var(--pop)" stroke="none" />
+        <path d="M48 40h14a8 8 0 1 1 16 0h14v14a8 8 0 1 1 0 16v14H48z" fill="var(--pop)" stroke-linejoin="round" />
+        <circle cx="330" cy="26" r="7" />
+        <path d="M330 33v34a17 17 0 1 1-34 0v-8" stroke-width="7" />
+        <path d="M74 176v-14M90 176v-14" stroke-width="6" />
+        <rect x="64" y="176" width="36" height="26" fill="var(--pop)" />
+        <path d="M82 202v14" />
+        <rect x="300" y="170" width="52" height="38" fill="var(--bg)" />
+        <rect x="314" y="182" width="52" height="38" fill="var(--bg)" />
+        <path d="M324 196l8 6-8 6" stroke-width="4" />
       </g>
     )
   }
   {
+    /* The LLM wiki: a stack of linked pages with a bookmark: memory that is still there after compaction. */
     cover === "wiki" && (
-      <g stroke="var(--fg)" stroke-width="5">
-        <rect x="150" y="40" width="150" height="180" fill="var(--pop)" transform="rotate(8 225 130)" />
-        <rect x="120" y="35" width="150" height="180" fill="var(--bg)" transform="rotate(-4 195 125)" />
-        <rect x="100" y="30" width="150" height="180" fill="var(--bg)" />
-        <path d="M125 70h100M125 95h80M125 120h100M125 145h60M125 170h90" />
+      <g fill="var(--bg)" stroke="var(--fg)" stroke-width="5">
+        <rect x="150" y="45" width="140" height="170" transform="rotate(8 220 130)" />
+        <rect x="128" y="40" width="140" height="170" transform="rotate(-4 198 125)" />
+        <path d={page(110, 35, 150, 180, 26)} />
+        <path d={fold(110, 35, 150, 26)} />
+        <path d="M150 35v62l14-11 14 11V35" fill="var(--pop)" />
+        <path d="M130 120h70M130 140h104M130 160h84M130 180h96" stroke-width="5" />
+        <path d="M212 70l18 26-24 14" fill="none" stroke-width="3" />
+        <circle cx="212" cy="70" r="7" fill="var(--pop)" />
+        <circle cx="230" cy="96" r="7" fill="var(--pop)" />
+        <circle cx="206" cy="110" r="7" fill="var(--pop)" />
       </g>
     )
   }
   {
-    cover === "translate" && (
-      <g stroke="var(--fg)" stroke-width="5">
-        <path d="M60 50h150v90h-90l-30 30v-30H60z" fill="var(--bg)" />
-        <path d="M190 100h150v90h-30v30l-30-30h-90z" fill="var(--pop)" />
-        <text x="135" y="112" font-size="54" font-weight="900" text-anchor="middle" fill="var(--fg)" stroke="none">
-          EN
-        </text>
-        <text x="265" y="162" font-size="54" font-weight="900" text-anchor="middle" fill="var(--fg)" stroke="none">
-          PL
-        </text>
+    /* Lingui vs i18next: one message in two languages, swapped both ways. */
+    cover === "bubbles" && (
+      <g fill="none" stroke="var(--fg)" stroke-width="5" stroke-linejoin="round">
+        <path d="M35 45h140v90H90l-28 26v-26H35z" fill="var(--bg)" />
+        <path d="M58 72h94M58 92h70M58 112h84" stroke-width="6" />
+        <path d="M225 110h140v90h-27v26l-28-26h-85z" fill="var(--pop)" />
+        <path d="M248 137h94M248 157h58M248 177h80" stroke="var(--bg)" stroke-width="6" />
+        <path d="M188 70q52-12 74 30" />
+        <path d="M250 92l12 8 2-15" />
+        <path d="M212 190q-52 12-74-30" />
+        <path d="M150 168l-12-8-2 15" />
       </g>
     )
   }
   {
-    cover === "compare" && (
-      <g stroke="var(--fg)" stroke-width="5">
-        <path d="M200 30V220" stroke-dasharray="10 10" />
-        <rect x="70" y="150" width="40" height="70" fill="var(--fg)" />
-        <rect x="120" y="90" width="40" height="130" fill="var(--pop)" />
-        <rect x="240" y="60" width="40" height="160" fill="var(--pop)" />
-        <rect x="290" y="120" width="40" height="100" fill="var(--fg)" />
-        <path d="M40 220h320" />
+    /* Astro or Next.js: two different loads on a level scale. */
+    cover === "scale" && (
+      <g fill="none" stroke="var(--fg)" stroke-width="5" stroke-linejoin="round">
+        <path d="M200 58V212M168 222h64l-10-10h-44z" fill="var(--fg)" />
+        <circle cx="200" cy="52" r="9" fill="var(--fg)" />
+        <path d="M84 72H316" stroke-width="7" />
+        <path d="M84 72l-30 78M84 72l30 78M316 72l-30 78M316 72l30 78" stroke-width="3" />
+        <path d={page(66, 98, 36, 46, 10)} fill="var(--pop)" />
+        <path d="M74 116h18M74 128h14" stroke-width="3" />
+        <rect x="278" y="122" width="22" height="22" fill="var(--pop)" />
+        <rect x="302" y="122" width="22" height="22" fill="var(--fg)" />
+        <rect x="290" y="100" width="22" height="22" fill="var(--pop)" />
+        <path d="M44 150h80a40 20 0 0 1-80 0zM276 150h80a40 20 0 0 1-80 0z" fill="var(--fg)" />
       </g>
     )
   }
   {
+    /* Fit text to width: one letter stretched wall to wall, with the width arrow over it. */
     cover === "type" && (
-      <g fill="var(--fg)">
-        <text x="200" y="168" font-size="170" font-weight="900" text-anchor="middle" style="font-stretch:150%">
-          A
-        </text>
-        <text x="105" y="168" font-size="170" font-weight="900" text-anchor="middle" style="font-stretch:50%">
-          A
-        </text>
-        <text x="300" y="168" font-size="170" font-weight="900" text-anchor="middle" style="font-stretch:50%" fill="var(--pop)">
-          a
-        </text>
-        <rect x="40" y="190" width="320" height="6" />
+      <g fill="var(--fg)" stroke="var(--fg)" stroke-width="5" stroke-linejoin="round">
+        <path d="M36 40V210M364 40V210" stroke-width="8" />
+        <path d="M60 62H340" fill="none" />
+        <path d="M70 52l-14 10 14 10M330 52l14 10-14 10" fill="none" />
+        <path d="M44 204L162 88h76l118 116h-72l-22-24H138l-22 24z" />
+        <path d="M160 152h80l-28-34h-24z" fill="var(--pop)" />
       </g>
     )
   }
   {
+    /* Reduced motion and a pause button: the orbit stops, the trail fades. */
     cover === "motion" && (
       <g fill="none" stroke="var(--fg)" stroke-width="5">
-        <circle cx="200" cy="125" r="90" stroke-dasharray="6 12" />
-        <circle cx="200" cy="125" r="60" />
-        <circle cx="290" cy="125" r="14" fill="var(--pop)" />
-        <path d="M185 100v50M215 100v50" stroke-width="12" />
+        <circle cx="200" cy="125" r="85" stroke-dasharray="6 12" />
+        <circle cx="250" cy="56" r="8" fill="var(--pop)" stroke="none" opacity=".2" />
+        <circle cx="269" cy="75" r="10" fill="var(--pop)" stroke="none" opacity=".4" />
+        <circle cx="281" cy="99" r="12" fill="var(--pop)" stroke="none" opacity=".65" />
+        <circle cx="285" cy="125" r="15" fill="var(--pop)" />
+        <circle cx="200" cy="125" r="46" fill="var(--fg)" />
+        <path d="M186 106v38M214 106v38" stroke="var(--bg)" stroke-width="12" />
       </g>
     )
   }
   {
-    cover === "shield" && (
-      <g stroke="var(--fg)" stroke-width="6">
-        <path d="M200 30l90 30v60c0 55-38 90-90 105-52-15-90-50-90-105V60z" fill="var(--pop)" />
-        <path d="M160 125l28 28 52-56" fill="none" />
+    /* Cookieless analytics: the cookie is crossed out, the numbers still come in. */
+    cover === "cookie" && (
+      <g fill="none" stroke="var(--fg)" stroke-width="5" stroke-linejoin="round">
+        <path d="M156.65 69.03A62 62 0 1 0 187.57 102.01A24 24 0 0 1 156.65 69.03z" fill="var(--bg)" />
+        <g fill="var(--fg)" stroke="none">
+          <circle cx="100" cy="110" r="7" />
+          <circle cx="146" cy="136" r="8" />
+          <circle cx="110" cy="160" r="6" />
+          <circle cx="158" cy="168" r="6" />
+          <circle cx="132" cy="96" r="5" />
+          <circle cx="86" cy="142" r="5" />
+        </g>
+        <path d="M58 200L204 52" stroke="var(--bg)" stroke-width="22" />
+        <path d="M58 200L204 52" stroke-width="10" />
+        <path d="M236 200H364" />
+        <rect x="248" y="152" width="22" height="48" fill="var(--pop)" />
+        <rect x="278" y="118" width="22" height="82" fill="var(--pop)" />
+        <rect x="308" y="136" width="22" height="64" fill="var(--pop)" />
+        <rect x="338" y="88" width="22" height="112" fill="var(--pop)" />
       </g>
     )
   }
   {
-    cover === "globe" && (
+    /* Translating catalogs with an LLM: one file in, a spark, three files out. */
+    cover === "catalogs" && (
+      <g fill="none" stroke="var(--fg)" stroke-width="5" stroke-linejoin="round">
+        <path d={page(40, 78, 74, 94, 20)} fill="var(--bg)" />
+        <path d={fold(40, 78, 74, 20)} />
+        <path d="M54 116h44M54 132h34M54 148h40" />
+        <path d="M122 125h28M140 115l10 10-10 10" />
+        <path d="M200 82q5 38 40 43-35 5-40 43-5-38-40-43 35-5 40-43z" fill="var(--pop)" />
+        <path d="M244 112l38-46M248 125h34M244 138l38 46" stroke-dasharray="7 6" stroke-width="4" />
+        <path d={page(288, 30, 64, 60)} fill="var(--pop)" />
+        <path d={fold(288, 30, 64)} />
+        <path d={page(288, 96, 64, 60)} fill="var(--pop)" />
+        <path d={fold(288, 96, 64)} />
+        <path d={page(288, 162, 64, 60)} fill="var(--pop)" />
+        <path d={fold(288, 162, 64)} />
+        <path d="M300 58h32M300 72h22M300 124h32M300 138h22M300 190h32M300 204h22" stroke-width="4" />
+      </g>
+    )
+  }
+  {
+    /* Lighthouse on 16 portfolios: a score gauge reading low, and one site of sixteen in the green. */
+    cover === "gauge" && (
       <g fill="none" stroke="var(--fg)" stroke-width="5">
-        <circle cx="200" cy="125" r="90" fill="var(--pop)" />
-        <ellipse cx="200" cy="125" rx="40" ry="90" />
-        <path d="M110 125h180M125 80h150M125 170h150" />
+        <path d="M90 170A110 110 0 0 1 310 170" stroke-width="22" />
+        <path d="M304.6 136A110 110 0 0 1 310 170" stroke="var(--pop)" stroke-width="22" />
+        <path d="M200 170L158 85" stroke-width="8" stroke-linecap="round" />
+        <circle cx="200" cy="170" r="14" fill="var(--fg)" />
+        <g stroke-width="3">
+          {Array.from({ length: 16 }, (_, i) => (
+            <rect x={59 + i * 18} y="200" width="12" height="12" fill={i === 11 ? "var(--pop)" : "var(--bg)"} />
+          ))}
+        </g>
+      </g>
+    )
+  }
+  {
+    /* Three.js on a phone: a planet too big for the screen, and a progress bar that has barely moved. */
+    cover === "planet" && (
+      <g fill="none" stroke="var(--fg)" stroke-width="5">
+        <rect x="150" y="28" width="100" height="194" rx="14" fill="var(--bg)" />
+        <path d="M185 40h30" />
+        <circle cx="200" cy="112" r="54" fill="var(--pop)" />
+        <path d="M172 90a34 34 0 0 1 22-14" stroke="var(--bg)" stroke-width="6" stroke-linecap="round" />
+        <ellipse cx="200" cy="112" rx="96" ry="20" transform="rotate(-14 200 112)" />
+        <rect x="168" y="190" width="64" height="10" />
+        <rect x="168" y="190" width="12" height="10" fill="var(--pop)" stroke="none" />
+      </g>
+    )
+  }
+  {
+    /* A multilingual site: one post, three directions. */
+    cover === "signpost" && (
+      <g fill="none" stroke="var(--fg)" stroke-width="5" stroke-linejoin="round">
+        <rect x="192" y="58" width="16" height="164" fill="var(--fg)" />
+        <circle cx="200" cy="52" r="9" fill="var(--fg)" />
+        <path d="M140 224h120" stroke-width="7" />
+        <path d="M200 66h104l18 16-18 16H200z" fill="var(--pop)" />
+        <path d="M200 110H96l-18 16 18 16h104z" fill="var(--bg)" />
+        <path d="M200 154h84l18 16-18 16h-84z" fill="var(--fg)" />
+        <path d="M218 82h60M104 126h60M218 170h44" stroke-width="4" stroke-dasharray="10 8" />
+        <path d="M218 170h44" stroke="var(--bg)" stroke-width="4" stroke-dasharray="10 8" />
+      </g>
+    )
+  }
+  {
+    /* A contact form on a static site: the letter goes in, the flag goes up. */
+    cover === "mailbox" && (
+      <g fill="none" stroke="var(--fg)" stroke-width="5" stroke-linejoin="round">
+        <rect x="155" y="196" width="22" height="40" fill="var(--fg)" />
+        <path d="M108 200V122a58 58 0 0 1 116 0v78z" fill="var(--pop)" />
+        <path d="M128 200v-74a38 38 0 0 1 76 0v74" />
+        <path d="M232 176V88" />
+        <rect x="232" y="88" width="34" height="22" fill="var(--fg)" />
+        <rect x="282" y="104" width="82" height="54" fill="var(--bg)" />
+        <path d="M282 104l41 30 41-30" />
+        <path d="M372 92h18M376 130h16M372 168h18" stroke-width="4" />
+      </g>
+    )
+  }
+  {
+    /* One CV, two outputs: the same data becomes a web page and a PDF sheet. */
+    cover === "sheet" && (
+      <g fill="none" stroke="var(--fg)" stroke-width="5" stroke-linejoin="round">
+        <path d="M44 88v76a42 13 0 0 0 84 0V88" fill="var(--pop)" />
+        <ellipse cx="86" cy="88" rx="42" ry="13" fill="var(--pop)" />
+        <path d="M44 114a42 13 0 0 0 84 0M44 140a42 13 0 0 0 84 0" />
+        <path d="M136 112l60-44M136 140l84 44" stroke-dasharray="8 7" stroke-width="4" />
+        <rect x="200" y="28" width="160" height="92" fill="var(--bg)" />
+        <path d="M200 48H360" />
+        <rect x="216" y="62" width="70" height="18" fill="var(--pop)" stroke-width="4" />
+        <path d="M216 94h120M216 106h84" stroke-width="4" />
+        <path d={page(226, 134, 92, 108, 20)} fill="var(--bg)" />
+        <path d={fold(226, 134, 92, 20)} />
+        <rect x="240" y="152" width="50" height="14" fill="var(--pop)" stroke-width="4" />
+        <path d="M240 182h62M240 196h46M240 210h56" stroke-width="4" />
+      </g>
+    )
+  }
+  {
+    /* Shipping an app alone: a flashcard on the phone, the rocket already off. */
+    cover === "rocket" && (
+      <g fill="none" stroke="var(--fg)" stroke-width="5" stroke-linejoin="round">
+        <rect x="120" y="24" width="112" height="204" rx="16" fill="var(--bg)" />
+        <path d="M160 214h32" />
+        <rect x="140" y="70" width="72" height="96" fill="var(--pop)" transform="rotate(-8 176 118)" />
+        <path d="M156 104h40M156 120h28" transform="rotate(-8 176 118)" />
+        <path d="M236 176q46-6 58-50" stroke-dasharray="8 7" stroke-width="4" />
+        <g transform="translate(312 92) rotate(35)">
+          <path d="M-7 26l7 20 7-20z" fill="var(--pop)" />
+          <path d="M0-44c16 14 16 52 11 70h-22c-5-18-5-56 11-70z" fill="var(--bg)" />
+          <circle cx="0" cy="-10" r="7" fill="var(--pop)" />
+          <path d="M-11 8l-13 18h13zM11 8l13 18h-13z" fill="var(--fg)" />
+        </g>
+      </g>
+    )
+  }
+  {
+    /* Hover on phones: the cursor and the finger both reach the same button. */
+    cover === "tap" && (
+      <g fill="none" stroke="var(--fg)" stroke-width="5" stroke-linejoin="round">
+        <path d="M62 72v74l18-18 14 30 12-6-14-30h26z" fill="var(--bg)" />
+        <path d="M120 112h22M258 112h22" stroke-dasharray="6 6" stroke-width="4" />
+        <rect x="148" y="88" width="104" height="48" fill="var(--pop)" />
+        <path d="M172 112h56" stroke="var(--bg)" stroke-width="6" />
+        <circle cx="318" cy="112" r="12" fill="var(--pop)" />
+        <circle cx="318" cy="112" r="26" stroke-width="4" opacity=".7" />
+        <circle cx="318" cy="112" r="40" stroke-width="3" opacity=".35" />
+        <path d="M70 188h260" stroke-width="3" opacity=".35" />
+      </g>
+    )
+  }
+  {
+    /* Psychology in UX: a price tag with its old price struck out, tied to a real anchor. */
+    cover === "anchor" && (
+      <g fill="none" stroke="var(--fg)" stroke-width="5" stroke-linejoin="round" stroke-linecap="round">
+        <path d="M96 125q-44-14-56-72" stroke-width="4" />
+        <path d="M114 68h160v114H114l-38-57z" fill="var(--pop)" />
+        <circle cx="98" cy="125" r="8" fill="var(--bg)" />
+        <rect x="136" y="86" width="20" height="26" stroke-width="4" />
+        <rect x="162" y="86" width="20" height="26" stroke-width="4" />
+        <rect x="188" y="86" width="20" height="26" stroke-width="4" />
+        <path d="M128 120L218 78" stroke-width="6" />
+        <rect x="136" y="130" width="28" height="36" fill="var(--fg)" />
+        <rect x="170" y="130" width="28" height="36" fill="var(--fg)" />
+        <rect x="204" y="130" width="28" height="36" fill="var(--fg)" />
+        <path d="M274 82q32-30 63-18" stroke-dasharray="7 6" stroke-width="4" />
+        <circle cx="346" cy="60" r="9" />
+        <path d="M346 69V196M324 92h44" stroke-width="7" />
+        <path d="M308 168q38 52 76 0" stroke-width="7" />
+        <path d="M300 178l8-12 12 6M392 178l-8-12-12 6" stroke-width="6" />
       </g>
     )
   }
@@ -136,6 +367,5 @@ const [bg, fg, pop] = TONES[tone % TONES.length]!;
     display: block;
     width: 100%;
     height: auto;
-    font-family: var(--font-sans);
   }
 </style>

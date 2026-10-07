@@ -15,6 +15,7 @@
     "test": "vitest run",
     "i18n:extract": "lingui extract --clean",
     "e2e": "playwright test",
+    "e2e:xb": "playwright test -c playwright.xb.config.ts",
     "lhci": "node ./scripts/lighthouse.mjs",
     "shots": "node ./scripts/shots.mjs",
     "fonts": "node ./scripts/fonts.mjs",

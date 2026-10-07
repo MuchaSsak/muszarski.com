@@ -39,7 +39,9 @@ export async function translationsOf(post: Post): Promise<Partial<Record<BlogLoc
 /** Related posts in the same locale: the listed keys first, then the newest sharing a tag. */
 export async function relatedTo(post: Post, limit = 3): Promise<Post[]> {
   const same = (await postsIn(postLocale(post))).filter((other) => other.id !== post.id);
-  const listed = post.data.related.map((key) => same.find((other) => other.data.translationKey === key)).filter((p): p is Post => !!p);
+  const listed = post.data.related
+    .map((key) => same.find((other) => other.data.translationKey === key))
+    .filter((p): p is Post => !!p);
   const sharing = same.filter((other) => !listed.includes(other) && other.data.tags.some((tag) => post.data.tags.includes(tag)));
   return [...listed, ...sharing, ...same.filter((other) => !listed.includes(other) && !sharing.includes(other))].slice(0, limit);
 }

@@ -51,9 +51,12 @@ Success signal: Google autocomplete starts completing "mateusz muszarski" to "�
    `description`, `address` (**locality + region + country only, never a street**), `knowsAbout` (Things with
    checked Wikidata ids: TypeScript Q978185, React Q19399674, three.js Q3525922, Next.js Q56062435, Tailwind Q102173844;
    look up each new id), `knowsLanguage`, `hasCredential` (INF.0x, `recognizedBy` CKE; wording from the certificate),
-   `sameAs` (GitHub, LinkedIn, npm, Play developer page…), `worksFor` only for a real employer or his own business.
+   `sameAs` (every profile in `ELSEWHERE`: GitHub, LinkedIn, npm, Instagram, Facebook, Telegram, Discord [owner
+   2026-10-07]; add the Play developer page), `worksFor` only for a real employer or his own business.
    The markup must match the visible text.
-4. **Bidirectional links:** each profile links to the site and the site links to each profile (`rel="me"`).
+4. **Bidirectional links:** each profile links to the site and the site links to each profile (`rel="me"`). Owner
+   to-do: put matmuszarski.space in the LinkedIn website field, the Instagram bio, the Facebook intro and the GitHub
+   profile. Search Console can't verify social profiles; once a knowledge panel shows, claim it with Google.
 5. **Earned mentions (P1):** 3–5 independent links (client credits, npm READMEs, a Tricity meetup write-up, a guest post).
 
 ## Metadata rules
@@ -81,19 +84,29 @@ Success signal: Google autocomplete starts completing "mateusz muszarski" to "�
 - **`robots.txt`:** allow all; `Sitemap:` line; never block Googlebot, Bingbot or OAI-SearchBot. Training bots
   (GPTBot, Google-Extended, ClaudeBot) are the owner's call [Q29].
 - **Sitemap:** index + children with hreflang alternates (one route map feeds `<link>` tags and the sitemap);
+  `<image:image>` entries for every element marked `data-sitemap-image` (the My life pin board), added after the build
+  by `scripts/sitemap-images.mjs` (Google reads `image:loc` only; place and story go in the JSON-LD) [2026-10-07];
   `lastmod` from content dates.
 - **Search Console:** Domain property via DNS TXT; submit the sitemap; URL Inspection on home, one case study, one
   post and `/cv/`.
 - **Bing Webmaster:** import from GSC + **IndexNow** ping (key file in `public/`) after every deploy.
 - **`/llms.txt`:** P2, generated from the CV data; Google doesn't use it. Zero expectation, zero cost.
-- **Launch gate** (port from pstryk): the build fails on a missing title/description/OG, a wrong host in canonical/sitemap,
-  a preview noindex in production, or invalid JSON-LD.
+- **Launch gate** (`apps/web/scripts/launch-gate.mjs`, after every build; also fails on a new-tab link without its
+  screen-reader note, `structure.md`): fails on a missing title, description or
+  canonical, more than one origin across canonicals / hreflang / og:url / sitemap, JSON-LD that does not parse, a
+  broken internal link or #anchor, a missing share image or PDF; in a launch build also on placeholder markers and on
+  wrong robots (legal, print and contact-result pages noindex, everything else indexable).
 
 ## Built (2026-10-05)
 
 - JSON-LD: `src/lib/schema.ts` (WebSite + ProfilePage + Person on home, ProfilePage on /cv/, CollectionPage on /work/ and
-  /blog/, AboutPage on /my-life/, BlogPosting + BreadcrumbList on posts; legal pages none). No photo or credentials in
-  the Person until they are real (P15, P11).
+  /blog/, AboutPage on /my-life/, BlogPosting + BreadcrumbList on posts; legal pages none). No credentials in the
+  Person until they are real (P11). [2026-10-07] Knowledge-panel pass: home and /cv/ carry the full Person with the
+  owner's portrait (`#portrait` ImageObject, `personImageUrl()` in `lib/photos.ts`), `givenName`/`familyName`,
+  `hasOccupation`, `nationality`, `email`, `mainEntityOfPage`; profile links carry `rel="me"`; the portrait is an
+  800×800 crop of the Vilnius photo. `/my-life/` adds an `ImageGallery` (`galleryNode()`): one `ImageObject` per pin
+  board photo with `contentLocation` (Place + country code), `dateCreated`, `description`, and the Person as `about`,
+  `creator` and `copyrightHolder`, built from the same `data/gallery.ts` the visitor reads.
 - Share images: `bun run og` renders one 1200×630 Poster card per page × locale from the built pages; the launch gate
   fails on a missing one. Favicons: SVG + 48 px PNG + apple-touch 180 + manifest 192/512.
 - `/llms.txt` from the CV + projects + posts; RSS per blog locale; the sitemap leaves out legal, CV print and contact
@@ -137,6 +150,9 @@ Every post links one case study and one pillar.
 - **Decided for now [user] 2026-10-05:** the new site launches on **`matmuszarski.space`**. The old space site moved to
   `3d-space-folio.vercel.app`, so the domain's indexed content gets replaced, not redirected (the old site was one URL).
   Renew it before it expires (2027-03-17). A name domain stays an option; if it comes, the migration below applies.
+- **Deployed, not launched [owner] 2026-10-06:** the site runs on the domain as a noindex build until the owner calls the
+  launch (`LAUNCH_BUILD`). The www/apex redirect lives only in Vercel → Domains (the apex should be primary, www → apex);
+  `vercel.json` has no host redirect (one there plus the dashboard's apex → www looped every font and script).
 
 - **All candidates are unregistered (2026-10-05):** mateuszmuszarski .com/.pl/.dev/.me, muszarski .com/.pl/.dev,
   matmuszarski .com/.dev/.pl.

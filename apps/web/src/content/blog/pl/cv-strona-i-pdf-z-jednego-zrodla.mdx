@@ -1,0 +1,189 @@
+---
+title: "Jak sprawić, żeby CV na stronie i CV w PDF-ie nigdy się nie rozjechały?"
+seoTitle: "CV na stronie i PDF z jednego źródła"
+description: "CV na stronie i trzy pliki PDF (en, pl, es) powstają z jednego pliku TypeScript. Drukuje je Playwright, a test pilnuje, żeby się nie rozjechały."
+translationKey: "cv-one-source"
+published: 2026-10-06
+tags: [astro, i18n, accessibility]
+cover: sheet
+related: [this-site, astro-i18n, lingui-vs-i18next]
+sources:
+  - title: "page.pdf() (Playwright docs, class Page)"
+    url: "https://playwright.dev/docs/api/class-page#page-pdf"
+    accessed: 2026-10-06
+  - title: "@page (MDN)"
+    url: "https://developer.mozilla.org/en-US/docs/Web/CSS/@page"
+    accessed: 2026-10-06
+  - title: "Printing (MDN, CSS media queries guide)"
+    url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Guides/Media_queries/Printing"
+    accessed: 2026-10-06
+  - title: "break-inside (MDN)"
+    url: "https://developer.mozilla.org/en-US/docs/Web/CSS/break-inside"
+    accessed: 2026-10-06
+  - title: "FontFaceSet: ready property (MDN)"
+    url: "https://developer.mozilla.org/en-US/docs/Web/API/FontFaceSet/ready"
+    accessed: 2026-10-06
+  - title: "<a>: the download attribute (MDN)"
+    url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/a"
+    accessed: 2026-10-06
+  - title: "react-pdf"
+    url: "https://react-pdf.org/"
+    accessed: 2026-10-06
+  - title: "Typst documentation"
+    url: "https://typst.app/docs/"
+    accessed: 2026-10-06
+---
+
+Trzymaj CV jako dane, a nie jako dwa dokumenty. Na tej stronie jeden plik TypeScript zasila CV pod `/cv/`, surową trasę do druku i pliki PDF, które Playwright drukuje z tej trasy po angielsku, polsku i hiszpańsku. Test jednostkowy się wywala, gdy dane się zmienią, a PDF-ów nikt nie wydrukuje na nowo, więc strona i plik nie mogą po cichu mówić dwóch różnych rzeczy.
+
+> **TL;DR**
+> - Jeden plik, `src/data/cv.ts`, trzyma wszystkie fakty z CV w trzech językach. Jeden komponent renderuje je dwa razy: jako plakat na ekran i jako prostą kolumnę na papier.
+> - `bun run cv:pdf` drukuje trasę do druku przez `page.pdf()` z Playwrighta: A4, z tagami i z konspektem. Trzy PDF-y po dwie strony w 3,5 s.
+> - Trasa do druku publikuje skrót (digest) danych, które pokazuje. Skrypt zapisuje go obok PDF-ów, a `cv.test.ts` się wywala, gdy aktualne dane już do niego nie pasują.
+
+## Skąd w ogóle bierze się rozjazd?
+
+Stąd, że CV zwykle istnieje dwa razy: jako PDF zrobiony w edytorze dokumentów i jako strona przepisana ręcznie. Każdą zmianę trzeba wprowadzić w dwóch miejscach i prędzej czy później o jednym się zapomina. Nowa praca trafia na stronę, a w PDF-ie zostaje stare stanowisko. Dorzuć trzy języki i masz sześć kopii.
+
+Zasada w wiki mojego projektu mieści się w jednym zdaniu: nigdy nie edytuj samej strony ani samego PDF-a. Takie zasady trzymają się tylko wtedy, gdy coś ich pilnuje, więc układ opisany niżej zamienia rozjazd w czerwony test, a nie w kwestię pamięci.
+
+## Co siedzi w pliku z danymi?
+
+`cv.ts` eksportuje jeden obiekt. Każdy tekst, który zależy od języka, to rekord z osobną wartością dla każdego locale:
+
+```ts
+export type Text = Record<Locale, string>; // { en, pl, es }
+
+export interface CvEntry {
+  id: string;
+  title: Text;
+  org?: Text | undefined;
+  when: Text; // pokazywane tak, jak zapisane: "2026", "Od 2022"
+  bullets: Text[];
+  links?: { label: string; href: string }[];
+  short?: { name: string; note: Text }; // jedna linijka na stronę główną
+  placeholder?: boolean;
+}
+```
+
+Dalej idą sekcje: stanowisko, dostępność, lokalizacja, podsumowanie, doświadczenie, edukacja, projekty, umiejętności, kwalifikacje, języki i zainteresowania. Wartości, które nie są jeszcze ostateczne, mają flagę zastępczej wartości i komentarz, a każda trafia do rejestru, który czyszczę przed startem. Hiszpański tekst powstał z pomocą maszyny i jest oznaczony jako nieprzejrzany.
+
+Treść CV siedzi w tym pliku osobno dla każdego języka, bo to dłuższy tekst. Krótkie napisy interfejsu, takie jak nagłówki sekcji „Doświadczenie” czy „Umiejętności”, przechodzą przez Lingui, jak każda inna etykieta na stronie. Dlaczego akurat Lingui, piszę w [porównaniu Lingui i i18next](/pl/blog/lingui-czy-i18next/).
+
+Z tego pliku czyta nie tylko samo CV:
+
+| Kto czyta | Co bierze |
+| --- | --- |
+| `/<locale>/cv/` | wszystko, w układzie plakatu |
+| `/<locale>/cv/print/`, a z niej PDF-y | wszystko, w jednej kolumnie |
+| Sekcja Kompetencje na stronie głównej | kwalifikacje i oś czasu zbudowaną z linijek `short` |
+| Dane strukturalne osoby (Person) | stanowisko i podsumowanie |
+| `llms.txt` | stanowisko, podsumowanie, lokalizację i języki |
+
+## Jak jeden komponent obsługuje ekran i papier?
+
+`CvBody.astro` renderuje te same sekcje w tej samej kolejności i przyjmuje `variant`: `"page"` albo `"print"`. Wariant na stronę to arkusz w dwóch kolumnach (8 do 4), z kontaktem, umiejętnościami i językami w obramowanym panelu bocznym; poniżej 900 px robi się z tego jedna kolumna. Wariant do druku to jedna kolumna od góry do dołu: kontakt i języki idą w jednym wierszu, a każda grupa umiejętności zajmuje jedną linijkę.
+
+Linki to jedyne miejsce, w którym oba warianty celowo mówią co innego. Na ekranie link brzmi „GitHub” i informuje czytnik ekranu, że otworzy się w nowej karcie. Papieru nie da się kliknąć, więc wariant do druku wypisuje adres:
+
+```astro
+<a href={link.href} rel="noopener" target="_blank">
+  {variant === "print" ? `${link.label}: ${link.href}` : link.label}
+  {newTab && <span class="sr-only"> {newTab}</span>}
+</a>
+```
+
+W wariancie do druku `newTab` to pusty tekst, więc PDF nie niesie notki o karcie, której papier i tak nie otworzy.
+
+## Co robi CSS do druku?
+
+CV da się dostać na papier na dwa sposoby i oba korzystają ze stylów do druku.
+
+Pierwszy to przycisk Drukuj na stronie z CV, który wywołuje `print()`. MDN opisuje typ mediów `print` jako style używane wyłącznie przy druku, więc blok `@media print` chowa nagłówek strony, sekcję z dużym imieniem i przyciskami, stopkę oraz warstwę ziarna, a arkusz zmienia na biały z czarnym tekstem.
+
+Drugi to trasa, z której powstają PDF-y. Nie ma na niej nawigacji ani ruchu, a stronę ustawia sama:
+
+```css
+@page {
+  size: A4;
+  margin: 12mm 14mm;
+}
+:root {
+  color-scheme: light;
+  background: #fff !important;
+}
+.print .entry {
+  break-inside: avoid;
+}
+.print h2 {
+  break-after: avoid;
+}
+```
+
+`@page` ustala rozmiar i marginesy drukowanych stron. Jasny `color-scheme` jest tu dlatego, że reszta strony deklaruje ciemny, który pomalowałby marginesy. `break-inside: avoid` nie pozwala rozciąć wpisu o pracy na dwie strony, a `break-after: avoid` pilnuje, żeby nagłówek sekcji nie zostawał sam na dole strony. Trasa ma `noindex` i nie ma jej w mapie strony: to źródło dla PDF-a, a nie miejsce, na które ktoś ma trafić.
+
+## Jak Playwright zamienia trasę w PDF?
+
+`bun run cv:pdf` działa na lokalnym podglądzie zbudowanej strony. Dla każdego języka otwiera `/<locale>/cv/print/`, kończy się błędem, jeśli odpowiedź nie jest OK („is the preview running?”), czeka na fonty, czyta skrót i drukuje:
+
+```js
+await page.goto(`${base}/${locale}/cv/print/`, { waitUntil: "networkidle" });
+await page.evaluate(() => document.fonts.ready);
+const digest = await page.locator('meta[name="cv-digest"]').getAttribute("content");
+const pdf = await page.pdf({
+  format: "A4",
+  printBackground: true,
+  preferCSSPageSize: true,
+  tagged: true,
+  outline: true,
+});
+```
+
+Co robi każdy element, według dokumentacji Playwrighta:
+
+- `page.pdf()` renderuje z mediami CSS `print`, więc działają style do druku opisane wyżej.
+- `format` domyślnie to Letter; ja ustawiam A4.
+- `preferCSSPageSize` daje pierwszeństwo rozmiarowi z `@page`. Domyślnie treść jest skalowana do formatu papieru.
+- `printBackground` drukuje grafiki tła, które domyślnie są wyłączone.
+- `tagged` tworzy PDF z tagami (dostępny), a `outline` osadza konspekt dokumentu. W moich plikach jego pozycje to nagłówki z CV.
+
+Czekanie na `document.fonts.ready` ma znaczenie przy własnym foncie. Według MDN ta obietnica (Promise) rozwiązuje się dopiero wtedy, gdy dokument skończył ładować fonty, układ jest gotowy i żadne kolejne fonty nie są potrzebne. Druk rusza więc dopiero wtedy, gdy jedyny font strony jest na miejscu.
+
+Trzy PDF-y po dwie strony powstają w 3,5 s na moim komputerze (pomiar z 2026-10-06). Trafiają do repozytorium, do `public/files/`. Pierwotnie chciałem drukować je w trakcie builda na serwerze i tam sprawdzać tekst PDF-a, ale build wdrożeniowy nie instaluje przeglądarki. Dlatego drukuję lokalnie, a wynikiem opiekuje się test.
+
+Patrzyłem też na react-pdf, renderer Reacta z własnymi komponentami `Document`, `Page`, `View` i `Text`, oraz na Typst, system składu oparty na znacznikach. Oba to dobre narzędzia. Oba oznaczałyby jednak opisanie układu CV drugi raz, a to właśnie ten rozjazd chciałem usunąć.
+
+## Jak test łapie nieaktualny PDF?
+
+Odciskiem palca danych. `cvDigestSource(locale)` przechodzi po obiekcie CV, zostawia tylko teksty danego języka i zamienia wynik na JSON. Trasa do druku liczy z tego skrót (SHA-256, pierwsze 16 znaków szesnastkowych) i wstawia go do znacznika `<meta name="cv-digest">`. Skrypt przepisuje tę wartość do `cv-digest.json` obok PDF-ów. Test liczy skrót od nowa z aktualnych danych:
+
+```ts
+describe.each(["en", "pl", "es"] as const)("CV PDF (%s)", (locale) => {
+  it("exists", () => {
+    expect(existsSync(new URL(`mateusz-muszarski-cv-${locale}.pdf`, files))).toBe(true);
+  });
+
+  it("was printed from the current CV data", () => {
+    const recorded = JSON.parse(readFileSync(new URL("cv-digest.json", files), "utf8")) as Record<string, string>;
+    expect(recorded[locale], "run `bun run build`, `bun run preview`, then `bun run cv:pdf`").toBe(digest(locale));
+  });
+});
+```
+
+Skrót jest osobny dla każdego języka, więc poprawka literówki po hiszpańsku wywala tylko hiszpański test, a komunikat błędu od razu mówi, co zrobić. Obok stoją jeszcze dwa zabezpieczenia: build produkcyjny staje, gdy brakuje któregoś PDF-a, a test end-to-end sprawdza, że link „Pobierz PDF” na polskiej stronie z CV ma atrybut `download` i zwraca 200.
+
+## Co dostaje osoba, która wchodzi na stronę?
+
+Na stronie z CV pierwszy przycisk to PDF, z rozmiarem pliku w etykiecie, odczytanym z dysku w czasie builda. To zwykły link z atrybutem `download`. MDN zaznacza, że `download` działa tylko dla adresów z tego samego źródła (same-origin), co jest jeszcze jednym powodem, żeby pliki leżały na stronie, a nie na zewnętrznym hostingu plików.
+
+Przycisk CV na stronie (w nagłówku, w pierwszej sekcji i w menu) robi dwie rzeczy jednym kliknięciem: zaczyna pobieranie w ramach tego kliknięcia, a potem otwiera CV na stronie, które potwierdza pobieranie i proponuje plik jeszcze raz. Bez JavaScriptu to zwykły link do CV na stronie.
+
+Tekst w PDF-ie to prawdziwy tekst. Puść `pdftotext` na polskim pliku, a ogonki wrócą jako litery, które da się wyszukać i skopiować. Pliki mają tagi i deklarują swój język. Resztę tego, jak powstawała ta strona, od wiki po bramki Lighthouse, opisałem w [studium przypadku](/pl/blog/jak-powstala-ta-strona/).
+
+## Co zrobiłbym inaczej?
+
+- **Liczyć skrót z wyniku, a nie tylko z danych.** Skrót obejmuje `cv.ts`. Jeśli zmienię `CvBody.astro` albo CSS do druku, test zostanie zielony, a PDF-y w repozytorium będą nieaktualne. E-mail, linki do profili i nagłówki sekcji też żyją poza `cv.ts`. Skrót z wyrenderowanego HTML-a trasy do druku objąłby to wszystko.
+- **Czytać PDF w teście.** Żaden test jeszcze nie otwiera PDF-a. Test end-to-end sprawdza link, kod odpowiedzi i to, że strona pokazuje nazwę projektu.
+- **Zrobić z drukowania jeden krok.** Najpierw trzeba zbudować stronę i uruchomić podgląd. Test złapie zapomniany druk, ale samo drukowanie nadal jest ręczne.
+
+Efekt znajdziesz pod [/pl/cv/](/pl/cv/), a PDF jest o jedno kliknięcie dalej.

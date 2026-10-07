@@ -33,14 +33,14 @@
 
 | # | Section | Must prove / do | CTA |
 | --- | --- | --- | --- |
-| 0 | Header (sticky) | M—M mark → home · Work (`#work`) · How I work (`#how-i-work`) · AI (`#ai`) · Blog · language codes · theme · CV (split) · **Contact**. My life sits in the footer + mobile menu. Built 2026-10-05 (`design.md` § Components) | Contact (primary), CV |
-| 1 | Hero | the fitted name (H1, the signature moment F20), role, one-line positioning, icon facts, the availability sticker; then the tool band (marks + names). Built 2026-10-05 | See the work (primary) · Download CV |
-| 2 | Selected work | the 4 flagship chapters (`content/projects.md`), each in its own theme; then "All projects →" | Case study · Live · Code · All projects |
-| 3 | How I work | product thinking: principles with receipts (F06) | links into case studies |
-| 4 | AI workflow | the system and its verification gates (F07) | "How this site was built" (F23) |
-| 5 | Credentials | expanding cards that load media on open; learning; teamwork (F08). **The Stack section is cut** [user 2026-10-05: "they dont care THAT MUCH to have a whole section dedicated just for this"]: tools show in the band and per chapter | Verify links · full CV |
-| 6 | Latest writing (optional) | 2–3 posts for internal links | Blog |
-| 7 | Contact | form + direct links + quick facts (F09); the "open to projects" line | Send · Copy email · CV · LinkedIn |
+| 0 | Header (sticky) | M—M mark → home · Work (`#work`) · How I work (`#how-i-work`) · AI (`#ai`) · Blog · language flags · CV · **Hire me** [user 2026-10-06]. My life sits in the footer + the menu. Built 2026-10-05, reworked 2026-10-06 (`design.md` § Components) | Hire me (primary, → `#contact`), CV |
+| 1 | Hero | the fitted name (H1, the signature moment F20), role, one-line positioning (P6, `brand.md` § Positioning), icon facts, the availability sticker; then the tool band (marks + names). Built 2026-10-05 | See the work (primary) · Download CV |
+| 2 | Selected work | the 4 flagship chapters (`content/projects.md`), each in its own skin, read in one order: badge → title → media → outcome → description → CTA → status → tools (`design.md` § Components, Chapters); then "Also shipped" (Malatro, yws.lu, lingui-translate-ai as tilted tickets; client work behind the rights gate) [user 2026-10-06] + "All projects →" | one primary per chapter: Visit pstrykweb.pl (the landing, never the konfigurator [user 2026-10-06]) · App Store + Google Play · Ask for a walkthrough · Launch (+ Code, secondary); All projects |
+| 3 | How I work | product thinking: a 7-stop ring; each stop shows a drawn scene from a real project, one line and a receipt (F06) [user 2026-10-06: tell it visually, less reading] | links into case studies |
+| 4 | AI workflow | an org chart (F07) [user 2026-10-06]: "I run AI like a team.", Me (Lead) → Claude Code (Builder) → a crew of six (memory, rules, research, tools, playbooks, quality gates), each with examples and tool pins, never counts [user 2026-10-06] | "How this site was built" (F23), the only CTA |
+| 5 | Credentials | list + detail panel on wide screens, accordion on phones; each credential its own colour; on wide screens an idle tour (a drawn cursor opens the next card after 5 s without hover, focus or click) [user 2026-10-06]; media loads on open; learning; teamwork (F08). **The Stack section is cut** [user 2026-10-05: "they dont care THAT MUCH to have a whole section dedicated just for this"]: tools show in the band and per chapter | Certificate (verify) · Details on the CV |
+| 6 | Latest writing (hidden without posts) | a compact teaser: kicker + plain heading, the newest posts (at most 8, 2026-10-07: every card is inline HTML) as small cards (taped paper notes on a faint dot grid), for internal links [user 2026-10-06] | All posts |
+| 7 | Contact | form + quick facts + three direct tiles (F09). The "Open to selected freelance projects / Start with a project" line and the CV tile are removed [user 2026-10-06] | Send · Copy email · LinkedIn · GitHub |
 | 8 | Footer | F10 | — |
 
 - **Rhythm** (desktop, in viewport heights; mobile = content height) [research: landing-sections]:
@@ -55,6 +55,8 @@
   - **≈ 9 screens in total.** Never more than 4 consecutive ~1.0 sections. Compositions: `design/design-references.md`.
 - **Merge:** if sections 3 + 4 read long in screenshots, they merge into one "How I work" with two halves
   [user agreed to evaluate].
+- **Focus over volume** [user 2026-10-06]: each section leads to one obvious next action; detail the landing no longer
+  shows (the space site's Lighthouse receipt, PstrykWeb's icon tiles) moves to posts and case studies (`design.md` § Art direction).
 
 ## All projects `/<locale>/work/`
 
@@ -72,11 +74,18 @@
 
 ## `/<locale>/cv/`
 
-- Header: name, title, location, availability, and a **Download PDF** button (`<a download>`, file size in the label).
+- Header: name, title, location, availability, then **Download PDF** (`<a download>`, file size in the label) · Print · Contact.
 - Sections from `content-model.md` § CV in the same order as the PDF, laid out on drafting sheets.
 - Locale switch; print stylesheet.
-- **No auto-download** (iOS needs a direct tap) [research: stack § 4.4]. Every CV CTA is a **split button**: "CV" opens `/cv/` and
-  the attached "↓ PDF" downloads directly (`Content-Disposition: attachment`, proper file name) [user] 2026-10-05.
+- **One CV button** (`layout/CvLink.astro`) [user 2026-10-06: "just one button for CV"; replaces the 2026-10-05 split button]:
+  - a plain click downloads the locale's PDF inside the tap (a direct `download` link, which iOS allows), sets
+    sessionStorage `cv-pdf` and opens `/cv/` after 400 ms; `/cv/` then shows the `[data-pdf-note]` confirmation and its
+    Download PDF button gets the file again. A click on `/cv/` itself shows the note in place
+  - modified clicks (new tab, middle click, a modifier key) just open the page
+  - without JS it is a plain link to `/cv/`, whose first button is the PDF
+  - **no auto-download on page load** (iOS needs a direct tap) [research: stack § 4.4]: the download only happens inside the
+    user's click
+  - the post author box still has separate "CV" and "PDF" text links (`pages/[locale]/blog/[slug].astro`)
 
 ## Blog
 
@@ -90,8 +99,18 @@
 
 ## `/<locale>/my-life/`
 
-Photo · short intro · interests grid (content-model § Life item) · "hang out" links (Discord,
-Messenger) · back to work / contact. Secondary nav item; not in the hero path.
+Hero (the title over a goo shader, a fanned stack of the owner's prints: tap, click or "Next photo" deals the next;
+entries marked `hero` in `src/data/gallery.ts`) · **pin board** [user 2026-10-07: "an actual real life pinboard ...
+evidence board", "great for seo and google knowledge panel"]: a cork board in a wooden frame, every photo from
+`gallery.ts` as a tacked print with its caption, the place + month on yellow tape and his story on an index card
+(real text next to the image), red yarn tying the prints of a row; a print links to the large file and opens a
+`<dialog>` lightbox (previous / next, arrow keys, Esc); `LifeBoard.astro` · a playground of
+toys, one per interest, each a card with a title, one line and a small game: calisthenics reps, music beats, faith
+(light), travel board, motorcycles (hold to rev), games with friends (Pong), films (roll a night: picture only, no
+text [user 2026-10-06]), parties, photography (slide to develop a print), self-improvement (an orb race of 1.01ⁿ vs
+0.99ⁿ with milestone chips, no figures [user 2026-10-06]) · socials · back to work / contact. The "hang out"
+overload (moving windows, notifications) was called off [user 2026-10-06]. Toy scripts load with the page section
+(no framework). Secondary nav item; not in the hero path.
 
 ## Legal
 
@@ -101,29 +120,43 @@ Messenger) · back to work / contact. Secondary nav item; not in the hero path.
 
 ## Navigation and footer
 
-- **Header on mobile:** mark, CV and Contact stay visible; the rest goes behind a labelled "Menu" button (a native
-  popover, 0 KB JS for open/close). Built 2026-10-05 (Poster):
-  - < 1180 px: navigation, language codes and theme move into the full-screen menu (+ My life, Contact, the PDF, pause motion)
-  - < 480 px: the CV control is a single "CV" button (the PDF lives in the menu); button type condenses (`wdth` 82, 72 under
-    360 px); the stuck full name stacks in two lines
+- **Header on mobile:** mark, CV and Hire me stay visible; the rest goes behind a labelled "Menu" button (a native
+  popover, 0 KB JS for open/close). Built 2026-10-05 (Poster), reworked 2026-10-06:
+  - < 1180 px: navigation and the flags move into the full-screen menu: Work · How I work · AI · Blog · My life · Contact,
+    then Download CV + pause motion, then the flags with their names
+  - < 480 px: button type condenses (`wdth` 82, 72 under 360 px) and the CV + Menu icons drop; the stuck full name stacks in
+    two lines
   - `e2e/chrome.spec.ts` checks every header control for spill and overlap at 8 widths x 3 locales
 - **Contact panel:** not built [assumption 2026-10-05]: every Contact link goes to the home section `#contact` (one form,
   one place to maintain). Revisit if analytics show people dropping on the jump.
 - **Footer columns** (this list owns the footer links; ~15 links):
   - Work (the 4 flagships → their home chapters, + All projects)
-  - Site (Blog, CV, My life, How this site was built → the blog case study, RSS)
-  - Elsewhere (GitHub, LinkedIn, npm…; `rel="me"`)
+  - Site (Blog, CV = the `CvLink` text link, My life, How this site was built → the blog case study, RSS)
+  - Elsewhere (`ELSEWHERE` in `data/site.ts`: GitHub, LinkedIn, npm, Instagram, Facebook, Telegram, Discord; `rel="me"`,
+    new tab) [owner 2026-10-07]
   - Legal (Privacy, Terms)
   - plus the locale switch and the build-time revision row (`design-references.md` § Per home section, Footer row)
+  - the columns start left, next to the say-line (`.cols` = `max-content` + `1fr`) [user 2026-10-06]
+- **External links open in a new tab** [user 2026-10-06] (`target="_blank" rel="noopener"`):
+  - every one says so to screen readers: "(opens in a new tab)" (`sr-only`, after the visible words); components
+    write it by hand (Lingui), posts get it from the Sätteri hast plugin `externalLinks` (`apps/web/astro.config.mjs`,
+    per-locale words)
+  - the launch gate fails any build with a new-tab link that lacks it (the print CV is exempt: no readers)
+    [2026-10-06]
 
 ## CTA inventory (every CTA has an analytics event: `analytics.md`; the ones without their own event use `cta`)
 
 | CTA | Where | Goes to |
 | --- | --- | --- |
-| Contact | header, hero, chapters' end, case-study end, footer | contact panel / section |
-| CV (split: CV · ↓ PDF) | header, hero proof, contact, /cv | `/cv/` · direct PDF download |
+| Hire me | header, every width [user 2026-10-06] | `#contact` |
+| Contact | menu, footer, `/cv/`, post author box | `#contact` |
+| CV / Download CV (one button, `CvLink`) | header ("CV"), hero + menu ("Download CV"), footer (text link) | PDF download inside the tap, then `/cv/` (§ `/cv/`) |
+| Download PDF | `/cv/`, post author box ("PDF") | direct PDF download |
 | See work | hero | `#work` |
-| Case study / Live / Code | chapters, `/work/` index | `/work/<slug>/` / external |
+| Chapter CTA (one primary each; Space adds Code) | chapters | external, new tab; Clockful's walkthrough → `#contact` |
+| Live / Store / npm / Code | `/work/` index | external, new tab |
 | All projects | after the chapters, footer | `/work/` |
-| Copy email | contact panel and section | clipboard + toast |
-| Open to projects | contact section (one line) | contact form, with the topic prefilled |
+| How this site was built | AI section, footer | the case-study post |
+| All posts | latest writing | blog index |
+| Copy email | contact section | clipboard + toast |
+| Send fails | contact form | its own navy error box (`role=alert`) under Send; the note "Used only to reply. Privacy policy" never changes, link underlined [user 2026-10-06]; unknown answers read as "can't send right now" |

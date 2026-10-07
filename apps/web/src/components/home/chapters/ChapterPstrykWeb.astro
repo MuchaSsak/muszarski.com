@@ -1,9 +1,9 @@
 ---
 /**
  * Chapter 01, PstrykWeb (content/projects/pstrykweb.md). PUBLIC INFO ONLY [user 2026-10-05]: the product as its public
- * pages describe it, his solo role for Cetuspro, tech visible from outside. Never the pipeline, AI generation,
+ * pages describe it, that he built it for Cetuspro (never "solo" or "team"), tech visible from outside. Never the pipeline, AI generation,
  * internal tools or counts. The stage is a drawn order loop (fill the form, order, the site goes live) until the
- * owner records the public konfigurator (placeholders.md P18). Rights status `check` (P10): hidden at launch until OK.
+ * owner records the product (placeholders.md P18). Rights status `check` (P10): hidden at launch until OK.
  */
 import { t } from "lingui-for-astro/macro";
 
@@ -21,39 +21,37 @@ const orderLabel = t`Order website`;
 const RADIUS = 62;
 const circumference = 2 * Math.PI * RADIUS;
 const fontSize = Math.min(14, circumference / (lineEm(ring, 120) + 0.16 * [...ring].length));
-
 ---
 
 <section class="sec chapter c-pw" id="pstrykweb" aria-labelledby="t-pw">
-  <ChapterBadge icon="tb:briefcase" label={t`Commercial · solo · 2026`} />
+  <div class="ch-bg" aria-hidden="true"></div>
+  <ChapterBadge icon="tb:briefcase" label={t`Commercial · Cetuspro · 2026`} />
   <Fit as="h2" id="t-pw" lines={["PstrykWeb"]} />
   <div class="pw-grid grid-2">
     <div class="ch-info">
-      <p class="outcome rv">{typo(locale, t`Bespoke websites for local businesses, ordered through one online form. Built solo for Cetuspro.`)}</p>
+      <p class="outcome rv">{typo(locale, t`Bespoke websites for local businesses, ordered through one online form.`)}</p>
       <p class="desc rv" style="--d:1">
-        {
-          typo(
-            locale,
-            t`A local business owner answers a few questions in one online form, the konfigurator, and orders a website made for their business. I built PstrykWeb for Cetuspro, a Polish software house, as its only developer.`,
-          )
-        }
+        {typo(
+          locale,
+          t`A local business owner answers a few questions in one online form and orders a website made for their business. I built PstrykWeb for Cetuspro, a Polish software house.`,
+        )}
       </p>
       <div class="links rv" style="--d:2">
         <a
           class="btn btn-inv"
-          href={WORK_LINKS.pstrykwebKonfigurator}
+          href={WORK_LINKS.pstrykweb}
           rel="noopener"
           target="_blank"
           data-umami-event="outbound"
-          data-umami-event-target="pstrykweb-konfigurator"
+          data-umami-event-target="pstrykweb-site"
           data-umami-event-project="pstrykweb"
         >
-          {t`Open the konfigurator`}
+          {t`Visit pstrykweb.pl`}
           <Icon name="tb:arrow-up-right" class="nudge" />
           <span class="sr-only">{t`(opens in a new tab)`}</span>
         </a>
       </div>
-      <p class="status live">{t`Konfigurator live`}</p>
+      <p class="status live">{t`Live`}</p>
       <StackList
         class="rv"
         style="--d:3"
@@ -68,46 +66,71 @@ const fontSize = Math.min(14, circumference / (lineEm(ring, 120) + 0.16 * [...ri
     <figure class="reel pw-stage stage-first">
       <div class="frame">
         <div class="award" aria-hidden="true">
-          <svg viewBox="0 0 200 200">
-            <polygon
-              class="burst"
-              points="100,0 113,20 135,8 140,32 164,28 160,52 184,58 172,79 194,92 176,108 190,128 168,136 172,160 148,160 144,184 122,174 110,196 96,178 78,194 70,170 46,176 46,152 22,148 32,126 10,112 28,96 12,78 34,68 26,46 50,44 52,20 74,28 86,6"
-            ></polygon>
-            <path id="pw-ring" d={`M100,100 m-${RADIUS},0 a${RADIUS},${RADIUS} 0 1,1 ${2 * RADIUS},0 a${RADIUS},${RADIUS} 0 1,1 -${2 * RADIUS},0`} fill="none"
-            ></path>
-            <text font-size={fontSize.toFixed(2)} textLength={circumference.toFixed(1)} lengthAdjust="spacing">
-              <textPath href="#pw-ring">{ring}</textPath>
-            </text>
-          </svg>
-          <div class="core"><span>#1<small>{t`Featured`}</small></span></div>
+          <div class="pw-spin">
+            <svg viewBox="0 0 200 200">
+              <polygon
+                class="burst"
+                points="100,0 113,20 135,8 140,32 164,28 160,52 184,58 172,79 194,92 176,108 190,128 168,136 172,160 148,160 144,184 122,174 110,196 96,178 78,194 70,170 46,176 46,152 22,148 32,126 10,112 28,96 12,78 34,68 26,46 50,44 52,20 74,28 86,6"
+              ></polygon>
+              <path
+                id="pw-ring"
+                d={`M100,100 m-${RADIUS},0 a${RADIUS},${RADIUS} 0 1,1 ${2 * RADIUS},0 a${RADIUS},${RADIUS} 0 1,1 -${2 * RADIUS},0`}
+                fill="none"
+              ></path>
+              <text font-size={fontSize.toFixed(2)} textLength={circumference.toFixed(1)} lengthAdjust="spacing">
+                <textPath href="#pw-ring">{ring}</textPath>
+              </text>
+            </svg>
+          </div>
+          <div class="core">
+            <span>
+              #1<small>{t`Featured`}</small>
+            </span>
+          </div>
         </div>
         <div class="browser">
-          <div class="b-top" aria-hidden="true"><i></i><i></i><i></i><span class="b-url"></span></div>
+          <div class="b-top" aria-hidden="true">
+            <i></i>
+            <i></i>
+            <i></i>
+            <span class="b-url"></span>
+          </div>
           <div class="b-site" aria-hidden="true">
             <div class="w w-nav" style="--i:0"></div>
             <div class="w w-h1" style="--i:1"></div>
             <div class="w w-h2" style="--i:2"></div>
             <div class="w w-btn" style="--i:3"></div>
             <div class="w w-img" style="--i:2"></div>
-            <div class="w-cards"><div class="w" style="--i:4"></div><div class="w" style="--i:5"></div><div class="w" style="--i:6"></div></div>
+            <div class="w-cards">
+              <div class="w" style="--i:4"></div>
+              <div class="w" style="--i:5"></div>
+              <div class="w" style="--i:6"></div>
+            </div>
           </div>
-          <span class="live-stamp" aria-hidden="true" data-t="LIVE ✓"></span>
+          <span class="live-stamp" aria-hidden="true" data-t="• LIVE"></span>
           <span class="soon">{t`Video soon`}</span>
         </div>
         <div class="order" aria-hidden="true">
           <!-- Drawn text: set as generated content, so a mid-fade frame isn't read as page text. -->
           <p class="o-k" data-t={t`Order a website`}></p>
-          <span class="o-l" data-t={t`Business name`}></span><span class="o-f" style="--fw:52%"></span>
-          <span class="o-l" data-t={t`What you do`}></span><span class="o-f f2" style="--fw:74%"></span>
+          <span class="o-l" data-t={t`Business name`}></span>
+          <span class="o-f" style="--fw:52%"></span>
+          <span class="o-l" data-t={t`What you do`}></span>
+          <span class="o-f f2" style="--fw:74%"></span>
           <span class="o-l" data-t={t`Style`}></span>
-          <div class="o-chips"><span class="on" data-t={t`Bold`}></span><span data-t={t`Calm`}></span><span data-t={t`Classic`}></span></div>
+          <div class="o-chips">
+            <span class="on" data-t={t`Bold`}></span>
+            <span data-t={t`Calm`}></span>
+            <span data-t={t`Classic`}></span>
+          </div>
           <span class="o-btn" data-t={`${orderLabel} →`}></span>
-          <svg class="pointer" viewBox="0 0 24 24"><path d="M5 3l14 7-6 2-2 6z" fill="#fff" stroke="#0a0d33" stroke-width="1.6" stroke-linejoin="round"
-            ></path></svg>
+          <svg class="pointer" viewBox="0 0 24 24">
+            <path d="M5 3l14 7-6 2-2 6z" fill="#fff" stroke="#0a0d33" stroke-width="1.6" stroke-linejoin="round"></path>
+          </svg>
         </div>
       </div>
       <figcaption class="sr-only">
-        {t`Illustration of the order flow: fill in the form, press order, the website goes live. A screen recording of the public konfigurator will replace it.`}
+        {t`Illustration of the order flow: fill in the form, press order, the website goes live. A screen recording will replace it.`}
       </figcaption>
     </figure>
   </div>
@@ -140,10 +163,16 @@ const fontSize = Math.min(14, circumference / (lineEm(ring, 120) + 0.16 * [...ri
     color: var(--ice);
     container-type: inline-size;
   }
-  .award svg {
+  /* Turns on an HTML wrapper so the compositor runs it (an SVG's own transform re-lays out the page every frame). */
+  .award .pw-spin {
     width: 100%;
     height: 100%;
     animation: spin 26s linear infinite reverse;
+  }
+  .award svg {
+    display: block;
+    width: 100%;
+    height: 100%;
   }
   .award .burst {
     fill: var(--cobalt);

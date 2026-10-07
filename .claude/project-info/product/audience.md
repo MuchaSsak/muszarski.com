@@ -22,7 +22,8 @@
 
 ## Secondary segments
 
-- **Freelance clients** (the "open to projects" line) [user]: they need outcome, trust, a quick contact.
+- **Freelance clients** [user]: they need outcome, trust, a quick contact (the form's "A project" topic; the "open to
+  projects" line was removed from the contact section 2026-10-06, `site/structure.md` § Home).
 - **Search visitors:** name, project names, blog topics (`seo.md`).
 - **AI assistants and screeners:** server-rendered facts, `/llms.txt`.
 

@@ -4,8 +4,9 @@ seoTitle: "Lingui vs i18next in 2026 for React and React Native"
 description: "Lingui and i18next compared from their docs and npm data: message format, macros, compile step, bundle size, plurals, TypeScript and React Native."
 translationKey: "lingui-vs-i18next"
 published: 2026-10-05
+updated: 2026-10-06
 tags: [i18n, react]
-cover: translate
+cover: bubbles
 related: [lingui-translate-ai, astro-vs-next]
 sources:
   - title: "Lingui: Introduction"
@@ -84,7 +85,13 @@ sources:
 
 Pick i18next if you want the largest ecosystem, keys you name yourself and translations loaded as JSON at runtime. Pick Lingui if you want to write the source text where it renders, keep plurals inside one ICU message and compile catalogs at build time, with a core runtime of about 2 kB gzipped. I use Lingui in Linkoglot (30 languages, Expo) and on this site; the comparison below comes from both projects' docs and public npm data, checked on 2026-10-05.
 
-## Two mental models: keys or source text
+> **TL;DR**
+>
+> - **i18next:** the largest ecosystem (about 27.8 million npm downloads in one week), keys you name yourself, JSON loaded at runtime, typed keys in TypeScript.
+> - **Lingui:** source text written where it renders, plurals inside one ICU message, catalogs compiled at build time, a core of about 2 kB gzipped.
+> - **Both** run in React Native on Hermes with `Intl` polyfills. Before you choose, test a plural in your hardest language on a real device.
+
+## Do you name keys or write source text?
 
 The difference shows up in the first line of code. With i18next you invent a key, put the text in a JSON file and look the key up at runtime:
 
@@ -109,13 +116,13 @@ t`Hello ${name}`;
 
 Neither model is wrong. Named keys stay stable when the English copy changes, and with TypeScript they autocomplete. Source text means there is nothing to name, and duplicates merge on their own. The flip side: an edited English sentence gets a new ID, so translators see it as a new, untranslated message.
 
-## Message format: is it ICU in both?
+## Is the message format ICU in both?
 
 Not by default. Lingui uses ICU MessageFormat throughout: placeholders, plurals and selects live inside one message, such as `{count, plural, one {# file} other {# files}}`. i18next has its own syntax: `{{name}}` for interpolation, and each plural form is a separate key with a suffix. Interpolated values are escaped by default to mitigate XSS.
 
 You can get ICU in i18next through the i18next-icu plugin, which uses formatjs' intl-messageformat. Its README warns that with the plugin only the ICU format is respected, so i18next's `{{name}}` interpolation stops working. Pick one syntax per project and stick to it.
 
-## Macros, extraction and the compile step
+## How do macros, extraction and compiling work?
 
 Lingui's loop is: write messages with macros, run `lingui extract` to update the catalogs, translate, compile. Macros run at build time (Babel, SWC, or the native transform in `@lingui/vite-plugin`). Per the docs, they generate the short IDs, keep your components type-checked as ordinary code, and strip translator comments and default messages from production builds. The extractor finds macros, explicit `i18n._()` calls and expressions marked with an `/** i18n */` comment; it cannot extract a message stored in a variable.
 
@@ -123,9 +130,9 @@ Compilation turns `.po` catalogs into JavaScript, so the runtime ships no messag
 
 i18next needs no compile step. JSON is bundled inline or loaded through backend plugins, and namespaces let you split translations and load them on demand. Extraction now lives in i18next-cli, a toolchain built on SWC that extracts keys, generates TypeScript definitions, lints for hardcoded strings, syncs locale files and reports translation status. It can migrate an old i18next-parser config.
 
-## Bundle size, measured on 2026-10-05
+## How big are they?
 
-From bundlephobia, minified and minified plus gzip (1 kB = 1,000 bytes):
+From bundlephobia on 2026-10-05, minified and minified plus gzip (1 kB = 1,000 bytes):
 
 | Package | Version | Minified | Gzipped |
 | --- | --- | --- | --- |
@@ -134,9 +141,11 @@ From bundlephobia, minified and minified plus gzip (1 kB = 1,000 bytes):
 | `@lingui/core` | 6.9.0 | 5.0 kB | 2.1 kB |
 | `@lingui/react` | 6.9.0 | 3.8 kB | 1.8 kB |
 
-The core rows match Lingui's own comparison page: about 2 kB against about 14 kB gzipped. `react-i18next` declares i18next as a peer dependency, so its row does not include i18next. Read the binding rows with care, because bundlephobia counts dependencies per package. Your catalogs add bytes in both cases and tree-shaking changes the totals, so measure your own build before you quote a number.
+The core rows match Lingui's own comparison page: about 2 kB against about 14 kB gzipped. `react-i18next` declares i18next as a peer dependency, so its row does not include i18next.
 
-## Plurals
+Read the binding rows with care, because bundlephobia counts dependencies per package. Your catalogs add bytes in both cases and tree-shaking changes the totals, so measure your own build before you quote a number.
+
+## How do they handle plurals?
 
 Both libraries follow the CLDR plural categories (zero, one, two, few, many, other) and both rely on `Intl.PluralRules`. The shape of the data differs. English needs two forms; Polish needs four. In i18next that is four keys, and the variable must be called `count`:
 
@@ -158,25 +167,25 @@ msgstr "{count, plural, one {# plik} few {# pliki} many {# plików} other {# pli
 
 The code does not change when a language with more forms is added. That is the practical argument for ICU: the grammar of each language stays in that language's file.
 
-## TypeScript
+## What about TypeScript?
 
 i18next offers type-safe keys and return types. You declare your resources in a `CustomTypeOptions` augmentation, and `t` checks and autocompletes keys. The newest versions require TypeScript 5, and the docs warn that type safety can slow compilation on big projects (an optimized selector API exists for that case).
 
 Lingui has no keys to type. Macros are ordinary template literals and JSX, so TypeScript checks the values you interpolate like any other code. You lose key autocomplete; in exchange there is no key list to keep in sync.
 
-## React Native and Expo
+## Do they work in React Native and Expo?
 
 Both work, and both need the same polyfills on Hermes. The i18next plural docs say Hermes still does not implement `Intl.PluralRules`, and since i18next v24 there is no fallback: without a polyfill only English-style `_one` and `_other` forms resolve. Lingui's React Native tutorial (Lingui 5 or newer, React Native 0.76 or Expo 52, Hermes) asks you to polyfill `Intl.Locale` and `Intl.PluralRules` with the formatjs packages.
 
 react-i18next describes itself as a framework for React and React Native. Lingui uses the same `@lingui/react` package on both, adds a Metro transformer for `.po` files, and a `defaultComponent` option on the provider so translated text renders inside `Text`. Whichever you pick, test a plural on a real device: a Polish plural stuck in the `other` form is easy to miss in English-first QA.
 
-## Ecosystem and translation workflow
+## How big is each ecosystem?
 
 i18next is far bigger. In the week from 2026-09-28 to 2026-10-04, npm counted about 27.8 million downloads of `i18next` and about 1.9 million of `@lingui/core`, roughly 15 times fewer. i18next has integrations for React, Angular and Vue, runs on Node.js and Deno, and has a long list of plugins (backends, language detection, converters from gettext, CSV and RESX). Its maintainers also build Locize, a translation management service made for i18next projects.
 
 Lingui covers React, React Native, Vue, SolidJS, Astro, Svelte and Node.js on top of the framework-agnostic `@lingui/core`. Its catalogs are PO files by default, the gettext format. The docs give the reasons: readable for long messages, comments for translators, contexts, metadata, and support in many localization tools. Macros accept `comment` and `context` fields that land in the catalog, which helps a human translator and an LLM alike.
 
-## Lingui in Linkoglot and on this site
+## How do I use Lingui?
 
 Linkoglot is my language-learning app, built with Expo and React Native and translated into 30 languages. With 30 catalogs, the file format matters as much as the API. PO files with ICU messages keep each language's plural rules in that language's file, and plain text is easy to process with a script. Linkoglot's translation script later became `lingui-translate-ai`, a CLI that fills Lingui catalogs with an LLM; the details are in [Translating Lingui catalogs with an LLM](/en/blog/translate-lingui-catalogs-with-an-llm/).
 
@@ -209,4 +218,6 @@ With `"catalog"`, the build fails if the Polish or Spanish catalog misses a mess
 
 ## What this comparison is not
 
-It is not a benchmark. The sizes come from bundlephobia, the download counts from the npm API, and every behaviour from the official docs listed below this post. I did not build the same app twice. If you are choosing for a team, try both on one real screen that has a plural in it, in the language with the most plural forms you support. If you want to see the projects where I use this setup, they are on my [work page](/en/work/).
+It is not a benchmark. The sizes come from bundlephobia, the download counts from the npm API, and every behaviour from the official docs listed below this post. I did not build the same app twice.
+
+If you are choosing for a team, try both on one real screen that has a plural in it, in the language with the most plural forms you support. If you want to see the projects where I use this setup, they are on my [work page](/en/work/).

@@ -22,8 +22,14 @@ describe("replyKind", () => {
 
 describe("findReply", () => {
   it("finds a reply address written inside the message, email first", () => {
-    expect(findReply("We're hiring. Write to jobs@studio.dev or call +48 600 700 800.")).toEqual({ kind: "email", value: "jobs@studio.dev" });
-    expect(findReply("My profile: linkedin.com/in/anna-k, thanks")).toEqual({ kind: "linkedin", value: "linkedin.com/in/anna-k" });
+    expect(findReply("We're hiring. Write to jobs@studio.dev or call +48 600 700 800.")).toEqual({
+      kind: "email",
+      value: "jobs@studio.dev",
+    });
+    expect(findReply("My profile: linkedin.com/in/anna-k, thanks")).toEqual({
+      kind: "linkedin",
+      value: "linkedin.com/in/anna-k",
+    });
     expect(findReply("Zadzwoń: 600 700 800")).toEqual({ kind: "phone", value: "600 700 800" });
   });
 

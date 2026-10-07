@@ -1,0 +1,176 @@
+---
+title: "Aplikacja mobilna w pojedynkę: Linkoglot od jednej bazy kodu do dwóch sklepów"
+seoTitle: "Aplikacja mobilna w pojedynkę"
+description: "Jak sam zbudowałem i wydałem Linkoglot, aplikację AI do nauki języków: Expo, Supabase, RevenueCat, Lingui w 30 językach i wymagania obu sklepów."
+translationKey: "solo-app"
+published: 2026-10-06
+tags: [react, i18n, ai]
+cover: rocket
+related: [lingui-translate-ai, lingui-vs-i18next, this-site]
+sources:
+  - title: "Continuous Native Generation (Expo docs)"
+    url: "https://docs.expo.dev/workflow/continuous-native-generation/"
+    accessed: 2026-10-06
+  - title: "Introduction to development builds (Expo docs)"
+    url: "https://docs.expo.dev/develop/development-builds/introduction/"
+    accessed: 2026-10-06
+  - title: "EAS Build (Expo docs)"
+    url: "https://docs.expo.dev/build/introduction/"
+    accessed: 2026-10-06
+  - title: "expo-apple-targets, @bacons/apple-targets (GitHub)"
+    url: "https://github.com/EvanBacon/expo-apple-targets"
+    accessed: 2026-10-06
+  - title: "Using RevenueCat with Expo (RevenueCat docs)"
+    url: "https://www.revenuecat.com/docs/getting-started/installation/expo"
+    accessed: 2026-10-06
+  - title: "Entitlements (RevenueCat docs)"
+    url: "https://www.revenuecat.com/docs/getting-started/entitlements"
+    accessed: 2026-10-06
+  - title: "Getting subscription status (RevenueCat docs)"
+    url: "https://www.revenuecat.com/docs/customers/customer-info"
+    accessed: 2026-10-06
+  - title: "App Review Guidelines (Apple Developer)"
+    url: "https://developer.apple.com/app-store/review/guidelines/"
+    accessed: 2026-10-06
+  - title: "App privacy details on the App Store (Apple Developer)"
+    url: "https://developer.apple.com/app-store/app-privacy-details/"
+    accessed: 2026-10-06
+  - title: "App account deletion requirements (Play Console Help)"
+    url: "https://support.google.com/googleplay/android-developer/answer/13327111"
+    accessed: 2026-10-06
+  - title: "Data safety section (Play Console Help)"
+    url: "https://support.google.com/googleplay/android-developer/answer/10787469"
+    accessed: 2026-10-06
+  - title: "Payments policy (Play Console Help)"
+    url: "https://support.google.com/googleplay/android-developer/answer/9858738"
+    accessed: 2026-10-06
+  - title: "Row Level Security (Supabase docs)"
+    url: "https://supabase.com/docs/guides/database/postgres/row-level-security"
+    accessed: 2026-10-06
+  - title: "Query Invalidation (TanStack Query docs)"
+    url: "https://tanstack.com/query/latest/docs/framework/react/guides/query-invalidation"
+    accessed: 2026-10-06
+  - title: "React Native internationalization (Lingui docs)"
+    url: "https://lingui.dev/tutorials/react-native"
+    accessed: 2026-10-06
+  - title: "Linkoglot on the App Store"
+    url: "https://apps.apple.com/us/app/linkoglot/id6768303316"
+    accessed: 2026-10-06
+  - title: "Linkoglot: AI Credits"
+    url: "https://www.linkoglot.eu/en/AICredits"
+    accessed: 2026-10-06
+---
+
+Linkoglot, aplikację AI do nauki języków, zbudowałem sam w kilka miesięcy i wydałem w Google Play 10 lipca 2026, a w App Store 21 lipca 2026. Jedna osoba udźwignie dwie platformy, bo za każdą ciężką pracą stoi narzędzie: Expo buduje natywne aplikacje, Supabase jest backendem, RevenueCat obsługuje subskrypcje w obu sklepach, a Lingui obsługuje 30 języków. Na Twojej głowie zostaje zakres, wymagania sklepów i decyzja, w których sprawach nie ufać telefonowi.
+
+> **W skrócie**
+>
+> - W pojedynkę znaczy: każda warstwa. Aplikacja, baza danych, prompty AI, płatności, wpisy w sklepach, strona produktu, dokumenty prawne i usuwanie konta.
+> - Expo generuje i buduje obie natywne aplikacje z jednej bazy kodu, RevenueCat daje jedno SDK nad płatnościami obu sklepów, a Postgres pilnuje reguł, które klient mógłby podrobić.
+> - Oba sklepy wymagają usuwania konta, informacji o prywatności i własnego systemu płatności za funkcje cyfrowe. Zaplanuj to jako funkcje w pierwszym tygodniu, a nie jako papierologię w ostatnim.
+
+## Co obejmowało „w pojedynkę”?
+
+Linkoglot zamienia to, co masz wokół siebie, w materiał do nauki. Kierujesz aparat na widok, stronę z tekstem albo kilka przedmiotów (aparat ma tryby Landscape, Text i Items), a AI robi ze zdjęcia fiszki, quizy i wyzwania. Potem ćwiczysz: czat tekstowy z tutorem AI, wymowę i rozmowy głosowe w czasie rzeczywistym.
+
+Praca w pojedynkę oznaczała każdą warstwę, nie tylko samą aplikację:
+
+- produkt i jego projekt graficzny;
+- aplikację w Expo na iPhone'a i Androida;
+- schemat bazy w Supabase, row-level security i triggery;
+- prompty AI;
+- płatności: darmowy okres próbny, potem subskrypcja miesięczna albo roczna;
+- wpisy w obu sklepach, z przetłumaczonym opisem i zrzutami ekranu dla każdego języka;
+- stronę produktu w Next.js w 30 wersjach językowych, politykę prywatności, regulamin i stronę do usuwania konta;
+- projekt poboczny: narzędzie CLI `lingui-translate-ai` w npm.
+
+Na początku dużo pisałem ręcznie, później dużo z pomocą AI. Tak czy inaczej, każda decyzja opisana niżej była moja, tak samo jak naprawianie jej skutków.
+
+## Jakie zadania bierze na siebie stack?
+
+| Zadanie | Narzędzie | Co robi |
+| --- | --- | --- |
+| Natywne projekty iOS i Android | Expo z development buildem i prebuildem | Generuje foldery `ios` i `android` z konfiguracji aplikacji i config pluginów |
+| Budowanie i podpisywanie | EAS Build | Hostowana usługa buildów; buildy iOS powstają na maszynach z macOS w chmurze Expo, a usługa potrafi też zarządzać keystore'ami, profilami provisioningowymi i certyfikatami |
+| Konta, dane, zdjęcia, aktualizacje na żywo | Supabase | Logowanie przez Google i Apple, Postgres, Storage, Realtime |
+| Dane z serwera w telefonie | TanStack Query | Cache po stronie klienta, który aplikacja zachowuje między uruchomieniami |
+| Subskrypcje w obu sklepach | RevenueCat | Jedno SDK nad StoreKit i Google Play Billing |
+| 30 języków | Lingui | Teksty w kodzie, katalog `.po` dla każdego języka |
+
+Interfejs to NativeWind z React Native Reusables.
+
+Expo nazywa to Continuous Native Generation: krótko żyjące projekty natywne powstają tylko wtedy, gdy są potrzebne. Ręczne zmiany w tych folderach mogą przepaść przy następnym `npx expo prebuild --clean`, więc zmiany wpisuje się w config pluginy.
+
+Linkoglot potrzebuje jednego natywnego elementu poza główną aplikacją: rozszerzenia iOS Notification Service Extension do powiadomień push. Dostarcza je `@bacons/apple-targets`, config plugin, który podczas prebuildu generuje targety Apple z folderu `targets/`. Nawet to rozszerzenie jest więc generowane, a nie ręcznie wklejone do projektu Xcode.
+
+Development build (według Expo: aplikacja skompilowana z biblioteką `expo-dev-client`) ma znaczenie także dla płatności. Poradnik RevenueCat dla Expo mówi, że w Expo Go SDK podmienia wywołania natywne na atrapy (mock API), a prawdziwe zakupy w tym trybie nie działają.
+
+## O czym ma decydować baza, a nie telefon?
+
+Aplikacja na telefonie to klient, którego nie kontrolujesz. Dwie części Linkoglota nie zależą od tego, czy telefon mówi prawdę.
+
+**Osiągnięcia.** Warstwa gry to XP, osiągnięcia i serie dni. Osiągnięcia przyznają triggery `AFTER INSERT` i `AFTER UPDATE` w Postgresie, które wywołują funkcję w schemacie `private`. Tabela osiągnięć ma włączone row-level security i wyłączone wszystkie operacje dla klienta. Dokumentacja Supabase opisuje skutek wprost: po włączeniu RLS żadne dane nie są dostępne przez API z kluczem publicznym (publishable key), dopóki nie utworzysz polityk. Aplikacja nie przyzna sobie osiągnięcia sama, a reguła jest zapisana raz dla obu platform.
+
+**Zdjęcia.** Zanim zdjęcie opuści telefon, aplikacja zmniejsza je do 1280 px wysokości i zapisuje jako JPEG z jakością 0,25. Plik trafia do Supabase Storage, do folderu użytkownika, analiza odbywa się na serwerze, a aplikacja odczytuje jej wynik. Do Storage i do modelu trafia tylko skompresowany obraz.
+
+## Czego sklepy wymagają przed wydaniem?
+
+Reguły sklepów zamieniają się w ekrany, formularze i kod, więc należą do planu. Te cztery ukształtowały Linkoglot:
+
+| Wymaganie | Reguła | W Linkoglocie |
+| --- | --- | --- |
+| Usunięcie konta | Apple 5.1.1(v): aplikacja, w której można założyć konto, musi pozwalać je usunąć w aplikacji. Google Play: ścieżka w aplikacji plus link w sieci do zgłoszenia usunięcia | Usuwanie w aplikacji i strona Delete Account w serwisie produktu |
+| Prywatna opcja logowania | Apple 4.8: aplikacja z Google Sign-In albo innym logowaniem społecznościowym musi też oferować równoważne logowanie, które ogranicza dane do imienia i e-maila, pozwala ukryć adres e-mail i bez zgody nie zbiera interakcji z aplikacją do celów reklamowych | Logowanie przez Google i przez Apple |
+| Informacje o prywatności | Szczegóły prywatności w App Store, łącznie z danymi zbieranymi przez zewnętrzne SDK. Formularz Data safety w Google Play, wymagany nawet na ścieżkach testów zamkniętych i otwartych | App Store wymienia sześć kategorii danych powiązanych z Tobą: zakupy, dane kontaktowe, treści użytkownika, identyfikatory, dane o użyciu i diagnostykę. Play podaje, że dane są szyfrowane podczas przesyłania i że możesz poprosić o ich usunięcie |
+| Płatności sklepu za funkcje cyfrowe | Apple 3.1.1: odblokowanie funkcji wymaga zakupu w aplikacji. Google Play: funkcje i treści cyfrowe w aplikacji przechodzą przez system płatności Google Play, z wymienionymi wyjątkami | RevenueCat nad oboma systemami płatności |
+
+Usuwanie konta dobrze pokazuje, jak jedna reguła zamienia się w dwie funkcje: ekran w aplikacji i stronę w sieci, bo Play wymaga też linku, pod którym można poprosić o usunięcie.
+
+## Co naprawiła pierwsza aktualizacja?
+
+Wersja 1.0.1 trafiła do Google Play 22 lipca, a do App Store 29 lipca. Notka do wydania w moim tłumaczeniu: „Naprawiono błąd, przez który zestawy do nauki generowane przez AI w tle zapisywały się poprawnie, ale nie odświeżały się na ekranie”.
+
+Dane były dobre, a ekran nieaktualny. Przy cache po stronie klienta, takim jak TanStack Query, ekran pokazuje dane z cache, dopóki coś nie oznaczy ich jako nieaktualnych. Dokumentacja TanStack opisuje `invalidateQueries` właśnie na sytuację, w której wiesz na pewno, że dane zapytania są nieaktualne: metoda oznacza zapytania jako przestarzałe i pobiera ponownie te, które są na ekranie. Zadanie w tle, które zapisuje dane, ma więc drugie zadanie: dać znać ekranowi.
+
+## Jak działają subskrypcje w dwóch sklepach?
+
+Model: darmowe pobranie, darmowy okres próbny, potem subskrypcja miesięczna albo roczna. Opis w App Store mówi, że subskrypcja miesięczna lub roczna odblokowuje pełny dostęp do wszystkich funkcji.
+
+RevenueCat opisuje swój produkt jako backend i SDK, które opakowują StoreKit, Google Play Billing i RevenueCat Billing. W aplikacji to SDK `react-native-purchases`, schowane za moimi hookami do inicjalizacji, zakupu, anulowania i przeliczania walut. Sprawdzenie dostępu, które pokazuje dokumentacja RevenueCat, jest krótkie:
+
+```ts
+const customerInfo = await Purchases.getCustomerInfo();
+// "pro" to przykładowy identyfikator uprawnienia (entitlement)
+const hasAccess = typeof customerInfo.entitlements.active["pro"] !== "undefined";
+```
+
+Entitlement to według RevenueCat poziom dostępu, funkcji albo treści, do którego użytkownik ma prawo. SDK trzyma informacje o kliencie w cache i odświeża go, gdy jest starszy niż 5 minut, ale tylko przy `getCustomerInfo()`, zakupie albo przywróceniu zakupów. Na zmiany pomiędzy tymi momentami jest `addCustomerInfoUpdateListener`, który uruchamia się przy każdej zmianie tych informacji na urządzeniu.
+
+**Kredyty na dokładkę do subskrypcji.** Funkcje AI rozlicza się w kredytach. Plan miesięczny daje 10 000 kredytów na miesiąc, a roczny 10 500. Dodatkowe kredyty nie wygasają i idą w ruch dopiero po wyczerpaniu miesięcznych. Opublikowana tabela kosztów (z 7 czerwca 2026) pokazuje, jak bardzo różnią się funkcje:
+
+| Funkcja | Model zalecany | Model Max |
+| --- | --- | --- |
+| Fiszki, generowanie bazowe | 0,88 | 2,4 |
+| Czat, za wiadomość | 1,7 | 5,52 |
+| Rozmowa głosowa, za minutę | 100 | 100 |
+
+Na zalecanym modelu minuta rozmowy głosowej kosztuje tyle kredytów, co mniej więcej 59 wiadomości na czacie.
+
+## Jak jedna osoba wydaje aplikację w 30 językach?
+
+App Store podaje 30 języków Linkoglota, a strona produktu ma te same 30 wersji językowych, każdą z alternatywą hreflang. Tekst mieszka w czterech miejscach i każde ma własną drogę:
+
+1. **Teksty aplikacji.** Lingui z katalogiem `.po` dla każdego języka, ta sama biblioteka, której używa ta strona ([jak powstała ta strona](/pl/blog/jak-powstala-ta-strona/)). Obie biblioteki porównuję w tekście [Lingui czy i18next](/pl/blog/lingui-czy-i18next/).
+2. **Tłumaczenie na dużą skalę.** Skrypt w repozytorium wysyłał katalogi do LLM partiami. 17 czerwca 2026 stał się narzędziem CLI `lingui-translate-ai` w npm, a wersja 1.1.0 z obsługą liczby mnogiej ICU wyszła 10 lipca 2026, tego samego dnia, w którym aplikacja pojawiła się w Google Play. [Jak działa to narzędzie i jak sprawdzam jego szkice](/pl/blog/tlumaczenie-katalogow-lingui-przez-llm/).
+3. **Treści w bazie.** Nazwy i opisy osiągnięć są zapisane jako jsonb, a tłumaczenia uzupełnia trigger `translate_column`.
+4. **Wpisy w sklepach.** Przetłumaczony opis i zrzuty ekranu dla każdego języka.
+
+Jedna rzecz do sprawdzenia, jeśli robisz to samo: poradnik Lingui dla React Native zaznacza, że obsługa `Intl` może się różnić między wersjami React Native i systemów, i dodaje polyfille dla `Intl.Locale` oraz `Intl.PluralRules`. Linkoglot wymaga co najmniej iOS 16.4 i Androida 7.0, więc liczbę mnogą warto przetestować na najstarszych wspieranych wersjach.
+
+## Ograniczenia tego tekstu
+
+- Żadnych liczb o użytkownikach: ten tekst dotyczy budowania i wydania, nie wzrostu.
+- Pomijam rundy weryfikacji w sklepach, to, jak w produkcji działają funkcje AI i rozmowy głosowe, oraz powody wyboru każdego narzędzia zamiast alternatyw. Każdy z tych tematów zasługuje na osobny tekst.
+- Opisy ze sklepów i tabelę kredytów cytuję w wersji z podanych dat. Ceny i koszty mogą się potem zmienić.
+
+Linkoglot i resztę moich projektów znajdziesz na [stronie z projektami](/pl/work/).

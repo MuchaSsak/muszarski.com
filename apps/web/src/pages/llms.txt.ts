@@ -2,7 +2,7 @@ import type { APIRoute } from "astro";
 
 import { CV } from "~/data/cv";
 import { visibleProjects } from "~/data/projects";
-import { PROFILES, SITE } from "~/data/site";
+import { ELSEWHERE, SITE } from "~/data/site";
 import { postPath, postsIn } from "~/lib/posts";
 
 /**
@@ -15,10 +15,12 @@ export const GET: APIRoute = async ({ site }) => {
   const lines = [
     `# ${SITE.name}`,
     "",
-    `> ${CV.title.en}. ${CV.summary.en}`,
+    `> ${CV.title.en}.`,
+    "",
+    CV.summary.en,
     "",
     `Location: ${CV.location.en}. Languages: ${CV.languages.map((l) => `${l.name.en} (${l.level.en})`).join(", ")}.`,
-    `Contact: ${SITE.email}. Profiles: ${PROFILES.map((p) => `${p.label} ${p.href}`).join(", ")}.`,
+    `Contact: ${SITE.email}. Profiles: ${ELSEWHERE.map((p) => `${p.label} ${p.href}`).join(", ")}.`,
     "",
     "## Pages",
     "",

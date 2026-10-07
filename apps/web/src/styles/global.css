@@ -19,6 +19,8 @@
   --yellow: #ffd23f;
   --lime: #c9f24a;
   --space: #07081c;
+  /* A lighter navy (granatowy) that separates the black space chapter from the ice sections [user 2026-10-07]. */
+  --midnight: #1c226b;
 
   /* Cobalt fields */
   color-scheme: dark;
@@ -458,6 +460,11 @@
     display: none !important;
   }
 }
+/* Controls that only work with JavaScript (filters): present from the first paint when the head script has set
+   `.js`, so revealing them later never shifts the page (CLS). */
+html:not(.js) .js-only {
+  display: none !important;
+}
 
 @layer utilities {
   .tabular {
@@ -473,13 +480,6 @@
     clip-path: inset(50%);
     white-space: nowrap;
   }
-}
-
-/* Below-the-fold home sections skip rendering until they come near (the first paint only lays out the hero and the
-   chapters). Not the chapters: their sticky offsets are measured from real heights. */
-:is(#how-i-work, #ai, #credentials, #writing, #contact, .site-footer) {
-  content-visibility: auto;
-  contain-intrinsic-size: auto 900px;
 }
 
 /* Reveal on first view. `html.rv-ready` is set by the motion script once its observer runs (it adds .in), so a
@@ -499,14 +499,15 @@
   transform: scaleX(0);
 }
 
+/* Entrances never hide content [user 2026-10-06: on a first visit the hero showed only the name for up to a second]:
+   the text is there at first paint and only settles a few pixels into place. */
 .rise {
-  animation: rise 0.9s var(--ease-out) both;
-  animation-delay: calc(120ms + var(--d, 0) * 90ms);
+  animation: rise 0.5s var(--ease-out) both;
+  animation-delay: calc(var(--d, 0) * 40ms);
 }
 @keyframes rise {
   from {
-    opacity: 0;
-    transform: translateY(1.25rem);
+    transform: translateY(0.625rem);
   }
 }
 

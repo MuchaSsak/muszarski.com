@@ -1,13 +1,14 @@
 import { type Locale } from "@package/shared/locales";
 
 import { CV } from "~/data/cv";
-import { PROFILES, SITE } from "~/data/site";
+import { ELSEWHERE, SITE } from "~/data/site";
+import { type Pin, placeLabel } from "~/lib/gallery";
 import { pathTo } from "~/lib/routes";
 
 /**
  * The structured-data graph (wiki: site/seo.md § Entity strategy): stable ids `/#person` and `/#website`, one Person
- * that every page points at. Only facts that are visible on the site go in; no street address, no photo until the
- * owner's own exists (placeholders.md P15), no credentials until they are confirmed (P11).
+ * that every page points at. Only facts that are visible on the site go in; no street address, the photo once the
+ * owner's own file exists (lib/photos.ts), no credentials until they are confirmed (P11).
  */
 type Node = Record<string, unknown>;
 
@@ -28,21 +29,36 @@ const KNOWS_ABOUT: { name: string; wikidata?: string }[] = [
   { name: "Claude Code" },
 ];
 
-export function personNode(site: URL, locale: Locale): Node {
+/** `image`: the absolute URL of the owner's photo, when there is one (lib/photos.ts). */
+export function personNode(site: URL, locale: Locale, image?: string): Node {
   return {
     "@type": "Person",
     "@id": personId(site),
     name: SITE.name,
+    givenName: SITE.name.split(" ")[0],
+    familyName: SITE.name.split(" ").slice(1).join(" "),
     alternateName: SITE.alternateName,
     url: `${origin(site)}${pathTo(locale)}`,
+    mainEntityOfPage: `${origin(site)}${pathTo(locale)}`,
+    email: `mailto:${SITE.email}`,
     jobTitle: CV.title[locale],
+    hasOccupation: {
+      "@type": "Occupation",
+      name: CV.title[locale],
+      occupationLocation: { "@type": "Country", name: "Poland" },
+      skills: KNOWS_ABOUT.map((thing) => thing.name).join(", "),
+    },
+    nationality: { "@type": "Country", name: "Poland" },
     description: CV.summary[locale],
     address: { "@type": "PostalAddress", addressRegion: SITE.region, addressCountry: SITE.countryCode },
     knowsAbout: KNOWS_ABOUT.map((thing) =>
-      thing.wikidata ? { "@type": "Thing", name: thing.name, sameAs: `https://www.wikidata.org/wiki/${thing.wikidata}` } : thing.name,
+      thing.wikidata
+        ? { "@type": "Thing", name: thing.name, sameAs: `https://www.wikidata.org/wiki/${thing.wikidata}` }
+        : thing.name,
     ),
     knowsLanguage: ["pl", "en"],
-    sameAs: PROFILES.map((profile) => profile.href),
+    sameAs: ELSEWHERE.map((profile) => profile.href),
+    ...(image ? { image: { "@type": "ImageObject", "@id": `${origin(site)}/#portrait`, url: image, caption: SITE.name } } : {}),
   };
 }
 
@@ -58,7 +74,7 @@ export function websiteNode(site: URL): Node {
   };
 }
 
-export function homeGraph(site: URL, locale: Locale, description: string): Node {
+export function homeGraph(site: URL, locale: Locale, description: string, image?: string): Node {
   const url = `${origin(site)}${pathTo(locale)}`;
   return {
     "@context": "https://schema.org",
@@ -74,12 +90,21 @@ export function homeGraph(site: URL, locale: Locale, description: string): Node 
         isPartOf: { "@id": websiteId(site) },
         mainEntity: { "@id": personId(site) },
       },
-      personNode(site, locale),
+      personNode(site, locale, image),
     ],
   };
 }
 
-export function pageGraph(site: URL, url: string, type: "WebPage" | "AboutPage" | "CollectionPage" | "ProfilePage", name: string, description: string, locale: string, crumbs: { name: string; url: string }[]): Node {
+export function pageGraph(
+  site: URL,
+  url: string,
+  type: "WebPage" | "AboutPage" | "CollectionPage" | "ProfilePage",
+  name: string,
+  description: string,
+  locale: string,
+  crumbs: { name: string; url: string }[],
+  extra: Node[] = [],
+): Node {
   return {
     "@context": "https://schema.org",
     "@graph": [
@@ -91,10 +116,60 @@ export function pageGraph(site: URL, url: string, type: "WebPage" | "AboutPage" 
         description,
         inLanguage: locale,
         isPartOf: { "@id": websiteId(site) },
-        ...(type === "AboutPage" || type === "ProfilePage" ? { mainEntity: { "@id": personId(site) } } : { author: { "@id": personId(site) } }),
+        ...(type === "AboutPage" || type === "ProfilePage"
+          ? { mainEntity: { "@id": personId(site) } }
+          : { author: { "@id": personId(site) } }),
       },
       breadcrumbs(crumbs),
+      ...extra,
     ],
+  };
+}
+
+/** The My life pin board: one ImageObject per photo with its place, month and story; he took them and is in them. */
+export function galleryNode(site: URL, pageUrl: string, name: string, locale: string, pins: Pin[]): Node {
+  const person = { "@id": personId(site) };
+  return {
+    "@type": "ImageGallery",
+    "@id": `${pageUrl}#photos`,
+    url: `${pageUrl}#photos`,
+    name,
+    inLanguage: locale,
+    isPartOf: { "@id": `${pageUrl}#webpage` },
+    about: person,
+    associatedMedia: pins.map((pin) => {
+      const contentUrl = new URL(pin.full.src, site).href;
+      return {
+        "@type": "ImageObject",
+        "@id": `${pageUrl}#photo-${pin.file}`,
+        contentUrl,
+        url: contentUrl,
+        width: pin.full.width,
+        height: pin.full.height,
+        name: pin.caption,
+        caption: pin.alt,
+        ...(pin.description ? { description: pin.description } : {}),
+        ...(pin.when ? { dateCreated: pin.when.iso } : {}),
+        ...(pin.place
+          ? {
+              contentLocation: {
+                "@type": "Place",
+                name: placeLabel(pin.place),
+                address: {
+                  "@type": "PostalAddress",
+                  ...(pin.place.name !== pin.place.country ? { addressLocality: pin.place.name } : {}),
+                  addressCountry: pin.place.countryCode,
+                },
+              },
+            }
+          : {}),
+        about: person,
+        creator: person,
+        copyrightHolder: person,
+        creditText: SITE.name,
+        copyrightNotice: `© ${SITE.name}`,
+      };
+    }),
   };
 }
 

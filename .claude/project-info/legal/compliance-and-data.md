@@ -18,11 +18,11 @@
 
 | Surface | Data | Stored | Purpose | Basis (sources support) |
 | --- | --- | --- | --- | --- |
-| Contact form → Resend → mailbox | email, message, optional name, time; IP at the function | Resend (US, 30-day logs); his mailbox (provider Unknown) | answer the message | art. 6(1)(f); 6(1)(b) for pre-contract requests. No consent needed |
+| Contact form → EmailJS → mailbox | email, message, optional name, time; IP at the function | EmailJS Pte. Ltd. (Singapore; AWS servers in the US; up to 30 days); his Gmail (Google Ireland Limited) | answer the message | art. 6(1)(f); 6(1)(b) for pre-contract requests. No consent needed |
 | Hosting logs (Vercel Pro) | IP, time, path, referrer, UA | Vercel (Pro: 1 day runtime logs) | security | art. 6(1)(f), recital 49 |
 | Analytics (Umami Cloud, EU region) | path, referrer, screen, language, browser/OS/device, transient location, a monthly visitor hash, events | Umami (Hobby: 6 months) | visit statistics | art. 6(1)(f) (+ PKE art. 399 below) |
 | Anti-spam (Turnstile, **form only**) | IP, TLS fingerprint, UA, sitekey/origin | Cloudflare | protect the requested form | art. 6(1)(f); Cloudflare is also its own controller for bot-detection improvement |
-| Social links (GitHub, LinkedIn, Discord, Messenger) | none until clicked | — | — | plain links |
+| Social links (GitHub, LinkedIn, npm, Instagram, Facebook, Telegram, Discord, Messenger) | none until clicked | — | — | plain links |
 | `/my-life` faith | his own special-category data, published by him | — | — | art. 9(2)(e) test: his deliberate public act (CJEU C-252/21 para 77). No third persons in faith-related photos without consent |
 
 ## Cookies and browser storage (PKE art. 399; enforced by Prezes UKE)
@@ -45,7 +45,7 @@
 | Vendor | Role | Region | DPA | Transfers |
 | --- | --- | --- | --- | --- |
 | Vercel Inc. | processor (customer data); controller for usage metadata | CDN edge; **set functions to an EU region (fra1)** (default iad1) | **Pro and Enterprise only** (eff. 31.03.2026). The owner chose Pro [user] 2026-10-05 | DPF active |
-| Resend | processor | data stored in the US whatever the sending region | pre-signed for every account; download from the dashboard | DPF (re-certification under review) + SCCs |
+| EmailJS | processor | servers in the US (AWS); company in Singapore (no adequacy decision) | part of the EmailJS Terms (emailjs.com/legal/data-protection-agreement, updated 2026-09-28) | SCCs [web: emailjs.com/legal/privacy-policy, 2026-10-06] |
 | Cloudflare (Turnstile) | processor + own controller | global | Self-Serve Subscription Agreement | DPF (under review) + SCCs; **link the Turnstile Privacy Addendum** if invisible mode |
 | Umami Software | processor | **pick the EU data region** at account creation | automatic on use | **not DPF** → SCCs |
 | Mailbox provider | processor | Unknown | Unknown | Unknown (owner) |
@@ -61,14 +61,14 @@
 - Analytics position (b) is implemented [assumption, Q34]: no banner, disclosure, opt-out switch on the privacy page,
   DNT/GPC honoured (the script isn't loaded).
 - For counsel (from the drafter): art. 399 without consent for statistics; whether he is a "usługodawca" at all; the
-  IP retention window for rate limiting; Vercel CDN log retention; DPF re-certification status of Resend and Cloudflare.
+  IP retention window for rate limiting; Vercel CDN log retention; DPF re-certification status of Cloudflare; EmailJS email-history retention (not stated beyond 30 days).
 
 ## Required legal pages
 
 | Page | Needed? | Basis | Status |
 | --- | --- | --- | --- |
 | Privacy policy `/privacy/` | **Yes** in every scenario | GDPR art. 12–13; link visible on every page + next to the form (WP260 para 11) | outline in research § 9(b) (16 sections, PL/EN headings); draft in Phase 1 |
-| Terms (regulamin) `/terms/` | **Only if** he offers paid work through the site **and** it provides an e-service (newsletter, comments, booking). Whether a contact form alone counts is disputed | UŚUDE art. 2 pkt 6, 8 | With the "open to projects" line + JDG: **recommended as a short, conservative regulamin** [research reading; owner decides, Q16]. Outline: research § 9(c) |
+| Terms (regulamin) `/terms/` | **Only if** he offers paid work through the site **and** it provides an e-service (newsletter, comments, booking). Whether a contact form alone counts is disputed | UŚUDE art. 2 pkt 6, 8 | With project enquiries (the contact form's "A project" topic; the "open to projects" line was removed 2026-10-06) + JDG: **recommended as a short, conservative regulamin** [research reading; owner decides, Q16]. Outline: research § 9(c) |
 | Service-provider info (name, address, e-mail, NIP) | if he is a usługodawca (freelance) | UŚUDE art. 5 | which address to publish: owner (Q36) |
 | Consumer info (UPK art. 12) | only for B2C distance contracts in an "organised system" (Unknown) | UPK | not planned (B2B focus) |
 

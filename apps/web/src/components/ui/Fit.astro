@@ -87,7 +87,7 @@ const wide = fitLines(lines, base[1], locale);
 </style>
 
 <script>
-  import { motionStill, onMotion } from "~/scripts/motion";
+  import { afterInteraction, motionStill, onMotion } from "~/scripts/motion";
 
   const LO = 50;
   const HI = 150;
@@ -307,11 +307,21 @@ const wide = fitLines(lines, base[1], locale);
     schedule();
   }
 
-  // An enhancement: never on the load path.
-  const idle = () =>
-    "requestIdleCallback" in window
-      ? requestIdleCallback(() => void start(), { timeout: 1500 })
-      : setTimeout(() => void start(), 300);
-  if (document.readyState === "complete") idle();
-  else addEventListener("load", idle, { once: true });
+  // An enhancement: never on the load path. It waits for the reader's first move (scroll, touch, key, or the mouse):
+  // splitting and measuring letters forces whole-page layouts, and the idle wave restyles letters every frame, which
+  // cost the home page ~2 s of main thread on a throttled phone (Lighthouse 56, 2026-10-07; lessons: a load-time loop).
+  let begun = false;
+  const begin = () => {
+    if (begun) return;
+    begun = true;
+    removeEventListener("pointermove", begin);
+    const idle = () =>
+      "requestIdleCallback" in window
+        ? requestIdleCallback(() => void start(), { timeout: 1500 })
+        : setTimeout(() => void start(), 300);
+    if (document.readyState === "complete") idle();
+    else addEventListener("load", idle, { once: true });
+  };
+  afterInteraction(begin);
+  addEventListener("pointermove", begin, { passive: true });
 </script>

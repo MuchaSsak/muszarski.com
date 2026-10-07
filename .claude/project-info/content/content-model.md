@@ -42,9 +42,11 @@
 ## CV (ONE source → `/cv/` page AND the PDF)
 
 - **The rule:** `cv` data is the single source. The `/<locale>/cv/` page and `mateusz-muszarski-cv-<locale>.pdf`
-  are both generated from it. **Never edit one without regenerating the other.** The build renders both
-  from the data in the same run, and a pdfjs content test fails the build when the PDF text ≠ the CV data
-  (mechanism: `technologies.md` § Stack, CV PDF row) [user] 2026-10-05.
+  are both generated from it. **Never edit one without regenerating the other.** The PDFs are made by
+  `bun run cv:pdf` (Playwright prints `/<locale>/cv/print/`) and committed; each records a digest of `cv.ts`, and
+  `cv.test.ts` fails while a PDF was made from older data (mechanism: `technologies.md` § Stack, CV PDF row)
+  [user] 2026-10-05. The digest covers `cv.ts` only: after a change to `CvBody.astro`, the print CSS, `SITE` or the
+  CV headings, run `bun run cv:pdf` by hand. Keep each PDF at two pages (`cv-pages` check in the run notes).
 - **Sections:** header (name, title, location, email, links, availability) · summary ·
   experience (freelance / own products / client projects, each with outcomes) · selected projects ·
   skills (grouped) · education + qualifications (INF.02/.03/.04) · certifications · volunteering +
@@ -60,6 +62,14 @@ verifyUrl?, skills[], summary, image? }`.
 - Instructors appear as text: "Course — Instructor". No photos unless permission is in writing
   (`compliance-and-data.md`).
 - INF.02/.03/.04 get an English explanation line (wording from the legal/naming research).
+- Data: `apps/web/src/data/cv.ts` `credentials`. The Jonas Schmedtmann (Udemy) entry is titled "Full-stack development
+  courses" (pl "Kursy programowania full-stack", es "Cursos de desarrollo full-stack"), not "JavaScript and React
+  courses" [user 2026-10-06]; the summary still names JavaScript and React. PDFs regenerated with the rename.
+- `items[]` on a credential = its certificates `{ title (as printed), when, href?, code? }` [owner's certificates
+  2026-10-06]. Home shows them as tickets with a "Verify" link (44 px) and the code; the CV page lists them with
+  links; the PDF prints one run-on line per card (title, date, code) and drops that card's summary to stay at two
+  pages. Udemy links use `udemy.com/certificate/<UC-id>/` (Udemy answers bots 403, so not fetch-checked); Youthpass
+  links go to the public check page plus the code. The Youthpass PDFs print personal data: never publish them.
 
 ## Skill
 
@@ -73,6 +83,15 @@ cover (code-drawn or real), coverAlt, author: "mateusz", draft, canonical? }`.
 - `translationKey` links translations for hreflang. A post that exists in one locale has no
   alternates.
 - The author is the single Person entity (`seo.md`).
+- Posts may import the case-study pieces (`components/blog/case/`): `Timeline` (versions in order: thumbnail, date,
+  verdict stamp, the owner's words verbatim, one line), `Versions` (one part of the site through its rounds as tabs:
+  screenshot, what the owner said, why it changed) and `Shots` (framed screenshots with tags such as "Claude's pick").
+  All text is passed from the per-locale MDX; their CSS lives in `styles/case.css` (see lessons: MDX component styles
+  and the CSP). Images live in `src/assets/case/` (1200 px webp, made from `comps/` and fresh shots of the site).
+- 2026-10-06 round [user: "make sure all of the blogs are quality and nice to read, write a bunch more"]: every post
+  has a TL;DR, question headings and short paragraphs; seven new posts in en + pl (portfolio Lighthouse data, the
+  three.js portfolio on mobile, multilingual Astro with Lingui, the contact form, CV + PDF from one source, hover on
+  phones, shipping an app alone). Owner questions the Linkoglot post raised are Q-L* in `open-questions.md`.
 
 ## Life item (`/my-life/`)
 

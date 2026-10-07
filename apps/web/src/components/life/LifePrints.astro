@@ -1,0 +1,562 @@
+---
+/**
+ * My life, the hobbies [user 2026-10-07: "display all my hobbies in a stunning, visually impressive way", "go a bit
+ * nuts", "experiment with shaders"; the toy playground before it felt "too much and messy/overwhelming" and is kept for
+ * the build story in `comps/history/my-life-toys/`]. Calm on purpose: one list and one picture.
+ * - The index: every hobby as a big condensed name with its one line, all readable at once. The row that reads now
+ *   (the middle of the screen; on phones the middle of the part under the pinned print) widens to fill its line: the
+ *   site's width axis as the highlight. A hover, a focus or a tap picks a row too.
+ * - The print: one sticky, signed riso print of that hobby, drawn live by a shader (`scripts/life-prints.ts`): two inks
+ *   in dots on coloured paper; a new pick wipes across it dot by dot; the pointer is a loupe. It is decoration
+ *   (`aria-hidden`): every word is in the list. Before WebGL starts (near view, after the first interaction), and
+ *   without it, the paper and a CSS dot screen in the same inks stand in.
+ * Paused or reduced motion: the list still follows, the print swaps still frames. The words are the owner's lines
+ * (P21: drafts for him to rewrite).
+ */
+import { t } from "lingui-for-astro/macro";
+
+import Icon from "~/components/ui/Icon.astro";
+import Logo from "~/components/ui/Logo.astro";
+import { fitLines } from "~/lib/fit";
+import { type IconName } from "~/lib/icons.gen";
+import { typo } from "~/lib/typography";
+
+const locale = Astro.locals.locale;
+
+// Inks are the tokens of global.css (cobalt, ice, pink, orange, navy, yellow, lime, space); the shader needs hex.
+// `tone` is the row's accent on the navy field (its number, the print's shadow): the paper, or ink 1 on dark paper.
+const C = {
+  cobalt: "#2433ff",
+  ice: "#eef0ff",
+  pink: "#ff4fb8",
+  orange: "#ff5b1f",
+  navy: "#0a0d33",
+  yellow: "#ffd23f",
+  lime: "#c9f24a",
+  space: "#07081c",
+};
+const HOBBIES: { title: string; line: string; icon: IconName; paper: string; ink1: string; ink2: string; tone: string }[] =
+  [
+    {
+      title: t`Calisthenics`,
+      line: t`Training with just my bodyweight. Bar, floor, repeat.`,
+      icon: "tb:barbell",
+      paper: C.yellow,
+      ink1: C.navy,
+      ink2: C.pink,
+      tone: C.yellow,
+    },
+    {
+      title: t`Music`,
+      line: t`My playlist is all over the place.`,
+      icon: "tb:music",
+      paper: C.pink,
+      ink1: C.navy,
+      ink2: C.cobalt,
+      tone: C.pink,
+    },
+    {
+      title: t`Faith`,
+      line: t`I'm a Christian.`,
+      icon: "tb:cross",
+      paper: C.cobalt,
+      ink1: C.yellow,
+      ink2: C.ice,
+      tone: C.yellow,
+    },
+    {
+      title: t`Travel`,
+      line: t`I like going somewhere I haven't been yet.`,
+      icon: "tb:plane",
+      paper: C.ice,
+      ink1: C.cobalt,
+      ink2: C.orange,
+      tone: C.ice,
+    },
+    {
+      title: t`Motorcycles`,
+      line: t`I like bikes. Simple as that.`,
+      icon: "tb:motorbike",
+      paper: C.orange,
+      ink1: C.navy,
+      ink2: C.yellow,
+      tone: C.orange,
+    },
+    {
+      title: t`Games with friends`,
+      line: t`Gaming, but best with friends.`,
+      icon: "tb:device-gamepad-2",
+      paper: C.lime,
+      ink1: C.navy,
+      ink2: C.pink,
+      tone: C.lime,
+    },
+    {
+      title: t`Films`,
+      line: t`A good film night is hard to beat.`,
+      icon: "tb:movie",
+      paper: C.space,
+      ink1: C.ice,
+      ink2: C.orange,
+      tone: C.ice,
+    },
+    {
+      title: t`Parties`,
+      line: t`I like a good party.`,
+      icon: "tb:sparkles",
+      paper: C.navy,
+      ink1: C.pink,
+      ink2: C.yellow,
+      tone: C.pink,
+    },
+    {
+      title: t`Photography`,
+      line: t`I take photos. Strictly amateur, strictly for fun.`,
+      icon: "tb:camera",
+      paper: C.ice,
+      ink1: C.navy,
+      ink2: C.pink,
+      tone: C.ice,
+    },
+    {
+      title: t`Self-improvement`,
+      line: t`Trying to be a bit better than yesterday.`,
+      icon: "tb:trending-up",
+      paper: C.yellow,
+      ink1: C.navy,
+      ink2: C.cobalt,
+      tone: C.yellow,
+    },
+  ];
+
+// One size for every name (cqi of the name's cell): the longest name at `wdth` 62 fills the cell. A name rests at 54
+// and, while it reads, widens to the `wdth` that fills its cell (the short ones stop at 150).
+const fit = fitLines(
+  HOBBIES.map((hobby) => hobby.title),
+  62,
+  locale,
+  0.97,
+);
+const inks = HOBBIES.map(({ paper, ink1, ink2, tone }) => ({ paper, ink1, ink2, tone }));
+const first = HOBBIES[0]!;
+const two = (n: number) => String(n).padStart(2, "0");
+---
+
+<section
+  class="sec field-bar prints"
+  aria-labelledby="t-likes"
+  data-prints
+  data-inks={JSON.stringify(inks)}
+  style={`--fs:${fit.size}`}
+>
+  <div class="pr-head">
+    <p class="kick">{t`Off the clock`}</p>
+    <h2 class="pr-title" id="t-likes">{t`Stuff I like`}</h2>
+    <p class="pr-hint"><Icon name="tb:arrow-down" />{t`Scroll, or pick one.`}</p>
+  </div>
+  <div class="pr-grid">
+    <ol class="pr-list" role="list" data-list>
+      {
+        HOBBIES.map((hobby, i) => (
+          <li class:list={["pr-row", i === 0 && "on"]} style={`--tone:${hobby.tone};--wide:${fit.wdth[i]}%`} data-row>
+            <span class="pr-num" aria-hidden="true">
+              <Icon name={hobby.icon} />
+              {two(i + 1)}
+            </span>
+            <h3 class="pr-name">
+              <button type="button" aria-pressed={i === 0 ? "true" : "false"}>
+                {hobby.title}
+              </button>
+            </h3>
+            <p class="pr-line">{typo(locale, hobby.line)}</p>
+          </li>
+        ))
+      }
+    </ol>
+    <div class="pr-stage" data-stage>
+      <figure
+        class="pr-print"
+        aria-hidden="true"
+        style={`--paper:${first.paper};--ink:${first.ink1};--tone:${first.tone}`}
+        data-sheet
+      >
+        <div class="pr-paper">
+          <canvas class="pr-canvas" data-canvas></canvas>
+        </div>
+        <figcaption class="pr-sign">
+          <span data-ed>{two(1)}/{two(HOBBIES.length)}</span>
+          <span class="pr-ti" data-ti>{first.title}</span>
+          <Logo class="pr-chop" />
+        </figcaption>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<style>
+  .pr-head {
+    display: grid;
+    justify-items: start;
+    gap: 0.5rem;
+    margin-bottom: clamp(1.75rem, 4vw, 3.5rem);
+  }
+  .pr-head .kick {
+    margin: 0;
+    color: var(--yellow);
+  }
+  .pr-title {
+    margin: 0;
+    font-weight: 900;
+    font-size: clamp(2.75rem, 7vw, 6.5rem);
+    line-height: 0.85;
+    text-transform: uppercase;
+    font-stretch: 62%;
+  }
+  .pr-hint {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 0.25rem 0 0;
+    font-weight: 700;
+    font-size: 1rem;
+    color: color-mix(in srgb, var(--ice) 78%, var(--navy));
+  }
+  .pr-hint :global(.ico) {
+    width: 1.125rem;
+    height: 1.125rem;
+    animation: pr-nudge 1.8s ease-in-out infinite;
+  }
+  @keyframes pr-nudge {
+    50% {
+      translate: 0 0.25rem;
+    }
+  }
+
+  .pr-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+    gap: clamp(2rem, 4vw, 5rem);
+    align-items: start;
+  }
+
+  /* ---- The index. A resting row is quiet (condensed, dimmed); the row that reads is wide and bright. */
+  .pr-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    border-bottom: 2px solid color-mix(in srgb, var(--ice) 16%, transparent);
+  }
+  .pr-row {
+    display: grid;
+    grid-template-columns: 4.25rem minmax(0, 1fr);
+    column-gap: clamp(0.75rem, 1.5vw, 1.5rem);
+    padding: clamp(0.875rem, 1.4vw, 1.25rem) 0;
+    border-top: 2px solid color-mix(in srgb, var(--ice) 16%, transparent);
+  }
+  .pr-num {
+    grid-row: 1 / span 2;
+    display: flex;
+    align-items: center;
+    gap: 0.375rem;
+    align-self: start;
+    padding-top: 0.5rem;
+    font-weight: 800;
+    font-size: 0.875rem;
+    font-stretch: 125%;
+    letter-spacing: 0.04em;
+    color: color-mix(in srgb, var(--ice) 62%, var(--navy));
+    transition: color 0.3s;
+  }
+  .pr-num :global(.ico) {
+    width: 1.25rem;
+    height: 1.25rem;
+  }
+  .pr-name {
+    margin: 0;
+    container-type: inline-size;
+  }
+  .pr-name button {
+    display: block;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: color-mix(in srgb, var(--ice) 46%, var(--navy));
+    font: inherit;
+    font-weight: 900;
+    font-size: calc(var(--fs) * 1cqi);
+    line-height: 0.92;
+    font-stretch: 54%;
+    text-align: start;
+    text-transform: uppercase;
+    white-space: nowrap;
+    cursor: pointer;
+    transition:
+      font-stretch 0.6s var(--ease-out),
+      color 0.3s;
+  }
+  .pr-name button:focus-visible {
+    outline: 3px solid var(--tone);
+    outline-offset: 4px;
+  }
+  .pr-line {
+    grid-column: 2;
+    max-width: 40ch;
+    margin: 0.5rem 0 0;
+    font-size: clamp(1rem, 1.2vw, 1.1875rem);
+    line-height: 1.4;
+    color: color-mix(in srgb, var(--ice) 72%, var(--navy));
+    transition: color 0.3s;
+  }
+  .pr-row.on .pr-num {
+    color: var(--tone);
+  }
+  .pr-row.on .pr-name button {
+    color: var(--ice);
+    font-stretch: var(--wide);
+  }
+  .pr-row.on .pr-line {
+    color: var(--ice);
+  }
+
+  /* ---- The print: a sheet of ice with the paper on it and the signature line under it, pinned beside the list. */
+  .pr-stage {
+    position: sticky;
+    top: calc(var(--header-h) + clamp(1rem, 3vh, 2rem));
+    display: grid;
+    justify-items: end;
+  }
+  .pr-print {
+    width: min(100%, calc((100svh - var(--header-h) - 8rem) * 0.78));
+    margin: 0;
+    padding: clamp(0.625rem, 1.1vw, 1rem) clamp(0.625rem, 1.1vw, 1rem) 0;
+    background: var(--ice);
+    color: var(--navy);
+    box-shadow: 12px 12px 0 var(--tone);
+    transition: box-shadow 0.4s;
+  }
+  .pr-paper {
+    position: relative;
+    overflow: hidden;
+    aspect-ratio: 4 / 5;
+    background: var(--paper);
+    transition: background-color 0.5s;
+  }
+  /* Until the shader runs (or without WebGL): the same inks as a plain dot screen. */
+  .pr-paper::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle, var(--ink) 0 34%, transparent 37%) 0 0 / 9px 9px;
+    mask: radial-gradient(circle at 50% 46%, #000 0 20%, transparent 64%);
+  }
+  .pr-canvas {
+    position: absolute;
+    inset: 0;
+    display: block;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    transition: opacity 0.6s var(--ease-out);
+  }
+  .pr-canvas:global(.on) {
+    opacity: 1;
+  }
+  /* Signed like a print: the edition, the title, his chop. */
+  .pr-sign {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.625rem 0 0.75rem;
+    font-weight: 800;
+    font-size: 0.8125rem;
+    font-stretch: 110%;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+  .pr-ti {
+    flex: 1;
+    text-align: center;
+  }
+  .pr-sign :global(.pr-chop) {
+    width: 1.5rem;
+    height: 1.5rem;
+  }
+
+  /* ---- Phones and small tablets: the print pins under the header and the list scrolls under it. */
+  @media (max-width: 56rem) {
+    .pr-grid {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 0;
+    }
+    .pr-stage {
+      order: -1;
+      z-index: 2;
+      top: var(--header-h);
+      justify-items: center;
+      margin-inline: calc(-1 * var(--gutter));
+      padding: 0.75rem var(--gutter) 1rem;
+      background: var(--sbg);
+    }
+    .pr-print {
+      width: min(100%, calc((46svh - 3.5rem) * 1.25), 34rem);
+      box-shadow: 8px 8px 0 var(--tone);
+    }
+    .pr-paper {
+      aspect-ratio: 5 / 4;
+    }
+    .pr-row {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .pr-num {
+      grid-row: auto;
+      padding: 0 0 0.375rem;
+    }
+    .pr-line {
+      grid-column: 1;
+    }
+    /* A focused name never hides under the pinned print. */
+    .pr-name button {
+      scroll-margin-top: calc(var(--header-h) + var(--stage-h, 50svh) + 1rem);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .pr-hint :global(.ico) {
+      animation: none;
+    }
+    .pr-name button,
+    .pr-print,
+    .pr-paper {
+      transition: none;
+    }
+  }
+  :global(.still) .pr-name button,
+  :global(.still) .pr-print,
+  :global(.still) .pr-paper {
+    transition: none;
+  }
+</style>
+
+<script>
+  import { afterInteraction } from "~/scripts/motion";
+  import type { PrintInks } from "~/scripts/life-prints";
+
+  for (const root of document.querySelectorAll<HTMLElement>("[data-prints]")) {
+    const inks = JSON.parse(root.dataset.inks ?? "[]") as (PrintInks & { tone: string })[];
+    const list = root.querySelector<HTMLElement>("[data-list]")!;
+    const rows = [...root.querySelectorAll<HTMLElement>("[data-row]")];
+    const buttons = rows.map((row) => row.querySelector("button")!);
+    const stage = root.querySelector<HTMLElement>("[data-stage]")!;
+    const print = root.querySelector<HTMLElement>("[data-sheet]")!;
+    const canvas = root.querySelector<HTMLCanvasElement>("[data-canvas]")!;
+    const edition = print.querySelector("[data-ed]")!;
+    const title = print.querySelector("[data-ti]")!;
+    const stacked = matchMedia("(max-width: 56rem)");
+    const two = (n: number) => String(n).padStart(2, "0");
+    let active = 0;
+    let prints: { show(index: number): void } | null = null;
+
+    const show = (index: number) => {
+      if (index === active) return;
+      active = index;
+      rows.forEach((row, k) => row.classList.toggle("on", k === index));
+      buttons.forEach((button, k) => button.setAttribute("aria-pressed", String(k === index)));
+      const ink = inks[index]!;
+      print.style.setProperty("--paper", ink.paper);
+      print.style.setProperty("--ink", ink.ink1);
+      print.style.setProperty("--tone", ink.tone);
+      edition.textContent = `${two(index + 1)}/${two(rows.length)}`;
+      title.textContent = buttons[index]!.textContent?.trim() ?? "";
+      prints?.show(index);
+    };
+
+    // The row that reads: nearest the reading line, unless the pointer rests on one or the reader picked one (held
+    // until they scroll on by hand).
+    let hover = -1;
+    let held = -1;
+    let heldAt = 0;
+    let near = false;
+    let raf = 0;
+    const readingLine = () => {
+      if (!stacked.matches) return innerHeight * 0.5;
+      const below = Math.min(stage.getBoundingClientRect().bottom, innerHeight * 0.6);
+      return below + (innerHeight - below) * 0.4;
+    };
+    const follow = () => {
+      raf = 0;
+      if (hover >= 0) return;
+      if (held >= 0) {
+        if (Math.abs(scrollY - heldAt) < 240) return;
+        held = -1;
+      }
+      const line = readingLine();
+      let best = active;
+      let gap = Infinity;
+      rows.forEach((row, k) => {
+        const box = row.getBoundingClientRect();
+        const d = Math.abs(box.top + box.height / 2 - line);
+        if (d < gap) {
+          gap = d;
+          best = k;
+        }
+      });
+      show(best);
+    };
+    const schedule = () => {
+      if (near && !raf) raf = requestAnimationFrame(follow);
+    };
+    const release = () => {
+      if (held < 0) return;
+      held = -1;
+      schedule();
+    };
+    addEventListener("scroll", schedule, { passive: true });
+    addEventListener("resize", schedule);
+    addEventListener("wheel", release, { passive: true });
+    addEventListener("touchmove", release, { passive: true });
+    new IntersectionObserver(([entry]) => {
+      near = !!entry?.isIntersecting;
+      schedule();
+    }).observe(root);
+
+    rows.forEach((row, k) => {
+      const button = buttons[k]!;
+      row.addEventListener("pointerenter", (event) => {
+        if (event.pointerType !== "mouse") return;
+        hover = k;
+        show(k);
+      });
+      const hold = () => {
+        held = k;
+        heldAt = scrollY;
+        show(k);
+      };
+      button.addEventListener("click", hold);
+      button.addEventListener("focus", hold);
+      button.addEventListener("blur", () => held === k && release());
+    });
+    list.addEventListener("pointerleave", () => {
+      hover = -1;
+      schedule();
+    });
+
+    // On phones a focused name scrolls clear of the pinned print (`scroll-margin-top` reads its height).
+    new ResizeObserver(() => root.style.setProperty("--stage-h", `${stage.offsetHeight}px`)).observe(stage);
+
+    // The shader: near view, after the reader's first move (text first, the picture after).
+    new IntersectionObserver(
+      (entries, observer) => {
+        if (!entries.some((entry) => entry.isIntersecting)) return;
+        observer.disconnect();
+        afterInteraction(() => {
+          void import("~/scripts/life-prints").then(({ startPrints }) => {
+            prints = startPrints(canvas, print, inks, active);
+          });
+        });
+      },
+      { rootMargin: "50% 0px" },
+    ).observe(stage);
+  }
+</script>

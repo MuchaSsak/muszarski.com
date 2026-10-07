@@ -1,0 +1,44 @@
+---
+/**
+ * A process drawn as a chain of steps (the case study's diagrams: the wiki loop, the research funnel, the QA loop).
+ * Each step: an icon, a short title and one line. Up to three steps run across on wide screens; longer chains stack. With `loop`, a return arrow says the last step feeds the first.
+ * Text comes from the post (per-locale MDX); the CSS lives in styles/case.css (prefix `fl-`).
+ */
+import Icon from "~/components/ui/Icon.astro";
+import { type IconName } from "~/lib/icons.gen";
+
+interface Step {
+  icon: IconName;
+  title: string;
+  text: string;
+}
+interface Props {
+  label: string;
+  steps: Step[];
+  /** The words on the return arrow, when the last step feeds the first. */
+  loop?: string;
+}
+
+const { label, steps, loop } = Astro.props;
+---
+
+<figure class:list={["fl", { "fl-loop": loop, "fl-row": steps.length <= 3 }]}>
+  <ol class="fl-steps" aria-label={label} style={`--n:${steps.length}`}>
+    {steps.map((step, i) => (
+      <li class="fl-step" style={`--i:${i}`}>
+        <span class="fl-icon">
+          <Icon name={step.icon} />
+        </span>
+        <span class="fl-n tabular">{String(i + 1).padStart(2, "0")}</span>
+        <b class="fl-title">{step.title}</b>
+        <span class="fl-text">{step.text}</span>
+      </li>
+    ))}
+  </ol>
+  {loop && (
+    <figcaption class="fl-back">
+      <Icon name="tb:refresh" />
+      {loop}
+    </figcaption>
+  )}
+</figure>

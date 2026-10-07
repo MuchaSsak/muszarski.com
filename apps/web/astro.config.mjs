@@ -9,6 +9,7 @@ import { defineConfig, envField } from "astro/config";
 import linguiForAstro from "lingui-for-astro/integration";
 
 import { isLaunchBuild, siteUrl } from "./scripts/launch.mjs";
+import { sitemapImages } from "./scripts/sitemap-images.mjs";
 import { SITE } from "./src/data/site.ts";
 
 /**
@@ -35,9 +36,21 @@ const TURNSTILE = "https://challenges.cloudflare.com";
  */
 /** @type {Record<string, Record<string, string>>} */
 const LEGAL_GAPS = {
-  en: { POSTAL_ADDRESS: "postal address to be completed", MAILBOX_PROVIDER: "mailbox provider to be completed", MAILBOX_LOCATION: "location to be completed" },
-  pl: { POSTAL_ADDRESS: "adres do korespondencji do uzupełnienia", MAILBOX_PROVIDER: "dostawca skrzynki do uzupełnienia", MAILBOX_LOCATION: "lokalizacja do uzupełnienia" },
-  es: { POSTAL_ADDRESS: "dirección postal pendiente", MAILBOX_PROVIDER: "proveedor del buzón pendiente", MAILBOX_LOCATION: "ubicación pendiente" },
+  en: {
+    POSTAL_ADDRESS: "postal address to be completed",
+    MAILBOX_PROVIDER: "Google Ireland Limited (Gmail)",
+    MAILBOX_LOCATION: "Google data centres, also outside the European Economic Area",
+  },
+  pl: {
+    POSTAL_ADDRESS: "adres do korespondencji do uzupełnienia",
+    MAILBOX_PROVIDER: "Google Ireland Limited (Gmail)",
+    MAILBOX_LOCATION: "centra danych Google, także poza Europejskim Obszarem Gospodarczym",
+  },
+  es: {
+    POSTAL_ADDRESS: "dirección postal pendiente",
+    MAILBOX_PROVIDER: "Google Ireland Limited (Gmail)",
+    MAILBOX_LOCATION: "centros de datos de Google, también fuera del Espacio Económico Europeo",
+  },
 };
 /** @param {{ fileURL?: URL }} context */
 function legalTokens(context) {
@@ -80,19 +93,33 @@ const tableScroll = {
 };
 
 /** Links that leave the site open in a new tab, so a reader keeps their place in the post [user 2026-10-06]. */
-const externalLinks = {
-  name: "external-links",
-  element: {
-    filter: ["a"],
-    /** @param {any} node @param {any} ctx */
-    visit(node, ctx) {
-      const href = String(node.properties?.href ?? "");
-      if (!/^https?:\/\//.test(href) || href.startsWith(SITE_URL)) return;
-      ctx.setProperty(node, "target", "_blank");
-      ctx.setProperty(node, "rel", "noopener");
+/** @type {Record<string, string>} The same words as the catalogs' "(opens in a new tab)". */
+const NEW_TAB = { en: "(opens in a new tab)", pl: "(otwiera się w nowej karcie)", es: "(se abre en una pestaña nueva)" };
+/** @param {{ fileURL?: URL }} context */
+function externalLinks(context) {
+  const path = context.fileURL ? decodeURIComponent(context.fileURL.pathname) : "";
+  const note = NEW_TAB[/\/content\/\w+\/(en|pl|es)\//.exec(path)?.[1] ?? "en"];
+  return {
+    name: "external-links",
+    element: {
+      filter: ["a"],
+      /** @param {any} node @param {any} ctx */
+      visit(node, ctx) {
+        const href = String(node.properties?.href ?? "");
+        if (!/^https?:\/\//.test(href) || href.startsWith(SITE_URL)) return;
+        ctx.setProperty(node, "target", "_blank");
+        ctx.setProperty(node, "rel", "noopener");
+        // Screen readers hear it after the link text (WCAG 2.5.3: the visible words still start the name).
+        ctx.appendChild(node, {
+          type: "element",
+          tagName: "span",
+          properties: { className: ["sr-only"] },
+          children: [{ type: "text", value: ` ${note}` }],
+        });
+      },
     },
-  },
-};
+  };
+}
 
 export default defineConfig({
   site: SITE_URL,
@@ -112,11 +139,16 @@ export default defineConfig({
       filter: (page) => /\/(en|pl|es)\//.test(page) && !/\/(privacy|terms|cv\/print|contact)\//.test(page),
       i18n: { defaultLocale: "en", locales: { en: "en", pl: "pl", es: "es" } },
     }),
+    sitemapImages(),
   ],
   // Code blocks: Shiki with the css-variables theme, so token colours come from the site's tokens (style attributes
   // are allowed by the CSP). Smart punctuation is off: English curly quotes are wrong in Polish.
   markdown: {
-    processor: satteri({ mdastPlugins: [legalTokens], hastPlugins: [tableScroll, externalLinks], features: { smartPunctuation: false } }),
+    processor: satteri({
+      mdastPlugins: [legalTokens],
+      hastPlugins: [tableScroll, externalLinks],
+      features: { smartPunctuation: false },
+    }),
     syntaxHighlight: "shiki",
     shikiConfig: { theme: "css-variables", wrap: false },
   },
@@ -150,7 +182,13 @@ export default defineConfig({
   env: {
     schema: {
       PUBLIC_SITE_URL: envField.string({ context: "client", access: "public", default: SITE_URL }),
-      PUBLIC_UMAMI_WEBSITE_ID: envField.string({ context: "client", access: "public", optional: true }),
+      // The Umami Cloud website id [user 2026-10-06]. Public by design (it ships in every page's HTML); the script only
+      // counts on the production host (`data-domains`), so previews and local runs send nothing.
+      PUBLIC_UMAMI_WEBSITE_ID: envField.string({
+        context: "client",
+        access: "public",
+        default: "ceeca8b5-55ea-4bce-a1f2-a9f7c45c3590",
+      }),
       PUBLIC_UMAMI_SCRIPT_URL: envField.string({ context: "client", access: "public", default: UMAMI_SCRIPT }),
       // Turnstile's public site key; unset = the form sends without the widget (the function then skips the check
       // only when its secret is unset too).

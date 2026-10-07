@@ -6,7 +6,9 @@ const nb = (text: string) => text.replaceAll("~", "\u00a0");
 
 describe("typo", () => {
   it("binds Polish one-letter words to the next word", () => {
-    expect(typo("pl", "problem biznesowy w gotowy produkt i od początku")).toBe(nb("problem biznesowy w~gotowy produkt i~od początku"));
+    expect(typo("pl", "problem biznesowy w gotowy produkt i od początku")).toBe(
+      nb("problem biznesowy w~gotowy produkt i~od początku"),
+    );
     expect(typo("pl", "a w Polsce i z Gdańska")).toBe(nb("a~w~Polsce i~z~Gdańska"));
   });
 

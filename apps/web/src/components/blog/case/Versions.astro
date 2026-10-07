@@ -1,0 +1,109 @@
+---
+/**
+ * One part of the site through its versions, as tabs [user 2026-10-06: "compare old commits of sections … and explain
+ * why that choice and what it does in a nice manner so not always just tons of paragraphs"]. Each tab is a frame: a
+ * screenshot, the decision at that round (written for the reader, never a chat quote [user 2026-10-07]) and one line
+ * on what changed and why. The text comes from the post (per-locale MDX); only the chrome labels are UI strings.
+ * Without the script every frame shows, stacked, each with its label. The frame keeps the tallest screenshot's shape, so switching never moves the page.
+ */
+import type { ImageMetadata } from "astro";
+import { Image } from "astro:assets";
+import { t } from "lingui-for-astro/macro";
+
+interface Frame {
+  label: string;
+  image: ImageMetadata;
+  alt: string;
+  /** The decision at that round, written for the reader (not the owner's chat words). */
+  decision?: string;
+  /** What this version does or why it changed. */
+  note: string;
+}
+interface Props {
+  id: string;
+  title: string;
+  frames: Frame[];
+}
+
+const { id, title, frames } = Astro.props;
+const ratio = Math.max(...frames.map((frame) => frame.image.height / frame.image.width));
+const last = frames.length - 1;
+---
+
+<figure class="vers" data-versions style={`--ratio:${(1 / ratio).toFixed(4)}`}>
+  <figcaption class="v-head">
+    <span class="v-kick">{title}</span>
+    <span class="v-tabs" role="tablist" aria-label={title}>
+      {frames.map((frame, i) => (
+        <button
+          type="button"
+          role="tab"
+          id={`${id}-t${i}`}
+          aria-controls={`${id}-p${i}`}
+          aria-selected={i === 0 ? "true" : "false"}
+          tabindex={i === 0 ? 0 : -1}
+        >
+          {frame.label}
+        </button>
+      ))}
+    </span>
+  </figcaption>
+  {frames.map((frame, i) => (
+    <div class:list={["v-panel", { on: i === 0 }]} role="tabpanel" id={`${id}-p${i}`} aria-labelledby={`${id}-t${i}`}>
+      <p class="v-label">{frame.label}</p>
+      <div class="v-shot">
+        <Image
+          src={frame.image}
+          alt={frame.alt}
+          widths={[480, 800, 1200]}
+          sizes="(min-width: 64rem) 46rem, 94vw"
+          loading="lazy"
+        />
+      </div>
+      <div class="v-text">
+        {frame.decision && (
+          <p class="v-said">
+            <span>{t`The decision`}</span>
+            {frame.decision}
+          </p>
+        )}
+        <p class="v-note">{frame.note}</p>
+        {i < last && (
+          <button class="v-next" type="button" data-next={i + 1}>
+            {t`Next version`} <span aria-hidden="true">→</span>
+          </button>
+        )}
+      </div>
+    </div>
+  ))}
+</figure>
+
+<script>
+  // Tabs (WAI-ARIA pattern): click or arrow keys pick a frame; "Next version" steps through them.
+  for (const root of document.querySelectorAll<HTMLElement>("[data-versions]")) {
+    const tabs = [...root.querySelectorAll<HTMLButtonElement>('[role="tab"]')];
+    const panels = [...root.querySelectorAll<HTMLElement>('[role="tabpanel"]')];
+    const pick = (index: number, focus = false) => {
+      tabs.forEach((tab, i) => {
+        tab.setAttribute("aria-selected", String(i === index));
+        tab.tabIndex = i === index ? 0 : -1;
+      });
+      panels.forEach((panel, i) => panel.classList.toggle("on", i === index));
+      if (focus) tabs[index]?.focus();
+    };
+    tabs.forEach((tab, i) => {
+      tab.addEventListener("click", () => pick(i));
+      tab.addEventListener("keydown", (event) => {
+        const step = event.key === "ArrowRight" ? 1 : event.key === "ArrowLeft" ? -1 : 0;
+        const to = event.key === "Home" ? 0 : event.key === "End" ? tabs.length - 1 : (i + step + tabs.length) % tabs.length;
+        if (step || event.key === "Home" || event.key === "End") {
+          event.preventDefault();
+          pick(to, true);
+        }
+      });
+    });
+    root
+      .querySelectorAll<HTMLButtonElement>("[data-next]")
+      .forEach((button) => button.addEventListener("click", () => pick(Number(button.dataset.next), true)));
+  }
+</script>

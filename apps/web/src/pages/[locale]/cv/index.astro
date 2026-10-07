@@ -17,6 +17,7 @@ import Icon from "~/components/ui/Icon.astro";
 import { CV } from "~/data/cv";
 import { cvPdfHref, SITE } from "~/data/site";
 import { chromeLinks } from "~/lib/nav";
+import { personImageUrl } from "~/lib/photos";
 import { localeStaticPaths, pathTo } from "~/lib/routes";
 import { breadcrumbs, personId, personNode, websiteId } from "~/lib/schema";
 
@@ -36,6 +37,7 @@ try {
 const [first, last] = SITE.name.split(" ") as [string, string];
 const title = t`CV`;
 const description = t`The CV of Mateusz Muszarski, full-stack developer: experience, projects, skills, qualifications and languages. Also as a PDF.`;
+const meUrl = await personImageUrl(site);
 const graph = {
   "@context": "https://schema.org",
   "@graph": [
@@ -49,7 +51,7 @@ const graph = {
       isPartOf: { "@id": websiteId(site) },
       mainEntity: { "@id": personId(site) },
     },
-    personNode(site, locale),
+    personNode(site, locale, meUrl),
     breadcrumbs([
       { name: SITE.name, url: new URL(links.home, site).href },
       { name: title, url },
@@ -64,7 +66,9 @@ const graph = {
     <div class="sbar draw">
       <p>{t`Curriculum vitae`}</p>
       <p>{CV.location[locale]}</p>
-      <p>{t`Since`} {SITE.since}</p>
+      <p>
+        {t`Since`} {SITE.since}
+      </p>
     </div>
     <Fit as="h1" id="cv-name" lines={[first, last]} motion="calm" />
     <div class="intro">
@@ -74,7 +78,14 @@ const graph = {
         {CV.availability[locale]}
       </p>
       <div class="ctas rise" style="--d:2">
-        <a class="btn btn-acc" href={pdf} download data-umami-event="cv_download" data-umami-event-source="cv-page" data-umami-event-locale={locale}>
+        <a
+          class="btn btn-acc"
+          href={pdf}
+          download
+          data-umami-event="cv_download"
+          data-umami-event-source="cv-page"
+          data-umami-event-locale={locale}
+        >
           <Icon name="tb:download" />
           {t`Download PDF`}
           {pdfSize && <small>{pdfSize}</small>}
@@ -83,7 +94,13 @@ const graph = {
           <Icon name="tb:file-text" />
           {t`Print`}
         </button>
-        <a class="btn btn-line" href={links.contact} data-umami-event="cta" data-umami-event-id="contact" data-umami-event-source="cv-page">
+        <a
+          class="btn btn-line"
+          href={links.contact}
+          data-umami-event="cta"
+          data-umami-event-id="contact"
+          data-umami-event-source="cv-page"
+        >
           {t`Contact`}
           <Icon name="tb:arrow-right" class="nudge" />
         </a>

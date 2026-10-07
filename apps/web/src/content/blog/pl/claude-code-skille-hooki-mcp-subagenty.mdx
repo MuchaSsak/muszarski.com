@@ -4,8 +4,9 @@ seoTitle: "Claude Code: skille, hooki, MCP czy subagenty?"
 description: "Praktyczny przewodnik po elementach Claude Code na podstawie oficjalnej dokumentacji, z prawdziwymi hookami, skillami i MCP, na których powstała ta strona."
 translationKey: "claude-code-building-blocks"
 published: 2026-10-05
+updated: 2026-10-06
 tags: [ai, claude-code]
-cover: pipeline
+cover: terminal
 related: [llm-wiki, claude-code-po-polsku, this-site]
 sources:
   - title: "Extend Claude Code (dokumentacja Claude Code)"
@@ -43,9 +44,15 @@ sources:
     accessed: 2026-10-05
 ---
 
-CLAUDE.md trzyma to, co Claude ma wiedzieć w każdej sesji. Skill to procedura albo materiał referencyjny potrzebny tylko czasem, a hook to coś, co musi się wydarzyć za każdym razem. Serwer MCP sięga po dane i akcje spoza repozytorium, a subagent bierze na siebie poboczną robotę, której wynik zaśmieciłby główny kontekst. Niżej rozkładam każdy element na części według oficjalnej dokumentacji Claude Code i pokazuję, jak połączyłem je przy budowie tej strony.
+CLAUDE.md trzyma to, co Claude ma wiedzieć w każdej sesji, skill to procedura albo materiał referencyjny potrzebny tylko czasem, a hook to coś, co musi się wydarzyć za każdym razem. Serwer MCP sięga po dane i akcje spoza repozytorium, a subagent bierze na siebie poboczną robotę, której wynik zaśmieciłby główny kontekst. Niżej rozkładam każdy element na części według oficjalnej dokumentacji Claude Code i pokazuję, jak połączyłem je przy budowie tej strony.
 
-## Pięć elementów w pigułce
+> **TL;DR**
+>
+> - **Prośba czy przymus:** CLAUDE.md i skille to instrukcje, które Claude interpretuje; hook odpala się na swoim zdarzeniu zawsze.
+> - **Koszt w kontekście:** za CLAUDE.md płacisz przy każdym zapytaniu, skille i narzędzia MCP kosztują niewiele, dopóki ich nie użyjesz, a subagent pracuje we własnym oknie i oddaje podsumowanie.
+> - **Dokładaj elementy, gdy pojawi się sygnał:** powtarzana poprawka, wklejany playbook, kopiowana karta przeglądarki, zalany kontekst, zasada, która musi działać zawsze.
+
+## Czym jest każdy z pięciu elementów?
 
 Strona dokumentacji „Extend Claude Code” opisuje całą warstwę rozszerzeń. W skrócie:
 
@@ -57,7 +64,7 @@ Strona dokumentacji „Extend Claude Code” opisuje całą warstwę rozszerzeń
 
 Są jeszcze pluginy, które pakują to wszystko w jedną instalowalną całość do użycia w wielu repozytoriach. Tutaj ich nie używam, więc je pomijam.
 
-## Dwa pytania, które rozstrzygają prawie wszystko
+## Jakie dwa pytania rozstrzygają prawie wszystko?
 
 **Kto decyduje, że coś się uruchomi?** Dokumentacja mówi wprost: hook zawsze odpala się na swoim zdarzeniu, a skill to instrukcje, które Claude interpretuje, więc wynik może się różnić. CLAUDE.md należy do tej drugiej grupy: według dokumentacji pamięci Claude traktuje go jako kontekst, a nie wymuszoną konfigurację. Stąd najważniejsza zasada z tej strony: „nigdy nie edytuj `.env`” w CLAUDE.md to prośba, a hook `PreToolUse`, który blokuje edycję, to egzekwowanie.
 
@@ -73,7 +80,7 @@ Są jeszcze pluginy, które pakują to wszystko w jedną instalowalną całość
 
 Dlatego długi CLAUDE.md to złe miejsce na dokumentację referencyjną: płacisz za nią przy każdym zapytaniu, potrzebna czy nie. Treść skilla prawie nic nie kosztuje, dopóki ktoś po nią nie sięgnie.
 
-## Potrzeba → element
+## Który element do jakiej potrzeby?
 
 | Potrzebujesz | Wybierz | Dlaczego |
 | --- | --- | --- |
@@ -86,15 +93,23 @@ Dlatego długi CLAUDE.md to złe miejsce na dokumentację referencyjną: płacis
 | Researchu po wielu plikach albo pracy równoległej | subagent | wraca tylko podsumowanie |
 | Częstej wymiany zdań nad jednym problemem | główna rozmowa | tu dokumentacja odradza subagenty |
 
-Dokumentacja radzi też dokładać elementy dopiero wtedy, gdy pojawi się konkretny sygnał. Claude drugi raz myli konwencję: wpis do CLAUDE.md. Trzeci raz wklejasz ten sam playbook: skill. Ciągle kopiujesz dane z karty przeglądarki: serwer MCP. Poboczne zadanie zalewa rozmowę: subagent. Coś ma się dziać zawsze, bez proszenia: hook.
+Dokumentacja radzi też dokładać elementy dopiero wtedy, gdy pojawi się konkretny sygnał:
 
-## Mój zestaw, element po elemencie
+- Claude drugi raz myli konwencję: wpis do CLAUDE.md.
+- Trzeci raz wklejasz ten sam playbook: skill.
+- Ciągle kopiujesz dane z karty przeglądarki: serwer MCP.
+- Poboczne zadanie zalewa rozmowę: subagent.
+- Coś ma się dziać zawsze, bez proszenia: hook.
+
+## Jak wygląda mój zestaw?
 
 Ta strona powstała w Claude Code sterowanym przez wiki projektu w `.claude/project-info/`. Oto co robi każdy element w tym repozytorium.
 
 ### CLAUDE.md: rozdzielnik, a nie encyklopedia
 
-Mój CLAUDE.md ma 76 linii. Większość to tabela routingu: 31 wierszy, które łączą słowa, jakich używam w poleceniach („locales, translation, hreflang”), ze stronami wiki. Do tego dziesięć niezmienników, na przykład budżety wydajności, licencje i „żadnych zmyślonych faktów”. Ścieżki są celowo zwykłym tekstem. `@import` wczytałby każdą stronę do każdej sesji, a dokumentacja potwierdza, że importy nie zmniejszają kosztu kontekstu. Samo wiki opisuję w osobnym wpisie: [LLM wiki, czyli pamięć projektu dla Claude Code](/pl/blog/llm-wiki-pamiec-projektu-dla-claude-code/).
+Mój CLAUDE.md ma 76 linii. Większość to tabela routingu: 31 wierszy, które łączą słowa, jakich używam w poleceniach („locales, translation, hreflang”), ze stronami wiki. Do tego dziesięć niezmienników, na przykład budżety wydajności, licencje i „żadnych zmyślonych faktów”.
+
+Ścieżki są celowo zwykłym tekstem. `@import` wczytałby każdą stronę do każdej sesji, a dokumentacja potwierdza, że importy nie zmniejszają kosztu kontekstu. Samo wiki opisuję w osobnym wpisie: [LLM wiki, czyli pamięć projektu dla Claude Code](/pl/blog/llm-wiki-pamiec-projektu-dla-claude-code/).
 
 ### Trzy hooki
 
@@ -131,7 +146,9 @@ Wszystkie trzy to zwykłe skrypty Node, które przy własnym błędzie kończą 
 | `search-registry-items` | tylko Claude | szuka komponentu w publicznych rejestrach shadcn przez serwer MCP i go instaluje |
 | `start-project-info` | tylko ja | zakłada wiki, tabelę routingu, lekcje i hooki w nowym projekcie |
 
-„Tylko Claude” to `user-invocable: false`: wiedza w tle, która nie ma sensu jako komenda. „Tylko ja” to `disable-model-invocation: true`: ten skill zapisuje sporo plików, więc wolę go odpalać sam, a do tego czasu jego opis nie kosztuje nic w kontekście. Strona główna ma dziś 100 we wszystkich czterech kategoriach mobilnego Lighthouse (mediana z 3 pomiarów), a `lighthouse-qa` to pętla, która tego pilnuje.
+„Tylko Claude” to `user-invocable: false`: wiedza w tle, która nie ma sensu jako komenda. „Tylko ja” to `disable-model-invocation: true`: ten skill zapisuje sporo plików, więc wolę go odpalać sam, a do tego czasu jego opis nie kosztuje nic w kontekście.
+
+Strona główna ma dziś w mobilnym Lighthouse 99 za wydajność i 100 za dostępność, dobre praktyki i SEO (mediana z 3 pomiarów), a `lighthouse-qa` to pętla, która tego pilnuje.
 
 ### Trzy serwery MCP
 
@@ -145,7 +162,7 @@ Dokumentacja MCP ma ostrzeżenie, które warto powtórzyć: upewnij się, że uf
 
 Nie mam własnych definicji subagentów, wbudowane wystarczyły. Używałem ich do researchu na etapie planowania: log wiki odnotowuje jedną partię 8 agentów badawczych i jedną 3, każdy z osobnym tematem. Zapisywały surowe notatki, a ja przenosiłem wnioski do stron, do których prowadzi routing. Wyszła z tego jedna lekcja: równoległe agenty dzielą jeden budżet wyszukiwania w sieci i potrafią go wyczerpać, więc lepiej pobierać adresy, które już znasz.
 
-## Jak to się łączy
+## Jak te elementy się łączą?
 
 Elementy robią się naprawdę przydatne, kiedy łatają nawzajem swoje słabe strony.
 
@@ -162,6 +179,6 @@ Elementy robią się naprawdę przydatne, kiedy łatają nawzajem swoje słabe s
 - **Subagent zaczyna od zera.** Nie widzi Twojej rozmowy, tylko wiadomość z poleceniem, więc mętne zlecenie wraca mętnym podsumowaniem. Jego zapytania liczą się też do tych samych limitów użycia co główna sesja.
 - **Nie zmierzyłem oszczędności.** Nie podam liczby tokenów ani minut, które dają te hooki. Mogę powiedzieć tyle: po kompaktowaniu kolejna tura zaczyna się od reguł, a nie od tego, że powtarzam je od nowa.
 
-## Od czego zacząć
+## Od czego zacząć?
 
 Najpierw krótki CLAUDE.md. Kolejny element dokładaj dopiero wtedy, gdy pojawi się jego sygnał: powtarzana poprawka, wklejany playbook, kopiowana karta przeglądarki, zalany kontekst, zasada, która musi działać zawsze. Jeśli dopiero zaczynasz, zajrzyj do przewodnika [Claude Code po polsku](/pl/blog/claude-code-po-polsku/). Jak te elementy zbudowały całą stronę, opisuję w [studium przypadku](/pl/blog/jak-powstala-ta-strona/), a same projekty znajdziesz na [stronie z pracami](/pl/work/).

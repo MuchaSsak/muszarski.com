@@ -18,7 +18,25 @@ export const BLOG_TAGS = [
 export type BlogTag = (typeof BLOG_TAGS)[number];
 
 /** Code-drawn covers (PostCover.astro), one motif per topic. */
-export const BLOG_COVERS = ["blueprint", "pipeline", "wiki", "translate", "compare", "type", "motion", "shield", "globe"] as const;
+export const BLOG_COVERS = [
+  "blueprint",
+  "terminal",
+  "wiki",
+  "bubbles",
+  "scale",
+  "type",
+  "motion",
+  "cookie",
+  "catalogs",
+  "gauge",
+  "planet",
+  "signpost",
+  "mailbox",
+  "sheet",
+  "rocket",
+  "tap",
+  "anchor",
+] as const;
 export type BlogCover = (typeof BLOG_COVERS)[number];
 
 /** Words per minute for technical prose on a screen (code and tables read slower; this is conservative). */
@@ -47,7 +65,9 @@ export const localeOf = (id: string) => id.split("/")[0] as "en" | "pl";
 /** Newest first; same day: featured first, then by title. */
 export function byNewest<T extends { data: { published: Date; featured: boolean; title: string } }>(a: T, b: T): number {
   return (
-    b.data.published.getTime() - a.data.published.getTime() || Number(b.data.featured) - Number(a.data.featured) || a.data.title.localeCompare(b.data.title)
+    b.data.published.getTime() - a.data.published.getTime() ||
+    Number(b.data.featured) - Number(a.data.featured) ||
+    a.data.title.localeCompare(b.data.title)
   );
 }
 

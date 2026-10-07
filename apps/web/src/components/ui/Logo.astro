@@ -1,0 +1,20 @@
+---
+/**
+ * The logo [user 2026-10-06: "make logo consistent", "favicon cleaner"]: one mark everywhere (header, footer, favicon,
+ * share images). A cobalt tile, the "M" of Anybody (OFL) at weight 900 drawn as a path, a pink bar under it: the same
+ * drawing as public/favicon.svg. Decorative: the link around it carries the name.
+ */
+interface Props {
+  class?: string | undefined;
+}
+const { class: className } = Astro.props;
+---
+
+<svg class:list={["logo", className]} viewBox="0 0 64 64" aria-hidden="true" focusable="false">
+  <rect width="64" height="64" fill="#2433ff"></rect>
+  <path
+    fill="#eef0ff"
+    d="M9.22 43.77L20.43 43.77L20.43 18L20.53 18L25.45 43.65L38.55 43.65L43.47 18L43.57 18L43.57 43.77L54.78 43.77L54.78 10.23L36.54 10.23L32.04 35.57L31.96 35.57L27.46 10.23L9.22 10.23Z"
+  ></path>
+  <rect x="9.22" y="48.27" width="45.56" height="5.5" fill="#ff4fb8"></rect>
+</svg>

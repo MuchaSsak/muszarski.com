@@ -40,12 +40,12 @@ export const PROJECTS: Project[] = [
     anchor: "pstrykweb",
     // Public info only (content/projects/pstrykweb.md § Public disclosure).
     line: {
-      en: "Bespoke websites for local businesses, ordered through one online form. Built solo for Cetuspro.",
-      pl: "Strony na zamówienie dla lokalnych firm, zamawiane przez jeden formularz online. Zbudowane samodzielnie dla Cetuspro.",
-      es: "Webs a medida para negocios locales, encargadas con un solo formulario online. Hecho en solitario para Cetuspro.",
+      en: "Bespoke websites for local businesses, ordered through one online form. Built for Cetuspro.",
+      pl: "Strony na zamówienie dla lokalnych firm, zamawiane przez jeden formularz online. Zbudowane dla Cetuspro.",
+      es: "Webs a medida para negocios locales, encargadas con un solo formulario online. Hecho para Cetuspro.",
     },
     stack: ["Next.js", "TypeScript", "Vercel"],
-    links: { live: "https://app.pstrykweb.pl/" },
+    links: { live: "https://pstrykweb.pl/" },
   },
   {
     slug: "linkoglot",
@@ -105,9 +105,9 @@ export const PROJECTS: Project[] = [
     year: 2026,
     rights: "ok",
     line: {
-      en: "This site: Astro, Lingui in three languages, 100 on mobile Lighthouse, built with a Claude Code setup I can show.",
-      pl: "Ta strona: Astro, Lingui w trzech językach, 100 w mobilnym Lighthouse, zbudowana z Claude Code w sposób, który mogę pokazać.",
-      es: "Este sitio: Astro, Lingui en tres idiomas, 100 en Lighthouse móvil, hecho con una configuración de Claude Code que puedo enseñar.",
+      en: "This site: Astro, Lingui in three languages, 99+ on mobile Lighthouse, built with a Claude Code setup I can show.",
+      pl: "Ta strona: Astro, Lingui w trzech językach, 99+ w mobilnym Lighthouse, zbudowana z Claude Code w sposób, który mogę pokazać.",
+      es: "Este sitio: Astro, Lingui en tres idiomas, 99+ en Lighthouse móvil, hecho con una configuración de Claude Code que puedo enseñar.",
     },
     stack: ["Astro", "TypeScript", "Lingui", "Tailwind CSS", "Claude Code"],
     links: { caseStudy: true },

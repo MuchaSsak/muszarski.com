@@ -5,6 +5,7 @@
  * font, a pause-motion button, the build revision, and the surname fitted edge to edge as the poster's last line.
  */
 import { type Locale } from "@package/shared/locales";
+import { LAUNCH_BUILD } from "astro:env/server";
 import { t } from "lingui-for-astro/macro";
 
 import CvLink from "~/components/layout/CvLink.astro";
@@ -12,8 +13,9 @@ import LocaleCodes from "~/components/layout/LocaleCodes.astro";
 import MotionToggle from "~/components/layout/MotionToggle.astro";
 import Fit from "~/components/ui/Fit.astro";
 import Icon from "~/components/ui/Icon.astro";
+import Logo from "~/components/ui/Logo.astro";
 import { visibleFlagships } from "~/data/projects";
-import { PROFILES, SITE } from "~/data/site";
+import { ELSEWHERE, SITE } from "~/data/site";
 import { BUILD_INFO } from "~/lib/build-info";
 import { type IconName } from "~/lib/icons.gen";
 import { chromeLinks } from "~/lib/nav";
@@ -31,7 +33,15 @@ const locale = Astro.locals.locale;
 const links = chromeLinks(locale);
 const english = links.blogLocale === locale ? "" : " (EN)";
 const year = BUILD_INFO.date.slice(0, 4);
-const PROFILE_ICONS: Record<string, IconName> = { github: "si:github", linkedin: "tb:brand-linkedin", npm: "si:npm" };
+const PROFILE_ICONS: Record<string, IconName> = {
+  github: "si:github",
+  linkedin: "tb:brand-linkedin",
+  npm: "si:npm",
+  instagram: "si:instagram",
+  facebook: "si:facebook",
+  telegram: "si:telegram",
+  discord: "si:discord",
+};
 const surname = SITE.name.split(" ").at(-1)!;
 const newTab = t`(opens in a new tab)`;
 
@@ -41,7 +51,8 @@ const columns = [
     title: t`Work`,
     items: [
       ...visibleFlagships().map((project) => ({ label: project.name, href: links.project(project.anchor ?? project.slug) })),
-      { label: t`All projects`, href: links.workIndex },
+      // An arrow marks it as the way on to the whole list [user 2026-10-07].
+      { label: t`All projects`, href: links.workIndex, more: true },
     ],
   },
   {
@@ -58,7 +69,7 @@ const columns = [
   {
     id: "elsewhere",
     title: t`Elsewhere`,
-    items: PROFILES.map((profile) => ({ label: profile.label, href: profile.href, outbound: profile.id })),
+    items: ELSEWHERE.map((profile) => ({ label: profile.label, href: profile.href, outbound: profile.id })),
   },
   {
     id: "legal",
@@ -95,7 +106,13 @@ const columns = [
             {column.items.map((item) =>
               "outbound" in item ? (
                 <li>
-                  <a href={item.href} rel="me noopener" target="_blank" data-umami-event="outbound" data-umami-event-target={item.outbound}>
+                  <a
+                    href={item.href}
+                    rel="me noopener"
+                    target="_blank"
+                    data-umami-event="outbound"
+                    data-umami-event-target={item.outbound}
+                  >
                     {PROFILE_ICONS[item.outbound] && <Icon name={PROFILE_ICONS[item.outbound]!} />}
                     {item.label}
                     <span class="sr-only">{newTab}</span>
@@ -104,6 +121,13 @@ const columns = [
               ) : "cv" in item ? (
                 <li>
                   <CvLink source="footer" plain />
+                </li>
+              ) : "more" in item ? (
+                <li>
+                  <a href={item.href} class="f-more">
+                    {item.label}
+                    <Icon name="tb:arrow-right" class="nudge" />
+                  </a>
                 </li>
               ) : (
                 <li>
@@ -121,18 +145,26 @@ const columns = [
     <LocaleCodes path={path} locales={locales} fallback={fallback} class="f-loc" />
     <MotionToggle />
     <p class="meta">
-      <span>
-        © {year} {SITE.name}
+      <span class="f-copy">
+        <Logo />© {year} {SITE.name}
       </span>
-      <span>{t`Marks: Simple Icons (CC0). Icons: Tabler (MIT). Font: Anybody (SIL OFL).`}</span>
-      {locale === "es" && <span>{t`This Spanish version was translated with AI and has not been reviewed by a native speaker yet.`}</span>}
+      <span>{t`Marks: Simple Icons (CC0), Playwright (Apache 2.0). Icons: Tabler (MIT). Font: Anybody (SIL OFL).`}</span>
+      {locale === "es" && (
+        <span>{t`This Spanish version was translated with AI and has not been reviewed by a native speaker yet.`}</span>
+      )}
       <span>
         {t`Built with`}{" "}
         <a href="https://astro.build/" rel="noopener" target="_blank" data-umami-event="outbound" data-umami-event-target="astro">
           Astro<span class="sr-only"> {newTab}</span>
-        </a>
-        · <time datetime={BUILD_INFO.date}>{BUILD_INFO.date}</time>
-        {BUILD_INFO.sha && <span class="tabular">{BUILD_INFO.sha}</span>}
+        </a>{" "}
+        {t`and love`}
+        {/* The revision helps check a preview deploy; the launched site doesn't show it [user 2026-10-07]. */}
+        {!LAUNCH_BUILD && (
+          <>
+            · <time datetime={BUILD_INFO.date}>{BUILD_INFO.date}</time>
+            {BUILD_INFO.sha && <span class="tabular">{BUILD_INFO.sha}</span>}
+          </>
+        )}
       </span>
     </p>
   </div>
@@ -141,6 +173,15 @@ const columns = [
 </footer>
 
 <style>
+  .f-copy {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .f-copy :global(.logo) {
+    width: 1.375rem;
+    height: 1.375rem;
+  }
   .site-footer {
     padding-bottom: 0;
     overflow: clip;
@@ -189,6 +230,12 @@ const columns = [
   ul :global(a:hover) {
     text-decoration: underline;
     text-underline-offset: 4px;
+  }
+  .f-more :global(.nudge) {
+    transition: transform 0.3s var(--ease-pop);
+  }
+  .f-more:is(:hover, :focus-visible) :global(.nudge) {
+    transform: translateX(4px);
   }
   .row {
     display: flex;

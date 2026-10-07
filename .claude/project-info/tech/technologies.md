@@ -21,7 +21,7 @@
 | Page transitions | native cross-document View Transitions (`@view-transition`, `view-transition-name` for card → case) | 0 KB | Chrome 126+, Safari 18.2+; Firefox navigates without animation | [research: § 3.3] |
 | Smooth scroll | none (no Lenis) | — | native scroll; Lenis breaks anchors | [research] |
 | CV PDF | `bun run cv:pdf`: Playwright `page.pdf()` (tagged, outline) from `/<locale>/cv/print/` of a running preview | playwright 1.63.0 | **committed** to `public/files/` (the Vercel build has no browser); the print route exposes a digest of the CV data, the script records it, `src/data/cv.test.ts` fails when the data changed after the PDFs were made [decided 2026-10-05, replaces the build-time + pdfjs plan] | [measured] |
-| Contact | **`apps/web/api/contact.ts`, a plain Vercel Function** next to the static site (no Astro adapter, so `astro preview` keeps working) → `/api/contact/`; Turnstile `siteverify` + Resend REST via `fetch` (no SDK); honeypot + min fill time + a per-instance limit; the real limit is one Vercel WAF rule; region fra1 (`vercel.json`) | — | works without JS (POST → 303 to `/contact/sent/` or `/contact/error/`); no DB; validation shared with the page (`src/lib/contact.ts`) | [decided 2026-10-05] |
+| Contact | **`apps/web/api/contact.ts`, a plain Vercel Function** next to the static site (no Astro adapter, so `astro preview` keeps working) → `/api/contact/`; Turnstile `siteverify` + EmailJS REST via `fetch` from the server (no SDK; the template holds the recipient) [owner 2026-10-06: EmailJS on his Gmail, no Resend]; honeypot + a per-instance limit (no min fill time: it blocked fast real senders [owner 2026-10-07]); a refused EmailJS call logs its status + reason (`EmailJS refused: ...` in the Vercel logs); the real limit is one Vercel WAF rule; region fra1 (`vercel.json`) | — | works without JS (POST → 303 to `/contact/sent/` or `/contact/error/`); no DB; validation shared with the page (`src/lib/contact.ts`), imported **with its `.js` extension** (Vercel runs `api/` as native ESM; a unit test guards it) | [decided 2026-10-05] |
 | Analytics | Umami Cloud Hobby (EU), script 2.3 KB gz, `data-domains` = prod host | — | cookieless; reads one localStorage opt-out key | [research: § 6] |
 | Media | `astro:assets` AVIF/WebP; loops AV1 (CRF 44–48) + optional HEVC + **H.264 fallback**; ffmpeg 8.1 | — | AV1 55–64% smaller; iPhone AV1 only on A17 Pro+ | [research: § 7] |
 | Testing | vitest; Playwright e2e + axe; Lighthouse script; pdfjs-dist PDF content test | — | gates in `working-agreement.md` § 2 | [research] |
@@ -31,10 +31,11 @@
 | Option | Cost | Fits |
 | --- | --- | --- |
 | Vercel Hobby | $0 | **only** while the copy is employment-only. Vercel counts "advertising the sale of a product or service" as commercial [web: vercel.com/docs/limits/fair-use-guidelines, 2026-09-14] |
-| Vercel Pro | $20/month | the "open to projects" line; the same tooling as pstryk (`vercel.json`, WAF rate-limit rule) |
+| Vercel Pro | $20/month | commercial use (project enquiries through the contact form; the "open to projects" line itself was removed 2026-10-06); the same tooling as pstryk (`vercel.json`, WAF rate-limit rule) |
 | Cloudflare Workers (static assets + 1 Worker) | $0 | free and tolerates a freelance CTA; `@astrojs/cloudflare` 14.3.3; Turnstile is Cloudflare's; costs a port of redirects/headers |
 
-- **Decided:** Vercel Pro ($20/month). It allows the "open to projects" line, and Vercel's DPA covers only Pro and Enterprise (`legal/compliance-and-data.md`).
+- **Decided:** Vercel Pro ($20/month). It allows commercial use (decided for the "open to projects" line, removed 2026-10-06;
+  the form still takes project enquiries), and Vercel's DPA covers only Pro and Enterprise (`legal/compliance-and-data.md`).
 - **Setup:** set the serverless function region to an EU region (`fra1`); add one WAF rate-limit rule on `/api/contact/`.
 
 ## Repo layout
@@ -50,11 +51,11 @@ Turborepo (`usage/turborepo.md`): `apps/web/` (the site; folders in `conventions
 | dev | `bun run dev` (astro dev, 4321) |
 | typecheck / lint / unit | `bun run check` (astro check + eslint + vitest, via turbo) |
 | i18n | `bun run i18n:extract` (then fill pl/es; the build compiles `.po` and fails on a missing message) |
-| build | `bun run build` (astro build → launch gate; later: CV PDFs, SEO/link gates) |
+| build | `bun run build` (astro build → launch gate: placeholder markers, share images + PDFs present, every internal link / asset / #anchor resolves, incl. sprite symbols) |
 | preview | `bun run preview` (4322; one per project, shared by e2e/shots/Lighthouse) |
-| e2e + a11y | `bun run e2e` |
-| screenshots | `MSYS_NO_PATHCONV=1 node scripts/shots.mjs --paths /en/ --widths 390,1024,1920,2560 --themes cobalt,paper,ink` (apps/web) |
-| Lighthouse | `bun run lhci` (`scripts/lighthouse.mjs`, median of 3, budgets) |
+| e2e + a11y | `bun run e2e` (Chromium, every spec) · `bun run e2e:xb` (Firefox + WebKit, functional specs; `bunx playwright install firefox webkit` once) |
+| screenshots | `MSYS_NO_PATHCONV=1 node scripts/shots.mjs --paths /en/ --widths 390,1024,1920,2560` (apps/web; one theme, so no `--themes`; `--full`, `--reduced`, `--accept`: `usage/visual-qa.md`) |
+| Lighthouse | `MSYS_NO_PATHCONV=1 bun run lhci -- --runs 3 /en/ /en/work/` (`scripts/lighthouse.mjs`, median of 3, budgets; exits 1 on a miss) |
 | fonts | `bun run fonts` (Anybody subset + metric fallbacks + `fit-metrics.gen.ts`; outputs committed) |
 | icons | `bun run icons` (the listed Simple Icons / Tabler icons → `src/lib/icons.gen.ts`; committed) |
 | CV PDFs | `bun run cv:pdf` (needs `bun run preview`; writes `public/files/*.pdf` + `cv-digest.json`; committed) |
@@ -66,19 +67,22 @@ Package manager: **bun 1.3.14** (decided at scaffold 2026-10-05 with the owner's
 
 ## Environment variables (names only)
 
+Template with every name: `apps/web/.env.example`. Values live in the Vercel project settings only.
+
 | Name | Purpose | Where | Required |
 | --- | --- | --- | --- |
-| `PUBLIC_SITE_URL` | canonical origin; default `https://matmuszarski.space` (`seo.md` § Domain); review deploys use their own `VERCEL_URL` | host env | no |
+| `PUBLIC_SITE_URL` | canonical origin; default `https://matmuszarski.space` (`seo.md` § Domain); a production deploy uses `VERCEL_PROJECT_PRODUCTION_URL`, review deploys their own `VERCEL_URL` | host env | no |
 | `PUBLIC_TURNSTILE_SITE_KEY` / `TURNSTILE_SECRET_KEY` | contact bot check | host env | yes |
-| `RESEND_API_KEY` / `CONTACT_TO_EMAIL` / `CONTACT_FROM_EMAIL` | contact delivery (`CONTACT_FROM_EMAIL` on a domain verified in Resend); unset = the form answers "can't send right now, copy my email" | host env | yes |
+| `EMAILJS_SERVICE_ID` / `EMAILJS_TEMPLATE_ID` / `EMAILJS_PUBLIC_KEY` / `EMAILJS_PRIVATE_KEY` | contact delivery through EmailJS (Account → Security: "Allow EmailJS API for non-browser applications" on, private key on); template: To = his Gmail, Reply-To `{{reply_to}}`, Subject `{{subject}}`, body `{{text}}`; unset = the form answers "can't send right now, copy my email" | host env | yes |
 | `PUBLIC_UMAMI_WEBSITE_ID` | analytics; unset = no script | host env | no |
+| `PUBLIC_UMAMI_SCRIPT_URL` / `PUBLIC_UMAMI_COLLECT_ORIGIN` | overrides for the Umami script and collector (defaults: Umami Cloud); the CSP follows them | host env | no |
 | `PUBLIC_GOOGLE_SITE_VERIFICATION` | only if not verified by DNS | host env | no |
-| `INDEXNOW_KEY` | IndexNow pings after deploy | host env | no |
-| `LAUNCH_BUILD` | true only for the production launch build; other builds are noindex | host env | yes |
+| `INDEXNOW_KEY` | IndexNow pings after deploy (not wired yet: post-launch, `seo.md`) | host env | no |
+| `LAUNCH_BUILD` | true only when the owner calls the launch [owner 2026-10-06: "full prod when i say it is, regardless of whether deployed to domain"]; every other build, a production deploy on the domain included, is noindex | host env | yes |
 
 ## External services and limits
 
-Resend free: 3,000/month, 100/day. Umami Hobby: 100K events/month, 1 site, 6-month retention. Turnstile
+EmailJS free: 200 emails/month [web: emailjs.com/pricing, check before relying on it]. Umami Hobby: 100K events/month, 1 site, 6-month retention. Turnstile
 tokens: 300 s, single use. Vercel Pro WAF: rate-limit rules included (the exact count: check the Vercel docs in S1). Node ≥ 22.19 on the build host (Lingui native tools).
 
 ## Spikes before the build (pass conditions in research § 8.2)

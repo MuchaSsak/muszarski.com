@@ -18,14 +18,12 @@ const { label, icon = "tb:briefcase", img } = Astro.props;
 ---
 
 <p class="tag-chip ch-badge">
-  {
-    img ? (
-      <img src={img} alt="" width="30" height="30" loading="lazy" decoding="async" />
-    ) : (
-      <span class="b-ico">
-        <Icon name={icon} />
-      </span>
-    )
-  }
+  {img ? (
+    <img src={img} alt="" width="30" height="30" loading="lazy" decoding="async" />
+  ) : (
+    <span class="b-ico">
+      <Icon name={icon} />
+    </span>
+  )}
   {label}
 </p>

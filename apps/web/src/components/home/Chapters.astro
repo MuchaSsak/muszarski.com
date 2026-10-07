@@ -1,8 +1,9 @@
 ---
 /**
  * Selected work (structure.md § Home 2, requirements.md F03): the flagship chapters as a stack of posters, then the
- * "All projects" strip. The rights gate (CLAUDE.md invariants) drops client/internship chapters whose rights are not
- * `ok` from the launch build; review builds show all four (placeholders.md P10).
+ * "Also shipped" strip (two side projects as tilted tickets) and "All projects". The rights gate (CLAUDE.md
+ * invariants) drops client/internship work whose rights are not `ok` from the launch build, chapters and tickets
+ * alike; review builds show all (placeholders.md P10).
  */
 import "~/styles/chapters.css";
 
@@ -13,8 +14,7 @@ import ChapterLinkoglot from "~/components/home/chapters/ChapterLinkoglot.astro"
 import ChapterPstrykWeb from "~/components/home/chapters/ChapterPstrykWeb.astro";
 import ChapterSpace from "~/components/home/chapters/ChapterSpace.astro";
 import Icon from "~/components/ui/Icon.astro";
-import { visibleFlagships } from "~/data/projects";
-import { WORK_LINKS } from "~/data/site";
+import { visibleFlagships, visibleProjects } from "~/data/projects";
 import { chromeLinks } from "~/lib/nav";
 
 const links = chromeLinks(Astro.locals.locale);
@@ -25,32 +25,74 @@ const CHAPTERS = {
   "space-portfolio": ChapterSpace,
 } as const;
 const shown = visibleFlagships().filter((project) => project.slug in CHAPTERS);
+
+// "Also shipped" [user 2026-10-06]: two side projects (the npm CLI left the strip [user 2026-10-07]; it stays on /work/
+// and the CV). Names and links come from the project data. Each ticket shows a crop of the live site.
+const EXTRAS: { slug: string; shot: string; target: string; line: string }[] = [
+  {
+    slug: "malatro",
+    shot: "/media/shipped/malatro.webp",
+    target: "malatro-live",
+    line: t`Balatro, but every card is a real maths exam task.`,
+  },
+  {
+    slug: "yws",
+    shot: "/media/shipped/yws.webp",
+    target: "yws-live",
+    line: t`A 3D site for a Luxembourg non-profit that houses young people.`,
+  },
+];
+const extras = EXTRAS.flatMap((extra) => {
+  const project = visibleProjects().find((item) => item.slug === extra.slug);
+  const href = project?.links.live;
+  return project && href ? [{ ...extra, name: project.name, href }] : [];
+});
 ---
 
 <div class="chapters" id="work" aria-label={t`Selected work`} role="region">
-  {
-    shown.map((project) => {
-      const Chapter = CHAPTERS[project.slug as keyof typeof CHAPTERS];
-      return <Chapter />;
-    })
-  }
+  {shown.map((project) => {
+    const Chapter = CHAPTERS[project.slug as keyof typeof CHAPTERS];
+    return <Chapter />;
+  })}
 </div>
 
 <div class="sec field-bar more">
-  <p>
-    <Icon name="si:npm" />
-    <span>
-      <b>{t`Also shipped:`}</b>
-      <a
-        href={WORK_LINKS.linguiTranslateAi}
-        rel="noopener"
-        target="_blank"
-        data-umami-event="outbound"
-        data-umami-event-target="npm-lingui-translate-ai">lingui-translate-ai<span class="sr-only"> {t`(opens in a new tab)`}</span></a
-      >, {t`my npm CLI that translates Lingui catalogs with an LLM.`}
-    </span>
-  </p>
-  <a class="btn btn-acc" href={links.workIndex} data-umami-event="cta" data-umami-event-id="all-projects" data-umami-event-source="chapters">
+  <span class="more-bg" aria-hidden="true"></span>
+  <p class="more-label" id="more-label">{t`Also shipped`}</p>
+  <ul class="shipped" role="list" aria-labelledby="more-label">
+    {extras.map((extra) => (
+      <li>
+        <a
+          class="ship"
+          href={extra.href}
+          rel="noopener"
+          target="_blank"
+          data-umami-event="outbound"
+          data-umami-event-target={extra.target}
+          data-umami-event-project={extra.slug}
+        >
+          <span class="ship-shot" aria-hidden="true">
+            <img src={extra.shot} alt="" width="320" height="200" loading="lazy" decoding="async" />
+          </span>
+          <span class="ship-text">
+            <b>
+              {extra.name}
+              <Icon name="tb:arrow-up-right" class="nudge" />
+            </b>
+            <small>{extra.line}</small>
+          </span>
+          <span class="sr-only"> {t`(opens in a new tab)`}</span>
+        </a>
+      </li>
+    ))}
+  </ul>
+  <a
+    class="btn btn-acc"
+    href={links.workIndex}
+    data-umami-event="cta"
+    data-umami-event-id="all-projects"
+    data-umami-event-source="chapters"
+  >
     {t`All projects`}
     <Icon name="tb:arrow-right" class="nudge" />
   </a>
@@ -60,13 +102,35 @@ const shown = visibleFlagships().filter((project) => project.slug in CHAPTERS);
   import "~/scripts/reel";
 
   // Each chapter sticks when its bottom meets the viewport (never under the header), so the next poster slides over
-  // the whole previous one. Re-measured on resize; no per-scroll work.
+  // the whole previous one. Re-measured on resize; no per-scroll work. Measured in the observer's first callback (after
+  // layout, not forcing one on load), all reads before all writes so one write doesn't force a layout per chapter.
   const chapters = [...document.querySelectorAll<HTMLElement>(".chapter")];
   const header = document.querySelector<HTMLElement>(".site-header");
   const stick = () => {
     const top = header?.offsetHeight ?? 0;
-    for (const chapter of chapters) chapter.style.setProperty("--stick", `${Math.min(top, innerHeight - chapter.offsetHeight)}px`);
+    const heights = chapters.map((chapter) => chapter.offsetHeight);
+    chapters.forEach((chapter, i) => chapter.style.setProperty("--stick", `${Math.min(top, innerHeight - heights[i]!)}px`));
   };
-  stick();
   new ResizeObserver(stick).observe(document.documentElement);
+
+  // Keyboard focus in a chapter must be visible (WCAG 2.4.11). WebKit scrolls to where a stuck chapter is drawn, which
+  // can be under the header or the next poster; then scroll to the element's place in the flow instead.
+  document.addEventListener("focusin", (event) => {
+    const el = event.target;
+    if (!(el instanceof HTMLElement) || !el.matches(":focus-visible")) return;
+    const chapter = el.closest<HTMLElement>(".chapter");
+    if (!chapter) return;
+    requestAnimationFrame(() => {
+      if (document.activeElement !== el) return;
+      const top = header?.offsetHeight ?? 0;
+      const box = el.getBoundingClientRect();
+      const later = chapters.slice(chapters.indexOf(chapter) + 1);
+      const covered = later.some((next) => next.getBoundingClientRect().top < box.top + box.height / 2);
+      if (box.top >= top && !covered) return;
+      chapter.style.position = "static";
+      const flowTop = el.getBoundingClientRect().top + scrollY;
+      chapter.style.position = "";
+      scrollTo(0, flowTop - top - 8);
+    });
+  });
 </script>

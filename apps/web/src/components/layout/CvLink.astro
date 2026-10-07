@@ -13,7 +13,7 @@ import { cvPdfHref } from "~/data/site";
 import { chromeLinks } from "~/lib/nav";
 
 interface Props {
-  source: "header" | "hero" | "menu" | "footer";
+  source: "header" | "hero" | "menu" | "footer" | "blog";
   /** "Download CV" instead of "CV" (the hero). */
   long?: boolean;
   /** A text link (the footer) instead of a button. */
@@ -32,7 +32,7 @@ const links = chromeLinks(locale);
   data-cv-pdf={cvPdfHref(locale)}
   data-cv-source={source}
 >
-  {!plain && <Icon name="tb:download" class="nudge-down" />}
+  {!plain && <Icon inline name="tb:download" class="nudge-down" />}
   {long ? t`Download CV` : t`CV`}
   <span class="sr-only">{t`(PDF, then the CV page)`}</span>
 </a>

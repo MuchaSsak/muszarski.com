@@ -1,0 +1,186 @@
+---
+title: "Dlaczego moje portfolio w three.js było wolne na telefonie i czego potrzebuje strona 3D"
+seoTitle: "Dlaczego moje portfolio w three.js było wolne"
+description: "Moje stare portfolio w three.js miało 34 punkty w mobilnym Lighthouse. Co je spowalniało i lista kontrolna dla strony 3D, która jest szybka na telefonie."
+translationKey: "threejs-mobile"
+published: 2026-10-06
+tags: [performance, react, accessibility]
+cover: planet
+related: [portfolio-lighthouse, this-site, reduced-motion]
+sources:
+  - title: "Largest Contentful Paint (LCP), web.dev"
+    url: "https://web.dev/articles/lcp"
+    accessed: 2026-10-06
+  - title: "Responsive Design (three.js manual)"
+    url: "https://threejs.org/manual/#en/responsive"
+    accessed: 2026-10-06
+  - title: "Rendering on Demand (three.js manual)"
+    url: "https://threejs.org/manual/#en/rendering-on-demand"
+    accessed: 2026-10-06
+  - title: "WebGLRenderer (three.js docs)"
+    url: "https://threejs.org/docs/pages/WebGLRenderer.html"
+    accessed: 2026-10-06
+  - title: "Scaling performance (React Three Fiber docs)"
+    url: "https://r3f.docs.pmnd.rs/advanced/scaling-performance"
+    accessed: 2026-10-06
+  - title: "Canvas (React Three Fiber docs)"
+    url: "https://r3f.docs.pmnd.rs/api/canvas"
+    accessed: 2026-10-06
+  - title: "import() (MDN)"
+    url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/import"
+    accessed: 2026-10-06
+  - title: "Window: requestIdleCallback() method (MDN)"
+    url: "https://developer.mozilla.org/en-US/docs/Web/API/Window/requestIdleCallback"
+    accessed: 2026-10-06
+  - title: "requestIdleCallback (Can I use)"
+    url: "https://caniuse.com/requestidlecallback"
+    accessed: 2026-10-06
+  - title: "Window: requestAnimationFrame() method (MDN)"
+    url: "https://developer.mozilla.org/en-US/docs/Web/API/Window/requestAnimationFrame"
+    accessed: 2026-10-06
+  - title: "prefers-reduced-motion (MDN)"
+    url: "https://developer.mozilla.org/en-US/docs/Web/CSS/@media/prefers-reduced-motion"
+    accessed: 2026-10-06
+  - title: "touch-action (MDN)"
+    url: "https://developer.mozilla.org/en-US/docs/Web/CSS/touch-action"
+    accessed: 2026-10-06
+  - title: "Lighthouse accessibility scoring (Chrome for Developers)"
+    url: "https://developer.chrome.com/docs/lighthouse/accessibility/scoring"
+    accessed: 2026-10-06
+---
+
+Moje stare portfolio w three.js było wolne na telefonie, bo kazało mu pobrać 13,8 MB i od razu uruchomić całą aplikację 3D, a w HTML nie było tekstu, który dałoby się w tym czasie pokazać. Mobilny Lighthouse dał mu 34 punkty, a największe malowanie treści (LCP) przyszło po 46,9 s. Rozwiązaniem nie jest „mniej 3D”, tylko tekst na początku, 3D ładowane później i w ramach budżetu oraz sterowanie, które nie wymaga kółka myszy.
+
+> **W skrócie**
+>
+> - **Co poszło źle:** 13,8 MB przed przyciskiem startu (z czego 7,6 MB to font z emoji), brak tekstu w HTML, wszystko czekało na aplikację 3D, a nawigacja działała tylko kółkiem myszy.
+> - **Czego strona 3D potrzebuje na telefonie:** prawdziwego tekstu w HTML na początek, paczki 3D ładowanej w bezczynności albo po interakcji, budżetu bajtów, ograniczonej gęstości pikseli, klatek tylko wtedy, gdy coś się zmienia, respektowania reduced motion i odblokowanego powiększania.
+> - **Co robię teraz:** w nagłówku tej strony nie ma WebGL. Stary lot to leniwie ładowane wideo, a jedyny shader na stronie czeka, aż przeglądarka będzie bezczynna.
+
+## Czym była stara strona?
+
+Portfolio, przez które się leci: 12 przystanków kamery w WebGL, sterowanych przewijaniem, od Ziemi do Neptuna, a na każdej planecie jedna sekcja (o mnie, doświadczenie, CV, certyfikaty, projekty, kontakt). Zbudowałem je sam w 2025 roku na three.js 0.177, React Three Fiber 9, drei, postprocessingu do flary obiektywu, GSAP i Vite 6. Ma 13 ręcznie napisanych programów shaderów w GLSL, opartych na podejściu z kursu Three.js Journey Bruna Simona.
+
+Najbardziej lubiłem je pokazywać. Potem, 5 października 2026, je zmierzyłem.
+
+## Jak bardzo było wolne, w liczbach?
+
+| Lighthouse 13.5.0, symulowane dławienie | Komputer | Telefon |
+| --- | --- | --- |
+| Wynik wydajności | 60 | 34 |
+| Pierwsze malowanie treści (FCP) | 0,8 s | 42,5 s |
+| Największe malowanie treści (LCP) | 1,2 s | 46,9 s |
+| Całkowity czas blokowania | 1240 ms | 930 ms |
+
+Pomiar mobilny emuluje telefon ze średniej półki na łączu 1,6 Mb/s, z procesorem spowolnionym 4 razy. Przed przyciskiem startu przeglądarka pobrała 13,8 MB. Reszty w wyniku nie widać:
+
+- Telefony, a także każde okno o szerokości do 900 px, dostawały pełnoekranowy komunikat „Oops” o niekompatybilnym urządzeniu. Za nim i tak pobierało się te same 13,8 MB.
+- Po zamknięciu komunikatu i dotknięciu startu przesunięcie palcem nic nie robiło. Podróż słuchała tylko zdarzenia `wheel`, więc na telefonie nie dało się opuścić pierwszego przystanku.
+- Nie było żadnej ścieżki dla klawiatury.
+- Skrypt przewijający tak szybko, jak pozwalała kamera, potrzebował około 85 s, żeby dotrzeć od przycisku startu do formularza kontaktowego.
+
+## Dlaczego było wolne?
+
+### Nic do namalowania w HTML
+
+Surowy HTML nie miał tekstu, który dałoby się zaindeksować. Sekcje żyły w nakładkach drei `<Html>` wewnątrz sceny 3D, więc istniały dopiero wtedy, gdy aplikacja już działała. Na liście web.dev elementów, które mogą zostać LCP (obrazy, wideo, obrazy tła z CSS, tekst w elementach blokowych), nie ma `<canvas>`. Bez tekstu w HTML każde malowanie czekało na JavaScript: największe przyszło po 1,2 s na moim komputerze i po 46,9 s na dławionym telefonie.
+
+### Bajty, których nikt nie potrzebował na start
+
+Dwa największe pliki przychodziły, zanim ktokolwiek kliknął start: kolorowy font z emoji, 7,6 MB po kompresji, i model asteroid, 4,5 MB. Tekstura Ziemi dokładała 1,65 MB. Sam font z emoji to ponad połowa pierwszego pobrania. Przy 1,6 Mb/s 13,8 MB to na papierze około 69 sekund samego transferu (13,8 × 8 / 1,6), zanim cokolwiek zostanie przetworzone.
+
+### Cała aplikacja 3D na głównym wątku
+
+Pierwsze ładowanie niosło cały stos: three.js, React Three Fiber, drei, postprocessing i GSAP, około 0,7 MB JavaScriptu przesłanego siecią. Drogie nie było pobieranie, tylko wykonanie: w pomiarze mobilnym Lighthouse naliczył 40,5 s uruchamiania JavaScriptu i 43,1 s pracy głównego wątku przy 4-krotnym spowolnieniu procesora.
+
+### Bramka, a potem powolna wycieczka
+
+Przycisk startu, animacja drzwi, potem ruchy kamery po 1-8 s każdy, a w trakcie każdego z nich sterowanie było ignorowane. Dobry showreel i słabe pierwsze spotkanie dla kogoś, kto otworzył link na telefonie.
+
+## Czego potrzebuje strona 3D, żeby była szybka na telefonie?
+
+To lista, którą dałbym sobie z 2025 roku. To nie są rozwiązane problemy: w [pomiarach Lighthouse na 16 portfolio programistów](/pl/blog/lighthouse-16-portfolio-programistow/) mediana stron immersyjnych wyniosła 35,5.
+
+### 1. Najpierw tekst
+
+Każdy prawdziwy fakt (imię, rola, projekty, kontakt) renderuj na serwerze jako HTML. Elementem LCP niech będzie tekst albo obraz zastępczy (poster), nigdy napis loadera. 3D to warstwa nad treścią, a nie jej pojemnik.
+
+### 2. Ładuj 3D później albo wcale
+
+Paczkę 3D ładuj dynamicznym `import()`. MDN pisze wprost, że dynamiczne importy są wykonywane dopiero wtedy, gdy są potrzebne. Uruchom ją po pierwszej interakcji, gdy canvas wjedzie w widok, albo gdy przeglądarka jest bezczynna. `requestIdleCallback` nie należy do Baseline (według caniuse w obecnym Safari jest domyślnie wyłączony), a MDN zaleca `timeout` dla pracy, która musi się wykonać, więc dodaj zapasowy `setTimeout`.
+
+Jeszcze lepiej: nie pobieraj niczego, co i tak nie zostanie użyte. Przy reduced motion albo bez WebGL pokaż poster i na tym skończ.
+
+### 3. Ustal budżet przed pierwszym commitem
+
+| Budżet | Cel |
+| --- | --- |
+| LCP, laboratorium, telefon | do 2,5 s |
+| Całkowity czas blokowania | do 200 ms |
+| JavaScript przed LCP (gzip) | do 150 KB |
+| Paczka 3D, ładowana leniwie (gzip) | do 200 KB przy samym three.js |
+| Zasoby 3D, ładowane leniwie, na telefonie | do 1 MB |
+
+Dla skali, z testu paczek z 5 października 2026 (esbuild, minifikacja, gzip): minimalna scena three.js po tree-shakingu to około 131 KB; React, React Three Fiber i minimalna scena około 310 KB; kilka pomocników z drei na wierzchu, około 400 KB. Wszystko przed jakimkolwiek modelem czy teksturą. To nie powód, żeby unikać R3F, tylko żeby trzymać go z dala od ścieżki krytycznej.
+
+### 4. Rysuj mniej pikseli i rzadziej
+
+Podręcznik three.js o ekranach o wysokiej gęstości: najlepsze telefony mają 9 pikseli urządzenia na każdy piksel zwykłego ekranu, więc muszą wykonać 9 razy więcej renderowania. Domyślne `dpr` w React Three Fiber to `[1, 2]`. Na telefonach ogranicz je bardziej: przy 1,5 karta graficzna wypełnia ćwierć pikseli, które wypełniałaby przy 3.
+
+Potem rysuj tylko wtedy, gdy coś się zmienia. Znowu podręcznik three.js: ciągłe renderowanie marnuje energię urządzenia, a na sprzęcie przenośnym także baterię użytkownika. W R3F to jeden prop:
+
+```tsx
+import { Canvas } from "@react-three/fiber";
+
+const coarse = matchMedia("(pointer: coarse)").matches;
+
+export function Scene() {
+  return (
+    <Canvas dpr={coarse ? [1, 1.5] : [1, 2]} frameloop="demand">
+      {/* wywołaj invalidate(), gdy cokolwiek zmienia obraz */}
+    </Canvas>
+  );
+}
+```
+
+Jeśli Twoja scena musi się animować, zatrzymuj pętlę, gdy canvas zjedzie z ekranu. MDN zaznacza, że `requestAnimationFrame` jest wstrzymywany w większości przeglądarek w kartach w tle i ukrytych ramkach iframe. Canvas przewinięty poza widok w aktywnej karcie nie jest ani jednym, ani drugim, więc zatrzymać go musi IntersectionObserver.
+
+### 5. Respektuj reduced motion
+
+MDN opisuje `prefers-reduced-motion` jako wykrywanie ustawienia urządzenia, które ogranicza zbędny ruch. Przelot kamery między planetami to dokładnie taki ruch. Tym osobom pokaż nieruchomą klatkę albo poster, a wszystkim daj przycisk pauzy dla wszystkiego, co rusza się dłużej niż pięć sekund. Jak robi to ta strona, opisałem w [tekście o reduced motion](/pl/blog/reduced-motion-i-przycisk-pauzy/).
+
+### 6. Nie blokuj powiększania, obsłuż dotyk i klawiaturę
+
+Nie wpisuj `user-scalable=no` ani niskiego `maximum-scale` do tagu viewport; Lighthouse ma test dostępności dokładnie na to. Jeśli canvas potrzebuje gestów przeciągania, ustaw `touch-action` na canvasie, a nie na całej stronie (MDN ostrzega, że nawet wtedy może to zablokować powiększanie nad tym obszarem).
+
+Każda droga przez scenę potrzebuje wersji dla dotyku i dla klawiatury: przesunięć palcem, strzałek, przycisków albo zwykłych linków. Moja miała nasłuch na kółko myszy i nic więcej.
+
+## Co robię teraz?
+
+Ta strona nie ma WebGL w nagłówku. H1 to moje imię i nazwisko, prawdziwy tekst gotowy przy pierwszym malowaniu. Stary lot pojawia się na stronie głównej jako krótkie wideo: poster, `preload="none"` i źródła dołączane dopiero po pierwszej interakcji, gdy film zbliża się do ekranu. Odtwarza się, gdy widać go przynajmniej w połowie, i staje poza ekranem; przy reduced motion zostaje poster. Prawdziwa strona otwiera się w nowej karcie, na komputerze.
+
+Jedyny działający tu shader, kolorowa maź za tytułem strony „Moje życie”, trzyma się tych samych zasad:
+
+```ts
+// Najpierw tekst: maź startuje po pierwszym ruchu czytelnika
+// albo gdy strona chwilę jest bezczynna.
+afterInteraction(() => void go());
+window.setTimeout(() => {
+  if ("requestIdleCallback" in window) requestIdleCallback(() => void go(), { timeout: 2000 });
+  else void go();
+}, 1800);
+```
+
+`go()` importuje malutki moduł na żądanie. Bez three.js: jeden trójkąt na cały canvas, prośba o oszczędny tryb karty graficznej (`WebGLRenderer` w three.js przyjmuje tę samą wskazówkę `powerPreference`), gęstość pikseli ograniczona do 1,5, pętla działająca tylko wtedy, gdy canvas jest w widoku, a karta przeglądarki widoczna, i jedna nieruchoma klatka przy pauzie albo reduced motion. Bez WebGL moduł się poddaje, a te same kolory namalowane w CSS zostają. Jedna uczciwa luka: przy reduced motion moduł i tak się pobiera, żeby narysować tę jedną klatkę. Lista kontrolna mówi, żeby to pominąć, i to byłaby następna rzecz do dokręcenia.
+
+Efekt opisałem w [studium przypadku tej strony](/pl/blog/jak-powstala-ta-strona/): strona główna ma 99 punktów za wydajność na telefonie i LCP około 1,95 s (mediana z 3 pomiarów).
+
+## Co zrobiłbym inaczej?
+
+- **Zacząć od telefonu.** Projektować najpierw pod telefon ze średniej półki i dokładać na komputerze, zamiast pokazywać ekran „Oops”.
+- **Fakty w HTML przed pierwszym shaderem.** Podróż mogła zostać taka sama, a każda sekcja mogła też istnieć jako zwykły tekst.
+- **Liczyć bajty od pierwszego dnia.** Jeden font z emoji to ponad połowa pierwszego pobrania. Spisany budżet by to wychwycił.
+- **Dotyk i klawiatura razem z kółkiem.** Jedna obsługa wejścia dla kółka, przesunięć i strzałek, od samego początku.
+- **Test na fizycznym telefonie.** Wszystkie liczby tutaj są z laboratorium. Uczciwym testem jest prawdziwy Android ze średniej półki.
+
+Kosmiczne portfolio nadal działa, a jego kod jest publiczny. Oba linki znajdziesz na [stronie z moimi projektami](/pl/work/).

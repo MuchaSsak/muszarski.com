@@ -4,6 +4,7 @@ seoTitle: "prefers-reduced-motion and a pause button"
 description: "How this site handles motion: a WCAG 2.2.2 pause control, prefers-reduced-motion, loops that stop offscreen and reveals that never hide content."
 translationKey: "reduced-motion"
 published: 2026-10-05
+updated: 2026-10-06
 tags: [accessibility, design]
 cover: motion
 related: [fitted-type, this-site]
@@ -31,30 +32,44 @@ sources:
     accessed: 2026-10-05
 ---
 
-Motion that respects people needs four things: honour `prefers-reduced-motion` by showing the final state, give one pause control that stops every loop and is remembered, stop loops nobody can see, and never let an animation hide content when its script fails. This site does all four with one small shared module and a button. Below is how, with the WCAG criteria behind each part and a checklist at the end.
+Motion that respects people does four things: it shows the final state under `prefers-reduced-motion`, it offers one remembered pause control for every loop, it stops loops nobody can see, and it never hides content when a script fails. This site does all four with one small shared module and a button. Below is how, with the WCAG criteria behind each part and a checklist at the end.
 
-## Two criteria, two different needs
+> **TL;DR**
+>
+> - **Two criteria:** WCAG 2.2.2 (Level A) asks for a way to pause motion that starts on its own and lasts over 5 s; 2.3.3 (Level AAA) asks that motion triggered by interaction can be turned off.
+> - **One switch:** a class on `<html>` pauses every CSS and JavaScript loop, is stored in `localStorage` and applied before the first paint; reduced motion skips straight to final states.
+> - **Fail open:** loops stop offscreen, reveals hide content only after their script runs, and the H1 (the LCP element) never animates on load.
+
+## Which WCAG criteria apply to motion?
 
 **WCAG 2.2 Success Criterion 2.2.2, Pause, Stop, Hide** is Level A, the baseline. For moving, blinking or scrolling information that "(1) starts automatically, (2) lasts more than five seconds, and (3) is presented in parallel with other content, there is a mechanism for the user to pause, stop, or hide it", unless the movement is essential. The Understanding document explains the number: five seconds "is long enough to get a user's attention, but not so long that a user cannot wait out the distraction". It also recommends, as a best practice, a single mechanism that affects all moving elements at once.
 
 **Success Criterion 2.3.3, Animation from Interactions** is Level AAA: "Motion animation triggered by interaction can be disabled, unless the animation is essential to the functionality or the information being conveyed." The Understanding document names who it protects: people with vestibular (inner ear) disorders, for whom non-essential motion can cause distraction, dizziness, headaches and nausea. One of its sufficient techniques (C39) is the `prefers-reduced-motion` media query.
 
-They are not the same switch. 2.2.2 is about attention, for everyone: a marquee in the corner of your eye while you read. 2.3.3 is about the body. An operating-system setting helps the people who know it exists. A visible button helps everyone else, including someone on a borrowed laptop. So I do both.
+They are not the same switch. 2.2.2 is about attention, for everyone: a marquee in the corner of your eye while you read. 2.3.3 is about the body.
 
-## What moves on this site
+An operating-system setting helps the people who know it exists. A visible button helps everyone else, including someone on a borrowed laptop. So I do both.
+
+## What moves on this site?
 
 | Motion | Reduced motion | Pause button | Offscreen |
 | --- | --- | --- | --- |
 | Tool marquee (a 50 s loop) | never starts; the list wraps into rows | paused | paused |
 | Spinning sticker (a 22 s loop) | finishes at once | paused | paused |
 | Letter accordion on my name | never starts | stops | stops |
+| Small CSS loops in the project, process and credentials sections | finish at once | paused | paused |
 | Reveals as sections scroll in | content is simply there | content is simply there | not applicable |
 
 All of it is decoration. Nothing on the page needs motion to make sense, which is what makes "pause everything" a safe default.
 
-## Reduced motion: the final state, not no state
+## What should reduced motion show?
 
-MDN describes `prefers-reduced-motion: reduce` as the user telling the browser they prefer an interface that "removes, reduces, or replaces motion-based animations". Where people set it, per MDN: Windows 11 under Settings, Accessibility, Visual Effects, Animation Effects; macOS 15 and earlier under Accessibility, Display, Reduce motion; iOS under Accessibility, Motion; Android 9 and later under Accessibility, Remove animations.
+The final state, not no state. MDN describes `prefers-reduced-motion: reduce` as the user telling the browser they prefer an interface that "removes, reduces, or replaces motion-based animations". Where people set it, per MDN:
+
+- **Windows 11:** Settings, Accessibility, Visual Effects, Animation Effects
+- **macOS 15 and earlier:** Accessibility, Display, Reduce motion
+- **iOS:** Accessibility, Motion
+- **Android 9 and later:** Accessibility, Remove animations
 
 The CSS side is one block:
 
@@ -73,7 +88,7 @@ Animations still run, for a hundredth of a millisecond, so every element lands i
 
 The JavaScript side checks the same query before starting anything: the letter accordion never starts, and the marquee never duplicates its list, so the tools sit in plain rows. The pause button is hidden too. With nothing moving, a pause button is noise.
 
-## One pause for everything, remembered
+## How does one pause button stop everything?
 
 The pause state is one class on `<html>`. CSS reads it, and JavaScript loops ask a shared function.
 
@@ -107,7 +122,7 @@ The details that matter:
 
 A Playwright test clicks the footer button, checks `aria-pressed` and that the marquee's `animation-play-state` is `paused`, opens the Polish home page and checks the pause is still on, then turns it off and checks the stored key is gone.
 
-## Stop what nobody sees
+## Why stop loops nobody sees?
 
 MDN lists this use case for the Intersection Observer API in so many words: "deciding whether or not to perform tasks or animation processes based on whether or not the user will see the result". Every section gets an `off` class while it is out of view, and the same CSS rule as the pause button applies to it.
 
@@ -121,7 +136,7 @@ document.querySelectorAll(".sec").forEach((section) => sections.observe(section)
 
 The 80 px margin starts a loop again just before its section scrolls in, so it's already moving when you see it. The accordion tracks visibility per block, and its frame loop stops scheduling itself once nothing moves. I haven't measured the CPU or battery saving. The argument doesn't need a number: motion nobody can see has no reason to run.
 
-## Reveals that fail open
+## What if the reveal script fails?
 
 The common reveal-on-scroll pattern hides elements in CSS and lets a script show them as they scroll in. If that script is blocked, throws, or arrives late, the content stays invisible. Here the hidden state only exists once the script has said it is running:
 
@@ -134,13 +149,17 @@ The common reveal-on-scroll pattern hides elements in CSS and lets a script show
 
 The script adds `rv-ready` to `<html>` itself, after it starts observing. No script, no hidden content. Paused motion turns the hidden state off too, so everything is simply there.
 
-## The heading never animates on load
+## Why does the heading never animate on load?
 
-The H1 on the home page is my name, and it is the Largest Contentful Paint element. web.dev excludes elements with an opacity of 0 from LCP, so a fade-in on that heading makes the LCP wait for the fade. It is also the first thing anyone reads. So the name is final in the first paint (it is [fitted to its container at build time](/en/blog/fit-text-to-width-at-build-time/)), the lines under it enter with a short CSS animation and no JavaScript, and the reveal pattern only starts below the first screen. The home page measures an LCP of about 1.65 s and a CLS of 0 (mobile Lighthouse, median of 3 runs).
+The H1 on the home page is my name, and it is the Largest Contentful Paint element. web.dev excludes elements with an opacity of 0 from LCP, so a fade-in on that heading makes the LCP wait for the fade. It is also the first thing anyone reads.
 
-## One trap: a paused entrance can freeze on its first frame
+So the name is final in the first paint (it is [fitted to its container at build time](/en/blog/fit-text-to-width-at-build-time/)), the lines under it enter with a short CSS animation and no JavaScript, and the reveal pattern only starts below the first screen. The home page measures an LCP of about 1.95 s and a CLS of 0 (mobile Lighthouse, median of 3 runs).
 
-MDN describes `animation-fill-mode: backwards` (and `both`) as applying the first keyframe during the animation's delay. `animation-play-state: paused` holds an animation where it is. Combine the two with a pause applied before the first paint, and an entrance that starts at `opacity: 0` can stay at `opacity: 0`. A pause should skip entrances to their final state, not freeze them at the start. It's worth one test with the pause stored and the page reloaded.
+## Can a paused entrance freeze on its first frame?
+
+Yes, and it's an easy trap. MDN describes `animation-fill-mode: backwards` (and `both`) as applying the first keyframe during the animation's delay. `animation-play-state: paused` holds an animation where it is. Combine the two with a pause applied before the first paint, and an entrance that starts at `opacity: 0` can stay at `opacity: 0`.
+
+A pause should skip entrances to their final state, not freeze them at the start. It's worth one test with the pause stored and the page reloaded.
 
 ## Checklist
 

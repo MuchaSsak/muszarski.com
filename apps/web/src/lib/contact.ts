@@ -7,7 +7,7 @@
 export const TOPICS = ["job", "project", "question"] as const;
 export type Topic = (typeof TOPICS)[number];
 
-export const LIMITS = { messageMin: 2, messageMax: 4000, replyMax: 200, minFillMs: 2500 } as const;
+export const LIMITS = { messageMin: 2, messageMax: 4000, replyMax: 200 } as const;
 
 export type ContactError =
   | "message-empty"

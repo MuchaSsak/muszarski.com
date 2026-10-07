@@ -21,9 +21,17 @@ test("a post links its translation (hreflang) and the language switch keeps it",
   await page.goto("/en/blog/how-this-site-was-built/");
   const hreflangs = await page
     .locator('link[rel="alternate"][hreflang]')
-    .evaluateAll((links) => links.map((link) => `${link.getAttribute("hreflang")} ${new URL(link.getAttribute("href")!).pathname}`));
-  expect(hreflangs).toEqual(["en /en/blog/how-this-site-was-built/", "pl /pl/blog/jak-powstala-ta-strona/", "x-default /en/blog/how-this-site-was-built/"]);
-  const jsonLd = await page.locator('script[type="application/ld+json"]').evaluateAll((scripts) => scripts.map((s) => s.textContent).join(""));
+    .evaluateAll((links) =>
+      links.map((link) => `${link.getAttribute("hreflang")} ${new URL(link.getAttribute("href")!).pathname}`),
+    );
+  expect(hreflangs).toEqual([
+    "en /en/blog/how-this-site-was-built/",
+    "pl /pl/blog/jak-powstala-ta-strona/",
+    "x-default /en/blog/how-this-site-was-built/",
+  ]);
+  const jsonLd = await page
+    .locator('script[type="application/ld+json"]')
+    .evaluateAll((scripts) => scripts.map((s) => s.textContent).join(""));
   expect(jsonLd).toContain('"BlogPosting"');
   await expect(page.locator(".site-header .h-loc a[hreflang=pl]")).toHaveAttribute("href", "/pl/blog/jak-powstala-ta-strona/");
   // No Spanish blog: the switch goes to the Spanish home.
@@ -51,7 +59,9 @@ test("contact: the reply address fills itself from the message, and a sent messa
   });
   await page.goto("/en/#contact");
   await page.getByRole("button", { name: "A job" }).click();
-  await page.getByRole("textbox", { name: "Your message" }).fill("Hi, we are hiring a full-stack developer. Write to jobs@studio.dev");
+  await page
+    .getByRole("textbox", { name: "Your message" })
+    .fill("Hi, we are hiring a full-stack developer. Write to jobs@studio.dev");
   await expect(page.getByRole("textbox", { name: "Where do I reply?" })).toHaveValue("jobs@studio.dev");
   await page.getByRole("button", { name: "Send" }).click();
   await expect(page.locator("[data-done]")).toBeVisible();
@@ -68,15 +78,33 @@ test("contact: an error keeps the text and points to the email", async ({ page }
   await message.fill("A question about Linkoglot");
   await page.getByRole("textbox", { name: "Where do I reply?" }).fill("+48 600 700 800");
   await page.getByRole("button", { name: "Send" }).click();
-  await expect(page.locator("[data-note]")).toContainText("Copy my email");
+  await expect(page.getByRole("alert")).toContainText("Copy my email");
+  // The privacy note stays as it is.
+  await expect(page.locator("#ct-note")).toHaveText(/Used only to reply\.\s*Privacy policy/);
   await expect(message).toHaveValue("A question about Linkoglot");
   // Nothing written: the form says so before sending anything.
   await message.fill("");
   await page.getByRole("button", { name: "Send" }).click();
-  await expect(page.locator("[data-note]")).toContainText("Write a message first");
+  await expect(page.getByRole("alert")).toContainText("Write a message first");
 });
 
-test("how I work: a stop shows its line and its receipt", async ({ page }) => {
+test("contact: a platform error page still reads as a sentence", async ({ page }) => {
+  // What Vercel answers when the function itself crashes (the live empty toast on 2026-10-06).
+  await page.route("**/api/contact/", (route) =>
+    route.fulfill({
+      status: 500,
+      contentType: "application/json",
+      body: JSON.stringify({ error: { code: "500", message: "A server error has occurred" } }),
+    }),
+  );
+  await page.goto("/en/#contact");
+  await page.getByRole("textbox", { name: "Your message" }).fill("A question about Linkoglot");
+  await page.getByRole("textbox", { name: "Where do I reply?" }).fill("+48 600 700 800");
+  await page.getByRole("button", { name: "Send" }).click();
+  await expect(page.getByRole("alert")).toContainText("The form can't send right now");
+});
+
+test("how I work: a stop shows its line and its practices", async ({ page }) => {
   await page.goto("/en/#how-i-work");
   await page.getByRole("button", { name: "Revenue" }).click();
   await expect(page.getByRole("button", { name: "Revenue" })).toHaveAttribute("aria-pressed", "true");
@@ -84,11 +112,94 @@ test("how I work: a stop shows its line and its receipt", async ({ page }) => {
   await expect(page.locator("#stop-3")).toContainText("RevenueCat");
 });
 
+test("AI story: the chip pauses it, and a step plays from that step", async ({ page }) => {
+  await page.goto("/en/#ai");
+  const story = page.locator("#ai [data-story]");
+  await page.locator("#ai").getByRole("button", { name: "Pause", exact: true }).click();
+  await expect(story).toHaveClass(/paused/);
+  await expect(page.locator("#ai").getByRole("button", { name: "Play", exact: true })).toBeVisible();
+  await page.locator('#ai [data-beat="4"]').click();
+  await expect(story).not.toHaveClass(/paused/);
+  await expect(page.locator('#ai [data-beat="4"]')).toHaveAttribute("aria-pressed", "true");
+  await expect(page.locator("#beat-4")).toBeVisible();
+});
+
+test("my life: the toys answer (a rep, the 1% race, the sound switch, a game of Pong)", async ({ page }) => {
+  await page.goto("/en/my-life/");
+  const reps = page.locator("[data-reps]");
+  const rep = reps.getByRole("button", { name: "Pull-up", exact: true });
+  await rep.click();
+  await expect(reps.locator("[data-n]")).toHaveText("1");
+  // A full set (8 pull-ups) cheers, and the next press starts the next set at once: no rest lock.
+  for (let i = 1; i < 8; i++) await rep.click();
+  await expect(reps.locator("[data-done]")).toContainText("Set done!");
+  await rep.click();
+  await expect(reps.locator("[data-n]")).toHaveText("1");
+  // The 1% race: a press is a day; a chip runs to its milestone.
+  const better = page.locator("[data-better]");
+  await better.getByRole("button", { name: "+1 day" }).press("Enter");
+  await expect(better.locator("[data-day]")).toHaveText("1");
+  await better.getByRole("button", { name: /100 days/ }).click();
+  await expect(better.locator("[data-up]")).toHaveText("×2.70");
+  await expect(better.locator("[data-day]")).toHaveText("100");
+  const sound = page.getByRole("button", { name: /Sound/ });
+  await sound.click();
+  await expect(sound).toHaveAttribute("aria-pressed", "false");
+  await sound.click();
+  await expect(sound).toHaveAttribute("aria-pressed", "true");
+  await page.locator("[data-pong]").getByRole("button", { name: "Play" }).click();
+  await expect(page.locator("[data-pong]")).toHaveClass(/playing/);
+});
+
 test("credentials: a card opens on click and says where to verify", async ({ page }) => {
   await page.goto("/en/#credentials");
   const card = page.getByRole("button", { name: /Hackathons/ });
   await card.click();
   await expect(card).toHaveAttribute("aria-expanded", "true");
+});
+
+test("credentials: wide screens open a row on focus or hover, phones toggle an accordion", async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto("/en/#credentials");
+  const rows = page.locator("#credentials .xc-btn");
+  await rows.nth(2).focus();
+  await expect(rows.nth(2)).toHaveAttribute("aria-expanded", "true");
+  await expect(rows.nth(0)).toHaveAttribute("aria-expanded", "false");
+  await expect(page.locator("#credentials .xc.open .xc-body")).toBeVisible();
+  await rows.nth(4).hover();
+  await expect(rows.nth(4)).toHaveAttribute("aria-expanded", "true");
+  // A fresh phone load: resizing under a parked mouse fires a stale hover in WebKit.
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/en/#credentials");
+  await rows.nth(1).click();
+  await expect(rows.nth(1)).toHaveAttribute("aria-expanded", "true");
+  await rows.nth(1).click();
+  await expect(rows.nth(1)).toHaveAttribute("aria-expanded", "false");
+});
+
+test("credentials: left idle on a wide screen, a cursor opens the next card", async ({ page }) => {
+  test.slow();
+  await page.emulateMedia({ reducedMotion: "no-preference" });
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto("/en/");
+  await page.locator("#credentials .xcards").scrollIntoViewIfNeeded();
+  await page.mouse.move(5, 5);
+  const rows = page.locator("#credentials .xc-btn");
+  await expect(rows.nth(0)).toHaveAttribute("aria-expanded", "true");
+  await expect(rows.nth(1)).toHaveAttribute("aria-expanded", "true", { timeout: 12_000 });
+  await expect(page.locator("#credentials [data-ghost]")).toBeHidden({ timeout: 5_000 });
+});
+
+test("credentials: the tour stays put while motion is paused", async ({ page }) => {
+  test.slow();
+  await page.addInitScript(() => localStorage.setItem("motion", "still"));
+  await page.emulateMedia({ reducedMotion: "no-preference" });
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto("/en/");
+  await page.locator("#credentials .xcards").scrollIntoViewIfNeeded();
+  await page.mouse.move(5, 5);
+  await page.waitForTimeout(7_500);
+  await expect(page.locator("#credentials .xc-btn").nth(0)).toHaveAttribute("aria-expanded", "true");
 });
 
 test("a stored pause never hides the entrances (hero text, sticker)", async ({ page }) => {

@@ -19,7 +19,9 @@
   means the asset is not used. This covers comps, the site, the CV PDF and OG images. Record the licence in the inventory.
 - **Allowed:**
   - the owner's own recordings and screenshots of his own products
-  - code-drawn SVG and shaders made for this site
+  - code-drawn SVG and shaders made for this site (blog covers, My life scenes, the case-study frames)
+  - sounds synthesised at run time with Web Audio (the My life toys): no audio files, nothing to license
+  - screenshots of this site's own earlier versions (`comps/`, `src/assets/case/`) for the case study
   - official store badges, unmodified
   - fonts with a verified licence (licence file next to the font)
   - the owner's own photos (or with the photographer's OK)
@@ -32,6 +34,17 @@
   - third-party site screenshots in shipped pages
   - the EU flag next to his name
 - **Who approves:** the owner, for anything showing a person, a client or a company name.
+
+## Image formats [user 2026-10-07: "always convert to optimal webp"]
+
+- **Every picture a page shows ships as WebP** (or SVG for drawings and marks). Photos and screenshots go through
+  `astro:assets` (`<Image>`, `getImage()`), which encodes WebP at build time (sharp, quality 80: no visible loss, a
+  board thumbnail is 15-55 KB from a 135-208 KB JPEG) in the widths the layout needs. JSON-LD images use the same
+  WebP files. Sources may stay JPEG/PNG in `src/assets/`; nothing in `public/` may be a raster other than WebP.
+- **Exceptions (PNG):** favicons and app icons in `public/icons/` (Google and Apple want PNG/ICO/SVG) and share
+  images in `public/og/` (LinkedIn and some chat apps don't preview WebP).
+- **Checked:** the launch gate fails any build with a non-WebP raster in the built HTML (`img`, `source`, JSON-LD,
+  the pin board's large files) or in `public/`, outside those two folders.
 
 ## Inventory (2026-10-05)
 
@@ -52,7 +65,13 @@
 ## Missing / needed (→ `open-questions.md`, `placeholders.md`)
 
 - **Owner recordings per flagship:** shot lists in the research files (PstrykWeb, Linkoglot 11 shots, space, Clockful).
-- **Owner photo:** square ≥ 800 px, same as the GitHub/LinkedIn avatars (Q7).
+- **Owner photos (2026-10-07):** `apps/web/src/assets/photos/mateusz-muszarski.jpg` (800×800 crop of the Vilnius
+  photo: Person image, author box) and `mateusz-muszarski-<place>.jpg` (coast, palanga, turkiye, vilnius: the My life
+  pin board, listed with alt, caption, place, month and story in `src/data/gallery.ts`). Name new files by place. The
+  superseded 460 px portrait is kept in `photos/archive/` (not shipped). Photos with other people (e.g. the ZSE award
+  photo with the principal, kept private in `context/photos/`) need that person's consent and the photographer's OK
+  first (Q47).
+- **Owner photo (history):** square ≥ 800 px, same as the GitHub/LinkedIn avatars (Q7). **Slots ready 2026-10-06** [owner sent two photos in chat: a pier selfie for the avatar, a straw-hat seaside selfie for My life; chat images don't reach the disk]: drop `me.*` and `life.*` into `apps/web/src/assets/photos/` (`lib/photos.ts`); the author box, the home Person JSON-LD `image` and the My life hero switch on by themselves. Own photos = owner's rights. Astro re-encodes them and strips EXIF/GPS (verified with a GPS-tagged test JPEG).
 - **Fonts (Poster, 2026-10-05):** `apps/web/public/fonts/` holds one subset variable woff2 (Anybody, 49.5 KB) +
   `LICENSE-Anybody.txt` (SIL OFL 1.1, from github.com/google/fonts). The Drafting Table faces (Archivo, Plex Mono) are gone
   from the site; their history is in git (`history/drafting-table`).

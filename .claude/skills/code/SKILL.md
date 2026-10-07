@@ -190,7 +190,7 @@ screenshot QA loop defined in `.claude/project-info/tech/usage/visual-qa.md`: bu
 shoot each changed route from `apps/web`:
 
 ```bash
-MSYS_NO_PATHCONV=1 node scripts/shots.mjs --paths /en/,/pl/ --widths 390,1024,1920,2560 [--themes light,dark] [--full] [--reduced]
+MSYS_NO_PATHCONV=1 node scripts/shots.mjs --paths /en/,/pl/ --widths 390,1024,1920,2560 [--full] [--reduced]
 ```
 
 (On Windows Git Bash the `MSYS_NO_PATHCONV=1` prefix stops `/en/` being rewritten
@@ -220,24 +220,21 @@ Non-negotiables that make this enforceable rather than eyeballed:
   `screenshots/.work/`). Log each accepted view in `screenshots/VISUAL-QA.md`. A
   green build never proves the loop ran; these do.
 - **Run the readability gate.** `e2e/a11y.spec.ts` (part of `bun run e2e`) runs axe
-  WCAG 2.2 AA in **light AND dark** on every route in `e2e/routes.ts`, plus the
-  skip-link check. Never place text on an image without a scrim (`tech/conventions.md`
+  WCAG 2.2 AA on every route in `e2e/routes.ts` (one colour theme, Cobalt; Paper and
+  Ink were cut 2026-10-06), plus the skip-link check. Never place text on an image without a scrim (`tech/conventions.md`
   § Do NOT); never delete/weaken the spec to make it pass — fix the token or add the scrim.
 - **Run the layout gate.** `e2e/layout.spec.ts` (same `bun run e2e`) sweeps
   320/390/1024/1920/2560 for horizontal overflow and checks the capped content
   shell (no text block wider than the 90rem shell on an ultrawide screen). Fix the
   layout, never the thresholds. Text hidden under fixed chrome is not machine-checked
   yet: catch it in the screenshots.
-- **Run the head + theme gates.** `e2e/i18n.spec.ts` checks `<html lang>`, title,
-  canonical, hreflang and the switcher per locale and fails on console or CSP errors;
-  `e2e/theme.spec.ts` checks the theme switch. Fix the page, never the spec.
-- **Check dark once, at the end.** You may iterate with `--themes light` (shots.mjs
-  shoots light + dark by default), but before you call the change done, look at the
-  dark shots of every affected route. Dark ships through the token swap (system
-  preference or the stored toggle choice), so any new surface/pairing has a dark
-  rendering nobody looked at — invisible borders, a drawing that vanishes on the dark
-  paper. A failure sends you back into the loop. Also take one `--reduced` pass when
-  the change animates anything.
+- **Run the head gates.** `e2e/i18n.spec.ts` checks `<html lang>`, title,
+  canonical, hreflang and the flag switcher per locale and fails on console or CSP
+  errors. Fix the page, never the spec.
+- **Check the other engines and motion.** Run `bun run e2e:xb` (Firefox + WebKit) when
+  the change touches focus, scrolling, sticky layout or anything a browser could place
+  differently (WebKit put keyboard focus under the sticky chapters on 2026-10-06). Also
+  take one `--reduced` pass when the change animates anything.
 
 ### 7b. Lighthouse QA (when a change can move a score)
 

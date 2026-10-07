@@ -1,0 +1,562 @@
+---
+/**
+ * My life (structure.md § /my-life/, requirements.md F13): the person behind the work, off the clock, and the one
+ * page that is pure show-off [user 2026-10-06: "purely show off page and for fun ... something nuts and going big",
+ * "lightweight shaders and ... very fun components"; no drawn illustrations; casual lines, not a pitch]:
+ * - the head (`LifeHero`): the title over a goo shader that follows the pointer
+ * - the playground: one toy per interest he named [user 2026-10-05], each something to do, not to watch: pull-ups to
+ *   count, light to move (faith), a departures board, an engine to rev, a beat to make, a film to roll, Pong to play,
+ *   a party to start, a camera to focus and shoot [user 2026-10-06], a race between a better and a worse you (1 %). Sound is synthesised and only plays after a press; one switch mutes it.
+ * - hang out: a yellow band, so it stands apart from the footer; his chats (Discord, Messenger, Telegram) arrive as
+ *   messages, Discord with the username to add.
+ * Every toy works by keyboard and says what it is in text; paused or reduced motion keeps them usable and still.
+ * - the pin board (`LifeBoard`, data in `data/gallery.ts`): his photos with place, month and story, as text on the
+ *   page, an ImageGallery in the JSON-LD and image entries in the sitemap.
+ * AboutPage JSON-LD → the Person. Faith is his own decision to publish (compliance-and-data.md: GDPR art. 9(2)(e)); no
+ * third persons on this page. PLACEHOLDER: the lines are drafts for the owner to rewrite in his voice (P6).
+ */
+import { t } from "lingui-for-astro/macro";
+
+import BaseLayout from "~/components/layout/BaseLayout.astro";
+import LifeBoard from "~/components/life/LifeBoard.astro";
+import LifeHero from "~/components/life/LifeHero.astro";
+import ToyBeats from "~/components/life/ToyBeats.astro";
+import ToyBetter from "~/components/life/ToyBetter.astro";
+import ToyBoard from "~/components/life/ToyBoard.astro";
+import ToyCard from "~/components/life/ToyCard.astro";
+import ToyFilm from "~/components/life/ToyFilm.astro";
+import ToyLight from "~/components/life/ToyLight.astro";
+import ToyParty from "~/components/life/ToyParty.astro";
+import ToyPhoto from "~/components/life/ToyPhoto.astro";
+import ToyPong from "~/components/life/ToyPong.astro";
+import ToyReps from "~/components/life/ToyReps.astro";
+import ToyRev from "~/components/life/ToyRev.astro";
+import JsonLd from "~/components/seo/JsonLd.astro";
+import Icon from "~/components/ui/Icon.astro";
+import Logo from "~/components/ui/Logo.astro";
+import { SITE, SOCIAL } from "~/data/site";
+import { type IconName } from "~/lib/icons.gen";
+import { chromeLinks } from "~/lib/nav";
+import { localeStaticPaths, pathTo } from "~/lib/routes";
+import { galleryPins } from "~/lib/gallery";
+import { galleryNode, pageGraph } from "~/lib/schema";
+import { typo } from "~/lib/typography";
+
+export const getStaticPaths = localeStaticPaths;
+
+const locale = Astro.locals.locale;
+const links = chromeLinks(locale);
+const site = Astro.site ?? new URL("http://localhost:4321");
+const url = new URL(pathTo(locale, "my-life"), site).href;
+const title = t`My life`;
+const description = t`Mateusz Muszarski off the clock: calisthenics, faith, travel, photography, motorcycles, films, music, games with friends and parties. And where to find him.`;
+const tap = { label: t`Tap`, icon: "tb:hand-click" as IconName };
+const hold = { label: t`Hold`, icon: "tb:hand-click" as IconName };
+const play = { label: t`Play`, icon: "tb:device-gamepad-2" as IconName };
+const slide = { label: t`Slide`, icon: "tb:arrows-maximize" as IconName };
+const L = (text: string) => typo(locale, text);
+const pins = await galleryPins(locale);
+const boardName = t`Pin board`;
+const SOCIAL_ICONS: Record<string, IconName> = { discord: "si:discord", messenger: "si:messenger", telegram: "si:telegram" };
+---
+
+<BaseLayout title={title} description={description} path="my-life" og="my-life">
+  <JsonLd
+    slot="head"
+    data={pageGraph(
+      site,
+      url,
+      "AboutPage",
+      `${title} – ${SITE.name}`,
+      description,
+      locale,
+      [
+        { name: SITE.name, url: new URL(links.home, site).href },
+        { name: title, url },
+      ],
+      pins.length ? [galleryNode(site, url, `${boardName} – ${SITE.name}`, locale, pins)] : [],
+    )}
+  />
+  <LifeHero />
+  <LifeBoard pins={pins} />
+
+  <section class="sec field-alt play" aria-labelledby="t-likes">
+    <div class="p-head">
+      <h2 class="p-title" id="t-likes">{t`Stuff I like`}</h2>
+      <p class="p-sub">{t`Go on, play with them.`}</p>
+      <button class="sound" type="button" aria-pressed="true" data-sound>
+        <Icon name="tb:music" />
+        <span>{t`Sound`}</span>
+        <b class="s-on">{t`on`}</b>
+        <b class="s-off">{t`off`}</b>
+      </button>
+    </div>
+    <ul class="toys" role="list">
+      <ToyCard
+        area="reps"
+        title={t`Calisthenics`}
+        line={L(t`Training with just my bodyweight. Bar, floor, repeat.`)}
+        tone="var(--yellow)"
+        hint={tap}
+      >
+        <ToyReps />
+      </ToyCard>
+      <ToyCard area="beats" title={t`Music`} line={L(t`My playlist is all over the place.`)} tone="var(--pink)" hint={tap}>
+        <ToyBeats />
+      </ToyCard>
+      <ToyCard area="light" title={t`Faith`} line={L(t`I'm a Christian.`)} tone="var(--navy)" ink="var(--ice)">
+        <ToyLight />
+      </ToyCard>
+      <ToyCard
+        area="board"
+        title={t`Travel`}
+        line={L(t`I like going somewhere I haven't been yet.`)}
+        tone="var(--lime)"
+        hint={tap}
+      >
+        <ToyBoard />
+      </ToyCard>
+      <ToyCard area="rev" title={t`Motorcycles`} line={L(t`I like bikes. Simple as that.`)} tone="var(--orange)" hint={hold}>
+        <ToyRev />
+      </ToyCard>
+      <ToyCard
+        area="pong"
+        title={t`Games with friends`}
+        line={L(t`Gaming, but best with friends.`)}
+        tone="var(--cobalt)"
+        ink="var(--ice)"
+        hint={play}
+      >
+        <ToyPong />
+      </ToyCard>
+      <ToyCard area="film" title={t`Films`} line={L(t`A good film night is hard to beat.`)} tone="var(--ice)" hint={tap}>
+        <ToyFilm />
+      </ToyCard>
+      <ToyCard area="party" title={t`Parties`} line={L(t`I like a good party.`)} tone="var(--space)" ink="var(--ice)" hint={tap}>
+        <ToyParty />
+      </ToyCard>
+      <ToyCard
+        area="photo"
+        title={t`Photography`}
+        line={L(t`I take photos. Strictly amateur, strictly for fun.`)}
+        tone="var(--pink)"
+        hint={slide}
+      >
+        <ToyPhoto />
+      </ToyCard>
+      <ToyCard
+        area="better"
+        title={t`Self-improvement`}
+        line={L(t`Trying to be a bit better than yesterday.`)}
+        tone="var(--lime)"
+        hint={hold}
+      >
+        <ToyBetter />
+      </ToyCard>
+    </ul>
+  </section>
+
+  <section class="sec hang" aria-labelledby="t-hang">
+    <div class="hang-grid">
+      <div>
+        <h2 class="hang-t" id="t-hang">{t`Hang out`}</h2>
+        <p>{t`Up for a game or a chat? Find me here.`}</p>
+        <div class="more-links">
+          <a class="btn btn-line" href={links.home}>
+            {t`Back to the work`}
+            <Icon name="tb:arrow-right" class="nudge" />
+          </a>
+          <a class="btn btn-line" href={links.contact}>
+            {t`Contact`}
+          </a>
+        </div>
+      </div>
+      <div class="win" data-chat>
+        <div class="win-bar" aria-hidden="true">
+          <Logo class="win-av" />
+          <b>{SITE.name}</b>
+          <i class="win-dots">
+            <b />
+            <b />
+            <b />
+          </i>
+        </div>
+        <div class="win-body">
+          <p class="m m-hi" style="--m:0" aria-hidden="true">{t`Hi!`}</p>
+          {SOCIAL.map((social, i) => (
+            <a
+              class={`m bubble b-${i}`}
+              style={`--m:${i + 1}`}
+              href={social.href}
+              rel="me noopener"
+              target="_blank"
+              data-umami-event="outbound"
+              data-umami-event-target={social.id}
+            >
+              <Icon name={SOCIAL_ICONS[social.id] ?? "tb:message-circle"} />
+              <span class="b-txt">
+                {social.label}
+                {social.handle && <small>{social.handle}</small>}
+              </span>
+              <Icon name="tb:arrow-up-right" class="b-go" />
+              <span class="sr-only"> {t`(opens in a new tab)`}</span>
+            </a>
+          ))}
+          <i class="m typing" style={`--m:${SOCIAL.length + 1}`} aria-hidden="true">
+            <b />
+            <b />
+            <b />
+          </i>
+        </div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  /* ---- The playground: a bento of toys, bigger where the toy needs room (the beat, the board, Pong). */
+  .p-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: 0.5rem 1.5rem;
+    margin-bottom: clamp(1.5rem, 3vw, 2.5rem);
+  }
+  .p-title {
+    margin: 0;
+    font-weight: 900;
+    font-size: clamp(2.75rem, 7vw, 6.5rem);
+    line-height: 0.85;
+    text-transform: uppercase;
+    font-stretch: 62%;
+  }
+  .p-sub {
+    margin: 0 0 0.375rem;
+    font-weight: 700;
+    font-size: clamp(1.125rem, 1.6vw, 1.375rem);
+  }
+  .sound {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    min-height: 2.75rem;
+    margin: 0 0 0.25rem auto;
+    padding: 0.375rem 0.875rem;
+    border: 0;
+    background: var(--navy);
+    color: var(--ice);
+    font: inherit;
+    font-weight: 800;
+    font-size: 0.8125rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    cursor: pointer;
+  }
+  .sound :global(.ico) {
+    width: 1.125rem;
+    height: 1.125rem;
+  }
+  .sound b {
+    padding: 0.125rem 0.375rem;
+    background: var(--lime);
+    color: var(--navy);
+  }
+  .sound .s-off,
+  .sound[aria-pressed="false"] .s-on {
+    display: none;
+  }
+  .sound[aria-pressed="false"] .s-off {
+    display: inline;
+    background: var(--pink);
+  }
+  .sound:focus-visible {
+    outline: 3px solid var(--navy);
+    outline-offset: 3px;
+  }
+  .toys {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    grid-template-areas:
+      "reps beats beats light"
+      "board board rev light"
+      "pong pong film party"
+      "pong pong photo photo"
+      "better better better better";
+    gap: clamp(1.25rem, 2.2vw, 2rem);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  @media (max-width: 64rem) {
+    .toys {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      grid-template-areas:
+        "reps rev"
+        "beats beats"
+        "board board"
+        "light film"
+        "pong pong"
+        "photo photo"
+        "better better"
+        "party party";
+    }
+  }
+  @media (max-width: 40rem) {
+    .toys {
+      grid-template-columns: minmax(0, 1fr);
+      grid-template-areas: "reps" "beats" "light" "board" "rev" "pong" "film" "party" "photo" "better";
+    }
+  }
+
+  /* ---- Hang out: a yellow band, so it stands apart from the footer. The title, the line and the links on the
+     left; a chat window on the right where the two chats arrive as messages (.dealing/.in), then he keeps typing. */
+  .hang {
+    background: var(--yellow);
+    color: var(--navy);
+    border-top: 3px solid var(--navy);
+  }
+  .hang-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 2rem 3rem;
+    align-items: center;
+  }
+  .hang-t {
+    margin: 0 0 0.5rem;
+    font-weight: 900;
+    font-size: clamp(2.5rem, 5vw, 4.5rem);
+    line-height: 0.9;
+    text-transform: uppercase;
+    font-stretch: 62%;
+  }
+  .hang p {
+    margin: 0;
+    font-size: 1.125rem;
+  }
+  .more-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.625rem;
+    margin-top: 1.5rem;
+  }
+  .more-links .btn {
+    max-width: 100%;
+    white-space: normal;
+  }
+  .win {
+    justify-self: center;
+    width: min(100%, 27rem);
+    background: var(--ice);
+    color: var(--navy);
+    box-shadow:
+      0 0 0 3px var(--navy),
+      10px 10px 0 3px var(--navy);
+    rotate: 1.5deg;
+  }
+  .win-bar {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+    padding: 0.625rem 0.875rem;
+    background: var(--navy);
+    color: var(--ice);
+    font-weight: 900;
+    font-size: 1rem;
+    font-stretch: 80%;
+    text-transform: uppercase;
+  }
+  .win-bar :global(.win-av) {
+    flex: none;
+    width: 1.75rem;
+    height: 1.75rem;
+  }
+  .win-dots {
+    display: flex;
+    gap: 0.3125rem;
+    margin-left: auto;
+  }
+  .win-dots b {
+    width: 0.625rem;
+    height: 0.625rem;
+    border-radius: 50%;
+    background: var(--yellow);
+  }
+  .win-dots b:nth-child(2) {
+    background: var(--lime);
+  }
+  .win-dots b:nth-child(3) {
+    background: var(--pink);
+  }
+  .win-body {
+    display: grid;
+    justify-items: start;
+    gap: 0.75rem;
+    padding: 1.25rem 1.125rem 1.375rem;
+    background: radial-gradient(circle at 1px 1px, rgb(10 13 51 / 0.12) 1px, transparent 1.5px) 0 0 / 14px 14px;
+  }
+  /* A message: a bubble from him, tail bottom left. */
+  .m {
+    border-radius: 1.25rem 1.25rem 1.25rem 0.25rem;
+  }
+  .m-hi {
+    margin: 0;
+    padding: 0.5rem 1rem;
+    background: var(--navy);
+    color: var(--ice);
+    font-weight: 900;
+    font-size: 1.25rem;
+    font-stretch: 80%;
+    text-transform: uppercase;
+  }
+  .bubble {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    min-height: 3.5rem;
+    padding: 0.75rem 1rem 0.75rem 1.125rem;
+    background: var(--yellow);
+    color: var(--navy);
+    text-decoration: none;
+    font-weight: 900;
+    font-size: 1.375rem;
+    font-stretch: 80%;
+    text-transform: uppercase;
+    box-shadow:
+      0 0 0 3px var(--navy),
+      5px 5px 0 3px var(--navy);
+    transition:
+      translate 0.35s var(--ease-pop),
+      rotate 0.35s var(--ease-pop);
+  }
+  .bubble.b-1 {
+    background: var(--lime);
+  }
+  .bubble.b-2 {
+    background: var(--pink);
+  }
+  /* The name, and under it the handle to add by hand (Discord adds by username). */
+  .b-txt {
+    display: grid;
+    min-width: 0;
+  }
+  .b-txt small {
+    font-weight: 700;
+    font-size: 0.875rem;
+    font-stretch: 100%;
+    letter-spacing: 0.02em;
+    text-transform: none;
+    overflow-wrap: anywhere;
+  }
+  .bubble :global(.ico) {
+    width: 1.75rem;
+    height: 1.75rem;
+  }
+  .bubble :global(.b-go) {
+    width: 1.25rem;
+    height: 1.25rem;
+    transition: translate 0.35s var(--ease-pop);
+  }
+  .bubble:focus-visible {
+    translate: -3px -3px;
+    rotate: -2deg;
+  }
+  .bubble:focus-visible :global(.b-go) {
+    translate: 3px -3px;
+  }
+  @media (hover: hover) {
+    .bubble:hover {
+      translate: -3px -3px;
+      rotate: -2deg;
+    }
+    .bubble:hover :global(.b-go) {
+      translate: 3px -3px;
+    }
+  }
+  .bubble:focus-visible {
+    outline: 3px solid var(--cobalt);
+    outline-offset: 5px;
+  }
+  .typing {
+    display: inline-flex;
+    gap: 0.3125rem;
+    padding: 0.75rem 1rem;
+    background: rgb(10 13 51 / 0.12);
+  }
+  .typing b {
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 50%;
+    background: var(--navy);
+    animation: ml-type 1.2s ease-in-out infinite;
+  }
+  .typing b:nth-child(2) {
+    animation-delay: 0.15s;
+  }
+  .typing b:nth-child(3) {
+    animation-delay: 0.3s;
+  }
+  @keyframes ml-type {
+    0%,
+    60%,
+    100% {
+      translate: 0 0;
+      opacity: 0.4;
+    }
+    30% {
+      translate: 0 -0.3rem;
+      opacity: 1;
+    }
+  }
+  .dealing .m {
+    animation: ml-msg 0.5s var(--ease-pop) both paused;
+    animation-delay: calc(0.2s + var(--m) * 0.75s);
+  }
+  .dealing.in .m {
+    animation-play-state: running;
+  }
+  @keyframes ml-msg {
+    from {
+      opacity: 0;
+      transform: translateY(1rem) scale(0.6);
+      transform-origin: 0 100%;
+    }
+  }
+  :global(.still) .dealing .m {
+    animation: none !important;
+  }
+
+  @media (max-width: 48rem) {
+    .hang-grid {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+</style>
+
+<script>
+  import { isMuted, onMute, setMuted } from "~/scripts/life-audio";
+  import { motionStill } from "~/scripts/motion";
+
+  // One switch mutes every toy; the choice is remembered in this browser.
+  for (const button of document.querySelectorAll<HTMLButtonElement>("[data-sound]")) {
+    const sync = (muted: boolean) => button.setAttribute("aria-pressed", String(!muted));
+    sync(isMuted());
+    onMute(sync);
+    button.addEventListener("click", () => setMuted(!isMuted()));
+  }
+
+  // The chat's messages arrive in turn as it scrolls into view. Without the script, or with motion paused, they are
+  // simply there.
+  if (!motionStill()) {
+    for (const chat of document.querySelectorAll<HTMLElement>("[data-chat]")) {
+      chat.classList.add("dealing");
+      new IntersectionObserver(
+        (entries, observer) => {
+          if (!entries.some((entry) => entry.isIntersecting)) return;
+          chat.classList.add("in");
+          observer.disconnect();
+        },
+        { rootMargin: "0px 0px -15% 0px" },
+      ).observe(chat);
+    }
+  }
+</script>

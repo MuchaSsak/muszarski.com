@@ -11,7 +11,13 @@ export const THIS_SITE_SLUGS = { en: "how-this-site-was-built", pl: "jak-powstal
 
 export const blogLocaleFor = (locale: Locale): "en" | "pl" => (BLOG_LOCALES.includes(locale) ? (locale as "en" | "pl") : "en");
 
-export function thisSitePath(locale: Locale): string {
+/** The post on psychology in UX, linked from the knowledge card in Competences [user 2026-10-07]. */
+export const UX_PSYCHOLOGY_SLUGS = { en: "psychology-in-ux-and-frontend", pl: "psychologia-w-ux-i-frontendzie" } as const;
+
+const postPath = (slugs: Record<"en" | "pl", string>, locale: Locale): string => {
   const blogLocale = blogLocaleFor(locale);
-  return pathTo(blogLocale, `blog/${THIS_SITE_SLUGS[blogLocale]}`);
-}
+  return pathTo(blogLocale, `blog/${slugs[blogLocale]}`);
+};
+
+export const thisSitePath = (locale: Locale): string => postPath(THIS_SITE_SLUGS, locale);
+export const uxPsychologyPath = (locale: Locale): string => postPath(UX_PSYCHOLOGY_SLUGS, locale);

@@ -1,0 +1,225 @@
+---
+title: "Wielojęzyczna strona w Astro z Lingui: adresy, hreflang i przełącznik języka, który nie gubi miejsca"
+seoTitle: "Wielojęzyczna strona w Astro z Lingui i hreflang"
+description: "Jak ta strona działa po angielsku, polsku i hiszpańsku z jednego statycznego builda Astro: adresy z językiem, slugi, hreflang i przełącznik języka."
+translationKey: "astro-i18n"
+published: 2026-10-06
+tags: [i18n, astro]
+cover: signpost
+related: [lingui-vs-i18next, lingui-translate-ai, this-site]
+sources:
+  - title: "Internationalization (i18n) Routing (Astro Docs)"
+    url: "https://docs.astro.build/en/guides/internationalization/"
+    accessed: 2026-10-06
+  - title: "Routing: dynamic routes and getStaticPaths (Astro Docs)"
+    url: "https://docs.astro.build/en/guides/routing/"
+    accessed: 2026-10-06
+  - title: "Middleware (Astro Docs)"
+    url: "https://docs.astro.build/en/guides/middleware/"
+    accessed: 2026-10-06
+  - title: "@astrojs/sitemap (Astro Docs)"
+    url: "https://docs.astro.build/en/guides/integrations-guide/sitemap/"
+    accessed: 2026-10-06
+  - title: "Tell Google about localized versions of your page (Google Search Central)"
+    url: "https://developers.google.com/search/docs/specialty/international/localized-versions"
+    accessed: 2026-10-06
+  - title: "Managing multi-regional and multilingual sites (Google Search Central)"
+    url: "https://developers.google.com/search/docs/specialty/international/managing-multi-regional-sites"
+    accessed: 2026-10-06
+  - title: "Spam policies for Google web search (Google Search Central)"
+    url: "https://developers.google.com/search/docs/essentials/spam-policies"
+    accessed: 2026-10-06
+  - title: "Lingui: Vite plugin"
+    url: "https://lingui.dev/ref/vite-plugin"
+    accessed: 2026-10-06
+  - title: "Lingui: CLI reference"
+    url: "https://lingui.dev/ref/cli"
+    accessed: 2026-10-06
+  - title: "lingui-for: Lingui for Svelte and Astro (GitHub)"
+    url: "https://github.com/SegaraRai/lingui-for"
+    accessed: 2026-10-06
+  - title: "Understanding SC 3.1.2: Language of Parts (W3C WAI, WCAG 2.2)"
+    url: "https://www.w3.org/WAI/WCAG22/Understanding/language-of-parts"
+    accessed: 2026-10-06
+  - title: "Flag: Poland emoji (Emojipedia)"
+    url: "https://emojipedia.org/flag-poland"
+    accessed: 2026-10-06
+---
+
+Ta strona działa po angielsku, polsku i hiszpańsku z jednego statycznego builda Astro. Każda podstrona mieszka pod `/en/`, `/pl/` albo `/es/`, teksty interfejsu przechodzą przez katalogi Lingui, a długie teksty, takie jak ten wpis, to osobne pliki dla każdego języka. Wszystkie adresy buduje jeden moduł o 70 liniach, więc link kanoniczny, tagi hreflang i przełącznik języka nie mogą się ze sobą rozjechać.
+
+> **TL;DR**
+> - Każdy adres zaczyna się od języka, a jeden moduł (`routes.ts`) buduje linki kanoniczne, hreflang i linki przełącznika.
+> - Interfejsem zajmuje się Lingui: katalogi kompilują się przy imporcie, a build produkcyjny pada, gdy brakuje tekstu po polsku albo hiszpańsku.
+> - Przełącznik zostawia Cię na tej samej stronie, jeśli istnieje tłumaczenie, a jeśli nie, prowadzi do sekcji w wybranym języku, nigdy do angielskiej strony pod polskim adresem. Hiszpański jest oznaczony jako niesprawdzone tłumaczenie AI.
+
+## Jak wyglądają adresy?
+
+| Zasada | Wartość |
+| --- | --- |
+| Języki | `en` (źródłowy i domyślny), `pl`, `es` |
+| Prefiks | zawsze, równy kodowi języka: `/en/`, `/pl/`, `/es/` |
+| Strona główna | `/` odpowiada stałym przekierowaniem 308 na `/en/` |
+| Ukośnik na końcu | zawsze |
+| `<html lang>` i hreflang | same kody języka: `en`, `pl`, `es` |
+| Slugi | takie same w każdym języku (`work`, `cv`, `my-life`), poza wpisami na blogu |
+
+Google zaleca osobne adresy URL dla każdej wersji językowej zamiast ciasteczek albo ustawień przeglądarki, które podmieniają język treści na tej samej stronie. Prefiks z kodem języka to najprostsza forma tej rady.
+
+## Dlaczego folder `[locale]`, a nie konfiguracja i18n z Astro?
+
+Astro ma własne API do wielojęzycznego routingu. Podajesz listę języków, wybierasz domyślny, decydujesz, czy domyślny dostaje prefiks, a linki budujesz pomocnikami w rodzaju `getRelativeLocaleUrl()`. Jest też tryb `manual`, który wyłącza middleware i18n z Astro, żeby można było napisać własną logikę.
+
+Tej konfiguracji nie włączyłem. Podstrony leżą w `src/pages/[locale]/`, czyli w dynamicznej trasie. W statycznym buildzie wszystkie trasy muszą być znane w czasie budowania, więc każda podstrona eksportuje `getStaticPaths()` z jednym wpisem na język, a blog zwraca jeden wpis na plik z artykułem.
+
+Skoro każdy język ma prefiks, a od wspólnych slugów jest jeden wyjątek, reguły mieszczą się w jednym małym module. Jeśli nie chcesz pisać takiego modułu, zacznij od wbudowanego API.
+
+## Jak jeden moduł buduje wszystkie adresy?
+
+`src/lib/routes.ts` zna jeden kształt: ścieżkę bez języka. Podstrona z tym samym slugiem wszędzie przekazuje napis (`"work"`). Podstrona, której slug zależy od języka, przekazuje mapę z jednym wpisem na język.
+
+```ts
+type LocalizedPath = string | Partial<Record<Locale, string>>;
+
+export function pathTo(locale: Locale, path: LocalizedPath = ""): string {
+  const local = typeof path === "string" ? path : path[locale];
+  if (local === undefined) throw new Error(`No ${locale} version`);
+  return `/${locale}/${clean(local)}`; // clean() dokłada ukośnik na końcu
+}
+
+export function switchPath(path: LocalizedPath, to: Locale, fallback: LocalizedPath = ""): string {
+  if (localesOf(path).includes(to)) return pathTo(to, path);
+  return localesOf(fallback).includes(to) ? pathTo(to, fallback) : pathTo(to);
+}
+```
+
+`pathTo` rzuca błąd, gdy podstrona nie ma wersji w danym języku, więc link do nieistniejącego tłumaczenia wywraca build, zamiast trafić na produkcję. Przez tę funkcję przechodzą tag kanoniczny, tagi hreflang, nawigacja i przełącznik, a testy jednostkowe pilnują każdego przypadku.
+
+## Jak działają hreflang i x-default?
+
+Zasady Google są krótkie. Każda wersja językowa musi wskazywać samą siebie i wszystkie pozostałe. Jeśli dwie strony nie wskazują na siebie nawzajem, Google ignoruje te tagi.
+
+Alternatywne adresy muszą być pełne, ze schematem `https://`. A `x-default` służy na wypadek, gdy żaden język nie pasuje do ustawień przeglądarki.
+
+`alternates()` zamienia te zasady na kod:
+
+```ts
+export function alternates(site: string, path: LocalizedPath): Alternate[] {
+  const locales = localesOf(path);
+  if (locales.length < 2) return []; // jeden język: nie ma czego łączyć w pary
+  const origin = new URL(site).origin;
+  const links = locales.map((l) => ({ hreflang: l, href: origin + pathTo(l, path) }));
+  const fallback = locales.includes("en") ? "en" : locales[0];
+  links.push({ hreflang: "x-default", href: origin + pathTo(fallback, path) });
+  return links;
+}
+```
+
+Tak wygląda nagłówek polskiej wersji mojego wpisu o Lingui po zbudowaniu:
+
+```html
+<link rel="canonical" href="https://matmuszarski.space/pl/blog/lingui-czy-i18next/">
+<link rel="alternate" hreflang="pl" href="https://matmuszarski.space/pl/blog/lingui-czy-i18next/">
+<link rel="alternate" hreflang="en" href="https://matmuszarski.space/en/blog/lingui-vs-i18next/">
+<link rel="alternate" hreflang="x-default" href="https://matmuszarski.space/en/blog/lingui-vs-i18next/">
+```
+
+Kody nie mają regionu, bo strony celują w języki, a nie w kraje. Format Google to kod języka z ISO 639-1 z opcjonalnym kodem regionu. `x-default` wskazuje angielski. Podstrona, która istnieje w jednym języku, nie dostaje hreflang wcale: mój wpis o Claude Code tylko po polsku nie ma żadnego, bo nie ma go z czym połączyć.
+
+Jeszcze jeden szczegół: Google rozpoznaje język strony po widocznej treści, a nie po atrybutach `lang` czy adresie URL. hreflang łączy tłumaczenia w pary, ale sam tekst musi być w języku, który obiecuje adres.
+
+## Jak działają przetłumaczone slugi?
+
+Podstrony mają wspólne slugi: `/en/work/`, `/pl/work/`, `/es/work/`. Wpisy na blogu nie. Ten wpis to `wielojezyczna-strona-astro-z-lingui` po polsku i `multilingual-astro-site-with-lingui` po angielsku.
+
+Każdy plik z wpisem ma w nagłówku `translationKey`. W czasie builda `translationsOf(post)` zbiera pliki z tym samym kluczem w mapę z języka na ścieżkę, a ta mapa to `LocalizedPath`, który layout przekazuje do `alternates()` i do przełącznika. Nowe tłumaczenie to jeden nowy plik z tym samym kluczem. Nic więcej się nie zmienia.
+
+## Dokąd prowadzi przełącznik języka?
+
+`switchPath()` próbuje trzech rzeczy po kolei: tej samej strony w wybranym języku, potem wersji sekcji zapasowej w tym języku, a na końcu strony głównej w tym języku. Z gotowych stron:
+
+| Jesteś na | Wybierasz | Lądujesz na |
+| --- | --- | --- |
+| `/pl/work/` | English | `/en/work/` |
+| `/pl/blog/lingui-czy-i18next/` | English | `/en/blog/lingui-vs-i18next/` |
+| `/pl/blog/claude-code-po-polsku/` (tylko po polsku) | English | `/en/blog/` |
+| dowolny wpis na blogu | Español | `/es/` (hiszpańskiego bloga nie ma) |
+
+Czego przełącznik nigdy nie robi: nie wrzuca Cię na angielską stronę, kiedy adres mówi `/pl/`.
+
+Google prosi, żeby nie przekierowywać automatycznie z jednej wersji językowej na inną, tylko dodać linki i zostawić wybór czytelnikowi. Przełącznik jest dokładnie tym: listą zwykłych linków wygenerowanych w czasie builda, bez JavaScriptu.
+
+```astro
+<a
+  href={switchPath(path, to, fallback, locales)}
+  hreflang={to}
+  lang={to}
+  aria-current={to === locale ? "true" : undefined}
+>
+  <span class={`flag flag-${to}`} aria-hidden="true" />
+  <span class="sr-only">{AUTONYMS[to]}</span>
+</a>
+```
+
+Flagi to gradienty CSS i małe SVG wpisane w style, nie emoji. Emojipedia zaznacza, że emoji polskiej flagi na niektórych platformach może się wyświetlić jako litery PL.
+
+Prawdziwą etykietą jest nazwa języka w nim samym (English, Polski, Español). W nagłówku i stopce to tekst dla czytników ekranu i podpowiedź po najechaniu, a w menu na telefonie jest widoczna obok flagi. `lang="pl"` na słowie „Polski” pozwala czytnikowi ekranu wymówić je po polsku, i o to chodzi w kryterium WCAG 3.1.2 Language of Parts (poziom AA). Bieżący język dostaje `aria-current` i podkreślenie.
+
+## Jak Lingui działa w statycznym buildzie Astro?
+
+Krótkie teksty (przyciski, nagłówki, komunikaty o błędach) to komunikaty Lingui. W plikach `.astro` działają dzięki lingui-for-astro, integracji społeczności (wersja 0.7.1, nie od zespołu Lingui), która przenosi makra Lingui do Astro z tłumaczeniem przypisanym do pojedynczego żądania. Komponent pisze `` t`Language` `` i dostaje tekst w języku strony.
+
+Język ustawia middleware. Astro uruchamia je w czasie builda dla każdej prerenderowanej strony, więc działa to także w statycznym buildzie:
+
+```ts
+export const onRequest = defineMiddleware((context, next) => {
+  const param = context.params.locale;
+  const locale = isLocale(param) ? param : DEFAULT_LOCALE;
+  context.locals.locale = locale;
+  setLinguiContext(context.locals, getI18n(locale));
+  return next();
+});
+```
+
+`getI18n()` zwraca jedną zapamiętaną instancję Lingui na język. Nie ma globalnego `activate()`: build renderuje wszystkie trzy języki w jednym procesie, a jeden globalny aktywny język byłby wspólny dla każdej renderowanej strony.
+
+Katalogi to pliki `.po`, po jednym na język. `@lingui/vite-plugin` kompiluje je przy imporcie, więc w repozytorium nie leży żaden skompilowany katalog. Build produkcyjny ustawia `failOnMissing: "catalog"`: pada, gdy w katalogu polskim albo hiszpańskim brakuje komunikatu, i sprawdza to, zanim zadziałają języki zapasowe. Szersze porównanie opisałem w [Lingui czy i18next](/pl/blog/lingui-czy-i18next/).
+
+Skrypty w przeglądarce w ogóle nie ładują Lingui. Formularz kontaktowy dostaje na przykład przetłumaczone komunikaty o błędach jako JSON w atrybucie `data-` wygenerowanym w czasie builda, więc strona wysyła słowa, a nie katalog. Czytelnik nic na tym nie traci: strona główna ma w mobilnym Lighthouse 99 za wydajność i 100 za dostępność, dobre praktyki i SEO we wszystkich trzech językach (mediana z trzech pomiarów na lokalnym buildzie produkcyjnym), jak opisałem w [studium przypadku tej strony](/pl/blog/jak-powstala-ta-strona/).
+
+Pętla dla nowego tekstu:
+
+1. Piszę angielski tekst w komponencie.
+2. Uruchamiam `bun run i18n:extract`. Pod spodem działa `lingui extract --clean`, które dopisuje nowe komunikaty do wszystkich trzech katalogów i usuwa nieużywane.
+3. Uzupełniam polski i hiszpański.
+4. Uruchamiam testy. Test katalogów pada przy brakującym albo pustym tłumaczeniu, zmienionym placeholderze lub tagu, surowej twardej spacji, półpauzie albo pauzie.
+5. Buduję. Wszystko, co przeoczyły testy, wychodzi tutaj.
+
+Jeden polski szczegół: jednoliterowe słowo, takie jak „w” czy „z”, nie powinno zostawać na końcu linii. Katalogi trzymają zwykłe spacje, a pomocnik `typo(locale, text)` wstawia twarde spacje dopiero przy renderowaniu.
+
+## Gdzie mieszkają długie teksty?
+
+Nie w Lingui. Wpis na 1500 słów jako jeden komunikat w katalogu byłby trudny do przetłumaczenia, a jeszcze trudniejszy do sprawdzenia. Wpisy na blogu i dokumenty prawne to pliki kolekcji treści, osobne dla każdego języka, w folderach takich jak `src/content/blog/pl/` i `src/content/legal/es/`.
+
+Wpisy na blogu istnieją po angielsku i po polsku. Polityka prywatności i regulamin istnieją we wszystkich trzech językach, a test sprawdza, czy trzy wersje mają te same numerowane sekcje. Powstają po polsku i to polska wersja jest wiążąca.
+
+## Jak oznaczona jest wersja hiszpańska?
+
+Hiszpański to tłumaczenie maszynowe, którego nie czytała jeszcze żadna osoba znająca ten język, i strona to mówi:
+
+- Nagłówek hiszpańskiego katalogu zawiera `X-Review-Status: unreviewed (AI translation)`, a test pada, jeśli ten wpis zniknie.
+- Stopka każdej hiszpańskiej podstrony mówi po hiszpańsku, że tekst przetłumaczyła AI i nie sprawdził go jeszcze rodzimy użytkownik języka.
+- Dokumenty prawne powtarzają to obok zapisu o tym, która wersja językowa jest wiążąca.
+- Hiszpańskiego bloga nie ma. Na hiszpańskich podstronach link do bloga prowadzi do bloga po angielsku i ma dopisek „(EN)”.
+
+Narzędzie, które napisałem do maszynowego tłumaczenia katalogów Lingui, opisuję w [Tłumaczeniu katalogów Lingui przez LLM](/pl/blog/tlumaczenie-katalogow-lingui-przez-llm/). Zasady Google dotyczące spamu wymieniają automatyczne przekształcenia, w tym tłumaczenie, użyte do wygenerowania wielu stron, które niewiele dają użytkownikom. Garść podstron w portfolio to nie ta skala. Prawdziwym ryzykiem jest jakość: drewniane hiszpańskie zdanie przeczy staranności, którą pokazuje reszta strony.
+
+## Ograniczenia
+
+- **Mapa strony łączy w pary tylko podstrony o tej samej ścieżce.** W zbudowanej mapie strony `/pl/work/` wskazuje swoje angielskie i hiszpańskie odpowiedniki, ale wpisy na blogu, z różnymi slugami, nie wskazują żadnych, więc ich hreflang jest tylko w nagłówku strony. Google akceptuje każdą z trzech metod (HTML, nagłówki HTTP, mapa strony), ale wolałbym zasilać mapę strony tą samą funkcją `alternates()`.
+- **Flagi oznaczają kraje, a nie języki.** Angielski ma flagę Wielkiej Brytanii, bo odbiorcy są głównie w Europie. Znaczenie niesie nazwa języka obok flagi.
+- **lingui-for-astro jest przed wersją 1.0 i rozwija je społeczność.** W plikach `.astro` trzymam jak najmniej tekstu, więc rezygnacja z tej integracji kosztowałaby kilka jawnych wywołań `i18n._()`.
+- **Strona 404 jest na razie tylko po angielsku.**
+- **Hiszpański zostaje „niesprawdzony”**, dopóki nie przeczyta go rodzimy użytkownik.
+
+Jeśli chcesz zobaczyć przełącznik w działaniu, otwórz [stronę z moimi projektami](/pl/work/) i zmień język: zostaniesz na tej samej stronie.
