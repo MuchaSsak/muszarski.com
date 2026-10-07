@@ -186,11 +186,4 @@ it("imports relative files with their .js extension", () => {
 
 The same incident exposed a second bug. When the platform answered with its own error, the page script read Vercel's error body as if it held one of my error kinds, found no sentence for it and showed an empty message. Now any answer that isn't the function's own falls back to "The form can't send right now".
 
-## What would I do differently?
-
-- **Send one real message on every preview deploy** before calling the form done. The unit tests mock the network and run through Vite; this bug lived in the platform's module loader, which only a real request reaches.
-- **Read the platform's function logs first.** The error name was there from the first failed request.
-- **Configure the WAF rule and the Turnstile keys in the same step as the form.** Without them, the per-instance limit, the honeypot and the timer are the only defence.
-- **Accept that the phone pattern is loose.** It matches most numbers and a few things that aren't; the cost is a reply address I can't use, not a lost message.
-
 If you'd like to try it, [the contact form](/en/#contact) takes one line.

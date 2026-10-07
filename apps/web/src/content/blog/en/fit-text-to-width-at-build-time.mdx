@@ -148,15 +148,4 @@ Frames never measure letters. The only layout read is one bounding box per visib
 
 It also knows when to stop. It doesn't start under `prefers-reduced-motion: reduce`. It stops while the block is offscreen (an IntersectionObserver), when the reader presses the site's pause button, and when nothing is moving. I wrote up those rules in [motion that respects people](/en/blog/reduced-motion-and-a-pause-button/).
 
-## What I would do differently
-
-- **Derive the character list from the copy.** A missing character fails the build loudly, which works, but deriving the list from every fitted string in every locale would remove the step.
-- **Check flushness at more widths.** A layout test already checks for horizontal overflow at 8 widths from 320 to 2560 px, but the "fills its line" check runs only at 1440. The narrow case, where the base `wdth` is 66, deserves the same check.
-
-## Takeaways
-
-- If your display type is the LCP element, size it before the browser sees it. A variable font turns that into a calculation instead of a measurement.
-- Check linearity for your font instead of assuming it. Two measurements are only enough if the curve is close to straight; mine bends by at most 0.06%.
-- Use `cqi` rather than `vw`, so a fitted block fits its own box wherever it sits.
-
 The rest of the build, from the project wiki to the Lighthouse gates, is in [the case study](/en/blog/how-this-site-was-built/). If you are hiring for front-end work where details like this matter, [my contact details are here](/en/#contact).

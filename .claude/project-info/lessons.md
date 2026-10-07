@@ -21,6 +21,7 @@
 - Less text, more to see: tools as one-colour marks WITH names, products as video ("sometimes less is more"); in chapters a short text description beats icon tiles; How I work tells each stop with a drawn scene, not a headline [2026-10-06] - 2026-10-05.
 - Every picture ships as optimal WebP (`astro:assets`, `public/` too); PNG only for favicons and OG cards; the launch gate fails otherwise - 2026-10-07.
 - Every hover has a tap, focus or scroll twin; phones get the same content and a premium feel ("they dont have cursors") - 2026-10-05.
+- Blog voice = a person writing, not an AI answering a prompt: no "What would I do differently?" / "Takeaways" sections - 2026-10-07.
 - AI section = the system (wiki, hooks, MCPs, skills, subagents) shown by example, tool marks as pins, never counts ("dont give precise numbers"); typecheck/lint/tests are "the floor", one line - 2026-10-06.
 - Do exactly the one thing asked ("so overachieving"); copy stays close to the owner's words: no overselling, no counts, never repeat what the picture already shows - 2026-10-07.
 - Heavy media loads near visibility, plays only when visible and after a first interaction (a load-time loop cost 270–480 ms TBT) - 2026-10-05.

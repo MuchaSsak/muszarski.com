@@ -148,15 +148,4 @@ Klatki nigdy nie mierzą liter. Jedyny odczyt układu to jeden prostokąt na wid
 
 Ulepszenie wie też, kiedy przestać. Nie startuje przy `prefers-reduced-motion: reduce`. Zatrzymuje się, gdy blok jest poza ekranem (IntersectionObserver), gdy wciśniesz przycisk pauzy na stronie i gdy nic się już nie rusza. Te zasady opisałem w tekście o [ruchu, który szanuje ludzi](/pl/blog/reduced-motion-i-przycisk-pauzy/).
 
-## Co zrobiłbym inaczej
-
-- **Lista znaków wyliczana z treści.** Brakujący znak głośno wywraca build i to działa, ale lista wyliczana z każdego dopasowanego tekstu w każdym języku usunęłaby ten krok.
-- **Sprawdzanie krawędzi przy większej liczbie szerokości.** Test układu sprawdza już brak poziomego przewijania przy 8 szerokościach od 320 do 2560 px, ale test „wypełnia linię” działa tylko przy 1440. Wąski wariant, z bazowym `wdth` 66, zasługuje na to samo.
-
-## Wnioski
-
-- Jeśli Twój duży nagłówek jest elementem LCP, ustal jego rozmiar, zanim zobaczy go przeglądarka. Font zmienny zamienia to w obliczenie zamiast pomiaru.
-- Sprawdź liniowość dla swojego fontu, zamiast ją zakładać. Dwa pomiary wystarczą tylko wtedy, gdy wykres jest prawie prosty; mój odchyla się najwyżej o 0,06%.
-- Używaj `cqi` zamiast `vw`, żeby dopasowany blok pasował do własnego pudełka, gdziekolwiek stoi.
-
 Jak powstała reszta tej strony, od wiki projektu po bramki Lighthouse, opisałem w [studium przypadku](/pl/blog/jak-powstala-ta-strona/). Jeśli szukasz kogoś do frontendu, w którym takie detale mają znaczenie, [tu znajdziesz kontakt](/pl/#contact).

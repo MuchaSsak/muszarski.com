@@ -37,7 +37,8 @@
   7. Architecture SVG (code-drawn, with a text alternative)
   8. The hard part (≤ 15 lines of code or a mini-demo)
   9. Results + how they were measured
-  10. What I'd do differently
+- No reflective template sections ("What I'd do differently", "Takeaways", "What I learned"): they read as
+  an AI answering a prompt [user] 2026-10-07. Honest gaps go in a plain "Limits" list.
 
 ## CV (ONE source → `/cv/` page AND the PDF)
 

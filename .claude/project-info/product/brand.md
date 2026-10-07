@@ -44,9 +44,10 @@
   - short declaratives
   - a number, date, scope or status instead of an adjective
   - name the context every time (client work / internship / own product / personal)
-  - honesty markers ("pre-traction", "not measured yet", "what I'd do differently")
+  - honesty markers ("pre-traction", "not measured yet", a plain "Limits" list)
 - **Don't:** hype, exclamation marks, "passionate", "crafting digital experiences", "seamless / robust /
-  scalable" without a number, LLM-sounding filler.
+  scalable" without a number, LLM-sounding filler, self-review sections in posts ("What would I do differently?",
+  "Takeaways": they sound like an AI answering "what would you change?" [user] 2026-10-07).
 - **Per locale:**
   - en: casual "you"
   - pl: informal "Ty" with courtesy capitals ("Twój", "Ci"), the pstryk convention

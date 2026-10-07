@@ -180,10 +180,4 @@ The site's CV button (in the header, the hero and the menu) does two things in o
 
 The PDF text is real text. Run `pdftotext` on the Polish file and the diacritics come back as letters you can search and copy. The files are tagged and declare their language. The rest of how this site was put together, from the wiki to the Lighthouse gates, is in [the case study](/en/blog/how-this-site-was-built/).
 
-## What would I do differently?
-
-- **Hash the output, not only the data.** The digest covers `cv.ts`. If I change `CvBody.astro` or the print CSS, the test stays green while the committed PDFs are stale. The email, the profile links and the section headings also live outside `cv.ts`. Hashing the print route's rendered HTML would cover all of it.
-- **Read the PDF in a test.** No test opens the PDF yet. The end-to-end check covers the link, the status code and that the page shows a project name.
-- **Make printing one step.** It needs a build and a running preview first. The test catches a forgotten print, but printing is still manual.
-
 The result is at [/en/cv/](/en/cv/), with the PDF one click away.

@@ -188,11 +188,4 @@ it("imports relative files with their .js extension", () => {
 
 Ten sam incydent odsłonił drugi błąd. Gdy platforma odpowiadała własnym błędem, skrypt strony czytał treść odpowiedzi Vercela tak, jakby zawierała jeden z moich rodzajów błędów, nie znajdował dla niego zdania i pokazywał pusty komunikat. Teraz każda odpowiedź, która nie pochodzi od mojej funkcji, kończy się komunikatem „Formularz nie może teraz wysłać wiadomości”, z zachowanym tekstem i e-mailem jedno kliknięcie dalej.
 
-## Co zrobiłbym inaczej?
-
-- **Wysłałbym jedną prawdziwą wiadomość przy każdym wdrożeniu podglądowym**, zanim uznam formularz za gotowy. Testy jednostkowe podmieniają sieć i działają przez Vite, a ten błąd siedział w loaderze modułów platformy, do którego dociera tylko prawdziwe żądanie.
-- **Zacząłbym od logów funkcji na platformie.** Nazwa błędu była tam od pierwszego nieudanego żądania.
-- **Skonfigurowałbym regułę WAF i klucze Turnstile w tym samym kroku co formularz.** Bez nich jedyną obroną są limit w jednej instancji, honeypot i licznik czasu.
-- **Pogodziłbym się z tym, że wzorzec telefonu jest luźny.** Od siedmiu do piętnastu cyfr z separatorami łapie większość numerów i kilka rzeczy, które numerami nie są. Kosztem jest adres, na który nie odpiszę, a nie zgubiona wiadomość.
-
 Jeśli chcesz to sprawdzić, w [formularzu kontaktowym](/pl/#contact) wystarczy jedno zdanie.

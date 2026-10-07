@@ -43,7 +43,7 @@
 | P22 | Legal tokens rendered as marked gaps: postal address, mailbox provider and its location (`[[POSTAL_ADDRESS]]`, `[[MAILBOX_PROVIDER]]`, `[[MAILBOX_LOCATION]]`) | `src/content/legal/*/*.md` | owner | fill the values in `astro.config.mjs` `legalTokens` known map | 36 |
 | P23 | CV entries with unconfirmed dates (PstrykWeb year, "since 2022" freelance, credentials dates, verify URLs on `.example`) | `src/data/cv.ts` | owner | confirm, then `bun run cv:pdf` | 10, 25 |
 | P24 | `/work/` cards show captures of the live sites (temporary, `assets.md` § Inventory) and drawn stand-ins (Clockful, the screensaver) | `public/media/work/`, `pages/[locale]/work/index.astro` | owner recordings or his OK on the captures | replace or approve | 1 |
-| P16 | Project facts not yet supplied (years, metrics, decisions, "what I'd do differently") | dossiers, case studies | owner | replace or drop the claim | 1 |
+| P16 | Project facts not yet supplied (years, metrics, decisions) | dossiers, case studies | owner | replace or drop the claim | 1 |
 
 ## Launch runbook (in order; owner steps marked **owner**)
 

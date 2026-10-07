@@ -542,12 +542,6 @@ Each slice records what it spent of the budgets: the home page after each step, 
 
 The LCP went up when Poster arrived: the heading now waits for one variable font instead of a small static cut. A trace showed the rest: the browser holds the first paint until the preloaded font arrives, and the font shares the connection with the HTML. Moving the icon paths into one cached sprite file cut the HTML from 54.5 to 38.1 KB gzip and the LCP from 2.03 to 1.95 s.
 
-## What would I do differently?
-
-- **Show directions before building.** I froze the first design before seeing an alternative and paid two slices of work for a look I threw away.
-- **Write the budget into the first commit.** Measuring from the first slice made every later trade-off a number instead of an opinion.
-- **Record the product videos earlier.** Two project chapters still use drawn stand-ins, and a drawing explains less than ten seconds of the real thing.
-
 ## Results, and how they were measured
 
 - Lighthouse, mobile, simulated throttling, median of three runs on a local production build (7 October 2026): the home page scores 95 to 96 for performance and 100 for accessibility, best practices and SEO; this post, the CV and the blog score 98 to 100.
