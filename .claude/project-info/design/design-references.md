@@ -61,7 +61,7 @@
 | Blog index | a dated list + one featured post + topic chips; **line-art SVG covers** per post (Linear) |
 | Blog post | one H1; byline + dates + reading time; TL;DR; 68ch column; sticky TOC; build-time Shiki + Copy (CSP: no inline styles → pick a class-based theme); demos with Play/Pause; sources; author box; series/related; link to the related case study |
 | `/cv/` | one typed data file → the page; the PDF is the print route via Playwright; a CI text check; single-column PDF (Bartosz Jarocki's CV as the structure model, not the look) |
-| `/my-life/` | photo hero; pronunciation chip; Short/Long intro with Copy (swyx); a dated Now block; ~8 hobby cards with one concrete fact each (Josh Comeau); SVG travel map (optional lazy globe); small lightbox; Discord/Messenger |
+| `/my-life/` | photo hero; pronunciation chip; Short/Long intro with Copy (swyx); a dated Now block; ~8 hobby cards with one concrete fact each (Josh Comeau); SVG travel map (optional lazy globe); small lightbox; Discord/Messenger. **Hobbies, 2026-10-07** [user: "do research on awwwards and mobbin", "stunning", the toys "too much and messy/overwhelming"]: a hover index of big names with one picture that follows it (A24, Craft and Köppen-style indexes on Awwwards / Mobbin), the picture as a halftone print (Dead North's halftone type, Paper Shaders' halftone): one list plus one print beat a grid of cards or toys (built: `components/life/LifePrints.astro`) |
 | Legal | a short-version box; numbered TOC; numbered clauses headed as questions; version + date (from git) (37signals, Plausible, Linear) |
 | 404 | a **real 404 status**; echo the path; "Did you mean…" from the route list; 3 suggestions; ⌘K prefilled if built |
 

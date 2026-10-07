@@ -3,7 +3,9 @@
 > Mistakes already paid for, as one-line rules. `.claude/hooks/session-start.mjs` injects the "Rules"
 > section into every session and after every compaction, so it stays short: no more than 60 rules and
 > under the 8,000-character card, merged and pruned. How to add, place and promote one: `working-agreement.md` § 7.
-> Product facts live in their own page, not here.
+> Product facts live in their own page, not here. Promoted 2026-10-07 (still in their pages): Sätteri plugins
+> (astro.md), fontkit, `api/` ESM imports and host redirects (technologies.md), production hosts (analytics.md), the
+> foldered wiki (README.md).
 
 ## Rules
 
@@ -19,6 +21,7 @@
 - Every picture ships as optimal WebP (`astro:assets`, `public/` too); PNG only for favicons and OG cards; the launch gate fails otherwise - 2026-10-07.
 - Every hover has a tap, focus or scroll twin; phones get the same content and a premium feel ("they dont have cursors") - 2026-10-05.
 - AI section = the system (wiki, hooks, MCPs, skills, subagents) shown by example, tool marks as pins, never counts ("dont give precise numbers"); typecheck/lint/tests are "the floor", one line - 2026-10-06.
+- Do exactly the one thing asked ("so overachieving"); copy stays close to the owner's words: no overselling, no counts, never repeat what the picture already shows - 2026-10-07.
 - Heavy media loads near visibility, plays only when visible and after a first interaction (a load-time loop cost 270–480 ms TBT) - 2026-10-05.
 - Shared review pages show nothing the site couldn't (internal PstrykWeb stack, client names); ask those in chat - 2026-10-05.
 - Keep every version for the build story: tag `history/*`, archive old shots, index in `comps/HISTORY.md`; never delete a superseded look - 2026-10-05.
@@ -36,33 +39,27 @@
 - A focus target taller than the viewport minus the header always sits under the sticky header: cap media by viewport height (`100svh - var(--header-h)`) - 2026-10-06.
 - Astro does not scope `@keyframes` names: two components' `bob` collided. Prefix keyframes per component (`hw-`, `cr-`, `ai-`) - 2026-10-06.
 - Reduced motion keeps `animation-delay`: staged entrances stay hidden for their delay. Switch staged scenes off under reduced motion and `.still` - 2026-10-06.
+- Animate an HTML wrapper, never an `<svg>`: the spinning sticker forced a full-page layout every frame (~1 s TBT). Find such loops by pausing `document.getAnimations()` one name at a time - 2026-10-07.
 
 ### Privacy of inputs
 - Images pasted in chat never reach the disk: ask the owner to drop the files in the repo, and build the slot so it switches on when they land - 2026-10-06.
 - Research screenshots of third-party sites stay local (`research/inspirations/img/` is gitignored); the repo may go public - 2026-10-05.
 
 ### Tools and environment
-- Astro 7 Markdown runs on Sätteri: write mdast/hast visitor plugins (`satteri({ mdastPlugins, hastPlugins })`, `ctx.replaceNode`), not remark/rehype - 2026-10-05.
 - Splicing text by slices or offsets drops or misplaces content: replace named blocks, then `node --check` / build and render-check at once - 2026-10-05.
-- Run prettier from the repo root (`bunx prettier --write <paths>`); from `apps/web` it ignores the root config - 2026-10-05.
-- fontkit can't instance a variable WOFF2; measure from the TTF source and ship the WOFF2 - 2026-10-05.
-- Bash heredocs break on quotes and lose backslashes (it bit again 2026-10-06): write scripts with Write; Write/Edit decode `\uXXXX`, so emit invisible characters with `chr()` - 2026-10-05.
+- Run prettier from the repo root (`bunx prettier --write <paths>`; from `apps/web` it ignores the root config), never on generated files (`og.mjs` parses `icons.gen.ts` as JSON) - 2026-10-05.
+- Bash heredocs break on quotes and lose backslashes (again 2026-10-07), and `cd` persists: write scripts with Write, use absolute paths; Write/Edit decode `\uXXXX`, so emit invisible characters with `chr()` - 2026-10-05.
 - Python on Windows writes CRLF: always `open(..., "w", newline="\n")` (a fixer pass caught 6 files on 2026-10-06) - 2026-10-05.
 - Git Bash rewrites URL-path arguments (`/en/` → `P:/Git/en/`): prefix with `MSYS_NO_PATHCONV=1`, also for `bun run lhci` - 2026-10-05.
-- The Bash tool's `cd` persists: use absolute paths - 2026-10-05.
 - `bun run check` stops at the first failing task: a red test hid a typecheck error that got committed. Read every task's result, re-run `astro check` after fixing a test - 2026-10-06.
 - e2e role queries match substrings ("Pull-up" hit "Pull-ups"): pass `exact: true` for short names - 2026-10-06.
 - Playwright WebKit on Windows paints variable fonts at the default instance (layout is right): judge Safari by measured widths, never by those screenshots - 2026-10-06.
-- One `astro preview` per project: e2e, shots and Lighthouse share port 4322 and reuse a running server - 2026-10-05.
+- One `astro preview` per project: e2e, shots and Lighthouse share port 4322. A busy machine fakes regressions (leftover headless Chrome at 100% CPU): kill leftovers, check the load, rerun - 2026-10-07.
 - After a Playwright update, run `./node_modules/.bin/playwright install chromium` in `apps/web` (browser version mismatch) - 2026-10-06.
 - No `content-visibility: auto`: WebKit landed focus 300-700 px off and Lighthouse gained nothing - 2026-10-06.
 - WebKit scrolls focus to where a stuck sticky chapter is drawn (under the next poster): `Chapters.astro` re-scrolls to the flow position; test focus in Firefox + WebKit (`bun run e2e:xb`) - 2026-10-06.
-- The owner works on two PCs: `git pull` first; on a merge take one side's `.po`, re-add the other side's changed msgids, `bun run i18n:extract`; regenerate PDFs, never merge them - 2026-10-06.
+- The owner works on two PCs and runs parallel sessions (one committed another's WIP, 2026-10-07): `git pull`/`git log` first, stage your own paths only; on a merge take one side's `.po`, re-add the other's msgids, extract; regenerate PDFs - 2026-10-06.
 - WebSearch has a budget shared by parallel agents; prefer WebFetch of known URLs, then Playwright - 2026-10-05.
-- Host redirects live in ONE place (Vercel → Domains): a `vercel.json` www → apex rule against the dashboard's apex → www looped every font and script - 2026-10-06.
 - Components rendered inside MDX get their `<style>` inlined without a CSP hash (blocked in the browser): put their CSS in a stylesheet the page imports (`styles/case.css`); check the console with a real browser, the build doesn't fail - 2026-10-06.
 - `satisfies Foo[]` keeps literal types, so optional fields vanish from items that lack them (ts2339 in the consumer): annotate the map callback (`(item: CertItem) =>`) - 2026-10-06.
-- `api/` runs on Vercel as native ESM: relative imports need `.js` or every request 500s (a unit test guards it). Live 500? `vercel logs --status-code 500 -x` first - 2026-10-06.
-- Never derive analytics domains from the build origin (a preview host got baked in, Umami dropped every real visit): list the production hosts explicitly - 2026-10-06.
 - Routing: a generic phrase in one row outscores a project name; put shared task words in every row they apply to and re-run `wiki-context.mjs --test` - 2026-10-05.
-- The wiki is foldered; the hooks need README, log, lessons and working-agreement at the root; keep basenames unique - 2026-10-05.

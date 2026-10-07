@@ -10,8 +10,8 @@
  *   in dots on coloured paper; a new pick wipes across it dot by dot; the pointer is a loupe. It is decoration
  *   (`aria-hidden`): every word is in the list. Before WebGL starts (near view, after the first interaction), and
  *   without it, the paper and a CSS dot screen in the same inks stand in.
- * Paused or reduced motion: the list still follows, the print swaps still frames. The words are the owner's lines
- * (P21: drafts for him to rewrite).
+ * Paused or reduced motion: the list still follows, the print swaps still frames. PLACEHOLDER: the ten lines are
+ * drafts for the owner to rewrite in his voice (P21).
  */
 import { t } from "lingui-for-astro/macro";
 
@@ -35,99 +35,98 @@ const C = {
   lime: "#c9f24a",
   space: "#07081c",
 };
-const HOBBIES: { title: string; line: string; icon: IconName; paper: string; ink1: string; ink2: string; tone: string }[] =
-  [
-    {
-      title: t`Calisthenics`,
-      line: t`Training with just my bodyweight. Bar, floor, repeat.`,
-      icon: "tb:barbell",
-      paper: C.yellow,
-      ink1: C.navy,
-      ink2: C.pink,
-      tone: C.yellow,
-    },
-    {
-      title: t`Music`,
-      line: t`My playlist is all over the place.`,
-      icon: "tb:music",
-      paper: C.pink,
-      ink1: C.navy,
-      ink2: C.cobalt,
-      tone: C.pink,
-    },
-    {
-      title: t`Faith`,
-      line: t`I'm a Christian.`,
-      icon: "tb:cross",
-      paper: C.cobalt,
-      ink1: C.yellow,
-      ink2: C.ice,
-      tone: C.yellow,
-    },
-    {
-      title: t`Travel`,
-      line: t`I like going somewhere I haven't been yet.`,
-      icon: "tb:plane",
-      paper: C.ice,
-      ink1: C.cobalt,
-      ink2: C.orange,
-      tone: C.ice,
-    },
-    {
-      title: t`Motorcycles`,
-      line: t`I like bikes. Simple as that.`,
-      icon: "tb:motorbike",
-      paper: C.orange,
-      ink1: C.navy,
-      ink2: C.yellow,
-      tone: C.orange,
-    },
-    {
-      title: t`Games with friends`,
-      line: t`Gaming, but best with friends.`,
-      icon: "tb:device-gamepad-2",
-      paper: C.lime,
-      ink1: C.navy,
-      ink2: C.pink,
-      tone: C.lime,
-    },
-    {
-      title: t`Films`,
-      line: t`A good film night is hard to beat.`,
-      icon: "tb:movie",
-      paper: C.space,
-      ink1: C.ice,
-      ink2: C.orange,
-      tone: C.ice,
-    },
-    {
-      title: t`Parties`,
-      line: t`I like a good party.`,
-      icon: "tb:sparkles",
-      paper: C.navy,
-      ink1: C.pink,
-      ink2: C.yellow,
-      tone: C.pink,
-    },
-    {
-      title: t`Photography`,
-      line: t`I take photos. Strictly amateur, strictly for fun.`,
-      icon: "tb:camera",
-      paper: C.ice,
-      ink1: C.navy,
-      ink2: C.pink,
-      tone: C.ice,
-    },
-    {
-      title: t`Self-improvement`,
-      line: t`Trying to be a bit better than yesterday.`,
-      icon: "tb:trending-up",
-      paper: C.yellow,
-      ink1: C.navy,
-      ink2: C.cobalt,
-      tone: C.yellow,
-    },
-  ];
+const HOBBIES: { title: string; line: string; icon: IconName; paper: string; ink1: string; ink2: string; tone: string }[] = [
+  {
+    title: t`Calisthenics`,
+    line: t`Training with just my bodyweight. Bar, floor, repeat.`,
+    icon: "tb:barbell",
+    paper: C.yellow,
+    ink1: C.navy,
+    ink2: C.pink,
+    tone: C.yellow,
+  },
+  {
+    title: t`Music`,
+    line: t`My playlist is all over the place.`,
+    icon: "tb:music",
+    paper: C.pink,
+    ink1: C.navy,
+    ink2: C.cobalt,
+    tone: C.pink,
+  },
+  {
+    title: t`Faith`,
+    line: t`I'm a Christian.`,
+    icon: "tb:cross",
+    paper: C.cobalt,
+    ink1: C.yellow,
+    ink2: C.ice,
+    tone: C.yellow,
+  },
+  {
+    title: t`Travel`,
+    line: t`I like going somewhere I haven't been yet.`,
+    icon: "tb:plane",
+    paper: C.ice,
+    ink1: C.cobalt,
+    ink2: C.orange,
+    tone: C.ice,
+  },
+  {
+    title: t`Motorcycles`,
+    line: t`I like bikes. Simple as that.`,
+    icon: "tb:motorbike",
+    paper: C.orange,
+    ink1: C.navy,
+    ink2: C.yellow,
+    tone: C.orange,
+  },
+  {
+    title: t`Games with friends`,
+    line: t`Gaming, but best with friends.`,
+    icon: "tb:device-gamepad-2",
+    paper: C.lime,
+    ink1: C.navy,
+    ink2: C.pink,
+    tone: C.lime,
+  },
+  {
+    title: t`Films`,
+    line: t`A good film night is hard to beat.`,
+    icon: "tb:movie",
+    paper: C.space,
+    ink1: C.ice,
+    ink2: C.orange,
+    tone: C.ice,
+  },
+  {
+    title: t`Parties`,
+    line: t`I like a good party.`,
+    icon: "tb:users-group",
+    paper: C.navy,
+    ink1: C.pink,
+    ink2: C.yellow,
+    tone: C.pink,
+  },
+  {
+    title: t`Photography`,
+    line: t`I take photos. Strictly amateur, strictly for fun.`,
+    icon: "tb:camera",
+    paper: C.ice,
+    ink1: C.navy,
+    ink2: C.pink,
+    tone: C.ice,
+  },
+  {
+    title: t`Self-improvement`,
+    line: t`Trying to be a bit better than yesterday.`,
+    icon: "tb:trending-up",
+    paper: C.yellow,
+    ink1: C.navy,
+    ink2: C.cobalt,
+    tone: C.yellow,
+  },
+];
 
 // One size for every name (cqi of the name's cell): the longest name at `wdth` 62 fills the cell. A name rests at 54
 // and, while it reads, widens to the `wdth` that fills its cell (the short ones stop at 150).
@@ -152,26 +151,27 @@ const two = (n: number) => String(n).padStart(2, "0");
   <div class="pr-head">
     <p class="kick">{t`Off the clock`}</p>
     <h2 class="pr-title" id="t-likes">{t`Stuff I like`}</h2>
-    <p class="pr-hint"><Icon name="tb:arrow-down" />{t`Scroll, or pick one.`}</p>
+    <p class="pr-hint">
+      <Icon name="tb:arrow-down" />
+      {t`Scroll, or pick one.`}
+    </p>
   </div>
   <div class="pr-grid">
     <ol class="pr-list" role="list" data-list>
-      {
-        HOBBIES.map((hobby, i) => (
-          <li class:list={["pr-row", i === 0 && "on"]} style={`--tone:${hobby.tone};--wide:${fit.wdth[i]}%`} data-row>
-            <span class="pr-num" aria-hidden="true">
-              <Icon name={hobby.icon} />
-              {two(i + 1)}
-            </span>
-            <h3 class="pr-name">
-              <button type="button" aria-pressed={i === 0 ? "true" : "false"}>
-                {hobby.title}
-              </button>
-            </h3>
-            <p class="pr-line">{typo(locale, hobby.line)}</p>
-          </li>
-        ))
-      }
+      {HOBBIES.map((hobby, i) => (
+        <li class:list={["pr-row", i === 0 && "on"]} style={`--tone:${hobby.tone};--wide:${fit.wdth[i]}%`} data-row>
+          <span class="pr-num" aria-hidden="true">
+            <Icon name={hobby.icon} />
+            {two(i + 1)}
+          </span>
+          <h3 class="pr-name">
+            <button type="button" aria-pressed={i === 0 ? "true" : "false"}>
+              {hobby.title}
+            </button>
+          </h3>
+          <p class="pr-line">{typo(locale, hobby.line)}</p>
+        </li>
+      ))}
     </ol>
     <div class="pr-stage" data-stage>
       <figure
@@ -184,8 +184,12 @@ const two = (n: number) => String(n).padStart(2, "0");
           <canvas class="pr-canvas" data-canvas></canvas>
         </div>
         <figcaption class="pr-sign">
-          <span data-ed>{two(1)}/{two(HOBBIES.length)}</span>
-          <span class="pr-ti" data-ti>{first.title}</span>
+          <span data-ed>
+            {two(1)}/{two(HOBBIES.length)}
+          </span>
+          <span class="pr-ti" data-ti>
+            {first.title}
+          </span>
           <Logo class="pr-chop" />
         </figcaption>
       </figure>
@@ -219,7 +223,6 @@ const two = (n: number) => String(n).padStart(2, "0");
     margin: 0.25rem 0 0;
     font-weight: 700;
     font-size: 1rem;
-    color: color-mix(in srgb, var(--ice) 78%, var(--navy));
   }
   .pr-hint :global(.ico) {
     width: 1.125rem;
@@ -264,7 +267,6 @@ const two = (n: number) => String(n).padStart(2, "0");
     font-size: 0.875rem;
     font-stretch: 125%;
     letter-spacing: 0.04em;
-    color: color-mix(in srgb, var(--ice) 62%, var(--navy));
     transition: color 0.3s;
   }
   .pr-num :global(.ico) {
@@ -282,6 +284,7 @@ const two = (n: number) => String(n).padStart(2, "0");
     padding: 0;
     border: 0;
     background: none;
+    /* The one dimmed text on the page: a resting name (large text, >= 3:1 on navy); the width says it too. */
     color: color-mix(in srgb, var(--ice) 46%, var(--navy));
     font: inherit;
     font-weight: 900;
@@ -306,8 +309,6 @@ const two = (n: number) => String(n).padStart(2, "0");
     margin: 0.5rem 0 0;
     font-size: clamp(1rem, 1.2vw, 1.1875rem);
     line-height: 1.4;
-    color: color-mix(in srgb, var(--ice) 72%, var(--navy));
-    transition: color 0.3s;
   }
   .pr-row.on .pr-num {
     color: var(--tone);
@@ -315,9 +316,6 @@ const two = (n: number) => String(n).padStart(2, "0");
   .pr-row.on .pr-name button {
     color: var(--ice);
     font-stretch: var(--wide);
-  }
-  .pr-row.on .pr-line {
-    color: var(--ice);
   }
 
   /* ---- The print: a sheet of ice with the paper on it and the signature line under it, pinned beside the list. */
@@ -516,10 +514,15 @@ const two = (n: number) => String(n).padStart(2, "0");
     addEventListener("resize", schedule);
     addEventListener("wheel", release, { passive: true });
     addEventListener("touchmove", release, { passive: true });
+    // On phones a focused name scrolls clear of the pinned print: `scroll-margin-top` reads its height, measured
+    // when the section comes near and on resize (nothing runs at page load).
+    const measure = () => root.style.setProperty("--stage-h", `${stage.offsetHeight}px`);
     new IntersectionObserver(([entry]) => {
       near = !!entry?.isIntersecting;
+      if (near) measure();
       schedule();
     }).observe(root);
+    addEventListener("resize", () => near && measure());
 
     rows.forEach((row, k) => {
       const button = buttons[k]!;
@@ -541,9 +544,6 @@ const two = (n: number) => String(n).padStart(2, "0");
       hover = -1;
       schedule();
     });
-
-    // On phones a focused name scrolls clear of the pinned print (`scroll-margin-top` reads its height).
-    new ResizeObserver(() => root.style.setProperty("--stage-h", `${stage.offsetHeight}px`)).observe(stage);
 
     // The shader: near view, after the reader's first move (text first, the picture after).
     new IntersectionObserver(

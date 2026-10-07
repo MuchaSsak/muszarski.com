@@ -198,7 +198,8 @@ const english = links.blogLocale !== locale;
   /* Drawing in. The scripted state only: without it every card is there. With the pencil, the card sits under an
      invisible mask that the pencil scribbles away (a clip-path the script grows), so nothing transitions; without
      it (the reader is moving) the paper, tape and words ink in quickly. The staged delays live on `.inking` (the
-     moment of drawing), so hover never waits for them. */
+     moment of drawing), so hover never waits for them. The card's two children are named, never `*`: a `*` here
+     restyled every element of the covers when the script undrew the cards on load (~330 ms on a throttled phone). */
   .wc.inking > :global(.card.compact) {
     transition:
       transform var(--dur-base) var(--ease-out),
@@ -208,26 +209,30 @@ const english = links.blogLocale !== locale;
   .wc.inking > :global(.card.compact)::before {
     transition: transform 0.4s var(--ease-pop) 0.35s;
   }
-  .wc.inking > :global(.card) > :global(*) {
+  .wc.inking > :global(.card) > :global(:is(.art, .txt)) {
     transition:
       opacity 0.35s var(--ease-out) 0.2s,
       translate 0.45s var(--ease-out) 0.2s;
   }
   .wc.scribbling > :global(.card),
   .wc.scribbling > :global(.card)::before,
-  .wc.scribbling > :global(.card) > :global(*) {
+  .wc.scribbling > :global(.card) > :global(:is(.art, .txt)) {
     transition: none !important;
   }
+  /* Undrawing is instant (on load it runs below the fold, and the card's own transitions would play it out). */
   .wc:not(.drawn) > :global(.card.compact) {
     background-color: transparent;
     box-shadow: none;
+    transition: none;
   }
   .wc:not(.drawn) > :global(.card.compact)::before {
     transform: translateX(-50%) rotate(-3deg) scaleX(0);
+    transition: none;
   }
-  .wc:not(.drawn) > :global(.card) > :global(*) {
+  .wc:not(.drawn) > :global(.card) > :global(:is(.art, .txt)) {
     opacity: 0;
     translate: 0 0.5rem;
+    transition: none;
   }
 
   /* The ghost: a pencil that draws the cards, and the pointer that drags the rail. The script moves it (transform)

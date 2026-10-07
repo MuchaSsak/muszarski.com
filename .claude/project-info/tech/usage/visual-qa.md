@@ -30,3 +30,7 @@
 - Git Bash rewrites `/en/` into `P:/Git/en/`: prefix commands that take URL paths with `MSYS_NO_PATHCONV=1`.
 - One `astro preview` per project (port 4322): the scripts reuse a running one; stop it before a rebuild only if files are locked.
 - The 0.01 ms reduced-motion transition means a colour read right after a change is the old value: poll in tests.
+- WebGL in headless Chromium needs `chromium.launch({ args: ["--use-angle=swiftshader", "--enable-unsafe-swiftshader"] })`,
+  or shader canvases stay on their fallback. To shoot a shader transition frame by frame, `page.clock.pauseAt(...)` and
+  then short `page.clock.runFor(130)` steps; `clock.install()` + one long `runFor` renders every frame and times out
+  (2026-10-07, the My life prints).

@@ -16,6 +16,10 @@ test("the fitted name fills its line, before and after the accordion starts", as
       return [...h1.querySelectorAll(".line")].map((line) => line.getBoundingClientRect().width / host);
     });
   for (const share of await measure()) expect(share).toBeGreaterThan(0.97);
+  // The accordion waits for the reader's first move (a load-time loop costs main-thread time on phones).
+  await page.waitForTimeout(600);
+  await expect(page.locator("#hero-title .ch")).toHaveCount(0);
+  await page.mouse.move(400, 300);
   await expect(page.locator("#hero-title .ch").first()).toBeAttached({ timeout: 5000 });
   for (const share of await measure()) {
     expect(share).toBeGreaterThan(0.97);

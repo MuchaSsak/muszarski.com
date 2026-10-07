@@ -70,6 +70,11 @@ verifyUrl?, skills[], summary, image? }`.
   links; the PDF prints one run-on line per card (title, date, code) and drops that card's summary to stay at two
   pages. Udemy links use `udemy.com/certificate/<UC-id>/` (Udemy answers bots 403, so not fetch-checked); Youthpass
   links go to the public check page plus the code. The Youthpass PDFs print personal data: never publish them.
+- 2026-10-07 [user]: `kind` also takes `knowledge` (the marketing, psychology and UX card, labelled "Knowledge").
+  A `CertItem` may carry `label?` (a short localized chip name, e.g. "Consumer psychology") and `site?` (an event's
+  site, for hackathons). A credential may carry `courseUrl?` (the course's own page, linked beside "Certificate", e.g.
+  threejs-journey.com) and `places?` (localized names drawn on the international card's route). Home shows the items
+  as small secondary chips under a drawn scene, not as ticket cards; the international card shows no chips.
 
 ## Skill
 

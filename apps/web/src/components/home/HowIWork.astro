@@ -175,7 +175,7 @@ const VITALS = [t`speed`, t`accessibility`, "SEO"];
     </ol>
     <div class="panel">
       {STOPS.map((stop, i) => (
-        <div class="pd enter" id={`stop-${i}`} data-pd={i}>
+        <div class:list={["pd enter", { "on timing": i === 0 }]} id={`stop-${i}`} data-pd={i}>
           <div class="k-row">
             <p class="kick k">
               {stopLabel} {pad(i + 1)} · {stop.name}
@@ -2247,7 +2247,8 @@ const VITALS = [t`speed`, t`accessibility`, "SEO"];
       pd.classList.add("timing");
     };
     buttons.forEach((b, i) => b.addEventListener("click", () => show(i, true)));
-    show(0, false);
+    // The first stop is already shown in the markup; nothing runs on load (a `show` here forced two layouts and
+    // restyled the section while it was still offscreen). Coming into view plays it from its start.
 
     // Coming into view plays the current stop from its start, so its story and its bar are seen whole.
     new IntersectionObserver(

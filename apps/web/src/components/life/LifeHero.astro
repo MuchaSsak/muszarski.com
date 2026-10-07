@@ -2,8 +2,8 @@
 /**
  * My life, the head [user 2026-10-06: "something nuts and going big", "lightweight shaders"]: the title over a
  * full-bleed goo of the brand colours (a fragment shader, `life-gl.ts`): blobs drift, one follows the pointer (or a
- * finger) and swells on a poke. The title is real text, painted first; the shader starts after the first interaction
- * or once the page is idle, and the same colours sit behind it in CSS until then (or for good, without WebGL). Paused
+ * finger) and swells on a poke. The title is real text, painted first; the shader starts at the first interaction or
+ * pointer move over it, and the same colours sit behind it in CSS until then (or for good, without WebGL). Paused
  * or reduced motion: one still frame.
  */
 import { t } from "lingui-for-astro/macro";
@@ -352,11 +352,10 @@ gl_FragColor=vec4(c,1.);}`;
       const { runShader } = await import("~/scripts/life-gl");
       runShader(canvas, GOO, { pointer: host, rest: [0.72, 0.4] });
     };
-    // Text first: the goo starts after the reader's first move, or once the page has been idle a moment.
+    // Text first: the goo starts at the reader's first interaction or pointer move over it; until then the same
+    // colours stand in as CSS. Not on an idle timer: compiling the shader during load cost 150-350 ms of blocking
+    // time and Lighthouse mobile fell to 83-91 (2026-10-07).
     afterInteraction(() => void go());
-    window.setTimeout(() => {
-      if ("requestIdleCallback" in window) requestIdleCallback(() => void go(), { timeout: 2000 });
-      else void go();
-    }, 1800);
+    host.addEventListener("pointermove", () => void go(), { once: true, passive: true });
   }
 </script>

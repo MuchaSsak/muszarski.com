@@ -13,8 +13,12 @@
 | whole site | inner pages (`/en/work/`, `/en/blog/`, `/pl/blog/`, `/es/work/`, `/en/my-life/`, `/en/privacy/`, case study, `/pl/cv/`) | 14.3-22.6 KB | 2.9-3.1 KB | 49.9 KB | 91-99 KB | 100 / 100 / 100 / 100 | 1.65-1.73 s | 0 | 0 ms | 2026-10-06 |
 | feedback round 2 (scenes, badges with pins, tickets, backdrops, credentials tour) | `/en/` (`/pl/` 41.8, `/es/` 41.6) | 40.6 KB | ~8.5 KB gz (7.6 KB in 9 modules + 0.9 KB inline; the tour +0.6 KB) | 49.9 KB | 154 KB | 99 / 100 / 100 / 100 (desktop 100 × 4) | 1.95 s | 0 | 0 ms | 2026-10-06 |
 | owner feedback pass | `/en/` (`/pl/`, `/es/` equal) | 34.7 KB | ~7.8 KB gz (6.7 KB in 9 modules + 1.1 KB inline) | 49.9 KB | 148 KB | 99 / 100 / 100 / 100 (desktop 100 × 4) | 1.95 s | 0 | 0-38 ms | 2026-10-06 |
+| My life hobby prints (the toys out) | `/en/my-life/` (`/pl/`, `/es/`) | 23 KB (the prints section ~10 KB raw) | prints 1.2 KB gz on load; the shader 4.2 KB gz + the runner 1.2 KB (shared with the hero) only near the section after a first interaction | 49.9 KB | 513 KB (photos of the hero + pin board) | en 92 / 100 / 100 / 100 (pl 96, es 92) | 2.8-3.3 s | 0 | 0-8 ms | 2026-10-07 |
 
 Notes:
+- My life (2026-10-07): the LCP is the H1 "MY", late because ~400 KB of hero and pin-board photos load in the same
+  window (the CV and privacy pages: LCP 1.8 s on 106 KB); over the 2.5 s bar, a job for the photos' loading, not the
+  prints. The hero goo on an idle timer had cost 150-350 ms TBT (LH 83-85); it now starts on the first interaction.
 - Owner feedback pass: the AI packet animation, reel playback bars and theme cycle left, so page JS fell ~9 → ~8 KB;
   inner pages (`/en/cv/`, `/en/work/`, case study, `/en/my-life/`, `/pl/blog/`) stay 100 × 4, LCP 1.65-1.73 s.
 - Whole site: the home LCP was 2.03 s until the icon sprite left the HTML (54.5 → 38.1 KB gz; `memory/run-notes.md`

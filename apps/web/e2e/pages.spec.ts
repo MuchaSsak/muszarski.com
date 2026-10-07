@@ -38,9 +38,9 @@ test("a post links its translation (hreflang) and the language switch keeps it",
   await expect(page.locator(".site-header .h-loc a[hreflang=es]")).toHaveAttribute("href", "/es/");
 });
 
-test("work: filters by type and tool, with an empty state", async ({ page }) => {
+test("work: the type pills filter the cards", async ({ page }) => {
   await page.goto("/en/work/");
-  const rows = page.locator("[data-rows] > .row");
+  const rows = page.locator("[data-grid] > .wk-card");
   const all = await rows.count();
   expect(all).toBeGreaterThan(6);
   await page.getByRole("button", { name: /^Open source/ }).click();
@@ -124,31 +124,27 @@ test("AI story: the chip pauses it, and a step plays from that step", async ({ p
   await expect(page.locator("#beat-4")).toBeVisible();
 });
 
-test("my life: the toys answer (a rep, the 1% race, the sound switch, a game of Pong)", async ({ page }) => {
+test("my life: a hobby picks its print (a tap, a focus, the scroll)", async ({ page }) => {
   await page.goto("/en/my-life/");
-  const reps = page.locator("[data-reps]");
-  const rep = reps.getByRole("button", { name: "Pull-up", exact: true });
-  await rep.click();
-  await expect(reps.locator("[data-n]")).toHaveText("1");
-  // A full set (8 pull-ups) cheers, and the next press starts the next set at once: no rest lock.
-  for (let i = 1; i < 8; i++) await rep.click();
-  await expect(reps.locator("[data-done]")).toContainText("Set done!");
-  await rep.click();
-  await expect(reps.locator("[data-n]")).toHaveText("1");
-  // The 1% race: a press is a day; a chip runs to its milestone.
-  const better = page.locator("[data-better]");
-  await better.getByRole("button", { name: "+1 day" }).press("Enter");
-  await expect(better.locator("[data-day]")).toHaveText("1");
-  await better.getByRole("button", { name: /100 days/ }).click();
-  await expect(better.locator("[data-up]")).toHaveText("×2.70");
-  await expect(better.locator("[data-day]")).toHaveText("100");
-  const sound = page.getByRole("button", { name: /Sound/ });
-  await sound.click();
-  await expect(sound).toHaveAttribute("aria-pressed", "false");
-  await sound.click();
-  await expect(sound).toHaveAttribute("aria-pressed", "true");
-  await page.locator("[data-pong]").getByRole("button", { name: "Play" }).click();
-  await expect(page.locator("[data-pong]")).toHaveClass(/playing/);
+  const prints = page.locator("[data-prints]");
+  const faith = prints.getByRole("button", { name: "Faith", exact: true });
+  await faith.click();
+  await expect(faith).toHaveAttribute("aria-pressed", "true");
+  await expect(prints.getByRole("button", { name: "Calisthenics", exact: true })).toHaveAttribute("aria-pressed", "false");
+  await expect(prints.locator("[data-ed]")).toHaveText("03/10");
+  // Focus is the keyboard twin of a hover.
+  const films = prints.getByRole("button", { name: "Films", exact: true });
+  await films.focus();
+  await expect(films).toHaveAttribute("aria-pressed", "true");
+  await expect(prints.locator("[data-ti]")).toHaveText("Films");
+  // Scrolling by hand lets go of the pick: the row at the reading line takes over.
+  await films.blur();
+  await prints.getByRole("button", { name: "Self-improvement", exact: true }).scrollIntoViewIfNeeded();
+  await page.mouse.wheel(0, 400);
+  await expect(prints.getByRole("button", { name: "Films", exact: true })).toHaveAttribute("aria-pressed", "false");
+  // The shader prints where WebGL exists (a scene that fails to compile leaves the canvas off).
+  const webgl = await page.evaluate(() => !!document.createElement("canvas").getContext("webgl"));
+  if (webgl) await expect(prints.locator("[data-canvas]")).toHaveClass(/on/);
 });
 
 test("credentials: a card opens on click and says where to verify", async ({ page }) => {

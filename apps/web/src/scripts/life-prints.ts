@@ -71,7 +71,8 @@ float hz=-.05;vec2 sc=vec2(.09,.05);float i1=0.,i2=0.;
 if(p.y>hz){
 i2=max(fill(length(p-sc)-.2,.003),.38*smoothstep(.42,hz,p.y));
 vec2 ac=vec2(-.1,-.62);
-i1=fill(abs(length(p-ac)-.93)-.009,.003)*step(.45,fract(atan(p.y-ac.y,p.x-ac.x)*34.+t*.5));
+float s=atan(p.y-ac.y,p.x-ac.x)*.93+t*.03;
+i1=fill(length(vec2(mod(s,.05)-.025,length(p-ac)-.93))-.011,0.);
 }else{
 float d=hz-p.y;float z=.06/(d+.015);
 float w=sin(z*8.+sin(p.x*6.+t*.5+z*.7)*1.3-t*1.2);
@@ -96,18 +97,9 @@ i1=fill(p.y-hz-.045-.035*sin(p.x*8.+1.)-.02*sin(p.x*21.),0.)*.85;
 i2*=1.-i1;}
 return vec2(i1,i2);}
 
-vec2 ballAt(float k){return vec2(tri(k*.9)*.62-.31,tri(k*.63+.3)*.68-.34);}
-vec2 pong(vec2 p,float t){
-vec2 g=(floor(p*32.)+.5)/32.;float k=t*.55;
-float i1=max(fill(box(g-vec2(-.36,ballAt(k-.1).y),vec2(.016,.08)),.001),fill(box(g-vec2(.36,ballAt(k-.05).y),vec2(.016,.08)),.001));
-i1=max(i1,.55*step(abs(g.x),.016)*step(.5,fract(g.y*7.)));
-float i2=0.;
-for(int i=0;i<5;i++){float f=float(i);i2=max(i2,fill(box(g-ballAt(k-f*.03),vec2(.022)),.001)*(1.-f*.2));}
-return vec2(i1,i2);}
-
 float bit(float m,float d){return mod(floor(m/d+.001),2.);}
 float digit(vec2 p,float n){
-float m=n<3.5?79.:n<4.5?102.:n<5.5?109.:n<6.5?125.:n<7.5?7.:127.;
+float m=n<.5?63.:n<1.5?6.:n<2.5?91.:n<3.5?79.:n<4.5?102.:n<5.5?109.:n<6.5?125.:n<7.5?7.:n<8.5?127.:111.;
 vec2 h=vec2(.085,.024),v=vec2(.024,.085);float d=9.;
 if(bit(m,1.)>.5)d=min(d,box(p-vec2(0.,.17),h));
 if(bit(m,2.)>.5)d=min(d,box(p-vec2(.085,.085),v));
@@ -117,6 +109,34 @@ if(bit(m,16.)>.5)d=min(d,box(p-vec2(-.085,-.085),v));
 if(bit(m,32.)>.5)d=min(d,box(p-vec2(-.085,.085),v));
 if(bit(m,64.)>.5)d=min(d,box(p,h));
 return d;}
+vec2 ballAt(float k,vec2 r){return vec2(tri(k*.9)*2.-1.,tri(k*.63+.3)*2.-1.)*r;}
+vec2 pong(vec2 p,float t){
+vec2 hs=vec2(min(.38,ASP*.5-.06),.24);
+vec2 sc=p-vec2(0.,.17);
+float scr=box(sc,hs-.04)-.04;
+float inScr=fill(scr,0.);
+vec2 g=(floor(sc*34.)+.5)/34.;
+float k=t*.5;vec2 r=hs-vec2(.09,.05);
+float game=max(fill(box(g-vec2(-hs.x+.05,ballAt(k-.1,r).y),vec2(.012,.055)),0.),fill(box(g-vec2(hs.x-.05,ballAt(k-.05,r).y),vec2(.012,.055)),0.));
+game=max(game,step(abs(g.x),.012)*step(.5,fract(g.y*9.)));
+vec2 dq=(sc-vec2(0.,hs.y-.09))*2.6;
+game=max(game,max(fill(digit(dq+vec2(.28,0.),2.),0.),fill(digit(dq-vec2(.28,0.),3.),0.)));
+float ball=0.;
+for(int i=0;i<4;i++){float f=float(i);ball=max(ball,fill(box(g-ballAt(k-f*.025,r),vec2(.016)),0.)*(1.-f*.24));}
+float i1=inScr*(1.-game)*(1.-ball)*.93;
+float i2=inScr*ball;
+i1=max(i1,fill(abs(scr-.012)-.008,0.));
+for(int j=0;j<2;j++){
+float side=float(j)*2.-1.;
+vec2 c=rot(side*.14+.06*sin(t*3.1+side*1.7))*(p-vec2(side*.19,-.31));
+float body=box(c,vec2(.1,.036))-.042;
+float pad=min(box(c-vec2(-.065,0.),vec2(.03,.01)),box(c-vec2(-.065,0.),vec2(.01,.03)));
+float btn=min(length(c-vec2(.055,.016))-.016,length(c-vec2(.088,-.012))-.016);
+i1=max(i1,fill(body,0.)*(1.-fill(pad,0.))*(1.-fill(btn,0.)));
+i2=max(i2,fill(btn,0.));
+i1=max(i1,fill(seg(p,vec2(side*.19,-.24),vec2(side*.07,-.08))-.006,0.)*(1.-inScr));}
+return vec2(i1,i2);}
+
 vec2 film(vec2 p,float t){
 float cyc=t*.7;float r=length(p);float a=mod(atan(p.x,p.y)+2.*PI,2.*PI);
 float i1=.24*smoothstep(.58,0.,r)*(.8+.2*h21(vec2(floor(t*11.),1.7)));
@@ -158,7 +178,7 @@ float blades=step(0.,r*cos(mod(a-spin,sector)-sector*.5)-open)*step(r,.33);
 float s=(a-spin+r*2.8)/sector;
 float i1=blades*(.62+.3*h21(vec2(mod(floor(s),7.),4.)))*(1.-.75*smoothstep(.08,0.,fract(s)));
 float barrel=step(.33,r)*step(r,.405);
-i1=max(i1,barrel*(.5+.4*step(0.,sin(a*64.))));
+i1=max(i1,barrel*(.5+.4*smoothstep(-.4,.4,sin(a*40.))));
 return vec2(i1,bok*(1.-blades)*(1.-barrel));}
 
 vec2 steps(vec2 p,float t){
@@ -169,21 +189,21 @@ float gi=pow(g,i);float top=.08*gi*g;
 float inside=max(fill(w.y-top,0.),fill(.1*gi*g-w.x,0.)*fill(w.y-top*g,0.));
 float tread=fill(w.y-top,0.)*(1.-fill(w.y-top+.025*gi,0.));
 float i1=inside*(.68+.22*mod(i,2.))*(1.-tread);
-float i2=max(tread,.75*smoothstep(.5,0.,length(p-vec2(-ASP*.15,.3)))*(1.-inside));
+float i2=max(tread,.55*smoothstep(.46,0.,length(p-vec2(-ASP*.22,.36)))*(1.-inside));
 return vec2(i1,i2);}
 
 vec2 pick(float s,vec2 p,float t){
 if(s<.5)return rings(p,t);if(s<1.5)return vinyl(p,t);if(s<2.5)return light(p,t);if(s<3.5)return sea(p,t);
 if(s<4.5)return road(p,t);if(s<5.5)return pong(p,t);if(s<6.5)return film(p,t);if(s<7.5)return disco(p,t);
 if(s<8.5)return iris(p,t);return steps(p,t);}
-float wipe(vec2 px){
+float wipe(vec2 px,float jit){
 vec2 uv=px/u_res;
-float k=(uv.x*.55+(1.-uv.y)*.45)*.85+h21(floor(px/(u_cell*3.)))*.15;
+float k=(uv.x*.55+(1.-uv.y)*.45)*(1.-jit)+jit;
 return smoothstep(k*.6,k*.6+.4,u_mix);}
 vec2 screen(vec2 f,float ang,float ink){
 vec2 q=rot(ang)*f/u_cell;vec2 id=floor(q)+.5;
 vec2 ctr=rot(-ang)*id*u_cell;
-float m=wipe(ctr);float b=step(.5,m);
+float m=wipe(ctr,h21(id+ang)*.12);float b=step(.5,m);
 vec2 cov=pick(b>.5?u_b:u_a,(ctr-.5*u_res)/u_res.y,u_time);
 float c=(ink<.5?cov.x:cov.y)*abs(2.*m-1.);
 float r=sqrt(clamp(c,0.,1.))*.76;
@@ -194,7 +214,7 @@ vec2 f=gl_FragCoord.xy;vec2 m=u_mouse*u_res;float R=.22*u_res.y;
 f=m+(f-m)*(1.-.4*exp(-dot(f-m,f-m)/(R*R)));
 vec2 s1=screen(f,.26,0.);
 vec2 s2=screen(f+vec2(1.2,-.9)*u_cell*.22,1.31,1.);
-vec3 c=mix(u_pa,u_pb,step(.5,wipe(gl_FragCoord.xy)));
+vec3 c=mix(u_pa,u_pb,step(.5,wipe(gl_FragCoord.xy,0.)));
 c=mix(c,mix(u_2a,u_2b,s2.y),s2.x);
 c=mix(c,mix(u_1a,u_1b,s1.y),s1.x*.96);
 c+=(h21(gl_FragCoord.xy+fract(u_time))-.5)*.03;

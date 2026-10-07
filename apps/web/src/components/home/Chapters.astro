@@ -104,12 +104,14 @@ const extras = EXTRAS.flatMap((extra) => {
   // Each chapter sticks when its bottom meets the viewport (never under the header), so the next poster slides over
   // the whole previous one. Re-measured on resize; no per-scroll work. Measured in the observer's first callback (after
   // layout, not forcing one on load), all reads before all writes so one write doesn't force a layout per chapter.
+  // `top` itself, not a custom property: a custom property inherits, so setting one restyled every element in the
+  // chapters (~320 ms on a throttled phone, run-notes 2026-10-07).
   const chapters = [...document.querySelectorAll<HTMLElement>(".chapter")];
   const header = document.querySelector<HTMLElement>(".site-header");
   const stick = () => {
     const top = header?.offsetHeight ?? 0;
     const heights = chapters.map((chapter) => chapter.offsetHeight);
-    chapters.forEach((chapter, i) => chapter.style.setProperty("--stick", `${Math.min(top, innerHeight - heights[i]!)}px`));
+    chapters.forEach((chapter, i) => (chapter.style.top = `${Math.min(top, innerHeight - heights[i]!)}px`));
   };
   new ResizeObserver(stick).observe(document.documentElement);
 

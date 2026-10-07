@@ -144,8 +144,10 @@ test("footer: 4 labelled columns, rel=me profiles in a new tab, language flags, 
   await page.goto("/en/");
   const footer = page.locator("footer.site-footer");
   await expect(footer.locator(".col-title")).toHaveText(["Work", "Site", "Elsewhere", "Legal"]);
-  await expect(footer.locator('a[rel~="me"]')).toHaveCount(3);
-  await expect(footer.locator('a[rel~="me"][target="_blank"]')).toHaveCount(3);
+  // Every public profile (GitHub, LinkedIn, npm and the social ones, `ELSEWHERE` in data/site.ts), each in a new tab.
+  const profiles = await footer.locator('a[rel~="me"]').count();
+  expect(profiles).toBeGreaterThanOrEqual(3);
+  await expect(footer.locator('a[rel~="me"][target="_blank"]')).toHaveCount(profiles);
   await expect(footer.locator(".meta time")).toHaveAttribute("datetime", /^\d{4}-\d{2}-\d{2}$/);
   await expect(footer.locator(".f-loc a")).toHaveCount(3);
 });

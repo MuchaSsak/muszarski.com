@@ -80,3 +80,6 @@
   SVGs, How I work scenes 41 KB raw, AI section 30 KB raw).
 - Home HTML 53 KB gzip (28 KB of it the inlined CSS in the head); it was 34.7 KB before the 2026-10-06 feedback rounds.
   The writing rail is capped at 8 posts (16 had pushed it to 56 KB).
+- My life after the hobby prints (local preview, median of 3-5): en 92 / es 92 / pl 96, TBT 0-8 ms, LCP 2.8-3.3 s
+  (photos; see `slice-costs.md`). One en median read 89 / TBT 190 ms while another session's headless Chrome ran;
+  the rerun was clean. `bun run e2e` on the touched specs: 206/206 in ~2.1 min; i18n 30/30.

@@ -13,6 +13,7 @@
 | 3 | 2026-10-05 | **Round 2**: Poster built out to the whole home page; themes Cobalt / Paper / Ink, fonts Anybody / Roboto Flex | "definitely progress"; notes for round 3 | tag `history/poster-r2` · `poster-full.html` |
 | 4 | 2026-10-05 | **Round 3**: less text, tool marks with names, a reel per project, PstrykWeb #1, product loop, AI pipeline, expanding credentials, message-first contact | "this is definitely progress … lets finally start coding"; cut the Stack section | tag `history/poster-r3` · `poster-r3.html`, `shots/r3-*` · artifact v4 |
 | 5 | 2026-10-05 | **Production build**: Poster in Astro, slice by slice (header + hero first) | — | `apps/web/`, accepted shots in `screenshots/` |
+| 6 | 2026-10-07 | **My life toys**: ten playable cards, one per hobby (reps counter, beat pads, light, travel board, rev, Pong, film roll, party, darkroom slider, the 1% race), Web Audio sounds | replaced: "overcomplicated for users with the interactive fun components", "too much and messy/overwhelming"; now one index + one shader print per hobby | tag `history/my-life-toys` (local) · `comps/history/my-life-toys/` (shots at 1920 + 390, the last source) |
 
 ## Rebuilding an old version
 

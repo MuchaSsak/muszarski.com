@@ -1,6 +1,6 @@
 /*
  * Project chapters (design.md § Components, requirements.md F03): a stack of posters, one skin per project. Each
- * chapter sticks when its bottom meets the viewport (JS sets --stick), so the next one slides over the whole
+ * chapter sticks when its bottom meets the viewport (JS sets its `top`), so the next one slides over the whole
  * previous poster. Without JS they are plain sections. Shared pieces live here; each chapter styles its own stage.
  *
  * Reading order inside a chapter [user 2026-10-06: focal points, one obvious CTA]: the badge (what kind of work) →
@@ -15,7 +15,7 @@
 }
 .js .chapter {
   position: sticky;
-  top: var(--stick, 0px);
+  top: 0;
 }
 .chapter + .chapter {
   box-shadow: 0 -16px 40px -22px rgb(0 0 0 / 0.45);
@@ -357,7 +357,7 @@
 }
 /* The strip's backdrop [user 2026-10-07: a subtle background that moves in a smooth loop]: a dot field drifting on a
    diagonal and a soft cobalt glow swaying under it. Transform-only (compositor), paused off screen, by the pause button
-   and under reduced motion (global rules on `.off` / `.still`). */
+   and under reduced motion (global rules on `.near` / `.still`). */
 .more-bg {
   position: absolute;
   inset: 0;

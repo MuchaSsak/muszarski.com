@@ -1,7 +1,7 @@
 /**
  * The site's motion state (design.md § Motion, requirements.md F19). One module, shared by every animated part:
  * - `still`: the reader paused motion (the pause buttons, WCAG 2.2.2) or asked for reduced motion
- * - `.off` on each `.sec` while it is offscreen, so CSS loops stop where nobody sees them
+ * - `.near` on each `.sec` while it is near the viewport: CSS loops run only there, so they stop where nobody sees them
  * - `.rv` elements reveal on first view (`html.rv-ready` gates the hidden state, so a failed script hides nothing)
  * JS loops subscribe with `onMotion` and check `motionStill()` each frame.
  */
@@ -35,9 +35,9 @@ export function setPaused(paused: boolean) {
 
 reduce.addEventListener("change", notify);
 
-// Sections pause their CSS loops while offscreen.
+// Sections run their CSS loops only while near the viewport (global.css).
 const sections = new IntersectionObserver(
-  (entries) => entries.forEach((e) => e.target.classList.toggle("off", !e.isIntersecting)),
+  (entries) => entries.forEach((e) => e.target.classList.toggle("near", e.isIntersecting)),
   {
     rootMargin: "80px 0px",
   },
@@ -88,6 +88,11 @@ for (const type of INTERACTIONS) addEventListener(type, markInteracted, { captur
 if (scrollY > 0) markInteracted();
 
 export const afterInteraction = (fn: () => void) => (interacted ? fn() : interactionWaiters.push(fn));
+
+// CSS loops that wait for the first move key off `html.woke` (global.css); a mouse move counts too.
+const wake = () => root.classList.add("woke");
+afterInteraction(wake);
+addEventListener("pointermove", wake, { once: true, passive: true });
 
 /** A short status line at the bottom of the screen (copy email, form states). */
 export function toast(message: string) {

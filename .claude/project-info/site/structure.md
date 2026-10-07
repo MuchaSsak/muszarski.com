@@ -35,11 +35,11 @@
 | --- | --- | --- | --- |
 | 0 | Header (sticky) | M—M mark → home · Work (`#work`) · How I work (`#how-i-work`) · AI (`#ai`) · Blog · language flags · CV · **Hire me** [user 2026-10-06]. My life sits in the footer + the menu. Built 2026-10-05, reworked 2026-10-06 (`design.md` § Components) | Hire me (primary, → `#contact`), CV |
 | 1 | Hero | the fitted name (H1, the signature moment F20), role, one-line positioning (P6, `brand.md` § Positioning), icon facts, the availability sticker; then the tool band (marks + names). Built 2026-10-05 | See the work (primary) · Download CV |
-| 2 | Selected work | the 4 flagship chapters (`content/projects.md`), each in its own skin, read in one order: badge → title → media → outcome → description → CTA → status → tools (`design.md` § Components, Chapters); then "Also shipped" (Malatro, yws.lu, lingui-translate-ai as tilted tickets; client work behind the rights gate) [user 2026-10-06] + "All projects →" | one primary per chapter: Visit pstrykweb.pl (the landing, never the konfigurator [user 2026-10-06]) · App Store + Google Play · Ask for a walkthrough · Launch (+ Code, secondary); All projects |
+| 2 | Selected work | the 4 flagship chapters (`content/projects.md`), each in its own skin, read in one order: badge → title → media → outcome → description → CTA → status → tools (`design.md` § Components, Chapters); then "Also shipped" (Malatro and yws.lu as tilted tickets, lingui-translate-ai removed [user 2026-10-07]; client work behind the rights gate) + "All projects →", one row tall on wide screens | one primary per chapter: Visit pstrykweb.pl (the landing, never the konfigurator [user 2026-10-06]) · App Store + Google Play · Ask for a walkthrough · Launch (+ Code, secondary); All projects |
 | 3 | How I work | product thinking: a 7-stop ring; each stop shows a drawn scene from a real project, one line and a receipt (F06) [user 2026-10-06: tell it visually, less reading] | links into case studies |
 | 4 | AI workflow | an org chart (F07) [user 2026-10-06]: "I run AI like a team.", Me (Lead) → Claude Code (Builder) → a crew of six (memory, rules, research, tools, playbooks, quality gates), each with examples and tool pins, never counts [user 2026-10-06] | "How this site was built" (F23), the only CTA |
 | 5 | Credentials | list + detail panel on wide screens, accordion on phones; each credential its own colour; on wide screens an idle tour (a drawn cursor opens the next card after 5 s without hover, focus or click) [user 2026-10-06]; media loads on open; learning; teamwork (F08). **The Stack section is cut** [user 2026-10-05: "they dont care THAT MUCH to have a whole section dedicated just for this"]: tools show in the band and per chapter | Certificate (verify) · Details on the CV |
-| 6 | Latest writing (hidden without posts) | a compact teaser: kicker + plain heading, the newest posts (at most 8, 2026-10-07: every card is inline HTML) as small cards (taped paper notes on a faint dot grid), for internal links [user 2026-10-06] | All posts |
+| 6 | Latest writing (hidden without posts) | a compact teaser: kicker + plain heading, the case study on this site always first [user 2026-10-07], then the newest posts (at most 8, 2026-10-07: every card is inline HTML) as small cards (taped paper notes on a faint dot grid), for internal links [user 2026-10-06] | All posts |
 | 7 | Contact | form + quick facts + three direct tiles (F09). The "Open to selected freelance projects / Start with a project" line and the CV tile are removed [user 2026-10-06] | Send · Copy email · LinkedIn · GitHub |
 | 8 | Footer | F10 | — |
 
@@ -60,10 +60,18 @@
 
 ## All projects `/<locale>/work/`
 
-- Every project: the 4 flagships first, then the archive.
-- Filters: type (`context` values in `content-model.md`: client / internship / own product / oss / side / course) and stack chips, with counts.
-- Row: title, year, one line, tags, links (case study / live / code).
-- Layout refined by the subpages research (list vs table vs grid; mobile).
+Rebuilt 2026-10-07 [user: "no videos/screenshots, it overwhelms users with so many buttons for filtering, and its so
+very boring ... completely rethink"]; research: Mobbin sections (Unseen Studio and Instrument: one compact pill row;
+Koto: an asymmetric wall of media; MOUTHWASH and Studio Freight: media first, little text). The look: `design.md` §
+Components, All projects.
+
+- Every project: the 4 flagships first (half a row each), then the archive (a third each), ordered so neighbours
+  never look alike.
+- **One filter row:** type pills only (`context` values that have projects), each with its count; the tool filter is
+  gone (tools show as text on each card). Without JS everything shows.
+- **Card:** media first (a live-site capture that scrolls, a reel, or a drawn scene), then year · type, name, one
+  line, tools, one primary action (the home chapter, the case study, or the live site / npm / code) + small links.
+- Phones: one column; captures scroll with the page instead of on hover.
 
 ## Case study `/<locale>/work/<slug>/`
 
