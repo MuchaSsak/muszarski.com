@@ -43,12 +43,13 @@ test("work: the type pills filter the cards", async ({ page }) => {
   const rows = page.locator("[data-grid] > .wk-card");
   const all = await rows.count();
   expect(all).toBeGreaterThan(6);
+  const shown = () => rows.evaluateAll((list) => list.filter((row) => !(row as HTMLElement).hidden).length);
+  // The cards swap inside a view transition, whose callback WebKit runs a frame after the click: poll.
   await page.getByRole("button", { name: /^Open source/ }).click();
-  const visible = await rows.evaluateAll((list) => list.filter((row) => !(row as HTMLElement).hidden).length);
-  expect(visible).toBeGreaterThan(0);
-  expect(visible).toBeLessThan(all);
+  await expect.poll(shown).toBeLessThan(all);
+  expect(await shown()).toBeGreaterThan(0);
   await page.getByRole("button", { name: /^All/ }).click();
-  expect(await rows.evaluateAll((list) => list.filter((row) => !(row as HTMLElement).hidden).length)).toBe(all);
+  await expect.poll(shown).toBe(all);
 });
 
 test("contact: the reply address fills itself from the message, and a sent message shows the thanks", async ({ page }) => {
