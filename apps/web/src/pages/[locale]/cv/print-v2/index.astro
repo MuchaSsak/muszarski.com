@@ -40,7 +40,9 @@ const keywords = CV.skills.flatMap((group) => group.items).join(", ");
     <meta name="keywords" content={keywords} />
     <meta name="cv-site" content={home} />
     <meta name="cv-digest" content={digest} />
-    {CV_FONT_FILES.map((href) => <link rel="preload" href={href} as="font" type="font/woff2" crossorigin />)}
+    {CV_FONT_FILES.map((href) => (
+      <link rel="preload" href={href} as="font" type="font/woff2" crossorigin />
+    ))}
   </head>
   <body>
     <CvSheet siteUrl={home} />
@@ -50,13 +52,13 @@ const keywords = CV.skills.flatMap((group) => group.items).join(", ");
 <style is:global>
   /* No side margins: Chrome clips anything drawn into a page margin, so the sheet keeps its 14 mm edges as padding
      and the bands bleed to the paper edge. Page 1 has no top margin and no margin text: the band opens it and the
-     text layer must start with the name (ATS). Page 2+ carries a running head (the name as outlines, its `content`
-     comes from cv-fonts.css: no second name in the text layer) and the page number, so a loose second sheet still
-     says whose it is. */
+     text layer must start with the name (ATS). Page 2 carries a running head and the page number, so a loose second
+     sheet still says whose it is; both are outlines (their `content` comes from cv-fonts.css), so neither a second
+     name nor a "2 / 2" lands in the text layer. */
   @page {
     size: A4;
     margin: 18mm 0 14mm;
-    /* Same font size as the page number, so the outlines sit on the number's baseline. */
+    /* One font size in both boxes, so the two outlines share a baseline. */
     @top-left {
       padding: 0 0 3.2mm 14mm;
       vertical-align: bottom;
@@ -64,10 +66,8 @@ const keywords = CV.skills.flatMap((group) => group.items).join(", ");
     }
     @top-right {
       padding: 0 14mm 3.2mm 0;
-      content: counter(page) " / " counter(pages);
       vertical-align: bottom;
-      font: 800 7.6pt "CV Label";
-      color: #2433ff;
+      font-size: 7.6pt;
     }
   }
   @page :first {

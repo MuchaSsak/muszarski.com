@@ -1,4 +1,4 @@
-import { type Locale } from "@package/shared/locales";
+import { isLocale, type Locale } from "@package/shared/locales";
 
 import { type IconName } from "~/lib/icons.gen";
 
@@ -560,6 +560,10 @@ export function cvDigestSource(locale: Locale): string {
     if (value && typeof value === "object") {
       const record = value as Record<string, unknown>;
       if ("en" in record && "pl" in record && "es" in record && typeof record.en === "string") return record[locale];
+      // A text only some locales carry (the Polish clause) belongs to those locales' digests alone.
+      const keys = Object.keys(record);
+      if (keys.length > 0 && keys.every(isLocale) && Object.values(record).every((text) => typeof text === "string"))
+        return record[locale];
       return Object.fromEntries(Object.entries(record).map(([key, inner]) => [key, pick(inner)]));
     }
     return value;

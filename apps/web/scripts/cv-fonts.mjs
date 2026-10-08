@@ -88,9 +88,10 @@ function stickerPaths(font) {
 }
 
 /**
- * The running head on page 2+ ("MATEUSZ MUSZARSKI · CV"), as outlines in an SVG for the @page margin box: it names a
- * loose second sheet without putting a second copy of the name into the text layer, where a parser could read it as a
- * new entry. Cap height 1.8 mm (the 7.6 pt labels), cobalt.
+ * The running head on page 2 ("MATEUSZ MUSZARSKI · CV" and "2 / 2"), as outlines in SVGs for the @page margin boxes:
+ * it names a loose second sheet without putting a second copy of the name, or a page number between two entries, into
+ * the text layer, where a parser could read them as content. The sheet has at most two pages (cv-sheet.mjs fails a
+ * third) and page 1 has no margin boxes, so the number is always "2 / 2". Cap height 1.8 mm (the 7.6 pt labels), cobalt.
  */
 function runningHead(font, text) {
   const label = font.getVariation({ wght: 800, wdth: 125 });
@@ -229,7 +230,8 @@ async function main() {
     const lo = lineEm(font, line, 50);
     const hi = lineEm(font, line, 150);
     const wdth = Math.round(Math.min(150, Math.max(50, 50 + ((target - lo) / (hi - lo)) * 100)) * 100) / 100;
-    const file = await write(`name-${i + 1}`, line, { wght: 900, wdth }, `BlackName${i + 1}`);
+    // Plus a space: the sheet keeps one at the end of each line but the last (the PDF bookmark needs it).
+    const file = await write(`name-${i + 1}`, `${line} `, { wght: 900, wdth }, `BlackName${i + 1}`);
     faces.push({ id: `name-${i + 1}`, family: `CV Name ${i + 1}`, wght: 900, wdth, ...file });
     name.push({ text: line, family: `CV Name ${i + 1}`, wdth, em: Math.round(lineEm(font, line, wdth) * 1e5) / 1e5 });
   }
@@ -249,7 +251,7 @@ async function main() {
     ),
   ];
   css.push(
-    `/* The running head of page 2+ as outlines (no text for parsers to misread). */\n@page {\n  @top-left {\n    content: ${runningHead(font, `${lines.join(" ")} · CV`)};\n  }\n}`,
+    `/* The running head of page 2 as outlines (no text for parsers to misread). */\n@page {\n  @top-left {\n    content: ${runningHead(font, `${lines.join(" ")} · CV`)};\n  }\n  @top-right {\n    content: ${runningHead(font, "2 / 2")};\n  }\n}`,
   );
   writeFileSync(join(ROOT, "src", "styles", "cv-fonts.css"), `${css.join("\n\n")}\n`);
   writeFileSync(

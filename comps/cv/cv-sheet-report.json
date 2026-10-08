@@ -1,12 +1,12 @@
 {
   "en": {
     "file": "..\\..\\comps\\cv\\mateusz-muszarski-cv-en.pdf",
-    "kb": 202.6,
+    "kb": 203.3,
     "pages": 2,
-    "d": 0.38,
+    "d": 0.34,
     "lastPageFill": 0.98,
     "endGapMm": 4.8,
-    "digest": "851c520232b1a790",
+    "digest": "6eeb2a82e077df69",
     "fonts": [
       "Type0/CIDFontType2 AAAAAA+AnybodyCV-BlackName1",
       "Type0/CIDFontType2 BAAAAA+AnybodyCV-BlackName2",
@@ -39,7 +39,9 @@
       "https://github.com/MuchaSsak"
     ],
     "problems": [],
-    "warnings": [],
+    "warnings": [
+      "facts still to confirm (placeholder: true in cv.ts): Intern; Freelance and own projects; INF.02 · INF.03 · INF.04"
+    ],
     "shots": [
       "..\\..\\comps\\cv\\mateusz-muszarski-cv-en-p1.png",
       "..\\..\\comps\\cv\\mateusz-muszarski-cv-en-p2.png"
@@ -47,12 +49,12 @@
   },
   "pl": {
     "file": "..\\..\\comps\\cv\\mateusz-muszarski-cv-pl.pdf",
-    "kb": 205.8,
+    "kb": 206.2,
     "pages": 2,
-    "d": 0.22,
-    "lastPageFill": 0.97,
-    "endGapMm": 4.8,
-    "digest": "d246e61b3b690586",
+    "d": 0.08,
+    "lastPageFill": 0.96,
+    "endGapMm": 6.9,
+    "digest": "98dd36ac063ad1fd",
     "fonts": [
       "Type0/CIDFontType2 AAAAAA+AnybodyCV-BlackName1",
       "Type0/CIDFontType2 BAAAAA+AnybodyCV-BlackName2",
@@ -85,7 +87,9 @@
       "https://github.com/MuchaSsak"
     ],
     "problems": [],
-    "warnings": [],
+    "warnings": [
+      "facts still to confirm (placeholder: true in cv.ts): Praktykant; Freelance i własne projekty; INF.02 · INF.03 · INF.04"
+    ],
     "shots": [
       "..\\..\\comps\\cv\\mateusz-muszarski-cv-pl-p1.png",
       "..\\..\\comps\\cv\\mateusz-muszarski-cv-pl-p2.png"
@@ -93,12 +97,12 @@
   },
   "es": {
     "file": "..\\..\\comps\\cv\\mateusz-muszarski-cv-es.pdf",
-    "kb": 203.8,
+    "kb": 204.7,
     "pages": 2,
-    "d": 0.28,
-    "lastPageFill": 0.99,
-    "endGapMm": 4.8,
-    "digest": "815ce22d9631137d",
+    "d": 0.17,
+    "lastPageFill": 1,
+    "endGapMm": 5.8,
+    "digest": "5ea68974c3634749",
     "fonts": [
       "Type0/CIDFontType2 AAAAAA+AnybodyCV-BlackName1",
       "Type0/CIDFontType2 BAAAAA+AnybodyCV-BlackName2",
@@ -131,7 +135,9 @@
       "https://github.com/MuchaSsak"
     ],
     "problems": [],
-    "warnings": [],
+    "warnings": [
+      "facts still to confirm (placeholder: true in cv.ts): Becario; Freelance y proyectos propios; INF.02 · INF.03 · INF.04"
+    ],
     "shots": [
       "..\\..\\comps\\cv\\mateusz-muszarski-cv-es-p1.png",
       "..\\..\\comps\\cv\\mateusz-muszarski-cv-es-p2.png"

@@ -64,6 +64,16 @@
 - Components rendered inside MDX get their `<style>` inlined without a CSP hash (blocked in the browser): put their CSS
   in a stylesheet the page imports (`styles/case.css`); check the console in a real browser, the build doesn't fail
   (2026-10-06).
+- `Icon.astro` forwards Astro's scope attribute, so a scoped `svg` selector also hits icons: target drawn SVGs by class
+  (2026-10-05).
+- Inline `<script>`s render between sibling sections: count siblings with `:nth-of-type`, not `:nth-child` (2026-10-05).
+- Astro does not scope `@keyframes` names: two components' `bob` collided. Prefix keyframes per component (`hw-`,
+  `cr-`, `ai-`) (2026-10-06).
+- A scoped `.cs :where(p)` reset is not low-specificity: Astro adds the scope attribute after the `:where()` too
+  (`.cs[data-astro-cid-…] :where(p)[data-astro-cid-…]`, 0-3-0), so it beat the scoped class rules (0-2-0) and zeroed
+  every margin of the CV sheet. Put resets in an unscoped `<style is:global>` (2026-10-08).
+- `astro dev` is one per project too: a second one exits ("already running"). For a private run, `astro build --outDir
+  .cache/<name>` and serve that folder yourself, as `scripts/cv-sheet.mjs` does (2026-10-08).
 
 ## Content, Markdown and generated files (2026-10-05)
 

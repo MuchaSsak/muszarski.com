@@ -55,6 +55,14 @@
 - **PDF:** single column, real selectable text, embedded fonts, ATS-safe headings, 1–2 pages.
   The web page may be more visual, but its content is the same.
 - **Locales:** en first; pl and es per `open-questions.md` (Q18).
+- **New sheet, draft [user 2026-10-08]** ("creative and good in design", at most 2 pages = one duplex sheet; Europass
+  dropped): `components/cv/CvSheet.astro` on `/<locale>/cv/print-v2/`, printed by `bun run cv:sheet` into `comps/cv/`
+  until the owner approves it; then it replaces the print route and the live PDFs, and `/cv/` mirrors it 1:1 (rollout
+  steps: `.claude/skills/new-cv/SKILL.md`). Decided for him: photo, email, region, links and availability in; date of
+  birth, address, PESEL, marital status and salary out; phone, "EU citizen" and CEFR levels once he gives them (Q49);
+  the Polish CV ends with the one-line recruitment clause (`CV.clause.pl`, none in en / es). Section order, writing
+  and cutting rules: `.claude/skills/new-cv/references/content.md`. The digest picks a partial text (the pl-only
+  clause) per locale, so it changes the pl digest alone.
 
 ## Credential
 

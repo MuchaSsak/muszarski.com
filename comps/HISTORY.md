@@ -15,6 +15,8 @@
 | 5 | 2026-10-05 | **Production build**: Poster in Astro, slice by slice (header + hero first) | — | `apps/web/`, accepted shots in `screenshots/` |
 | 6 | 2026-10-07 | **My life toys**: ten playable cards, one per hobby (reps counter, beat pads, light, travel board, rev, Pong, film roll, party, darkroom slider, the 1% race), Web Audio sounds | replaced: "overcomplicated for users with the interactive fun components", "too much and messy/overwhelming"; now one index + one shader print per hobby | tag `history/my-life-toys` (local) · `comps/history/my-life-toys/` (shots at 1920 + 390, the last source) |
 
+| 7 | 2026-10-08 | **CV sheet** (draft, `comps/cv/`): a designed two-page PDF (cobalt band, fitted name, sticker, date rail, pink contact slip) replacing the first CV print template (the live `public/files/*.pdf`, in git) | "make them look a whole ton better and impressive", max 2 pages; waiting for approval | `comps/cv/*.pdf`, `*-p1.png`, `*-p2.png` · old template: `apps/web/src/pages/[locale]/cv/print/` |
+
 ## Rebuilding an old version
 
 - A comp: open the file in a browser (`python -m http.server` in `comps/`, then `/poster-r3.html`). Fonts in comps load from

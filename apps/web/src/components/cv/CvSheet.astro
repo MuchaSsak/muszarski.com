@@ -16,7 +16,8 @@
  *
  * Fluid: every size and gap in the body reads `--d` (0 = densest, 1 = roomiest); `scripts/cv-sheet.mjs` picks the
  * roomiest value that fits two pages, then sets `--end-gap` so the contact slip sits at the foot of the last page.
- * Entries never split across pages; sections may. `data-cv-*` hooks are for that script.
+ * Entries never split across pages; sections may; an empty list renders nothing. `data-cv-*` hooks are for that
+ * script.
  */
 import { Image } from "astro:assets";
 import { t } from "lingui-for-astro/macro";
@@ -61,6 +62,16 @@ const sections = {
   interests: t`Interests`,
   contact: t`Contact`,
 };
+// Education leads while the owner is still at school: the skim looks for it, and it is one short entry. After
+// graduation it moves below Experience (content.md § 3).
+const EDUCATION_FIRST = true;
+const lists: { heading: string; entries: CvEntry[] }[] = [
+  ...(EDUCATION_FIRST ? [{ heading: sections.education, entries: CV.education }] : []),
+  { heading: sections.experience, entries: CV.experience },
+  ...(EDUCATION_FIRST ? [] : [{ heading: sections.education, entries: CV.education }]),
+  { heading: sections.projects, entries: CV.projects },
+  // A list with nothing in it leaves no empty heading behind.
+].filter((list) => list.entries.length > 0);
 const credentials = CV.credentials.filter((credential) => credential.kind !== "experience");
 // A repository reads best as its address (a paper reader can type it); a store badge by its name.
 const linkText = (link: { label: string; href: string }) => (/github\.com\//.test(link.href) ? short(link.href) : link.label);
@@ -72,22 +83,19 @@ const webCv = new URL(pathTo(locale, "cv/"), siteUrl);
 
 <div class="cs" style={`--name-em: ${nameEm}`}>
   <header class="cs-band">
-    {
-      photo && (
-        <div class="cs-photo">
-          <Image src={photo} alt={SITE.name} width={Math.min(photo.width, 600)} format="webp" quality={92} />
-        </div>
-      )
-    }
+    {photo && (
+      <div class="cs-photo">
+        <Image src={photo} alt={SITE.name} width={Math.min(photo.width, 600)} format="webp" quality={92} />
+      </div>
+    )}
     <h1 class="cs-name">
-      {
-        CV_NAME.map((line, i) => (
-          <>
-            {i > 0 && " "}
-            <span style={`font-family: "${line.family}"`}>{line.text}</span>
-          </>
-        ))
-      }
+      {CV_NAME.map((line, i) => (
+        <>
+          {i > 0 && <br />}
+          {/* A kept space at the line end: without it the PDF bookmark reads "MATEUSZMUSZARSKI". */}
+          <span style={`font-family: "${line.family}"`}>{i < CV_NAME.length - 1 ? `${line.text} ` : line.text}</span>
+        </>
+      ))}
     </h1>
     <svg class="cs-sticker" viewBox="0 0 200 200" aria-hidden="true">
       <circle cx="100" cy="100" r="96"></circle>
@@ -95,20 +103,20 @@ const webCv = new URL(pathTo(locale, "cv/"), siteUrl);
       <path d={CV_STICKER.core}></path>
     </svg>
     <div class="cs-id">
-      <p class="cs-role" data-cv-must={CV.title[locale]}>{l(CV.title)}</p>
+      <p class="cs-role" data-cv-must={CV.title[locale]}>
+        {l(CV.title)}
+      </p>
       <p class="cs-avail" data-cv-must={CV.location[locale]}>{`${l(CV.location)} · ${l(CV.availability)}`}</p>
     </div>
   </header>
   <ul class="cs-bar" aria-label={sections.contact}>
-    {
-      contact.map((item) => (
-        <li>
-          <a href={item.href} data-cv-link data-cv-must={item.text}>
-            {item.text}
-          </a>
-        </li>
-      ))
-    }
+    {contact.map((item) => (
+      <li>
+        <a href={item.href} data-cv-link data-cv-must={item.text}>
+          {item.text}
+        </a>
+      </li>
+    ))}
   </ul>
 
   <section class="cs-sec">
@@ -130,92 +138,93 @@ const webCv = new URL(pathTo(locale, "cv/"), siteUrl);
     </div>
   </section>
 
-  {
-    (
-      [
-        { heading: sections.experience, entries: CV.experience },
-        { heading: sections.education, entries: CV.education },
-        { heading: sections.projects, entries: CV.projects },
-      ] satisfies { heading: string; entries: CvEntry[] }[]
-    ).map((list) => (
-      <section class="cs-sec" data-cv-list>
-        <h2 data-cv-heading>{list.heading}</h2>
-        {list.entries.map((entry) => (
-          <article class="cs-entry" data-cv-entry>
-            <h3>{l(entry.title)}</h3>
-            {entry.org && <p class="cs-org">{l(entry.org)}</p>}
-            <p class="cs-when">{l(entry.when)}</p>
-            {entry.bullets.length > 0 && (
-              <ul class="cs-bullets">
-                {entry.bullets.map((bullet) => (
-                  <li>{l(bullet)}</li>
-                ))}
-              </ul>
-            )}
-            {entry.links && (
-              <p class="cs-links">
-                {entry.links.map((link) => (
-                  <a href={link.href}>{linkText(link)}</a>
-                ))}
-              </p>
-            )}
-          </article>
-        ))}
-      </section>
-    ))
-  }
-
-  <section class="cs-sec" data-cv-list>
-    <h2 data-cv-heading>{sections.credentials}</h2>
-    {
-      // Low weight with tech hiring (research): one head line (title · issuer), then the proof, one line each.
-      credentials.map((credential) => (
-        <article class="cs-entry" data-cv-entry>
-          <h3>
-            {credential.verifyUrl ? <a href={credential.verifyUrl}>{l(credential.title)}</a> : l(credential.title)}
-            <span class="cs-issuer"> · {l(credential.issuer)}</span>
-          </h3>
-          <p class="cs-when">{l(credential.when)}</p>
-          {credential.items ? (
-            <ul class="cs-certs">
-              {credential.items.map((item) => (
-                <li>
-                  {item.href || item.site ? <a href={item.href ?? item.site}>{item.title}</a> : item.title}
-                  <span class="cs-meta"> · {certMeta(item)}</span>
-                </li>
+  {lists.map((list) => (
+    <section class="cs-sec" data-cv-list>
+      <h2 data-cv-heading>{list.heading}</h2>
+      {list.entries.map((entry) => (
+        <article class="cs-entry" data-cv-entry data-cv-placeholder={entry.placeholder ? l(entry.title) : undefined}>
+          <h3>{l(entry.title)}</h3>
+          {entry.org && <p class="cs-org">{l(entry.org)}</p>}
+          <p class="cs-when">{l(entry.when)}</p>
+          {entry.bullets.length > 0 && (
+            <ul class="cs-bullets">
+              {entry.bullets.map((bullet) => (
+                <li>{l(bullet)}</li>
               ))}
             </ul>
-          ) : (
-            !credential.verifyUrl && <p class="cs-note">{l(credential.summary)}</p>
+          )}
+          {entry.links && (
+            <p class="cs-links">
+              {entry.links.map((link) => (
+                <a href={link.href}>{linkText(link)}</a>
+              ))}
+            </p>
           )}
         </article>
-      ))
-    }
-  </section>
+      ))}
+    </section>
+  ))}
+
+  {credentials.length > 0 && (
+    <section class="cs-sec" data-cv-list>
+      <h2 data-cv-heading>{sections.credentials}</h2>
+      {
+        // Low weight with tech hiring (research): one head line (title · issuer), then the proof, one line each.
+        credentials.map((credential) => (
+          <article
+            class="cs-entry cs-cred"
+            data-cv-entry
+            data-cv-placeholder={credential.placeholder ? l(credential.title) : undefined}
+          >
+            <h3>
+              {credential.verifyUrl ? <a href={credential.verifyUrl}>{l(credential.title)}</a> : l(credential.title)}
+              <span class="cs-issuer"> · {l(credential.issuer)}</span>
+            </h3>
+            <p class="cs-when">{l(credential.when)}</p>
+            {credential.items ? (
+              <ul class="cs-certs">
+                {credential.items.map((item: CertItem) => (
+                  <li>
+                    {item.href || item.site ? <a href={item.href ?? item.site}>{item.title}</a> : item.title}
+                    <span class="cs-meta"> · {certMeta(item)}</span>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              !credential.verifyUrl && <p class="cs-note">{l(credential.summary)}</p>
+            )}
+          </article>
+        ))
+      }
+    </section>
+  )}
 
   <section class="cs-sec cs-pair">
-    <div>
-      <h2 data-cv-heading>{sections.languages}</h2>
-      <p>
-        {
-          CV.languages.map((language, i) => (
-            <>
-              {i > 0 && " · "}
-              <strong>{l(language.name)}</strong>{`${NBSP}${l(language.level)}`}
-            </>
-          ))
-        }
-      </p>
-    </div>
-    <div>
-      <h2 data-cv-heading>{sections.interests}</h2>
-      <p>{l(CV.interests)}</p>
-    </div>
+    {CV.languages.length > 0 && (
+      <div>
+        <h2 data-cv-heading>{sections.languages}</h2>
+        <ul class="cs-langs">
+          {CV.languages.map((language) => (
+            <li>
+              <strong>{l(language.name)}</strong> {l(language.level)}
+            </li>
+          ))}
+        </ul>
+      </div>
+    )}
+    {CV.interests[locale] && (
+      <div>
+        <h2 data-cv-heading>{sections.interests}</h2>
+        <p>{l(CV.interests)}</p>
+      </div>
+    )}
   </section>
 
   <footer class="cs-end">
     <h2 data-cv-heading>{sections.contact}</h2>
-    <p class="cs-end-mail"><a href={`mailto:${SITE.email}`}>{SITE.email}</a></p>
+    <p class="cs-end-mail">
+      <a href={`mailto:${SITE.email}`}>{SITE.email}</a>
+    </p>
     <p class="cs-end-web">
       <a href={webCv.href}>{short(webCv.href)}</a>
       {github && <a href={github.href}>{short(github.href)}</a>}
@@ -234,8 +243,9 @@ const webCv = new URL(pathTo(locale, "cv/"), siteUrl);
     --pink: #ff4fb8;
     --slate: #4b4f78;
     /* The type scale, six steps (the name is fitted): every body step reads --d, set on the root (the print page's
-       default, or scripts/cv-sheet.mjs while it fits the sheet): 0 = densest (body 9.6 pt), 1 = roomiest (10.6 pt). */
-    --fs: calc(9.6pt + 1pt * var(--d));
+       default, or scripts/cv-sheet.mjs while it fits the sheet): 0 = densest (body 10 pt, the floor of print
+       guidance), 1 = roomiest (10.8 pt). Meta lines run at 0.9 (9-9.7 pt). */
+    --fs: calc(10pt + 0.8pt * var(--d));
     --t-title: calc(var(--fs) * 1.2);
     --t-meta: calc(var(--fs) * 0.9);
     --t-label: 7.6pt;
@@ -271,13 +281,23 @@ const webCv = new URL(pathTo(locale, "cv/"), siteUrl);
     display: grid;
     grid-template-columns: var(--photo) 1fr var(--stk);
     align-items: center;
-    column-gap: 6mm;
+    column-gap: var(--band-gap);
     margin: 0 calc(-1 * var(--edge));
-    padding: 9mm var(--edge) 5mm;
+    padding: 7.5mm var(--edge) 4.5mm;
     background: var(--cobalt);
     color: var(--ice);
+    --band-gap: 6mm;
+    --band-gaps: 12mm;
+  }
+  /* Without a photo (UK, Irish and US applications, content.md § 2) the name takes its column; `--no-photo` in
+     scripts/cv-sheet.mjs prints that variant. The name's size stays capped so the band keeps its height. */
+  .cs-band:not(:has(.cs-photo)) {
+    --photo: 0mm;
+    --band-gaps: 6mm;
+    grid-template-columns: 1fr var(--stk);
   }
   .cs-photo {
+    grid-column: 1;
     width: var(--photo);
     height: var(--photo);
     border: 0.6mm solid var(--ice);
@@ -291,16 +311,29 @@ const webCv = new URL(pathTo(locale, "cv/"), siteUrl);
     object-fit: cover;
   }
   .cs-name {
-    display: flex;
-    flex-direction: column;
+    grid-column: 2;
     font-weight: 900;
     /* Each line is exactly as wide as its column: the width in em comes from scripts/cv-fonts.mjs. */
-    font-size: calc((210mm - 2 * var(--edge) - var(--photo) - var(--stk) - 12mm) / var(--name-em) * 0.995);
+    font-size: min(
+      calc((210mm - 2 * var(--edge) - var(--photo) - var(--stk) - var(--band-gaps)) / var(--name-em) * 0.995),
+      18.2mm
+    );
     line-height: 0.78;
     white-space: nowrap;
   }
+  /* pre-wrap keeps the space at the end of a line (it hangs, so the fitted width doesn't change). */
+  .cs-name span {
+    white-space: pre-wrap;
+  }
+  .cs-band:not(:has(.cs-photo)) .cs-name {
+    grid-column: 1;
+  }
+  .cs-band:not(:has(.cs-photo)) .cs-id {
+    grid-column: 1 / -1;
+  }
   /* The hero sticker's twin: outlines only (no text), so it may turn. */
   .cs-sticker {
+    grid-column: -2;
     width: var(--stk);
     height: var(--stk);
     transform: rotate(-12deg);
@@ -313,7 +346,7 @@ const webCv = new URL(pathTo(locale, "cv/"), siteUrl);
   }
   .cs-id {
     grid-column: 2 / -1;
-    margin-top: 3mm;
+    margin-top: 2.2mm;
     padding-top: 2mm;
     border-top: 0.8mm solid var(--ice);
   }
@@ -472,6 +505,10 @@ const webCv = new URL(pathTo(locale, "cv/"), siteUrl);
   .cs-meta {
     font-size: var(--t-meta);
   }
+  /* Credentials weigh less than jobs (research): their head line is bold body type, not a title. */
+  .cs-cred h3 {
+    font: 700 var(--fs) / 1.25 "CV Strong";
+  }
 
   /* Languages and interests side by side: two short blocks, one row. */
   .cs-pair {
@@ -479,6 +516,10 @@ const webCv = new URL(pathTo(locale, "cv/"), siteUrl);
     grid-template-columns: 1fr 1.35fr;
     gap: 6mm;
     break-inside: avoid;
+  }
+  .cs-langs {
+    padding: 0;
+    list-style: none;
   }
 
   /* The contact slip: the site's contact field (pink) with a hard navy shadow, at the foot of the last page

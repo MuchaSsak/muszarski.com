@@ -6,7 +6,8 @@
 > Product facts live in their own page, not here. Promoted 2026-10-07 (still in their pages): Sätteri plugins,
 > `content-visibility`, the stuck-chapter focus, MDX component CSS and `satisfies` (astro.md), fontkit, `api/` ESM
 > imports and host redirects (technologies.md), production hosts (analytics.md), WebKit font shots (visual-qa.md), the
-> foldered wiki (README.md).
+> foldered wiki (README.md); 2026-10-08: scope attribute on icons, inline scripts between sections, unscoped
+> `@keyframes` (astro.md); the CV print gotchas (`.claude/skills/new-cv/references/template.md`).
 
 ## Rules
 
@@ -32,18 +33,14 @@
 - A visible label must start the accessible name (WCAG 2.5.3): visually hidden text after the visible text, not a replacing `aria-label` - 2026-10-05.
 - Run `bun run i18n:extract` before a production build: a missing message renders as its id and fitted titles (`a|b`) crash - 2026-10-05.
 - `.still` pauses every animation, freezing delayed entrances on their hidden frame: mark entrances `.rise`/`.enter` and test a stored pause - 2026-10-05.
-- Never name a class after a Tailwind utility (`.ring` drew a box-shadow ring); prefix section classes (`lp-ring`) - 2026-10-05.
-- `Icon.astro` forwards Astro's scope attribute, so a scoped `svg` selector also hits icons; target drawn SVGs by class - 2026-10-05.
-- Inline `<script>`s render between sibling sections: count siblings with `:nth-of-type`, not `:nth-child` - 2026-10-05.
+- Prefix classes: one named after a Tailwind utility (`.ring` drew a box-shadow ring) or a component (`browser` as a modifier drew a second frame) is already a selector; use `lp-ring`, `f-browser` - 2026-10-05.
 - A grid-stacked hidden label still sets the grid's width (it pushed the header off a 320 px screen); size stacks for the visible state - 2026-10-05.
 - Chrome holds first paint for a preloaded font, and HTML bytes compete with it: keep page HTML lean (icons in the cached sprite; first-screen icons `inline`). Keep the preload: without it home LCP fell 0.6 s but the parse landed after first paint (TBT 33 → 775 ms) - 2026-10-06.
 - A child rule like `.dlink > span { width: 100% }` also hits an added `.sr-only` span (a 1,193 px overflow): exclude `.sr-only` or wrap the visible text - 2026-10-06.
 - A focus target taller than the viewport minus the header always sits under the sticky header: cap media by viewport height (`100svh - var(--header-h)`) - 2026-10-06.
-- Astro does not scope `@keyframes` names: two components' `bob` collided. Prefix keyframes per component (`hw-`, `cr-`, `ai-`) - 2026-10-06.
 - Reduced motion keeps `animation-delay`: staged entrances stay hidden for their delay. Switch staged scenes off under reduced motion and `.still` - 2026-10-06.
 - Load cost hides in style and layout: animate an HTML wrapper, never an `<svg>` (a layout per frame); no grid around a `container-type` box (~1 s layouts); set `top`, not an inherited custom property, on big subtrees; never toggle a class a `*` rule reads on a big ancestor (`.off *` restyled 1,658 elements: start paused, mark what is near); transition only the revealed state. Find each with traces and CSS A/B via `page.route` - 2026-10-07.
 - A % height inside an auto grid row resolves against the row the item itself grew (the Linkoglot phone overflowed its field): give the grid a definite track, `grid-template: minmax(0, 1fr) / minmax(0, 1fr)` - 2026-10-08.
-- A class that names a component (`browser`, `phone`) is a selector: putting it on a wrapper as a modifier drew a second frame. Prefix modifiers (`f-browser`) - 2026-10-08.
 
 ### Privacy of inputs
 - Images pasted in chat never reach the disk: ask the owner to drop the files in the repo, and build the slot so it switches on when they land - 2026-10-06.
@@ -52,14 +49,14 @@
 ### Tools and environment
 - Splicing text by slices or offsets drops or misplaces content: replace named blocks, then `node --check` / build and render-check at once - 2026-10-05.
 - Run prettier from the repo root (`bunx prettier --write <paths>`; from `apps/web` it ignores the root config), never on generated files (`og.mjs` parses `icons.gen.ts` as JSON); after formatting an Astro template, diff the rendered HTML (it put a visible space in `All<sup>`) - 2026-10-05.
-- Bash heredocs break on quotes and lose backslashes (again 2026-10-07), and `cd` persists: write scripts with Write, use absolute paths; Write/Edit decode `\uXXXX`, so emit invisible characters with `chr()` - 2026-10-05.
+- Bash heredocs break on quotes and lose backslashes (again 2026-10-07, 2026-10-08), and `cd` persists: write scripts with Write, use absolute paths; Write/Edit decode `\uXXXX`, so emit invisible characters with `chr()` - 2026-10-05.
 - Python on Windows writes CRLF: always `open(..., "w", newline="\n")` (a fixer pass caught 6 files on 2026-10-06) - 2026-10-05.
 - Git Bash rewrites URL-path arguments (`/en/` → `P:/Git/en/`): prefix with `MSYS_NO_PATHCONV=1`, also for `bun run lhci` - 2026-10-05.
 - `bun run check` stops at the first failing task: a red test hid a typecheck error that got committed. Read every task's result, re-run `astro check` after fixing a test - 2026-10-06.
 - e2e role queries match substrings ("Pull-up" hit "Pull-ups"): pass `exact: true` for short names - 2026-10-06.
 - Stop a server by its port's PID (`netstat -ano | grep :<port>` → `taskkill //F //PID`), never by image name: `taskkill /IM python.exe` ends every Python on the machine, other sessions' too - 2026-10-08.
 - A git worktree under the long temp path builds pages with no CSS ("Filename too long") and won't delete: put A/B worktrees at a short path (`C:/Users/<you>/wtb`), remove them with `git worktree remove` - 2026-10-08.
-- One `astro preview` per project: e2e, shots and Lighthouse share port 4322; for speed work build to a scratch `--outDir` and serve it on its own port (`E2E_PORT`, `lhci --base`). A busy machine fakes regressions (other sessions' headless Chrome at 100% CPU): check the load, rerun - 2026-10-07.
+- One `astro preview` and one `astro dev` per project: e2e, shots and Lighthouse share port 4322; for speed work build to a scratch `--outDir` and serve it on its own port (`E2E_PORT`, `lhci --base`). A busy machine fakes regressions (other sessions' headless Chrome at 100% CPU): check the load, rerun - 2026-10-07.
 - After a Playwright update, run `./node_modules/.bin/playwright install chromium` in `apps/web` (browser version mismatch) - 2026-10-06.
 - The owner works on two PCs and runs parallel sessions (one committed another's WIP, 2026-10-07): `git pull`/`git log` first, stage your own paths only; on a merge take one side's `.po`, re-add the other's msgids, extract; regenerate PDFs - 2026-10-06.
 - WebSearch has a budget shared by parallel agents; prefer WebFetch of known URLs, then Playwright - 2026-10-05.

@@ -81,6 +81,8 @@ Success signal: Google autocomplete starts completing "mateusz muszarski" to "�
   the sitemap; preview builds `noindex` (`IS_FULL_PRODUCTION`).
 - **Favicons:** PNG/ICO ≥ 48 px (Google doesn't list SVG) + SVG + apple-touch 180 + manifest 192/512.
 - **PDF CV:** served with `Link: <…/cv/>; rel="canonical"`, `Content-Disposition: attachment`; PDF Title/Author metadata set.
+  The draft sheet (`bun run cv:sheet`, 2026-10-08) also writes Subject (the profile), Keywords (the skills), Creator
+  (the site URL) and the document language, and keeps the print route `noindex` and out of the sitemap.
 
 ## Crawl and indexing setup
 

@@ -23,7 +23,8 @@ project dossiers in `content/projects/` (what may be said about client work).
 - Columns don't break parsers; the order of the text does (R 8). The sheet keeps DOM order = reading order and checks
   it on every print.
 - Two pages are fine when page 2 has substance; page 1 must work alone (R 13). Page 1: band (who, role, where,
-  availability, contact), profile, experience. Page 2: the rest, ending with the contact band.
+  availability, contact), profile, skills, experience, and education when it fits. Page 2: the rest, ending with the
+  contact slip.
 - Polish IT recruiters' top three CV mistakes: no description of what you did in projects (64.8%), unneeded personal
   data (60.6%), an illegible layout or font (60.4%) (R 14, No Fluff Jobs 2023, n = 588).
 
@@ -45,10 +46,14 @@ project dossiers in `content/projects/` (what may be said about client work).
 
 ## 3. Sections and order
 
-Profile → Experience → Selected projects → Skills → Education → Qualifications and training → Languages + Interests →
-Contact band → (pl) clause. The order follows the skim (R 1, R 15): an overview first, then work with dates, then the
-stack, then the rest. Certificates carry little weight with tech hiring, so they stay one compact block (R 17,
-hiring-perspective § credentials); hackathons and real projects weigh more.
+Profile → Skills → Education → Experience → Selected projects → Qualifications and training → Languages + Interests
+→ Contact slip → (pl) clause. The order follows the skim (R 1, R 15): an overview, the stack as compact keyword rows
+(one line per group, so it costs little and answers the keyword scan at once), then school and work with dates, so
+page 1 alone covers who, what, where, stack, education and work. Education leads while he is still at school (one short
+entry, and the first question for a student applying full-time); after graduation it moves below Experience
+(`EDUCATION_FIRST` in the sheet). Certificates carry little weight with tech hiring, so they stay one compact block
+(R 17, hiring-perspective § credentials); hackathons and real projects weigh more. A new section goes after Selected
+projects unless there's a reason.
 
 ## 4. Writing rules
 
@@ -75,7 +80,7 @@ hiring-perspective § credentials); hackathons and real projects weigh more.
 
 | | en | pl | es |
 | --- | --- | --- | --- |
-| Dates | Jun 2026 – now | czerwiec 2026 – obecnie (or 06.2026) | junio de 2026 – actualidad |
+| Dates (research; the data still mixes styles, the owner picks one: Q49) | Jun 2026 – now | czerwiec 2026 – obecnie (or 06.2026) | junio de 2026 – actualidad |
 | School | technical secondary school (technikum) | technikum | escuela técnica secundaria (technikum) |
 | Qualification | programmer technician (technik programista; INF.03 + INF.04) | technik programista | técnico programador; never "equivalente a Técnico Superior" without homologación |
 | Exams | Polish state vocational exams INF.02 / .03 / .04 (INF.02 belongs to the IT technician title, the KKZ course) | egzaminy zawodowe INF.02 / .03 / .04 | exámenes profesionales estatales de Polonia |
@@ -91,9 +96,15 @@ laboral", "Formación académica", "Formación complementaria".
 1. Read the ad; list what it asks for (title, stack, years, language, contract, location).
 2. Map each ask to a true fact in `cv.ts`. Never add a skill, tool or level he doesn't have.
 3. Put the matches first: profile wording, skill group order, bullet order. Mirror the ad's spelling of the tools.
-4. A tailored copy is temporary: edit `cv.ts`, run `bun run cv:sheet --out .cache/cv-tailored/<company>` (gitignored),
-   hand over the PDFs, then restore the data (`git checkout -- apps/web/src/data/cv.ts`) unless the owner wants the
-   change on the public CV too.
+4. Facts may come from `cv.ts` or the project dossiers (`content/projects/*.md`, within their Public disclosure
+   section). Anything else (a tool the ad names, a WCAG level, years of experience) needs the owner's word.
+5. Location: a job in another city or country never implies relocation; ask. UK, Irish and US ads: print without the
+   photo (`--no-photo`).
+6. A tailored copy is temporary and touches only the locale(s) it is for. Copy `cv.ts` to the scratchpad first (the
+   working tree may hold uncommitted work: never restore with `git checkout`), edit, run
+   `bun run cv:sheet --locales <l> --png --out .cache/cv-tailored/<company or role slug>` (gitignored), hand over the
+   PDFs, then copy the backup back and diff to confirm. Skip the page sync, check, wiki and commit; the report lists
+   what was reordered and what couldn't be claimed.
 
 ## 7. Cutting (when it won't fit two pages)
 

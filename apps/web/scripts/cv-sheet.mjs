@@ -6,20 +6,25 @@
  * A4 pages (one duplex sheet), writes each PDF with its metadata and checks it.
  *
  *   bun run cv:sheet [--no-build] [--base <url>] [--out <dir>] [--locales en,pl] [--png] [--stress more|less]
+ *                    [--no-photo]
  *
  * `--no-build` serves the last .cache/cv-dist/ again; `--base` prints from a server you run instead.
  *
  * Fit: every size and gap of the sheet scales with one CSS variable, `--d` (0 = densest, 1 = roomiest; the body runs
- * 9.4 to 10.5 pt). The script looks for the roomiest `--d` that keeps the sheet within two pages, and takes one page
+ * 10 to 10.8 pt). The script looks for the roomiest `--d` that keeps the sheet within two pages, and takes one page
  * when the content fits one at a comfortable density. Content that overflows two pages at `--d: 0` is an error: cut it
- * (the new-cv skill lists what to cut first). Then the closing contact band moves to the foot of the last page.
+ * (the new-cv skill lists what to cut first). Then the closing contact slip moves to the foot of the last page, unless
+ * that would leave more than MAX_END_GAP of empty paper above it (then it follows the content).
  *
  * Checks (exit code 1 on a failure): pages <= 2; every font embedded as TrueType from Anybody (a Type 3 font or a
  * system fallback means a variable font or a missing glyph slipped in); the text layer starts with the name and holds
  * the email, the role and every section heading in order; the profile links are clickable; no placeholder text.
+ * Warnings: a thin last page, no room left, and entries still marked `placeholder: true` in cv.ts (facts to confirm).
  *
  * Until the owner approves the sheet [user 2026-10-08], the output goes to comps/cv/ (drafts), not public/files/.
  * `--stress more|less` duplicates or removes entries in the page before printing, to test how the sheet flows.
+ * `--no-photo` prints the variant without the photo (UK, Irish and US applications). Both variants write to
+ * .cache/cv-variants/ unless `--out` says otherwise, so they never mix with the drafts.
  * `--png` also writes page previews (pdf.js in the browser, 2x) next to each PDF.
  */
 import { spawnSync } from "node:child_process";
@@ -37,20 +42,33 @@ const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
 const argv = process.argv.slice(2);
 const arg = (name, fallback) => (argv.includes(name) ? argv[argv.indexOf(name) + 1] : fallback);
 const DIST = join(ROOT, ".cache", "cv-dist");
-const out = resolve(ROOT, arg("--out", join("..", "..", "comps", "cv")));
 const LOCALES = arg("--locales", "en,pl,es").split(",");
 const stress = arg("--stress", "");
+const noPhoto = argv.includes("--no-photo");
+const variant = `${stress ? `-stress-${stress}` : ""}${noPhoto ? "-no-photo" : ""}`;
+const out = resolve(ROOT, arg("--out", variant ? join(".cache", "cv-variants") : join("..", "..", "comps", "cv")));
 const ROUTE = "cv/print-v2";
 /** One page wins when the content fits one at this density or roomier. */
 const ONE_PAGE_MIN_D = 0.4;
 /** A last page filled less than this reads as a mistake: say so. */
 const MIN_LAST_FILL = 0.3;
+/** Above this much empty paper (mm) the contact slip follows the content instead of sitting at the page foot. */
+const MAX_END_GAP = 40;
 
 const require = createRequire(import.meta.url);
 mkdirSync(out, { recursive: true });
 
 /** A static server for the built site (the print route, its fonts and the photo are all static files). */
-const TYPES = { ".html": "text/html", ".css": "text/css", ".js": "text/javascript", ".woff2": "font/woff2", ".webp": "image/webp", ".svg": "image/svg+xml", ".png": "image/png", ".json": "application/json" };
+const TYPES = {
+  ".html": "text/html",
+  ".css": "text/css",
+  ".js": "text/javascript",
+  ".woff2": "font/woff2",
+  ".webp": "image/webp",
+  ".svg": "image/svg+xml",
+  ".png": "image/png",
+  ".json": "application/json",
+};
 function serve(dir) {
   const server = createServer((req, res) => {
     let file = normalize(join(dir, decodeURIComponent(new URL(req.url ?? "/", "http://x").pathname)));
@@ -70,7 +88,10 @@ if (!base) {
     console.log("building the site into .cache/cv-dist/ ...");
     const pkg = require.resolve("astro/package.json");
     const astro = join(dirname(pkg), JSON.parse(readFileSync(pkg, "utf8")).bin.astro);
-    const build = spawnSync(process.execPath, [astro, "build", "--outDir", DIST], { cwd: ROOT, stdio: ["ignore", "ignore", "pipe"] });
+    const build = spawnSync(process.execPath, [astro, "build", "--outDir", DIST], {
+      cwd: ROOT,
+      stdio: ["ignore", "ignore", "pipe"],
+    });
     if (build.status !== 0) throw new Error(`astro build failed:\n${build.stderr?.toString().slice(-3000)}`);
   }
   if (!existsSync(DIST)) throw new Error("no .cache/cv-dist/ yet: run without --no-build");
@@ -112,19 +133,22 @@ async function withMetadata(pdf, meta, locale) {
   return Buffer.from(await doc.save({ useObjectStreams: false }));
 }
 
-/** Every font on every page: subtype, base name. */
+/**
+ * Every font in the file: subtype, base name. Every object is scanned, not only the pages' resources: Chrome can put
+ * text inside form XObjects (transparency groups), whose fonts a page's /Resources doesn't list.
+ */
 function fontsOf(doc) {
   const fonts = new Map();
-  for (const pdfPage of doc.getPages()) {
-    const dict = pdfPage.node.Resources()?.lookupMaybe(PDFName.of("Font"), PDFDict);
-    for (const [, ref] of dict?.entries() ?? []) {
-      const font = doc.context.lookup(ref, PDFDict);
-      const name = font.lookupMaybe(PDFName.of("BaseFont"), PDFName)?.decodeText() ?? "(none)";
-      let subtype = font.lookupMaybe(PDFName.of("Subtype"), PDFName)?.decodeText();
-      const descendants = font.lookupMaybe(PDFName.of("DescendantFonts"), PDFArray);
-      if (descendants) subtype += `/${doc.context.lookup(descendants.get(0), PDFDict).lookupMaybe(PDFName.of("Subtype"), PDFName)?.decodeText()}`;
-      fonts.set(`${subtype} ${name}`, { subtype, name });
-    }
+  const nameOf = (dict, key) => dict.lookupMaybe(PDFName.of(key), PDFName)?.decodeText();
+  for (const [, font] of doc.context.enumerateIndirectObjects()) {
+    if (!(font instanceof PDFDict) || nameOf(font, "Type") !== "Font") continue;
+    let subtype = nameOf(font, "Subtype") ?? "(none)";
+    // A CID font is reported with its Type0 parent.
+    if (subtype.startsWith("CIDFont")) continue;
+    const name = nameOf(font, "BaseFont") ?? "(none)";
+    const descendants = font.lookupMaybe(PDFName.of("DescendantFonts"), PDFArray);
+    if (descendants) subtype += `/${nameOf(doc.context.lookup(descendants.get(0), PDFDict), "Subtype")}`;
+    fonts.set(`${subtype} ${name}`, { subtype, name });
   }
   return [...fonts.values()];
 }
@@ -174,7 +198,11 @@ async function previews(pdf, stem) {
     const path = new URL(route.request().url()).pathname;
     if (path === "/doc.pdf") return route.fulfill({ body: pdf, contentType: "application/pdf" });
     if (files[path]) return route.fulfill({ body: readFileSync(files[path]), contentType: "text/javascript" });
-    return route.fulfill({ status: 200, contentType: "text/html", body: "<!doctype html><body style='margin:0;background:#888'></body>" });
+    return route.fulfill({
+      status: 200,
+      contentType: "text/html",
+      body: "<!doctype html><body style='margin:0;background:#888'></body>",
+    });
   });
   await viewer.goto("http://cv.local/");
   const count = await viewer.evaluate(async () => {
@@ -220,6 +248,7 @@ for (const locale of LOCALES) {
   if (!response?.ok()) throw new Error(`${locale}: ${response?.status()} for /${ROUTE}/; is the preview running?`);
   await page.evaluate(() => document.fonts.ready);
   if (stress) await applyStress(stress);
+  if (noPhoto) await page.evaluate(() => document.querySelector(".cs-photo")?.remove());
   const meta = await page.evaluate(() => {
     const get = (name) => document.querySelector(`meta[name="${name}"]`)?.getAttribute("content") ?? "";
     return {
@@ -232,6 +261,9 @@ for (const locale of LOCALES) {
       headings: [...document.querySelectorAll("[data-cv-heading]")].map((h) => h.textContent.trim()),
       must: [...document.querySelectorAll("[data-cv-must]")].map((el) => el.getAttribute("data-cv-must")),
       links: [...document.querySelectorAll("[data-cv-link]")].map((el) => el.getAttribute("href")),
+      placeholders: [
+        ...new Set([...document.querySelectorAll("[data-cv-placeholder]")].map((el) => el.getAttribute("data-cv-placeholder"))),
+      ],
       // Every text block in DOM order (its first characters, spaces dropped): the PDF must say them in this order.
       order: [...document.querySelectorAll("body :is(h1, h2, h3, p, li)")]
         .filter((el) => !el.closest("[aria-hidden='true']") && !el.querySelector("p, li"))
@@ -254,8 +286,9 @@ for (const locale of LOCALES) {
     target = one >= ONE_PAGE_MIN_D ? 1 : 2;
     d = target === 1 ? one : await roomiest(2);
   }
-  // Compose the last page: the contact slip goes to the foot of the last page, whatever the content length. The
-  // largest top margin (--end-gap) that keeps the page count is found by halving, to ~2 mm.
+  // Compose the last page: the contact slip goes to the foot of the last page. The largest top margin (--end-gap)
+  // that keeps the page count is found by halving, to ~2 mm. A short last page keeps the slip under its content: a
+  // band alone at the foot of a mostly empty page reads as a layout error.
   const before = await textOf(await pdfAt(d));
   const contentFill = before.at(-1)?.fill ?? 0;
   const gapAt = async (mm) => {
@@ -268,11 +301,11 @@ for (const locale of LOCALES) {
     if ((await gapAt(mid)) === before.length) lo = mid;
     else hi = mid;
   }
-  const gap = Math.max(0, lo - 0.5);
+  const gap = lo - 0.5 > MAX_END_GAP ? 0 : Math.max(0, lo - 0.5);
   await gapAt(gap);
   const printed = await pdfAt(d);
   const pdf = await withMetadata(printed, meta, locale);
-  const file = join(out, `mateusz-muszarski-cv-${locale}${stress ? `-stress-${stress}` : ""}.pdf`);
+  const file = join(out, `mateusz-muszarski-cv-${locale}${variant}.pdf`);
   writeFileSync(file, pdf);
 
   // Checks.
@@ -305,16 +338,21 @@ for (const locale of LOCALES) {
     const found = squeezed.indexOf(start.toLocaleUpperCase(locale), cursor);
     if (found < 0) {
       const anywhere = squeezed.indexOf(start.toLocaleUpperCase(locale)) >= 0;
-      problems.push(`reading order: "${start}" ${anywhere ? "comes too early in the text layer" : "is missing from the text layer"}`);
+      problems.push(
+        `reading order: "${start}" ${anywhere ? "comes too early in the text layer" : "is missing from the text layer"}`,
+      );
     } else cursor = found;
   }
-  for (const must of meta.must) if (!upper.includes(must.toLocaleUpperCase(locale))) problems.push(`"${must}" missing from the text layer`);
+  for (const must of meta.must)
+    if (!upper.includes(must.toLocaleUpperCase(locale))) problems.push(`"${must}" missing from the text layer`);
   for (const href of meta.links) if (!links.includes(href)) problems.push(`link ${href} is not clickable`);
   if (/PLACEHOLDER|undefined|\[object/i.test(all)) problems.push("placeholder or broken text in the PDF");
   const fill = contentFill;
   const warnings = [];
   if (pages === 2 && fill < MIN_LAST_FILL) warnings.push(`page 2 holds only ${Math.round(fill * 100)}% content`);
   if (d === 0 && pages === 2) warnings.push("at the densest setting: no room left; cut before adding");
+  if (meta.placeholders.length)
+    warnings.push(`facts still to confirm (placeholder: true in cv.ts): ${meta.placeholders.join("; ")}`);
 
   const shots = argv.includes("--png") ? await previews(pdf, file.replace(/\.pdf$/, "")) : [];
   report[locale] = {
@@ -333,12 +371,12 @@ for (const locale of LOCALES) {
   };
   if (problems.length) failed = true;
   console.log(
-    `${locale}: ${pages} page(s), --d ${report[locale].d}, last page ${Math.round(fill * 100)}% content (+${report[locale].endGapMm} mm to the band), ${report[locale].kb} KB` +
+    `${locale}: ${pages} page(s), --d ${report[locale].d}, last page ${Math.round(fill * 100)}% content (${gap ? `+${report[locale].endGapMm} mm to the slip` : "slip follows the content"}), ${report[locale].kb} KB` +
       `${problems.length ? `\n  FAIL ${problems.join("\n  FAIL ")}` : ""}${warnings.length ? `\n  warn ${warnings.join("\n  warn ")}` : ""}`,
   );
   if (target !== pages) console.log(`  (fit aimed at ${target} page(s))`);
 }
-writeFileSync(join(out, `cv-sheet-report${stress ? `-stress-${stress}` : ""}.json`), `${JSON.stringify(report, null, 2)}\n`);
+writeFileSync(join(out, `cv-sheet-report${variant}.json`), `${JSON.stringify(report, null, 2)}\n`);
 await browser.close();
 server?.close();
 if (failed) process.exitCode = 1;

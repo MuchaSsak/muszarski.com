@@ -104,6 +104,18 @@ The Stack section is cut [user 2026-10-05: recruiters don't need a whole section
 chapter (`StackList`). Patterns came from `comps/poster-r3.html`; the owner's feedback pass of 2026-10-06 (header, CV
 button, flags, single theme, chapters, AI, credentials, writing, contact, footer) is folded into the rows above.
 
+## CV sheet (draft 2026-10-08)
+
+The PDF CV is a poster on paper in the Cobalt palette (`components/cv/CvSheet.astro`; waits for the owner's approval):
+a full-bleed cobalt band (photo with a pink hard shadow, the fitted name in Anybody Black, the hero sticker's twin as
+outlines, role and place), a navy contact bar with the links spelled out, then a ledger: section labels (expanded caps,
+a pink tab, a navy rule to the edge), dates in a 27 mm cobalt rail, condensed titles, pink square bullets. Page 2 has an
+outline running head and the page number; a pink contact slip with a navy hard shadow closes the last page, pinned to
+its foot (or under the content when the page is short). Static Anybody instances only (a variable font prints as Type
+3); one density variable `--d` scales the body (10-10.8 pt, the print floor) and every gap so any amount of content
+fills at most two pages. A no-photo variant (UK, IE, US) keeps the band whole. Pink is never text on white. Anatomy,
+invariants and their reasons: `.claude/skills/new-cv/references/template.md`.
+
 ## Motion
 
 - **Vocabulary:** rise (10 px settle, never hidden), draw (scaleX rules), pop (sticker), spin, marquee, letter accordion, hard
