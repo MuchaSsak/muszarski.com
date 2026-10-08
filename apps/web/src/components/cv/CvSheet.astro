@@ -88,6 +88,10 @@ const credentials: CvCredential[] = cvQualifications();
 const linkText = (link: { label: string; href: string }) => (/github\.com\//.test(link.href) ? short(link.href) : link.label);
 const certMeta = (item: CertItem) => tx(item.when[locale]);
 const clause = (CV.clause as Partial<Record<string, string>>)[locale];
+// Interests as tags, as on the /cv/ page [user 2026-10-08]: the line split at its commas, each behind its icon when the
+// counts agree.
+const interests = l(CV.interests).replace(/\.$/, "").split(/,\s+/);
+const interestIcons = interests.length === CV.interestIcons.length ? CV.interestIcons : [];
 // The web version of this CV: printed without the locale (vercel.json sends a typed address to the reader's
 // language) [user 2026-10-08], linked to the same language as the sheet.
 const webCv = new URL(pathTo(locale, "cv/"), siteUrl);
@@ -285,7 +289,14 @@ const FRAME = '<path fill="none" stroke="#0a0d33" stroke-width="1.2" d="M.6.6h43
     {CV.interests[locale] && (
       <div>
         <h2 data-cv-heading>{sections.interests}</h2>
-        <p>{l(CV.interests)}</p>
+        <ul class="cs-likes">
+          {interests.map((interest, i) => (
+            <li>
+              {interestIcons[i] && <Icon name={interestIcons[i]} inline class="cs-likes-ico" />}
+              {interest.replace(/ /g, NBSP)}
+            </li>
+          ))}
+        </ul>
       </div>
     )}
   </section>
@@ -705,10 +716,11 @@ const FRAME = '<path fill="none" stroke="#0a0d33" stroke-width="1.2" d="M.6.6h43
     font: 700 var(--fs) / 1.25 "CV Strong";
   }
 
-  /* Languages and interests side by side: two short blocks, one row. */
+  /* Languages and interests side by side: two short blocks, one row. The tags get the wider column (two rows of them,
+     not three). */
   .cs-pair {
     display: grid;
-    grid-template-columns: 1fr 1.35fr;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.8fr);
     gap: 6mm;
     break-inside: avoid;
   }
@@ -721,6 +733,27 @@ const FRAME = '<path fill="none" stroke="#0a0d33" stroke-width="1.2" d="M.6.6h43
     height: 1em;
     margin-right: 0.5em;
     vertical-align: -0.14em;
+  }
+  /* Interests: outlined tags with their icons, the /cv/ page's chips on paper. */
+  .cs-likes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.2mm;
+    padding: 0;
+    list-style: none;
+  }
+  .cs-likes li {
+    display: flex;
+    align-items: center;
+    gap: 1mm;
+    padding: 0.3mm 1.6mm 0.3mm 1.2mm;
+    border: 0.35mm solid var(--navy);
+    font: 700 var(--t-meta) / 1.2 "CV Strong";
+  }
+  .cs-likes-ico {
+    flex: none;
+    width: 1.2em;
+    height: 1.2em;
   }
 
   /* The contact slip: the site's contact field (pink) with a hard navy shadow, at the foot of the last page

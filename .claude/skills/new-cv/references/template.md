@@ -39,7 +39,8 @@ page 2 │ MATEUSZ MUSZARSKI · CV                    2 / 2 │  @page margin bo
        │ date │ title · issuer, then cert lines or 1 line │  .cs-cred; an optional gain line (↗, cobalt bold):
        │      │ ↗ what it gave him                         │    what it gave him (`gain`)
        │ ▪ EDUCATION                                     │  an entry list
-       │ ▪ LANGUAGES (flags)  │ ▪ INTERESTS              │  .cs-pair; the flags are drawn SVG
+       │ ▪ LANGUAGES (flags)  │ ▪ INTERESTS              │  .cs-pair; the flags are drawn SVG; interests
+       │                      │ [(i) tag] [(i) tag] …    │    as outlined tags (`CV.interestIcons`)
        │ ┌ CONTACT  hi@…  web CV · GitHub      [QR] ┐▌  │  pink slip pinned to the last page's foot; the QR
        │ └──────────────────────────────────────────┘▌  │    code (white tile) opens the portfolio
        │ (pl) recruitment clause, small                  │
@@ -92,7 +93,8 @@ global reset, `--d` default, metadata, digest), `styles/cv-fonts.css` + `lib/cv-
 - **Below 0, gaps only** (2026-10-08): when the sheet overflows two pages at `d = 0`, the fit may go down to
   `MIN_D` (-0.5). There `--fs` and `--lh` stay at their floor (`max(var(--d), 0)`) and only the gaps tighten (section
   gap 3.7 mm at -0.5). The report warns `gaps tightened below the default`. At the rollout English printed at 0,
-  Polish at -0.39 and Spanish at -0.24, after their wording was brought to the English line count (`content.md` § 5).
+  Polish at -0.39 and Spanish at -0.24, after their wording was brought to the English line count (`content.md` § 5);
+  with the interest tags (two rows) English prints at -0.04, Polish at -0.43, Spanish at -0.27.
   Beyond `MIN_D` the content must be cut (`content.md` § 7).
 
 ## 3. Tokens

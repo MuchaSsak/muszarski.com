@@ -119,7 +119,7 @@ ledger: section labels (expanded caps, a pink tab, a navy rule to the edge), dat
 titles, pink square bullets, a little more air between entries and sections than v7 (v8). No project logos (the owner
 dropped them, 2026-10-08). Skills and qualifications: soft skills as icon, skill and one line of proof in two columns,
 the tools as small rows per group under an outline icon, then the credentials (the formal one first, then newest
-first), some with a gain line in cobalt bold (what it gave him). Languages carry drawn flags. Page 2 has an outline running head and the page number;
+first), some with a gain line in cobalt bold (what it gave him). Languages carry drawn flags; interests are outlined tags with Tabler icons, the /cv/ page's chips [user 2026-10-08]. Page 2 has an outline running head and the page number;
 a pink contact slip with a navy hard shadow and a QR code to the portfolio closes the last page, pinned to its foot (or
 under the content when the page is short); it prints the locale-free `muszarski.com/cv` (`site/i18n.md`). Icons are
 Tabler outlines; no tool, company or project logos (`assets.md` § CV marks). Static Anybody instances only (a variable font prints as Type

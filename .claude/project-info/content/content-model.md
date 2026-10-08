@@ -59,13 +59,13 @@
   Cetuspro, Linkoglot, Portfolio) · skills and qualifications (soft skills with a line of proof, technologies in named
   groups, then the qualifications: `CV.qualifications` lists which credentials and in what order, each with its `cv`
   override: a CV title or date, one summary line instead of the certificates, a `gain` line) · education · languages
-  (Polish, English; flags) + interests · contact slip (QR code) · (pl) clause. Writing and cutting rules:
+  (Polish, English; flags) + interests (tags with icons) · contact slip (QR code) · (pl) clause. Writing and cutting rules:
   `.claude/skills/new-cv/references/content.md`.
 - **The web page shows the same content in its own layout** [user 2026-10-08: "it would be too boring if it was the
   same as pdf ... display all information that is on the cv itself"]: same sections, order, words and links; the
   screen adds layout, colour, the projects' real media and copy buttons (`design.md` § CV page).
 - **Locales:** pl and es run ~15% longer than en; they are written to the English line count, and the fit may tighten
-  the gaps (never the type) below `--d 0` (2026-10-08: en 0, pl -0.39, es -0.24). es is unreviewed (P12). The digest
+  the gaps (never the type) below `--d 0` (2026-10-08, with the interest tags: en -0.04, pl -0.43, es -0.27). es is unreviewed (P12). The digest
   picks a partial text (the pl-only clause) per locale, so it changes the pl digest alone.
 
 ## Credential

@@ -719,7 +719,7 @@ export const CV = {
     pl: "Kalistenika, podróże, motocykle, filmy, muzyka każdego rodzaju, granie ze znajomymi.",
     es: "Calistenia, viajes, motos, cine, música de todo tipo, jugar con amigos.",
   } satisfies Text,
-  /** One outline icon per interest, in the line's order (the /cv/ page shows them as tags; none if the counts differ). */
+  /** One outline icon per interest, in the line's order (tags on the sheet and /cv/; none if the counts differ). */
   interestIcons: [
     "tb:barbell",
     "tb:plane",
