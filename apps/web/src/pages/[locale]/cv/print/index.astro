@@ -1,18 +1,19 @@
 ---
 /**
- * The CV as one plain, ATS-safe column for the PDF (`bun run cv:pdf` prints this page with Playwright). Same data and
- * component as /cv/. noindex and out of the sitemap; no site chrome, no motion, the one site font.
+ * The CV sheet, the source of the CV PDFs (`bun run cv:sheet` prints it with Playwright into public/files/; design.md
+ * § CV sheet). Same data as /cv/ (`~/data/cv`). noindex and out of the sitemap; no site chrome, no motion, no global
+ * CSS: only the sheet's static font instances (a variable font prints as Type 3 glyphs, scripts/cv-fonts.mjs).
  */
-import "~/styles/global.css";
+import "~/styles/cv-fonts.css";
 
 import { createHash } from "node:crypto";
 
 import { t } from "lingui-for-astro/macro";
 
-import CvBody from "~/components/cv/CvBody.astro";
+import CvSheet from "~/components/cv/CvSheet.astro";
 import { CV, cvDigestSource } from "~/data/cv";
 import { SITE } from "~/data/site";
-import { FONT_FILES } from "~/lib/fonts.gen";
+import { CV_FONT_FILES } from "~/lib/cv-fonts.gen";
 import { localeStaticPaths, pathTo } from "~/lib/routes";
 
 export const getStaticPaths = localeStaticPaths;
@@ -20,10 +21,13 @@ export const getStaticPaths = localeStaticPaths;
 const locale = Astro.locals.locale;
 const site = Astro.site ?? new URL("http://localhost:4321");
 const home = new URL(pathTo(locale), site).href;
-const font = FONT_FILES.find((file) => file.preload);
 const cvLabel = t`CV`;
-// Which CV data this page shows; `bun run cv:pdf` records it next to the PDF and cv.test.ts compares.
-const digest = createHash("sha256").update(cvDigestSource(locale)).digest("hex").slice(0, 16);
+// Which CV data this sheet shows; `bun run cv:sheet` records it next to the PDF.
+const digest = createHash("sha256").update(cvDigestSource(locale, CV)).digest("hex").slice(0, 16);
+const keywords = CV.tools
+  .flatMap((group) => group.tools)
+  .map((tool) => (typeof tool === "string" ? tool : tool[locale]))
+  .join(", ");
 ---
 
 <!doctype html>
@@ -32,63 +36,63 @@ const digest = createHash("sha256").update(cvDigestSource(locale)).digest("hex")
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="robots" content="noindex, nofollow" />
-    <title>{SITE.name} – {cvLabel}</title>
+    <title>{`${SITE.name} – ${cvLabel} – ${CV.title[locale]}`}</title>
     <meta name="author" content={SITE.name} />
-    <meta name="description" content={CV.title[locale]} />
+    <meta name="description" content={CV.summary[locale]} />
+    <meta name="keywords" content={keywords} />
+    <meta name="cv-site" content={home} />
     <meta name="cv-digest" content={digest} />
-    {font && <link rel="preload" href={font.href} as="font" type="font/woff2" crossorigin />}
+    {CV_FONT_FILES.map((href) => (
+      <link rel="preload" href={href} as="font" type="font/woff2" crossorigin />
+    ))}
   </head>
-  <body class="print-body">
-    <header class="ph">
-      <h1>{SITE.name}</h1>
-      <p class="pt">{CV.title[locale]}</p>
-      <p class="pa">{CV.availability[locale]}</p>
-    </header>
-    <CvBody variant="print" siteUrl={home} />
+  <body>
+    <CvSheet siteUrl={home} />
   </body>
 </html>
 
 <style is:global>
+  /* No side margins: Chrome clips anything drawn into a page margin, so the sheet keeps its 14 mm edges as padding
+     and the bands bleed to the paper edge. Page 1 has no top margin and no margin text: the band opens it and the
+     text layer must start with the name (ATS). Page 2 carries a running head and the page number, so a loose second
+     sheet still says whose it is; both are outlines (their `content` comes from cv-fonts.css), so neither a second
+     name nor a "2 / 2" lands in the text layer. */
   @page {
     size: A4;
-    margin: 12mm 14mm;
+    margin: 18mm 0 14mm;
+    /* One font size in both boxes, so the two outlines share a baseline. */
+    @top-left {
+      padding: 0 0 3.2mm 14mm;
+      vertical-align: bottom;
+      font-size: 7.6pt;
+    }
+    @top-right {
+      padding: 0 14mm 3.2mm 0;
+      vertical-align: bottom;
+      font-size: 7.6pt;
+    }
   }
-  /* Light canvas: the site's dark color-scheme would paint the page margins dark. */
+  @page :first {
+    margin: 0 0 14mm;
+    @top-left {
+      content: none;
+    }
+    @top-right {
+      content: none;
+    }
+  }
   :root {
+    /* The sheet's density (CvSheet.astro); scripts/cv-sheet.mjs overrides it on <html> while it fits the pages. */
+    --d: 0.6;
     color-scheme: light;
-    background: #fff !important;
-  }
-  body.print-body {
     background: #fff;
-    color: #0a0d33;
-    min-height: 0;
   }
-  body.print-body {
-    max-width: 180mm;
-    margin: 0 auto;
-    padding: 0;
-    font-size: 10.5pt;
-  }
-  .print-body .ph {
-    margin-bottom: 12pt;
-    padding-bottom: 8pt;
-    border-bottom: 3pt solid #0a0d33;
-  }
-  .print-body h1 {
+  body {
     margin: 0;
-    font-weight: 900;
-    font-size: 26pt;
-    line-height: 1;
-    text-transform: uppercase;
-    font-stretch: 80%;
+    background: #fff;
   }
-  .print-body .pt {
-    margin: 4pt 0 0;
-    font-weight: 700;
-    font-size: 12pt;
-  }
-  .print-body .pa {
-    margin: 2pt 0 0;
-    font-size: 10pt;
+  /* The sheet sets every margin it wants; unscoped, so any class rule of the sheet wins. */
+  :is(h1, h2, h3, p, ul) {
+    margin: 0;
   }
 </style>

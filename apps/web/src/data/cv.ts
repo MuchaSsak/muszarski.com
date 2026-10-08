@@ -3,13 +3,15 @@ import { isLocale, type Locale } from "@package/shared/locales";
 import { type IconName } from "~/lib/icons.gen";
 
 /**
- * THE CV (wiki: content/content-model.md § CV). One source renders the `/cv/` page, the print route the PDF is made
- * from (`bun run cv:pdf`) and the home credentials. Never edit the page or the PDF alone: change this file, then run
- * `bun run cv:pdf`; `cv.test.ts` fails while a PDF was made from older data.
+ * THE CV (wiki: content/content-model.md § CV; the /new-cv skill drives every change). One source renders the `/cv/`
+ * page, the CV sheet the PDFs are printed from (`cv/print/`, `bun run cv:sheet`) and the home Competences. Never edit
+ * the page or the PDF alone: change this file, then run `bun run cv:sheet`; `cv.test.ts` fails while a PDF was made
+ * from older data.
  *
  * Text is per locale (long-form content, not UI strings: i18n.md). Facts come from the wiki; every value that is not
  * real yet is marked `placeholder: true` (or PLACEHOLDER) and logged in placeholders.md (P2, P3, P4, P11, P16).
- * Spanish is machine-assisted and unreviewed (P12).
+ * Spanish is machine-assisted and unreviewed (P12). The content was approved in English first [user 2026-10-08], then
+ * localized.
  */
 export type Text = Record<Locale, string>;
 
@@ -23,6 +25,8 @@ export interface CvEntry {
   links?: { label: string; href: string }[];
   /** A one-line version for the home "Experience" card: the place and what it was. */
   short?: { name: string; note: Text };
+  /** The role he holds now (the /cv/ page marks it live). */
+  current?: boolean;
   placeholder?: boolean;
 }
 
@@ -42,7 +46,39 @@ export interface Credential {
   places?: Text[] | undefined;
   /** The certificates behind a card, each with its own proof: a verify link, a code to check, or both. */
   items?: CertItem[] | undefined;
+  /** How the CV shows it where that differs from the home card (`CV.qualifications` lists which ones it shows). */
+  cv?: CvOverride | undefined;
   placeholder?: boolean;
+}
+
+/** A credential's CV version [user 2026-10-08]: a shorter title or date, one summary line, what it gave him. */
+export interface CvOverride {
+  title?: Text;
+  issuer?: Text;
+  when?: Text;
+  summary?: Text;
+  /** What it gave him: one line the CV sets apart in the accent colour [user 2026-10-08]. */
+  gain?: Text;
+  /** One summary line in place of a line per certificate (the certificates stay on the home card). */
+  summaryOnly?: boolean;
+}
+
+/** A credential as the CV shows it: the home card with its CV override applied. */
+export type CvCredential = Credential & { gain?: Text | undefined };
+
+/** A soft skill: what he's good at, and one line that shows it (facts from this file and the owner's words). */
+export interface SoftSkill {
+  icon: IconName;
+  name: Text;
+  line: Text;
+}
+
+/** A group of tools he works with, under an outline icon (Tabler, MIT); a tool's name is the same in every locale
+ * unless it holds words. */
+export interface ToolGroup {
+  icon: IconName;
+  name: Text;
+  tools: (string | Text)[];
 }
 
 export interface CertItem {
@@ -65,10 +101,12 @@ const YOUTHPASS = (code: string) => ({ href: "https://www.youthpass.eu/en/verify
 const same = (value: string): Text => ({ en: value, pl: value, es: value });
 
 export const CV = {
+  // [user 2026-10-08] "call me more like on website, full-stack product engineer": the hero's role line, in the hero's
+  // words per locale (the Polish hero keeps the English title).
   title: {
-    en: "Full-stack developer (React, Node.js, TypeScript)",
-    pl: "Programista full stack (React, Node.js, TypeScript)",
-    es: "Desarrollador full stack (React, Node.js, TypeScript)",
+    en: "Full-stack product engineer",
+    pl: "Full-stack product engineer",
+    es: "Ingeniero de producto full stack",
   } satisfies Text,
   // PLACEHOLDER (P4, Q3): role type, contract and mode wait for the owner.
   availability: {
@@ -79,9 +117,9 @@ export const CV = {
   // PLACEHOLDER (P3, Q27): region line.
   location: { en: "Pomorskie, Poland", pl: "Pomorskie, Polska", es: "Pomerania, Polonia" } satisfies Text,
   summary: {
-    en: "Full-stack developer who builds web and mobile products end to end, from the business problem to the shipped app, since 2022. I work in TypeScript, React, Next.js, Astro, React Native (Expo), Node.js and Supabase/Postgres. I use AI agents (Claude Code) as leverage and keep the decisions and the verification: tests, accessibility and performance checks on every change.",
-    pl: "Programista full stack, który od 2022 roku buduje produkty webowe i mobilne od początku do końca: od problemu biznesowego do wdrożonej aplikacji. Pracuję w TypeScript, React, Next.js, Astro, React Native (Expo), Node.js i Supabase/Postgres. Agentów AI (Claude Code) używam jako dźwigni, a decyzje i weryfikację zostawiam sobie: testy, dostępność i wydajność sprawdzane przy każdej zmianie.",
-    es: "Desarrollador full stack que construye productos web y móviles de principio a fin, desde el problema de negocio hasta la app publicada, desde 2022. Trabajo con TypeScript, React, Next.js, Astro, React Native (Expo), Node.js y Supabase/Postgres. Uso agentes de IA (Claude Code) como palanca y me quedo con las decisiones y la verificación: tests, accesibilidad y rendimiento en cada cambio.",
+    en: "Full-stack product engineer who builds web and mobile products end to end, from the business problem to the shipped app, since 2022. I work in TypeScript, React, Next.js, Astro, React Native (Expo), Node.js and Supabase/Postgres. I use AI agents (Claude Code) as leverage and keep the decisions and the verification: tests, accessibility and performance checks on every change.",
+    pl: "Full-stack product engineer: od 2022 roku buduję produkty webowe i mobilne od początku do końca, od problemu biznesowego do wdrożonej aplikacji. Pracuję w TypeScript, React, Next.js, Astro, React Native (Expo), Node.js i Supabase/Postgres. Agentów AI (Claude Code) używam jako dźwigni, a decyzje i weryfikację zostawiam sobie: testy, dostępność i wydajność sprawdzane przy każdej zmianie.",
+    es: "Ingeniero de producto full stack que construye productos web y móviles de principio a fin, desde el problema de negocio hasta la app publicada, desde 2022. Trabajo con TypeScript, React, Next.js, Astro, React Native (Expo), Node.js y Supabase/Postgres. Uso agentes de IA (Claude Code) como palanca y me quedo con las decisiones y la verificación: tests, accesibilidad y rendimiento en cada cambio.",
   } satisfies Text,
 
   experience: [
@@ -91,6 +129,7 @@ export const CV = {
       org: { en: "Software house, remote", pl: "Software house, zdalnie", es: "Software house, en remoto" },
       // [user 2026-10-06] "june to currently".
       when: { en: "June 2026 – now", pl: "czerwiec 2026 – obecnie", es: "junio de 2026 – actualidad" },
+      current: true,
       short: {
         name: "Cetuspro",
         note: {
@@ -99,21 +138,12 @@ export const CV = {
           es: "en remoto, proyectos comerciales reales",
         },
       },
+      // PstrykWeb has its own entry under Selected projects [user 2026-10-08]; the job keeps his concrete part of it.
       bullets: [
         {
-          en: "Real commercial projects for a software house, worked on remotely.",
-          pl: "Prawdziwe projekty komercyjne dla software house'u, w pracy zdalnej.",
-          es: "Proyectos comerciales reales para una software house, en remoto.",
-        },
-        {
-          en: "Built PstrykWeb for the software house Cetuspro: bespoke websites for local businesses, ordered through one online form.",
-          pl: "Zbudowałem PstrykWeb dla software house'u Cetuspro: strony na zamówienie dla lokalnych firm, zamawiane przez jeden formularz online.",
-          es: "Construí PstrykWeb para la software house Cetuspro: webs a medida para negocios locales, encargadas con un solo formulario online.",
-        },
-        {
-          en: "Built the public konfigurator, the online order form (Next.js, TypeScript, Vercel).",
-          pl: "Zbudowałem publiczny konfigurator, czyli formularz zamówienia online (Next.js, TypeScript, Vercel).",
-          es: "Construí el configurador público, el formulario de pedido online (Next.js, TypeScript, Vercel).",
+          en: "Real commercial projects; built the public configurator of PstrykWeb, the online order form (Next.js, TypeScript, Vercel).",
+          pl: "Prawdziwe projekty komercyjne; zbudowałem publiczny konfigurator PstrykWeb, czyli formularz zamówienia online (Next.js, TypeScript, Vercel).",
+          es: "Proyectos comerciales reales; construí el configurador público de PstrykWeb, el formulario de pedido online (Next.js, TypeScript, Vercel).",
         },
       ],
     },
@@ -131,53 +161,23 @@ export const CV = {
           es: "6 semanas, construir con agentes de IA",
         },
       },
+      // "15-requirement" broke at its hyphen and extractors joined it into "15requirement". The test and security
+      // counts are off the CV [user 2026-10-08] (the home chapter keeps them).
       bullets: [
         {
-          en: "Built Clockful, a role-based time tracker, with AI agents only, from a 15-requirement spec in about 9 days (an estimate from the repo dates).",
-          pl: "Zbudowałem Clockful, aplikację do mierzenia czasu pracy z rolami, wyłącznie z agentami AI, na podstawie specyfikacji z 15 wymaganiami, w około 9 dni (szacunek z dat w repozytorium).",
-          es: "Construí Clockful, un control de horas con roles, solo con agentes de IA, a partir de una especificación de 15 requisitos en unos 9 días (estimación por las fechas del repositorio).",
-        },
-        {
-          en: "118 automated tests (49 Vitest, 69 Playwright); Postgres row-level security on all 5 tables, with an audit trigger.",
-          pl: "118 testów automatycznych (49 Vitest, 69 Playwright); row-level security w Postgresie na wszystkich 5 tabelach i trigger audytowy.",
-          es: "118 tests automáticos (49 Vitest, 69 Playwright); row-level security de Postgres en las 5 tablas, con un trigger de auditoría.",
-        },
-      ],
-    },
-    {
-      id: "linkoglot",
-      title: {
-        en: "Founder and developer, Linkoglot",
-        pl: "Twórca i programista, Linkoglot",
-        es: "Fundador y desarrollador, Linkoglot",
-      },
-      org: { en: "Own product", pl: "Własny produkt", es: "Producto propio" },
-      when: same("2026"),
-      links: [
-        { label: "App Store", href: "https://apps.apple.com/app/id6768303316" },
-        { label: "Google Play", href: "https://play.google.com/store/apps/details?id=com.linkoglot.app" },
-      ],
-      bullets: [
-        {
-          en: "Designed, built and shipped an AI language-learning app to the App Store and Google Play, solo: snap a photo to get flashcards, quizzes and voice practice.",
-          pl: "Samodzielnie zaprojektowałem, zbudowałem i wydałem w App Store i Google Play aplikację do nauki języków z AI: zdjęcie zamienia się w fiszki, quizy i ćwiczenia mówienia.",
-          es: "Diseñé, construí y publiqué en solitario en App Store y Google Play una app de idiomas con IA: una foto se convierte en tarjetas, tests y práctica oral.",
-        },
-        {
-          en: "Free trial, then monthly or yearly plans through RevenueCat; 30 languages with Lingui (Expo, React Native, Supabase).",
-          pl: "Darmowy okres próbny, potem plan miesięczny lub roczny przez RevenueCat; 30 języków z Lingui (Expo, React Native, Supabase).",
-          es: "Prueba gratuita y después planes mensuales o anuales con RevenueCat; 30 idiomas con Lingui (Expo, React Native, Supabase).",
+          en: "Built Clockful, a role-based time tracker, with AI agents only, from a spec of 15 requirements in about 9 days (an estimate from the repo dates).",
+          pl: "Zbudowałem Clockful, aplikację do ewidencji czasu pracy z rolami, wyłącznie z agentami AI, ze specyfikacji 15 wymagań w około 9 dni (szacunek z dat w repozytorium).",
+          es: "Construí Clockful, un control de horas con roles, solo con agentes de IA, a partir de 15 requisitos en unos 9 días (estimación según las fechas del repositorio).",
         },
       ],
     },
     {
       id: "beniaminek",
-      // Soft skills and social projects lead, not the programming [user 2026-10-07].
-      title: { en: "Intern", pl: "Praktykant", es: "Becario" },
-      org: { en: "KS Beniaminek 03, sports club", pl: "KS Beniaminek 03, klub sportowy", es: "KS Beniaminek 03, club deportivo" },
-      // PLACEHOLDER (P16): the month and year and the social projects by name, owner confirms [user 2026-10-06: one month].
-      when: { en: "1 month", pl: "1 miesiąc", es: "1 mes" },
-      placeholder: true,
+      // Soft skills and social projects lead, not the programming [user 2026-10-07]. [user 2026-10-08] "ks beniaminek
+      // was 2025"; title and place like the other internships.
+      title: { en: "Intern, KS Beniaminek 03", pl: "Praktykant, KS Beniaminek 03", es: "Becario, KS Beniaminek 03" },
+      org: { en: "Sports club", pl: "Klub sportowy", es: "Club deportivo" },
+      when: { en: "2025 · 1 month", pl: "2025 · 1 miesiąc", es: "2025 · 1 mes" },
       short: {
         name: "KS Beniaminek 03",
         note: {
@@ -189,8 +189,8 @@ export const CV = {
       bullets: [
         {
           en: "Social projects at a sports club: work with people, communication and teamwork.",
-          pl: "Projekty społeczne w klubie sportowym: praca z ludźmi, komunikacja i praca w zespole.",
-          es: "Proyectos sociales en un club deportivo: trabajo con personas, comunicación y trabajo en equipo.",
+          pl: "Projekty społeczne w klubie: praca z ludźmi, komunikacja i praca w zespole.",
+          es: "Proyectos sociales en el club: trabajo con personas, comunicación y trabajo en equipo.",
         },
       ],
     },
@@ -200,18 +200,23 @@ export const CV = {
       // PLACEHOLDER (P2, P16): years of paid work, owner confirms.
       when: { en: "Since 2022", pl: "Od 2022", es: "Desde 2022" },
       placeholder: true,
+      // [user 2026-10-08] described generally, with two examples: the yws.lu landing (Youth Work Synergy, a nonprofit
+      // that houses young people in Luxembourg: yws.lu, checked 2026-10-08) and the youth-space app his school's
+      // principal gave him an award for (gallery.ts). lingui-translate-ai is off the CV. yws.lu is client work: rights
+      // `check` (projects.ts, placeholders.md P10) until the client's OK.
       bullets: [
         {
-          en: "Websites and 3D landing pages for clients (React, React Three Fiber, GSAP).",
-          pl: "Strony i landingi 3D dla klientów (React, React Three Fiber, GSAP).",
-          es: "Webs y landings 3D para clientes (React, React Three Fiber, GSAP).",
+          en: "Landing pages for businesses and organisations, such as a 3D site for Youth Work Synergy, a youth housing nonprofit in Luxembourg (React, React Three Fiber, GSAP).",
+          pl: "Landingi dla firm i organizacji, np. strona 3D dla Youth Work Synergy, luksemburskiej organizacji mieszkaniowej dla młodzieży (React, React Three Fiber, GSAP).",
+          es: "Landings para empresas y organizaciones, como una web 3D para Youth Work Synergy, una ONG de vivienda juvenil de Luxemburgo (React, React Three Fiber, GSAP).",
         },
         {
-          en: "lingui-translate-ai: an npm CLI that translates Lingui catalogs with an LLM, grown out of Linkoglot.",
-          pl: "lingui-translate-ai: CLI na npm, które tłumaczy katalogi Lingui przez LLM; wyrosło z Linkoglota.",
-          es: "lingui-translate-ai: una CLI en npm que traduce catálogos de Lingui con un LLM, nacida de Linkoglot.",
+          en: "A mobile app for a local youth space; the principal of my technical secondary school gave me an award for it.",
+          pl: "Aplikacja mobilna dla lokalnej przestrzeni dla młodzieży; dyrektor mojego technikum nagrodził mnie za nią.",
+          es: "Una app móvil para un espacio juvenil local; el director de mi escuela técnica me dio un premio por ella.",
         },
       ],
+      links: [{ label: "yws.lu", href: "https://yws.lu/" }],
     },
   ] satisfies CvEntry[],
 
@@ -246,54 +251,165 @@ export const CV = {
     },
   ] satisfies CvEntry[],
 
+  // [user 2026-10-08] "list pstryk as the first one there, in collaboration with cetuspro"; Linkoglot moves here from
+  // Experience; "Portfolio", never "This site"; the 3D space portfolio is off the CV. No project logos [user
+  // 2026-10-08: "i changed my mind about project logos"].
   projects: [
     {
-      id: "this-site",
-      title: { en: "This site", pl: "Ta strona", es: "Este sitio" },
+      id: "pstrykweb",
+      title: same("PstrykWeb"),
+      org: { en: "In collaboration with Cetuspro", pl: "We współpracy z Cetuspro", es: "En colaboración con Cetuspro" },
       when: same("2026"),
+      // Public info only, and the landing is the one link (content/projects/pstrykweb.md).
+      links: [{ label: "pstrykweb.pl", href: "https://pstrykweb.pl/" }],
+      // The title names it: the line says what it is (one line, no orphan).
       bullets: [
         {
-          en: "Astro, React, Lingui (en/pl/es); Lighthouse mobile 99 on the home page and 100 on the other pages, about 8 KB of JavaScript; built with a Claude Code setup of a project wiki, hooks and skills.",
-          pl: "Astro, React, Lingui (en/pl/es); Lighthouse mobile 99 na stronie głównej i 100 na pozostałych, około 8 KB JavaScriptu; zbudowana z Claude Code, wiki projektu, hookami i skillami.",
-          es: "Astro, React, Lingui (en/pl/es); Lighthouse móvil 99 en la portada y 100 en las demás páginas, unos 8 KB de JavaScript; hecho con Claude Code, una wiki del proyecto, hooks y skills.",
+          en: "Bespoke websites for local businesses, ordered through one online form.",
+          pl: "Strony na zamówienie dla lokalnych firm, zamawiane przez jeden formularz online.",
+          es: "Webs a medida para negocios locales, encargadas con un solo formulario online.",
         },
       ],
     },
     {
-      id: "space",
-      title: { en: "3D space portfolio", pl: "Portfolio 3D w kosmosie", es: "Portfolio 3D espacial" },
-      when: same("2025"),
-      links: [{ label: "GitHub", href: "https://github.com/MuchaSsak/3d-space-portfolio" }],
+      id: "linkoglot",
+      title: same("Linkoglot"),
+      org: {
+        en: "Own product, founder and developer",
+        pl: "Własny produkt, twórca i programista",
+        es: "Producto propio, fundador y desarrollador",
+      },
+      when: same("2026"),
+      links: [
+        { label: "App Store", href: "https://apps.apple.com/app/id6768303316" },
+        { label: "Google Play", href: "https://play.google.com/store/apps/details?id=com.linkoglot.app" },
+      ],
       bullets: [
         {
-          en: "A scroll-driven WebGL journey from Earth to Neptune in 12 camera stops; 13 hand-written GLSL shaders (three.js, React Three Fiber, GSAP).",
-          pl: "Podróż WebGL od Ziemi do Neptuna sterowana przewijaniem, 12 przystanków kamery; 13 ręcznie pisanych shaderów GLSL (three.js, React Three Fiber, GSAP).",
-          es: "Un viaje WebGL de la Tierra a Neptuno guiado por el scroll, 12 paradas de cámara; 13 shaders GLSL escritos a mano (three.js, React Three Fiber, GSAP).",
+          en: "Designed, built and shipped an AI language-learning app to the App Store and Google Play, solo: snap a photo to get flashcards, quizzes and voice practice.",
+          pl: "Sam zaprojektowałem, zbudowałem i wydałem w App Store i Google Play aplikację do nauki języków z AI: zdjęcie zamienia się w fiszki, quizy i ćwiczenia mówienia.",
+          es: "Diseñé, construí y publiqué en solitario en App Store y Google Play una app de idiomas con IA: una foto se convierte en tarjetas, tests y práctica oral.",
+        },
+        {
+          en: "Free trial, then monthly or yearly plans through RevenueCat; 30 languages with Lingui (Expo, React Native, Supabase).",
+          pl: "Darmowy okres próbny, potem plan miesięczny lub roczny przez RevenueCat; 30 języków z Lingui (Expo, React Native, Supabase).",
+          es: "Prueba gratuita y después planes mensuales o anuales con RevenueCat; 30 idiomas con Lingui (Expo, React Native, Supabase).",
         },
       ],
+    },
+    {
+      id: "portfolio",
+      title: same("Portfolio"),
+      when: same("2026"),
+      // One bullet, two lines on the sheet: the same facts, the scores as a range.
+      bullets: [
+        {
+          en: "Astro, React and Lingui (en/pl/es); Lighthouse mobile 99–100, about 8 KB of JavaScript; built with a Claude Code setup: a project wiki, hooks and skills.",
+          pl: "Astro, React i Lingui (en/pl/es); Lighthouse mobile 99–100, około 8 KB JavaScriptu; zbudowane z Claude Code: wiki projektu, hooki i skille.",
+          es: "Astro, React y Lingui (en/pl/es); Lighthouse móvil 99–100, unos 8 KB de JavaScript; hecho con Claude Code: una wiki del proyecto, hooks y skills.",
+        },
+      ],
+      links: [{ label: "muszarski.com", href: "https://muszarski.com/" }],
     },
   ] satisfies CvEntry[],
 
-  skills: [
+  // [user 2026-10-08] the soft skills first ("especially"), shown as skills with what backs them, not a list of names.
+  softSkills: [
     {
-      group: { en: "Frontend", pl: "Frontend", es: "Frontend" },
-      items: ["TypeScript", "React", "Next.js", "Astro", "Tailwind CSS"],
-    },
-    { group: { en: "Mobile", pl: "Mobile", es: "Móvil" }, items: ["React Native", "Expo", "RevenueCat"] },
-    {
-      group: { en: "Backend and data", pl: "Backend i dane", es: "Backend y datos" },
-      items: ["Node.js", "Supabase", "PostgreSQL (RLS)", "TanStack Query"],
-    },
-    {
-      group: { en: "3D and motion", pl: "3D i animacja", es: "3D y animación" },
-      items: ["three.js", "React Three Fiber", "GLSL", "GSAP"],
+      icon: "tb:users-group",
+      name: { en: "Teamwork and clients", pl: "Praca w zespole i z klientem", es: "Trabajo en equipo y con clientes" },
+      line: {
+        en: "Software houses, hackathon teams",
+        pl: "Software house'y i hackathony",
+        es: "Software houses, equipos de hackathon",
+      },
     },
     {
-      group: { en: "AI and quality", pl: "AI i jakość", es: "IA y calidad" },
-      items: ["Claude Code", "MCP", "Playwright", "Vitest", "Lighthouse"],
+      icon: "tb:puzzle",
+      name: { en: "Problem solving", pl: "Rozwiązywanie problemów", es: "Resolución de problemas" },
+      line: {
+        en: "From business problem to shipped app",
+        pl: "Od problemu biznesowego do aplikacji",
+        es: "Del problema de negocio a la app",
+      },
     },
-    { group: { en: "i18n", pl: "i18n", es: "i18n" }, items: ["Lingui", "lingui-translate-ai"] },
-  ],
+    {
+      icon: "tb:target",
+      name: { en: "Business thinking", pl: "Myślenie biznesowe", es: "Visión de negocio" },
+      line: {
+        en: "Solutions measured by business results",
+        pl: "Rozwiązania mierzone wynikami biznesu",
+        es: "Soluciones medidas por resultados",
+      },
+    },
+    {
+      icon: "tb:hand-click",
+      name: { en: "Conversions and UX", pl: "Konwersja i UX", es: "Conversión y UX" },
+      line: {
+        en: "How people notice, trust and act",
+        pl: "Jak ludzie zauważają, ufają i działają",
+        es: "Cómo la gente se fija, confía y actúa",
+      },
+    },
+    {
+      icon: "tb:brain",
+      name: { en: "User psychology", pl: "Psychologia użytkownika", es: "Psicología del usuario" },
+      line: {
+        en: "Consumer psychology and UX courses",
+        pl: "Kursy psychologii konsumenta i UX",
+        es: "Cursos de psicología del consumidor y UX",
+      },
+    },
+    {
+      icon: "tb:chart-line",
+      name: { en: "Analytical thinking", pl: "Myślenie analityczne", es: "Pensamiento analítico" },
+      line: {
+        en: "Marketing planned around goals and data",
+        pl: "Marketing planowany wokół celów i danych",
+        es: "Marketing con objetivos y datos",
+      },
+    },
+  ] satisfies SoftSkill[],
+
+  // [user 2026-10-08] the owner's list, "small font", "in good visual order", icons only where we know they're
+  // allowed: the tools' own logos are not (React, GitLab, Playwright, Lighthouse and Claude forbid this use, most
+  // others don't say; design/assets.md § CV marks), so each group gets an outline icon and the tools stay names.
+  // Node.js and PostgreSQL come from the profile (ATS keywords). [user 2026-10-08] WebGL under Web; Mobbin under
+  // Quality (so the group says "and UX": Mobbin is a library of real app screens); Vercel API in the workflow.
+  tools: [
+    {
+      icon: "tb:browser",
+      name: same("Web"),
+      tools: ["TypeScript", "React", "Next.js", "Astro", "Tailwind CSS", "shadcn/ui", "WebGL"],
+    },
+    { icon: "tb:device-mobile", name: { en: "Mobile", pl: "Mobile", es: "Móvil" }, tools: ["React Native", "Expo"] },
+    {
+      icon: "tb:database",
+      name: { en: "Back end and data", pl: "Backend i dane", es: "Backend y datos" },
+      tools: ["Node.js", "Supabase", "PostgreSQL", "TanStack Query"],
+    },
+    {
+      icon: "tb:test-pipe",
+      name: { en: "Quality and UX", pl: "Jakość i UX", es: "Calidad y UX" },
+      tools: [
+        { en: "Playwright E2E testing", pl: "Playwright (testy E2E)", es: "Playwright (pruebas E2E)" },
+        "Lighthouse MCP",
+        "Mobbin",
+      ],
+    },
+    {
+      icon: "tb:terminal-2",
+      name: { en: "AI and workflow", pl: "AI i workflow", es: "IA y flujo de trabajo" },
+      tools: ["Claude Code", "GitHub", "GitLab", "Vercel API"],
+    },
+  ] satisfies ToolGroup[],
+
+  /**
+   * The CV's qualifications and training, in its order: the formal qualification first, then newest first [review
+   * 2026-10-08]. Each is a home card (below) with its `cv` override. "Marketing, psychology and UX" stays off the CV:
+   * the soft skills carry it [user 2026-10-08].
+   */
+  qualifications: ["inf", "hackathons", "erasmus", "threejs-journey", "jonas"],
 
   credentials: [
     {
@@ -332,6 +448,8 @@ export const CV = {
       },
       // PLACEHOLDER (P11, Q10): exam dates and whether each certificate is issued.
       when: { en: "Secondary school", pl: "Technikum", es: "Secundaria" },
+      // [user 2026-10-08] "instead of Secondary school in inf, you can say State exams".
+      cv: { when: { en: "State exams", pl: "Egzaminy zawodowe", es: "Exámenes estatales" } },
       placeholder: true,
     },
     {
@@ -350,6 +468,16 @@ export const CV = {
       when: { en: "January 2025", pl: "Styczeń 2025", es: "Enero 2025" },
       verifyUrl: "https://threejs-journey.com/certificate/view/45175",
       courseUrl: "https://threejs-journey.com/",
+      // [user 2026-10-08] a year, like every other date on the CV; what the course covers: "the webgl and stuff and 90h+
+      // of video and challenges" (93 h of video, threejs-journey.com, checked 2026-10-08).
+      cv: {
+        when: same("2025"),
+        summary: {
+          en: "90+ hours of video and challenges: WebGL with three.js, GLSL shaders, physics, Blender models, post-processing, performance and React Three Fiber.",
+          pl: "Ponad 90 godzin nagrań i wyzwań: WebGL z three.js, shadery GLSL, fizyka, modele z Blendera, post-processing, wydajność i React Three Fiber.",
+          es: "Más de 90 horas de vídeo y retos: WebGL con three.js, shaders GLSL, física, modelos de Blender, posprocesado, rendimiento y React Three Fiber.",
+        },
+      },
     },
     {
       id: "jonas",
@@ -411,6 +539,32 @@ export const CV = {
       },
       // PLACEHOLDER (P11): the years of the Georgia and Demre projects, owner to confirm (the Youthpass ones are 2025).
       when: same("2025"),
+      // One line instead of a line per certificate [user 2026-10-08: "whatever with those certs for hackathons or
+      // european projects"]. [user 2026-10-08] "visegrad project in georgia bakuriani for alternative youth
+      // participation"; "it helped me achieve fluency in communication with people, especially in English".
+      cv: {
+        title: {
+          en: "International youth projects",
+          pl: "Międzynarodowe projekty młodzieżowe",
+          es: "Proyectos juveniles internacionales",
+        },
+        issuer: {
+          en: "Erasmus+, European Solidarity Corps, Visegrad",
+          pl: "Erasmus+, Korpus Solidarności, Wyszehrad",
+          es: "Erasmus+, Cuerpo Europeo de Solidaridad, Visegrado",
+        },
+        summary: {
+          en: "Digital youth work in Latvia, youth entrepreneurship in Lithuania, alternative youth participation in Bakuriani (Georgia), two months with sea turtles in Demre (Türkiye).",
+          pl: "Cyfrowa praca z młodzieżą na Łotwie, przedsiębiorczość na Litwie, alternatywna partycypacja w Bakuriani (Gruzja), dwa miesiące z żółwiami morskimi w Demre (Turcja).",
+          es: "Trabajo juvenil digital en Letonia, emprendimiento en Lituania, participación alternativa en Bakuriani (Georgia), dos meses con tortugas marinas en Demre (Turquía).",
+        },
+        gain: {
+          en: "Made me fluent in communicating with people, especially in English.",
+          pl: "Dzięki nim swobodnie porozumiewam się z ludźmi, zwłaszcza po angielsku.",
+          es: "Me dieron soltura para comunicarme con la gente, sobre todo en inglés.",
+        },
+        summaryOnly: true,
+      },
       places: [
         same("Saraiķi"),
         same("Daugirdiškės"),
@@ -461,6 +615,21 @@ export const CV = {
         es: "Un problema difícil, un equipo y un reloj. Me enseñan a decidir rápido, repartir el trabajo y entregar algo que funcione bajo presión.",
       },
       when: same("2026"),
+      // One line instead of a line per event [user 2026-10-08]; "they helped me improve in working under time pressure
+      // and in a team".
+      cv: {
+        summary: {
+          en: "HackYeah 2026 in Kraków, Europe's biggest on-site hackathon; Hack4Change 2026 in Gdańsk, 48 hours for the Baltic Sea; Product Challenge 2026: Vibe the Future in Rzeszów.",
+          pl: "HackYeah 2026 w Krakowie, największy stacjonarny hackathon w Europie; Hack4Change 2026 w Gdańsku, 48 h dla Bałtyku; Product Challenge 2026: Vibe the Future w Rzeszowie.",
+          es: "HackYeah 2026 en Cracovia, el mayor hackathon presencial de Europa; Hack4Change 2026 en Gdansk, 48 h por el Báltico; Product Challenge 2026: Vibe the Future en Rzeszów.",
+        },
+        gain: {
+          en: "Made me better at working under time pressure and in a team.",
+          pl: "Nauczyły mnie lepiej pracować pod presją czasu i w zespole.",
+          es: "Me enseñaron a trabajar mejor bajo presión y en equipo.",
+        },
+        summaryOnly: true,
+      },
       // [user 2026-10-07] HackYeah, Hack4Change and Vibe the Future; dates, places and sites from the events' own pages
       // (hackyeah.pl, hack4change.tech + the 2026 sign-up page, vibethefuture.pl), read 2026-10-07. Newest first.
       items: [
@@ -531,17 +700,34 @@ export const CV = {
     },
   ] satisfies Credential[],
 
+  // Spanish is off the CV [user 2026-10-08]. The flags are drawn (Windows has no flag emoji).
   languages: [
-    { name: { en: "Polish", pl: "polski", es: "polaco" }, level: { en: "native", pl: "ojczysty", es: "nativo" } },
-    { name: { en: "English", pl: "angielski", es: "inglés" }, level: { en: "fluent", pl: "biegły", es: "fluido" } },
-    { name: { en: "Spanish", pl: "hiszpański", es: "español" }, level: { en: "basic", pl: "podstawowy", es: "básico" } },
-  ],
+    {
+      name: { en: "Polish", pl: "polski", es: "polaco" },
+      level: { en: "native", pl: "ojczysty", es: "nativo" },
+      flag: "pl",
+    },
+    {
+      name: { en: "English", pl: "angielski", es: "inglés" },
+      level: { en: "fluent", pl: "biegły", es: "fluido" },
+      flag: "gb",
+    },
+  ] satisfies { name: Text; level: Text; flag: "pl" | "gb" }[],
 
   interests: {
     en: "Calisthenics, travel, motorcycles, films, music of every kind, gaming with friends.",
     pl: "Kalistenika, podróże, motocykle, filmy, muzyka każdego rodzaju, granie ze znajomymi.",
     es: "Calistenia, viajes, motos, cine, música de todo tipo, jugar con amigos.",
   } satisfies Text,
+  /** One outline icon per interest, in the line's order (the /cv/ page shows them as tags; none if the counts differ). */
+  interestIcons: [
+    "tb:barbell",
+    "tb:plane",
+    "tb:motorbike",
+    "tb:movie",
+    "tb:music",
+    "tb:device-gamepad-2",
+  ] satisfies IconName[] as IconName[],
 
   /**
    * The recruitment consent line at the end of the CV. Polish recruiters still expect it although the Labour Code data
@@ -552,6 +738,24 @@ export const CV = {
     pl: "Wyrażam zgodę na przetwarzanie moich danych osobowych zawartych w aplikacji dla potrzeb niezbędnych do realizacji obecnego oraz przyszłych procesów rekrutacyjnych.",
   } satisfies Partial<Text>,
 };
+
+/** The CV's qualifications and training (`CV.qualifications`, in that order), each with its CV override applied. */
+export function cvQualifications(): CvCredential[] {
+  return CV.qualifications.map((id) => {
+    const credential: Credential | undefined = CV.credentials.find((entry) => entry.id === id);
+    if (!credential) throw new Error(`cv.ts: CV.qualifications names "${id}", which is not a credential`);
+    const { cv, ...card } = credential;
+    return {
+      ...card,
+      title: cv?.title ?? card.title,
+      issuer: cv?.issuer ?? card.issuer,
+      when: cv?.when ?? card.when,
+      summary: cv?.summary ?? card.summary,
+      items: cv?.summaryOnly ? undefined : card.items,
+      gain: cv?.gain,
+    };
+  });
+}
 
 /** A stable digest of the CV content of one locale: the PDF records it, `cv.test.ts` compares. */
 export function cvDigestSource(locale: Locale, cv: object = CV): string {

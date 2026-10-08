@@ -14,7 +14,8 @@
 | `bun run typecheck` (astro check, ~105 files) | 16 s | 2026-10-06 |
 | `bun run e2e` (236 tests, 4 workers; the two tour tests wait ~8 s each) | 52 s | 2026-10-07 |
 | `bun run e2e:xb` (Firefox + WebKit, 164 tests) | 1.9 min | 2026-10-07 |
-| `bun run cv:pdf` (3 PDFs, 196-210 KB, 2 pages each) | 3.5 s | 2026-10-06 |
+| `bun run cv:sheet --png` (build + 3 PDFs, 219-222 KB, 2 pages each, fit + checks + previews) | ~4 min; `--locales pl,es` ~3 min | 2026-10-08 |
+| `astro build --outDir .cache/<x>` while a local server serves that folder | 400 s+ (Windows file locks); 11.6 s with the server stopped | 2026-10-08 |
 | `bun run og` (47 share images + 4 icons) | 3.7 s | 2026-10-07 |
 | `bun run lhci` (median of 3, per page) | ~25 s a page | 2026-10-06 |
 | `node scripts/fonts.mjs` (cached sources) | ~2 s | 2026-10-06 |

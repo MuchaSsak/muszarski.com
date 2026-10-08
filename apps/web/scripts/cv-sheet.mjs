@@ -1,9 +1,12 @@
 #!/usr/bin/env node
 /**
- * The CV sheet PDFs (wiki: content/content-model.md § CV, design/design.md § CV sheet; the new-cv skill drives it).
+ * The CV PDFs (wiki: content/content-model.md § CV, design/design.md § CV sheet; the new-cv skill drives it).
  * Builds the site into .cache/cv-dist/, serves it on a free port (Astro runs one dev or preview server per project, so
- * this never fights another session's), prints /<locale>/cv/print-v2/ (the same data as /cv/), fits it to at most two
- * A4 pages (one duplex sheet), writes each PDF with its metadata and checks it.
+ * this never fights another session's), prints /<locale>/cv/print/ (the same data as /cv/), fits it to at most two
+ * A4 pages (one duplex sheet), writes each PDF with its metadata to public/files/mateusz-muszarski-cv-<locale>.pdf,
+ * records which CV data it was printed from (public/files/cv-digest.json, from the page's `cv-digest` meta;
+ * `src/data/cv.test.ts` fails when the data changed after the PDFs were made) and checks it. The PDFs are committed:
+ * the Vercel build has no browser to print them.
  *
  *   bun run cv:sheet [--no-build] [--base <url>] [--out <dir>] [--locales en,pl] [--png] [--stress more|less]
  *                    [--no-photo]
@@ -12,8 +15,9 @@
  *
  * Fit: every size and gap of the sheet scales with one CSS variable, `--d` (0 = densest, 1 = roomiest; the body runs
  * 10 to 10.8 pt). The script looks for the roomiest `--d` that keeps the sheet within two pages, and takes one page
- * when the content fits one at a comfortable density. Content that overflows two pages at `--d: 0` is an error: cut it
- * (the new-cv skill lists what to cut first). Then the closing contact slip moves to the foot of the last page, unless
+ * when the content fits one at a comfortable density. Below 0 (down to MIN_D) only the gaps tighten, the type stays at
+ * its floor: the last step for a long locale. Content that overflows two pages even there is an error: cut it (the
+ * new-cv skill lists what to cut first). Then the closing contact slip moves to the foot of the last page, unless
  * that would leave more than MAX_END_GAP of empty paper above it (then it follows the content).
  *
  * Checks (exit code 1 on a failure): pages <= 2; every font embedded as TrueType from Anybody (a Type 3 font or a
@@ -21,22 +25,24 @@
  * the email, the role and every section heading in order; the profile links are clickable; no placeholder text.
  * Warnings: a thin last page, no room left, and entries still marked `placeholder: true` in cv.ts (facts to confirm).
  *
- * Until the owner approves the sheet [user 2026-10-08], the output goes to comps/cv/ (drafts), not public/files/.
  * `--stress more|less` duplicates or removes entries in the page before printing, to test how the sheet flows.
  * `--no-photo` prints the variant without the photo (UK, Irish and US applications). Both variants write to
- * .cache/cv-variants/ unless `--out` says otherwise, so they never mix with the drafts.
- * `--png` also writes page previews (pdf.js in the browser, 2x) next to each PDF.
+ * .cache/cv-variants/ unless `--out` says otherwise, so they never mix with the live PDFs (a tailored copy goes to its
+ * own `--out` too). The report goes to .cache/cv-sheet-report.json for the live PDFs (public/ would ship it).
+ * `--png` also writes page previews (pdf.js in the browser, 2x) next to each PDF (for the live PDFs: in
+ * .cache/cv-previews/; the live run always writes `mateusz-muszarski-cv-<locale>-p<N>.webp` for the /cv/ page).
  */
 import { spawnSync } from "node:child_process";
 import { existsSync, mkdirSync, readFileSync, rmSync, statSync, writeFileSync } from "node:fs";
 import { createServer } from "node:http";
 import { createRequire } from "node:module";
-import { dirname, extname, join, normalize, relative, resolve } from "node:path";
+import { basename, dirname, extname, join, normalize, relative, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
 import { chromium } from "@playwright/test";
 import { PDFArray, PDFDict, PDFDocument, PDFName, PDFString } from "pdf-lib";
 import { getDocument } from "pdfjs-dist/legacy/build/pdf.mjs";
+import sharp from "sharp";
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
 const argv = process.argv.slice(2);
@@ -46,10 +52,14 @@ const LOCALES = arg("--locales", "en,pl,es").split(",");
 const stress = arg("--stress", "");
 const noPhoto = argv.includes("--no-photo");
 const variant = `${stress ? `-stress-${stress}` : ""}${noPhoto ? "-no-photo" : ""}`;
-const out = resolve(ROOT, arg("--out", variant ? join(".cache", "cv-variants") : join("..", "..", "comps", "cv")));
-const ROUTE = "cv/print-v2";
+const LIVE = join(ROOT, "public", "files");
+const out = resolve(ROOT, arg("--out", variant ? join(".cache", "cv-variants") : LIVE));
+const ROUTE = "cv/print";
 /** One page wins when the content fits one at this density or roomier. */
 const ONE_PAGE_MIN_D = 0.4;
+/** Below 0 only the gaps tighten, never the type (it stays at its 10 pt floor): the last step before a cut. Polish and
+ * Spanish run ~15% longer than English and need it [2026-10-08]. */
+const MIN_D = -0.5;
 /** A last page filled less than this reads as a mistake: say so. */
 const MIN_LAST_FILL = 0.3;
 /** Above this much empty paper (mm) the contact slip follows the content instead of sitting at the page foot. */
@@ -284,7 +294,12 @@ for (const locale of LOCALES) {
   });
 
   // Fit: one page if it fits comfortably, else the roomiest two.
-  const dense = await pagesOf(await pdfAt(0));
+  let dense = await pagesOf(await pdfAt(0));
+  let floor = 0;
+  if (dense > 2 && (await pagesOf(await pdfAt(MIN_D))) <= 2) {
+    floor = MIN_D;
+    dense = 2;
+  }
   let d;
   let target;
   if (dense > 2) {
@@ -295,7 +310,7 @@ for (const locale of LOCALES) {
   } else {
     const one = dense === 1 ? await roomiest(1) : -1;
     target = one >= ONE_PAGE_MIN_D ? 1 : 2;
-    d = target === 1 ? one : await roomiest(2);
+    d = target === 1 ? one : floor < 0 ? await roomiest(2, floor, 0) : await roomiest(2);
   }
   // Compose the last page: the contact slip goes to the foot of the last page. The largest top margin (--end-gap)
   // that keeps the page count is found by halving, to ~2 mm. A short last page keeps the slip under its content: a
@@ -316,8 +331,7 @@ for (const locale of LOCALES) {
   await gapAt(gap);
   const printed = await pdfAt(d);
   const pdf = await withMetadata(printed, meta, locale);
-  const file = join(out, `mateusz-muszarski-cv-${locale}${variant}.pdf`);
-  writeFileSync(file, pdf);
+  let file = join(out, `mateusz-muszarski-cv-${locale}${variant}.pdf`);
 
   // Checks.
   const doc = await PDFDocument.load(pdf);
@@ -362,27 +376,54 @@ for (const locale of LOCALES) {
   const runs = text.flatMap((p, n) => p.runs.map((run) => ({ ...run, page: n })));
   let from = 0;
   let paired = 0;
+  // A bullet line may start with the next entry's title ("PstrykWeb, czyli …" in Polish): every run that starts with
+  // the title is a candidate, and the first one with its date on its baseline is the title.
+  const onBaseline = (t, when) => {
+    const w = runs.findIndex((run, i) => i > t && i <= t + 6 && run.str.startsWith(when));
+    return w >= 0 && runs[w].page === runs[t].page && Math.abs(runs[w].y - runs[t].y) <= 0.5;
+  };
   for (const entry of meta.dated) {
-    const t = runs.findIndex((run, i) => i >= from && run.str.startsWith(entry.title));
-    if (t < 0 || !entry.when) continue;
+    const candidates = runs.flatMap((run, i) => (i >= from && run.str.startsWith(entry.title) ? [i] : []));
+    if (!candidates.length || !entry.when) continue;
+    const t = candidates.find((i) => onBaseline(i, entry.when)) ?? candidates[0];
     from = t + 1;
     paired += 1;
-    const w = runs.findIndex((run, i) => i > t && i <= t + 6 && run.str.startsWith(entry.when));
-    if (w < 0 || runs[w].page !== runs[t].page || Math.abs(runs[w].y - runs[t].y) > 0.5)
-      problems.push(`the date "${entry.when}…" is not on the baseline of "${entry.title}…"`);
+    if (!onBaseline(t, entry.when)) problems.push(`the date "${entry.when}…" is not on the baseline of "${entry.title}…"`);
   }
   // A check that finds no titles proves nothing: say so.
   if (meta.dated.length && paired < meta.dated.length / 2)
     problems.push(`the date check found only ${paired} of ${meta.dated.length} titles`);
   if (/PLACEHOLDER|undefined|\[object/i.test(all)) problems.push("placeholder or broken text in the PDF");
+  // A print that fails its checks never replaces a live PDF: it goes to .cache/cv-rejected/ for a look.
+  if (out === LIVE && problems.length) {
+    file = join(ROOT, ".cache", "cv-rejected", basename(file));
+    mkdirSync(dirname(file), { recursive: true });
+  }
+  writeFileSync(file, pdf);
   const fill = contentFill;
   const warnings = [];
   if (pages === 2 && fill < MIN_LAST_FILL) warnings.push(`page 2 holds only ${Math.round(fill * 100)}% content`);
-  if (d === 0 && pages === 2) warnings.push("at the densest setting: no room left; cut before adding");
+  if (d < 0)
+    warnings.push(`gaps tightened below the default (--d ${Math.round(d * 100) / 100}): no room left; cut before adding`);
+  else if (d === 0 && pages === 2) warnings.push("at the densest setting: no room left; cut before adding");
   if (meta.placeholders.length)
     warnings.push(`facts still to confirm (placeholder: true in cv.ts): ${meta.placeholders.join("; ")}`);
 
-  const shots = argv.includes("--png") ? await previews(pdf, file.replace(/\.pdf$/, "")) : [];
+  // Previews of the live PDFs go to .cache/cv-previews/ (anything in public/ ships), and each page also ships as a
+  // small WebP next to its PDF: the /cv/ page shows the sheets it downloads (CvPapers.astro).
+  const live = out === LIVE && !problems.length;
+  const stem = (live ? join(ROOT, ".cache", "cv-previews", basename(file)) : file).replace(/\.pdf$/, "");
+  if (live) mkdirSync(dirname(stem), { recursive: true });
+  const shots = argv.includes("--png") || live ? await previews(pdf, stem) : [];
+  if (live) {
+    const web = (n) => join(LIVE, `mateusz-muszarski-cv-${locale}-p${n}.webp`);
+    for (const [i, shot] of shots.entries())
+      await sharp(shot)
+        .resize({ width: 640 })
+        .webp({ quality: 82 })
+        .toFile(web(i + 1));
+    for (let n = shots.length + 1; existsSync(web(n)); n++) rmSync(web(n));
+  }
   report[locale] = {
     file: relative(ROOT, file),
     kb: Math.round(pdf.length / 102.4) / 10,
@@ -404,7 +445,15 @@ for (const locale of LOCALES) {
   );
   if (target !== pages) console.log(`  (fit aimed at ${target} page(s))`);
 }
-writeFileSync(join(out, `cv-sheet-report${variant}.json`), `${JSON.stringify(report, null, 2)}\n`);
+// The live PDFs record their digests (cv.test.ts compares them with the data); other runs leave the record alone.
+if (out === LIVE) {
+  const record = join(out, "cv-digest.json");
+  const digests = existsSync(record) ? JSON.parse(readFileSync(record, "utf8")) : {};
+  for (const [locale, entry] of Object.entries(report)) if (!entry.problems.length) digests[locale] = entry.digest;
+  writeFileSync(record, `${JSON.stringify(digests, null, 2)}\n`);
+}
+const reportDir = out === LIVE ? join(ROOT, ".cache") : out;
+writeFileSync(join(reportDir, `cv-sheet-report${variant}.json`), `${JSON.stringify(report, null, 2)}\n`);
 await browser.close();
 server?.close();
 if (failed) process.exitCode = 1;

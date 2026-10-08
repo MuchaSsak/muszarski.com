@@ -80,6 +80,11 @@
   every margin of the CV sheet. Put resets in an unscoped `<style is:global>` (2026-10-08). A plain scoped element rule
   does the same: `.cs ul` (0-2-1) beat `.cs-bar` (0-2-0) and zeroed the contact bar's padding; reset lists by their own
   class (2026-10-08).
+- Scroll-driven CSS: write `animation-name` / `-timing-function` / `-fill-mode` / `-timeline` / `-range` as
+  longhands. `animation: x linear both; animation-timeline: view()` is minified into
+  `animation: linear both x view()`, which Chrome rejects whole (the timeline is reset-only in the shorthand): the
+  effect silently never runs. Found 2026-10-08 on `/cv/`; the home chapters (`ch-slide`, the Linkoglot `tilt`) and
+  `/work/` (`wk-pan`) still use the shorthand pair and are dead the same way (open-questions) (2026-10-08).
 - `astro dev` is one per project too: a second one exits ("already running"). For a private run, `astro build --outDir
   .cache/<name>` and serve that folder yourself, as `scripts/cv-sheet.mjs` does (2026-10-08).
 
@@ -105,6 +110,6 @@
   (`ChapterBadge`, `.desc`, `.mstats`, reels with a `.r-hit` tap target); long text uses `styles/prose.css`.
 - Entrance animations carry `.rise` or `.enter` so a stored pause shows them final. Never name a class after a Tailwind
   utility (`ring`, `shadow`, `border`, `container`...).
-- Generated and committed: icons (`bun run icons`), fonts (`bun run fonts`), CV PDFs (`bun run cv:pdf`, needs the
+- Generated and committed: icons (`bun run icons`), fonts (`bun run fonts`), CV PDFs (`bun run cv:sheet`, builds and serves by itself; was `cv:pdf` with the
   preview), share images + favicons (`bun run og`, needs a build). The launch gate fails while any is missing.
 

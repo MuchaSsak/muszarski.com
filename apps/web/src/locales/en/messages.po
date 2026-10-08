@@ -7,7 +7,7 @@ msgstr ""
 "X-Generator: @lingui/cli\n"
 "Language: en\n"
 
-#: src/components/cv/CvBody.astro:20
+#: src/components/cv/CvWeb.astro:36
 #: src/components/home/Chapters.astro:84
 #: src/components/home/chapters/ChapterLinkoglot.astro:101
 #: src/components/home/chapters/ChapterLinkoglot.astro:113
@@ -23,6 +23,7 @@ msgstr ""
 #: src/components/home/Credentials.astro:298
 #: src/components/layout/SiteFooter.astro:46
 #: src/pages/[locale]/blog/[slug].astro:161
+#: src/pages/[locale]/cv/index.astro:50
 #: src/pages/[locale]/my-life/index.astro:111
 #: src/pages/[locale]/work/index.astro:160
 msgid "(opens in a new tab)"
@@ -329,7 +330,6 @@ msgstr "Case studies"
 msgid "Case study"
 msgstr "Case study"
 
-#: src/components/cv/CvBody.astro:156
 #: src/components/home/Credentials.astro:296
 msgid "Certificate"
 msgstr "Certificate"
@@ -415,14 +415,14 @@ msgstr "components"
 msgid "confirm email"
 msgstr "confirm email"
 
-#: src/components/cv/CvBody.astro:37
-#: src/components/cv/CvSheet.astro:78
+#: src/components/cv/CvSheet.astro:75
+#: src/components/cv/CvWeb.astro:50
 #: src/components/home/Contact.astro:46
 #: src/components/layout/SiteFooter.astro:97
 #: src/components/layout/SiteHeader.astro:94
 #: src/components/layout/SiteHeader.astro:121
 #: src/pages/[locale]/blog/[slug].astro:189
-#: src/pages/[locale]/cv/index.astro:104
+#: src/pages/[locale]/cv/index.astro:53
 #: src/pages/[locale]/my-life/index.astro:79
 msgid "Contact"
 msgstr "Contact"
@@ -439,25 +439,28 @@ msgstr "Conversion"
 msgid "Converts"
 msgstr "Converts"
 
+#: src/components/cv/CvWeb.astro:52
 #: src/components/home/Contact.astro:170
+#: src/pages/[locale]/cv/index.astro:51
 msgid "Copy email"
 msgstr "Copy email"
 
-#: src/components/cv/CvBody.astro:23
+#: src/components/cv/CvWeb.astro:54
+msgid "Copy link"
+msgstr "Copy link"
+
 #: src/components/home/Credentials.astro:30
 #: src/pages/[locale]/work/index.astro:52
 msgid "Course"
 msgstr "Course"
 
-#: src/pages/[locale]/cv/index.astro:67
+#: src/pages/[locale]/cv/index.astro:80
 msgid "Curriculum vitae"
 msgstr "Curriculum vitae"
 
 #: src/components/layout/CvLink.astro:36
 #: src/components/layout/SiteFooter.astro:63
-#: src/pages/[locale]/cv/index.astro:38
-#: src/pages/[locale]/cv/index.astro:114
-#: src/pages/[locale]/cv/print-v2/index.astro:26
+#: src/pages/[locale]/cv/index.astro:43
 #: src/pages/[locale]/cv/print/index.astro:24
 msgid "CV"
 msgstr "CV"
@@ -515,7 +518,7 @@ msgstr "Done"
 msgid "Download CV"
 msgstr "Download CV"
 
-#: src/pages/[locale]/cv/index.astro:90
+#: src/pages/[locale]/cv/index.astro:112
 msgid "Download PDF"
 msgstr "Download PDF"
 
@@ -531,8 +534,8 @@ msgstr "drop-off"
 msgid "drop-off points"
 msgstr "drop-off points"
 
-#: src/components/cv/CvBody.astro:31
-#: src/components/cv/CvSheet.astro:75
+#: src/components/cv/CvSheet.astro:72
+#: src/components/cv/CvWeb.astro:47
 msgid "Education"
 msgstr "Education"
 
@@ -540,7 +543,9 @@ msgstr "Education"
 msgid "Elsewhere"
 msgstr "Elsewhere"
 
+#: src/components/cv/CvWeb.astro:53
 #: src/components/home/Contact.astro:163
+#: src/pages/[locale]/cv/index.astro:52
 msgid "Email copied"
 msgstr "Email copied"
 
@@ -564,8 +569,8 @@ msgstr "English · Polish"
 msgid "Every project by Mateusz Muszarski: client work, his own products, open source and experiments, with the tools, the year and the links."
 msgstr "Every project by Mateusz Muszarski: client work, his own products, open source and experiments, with the tools, the year and the links."
 
-#: src/components/cv/CvBody.astro:30
-#: src/components/cv/CvSheet.astro:70
+#: src/components/cv/CvSheet.astro:67
+#: src/components/cv/CvWeb.astro:41
 msgid "Experience"
 msgstr "Experience"
 
@@ -784,12 +789,11 @@ msgstr "Install"
 msgid "interest"
 msgstr "interest"
 
-#: src/components/cv/CvBody.astro:36
-#: src/components/cv/CvSheet.astro:77
+#: src/components/cv/CvSheet.astro:74
+#: src/components/cv/CvWeb.astro:49
 msgid "Interests"
 msgstr "Interests"
 
-#: src/components/cv/CvBody.astro:24
 #: src/components/home/Credentials.astro:31
 msgid "International"
 msgstr "International"
@@ -823,7 +827,6 @@ msgstr "Karpathy-style LLM wiki"
 msgid "Kind"
 msgstr "Kind"
 
-#: src/components/cv/CvBody.astro:26
 #: src/components/home/Credentials.astro:33
 msgid "Knowledge"
 msgstr "Knowledge"
@@ -840,8 +843,8 @@ msgstr "landing"
 msgid "Language"
 msgstr "Language"
 
-#: src/components/cv/CvBody.astro:35
-#: src/components/cv/CvSheet.astro:76
+#: src/components/cv/CvSheet.astro:73
+#: src/components/cv/CvWeb.astro:48
 msgid "Languages"
 msgstr "Languages"
 
@@ -893,6 +896,10 @@ msgstr "Limits"
 #: src/pages/[locale]/blog/index.astro:70
 msgid "Lingui, Claude Code, Lighthouse"
 msgstr "Lingui, Claude Code, Lighthouse"
+
+#: src/components/cv/CvWeb.astro:55
+msgid "Link copied"
+msgstr "Link copied"
 
 #: src/components/home/chapters/ChapterSpace.astro:104
 msgid "Link copied. Open it on a computer."
@@ -1259,7 +1266,7 @@ msgstr "Previous posts"
 msgid "pricing"
 msgstr "pricing"
 
-#: src/pages/[locale]/cv/index.astro:95
+#: src/pages/[locale]/cv/index.astro:117
 msgid "Print"
 msgstr "Print"
 
@@ -1280,8 +1287,8 @@ msgstr "Pro"
 msgid "Product|engineer"
 msgstr "Product|engineer"
 
-#: src/components/cv/CvBody.astro:29
-#: src/components/cv/CvSheet.astro:69
+#: src/components/cv/CvSheet.astro:66
+#: src/components/cv/CvWeb.astro:40
 msgid "Profile"
 msgstr "Profile"
 
@@ -1293,12 +1300,11 @@ msgstr "Projects"
 msgid "purchases"
 msgstr "purchases"
 
-#: src/components/cv/CvBody.astro:22
 #: src/components/home/Credentials.astro:29
 msgid "Qualification"
 msgstr "Qualification"
 
-#: src/components/cv/CvBody.astro:33
+#: src/components/cv/CvWeb.astro:46
 msgid "Qualifications and training"
 msgstr "Qualifications and training"
 
@@ -1394,8 +1400,8 @@ msgstr "Search"
 msgid "See the work"
 msgstr "See the work"
 
-#: src/components/cv/CvBody.astro:32
-#: src/components/cv/CvSheet.astro:71
+#: src/components/cv/CvSheet.astro:68
+#: src/components/cv/CvWeb.astro:42
 msgid "Selected projects"
 msgstr "Selected projects"
 
@@ -1459,17 +1465,13 @@ msgstr "sign-up"
 msgid "sign-ups"
 msgstr "sign-ups"
 
-#: src/pages/[locale]/cv/index.astro:70
+#: src/pages/[locale]/cv/index.astro:83
 msgid "Since"
 msgstr "Since"
 
 #: src/components/layout/SiteFooter.astro:60
 msgid "Site"
 msgstr "Site"
-
-#: src/components/cv/CvBody.astro:34
-msgid "Skills"
-msgstr "Skills"
 
 #: src/components/home/AiWorkflow.astro:36
 msgid "Skills + gates"
@@ -1479,7 +1481,8 @@ msgstr "Skills + gates"
 msgid "Skills and gates check every change: types, tests, accessibility, speed."
 msgstr "Skills and gates check every change: types, tests, accessibility, speed."
 
-#: src/components/cv/CvSheet.astro:72
+#: src/components/cv/CvSheet.astro:69
+#: src/components/cv/CvWeb.astro:43
 msgid "Skills and qualifications"
 msgstr "Skills and qualifications"
 
@@ -1495,7 +1498,8 @@ msgstr "Snap a photo, get flashcards. A subscription language app, shipped solo 
 msgid "Snapped → card"
 msgstr "Snapped → card"
 
-#: src/components/cv/CvSheet.astro:73
+#: src/components/cv/CvSheet.astro:70
+#: src/components/cv/CvWeb.astro:44
 msgid "Soft skills"
 msgstr "Soft skills"
 
@@ -1584,12 +1588,12 @@ msgstr "tables behind row-level security"
 msgid "task: contact form"
 msgstr "task: contact form"
 
-#: src/components/cv/CvBody.astro:25
 #: src/components/home/Credentials.astro:32
 msgid "Teamwork"
 msgstr "Teamwork"
 
-#: src/components/cv/CvSheet.astro:74
+#: src/components/cv/CvSheet.astro:71
+#: src/components/cv/CvWeb.astro:45
 msgid "Technologies"
 msgstr "Technologies"
 
@@ -1634,14 +1638,13 @@ msgstr "The club screensaver: the particles in motion"
 msgid "The contact form could not send your message. Write directly to Mateusz Muszarski instead."
 msgstr "The contact form could not send your message. Write directly to Mateusz Muszarski instead."
 
-#: src/components/cv/CvBody.astro:160
 #: src/components/home/Credentials.astro:283
 msgid "The course"
 msgstr "The course"
 
-#: src/pages/[locale]/cv/index.astro:39
-msgid "The CV of Mateusz Muszarski, full-stack developer: experience, projects, skills, qualifications and languages. Also as a PDF."
-msgstr "The CV of Mateusz Muszarski, full-stack developer: experience, projects, skills, qualifications and languages. Also as a PDF."
+#: src/pages/[locale]/cv/index.astro:44
+msgid "The CV of Mateusz Muszarski, full-stack product engineer: experience, projects, skills, qualifications and languages. Also as a PDF."
+msgstr "The CV of Mateusz Muszarski, full-stack product engineer: experience, projects, skills, qualifications and languages. Also as a PDF."
 
 #: src/components/blog/case/Versions.astro:66
 msgid "The decision"
@@ -1896,7 +1899,7 @@ msgstr "Your message"
 msgid "Your message reached Mateusz Muszarski. He replies to the address you gave."
 msgstr "Your message reached Mateusz Muszarski. He replies to the address you gave."
 
-#: src/pages/[locale]/cv/index.astro:109
+#: src/pages/[locale]/cv/index.astro:131
 msgid "Your PDF is downloading. Nothing yet? Use the Download PDF button."
 msgstr "Your PDF is downloading. Nothing yet? Use the Download PDF button."
 

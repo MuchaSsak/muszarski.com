@@ -98,6 +98,13 @@ Selected projects unless there's a reason.
 | Exams | Polish state vocational exams INF.02 / .03 / .04 (INF.02 belongs to the IT technician title, the KKZ course) | egzaminy zawodowe INF.02 / .03 / .04 | exámenes profesionales estatales de Polonia |
 | Clause | none | `CV.clause.pl` | none |
 | Spanish copy | — | — | machine-assisted, unreviewed (P12): flag it in the report |
+| Length | the budget | ~15% longer: write to the English line count | ~10% longer: the same |
+
+**Line budget** (2026-10-08): the English sheet fills two pages at `--d 0`; the first Polish and Spanish drafts ran
+to three. Translate to the English line count: a bullet that is two lines in English stays two (drop what the line
+above already says, such as "at a sports club" under the org "Sports club"; "48 h" for "48 godzin"; shorter, plain
+words). Below `--d 0` the fit tightens only the gaps (`template.md` § 2); a locale that still overflows needs a
+cut (§ 7) in that locale.
 
 Section headings come from the site's Lingui catalogs (the same words as the `/cv/` page). Research-preferred variants,
 should the owner want them: pl "Doświadczenie zawodowe", "Języki obce", "Kursy i certyfikaty"; es "Experiencia
@@ -112,8 +119,8 @@ laboral", "Formación académica", "Formación complementaria".
    section). Anything else (a tool the ad names, a WCAG level, years of experience) needs the owner's word.
 5. Location: a job in another city or country never implies relocation; ask. UK, Irish and US ads: print without the
    photo (`--no-photo`).
-6. A tailored copy is temporary and touches only the locale(s) it is for. Copy the data file (`cv-draft.ts` until
-   the rollout, then `cv.ts`) to the scratchpad first (the
+6. A tailored copy is temporary and touches only the locale(s) it is for. Copy the data file (`cv.ts`) to the
+   scratchpad first (the
    working tree may hold uncommitted work: never restore with `git checkout`), edit, run
    `bun run cv:sheet --locales <l> --png --out .cache/cv-tailored/<company or role slug>` (gitignored), hand over the
    PDFs, then copy the backup back and diff to confirm. Skip the page sync, check, wiki and commit; the report lists

@@ -233,6 +233,26 @@ test("CV: the PDF downloads directly and the page and PDF come from the same dat
   await expect(page.locator(".cv")).toContainText("Linkoglot");
 });
 
+test("CV: the web page shows the sheet's sections in the sheet's order, and the Polish clause", async ({ page }) => {
+  await page.goto("/pl/cv/");
+  const heads = await page.locator(".cv h2").allTextContents();
+  expect(heads.map((head) => head.trim())).toEqual([
+    "Profil",
+    "Doświadczenie",
+    "Wybrane projekty",
+    "Umiejętności i kwalifikacje",
+    "Wykształcenie",
+    "Języki",
+    "Zainteresowania",
+    "Kontakt",
+  ]);
+  await expect(page.locator(".cv")).toContainText("Wyrażam zgodę na przetwarzanie moich danych osobowych");
+  // The PDF's sheets are a mouse and touch shortcut only; the Download PDF button is the accessible one.
+  await expect(page.locator(".papers")).toHaveAttribute("aria-hidden", "true");
+  await page.goto("/en/cv/");
+  await expect(page.locator(".cv")).not.toContainText("Wyrażam zgodę");
+});
+
 test("privacy: the statistics switch is remembered in this browser", async ({ page }) => {
   await page.goto("/en/privacy/");
   const toggle = page.locator("[data-optout]");

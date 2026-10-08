@@ -5,8 +5,6 @@
  * in a left rail, content on the right) over at most two A4 pages, closed by a pink contact slip with a QR code at the
  * foot of the last page.
  *
- * DRAFT [user 2026-10-08]: it reads `~/data/cv-draft` (English first) until the rollout merges that into cv.ts.
- *
  * Built for two readers at once (research/2026-10-08-cv-recruiters-ats.md):
  * - a recruiter's skim: page 1 alone says who, what, where, how to reach him, the work and the projects;
  * - an ATS: real text in reading order, plain headings with tracking <= 0.05 em, static named TrueType fonts, links
@@ -30,8 +28,7 @@ import { t } from "lingui-for-astro/macro";
 import { encode } from "uqr";
 
 import Icon from "~/components/ui/Icon.astro";
-import { type CertItem, type CvEntry, type Text } from "~/data/cv";
-import { CV_DRAFT as CV, type CvCredential } from "~/data/cv-draft";
+import { type CertItem, CV, type CvCredential, type CvEntry, cvQualifications, type Text } from "~/data/cv";
 import { PROFILES, SITE } from "~/data/site";
 import { CV_NAME, CV_STICKER } from "~/lib/cv-fonts.gen";
 import { type IconName } from "~/lib/icons.gen";
@@ -86,7 +83,7 @@ const blocks: Block[] = [
   { kind: "list" as const, heading: sections.education, entries: CV.education },
   // A list with nothing in it leaves no empty heading behind.
 ].filter((block) => block.kind !== "list" || block.entries.length > 0);
-const credentials: CvCredential[] = CV.credentials.filter((credential) => credential.kind !== "experience");
+const credentials: CvCredential[] = cvQualifications();
 // A repository reads best as its address (a paper reader can type it); a store badge by its name.
 const linkText = (link: { label: string; href: string }) => (/github\.com\//.test(link.href) ? short(link.href) : link.label);
 const certMeta = (item: CertItem) => tx(item.when[locale]);
@@ -222,7 +219,8 @@ const FRAME = '<path fill="none" stroke="#0a0d33" stroke-width="1.2" d="M.6.6h43
                 {CV.tools.map((group) => (
                   <li>
                     <Icon name={group.icon} inline class="cs-tools-ico" />
-                    <strong>{l(group.name)}:</strong> {group.tools.map((tool) => tool.replace(/ /g, NBSP)).join(" · ")}
+                    <strong>{l(group.name)}:</strong>{" "}
+                    {group.tools.map((tool) => (typeof tool === "string" ? tool : tool[locale]).replace(/ /g, NBSP)).join(" · ")}
                   </li>
                 ))}
               </ul>
@@ -330,13 +328,14 @@ const FRAME = '<path fill="none" stroke="#0a0d33" stroke-width="1.2" d="M.6.6h43
     --slate: #4b4f78;
     /* The type scale, six steps (the name is fitted): every body step reads --d, set on the root (the print page's
        default, or scripts/cv-sheet.mjs while it fits the sheet): 0 = densest (body 10 pt, the floor of print
-       guidance), 1 = roomiest (10.8 pt). Meta lines run at 0.9 (9-9.7 pt). */
-    --fs: calc(10pt + 0.8pt * var(--d));
+       guidance), 1 = roomiest (10.8 pt). Meta lines run at 0.9 (9-9.7 pt). Below 0 (a long locale's last resort) only
+       the gaps tighten: the type and the leading stay at their floor. */
+    --fs: calc(10pt + 0.8pt * max(var(--d), 0));
     --t-title: calc(var(--fs) * 1.2);
     --t-meta: calc(var(--fs) * 0.9);
     --t-label: 8.2pt;
     --t-band: 8.8pt;
-    --lh: calc(1.3 + 0.1 * var(--d));
+    --lh: calc(1.3 + 0.1 * max(var(--d), 0));
     /* Room between sections and entries [user 2026-10-08: "slightly more living room"]; the page edges stay. */
     --sec: calc(5.4mm + 3.4mm * var(--d));
     --entry: calc(3.1mm + 1.8mm * var(--d));

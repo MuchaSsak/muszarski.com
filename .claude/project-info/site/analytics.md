@@ -15,12 +15,13 @@
 
 | Event | When | Properties |
 | --- | --- | --- |
-| `cv_download` | a PDF download starts | `source` (header/hero/menu/footer from the CV button; cv-page; blog), `locale` |
+| `cv_download` | a PDF download starts | `source` (header/hero/menu/footer from the CV button; cv-page; cv-papers, the PDF's pages on `/cv/`; blog), `locale` |
 | `cv_view` | `/cv/` page view (pageview) | — |
 | `contact_open` | contact panel opened (no panel is built, so not wired) | `source` |
 | `contact_submit` | form sent successfully | `topic` (job/project/question/none) |
 | `contact_error` | form error shown | `kind` (validation/turnstile/network/429/5xx) |
-| `copy_email` | email copied | `source` |
+| `copy_email` | email copied | `source` (contact; cv-bar, cv-page on `/cv/`) |
+| `copy_cv_link` | the CV's address copied on `/cv/` | `source` |
 | `case_open` | a case study opened from a chapter or archive | `project` (slug) |
 | `outbound` | Live / Code / npm / LinkedIn / GitHub clicked | `target`, `project?` |
 | `locale_switch` | locale changed | `from`, `to` |

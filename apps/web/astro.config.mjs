@@ -134,9 +134,9 @@ export default defineConfig({
     react(),
     mdx(),
     sitemap({
-      // Only real, indexable pages: never the root redirect, 404, legal pages (noindex), the CV print routes or the
+      // Only real, indexable pages: never the root redirect, 404, legal pages (noindex), the CV print route or the
       // contact result pages (seo.md § Robots).
-      filter: (page) => /\/(en|pl|es)\//.test(page) && !/\/(privacy|terms|cv\/print(-v2)?|contact)\//.test(page),
+      filter: (page) => /\/(en|pl|es)\//.test(page) && !/\/(privacy|terms|cv\/print|contact)\//.test(page),
       i18n: { defaultLocale: "en", locales: { en: "en", pl: "pl", es: "es" } },
     }),
     sitemapImages(),

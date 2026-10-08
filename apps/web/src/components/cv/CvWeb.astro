@@ -1,0 +1,1275 @@
+---
+/**
+ * The web CV's body (structure.md § /cv/, design.md § CV page): the PDF's content (`~/data/cv`, the same source as
+ * CvSheet.astro) with the PDF's words and links, laid out for a screen instead of paper [user 2026-10-08: "go
+ * creative on it, but display all information that is on the cv itself"]. Same sections in the same order as the
+ * sheet: Profile, Experience, Selected projects, Skills and qualifications, Education, Languages, Interests, Contact,
+ * then the Polish clause.
+ *
+ * What the screen adds: section labels that stay in view while their section scrolls by; the stack named in the
+ * profile picked out; the current role marked live and a timeline that fills as it passes; the projects in their own
+ * colours with their real media (behind the rights gate); copy buttons for the email and the CV's address.
+ */
+import { t } from "lingui-for-astro/macro";
+import { encode } from "uqr";
+
+import Flag from "~/components/ui/Flag.astro";
+import Icon from "~/components/ui/Icon.astro";
+import { type CertItem, CV, type CvCredential, type CvEntry, cvQualifications, type Text } from "~/data/cv";
+import { visibleProjects } from "~/data/projects";
+import { PROFILES, SITE } from "~/data/site";
+import { pathTo } from "~/lib/routes";
+import { typo } from "~/lib/typography";
+
+interface Props {
+  /** The portfolio's home in this locale (absolute). */
+  siteUrl: string;
+}
+
+const { siteUrl } = Astro.props;
+const locale = Astro.locals.locale;
+const NBSP = String.fromCharCode(160);
+// Locale typography, and a range dash stays with the word before it ("2026 – now" never starts a line with "–").
+const tx = (text: string) => typo(locale, text).replace(/ – /g, `${NBSP}– `);
+const l = (text: Text) => tx(text[locale]);
+const short = (href: string) => href.replace(/^(https?:\/\/)?(www\.)?/, "").replace(/\/$/, "");
+const newTab = t`(opens in a new tab)`;
+const github = PROFILES.find((profile) => profile.id === "github");
+
+const heads = {
+  summary: t`Profile`,
+  experience: t`Experience`,
+  projects: t`Selected projects`,
+  skills: t`Skills and qualifications`,
+  softSkills: t`Soft skills`,
+  tools: t`Technologies`,
+  qualifications: t`Qualifications and training`,
+  education: t`Education`,
+  languages: t`Languages`,
+  interests: t`Interests`,
+  contact: t`Contact`,
+};
+const copyEmail = t`Copy email`;
+const emailCopied = t`Email copied`;
+const copyLink = t`Copy link`;
+const linkCopied = t`Link copied`;
+
+// The profile names the stack: those words are picked out so a skim finds them (the same words, only weighted).
+const TERMS = [
+  ...new Set([
+    ...CV.tools.flatMap((group) => group.tools).filter((tool): tool is string => typeof tool === "string"),
+    "Postgres",
+  ]),
+].sort((a, b) => b.length - a.length);
+const escape = (text: string) => text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+const termRe = new RegExp(`(?<![\\p{L}\\d])(${TERMS.map(escape).join("|")})(?![\\p{L}\\d])`, "u");
+const summary = l(CV.summary).split(termRe);
+
+// Projects show their real media only while the rights gate lets the project show (CLAUDE.md, projects.ts).
+const shown = new Set(visibleProjects().map((project) => project.slug));
+const MEDIA: Record<string, { slug: string; kind: "page" | "phone" | "card"; src: string; w: number; h: number }> = {
+  pstrykweb: { slug: "pstrykweb", kind: "page", src: "/media/work/pstrykweb.webp", w: 720, h: 1800 },
+  linkoglot: { slug: "linkoglot", kind: "phone", src: "/media/linkoglot/camera-poster.webp", w: 320, h: 694 },
+  portfolio: { slug: "this-site", kind: "card", src: `/media/work/this-site-${locale}.webp`, w: 960, h: 504 },
+};
+const media = (id: string) => {
+  const item = MEDIA[id];
+  return item && shown.has(item.slug) ? item : undefined;
+};
+// Each project in its own colour, as on the home page (styles/chapters.css); the portfolio in the site's cobalt.
+const SKIN: Record<string, string> = { pstrykweb: "yellow", linkoglot: "orange", portfolio: "cobalt" };
+// Soft skills: one poster colour per tile, in a fixed order (every pair passes AA, tokens.test.ts).
+const TILE = ["cobalt", "pink", "yellow", "lime", "orange", "navy"];
+
+const qualifications: CvCredential[] = cvQualifications();
+const linkText = (link: { label: string; href: string }) => (/github\.com\//.test(link.href) ? short(link.href) : link.label);
+const clause = (CV.clause as Partial<Record<string, string>>)[locale];
+// Interests as chips: the line split at its commas, each behind its icon when the counts agree.
+const interests = l(CV.interests).replace(/\.$/, "").split(/,\s+/);
+const interestIcons = interests.length === CV.interestIcons.length ? CV.interestIcons : [];
+// The CV's own address, locale-free (vercel.json sends it to the reader's language), as the sheet prints it.
+const cvAddress = new URL("/cv/", siteUrl).href;
+const webCv = new URL(pathTo(locale, "cv/"), siteUrl).href;
+// The slip's QR code: the portfolio in this language, one path of unit squares.
+const qr = encode(siteUrl, { ecc: "M", border: 0 });
+const qrPath = qr.data.flatMap((row, y) => row.flatMap((on, x) => (on ? [`M${x} ${y}h1v1h-1z`] : []))).join("");
+const sections: { id: string; head: string }[] = [
+  { id: "profile", head: heads.summary },
+  { id: "experience", head: heads.experience },
+  { id: "projects", head: heads.projects },
+  { id: "skills", head: heads.skills },
+];
+const num = (id: string) => String(sections.findIndex((section) => section.id === id) + 1).padStart(2, "0");
+---
+
+<div class="cv">
+  <section class="sec field-alt cw-sec cw-first" id="profile" aria-labelledby="cw-h-profile">
+    <header class="cw-label">
+      <span class="cw-num" aria-hidden="true">
+        {num("profile")}
+      </span>
+      <h2 id="cw-h-profile">{heads.summary}</h2>
+    </header>
+    <div class="cw-main">
+      <p class="cw-statement">{summary.map((part, i) => (i % 2 ? <strong>{part}</strong> : part))}</p>
+    </div>
+  </section>
+
+  <section class="sec field-alt cw-sec" id="experience" aria-labelledby="cw-h-experience">
+    <header class="cw-label">
+      <span class="cw-num" aria-hidden="true">
+        {num("experience")}
+      </span>
+      <h2 id="cw-h-experience">{heads.experience}</h2>
+    </header>
+    <ol class="cw-main cw-tl" role="list">
+      {CV.experience.map((entry: CvEntry) => (
+        <li class:list={["cw-job", { now: entry.current }]}>
+          <h3>{l(entry.title)}</h3>
+          <p class="cw-when">
+            {entry.current && <span class="cw-live" aria-hidden="true" />}
+            {l(entry.when)}
+          </p>
+          {entry.org && <p class="cw-org">{l(entry.org)}</p>}
+          {entry.bullets.length > 0 && (
+            <ul class="cw-bullets" role="list">
+              {entry.bullets.map((bullet) => (
+                <li>{l(bullet)}</li>
+              ))}
+            </ul>
+          )}
+          {entry.links && (
+            <p class="cw-links">
+              {entry.links.map((link) => (
+                <a href={link.href} rel="noopener" target="_blank">
+                  {linkText(link)}
+                  <Icon name="tb:arrow-up-right" />
+                  <span class="sr-only"> {newTab}</span>
+                </a>
+              ))}
+            </p>
+          )}
+        </li>
+      ))}
+    </ol>
+  </section>
+
+  <section class="sec field-bar cw-sec cw-projects" id="projects" aria-labelledby="cw-h-projects">
+    <header class="cw-label">
+      <span class="cw-num" aria-hidden="true">
+        {num("projects")}
+      </span>
+      <h2 id="cw-h-projects">{heads.projects}</h2>
+    </header>
+    <ul class="cw-main cw-cards" role="list">
+      {CV.projects.map((entry: CvEntry) => {
+        const item = media(entry.id);
+        return (
+          <li class="cw-card" data-skin={SKIN[entry.id]}>
+            <div class:list={["cw-plate", item?.kind ?? "none"]} aria-hidden="true">
+              {item?.kind === "page" && (
+                <span class="cw-window">
+                  <span class="cw-dots">
+                    <i />
+                    <i />
+                    <i />
+                  </span>
+                  <span class="cw-scroll">
+                    <img src={item.src} alt="" width={item.w} height={item.h} loading="lazy" decoding="async" />
+                  </span>
+                </span>
+              )}
+              {item?.kind === "phone" && (
+                <span class="cw-phone">
+                  <img src={item.src} alt="" width={item.w} height={item.h} loading="lazy" decoding="async" />
+                </span>
+              )}
+              {item?.kind === "card" && (
+                <span class="cw-window">
+                  <span class="cw-dots">
+                    <i />
+                    <i />
+                    <i />
+                  </span>
+                  <img src={item.src} alt="" width={item.w} height={item.h} loading="lazy" decoding="async" />
+                </span>
+              )}
+            </div>
+            <div class="cw-card-body">
+              <p class="cw-when">{l(entry.when)}</p>
+              <h3>{l(entry.title)}</h3>
+              {entry.org && <p class="cw-org">{l(entry.org)}</p>}
+              <ul class="cw-bullets" role="list">
+                {entry.bullets.map((bullet) => (
+                  <li>{l(bullet)}</li>
+                ))}
+              </ul>
+              {entry.links && (
+                <p class="cw-go">
+                  {entry.links.map((link) => (
+                    <a class="btn btn-inv" href={link.href} rel="noopener" target="_blank">
+                      {linkText(link)}
+                      <Icon name="tb:arrow-up-right" class="nudge" />
+                      <span class="sr-only"> {newTab}</span>
+                    </a>
+                  ))}
+                </p>
+              )}
+            </div>
+          </li>
+        );
+      })}
+    </ul>
+  </section>
+
+  <section class="sec field-alt cw-sec" id="skills" aria-labelledby="cw-h-skills">
+    <header class="cw-label">
+      <span class="cw-num" aria-hidden="true">
+        {num("skills")}
+      </span>
+      <h2 id="cw-h-skills">{heads.skills}</h2>
+    </header>
+    <div class="cw-main">
+      {CV.softSkills.length > 0 && (
+        <div class="cw-block">
+          <h3 class="cw-kick">{heads.softSkills}</h3>
+          <ul class="cw-soft" role="list">
+            {CV.softSkills.map((skill, i) => (
+              <li style={`--tile:var(--${TILE[i % TILE.length]})`}>
+                <span class="cw-tile">
+                  <Icon name={skill.icon} />
+                </span>
+                <strong>{l(skill.name)}</strong>
+                <span>{l(skill.line)}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+      {CV.tools.length > 0 && (
+        <div class="cw-block cw-stack">
+          <h3 class="cw-kick">{heads.tools}</h3>
+          <dl class="cw-tools">
+            {CV.tools.map((group) => (
+              <div>
+                <dt>
+                  <Icon name={group.icon} />
+                  {l(group.name)}
+                </dt>
+                <dd>
+                  <ul role="list">
+                    {group.tools.map((tool) => (
+                      <li>{typeof tool === "string" ? tool : tool[locale]}</li>
+                    ))}
+                  </ul>
+                </dd>
+              </div>
+            ))}
+          </dl>
+        </div>
+      )}
+      {qualifications.length > 0 && (
+        <div class="cw-block" id="qualifications">
+          <h3 class="cw-kick">{heads.qualifications}</h3>
+          <ul class="cw-quals" role="list">
+            {qualifications.map((credential) => (
+              <li>
+                <p class="cw-when">{l(credential.when)}</p>
+                <h4>
+                  {credential.verifyUrl ? (
+                    <a href={credential.verifyUrl} rel="noopener" target="_blank">
+                      {l(credential.title)}
+                      <span class="sr-only"> {newTab}</span>
+                    </a>
+                  ) : (
+                    l(credential.title)
+                  )}
+                  <span class="cw-issuer"> · {l(credential.issuer)}</span>
+                </h4>
+                {credential.items ? (
+                  <ul class="cw-certs" role="list">
+                    {credential.items.map((item: CertItem) => (
+                      <li>
+                        {item.href || item.site ? (
+                          <a href={item.href ?? item.site} rel="noopener" target="_blank">
+                            {item.title}
+                            <span class="sr-only"> {newTab}</span>
+                          </a>
+                        ) : (
+                          item.title
+                        )}
+                        <span class="cw-meta"> · {tx(item.when[locale])}</span>
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p class="cw-note">{l(credential.summary)}</p>
+                )}
+                {credential.gain && (
+                  <p class="cw-gain">
+                    <Icon name="tb:trending-up" />
+                    <span>{l(credential.gain)}</span>
+                  </p>
+                )}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+    </div>
+  </section>
+
+  <section class="sec field-alt cw-trio" aria-label={`${heads.education} · ${heads.languages} · ${heads.interests}`}>
+    {CV.education.length > 0 && (
+      <div class="cw-cell" id="education">
+        <h2 class="cw-kick">{heads.education}</h2>
+        {CV.education.map((entry: CvEntry) => (
+          <article class="cw-edu">
+            <p class="cw-when">{l(entry.when)}</p>
+            <h3>{l(entry.title)}</h3>
+            {entry.org && <p class="cw-org">{l(entry.org)}</p>}
+            <ul class="cw-bullets" role="list">
+              {entry.bullets.map((bullet) => (
+                <li>{l(bullet)}</li>
+              ))}
+            </ul>
+          </article>
+        ))}
+      </div>
+    )}
+    {CV.languages.length > 0 && (
+      <div class="cw-cell" id="languages">
+        <h2 class="cw-kick">{heads.languages}</h2>
+        <ul class="cw-langs" role="list">
+          {CV.languages.map((language) => (
+            <li>
+              <Flag code={language.flag.toUpperCase()} class="cw-flag" />
+              <strong>{l(language.name)}:</strong> {l(language.level)}
+            </li>
+          ))}
+        </ul>
+      </div>
+    )}
+    {CV.interests[locale] && (
+      <div class="cw-cell" id="interests">
+        <h2 class="cw-kick">{heads.interests}</h2>
+        <p class="sr-only">{l(CV.interests)}</p>
+        <ul class="cw-likes" role="list" aria-hidden="true">
+          {interests.map((interest, i) => (
+            <li>
+              {interestIcons[i] && <Icon name={interestIcons[i]} />}
+              {interest}
+            </li>
+          ))}
+        </ul>
+      </div>
+    )}
+  </section>
+
+  <section class="sec field-accent cw-end" id="cv-contact" aria-labelledby="cw-h-contact">
+    <h2 class="cw-kick" id="cw-h-contact">
+      {heads.contact}
+    </h2>
+    <div class="cw-end-main">
+      <p class="cw-mail">
+        <a href={`mailto:${SITE.email}`} data-umami-event="cta" data-umami-event-id="email" data-umami-event-source="cv-page">
+          {SITE.email}
+        </a>
+      </p>
+      <ul class="cw-end-links" role="list">
+        <li>
+          <button
+            class="btn btn-inv"
+            type="button"
+            data-copy={SITE.email}
+            data-copied={emailCopied}
+            data-copy-failed={SITE.email}
+            data-copy-event="copy_email"
+            data-copy-source="cv-page"
+          >
+            <Icon name="tb:copy" />
+            {copyEmail}
+          </button>
+        </li>
+        <li class="cw-cvlink">
+          <Icon name="tb:file-cv" />
+          <a href={webCv}>{short(cvAddress)}</a>
+          <button
+            class="cw-mini"
+            type="button"
+            data-copy={cvAddress}
+            data-copied={linkCopied}
+            data-copy-failed={cvAddress}
+            data-copy-event="copy_cv_link"
+            data-copy-source="cv-page"
+          >
+            <Icon name="tb:copy" />
+            {copyLink}
+          </button>
+        </li>
+        {github && (
+          <li class="cw-cvlink">
+            <Icon name="si:github" />
+            <a href={github.href} rel="me noopener" target="_blank">
+              {short(github.href)}
+              <span class="sr-only"> {newTab}</span>
+            </a>
+          </li>
+        )}
+      </ul>
+    </div>
+    <div class="cw-qr" aria-hidden="true">
+      <svg viewBox={`-2 -2 ${qr.size + 4} ${qr.size + 4}`}>
+        <rect x="-2" y="-2" width={qr.size + 4} height={qr.size + 4} fill="#fff"></rect>
+        <path d={qrPath}></path>
+      </svg>
+      <span>{short(siteUrl)}</span>
+    </div>
+    {clause && <p class="cw-clause">{tx(clause)}</p>}
+  </section>
+</div>
+
+<style>
+  /* Sections: a label column that stays in view while its section scrolls by (wide screens), then the content. On
+     phones the label sits on top. Sections on the same field are parted by a 3 px rule, like the site's bars. */
+  .cw-sec {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 1.25rem;
+    padding-block: clamp(2.5rem, 5vw, 4.5rem);
+  }
+  .cw-sec.field-alt + .cw-sec.field-alt::before,
+  .cw-trio::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: var(--pad-x);
+    right: var(--pad-x);
+    height: 3px;
+    background: currentColor;
+  }
+  .cw-first {
+    padding-top: clamp(3rem, 6vw, 5.5rem);
+  }
+  @media (min-width: 64rem) {
+    .cw-sec:not(.cw-projects) {
+      grid-template-columns: minmax(15rem, 0.3fr) minmax(0, 1fr);
+      column-gap: clamp(2rem, 4vw, 5rem);
+    }
+    .cw-sec:not(.cw-projects) .cw-label {
+      position: sticky;
+      top: calc(var(--header-h) + 1.75rem);
+      align-self: start;
+    }
+  }
+  .cw-label {
+    display: grid;
+    gap: 0.75rem;
+    align-content: start;
+  }
+  .cw-num,
+  .cw-kick {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+    margin: 0;
+    font-weight: 800;
+    font-size: 0.875rem;
+    line-height: 1.25;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    font-stretch: 125%;
+  }
+  /* The sheet's pink tab, before every label. */
+  .cw-num::before,
+  .cw-kick::before {
+    content: "";
+    flex: none;
+    width: 0.75rem;
+    height: 0.75rem;
+    background: var(--accent);
+  }
+  /* Sized so the longest word in any locale ("CUALIFICACIONES", about 6 em at this width) fits the label column at
+     every width: words never break. */
+  .cw-label h2 {
+    margin: 0;
+    font-weight: 900;
+    font-size: clamp(2.25rem, 0.75rem + 2.4vw, 4rem);
+    line-height: 0.86;
+    text-transform: uppercase;
+    font-stretch: 62%;
+  }
+  .cw-main {
+    min-width: 0;
+    margin: 0;
+  }
+  .cw-when,
+  .cw-org {
+    margin: 0;
+    font-weight: 700;
+    font-size: var(--text-sm);
+    line-height: 1.35;
+  }
+  .cw-when {
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    font-stretch: 115%;
+  }
+  .cw-org {
+    opacity: 0.78;
+  }
+  .cw-bullets {
+    display: grid;
+    gap: 0.375rem;
+    margin: 0.875rem 0 0;
+    padding: 0;
+    list-style: none;
+  }
+  .cw-bullets li {
+    max-width: 64ch;
+    padding-left: 1.375rem;
+    text-wrap: pretty;
+  }
+  /* The sheet's pink square bullets. */
+  .cw-bullets li::before {
+    content: "";
+    display: inline-block;
+    width: 0.5rem;
+    height: 0.5rem;
+    margin: 0 0.875rem 0.15em -1.375rem;
+    background: var(--accent);
+    vertical-align: middle;
+  }
+
+  /* Profile: the summary as a statement, the stack it names picked out by a pink underline. */
+  .cw-statement {
+    max-width: 44ch;
+    margin: 0;
+    font-weight: 500;
+    font-size: clamp(1.3125rem, 0.95rem + 1.15vw, 2.125rem);
+    line-height: 1.32;
+    text-wrap: pretty;
+  }
+  .cw-statement strong {
+    font-weight: 800;
+    background: linear-gradient(var(--accent), var(--accent)) 0 94% / 100% 0.2em no-repeat;
+  }
+
+  /* Experience: a timeline. A spine runs through the entries, each title sits on a square stop, the current role's
+     stop is pink and its date carries a live dot. Where scroll-driven animations exist, the spine fills in pink as an
+     entry passes the middle of the screen. */
+  .cw-tl {
+    max-width: 60rem;
+    padding: 0;
+    list-style: none;
+  }
+  .cw-job {
+    position: relative;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas: "when" "title" "org" "bullets" "links";
+    padding: 0 0 clamp(2rem, 3.5vw, 3rem) clamp(2.25rem, 3vw, 3rem);
+  }
+  .cw-job:last-child {
+    padding-bottom: 0;
+  }
+  .cw-job::before,
+  .cw-job::after {
+    content: "";
+    position: absolute;
+    left: 0.5rem;
+    top: 0.75rem;
+    bottom: 0;
+    width: 3px;
+    background: color-mix(in srgb, currentColor 22%, transparent);
+  }
+  .cw-job::after {
+    background: var(--accent);
+    transform-origin: top;
+  }
+  .cw-job:last-child::before,
+  .cw-job:last-child::after {
+    display: none;
+  }
+  .cw-job h3 {
+    grid-area: title;
+    position: relative;
+    margin: 0.25rem 0 0.125rem;
+    font-weight: 900;
+    font-size: clamp(1.625rem, 1.2rem + 1.3vw, 2.5rem);
+    line-height: 0.95;
+    text-transform: uppercase;
+    font-stretch: 62%;
+  }
+  /* The stop: a square on the spine, level with the title. */
+  .cw-job h3::before {
+    content: "";
+    position: absolute;
+    top: 0.05em;
+    left: calc(-1 * clamp(2.25rem, 3vw, 3rem));
+    width: 1.1875rem;
+    height: 1.1875rem;
+    border: 3px solid currentColor;
+    background: var(--sbg);
+  }
+  .cw-job.now h3::before {
+    background: var(--accent);
+  }
+  .cw-job .cw-when {
+    grid-area: when;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .cw-job .cw-org {
+    grid-area: org;
+  }
+  .cw-job .cw-bullets {
+    grid-area: bullets;
+  }
+  .cw-job .cw-links {
+    grid-area: links;
+  }
+  @media (min-width: 48rem) {
+    .cw-job {
+      grid-template-columns: minmax(0, 1fr) auto;
+      grid-template-areas: "title when" "org org" "bullets bullets" "links links";
+      column-gap: 1.5rem;
+      align-items: baseline;
+    }
+    .cw-job .cw-when {
+      justify-self: end;
+    }
+  }
+  .cw-live {
+    flex: none;
+    width: 0.625rem;
+    height: 0.625rem;
+    border-radius: 50%;
+    background: #1fbf5b;
+    box-shadow: 0 0 0 2px currentColor;
+    animation: cw-live 2s ease-in-out infinite;
+  }
+  @keyframes cw-live {
+    50% {
+      box-shadow:
+        0 0 0 2px currentColor,
+        0 0 0 6px color-mix(in srgb, #1fbf5b 35%, transparent);
+    }
+  }
+  .cw-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1.25rem;
+    margin: 0.875rem 0 0;
+  }
+  .cw-links a {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    font-weight: 800;
+    text-decoration: underline 2px;
+    text-underline-offset: 0.25em;
+  }
+  .cw-links :global(.ico) {
+    width: 1.125rem;
+    height: 1.125rem;
+  }
+  @supports (animation-timeline: view()) {
+    @media (prefers-reduced-motion: no-preference) {
+      /* Longhands, never the shorthand: the minifier folds the timeline into `animation`, which Chrome rejects. */
+      .cw-job::after {
+        animation-name: cw-fill;
+        animation-timing-function: linear;
+        animation-fill-mode: both;
+        animation-timeline: view();
+        animation-range: entry 60% cover 55%;
+      }
+      :global(.still) .cw-job::after {
+        animation: none !important;
+      }
+    }
+  }
+  @keyframes cw-fill {
+    from {
+      transform: scaleY(0);
+    }
+  }
+
+  /* Selected projects: a navy poster of cards in each project's colour, its real media on a plate on top. */
+  .cw-projects {
+    padding-block: clamp(3rem, 6vw, 5.5rem);
+  }
+  .cw-projects .cw-label h2 {
+    max-width: none;
+  }
+  .cw-cards {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: clamp(1.75rem, 3vw, 2.75rem);
+    margin-top: clamp(0.75rem, 2vw, 1.75rem);
+    padding: 0 8px 8px 0;
+    list-style: none;
+  }
+  @media (min-width: 48rem) {
+    .cw-cards {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+  @media (min-width: 64rem) {
+    .cw-cards {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+  .cw-card {
+    --sbg: var(--ice);
+    --sfg: var(--navy);
+    --pop: var(--cobalt);
+    display: flex;
+    flex-direction: column;
+    background: var(--sbg);
+    color: var(--sfg);
+    box-shadow: 8px 8px 0 var(--ice);
+  }
+  .cw-card[data-skin="yellow"] {
+    --sbg: var(--yellow);
+    --pop: var(--cobalt);
+  }
+  .cw-card[data-skin="orange"] {
+    --sbg: var(--orange);
+    --pop: var(--ice);
+  }
+  .cw-card[data-skin="cobalt"] {
+    --sbg: var(--cobalt);
+    --sfg: var(--ice);
+    --pop: var(--accent);
+  }
+  .cw-plate {
+    position: relative;
+    display: grid;
+    place-items: end center;
+    aspect-ratio: 16 / 10;
+    overflow: hidden;
+    padding: 1.25rem 1.25rem 0;
+    border-bottom: 3px solid var(--navy);
+    background:
+      radial-gradient(color-mix(in srgb, var(--sfg) 24%, transparent) 1.2px, transparent 1.7px) 0 0 / 14px 14px,
+      var(--sbg);
+  }
+  .cw-plate.none {
+    padding: 0;
+  }
+  .cw-window {
+    display: flex;
+    flex-direction: column;
+    width: 92%;
+    height: 90%;
+    overflow: hidden;
+    border: 3px solid var(--navy);
+    border-bottom: 0;
+    background: #fff;
+    box-shadow: 6px 0 0 var(--navy);
+  }
+  .cw-dots {
+    display: flex;
+    flex: none;
+    gap: 0.3rem;
+    padding: 0.45rem 0.6rem;
+    background: var(--navy);
+  }
+  .cw-dots i {
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 50%;
+    background: var(--ice);
+    opacity: 0.55;
+  }
+  .cw-window img {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+  .cw-plate.card .cw-window img {
+    height: 100%;
+    object-fit: cover;
+    object-position: top left;
+  }
+  .cw-scroll {
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
+  }
+  /* The landing pans down as the card crosses the screen (scroll-driven), so phones see the same move as mice. */
+  @supports (animation-timeline: view()) {
+    @media (prefers-reduced-motion: no-preference) {
+      .cw-scroll img {
+        animation-name: cw-pan;
+        animation-timing-function: linear;
+        animation-fill-mode: both;
+        animation-timeline: view();
+        animation-range: cover 10% cover 90%;
+      }
+      :global(.still) .cw-scroll img {
+        animation: none !important;
+      }
+    }
+  }
+  @keyframes cw-pan {
+    to {
+      transform: translateY(calc(-100% + 14rem));
+    }
+  }
+  .cw-phone {
+    display: block;
+    width: 36%;
+    height: 94%;
+    overflow: hidden;
+    border: 5px solid var(--navy);
+    border-bottom: 0;
+    border-radius: 1.5rem 1.5rem 0 0;
+    background: var(--navy);
+    box-shadow: 6px 0 0 var(--navy);
+  }
+  .cw-phone img {
+    display: block;
+    width: 100%;
+    height: auto;
+    border-radius: 1.1rem 1.1rem 0 0;
+  }
+  .cw-card-body {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    padding: 1.25rem clamp(1.125rem, 2vw, 1.75rem) clamp(1.5rem, 2.5vw, 2rem);
+  }
+  .cw-card h3 {
+    margin: 0.375rem 0 0.25rem;
+    font-weight: 900;
+    font-size: clamp(2rem, 1.4rem + 1.6vw, 3rem);
+    line-height: 0.9;
+    text-transform: uppercase;
+    font-stretch: 62%;
+  }
+  .cw-card .cw-bullets {
+    margin-bottom: 1.5rem;
+  }
+  .cw-card .cw-bullets li::before {
+    background: var(--sfg);
+  }
+  .cw-go {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem 1rem;
+    margin: auto 0 0;
+  }
+
+  /* Skills and qualifications. */
+  .cw-block + .cw-block {
+    margin-top: clamp(2.5rem, 4.5vw, 3.75rem);
+  }
+  .cw-block > .cw-kick {
+    margin-bottom: 1.25rem;
+  }
+  .cw-soft {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 1.25rem;
+    margin: 0;
+    padding: 0 5px 5px 0;
+    list-style: none;
+  }
+  @media (min-width: 30rem) {
+    .cw-soft {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+  @media (min-width: 90rem) {
+    .cw-soft {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+  .cw-soft li {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    grid-template-rows: auto 1fr;
+    column-gap: 0.875rem;
+    padding: 1rem 1.125rem 1.125rem 1rem;
+    border: 2px solid currentColor;
+    background: color-mix(in srgb, #fff 55%, var(--sbg));
+    box-shadow: 5px 5px 0 currentColor;
+    transition:
+      transform var(--dur-base) var(--ease-out),
+      box-shadow var(--dur-base) var(--ease-out);
+  }
+  /* Each tile's icon on its own poster colour, a little tilted, like the home Competences tiles. */
+  .cw-tile {
+    grid-row: span 2;
+    display: grid;
+    place-items: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    background: var(--tile);
+    color: var(--navy);
+    box-shadow: 3px 3px 0 var(--navy);
+    transform: rotate(-4deg);
+    transition: transform var(--dur-base) var(--ease-pop);
+  }
+  .cw-soft li:nth-child(6n + 1) .cw-tile,
+  .cw-soft li:nth-child(6n + 6) .cw-tile {
+    color: var(--ice);
+  }
+  .cw-tile :global(.ico) {
+    width: 1.5rem;
+    height: 1.5rem;
+  }
+  .cw-soft strong {
+    font-weight: 800;
+    font-size: 1.0625rem;
+    line-height: 1.25;
+  }
+  .cw-soft span:not(.cw-tile) {
+    margin-top: 0.125rem;
+    font-size: var(--text-sm);
+    line-height: 1.4;
+    opacity: 0.82;
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .cw-soft li:hover {
+      transform: translate(-3px, -3px);
+      box-shadow: 8px 8px 0 currentColor;
+    }
+    .cw-soft li:hover .cw-tile {
+      transform: rotate(6deg) scale(1.08);
+    }
+  }
+
+  /* Technologies: a navy panel, one row per group (its icon and name), the tools as plain tags. */
+  .cw-tools {
+    display: grid;
+    gap: 0.875rem;
+    margin: 0 8px 8px 0;
+    padding: clamp(1.25rem, 2.5vw, 2rem);
+    background: var(--navy);
+    color: var(--ice);
+    box-shadow: 8px 8px 0 var(--accent);
+  }
+  .cw-tools div {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0.625rem 1rem;
+    align-items: center;
+  }
+  @media (min-width: 48rem) {
+    .cw-tools div {
+      grid-template-columns: 13rem minmax(0, 1fr);
+    }
+  }
+  .cw-tools div + div {
+    padding-top: 0.875rem;
+    border-top: 1px solid color-mix(in srgb, var(--ice) 22%, transparent);
+  }
+  .cw-tools dt {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--lime);
+    font-weight: 800;
+    font-size: 0.875rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    font-stretch: 115%;
+  }
+  .cw-tools dt :global(.ico) {
+    width: 1.375rem;
+    height: 1.375rem;
+  }
+  .cw-tools dd {
+    margin: 0;
+  }
+  .cw-tools ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .cw-tools li {
+    padding: 0.3125rem 0.625rem;
+    border: 1.5px solid color-mix(in srgb, var(--ice) 45%, transparent);
+    font-weight: 700;
+    font-size: var(--text-sm);
+    line-height: 1.2;
+    white-space: nowrap;
+  }
+
+  /* Qualifications: date, title (the certificate check where there is one) and issuer, one line or the certificates,
+     then what it gave him on a pink marker. */
+  .cw-quals,
+  .cw-certs {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .cw-quals {
+    max-width: 66rem;
+  }
+  .cw-quals > li {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    padding: 1.125rem 0;
+    border-top: 2px solid color-mix(in srgb, currentColor 16%, transparent);
+  }
+  .cw-quals > li:first-child {
+    padding-top: 0;
+    border-top: 0;
+  }
+  @media (min-width: 48rem) {
+    .cw-quals > li {
+      grid-template-columns: 10rem minmax(0, 1fr);
+      column-gap: 1.5rem;
+    }
+    .cw-quals > li > :not(.cw-when) {
+      grid-column: 2;
+    }
+    .cw-quals .cw-when {
+      grid-row: 1 / span 3;
+    }
+  }
+  .cw-quals .cw-when {
+    color: var(--cobalt);
+  }
+  .cw-quals h4 {
+    margin: 0;
+    font-weight: 800;
+    font-size: 1.1875rem;
+    line-height: 1.3;
+  }
+  .cw-quals h4 a {
+    text-decoration: underline 2px;
+    text-underline-offset: 0.2em;
+  }
+  .cw-issuer {
+    font-weight: 600;
+    font-size: var(--text-sm);
+    opacity: 0.78;
+  }
+  .cw-note,
+  .cw-certs {
+    max-width: 68ch;
+    margin: 0.375rem 0 0;
+  }
+  .cw-certs li + li {
+    margin-top: 0.25rem;
+  }
+  .cw-certs a {
+    font-weight: 600;
+    text-decoration: underline 1.5px;
+    text-underline-offset: 0.2em;
+  }
+  .cw-meta {
+    font-size: var(--text-sm);
+    white-space: nowrap;
+    opacity: 0.78;
+  }
+  .cw-gain {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+    margin: 0.625rem 0 0;
+    font-weight: 800;
+  }
+  .cw-gain span {
+    padding: 0.0625rem 0.375rem;
+    background: var(--accent);
+    color: var(--on-accent);
+    -webkit-box-decoration-break: clone;
+    box-decoration-break: clone;
+  }
+  .cw-gain :global(.ico) {
+    width: 1.375rem;
+    height: 1.375rem;
+    margin-top: 0.0625rem;
+    color: var(--cobalt);
+  }
+
+  /* Education, languages and interests: three short blocks on one row. */
+  .cw-trio {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 2.5rem clamp(2rem, 4vw, 4rem);
+    padding-block: clamp(2.5rem, 5vw, 4.5rem);
+  }
+  @media (min-width: 64rem) {
+    .cw-trio {
+      grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr) minmax(0, 1fr);
+    }
+  }
+  .cw-cell > .cw-kick {
+    margin-bottom: 1.125rem;
+  }
+  .cw-edu h3 {
+    margin: 0.25rem 0 0.125rem;
+    font-weight: 900;
+    font-size: clamp(1.5rem, 1.2rem + 1vw, 2.125rem);
+    line-height: 0.95;
+    text-transform: uppercase;
+    font-stretch: 62%;
+  }
+  .cw-langs,
+  .cw-likes {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .cw-langs {
+    display: grid;
+    gap: 0.75rem;
+  }
+  .cw-langs li {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 1.125rem;
+  }
+  .cw-langs :global(.cw-flag) {
+    width: 2.25rem;
+    height: 1.5rem;
+  }
+  .cw-likes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  .cw-likes li {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.375rem 0.75rem 0.375rem 0.625rem;
+    border: 2px solid currentColor;
+    font-weight: 700;
+    font-size: var(--text-sm);
+    line-height: 1.2;
+  }
+  .cw-likes :global(.ico) {
+    width: 1.125rem;
+    height: 1.125rem;
+  }
+
+  /* Contact: the sheet's pink slip, poster-sized. The email is the one big thing; copy it, or the CV's address. */
+  .cw-end {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 1.5rem 3rem;
+    align-items: start;
+    padding-block: clamp(3rem, 6vw, 5.5rem) clamp(2.5rem, 5vw, 4rem);
+  }
+  @media (min-width: 48rem) {
+    .cw-end {
+      grid-template-columns: minmax(0, 1fr) auto;
+    }
+    .cw-end > .cw-kick,
+    .cw-clause {
+      grid-column: 1 / -1;
+    }
+  }
+  .cw-mail {
+    margin: 0;
+    font-weight: 900;
+    font-size: clamp(2.5rem, 1rem + 6.4vw, 8rem);
+    line-height: 0.9;
+    text-transform: lowercase;
+    font-stretch: 62%;
+    overflow-wrap: anywhere;
+  }
+  /* On the pink field the tab is navy. */
+  .cw-end > .cw-kick::before {
+    background: var(--navy);
+  }
+  .cw-mail a {
+    text-decoration: underline 0.06em;
+    text-underline-offset: 0.12em;
+  }
+  .cw-end-links {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1rem 1.75rem;
+    margin: clamp(1.25rem, 2.5vw, 2rem) 0 0;
+    padding: 0 4px 4px 0;
+    list-style: none;
+  }
+  .cw-cvlink {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 800;
+  }
+  .cw-cvlink > :global(.ico) {
+    width: 1.375rem;
+    height: 1.375rem;
+  }
+  .cw-cvlink a {
+    text-decoration: underline 2px;
+    text-underline-offset: 0.2em;
+  }
+  .cw-mini {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    min-height: 2.75rem;
+    padding: 0 0.625rem;
+    border: 0;
+    background: none;
+    color: inherit;
+    font: inherit;
+    font-weight: 800;
+    font-size: 0.75rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    font-stretch: 115%;
+    box-shadow: inset 0 0 0 2px currentColor;
+    cursor: pointer;
+  }
+  .cw-mini :global(.ico) {
+    width: 1rem;
+    height: 1rem;
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .cw-mini:hover {
+      background: var(--navy);
+      color: var(--accent);
+    }
+  }
+  .cw-qr {
+    display: grid;
+    justify-items: center;
+    gap: 0.5rem;
+    width: clamp(7.5rem, 11vw, 10rem);
+    font-weight: 800;
+    font-size: 0.75rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    font-stretch: 115%;
+  }
+  .cw-qr svg {
+    display: block;
+    width: 100%;
+    border: 3px solid var(--navy);
+    box-shadow: 6px 6px 0 var(--navy);
+    fill: var(--navy);
+  }
+  @media (max-width: 47.99rem) {
+    .cw-qr {
+      display: none;
+    }
+  }
+  .cw-clause {
+    max-width: 96ch;
+    margin: clamp(1rem, 2vw, 1.5rem) 0 0;
+    font-size: 0.8125rem;
+    line-height: 1.45;
+  }
+</style>

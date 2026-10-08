@@ -44,28 +44,29 @@
 
 - **The rule:** `cv` data is the single source. The `/<locale>/cv/` page and `mateusz-muszarski-cv-<locale>.pdf`
   are both generated from it. **Never edit one without regenerating the other.** The PDFs are made by
-  `bun run cv:pdf` (Playwright prints `/<locale>/cv/print/`) and committed; each records a digest of `cv.ts`, and
-  `cv.test.ts` fails while a PDF was made from older data (mechanism: `technologies.md` § Stack, CV PDF row)
-  [user] 2026-10-05. The digest covers `cv.ts` only: after a change to `CvBody.astro`, the print CSS, `SITE` or the
-  CV headings, run `bun run cv:pdf` by hand. Keep each PDF at two pages (`cv-pages` check in the run notes).
-- **Sections:** header (name, title, location, email, links, availability) · summary ·
-  experience (freelance / own products / client projects, each with outcomes) · selected projects ·
-  skills (grouped) · education + qualifications (INF.02/.03/.04) · certifications · volunteering +
-  international (Erasmus+, ESC) · hackathons · languages · interests (short).
-- **PDF:** single column, real selectable text, embedded fonts, ATS-safe headings, 1–2 pages.
-  The web page may be more visual, but its content is the same.
-- **Locales:** en first; pl and es per `open-questions.md` (Q18).
-- **New sheet, draft [user 2026-10-08]** ("creative and good in design", at most 2 pages = one duplex sheet; Europass
-  dropped): `components/cv/CvSheet.astro` on `/<locale>/cv/print-v2/`, printed by `bun run cv:sheet` into `comps/cv/`
-  until the owner approves it; then it replaces the print route and the live PDFs, and `/cv/` mirrors it 1:1 (rollout
-  steps: `.claude/skills/new-cv/SKILL.md`). Decided for him: photo, email, region, links and availability in; date of
-  birth, address, PESEL, marital status and salary out; phone, "EU citizen" and CEFR levels once he gives them (Q49);
-  the Polish CV ends with the one-line recruitment clause (`CV.clause.pl`, none in en / es). English first
-  [user 2026-10-08]: the sheet reads `src/data/cv-draft.ts` (spreads `cv.ts`, overrides what changed: title "Full-stack
-  product engineer", PstrykWeb, Linkoglot and Portfolio as projects, soft skills and grouped tools, no Spanish) until
-  the rollout merges it into `cv.ts` with Polish and Spanish text and rebuilds `/cv/`. Section order, writing
-  and cutting rules: `.claude/skills/new-cv/references/content.md`. The digest picks a partial text (the pl-only
-  clause) per locale, so it changes the pl digest alone.
+  `bun run cv:sheet` (= `cv:pdf`: builds, prints `/<locale>/cv/print/` with Playwright, fits ≤ 2 A4 pages, checks) and
+  committed with their page previews (`*-p1.webp`, `*-p2.webp`, shown on `/cv/`); each records a digest of `cv.ts`,
+  and `cv.test.ts` fails while a PDF was made from older data (mechanism: `technologies.md` § Stack, CV PDF row)
+  [user] 2026-10-05. The digest covers `cv.ts` only: after a change to `CvSheet.astro`, the print route, `SITE` or the
+  CV headings, run `bun run cv:sheet` by hand. A print that fails a check never replaces a live PDF.
+- **Sheet = PDF [approved 2026-10-08]** ("the cv that is current is quite good as the template"): the designed two-page
+  sheet (`components/cv/CvSheet.astro`, `design.md` § CV sheet), English first, then localized; Europass dropped. How
+  to change it: the `new-cv` skill (`.claude/skills/new-cv/`). Decided for him: photo, email, region, links and
+  availability in; date of birth, address, PESEL, marital status and salary out; phone, "EU citizen" and CEFR levels
+  once he gives them (Q49); the Polish CV ends with the one-line recruitment clause (`CV.clause.pl`, none in en / es).
+- **Sections and order** [user 2026-10-08]: header (photo, name, title "Full-stack product engineer", availability) ·
+  contact bar (email, region, site, GitHub, LinkedIn) · profile · experience · selected projects (PstrykWeb with
+  Cetuspro, Linkoglot, Portfolio) · skills and qualifications (soft skills with a line of proof, technologies in named
+  groups, then the qualifications: `CV.qualifications` lists which credentials and in what order, each with its `cv`
+  override: a CV title or date, one summary line instead of the certificates, a `gain` line) · education · languages
+  (Polish, English; flags) + interests · contact slip (QR code) · (pl) clause. Writing and cutting rules:
+  `.claude/skills/new-cv/references/content.md`.
+- **The web page shows the same content in its own layout** [user 2026-10-08: "it would be too boring if it was the
+  same as pdf ... display all information that is on the cv itself"]: same sections, order, words and links; the
+  screen adds layout, colour, the projects' real media and copy buttons (`design.md` § CV page).
+- **Locales:** pl and es run ~15% longer than en; they are written to the English line count, and the fit may tighten
+  the gaps (never the type) below `--d 0` (2026-10-08: en 0, pl -0.39, es -0.24). es is unreviewed (P12). The digest
+  picks a partial text (the pl-only clause) per locale, so it changes the pl digest alone.
 
 ## Credential
 

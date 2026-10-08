@@ -14,25 +14,14 @@ ones and be fluid enough with it that if I ever need to add or remove some more 
 
 | Piece | Where | Notes |
 | --- | --- | --- |
-| Data (the one source) | `apps/web/src/data/cv.ts` | per-locale `Text`. Never edit the PDF or the page alone. Also read by: home credentials and the Experience card (`when`, `short`), the Person JSON-LD `jobTitle` (`lib/schema.ts`, from `CV.title`) and `llms.txt`; say so when a change shows there too |
-| Draft data (until the rollout) | `apps/web/src/data/cv-draft.ts` | the English CV the sheet prints while the owner approves it: spreads `cv.ts`, overrides what changed, adds `softSkills`, `tools`, `logo`, `flag`. `/cv/`, home and the live PDFs still read `cv.ts` |
+| Data (the one source) | `apps/web/src/data/cv.ts` | per-locale `Text`. Never edit the PDF or the page alone. Also read by: home Competences and its Experience card (`credentials`, `when`, `short`), the Person JSON-LD `jobTitle` (`lib/schema.ts`, from `CV.title`) and `llms.txt`; say so when a change shows there too |
+| Credentials on the CV | `CV.qualifications` (ids, in the CV's order) + each credential's `cv` override (`cvQualifications()`) | the home card keeps its full text and certificates; the CV shows the override: its own title, date, one summary line (`summaryOnly`), a `gain` line |
 | The sheet (PDF layout) | `apps/web/src/components/cv/CvSheet.astro` | how it works and its rules: `references/template.md` |
-| Print route | `apps/web/src/pages/[locale]/cv/print-v2/index.astro` | page CSS (`@page`), metadata, digest; noindex, out of the sitemap |
+| Print route | `apps/web/src/pages/[locale]/cv/print/index.astro` | page CSS (`@page`), metadata, digest; noindex, out of the sitemap |
 | Fonts | `bun run cv:fonts` → `public/fonts/cv/`, `src/styles/cv-fonts.css`, `src/lib/cv-fonts.gen.ts` | static Anybody instances + the fitted name + the sticker outlines |
-| Print + checks | `bun run cv:sheet` (`apps/web/scripts/cv-sheet.mjs`) | builds, serves, fits ≤ 2 pages, writes PDFs + `cv-sheet-report.json`, checks |
-| Web page | `apps/web/src/pages/[locale]/cv/index.astro` + `components/cv/CvBody.astro` | must say exactly what the PDF says (1:1) |
+| Print + checks | `bun run cv:sheet` (= `cv:pdf`, `apps/web/scripts/cv-sheet.mjs`) | builds, serves, fits ≤ 2 pages, writes `public/files/*.pdf` + `cv-digest.json` + page previews (`*-p1.webp`, `*-p2.webp`), checks; report in `.cache/cv-sheet-report.json`. A print with a `FAIL` goes to `.cache/cv-rejected/` and never replaces a live PDF |
+| Web page | `apps/web/src/pages/[locale]/cv/index.astro` (head, contact bar) + `components/cv/CvWeb.astro` (body) + `CvPapers.astro` (the PDF's pages as paper) | the same sections, order, words and links as the sheet, laid out for a screen (`design.md` § CV page) |
 | Evidence | `.claude/project-info/research/2026-10-08-cv-*.md` | recruiters + ATS, locale conventions, design inspiration |
-
-**Status [user 2026-10-08]: draft, English first.** The owner approves the sheet, this skill and the English content
-first ("lets just first agree on an english version"); the rollout then localizes it and rebuilds `/cv/`. Until then
-the sheet reads `cv-draft.ts` and `cv:sheet` writes to `comps/cv/`: print with `--locales en` (Polish and Spanish
-fields repeat the English). The live PDFs (`public/files/`, old template) and the `/cv/` page keep reading `cv.ts`, so
-an edit there shows on `/cv/` at once, and the live PDFs must be reprinted or `cv.test.ts` fails. Without
-a second preview server: after `cv:sheet` (it leaves its build in `apps/web/.cache/cv-dist/`), serve that folder on a
-free port (`python -m http.server <port> --bind 127.0.0.1 --directory .cache/cv-dist`), run
-`node scripts/cv-pdf.mjs --base http://127.0.0.1:<port>`, stop the server by its port's PID, and commit only the PDFs
-whose digest changed (`git checkout` the others: same text, fewer binary diffs). After approval, do § Rollout once and
-delete this paragraph.
 
 ## Workflow
 
@@ -45,7 +34,9 @@ delete this paragraph.
    string (that fails the print).
 2. **Decide the content** with `references/content.md`: what goes in, what stays out (personal data included), how to
    write a bullet, per-locale conventions, the cutting order. Page 1 must sell him alone.
-3. **Edit the data** (`cv-draft.ts`, English only, until the rollout; then `cv.ts`): English first, then Polish and Spanish (Spanish stays marked unreviewed, `i18n.md`). Keep the
+3. **Edit the data** (`cv.ts`): English first, then Polish and Spanish (Spanish stays marked unreviewed, `i18n.md`).
+   Polish and Spanish run ~15% longer than English: write them to the English line count (`references/content.md` § 5).
+   Keep the
    structure; add fields rather than overloading strings. A new section type also needs the sheet
    (`references/template.md` § Adding a section) and the page. Where things go:
    - Seniority words ("junior", "looking for") go in `CV.availability`, not `CV.title`: the title is fixed by
@@ -67,9 +58,10 @@ delete this paragraph.
 6. **Look at every page** (`*-p1.png`, `*-p2.png`, all three locales; pl runs longest). Check: nothing clipped or
    overlapping (the sticker, long titles in the rail, the contact bar), no orphan heading at a page foot, no widow line
    alone at a page top, each page reads on its own, the closing band sits at the foot of the last page.
-7. **Sync the web page** 1:1 with the PDF (after rollout this is the default, not optional): same sections, order and
-   wording. Then, from the repo root, `bun run check` (typecheck + lint + unit; `cv.test.ts` compares the PDF digests)
-   and, in `apps/web`, the two CV e2e tests: `bunx playwright test e2e/pages.spec.ts -g CV`.
+7. **Sync the web page** 1:1 with the PDF: same sections, order, wording and links (`CvWeb.astro` reads the same data,
+   so a data change shows by itself; a new section or field needs markup there too). Then, from the repo root,
+   `bun run check` (typecheck + lint + unit; `cv.test.ts` compares the PDF digests and wants the page previews) and,
+   in `apps/web`, the CV e2e tests: `bunx playwright test e2e/pages.spec.ts -g CV`.
 8. **Close:** wiki (`content-model.md` § CV for any rule change, `log.md` line; `placeholders.md` and
    `open-questions.md` when an answer clears a row), commit your own paths per the working agreement, and a short
    report: what changed, pages + `--d` per locale, what was cut and why, open owner questions, the PDFs' paths, and
@@ -97,21 +89,12 @@ These broke once and cost time; `references/template.md` has the why and the fix
   own: the owner dropped them, 2026-10-08).
 - Lists are reset by their own class, never by `.cs ul` (a scoped element rule outranks one class).
 
-## Rollout (once, after the owner approves the sheet)
+## History
 
-1. Merge `cv-draft.ts` into `cv.ts`: its overrides become the data; add `softSkills`, `tools`, `flag` and the
-   credentials' `gain` (`CvCredential`). A credential the CV shows as one line keeps its items for the home card (add a
-   CV-only summary field instead of dropping them). yws.lu (Freelance) is client work: its rights need `ok` first. Write the Polish and Spanish text (es unreviewed), point the sheet and the print route back at
-   `cv.ts`, delete `cv-draft.ts`, reprint all three locales.
-2. Point the print route at the sheet: move `cv/print-v2/index.astro` to `cv/print/index.astro` (replacing the old one),
-   drop `variant="print"` from `CvBody.astro`, update the sitemap filter in `astro.config.mjs`.
-3. Make `cv:sheet` the PDF command: default `--out public/files`, write `cv-digest.json` from the page's `cv-digest`
-   meta (as `cv-pdf.mjs` does), set `ROUTE = "cv/print"`; point `cv:pdf` at it and delete `cv-pdf.mjs`.
-4. Rebuild `/cv/` to mirror the sheet 1:1 (sections, order, wording, the closing contact band, the Polish clause), and
-   make it more interesting and up to date [user 2026-10-08].
-5. `bun run cv:sheet` → commit the PDFs; `bun run check`, e2e; update `content-model.md` § CV,
-   `technologies.md` (CV PDF row), `seo.md` (PDF metadata now set), `design.md` (§ CV sheet), `log.md`.
-6. Delete the Status paragraph above and this section's "once" note.
+Approved by the owner on 2026-10-08 ("the cv that is current is quite good as the template"), English first, then
+localized; the same day the draft data merged into `cv.ts`, the sheet replaced the old print template and its PDFs,
+and `/cv/` got its own screen layout [user: "it would be too boring if it was the same as pdf"]. Old versions:
+`comps/cv/v6`-`v8`, the old page in `comps/history/cv-page-v1/`, the old code at tag `history/cv-page-v1`.
 
 ## Changing the template itself
 
@@ -123,4 +106,4 @@ three `2026-10-08-cv-*` notes), change one thing, then evaluate:
 greyscale look at page 1, `pdftotext -enc UTF-8 <pdf> -` reading like
 a CV (name first, no split words; for dates beside their titles use PyMuPDF, see `template.md` § 8), and an independent review by a fresh subagent with the
 renders and the extracted text (7-second skim, ATS field extraction, design score against `design-quality.md`). Keep the
-old look in `comps/cv/` and a row in `comps/HISTORY.md`, as for every other version of the site.
+old look in `comps/cv/v<N>/` and a row in `comps/HISTORY.md`, as for every other version of the site.

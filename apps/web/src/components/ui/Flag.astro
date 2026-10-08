@@ -26,6 +26,18 @@ const { code, class: className } = Astro.props;
     <polygon fill="#fff" points="540,400 609,378 609,305 652,364 721,341 678,400 721,459 652,436 609,495 609,422" />
   </svg>
 )}
+{code === "GB" && (
+  <svg class:list={["flag", className]} viewBox="0 0 60 30" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+    <clipPath id="flag-gb-t">
+      <path d="M30 15h30v15zv15H0zH0V0zV0h30z" />
+    </clipPath>
+    <path fill="#012169" d="M0 0h60v30H0z" />
+    <path d="M0 0l60 30M60 0L0 30" stroke="#fff" stroke-width="6" />
+    <path d="M0 0l60 30M60 0L0 30" clip-path="url(#flag-gb-t)" stroke="#c8102e" stroke-width="4" />
+    <path d="M30 0v30M0 15h60" stroke="#fff" stroke-width="10" />
+    <path d="M30 0v30M0 15h60" stroke="#c8102e" stroke-width="6" />
+  </svg>
+)}
 {code === "PL" && (
   <svg class:list={["flag", className]} viewBox="0 0 8 5" preserveAspectRatio="none" aria-hidden="true">
     <path fill="#fff" d="M0 0h8v2.5H0z" />

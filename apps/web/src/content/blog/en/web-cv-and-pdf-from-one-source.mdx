@@ -4,6 +4,7 @@ seoTitle: "Web CV and PDF from one data file"
 description: "My CV page and its PDFs in English, Polish and Spanish come from one TypeScript file, printed by Playwright and guarded by a test that fails on drift."
 translationKey: "cv-one-source"
 published: 2026-10-06
+updated: 2026-10-08
 tags: [astro, i18n, accessibility]
 cover: sheet
 related: [this-site, astro-i18n, lingui-vs-i18next]
@@ -33,6 +34,8 @@ sources:
     url: "https://typst.app/docs/"
     accessed: 2026-10-06
 ---
+
+> **Update, 8 October 2026:** the CV has moved on since I wrote this. The PDF now comes from its own designed two-page sheet (`CvSheet.astro`, printed and checked by `bun run cv:sheet`), and the web page got a layout of its own instead of a second variant of one component. The idea below still holds: one data file, and a digest test that fails when the page and the PDF drift apart.
 
 Keep the CV as data, not as two documents. On this site one TypeScript file feeds the web CV at `/cv/`, a bare print route, and the PDFs that Playwright prints from that route in English, Polish and Spanish. A unit test fails when the data changes and the PDFs were not printed again, so the page and the file can't quietly say different things.
 

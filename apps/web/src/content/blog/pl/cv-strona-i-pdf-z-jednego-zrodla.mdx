@@ -4,6 +4,7 @@ seoTitle: "CV na stronie i PDF z jednego źródła"
 description: "CV na stronie i trzy pliki PDF (en, pl, es) powstają z jednego pliku TypeScript. Drukuje je Playwright, a test pilnuje, żeby się nie rozjechały."
 translationKey: "cv-one-source"
 published: 2026-10-06
+updated: 2026-10-08
 tags: [astro, i18n, accessibility]
 cover: sheet
 related: [this-site, astro-i18n, lingui-vs-i18next]
@@ -33,6 +34,8 @@ sources:
     url: "https://typst.app/docs/"
     accessed: 2026-10-06
 ---
+
+> **Aktualizacja, 8 października 2026:** od czasu tego wpisu CV poszło dalej. PDF powstaje teraz z osobnego, zaprojektowanego arkusza na dwie strony (`CvSheet.astro`, drukowanego i sprawdzanego przez `bun run cv:sheet`), a strona dostała własny układ zamiast drugiego wariantu tego samego komponentu. Idea poniżej się nie zmieniła: jeden plik z danymi i test skrótu, który pada, gdy strona i PDF się rozjadą.
 
 Trzymaj CV jako dane, a nie jako dwa dokumenty. Na tej stronie jeden plik TypeScript zasila CV pod `/cv/`, surową trasę do druku i pliki PDF, które Playwright drukuje z tej trasy po angielsku, polsku i hiszpańsku. Test jednostkowy się wywala, gdy dane się zmienią, a PDF-ów nikt nie wydrukuje na nowo, więc strona i plik nie mogą po cichu mówić dwóch różnych rzeczy.
 

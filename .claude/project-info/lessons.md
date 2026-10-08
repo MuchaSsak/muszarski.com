@@ -34,6 +34,7 @@
 - A visible label must start the accessible name (WCAG 2.5.3): visually hidden text after the visible text, not a replacing `aria-label` - 2026-10-05.
 - Run `bun run i18n:extract` before a production build: a missing message renders as its id and fitted titles (`a|b`) crash - 2026-10-05.
 - `.still` pauses every animation, freezing delayed entrances on their hidden frame: mark entrances `.rise`/`.enter` and test a stored pause - 2026-10-05.
+- Scroll-driven CSS goes in longhands (`animation-name`, `-timing-function`, `-fill-mode`, `-timeline`, `-range`): the build folds `animation` + `animation-timeline` into one shorthand Chrome rejects whole, and the effect silently never runs; check `getComputedStyle(el).animationName` in a browser, not the source - 2026-10-08.
 - Chrome holds first paint for a preloaded font, and HTML bytes compete with it: keep page HTML lean (icons in the cached sprite; first-screen icons `inline`). Keep the preload: without it home LCP fell 0.6 s but the parse landed after first paint (TBT 33 → 775 ms) - 2026-10-06.
 - A focus target taller than the viewport minus the header always sits under the sticky header: cap media by viewport height (`100svh - var(--header-h)`) - 2026-10-06.
 - Reduced motion keeps `animation-delay`: staged entrances stay hidden for their delay. Switch staged scenes off under reduced motion and `.still` - 2026-10-06.

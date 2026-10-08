@@ -1,23 +1,27 @@
 ---
 /**
- * The web CV (structure.md § /cv/, requirements.md F11): the same data and sections as the PDF (`~/data/cv`, one
- * source), laid out as a poster sheet, with a direct PDF download (size in the label) and a print stylesheet.
- * ProfilePage + Person JSON-LD. Never edit this page or the PDF alone: change the data, run `bun run cv:pdf`.
- * The site's CV button downloads the PDF and lands here (`CvLink`); the page then confirms the download.
+ * The web CV (structure.md § /cv/, requirements.md F11, design.md § CV page): the PDF's content (`~/data/cv`, one
+ * source) and its words and links, laid out for a screen [user 2026-10-08: "it would be too boring if it was the same
+ * as pdf, so i want you to go creative on it"]. A cobalt head (fitted name, photo, role, availability, the PDF as two
+ * sheets of paper), a navy contact bar, then the body (CvWeb.astro). ProfilePage + Person JSON-LD. Never edit this
+ * page or the PDF alone: change the data, run `bun run cv:sheet`. The site's CV button downloads the PDF and lands
+ * here (`CvLink`); the page then confirms the download.
  */
 import { statSync } from "node:fs";
 
+import { Image } from "astro:assets";
 import { t } from "lingui-for-astro/macro";
 
-import CvBody from "~/components/cv/CvBody.astro";
+import CvPapers from "~/components/cv/CvPapers.astro";
+import CvWeb from "~/components/cv/CvWeb.astro";
 import BaseLayout from "~/components/layout/BaseLayout.astro";
 import JsonLd from "~/components/seo/JsonLd.astro";
 import Fit from "~/components/ui/Fit.astro";
 import Icon from "~/components/ui/Icon.astro";
 import { CV } from "~/data/cv";
-import { cvPdfHref, SITE } from "~/data/site";
+import { cvPdfHref, PROFILES, SITE } from "~/data/site";
 import { chromeLinks } from "~/lib/nav";
-import { personImageUrl } from "~/lib/photos";
+import { personImageUrl, photoFile } from "~/lib/photos";
 import { localeStaticPaths, pathTo } from "~/lib/routes";
 import { breadcrumbs, personId, personNode, websiteId } from "~/lib/schema";
 
@@ -27,17 +31,28 @@ const locale = Astro.locals.locale;
 const links = chromeLinks(locale);
 const site = Astro.site ?? new URL("http://localhost:4321");
 const url = new URL(pathTo(locale, "cv"), site).href;
+const home = new URL(links.home, site).href;
 const pdf = cvPdfHref(locale);
 let pdfSize = "";
 try {
   pdfSize = `${Math.max(1, Math.round(statSync(`public${pdf}`).size / 1024))} KB`;
 } catch {
-  // Not generated yet (`bun run cv:pdf`); the launch gate fails on a missing PDF.
+  // Not generated yet (`bun run cv:sheet`); the launch gate fails on a missing PDF.
 }
 const [first, last] = SITE.name.split(" ") as [string, string];
 const title = t`CV`;
-const description = t`The CV of Mateusz Muszarski, full-stack developer: experience, projects, skills, qualifications and languages. Also as a PDF.`;
+const description = t`The CV of Mateusz Muszarski, full-stack product engineer: experience, projects, skills, qualifications and languages. Also as a PDF.`;
 const meUrl = await personImageUrl(site);
+const photo = photoFile("mateusz-muszarski-cv");
+const short = (href: string) => href.replace(/^(https?:\/\/)?(www\.)?/, "").replace(/\/$/, "");
+const github = PROFILES.find((profile) => profile.id === "github");
+const linkedin = PROFILES.find((profile) => profile.id === "linkedin");
+const newTab = t`(opens in a new tab)`;
+const copyEmail = t`Copy email`;
+const emailCopied = t`Email copied`;
+const contactLabel = t`Contact`;
+// A separator dot stays with the word before it, so a wrapped line never starts with "·".
+const availability = CV.availability[locale].replace(/ · /g, `${String.fromCharCode(160)}· `);
 const graph = {
   "@context": "https://schema.org",
   "@graph": [
@@ -62,7 +77,7 @@ const graph = {
 
 <BaseLayout title={title} description={description} path="cv" og="cv">
   <JsonLd slot="head" data={graph} />
-  <section class="sec field-hero top near" aria-labelledby="cv-name">
+  <section class="sec field-hero cw-top near" aria-labelledby="cv-name">
     <div class="sbar draw">
       <p>{t`Curriculum vitae`}</p>
       <p>{CV.location[locale]}</p>
@@ -71,13 +86,22 @@ const graph = {
       </p>
     </div>
     <Fit as="h1" id="cv-name" lines={[first, last]} motion="calm" />
-    <div class="intro">
-      <p class="role rise">{CV.title[locale]}</p>
-      <p class="avail rise" style="--d:1">
-        <span class="dot" aria-hidden="true"></span>
-        {CV.availability[locale]}
-      </p>
-      <div class="ctas rise" style="--d:2">
+    <div class="cw-intro">
+      {photo && (
+        <div class="cw-photo rise">
+          <Image src={photo} alt={SITE.name} width={Math.min(photo.width, 600)} format="webp" quality={90} loading="eager" />
+        </div>
+      )}
+      <div class="cw-id">
+        <p class="cw-role rise" style="--d:1">
+          {CV.title[locale]}
+        </p>
+        <p class="cw-avail rise" style="--d:2">
+          <span class="dot" aria-hidden="true"></span>
+          {availability}
+        </p>
+      </div>
+      <div class="ctas rise" style="--d:3">
         <a
           class="btn btn-acc"
           href={pdf}
@@ -86,61 +110,143 @@ const graph = {
           data-umami-event-source="cv-page"
           data-umami-event-locale={locale}
         >
-          <Icon name="tb:download" />
+          <Icon name="tb:download" inline />
           {t`Download PDF`}
           {pdfSize && <small>{pdfSize}</small>}
         </a>
         <button class="btn btn-line" type="button" data-print>
-          <Icon name="tb:file-text" />
+          <Icon name="tb:file-text" inline />
           {t`Print`}
         </button>
         <a
           class="btn btn-line"
-          href={links.contact}
+          href="#cv-contact"
           data-umami-event="cta"
           data-umami-event-id="contact"
           data-umami-event-source="cv-page"
         >
-          {t`Contact`}
-          <Icon name="tb:arrow-right" class="nudge" />
+          {contactLabel}
+          <Icon name="tb:arrow-down" class="nudge-down" inline />
         </a>
         <p class="pdf-note" role="status" data-pdf-note hidden>
-          <Icon name="tb:circle-check" />
+          <Icon name="tb:circle-check" inline />
           {t`Your PDF is downloading. Nothing yet? Use the Download PDF button.`}
         </p>
       </div>
+      <div class="cw-paper">
+        <CvPapers pdf={pdf} />
+      </div>
     </div>
   </section>
-  <section class="sec field-alt sheet" aria-label={t`CV`}>
-    <CvBody variant="page" siteUrl={new URL(links.home, site).href} />
+
+  <section class="sec field-bar cw-bar" aria-label={contactLabel}>
+    <ul role="list">
+      <li class="cw-mailbox">
+        <Icon name="tb:mail" inline />
+        <a href={`mailto:${SITE.email}`}>{SITE.email}</a>
+        <button
+          class="cw-copy"
+          type="button"
+          data-copy={SITE.email}
+          data-copied={emailCopied}
+          data-copy-failed={SITE.email}
+          data-copy-event="copy_email"
+          data-copy-source="cv-bar"
+        >
+          <Icon name="tb:copy" inline />
+          <span class="sr-only">{copyEmail}</span>
+        </button>
+      </li>
+      <li>
+        <Icon name="tb:map-pin" inline />
+        <span>{CV.location[locale]}</span>
+      </li>
+      {github && (
+        <li>
+          <Icon name="si:github" inline />
+          <a href={github.href} rel="me noopener" target="_blank">
+            {short(github.href)}
+            <span class="sr-only"> {newTab}</span>
+          </a>
+        </li>
+      )}
+      {linkedin && (
+        <li>
+          <img class="cw-in" src="/media/cv/linkedin-in-white.webp" alt="" width="280" height="260" />
+          <a href={linkedin.href} rel="me noopener" target="_blank">
+            {short(linkedin.href)}
+            <span class="sr-only"> {newTab}</span>
+          </a>
+        </li>
+      )}
+      <li class="cw-web">
+        <Icon name="tb:world" inline />
+        <a href={home}>{new URL(home).host}</a>
+      </li>
+    </ul>
   </section>
+
+  <CvWeb siteUrl={home} />
 </BaseLayout>
 
 <style>
-  .top {
-    padding-bottom: clamp(2.5rem, 5vw, 4.5rem);
+  .cw-top {
+    padding-bottom: clamp(2.5rem, 5vw, 4rem);
   }
-  .intro {
+  /* Under the name, read left to right: the photo, who he is and how to get the PDF, then the PDF itself as two
+     sheets of paper. */
+  .cw-intro {
     display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 1.5rem;
+    grid-template-columns: auto minmax(0, 1fr);
+    grid-template-areas: "photo id" "ctas ctas";
+    gap: 1.5rem clamp(1.25rem, 3vw, 3rem);
     align-items: start;
     margin-top: clamp(1.25rem, 2.4vw, 2.25rem);
-    padding-top: clamp(0.875rem, 1.6vw, 1.5rem);
+    padding-top: clamp(1.25rem, 2vw, 1.75rem);
     border-top: 3px solid currentColor;
   }
-  .role {
-    max-width: 16ch;
+  @media (min-width: 48rem) {
+    .cw-intro {
+      grid-template-columns: auto minmax(0, 1fr) clamp(9rem, 15vw, 16rem);
+      grid-template-rows: auto 1fr;
+      grid-template-areas: "photo id paper" "photo ctas paper";
+      row-gap: clamp(1.25rem, 2vw, 2rem);
+    }
+  }
+  .cw-photo {
+    grid-area: photo;
+    width: clamp(6.5rem, 12vw, 11.5rem);
+    aspect-ratio: 1;
+    border: 4px solid var(--ice);
+    background: var(--ice);
+    box-shadow: 7px 7px 0 var(--accent);
+    transform: rotate(-2deg);
+  }
+  .cw-photo :global(img) {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .cw-id {
+    grid-area: id;
+    display: grid;
+    gap: 0.875rem;
+    align-content: start;
+  }
+  .cw-role {
+    max-width: 18ch;
     margin: 0;
-    font-weight: 800;
-    font-size: clamp(1.5rem, 2.6vw, 2.5rem);
-    line-height: 0.95;
+    font-weight: 900;
+    font-size: clamp(1.75rem, 0.6rem + 3.6vw, 5.25rem);
+    line-height: 0.9;
     text-transform: uppercase;
     font-stretch: 62%;
   }
-  .avail {
+  .cw-avail {
     display: flex;
     gap: 0.625rem;
+    max-width: 34ch;
     margin: 0;
     font-weight: 700;
     font-size: 1.0625rem;
@@ -156,9 +262,11 @@ const graph = {
     box-shadow: 0 0 0 2px currentColor;
   }
   .ctas {
+    grid-area: ctas;
     display: flex;
     flex-wrap: wrap;
-    gap: 0.625rem;
+    align-content: start;
+    gap: 0.75rem;
   }
   .pdf-note {
     display: flex;
@@ -176,23 +284,150 @@ const graph = {
     height: 1.25rem;
     margin-top: 0.0625rem;
   }
-  @media (max-width: 56.25rem) {
-    .intro {
-      grid-template-columns: minmax(0, 1fr);
+  .cw-paper {
+    grid-area: paper;
+    display: none;
+    padding: 0.25rem 1.75rem 0 0;
+  }
+  @media (min-width: 48rem) {
+    .cw-paper {
+      display: block;
     }
   }
+  @media (min-width: 90rem) {
+    .cw-role {
+      max-width: none;
+    }
+  }
+
+  /* The contact bar: the sheet's navy bar, links spelled out behind their icons, the portfolio apart in pink. */
+  .cw-bar {
+    padding-block: 1rem;
+  }
+  .cw-bar ul {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem clamp(1rem, 1.6vw, 2.5rem);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    font-weight: 700;
+    font-size: var(--text-sm);
+  }
+  .cw-bar li {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    min-height: 2.75rem;
+  }
+  .cw-bar li :global(.ico),
+  .cw-in {
+    flex: none;
+    width: 1.25rem;
+    height: 1.25rem;
+  }
+  .cw-in {
+    width: auto;
+    height: 1.125rem;
+  }
+  .cw-bar a {
+    text-decoration: none;
+    background: linear-gradient(currentColor, currentColor) 0 100% / 0 2px no-repeat;
+    transition: background-size var(--dur-base) var(--ease-out);
+  }
+  .cw-bar a:is(:hover, :focus-visible) {
+    background-size: 100% 2px;
+  }
+  .cw-copy {
+    display: grid;
+    place-items: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    margin-left: -0.375rem;
+    border: 0;
+    background: none;
+    color: inherit;
+    cursor: pointer;
+  }
+  .cw-copy :global(.ico) {
+    width: 1.125rem;
+    height: 1.125rem;
+    opacity: 0.75;
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .cw-copy:hover :global(.ico) {
+      opacity: 1;
+      color: var(--accent);
+    }
+  }
+  /* The portfolio, apart: a pink tile with a hard shadow, like the sheet's. */
+  .cw-web {
+    margin-left: auto;
+    padding: 0 1rem;
+    background: var(--accent);
+    color: var(--on-accent);
+    box-shadow: 4px 4px 0 var(--ice);
+    font-weight: 900;
+    font-size: 1.0625rem;
+    font-stretch: 115%;
+  }
+  @media (max-width: 47.99rem) {
+    .cw-web {
+      margin-left: 0;
+    }
+  }
+
+  /* Print: the page on white, without the site's chrome, the papers, the QR code or the buttons. The designed
+     print is the PDF; this keeps a browser's print readable. */
   @media print {
-    .top,
     :global(.site-header),
     :global(.site-footer),
     :global(.grain),
-    :global(.skip) {
+    :global(.skip),
+    .ctas,
+    .cw-paper,
+    .cw-copy,
+    :global(.cw-qr),
+    :global(.cw-mini),
+    :global(.cw-end-links .btn),
+    :global(.cw-plate) {
       display: none !important;
     }
-    .sheet {
-      padding: 0;
-      background: #fff;
-      color: #000;
+    :global(.sec) {
+      --sbg: #fff !important;
+      --sfg: #000 !important;
+      background: #fff !important;
+      color: #000 !important;
+      padding-block: 1rem !important;
+    }
+    :global(.cw-card),
+    :global(.cw-tools),
+    :global(.cw-soft li) {
+      box-shadow: none !important;
+      background: #fff !important;
+      color: #000 !important;
+      border: 1px solid #000;
+    }
+    :global(.cw-label) {
+      position: static !important;
+    }
+    :global(html),
+    :global(body) {
+      background: #fff !important;
+    }
+    :global(.cw-card),
+    :global(.cw-job),
+    :global(.cw-quals > li) {
+      break-inside: avoid;
+    }
+    :global(.cw-label) {
+      break-after: avoid;
+    }
+    :global(.cw-tools dt),
+    :global(.cw-tools li) {
+      color: #000 !important;
+      border-color: #000 !important;
     }
   }
 </style>

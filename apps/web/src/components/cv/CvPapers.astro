@@ -1,0 +1,74 @@
+---
+/**
+ * The PDF as paper (design.md § CV page): the two printed pages of this locale's CV, fanned like sheets on a desk, as
+ * a mouse and touch shortcut to the download. The pages are the real PDF's pages, rendered to WebP by
+ * `bun run cv:sheet` in the same run that prints the PDF, so the picture can't drift from the file. Decorative for
+ * assistive tech: the Download PDF button beside it is the accessible way to the same file. Renders nothing until the
+ * previews exist.
+ */
+import { existsSync } from "node:fs";
+
+interface Props {
+  pdf: string;
+}
+
+const { pdf } = Astro.props;
+const locale = Astro.locals.locale;
+const pages = [1, 2].map((n) => `/files/mateusz-muszarski-cv-${locale}-p${n}.webp`).filter((href) => existsSync(`public${href}`));
+---
+
+{pages.length > 0 && (
+  <a
+    class="papers"
+    href={pdf}
+    download
+    tabindex="-1"
+    aria-hidden="true"
+    data-umami-event="cv_download"
+    data-umami-event-source="cv-papers"
+    data-umami-event-locale={locale}
+  >
+    {pages
+      .map((src, i) => (
+        <span class="sheet" style={`--i:${i}`}>
+          <img src={src} alt="" width="640" height="905" loading="lazy" decoding="async" />
+        </span>
+      ))
+      .reverse()}
+  </a>
+)}
+
+<style>
+  /* Two A4 sheets: page 2 behind, page 1 on top, each on a hard navy shadow. They fan apart on hover (fine pointers);
+     a press sinks them like a button. On touch a tap is the download itself. */
+  .papers {
+    position: relative;
+    display: block;
+    width: 100%;
+    aspect-ratio: 1 / 1.414;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .sheet {
+    position: absolute;
+    inset: 0;
+    background: #fff;
+    box-shadow: 6px 6px 0 var(--navy);
+    transform: rotate(calc(-3deg + var(--i) * 7deg)) translate(calc(var(--i) * 8%), calc(var(--i) * 2%));
+    transform-origin: 50% 90%;
+    transition: transform var(--dur-slow) var(--ease-out);
+  }
+  .sheet img {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .papers:hover .sheet {
+      transform: rotate(calc(-6deg + var(--i) * 15deg)) translate(calc(var(--i) * 26%), calc(-3% + var(--i) * 4%));
+    }
+  }
+  .papers:active .sheet {
+    transform: rotate(calc(-3deg + var(--i) * 7deg)) translate(calc(4px + var(--i) * 8%), calc(4px + var(--i) * 2%));
+    transition-duration: var(--dur-fast);
+  }
+</style>

@@ -109,10 +109,10 @@ The Stack section is cut [user 2026-10-05: recruiters don't need a whole section
 chapter (`StackList`). Patterns came from `comps/poster-r3.html`; the owner's feedback pass of 2026-10-06 (header, CV
 button, flags, single theme, chapters, AI, credentials, writing, contact, footer) is folded into the rows above.
 
-## CV sheet (draft 2026-10-08)
+## CV sheet (approved 2026-10-08)
 
-The PDF CV is a poster on paper in the Cobalt palette (`components/cv/CvSheet.astro`; waits for the owner's approval,
-English first): a full-bleed cobalt band (photo with a pink hard shadow, the fitted name in Anybody Black, the hero
+The PDF CV is a poster on paper in the Cobalt palette (`components/cv/CvSheet.astro`; approved by the owner,
+English first, then localized): a full-bleed cobalt band (photo with a pink hard shadow, the fitted name in Anybody Black, the hero
 sticker's twin as outlines, MUSZARSKI.COM upright on top, role and availability), a navy contact bar of icon + text
 (email, place; GitHub, LinkedIn) with the portfolio apart in a pink tile with a hard shadow [user 2026-10-08], then a
 ledger: section labels (expanded caps, a pink tab, a navy rule to the edge), dates in a 27 mm cobalt rail, condensed
@@ -126,6 +126,33 @@ Tabler outlines; no tool, company or project logos (`assets.md` § CV marks). St
 3); one density variable `--d` scales the body (10-10.8 pt, the print floor) and every gap so any amount of content
 fills at most two pages. A no-photo variant (UK, IE, US) keeps the band whole. Pink is never text on white. Anatomy,
 invariants and their reasons: `.claude/skills/new-cv/references/template.md`.
+
+## CV page (2026-10-08)
+
+`/cv/` shows the sheet's content, words and links in a layout made for a screen [user 2026-10-08: "it would be too
+boring if it was the same as pdf, so i want you to go creative on it, but display all information that is on the cv
+itself"] (`pages/[locale]/cv/index.astro`, `components/cv/CvWeb.astro`, `CvPapers.astro`; research:
+`research/2026-10-08-cv-web-page-inspiration.md`). A sequence of poster fields instead of one white sheet:
+- **Head** (hero field): the fitted name, then the photo (tilted, pink hard shadow), the title as a large condensed
+  line, availability with a green dot, the three buttons, and **the PDF as paper**: its two real pages (rendered by
+  `cv:sheet` in the same run as the PDF) fanned on a navy hard shadow; they fan wider on hover, a click or tap
+  downloads. Then the sheet's navy contact bar with a copy button on the email and the portfolio in a pink tile.
+- **Body** (alt field, sections parted by 3 px rules): a label column whose number and condensed heading stay in view
+  while their section scrolls by (≥ 1024 px; on top on phones). Profile is a statement in large type with the stack it
+  names picked out (bold, pink underline). Experience is a timeline: square stops on a spine, the current role's stop
+  pink with a live dot by its date, the spine filling in pink as entries pass the middle of the screen
+  (scroll-driven CSS). Skills: soft skills as bordered tiles (an icon on its own poster colour, tilted; they lift on
+  hover), Technologies as a navy panel of named groups with the tools as tags, the qualifications as a ledger with
+  the gain line on a pink marker. Education, Languages (drawn flags) and Interests (tags with Tabler icons) share a row.
+- **Selected projects** (bar field): cards in each project's colour (PstrykWeb yellow, Linkoglot orange, Portfolio
+  cobalt) with real media on a dotted plate: the pstrykweb.pl capture in a browser frame panning down as the card
+  crosses the screen (scroll-driven, so phones see it too), the Linkoglot phone, the portfolio's share card; media
+  only while the rights gate shows the project. Links are buttons.
+- **Contact** (accent field): the email as the one big line, Copy email, the CV's locale-free address with Copy link,
+  GitHub, the QR code; the Polish clause last.
+- No tool lens / filter (the research's top idea: 7 of the 20 tools appear in no entry, and filters were cut from All
+  projects). Scroll-driven CSS is written as longhands (`tech/usage/astro.md` § Gotchas). Paused or reduced motion:
+  no fill, no pan, everything in its final state.
 
 ## Motion
 

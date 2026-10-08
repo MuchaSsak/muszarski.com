@@ -20,7 +20,7 @@
 /<locale>/privacy/               privacy policy, noindex,follow (F14)
 /<locale>/terms/                 regulamin, conservative draft (compliance-and-data.md; Q16)
 /<locale>/contact/sent|error/     results of a no-JS form post (noindex)
-/<locale>/cv/print/              the PDF's source (noindex)
+/<locale>/cv/print/              the CV sheet, the PDF's source (noindex, out of the sitemap)
 /404                             per-locale copy (F21)
 /files/mateusz-muszarski-cv-<locale>.pdf
 /en/rss.xml · /pl/rss.xml · /sitemap.xml (index) · /robots.txt · /llms.txt
@@ -92,9 +92,16 @@ the case study: "fun, but not that overly fun", `design.md` § Art direction]. T
 
 ## `/<locale>/cv/`
 
-- Header: name, title, location, availability, then **Download PDF** (`<a download>`, file size in the label) · Print · Contact.
-- Sections from `content-model.md` § CV in the same order as the PDF, laid out on drafting sheets.
-- Locale switch; print stylesheet.
+- The PDF's content, words and links in a screen layout of its own [user 2026-10-08] (`design.md` § CV page):
+  - head (cobalt): the fitted name (H1), the CV photo, the title, availability, then **Download PDF** (`<a download>`,
+    file size in the label) · Print · Contact (jumps to the contact band); on the right the PDF's two pages as paper
+    (a mouse and touch shortcut to the same download, `aria-hidden`; ≥ 768 px)
+  - contact bar (navy): email + copy, region, GitHub, LinkedIn, the portfolio apart in pink
+  - Profile, Experience, Selected projects, Skills and qualifications, then Education · Languages · Interests in one
+    row, then the contact band (pink: the email, Copy email, the CV's address + Copy link, GitHub, QR code) and the
+    Polish clause; the same order as the sheet (an e2e test lists the headings)
+  - deep links: `#experience`, `#qualifications` (the home Competences cards' "Details on the CV")
+- Locale switch; a print stylesheet (white, no chrome, no media); the designed print is the PDF.
 - **One CV button** (`layout/CvLink.astro`) [user 2026-10-06: "just one button for CV"; replaces the 2026-10-05 split button]:
   - a plain click downloads the locale's PDF inside the tap (a direct `download` link, which iOS allows), sets
     sessionStorage `cv-pdf` and opens `/cv/` after 400 ms; `/cv/` then shows the `[data-pdf-note]` confirmation and its
