@@ -38,17 +38,22 @@ test("a post links its translation (hreflang) and the language switch keeps it",
   await expect(page.locator(".site-header .h-loc a[hreflang=es]")).toHaveAttribute("href", "/es/");
 });
 
-test("work: the TV flips to the next project and the safe says no", async ({ page }) => {
+test("work: the index jumps to a plate, a capture opens the X-ray, the end winks", async ({ page }) => {
   await page.goto("/en/work/");
-  const link = page.locator("[data-tv-link]");
-  const first = await link.getAttribute("href");
-  await page.getByRole("button", { name: "Next channel", exact: true }).click();
-  // The channel changes once its capture has loaded (after a beat of static): poll.
-  await expect.poll(() => link.getAttribute("href")).not.toBe(first);
-  const target = await link.getAttribute("href");
-  await expect(page.locator(target!)).toHaveCount(1);
-  await page.getByRole("button", { name: /^Locked/ }).click();
-  await expect(page.locator("[data-safe-live]")).toHaveText("Nice try");
+  await expect(page.getByRole("heading", { level: 1, name: "Things I’ve built" })).toBeVisible();
+  const index = page.getByRole("navigation", { name: "On this page" });
+  await index.getByRole("link", { name: /^Linkoglot/ }).click();
+  await expect(page).toHaveURL(/#wk-linkoglot$/);
+  await expect(page.locator("#wk-linkoglot")).toBeInViewport();
+  // A pointer over a capture opens the X-ray lens: the page's one canvas moves into it (where WebGL runs).
+  const webgl = await page.evaluate(() => !!document.createElement("canvas").getContext("webgl"));
+  const view = page.locator("#wk-malatro [data-xray]");
+  await view.scrollIntoViewIfNeeded();
+  await view.hover();
+  if (webgl) await expect(view.locator("canvas.xr")).toHaveCount(1);
+  await expect(page.getByRole("heading", { name: "There's more." })).toBeVisible();
+  await expect(page.locator(".pr-line")).toContainText("😉");
+  await expect(page.getByText("Wink wink")).toHaveCount(0);
 });
 
 test("contact: the reply address fills itself from the message, and a sent message shows the thanks", async ({ page }) => {

@@ -1,624 +1,271 @@
 ---
 /**
- * All projects, the head [user 2026-10-08: the old head was "basically the same as on main landing"; "be a bit more
- * creative and visually impressive", "experiment maybe with shaders even"; then "better text instead of always the same
- * trick and cooler background", no counts, no "flagships"]: a sentence-case title with a lit ON AIR sign (not the
- * fitted poster type), on a broadcast test card drawn in CSS, beside a tilted TV that flips through the work. The
- * screen is a fragment shader (`scripts/work-tv.ts`): each channel is a project's capture behind a CRT bulge,
- * scanlines, a colour split, a lens under the pointer and a burst of static between channels; "Now showing" links to
- * the project's card, and the room glows in the project's colour. Until the reader's first interaction (and for good
- * without JS) the screen shows colour bars in the brand's colours, drawn in CSS: nothing loads early and the title
- * stays the LCP. Paused or reduced motion: no static and no flipping; the buttons still work.
+ * All projects, the head [user 2026-10-08: the TV head was "not far from being good, but i wish the background was
+ * more alive, and maybe even the headings and some very micro hover effects"; the page "too vibe coded", "go for a
+ * different style and theme"]. The night catalogue: a plain title on an ink field of contour lines that drift like a
+ * map; the pointer raises a hill under itself (a tap sends a ripple, the scroll slides the map), and hovering or
+ * focusing a name in the index tints the lines in that project's colour (`scripts/work-field.ts`, one fragment
+ * shader, no library). The title's letters thin out under the pointer (`HoverType`). The index on the right is the
+ * page in one glance: every project, its kind and year, one click to its plate.
+ * The title is real text, painted first (the LCP); the shader starts at the first interaction or a pointer over the
+ * head, only while it is in view, and concentric lines in CSS stand in until then (or for good without WebGL).
+ * Paused or reduced motion: one still frame that moves only with the pointer.
  */
 import { t } from "lingui-for-astro/macro";
 
+import HoverType from "~/components/ui/HoverType.astro";
 import Icon from "~/components/ui/Icon.astro";
 import { typo } from "~/lib/typography";
 
-export interface Channel {
+export interface IndexItem {
   slug: string;
   name: string;
-  meta: string;
-  src: string;
-  ar: number;
-  contain: boolean;
-  bg: string;
+  /** Kind of work, e.g. "Own product". */
+  kind: string;
+  year: number;
+  /** The project's colour, readable on the ink (`#rrggbb`); the shader tints its lines with it. */
+  color: string;
 }
 
 interface Props {
-  channels: Channel[];
+  items: IndexItem[];
 }
 
-const { channels } = Astro.props;
+const { items } = Astro.props;
 const locale = Astro.locals.locale;
-const [lead, sign] = t`All my projects,|on air`.split("|") as [string, string];
-const first = channels[0];
+const title = t`Things I’ve built`;
 ---
 
-<section class="sec field-bar wh top near" aria-labelledby="t-work" style={first ? `--wh-glow:${first.bg}` : undefined}>
-  <div class="wh-grid">
-    <div class="wh-txt">
-      <p class="wh-kick rise"><span class="wh-dot"></span>{t`Work`}</p>
-      <h1 class="wh-title" id="t-work">
-        {lead} <span class="wh-air enter">{sign}</span>
+<section class="sec wh near" aria-labelledby="t-work" data-field-host>
+  <canvas class="wh-field" aria-hidden="true" data-field></canvas>
+  <div class="wh-in">
+    <div class="wh-head">
+      <p class="kick wh-kick rise">{t`Work`}</p>
+      <h1 class="wh-title" id="t-work" data-ht-tap>
+        <HoverType text={title} hover />
       </h1>
-      <p class="lede rise" style="--d:2">
-        {typo(locale, t`Client work, my own products, open source and experiments. Flip through them on the TV, or scroll down for all of them.`)}
+      <p class="wh-lede rise" style="--d:2">
+        {typo(locale, t`Client work, my own products, open source and experiments. Pick one, or scroll through all of them.`)}
       </p>
     </div>
-    {
-      first && (
-        <div class="wh-stage">
-          <div class="wh-card" aria-hidden="true">
-            <i />
-            <i />
-            <i />
-            <i />
-            <i />
-            <i />
-          </div>
-        <div class="tv enter" data-tv={JSON.stringify(channels)}>
-          <span class="tv-ant" aria-hidden="true">
-            <i />
-            <i />
-          </span>
-          <div class="tv-box">
-            <div class="tv-screen" data-tv-screen>
-              <canvas aria-hidden="true" />
-              <img data-tv-img alt="" decoding="async" hidden />
-              <span class="tv-osd tabular" aria-hidden="true" data-tv-num>
-                CH 01
+    <nav class="wh-toc rise" aria-labelledby="t-toc" style="--d:3">
+      <p class="wh-toc-k" id="t-toc">{t`On this page`}</p>
+      <ol role="list">
+        {items.map((item, k) => (
+          <li>
+            <a href={`#wk-${item.slug}`} data-tint={item.color} style={`--c:${item.color}`}>
+              <span class="wt-n tabular" aria-hidden="true">
+                {String(k + 1).padStart(2, "0")}
               </span>
-            </div>
-            <div class="tv-panel">
-              <span class="tv-led tabular" aria-hidden="true" data-tv-led>
-                01
+              <span class="wt-name">{item.name}</span>
+              <span class="wt-meta">
+                {item.kind} · <span class="tabular">{item.year}</span>
               </span>
-              <span class="tv-knob" aria-hidden="true" />
-              <span class="tv-btns js-only">
-                <button class="tv-btn" type="button" data-tv-prev aria-label={t`Previous channel`}>
-                  <Icon name="tb:chevron-down" class="tv-up" />
-                </button>
-                <button class="tv-btn" type="button" data-tv-next aria-label={t`Next channel`}>
-                  <Icon name="tb:chevron-down" />
-                </button>
-              </span>
-              <span class="tv-grill" aria-hidden="true" />
-            </div>
-          </div>
-          <p class="tv-now" data-tv-now>
-            <span class="tv-kick">{t`Now showing`}</span>
-            <a href={`#wk-${first.slug}`} data-tv-link>
-              <b data-tv-name>{first.name}</b>
-              <span class="tv-meta" data-tv-meta>
-                {first.meta}
-              </span>
-              <Icon name="tb:arrow-down" class="nudge" />
+              <Icon name="tb:arrow-down" class="wt-ar" />
             </a>
-          </p>
-        </div>
-        </div>
-      )
-    }
+          </li>
+        ))}
+      </ol>
+    </nav>
   </div>
 </section>
 
 <style>
-  /* The room: navy under a faint test-card grid, lit by the channel on screen. Animating the glow on the section alone
-     (inherits: false) keeps the transition from restyling the subtree (lessons.md). */
-  @property --wh-glow {
-    syntax: "<color>";
-    inherits: false;
-    initial-value: #2433ff;
-  }
+  /* The night field. Until the shader runs: rings of the same lines in CSS. */
   .wh {
+    --hair: rgb(238 240 255 / 0.14);
+    --mute: #b2b4c6; /* ice at 74% on the ink, as a solid colour (no faded text) */
     overflow: clip;
-    padding-top: clamp(2.5rem, 6vw, 5rem);
-    padding-bottom: clamp(3.5rem, 7vw, 6rem);
-    background:
-      radial-gradient(55% 75% at 76% 58%, color-mix(in srgb, var(--wh-glow) 30%, transparent), transparent 72%),
-      repeating-linear-gradient(90deg, rgb(238 240 255 / 0.06) 0 2px, transparent 2px 64px) 50% 0,
-      repeating-linear-gradient(rgb(238 240 255 / 0.06) 0 2px, transparent 2px 64px) 0 50%,
-      var(--navy);
-    transition: --wh-glow 0.9s var(--ease-out);
+    padding-top: clamp(3rem, 7vw, 6.5rem);
+    padding-bottom: clamp(3.5rem, 7vw, 6.5rem);
+    background: repeating-radial-gradient(circle at 82% 18%, transparent 0 38px, rgb(58 70 255 / 0.32) 38px 39px), var(--space);
+    color: var(--ice);
   }
-  .wh-grid {
-    display: grid;
-    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
-    gap: clamp(2.5rem, 5vw, 5rem);
-    align-items: center;
-  }
-
-  /* The title: plain words and a lit studio sign, not the fitted poster type. */
-  .wh-kick {
-    display: flex;
-    align-items: center;
-    gap: 0.625rem;
-    margin: 0 0 1.25rem;
-    font-weight: 800;
-    font-size: 0.875rem;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-  }
-  .wh-dot {
-    width: 0.625rem;
-    height: 0.625rem;
-    border-radius: 50%;
-    background: var(--pink);
-    box-shadow: 0 0 10px var(--pink);
-    animation: wh-blink 1.6s steps(1) infinite;
-  }
-  @keyframes wh-blink {
-    50% {
-      opacity: 0.2;
-    }
-  }
-  .wh-title {
-    margin: 0;
-    font-weight: 900;
-    font-size: clamp(2.75rem, 5.6vw, 5.5rem);
-    line-height: 1;
-    letter-spacing: -0.01em;
-    font-stretch: 90%;
-    text-wrap: balance;
-  }
-  .wh-air {
-    display: inline-block;
-    margin-top: 0.1em;
-    padding: 0.02em 0.3em 0.08em;
-    border-radius: 0.14em;
-    background: var(--pink);
-    color: var(--navy);
-    box-shadow:
-      0 0 0 0.06em var(--navy),
-      0 0 0.45em rgb(255 79 184 / 0.6),
-      0 0 1.4em rgb(255 79 184 / 0.35);
-    font-stretch: 112%;
-    letter-spacing: 0.02em;
-    text-transform: uppercase;
-    white-space: nowrap;
-    rotate: -2deg;
-    animation: wh-flicker 1.4s steps(1) 0.3s both;
-  }
-  /* The sign switches on with a stutter, like a real one. Only the light changes, never the opacity (it is in the LCP). */
-  @keyframes wh-flicker {
-    0%,
-    18%,
-    34% {
-      background-color: #7a2a63;
-      box-shadow: 0 0 0 0.06em var(--navy);
-    }
-    12%,
-    26% {
-      background-color: var(--pink);
-    }
-  }
-  .lede {
-    max-width: 38ch;
-    margin: clamp(1.25rem, 2.4vw, 2rem) 0 0;
-    font-size: clamp(1.125rem, 1.4vw, 1.375rem);
-    line-height: 1.45;
-  }
-
-  /* The test card behind the set (a PM5544-style circle in the brand's colours): steps, the colour bars, gratings. */
-  .wh-stage {
-    position: relative;
-    display: grid;
-    justify-items: center;
-  }
-  .wh-card {
-    position: absolute;
-    left: 50%;
-    top: 52%;
-    display: grid;
-    grid-template-rows: 20% 13% 22% 13% 12% 20%;
-    width: min(120%, 48rem);
-    aspect-ratio: 1;
-    overflow: hidden;
-    border-radius: 50%;
-    translate: -50% -50%;
-    opacity: 0.3;
-    box-shadow:
-      0 0 0 3px var(--ice),
-      0 0 0 1.75rem rgb(238 240 255 / 0.08),
-      0 0 0 calc(1.75rem + 3px) rgb(238 240 255 / 0.35);
-  }
-  .wh-card::before,
-  .wh-card::after {
-    content: "";
-    position: absolute;
-    background: var(--ice);
-  }
-  .wh-card::before {
-    left: 50%;
-    top: 0;
-    bottom: 0;
-    width: 3px;
-  }
-  .wh-card::after {
-    top: 50%;
-    left: 0;
-    right: 0;
-    height: 3px;
-  }
-  .wh-card i:nth-child(1),
-  .wh-card i:nth-child(6) {
-    background: var(--navy);
-  }
-  .wh-card i:nth-child(2) {
-    background: linear-gradient(90deg, #0a0d33 0 16.67%, #1c226b 0 33.33%, #2433ff 0 50%, #7a83ff 0 66.67%, #b8bdff 0 83.33%, #eef0ff 0);
-  }
-  .wh-card i:nth-child(3) {
-    background: linear-gradient(
-      90deg,
-      var(--ice) 0 14.29%,
-      var(--yellow) 0 28.57%,
-      var(--lime) 0 42.86%,
-      var(--orange) 0 57.14%,
-      var(--pink) 0 71.43%,
-      var(--cobalt) 0 85.71%,
-      var(--midnight) 0
-    );
-  }
-  .wh-card i:nth-child(4) {
-    background:
-      repeating-linear-gradient(90deg, var(--ice) 0 7px, var(--navy) 7px 14px) 0 0 / 20% 100% no-repeat,
-      repeating-linear-gradient(90deg, var(--ice) 0 5px, var(--navy) 5px 10px) 25% 0 / 20% 100% no-repeat,
-      repeating-linear-gradient(90deg, var(--ice) 0 3px, var(--navy) 3px 6px) 50% 0 / 20% 100% no-repeat,
-      repeating-linear-gradient(90deg, var(--ice) 0 2px, var(--navy) 2px 4px) 75% 0 / 20% 100% no-repeat,
-      repeating-linear-gradient(90deg, var(--ice) 0 1px, var(--navy) 1px 2px) 100% 0 / 20% 100% no-repeat,
-      var(--navy);
-  }
-  .wh-card i:nth-child(5) {
-    background: linear-gradient(90deg, #eef0ff 0 16.67%, #b8bdff 0 33.33%, #7a83ff 0 50%, #2433ff 0 66.67%, #1c226b 0 83.33%, #0a0d33 0);
-  }
-
-  /* The set: a yellow TV with antennas, tilted, a pink hard shadow. */
-  .tv {
-    --line: 3px;
-    position: relative;
-    justify-self: center;
-    width: min(100%, 40rem);
-    margin-top: clamp(2.5rem, 4vw, 3.5rem);
-    rotate: 2deg;
-    animation: wh-in 0.7s var(--ease-pop) both;
-  }
-  @keyframes wh-in {
-    from {
-      opacity: 0;
-      transform: translateY(1.5rem) rotate(-4deg);
-    }
-  }
-  .tv-ant {
-    position: absolute;
-    left: 50%;
-    bottom: calc(100% - 2px);
-    width: 4.5rem;
-    height: 1.375rem;
-    translate: -50% 0;
-    background: var(--yellow);
-    border-radius: 4.5rem 4.5rem 0 0;
-    box-shadow: 0 0 0 var(--line) var(--navy);
-  }
-  .tv-ant i {
-    position: absolute;
-    left: 50%;
-    bottom: 60%;
-    width: 3px;
-    height: clamp(3rem, 6vw, 4.5rem);
-    background: var(--ice);
-    transform-origin: 50% 100%;
-    rotate: -32deg;
-    animation: wh-ant 4s ease-in-out infinite;
-  }
-  .tv-ant i + i {
-    rotate: 26deg;
-    animation-delay: -2s;
-  }
-  .tv-ant i::after {
-    content: "";
-    position: absolute;
-    top: -0.375rem;
-    left: 50%;
-    width: 0.75rem;
-    height: 0.75rem;
-    translate: -50% 0;
-    border-radius: 50%;
-    background: var(--pink);
-  }
-  @keyframes wh-ant {
-    50% {
-      transform: rotate(5deg);
-    }
-  }
-  .tv-box {
-    position: relative;
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) clamp(4.25rem, 8vw, 6.5rem);
-    gap: clamp(0.75rem, 1.4vw, 1.125rem);
-    padding: clamp(0.75rem, 1.5vw, 1.125rem);
-    border-radius: 1.25rem;
-    background: var(--yellow);
-    color: var(--navy);
-    box-shadow:
-      0 0 0 var(--line) var(--navy),
-      14px 14px 0 var(--line) var(--pink);
-  }
-
-  /* The screen. Until the shader runs: colour bars in the brand's colours, with scanlines. */
-  .tv-screen {
-    position: relative;
-    aspect-ratio: 4 / 3;
-    overflow: hidden;
-    border-radius: 1.5rem / 1.125rem;
-    background:
-      linear-gradient(90deg, var(--navy) 0 25%, var(--ice) 0 50%, var(--navy) 0 75%, var(--ice) 0) 0 100% / 100% 25% no-repeat,
-      linear-gradient(
-        90deg,
-        var(--ice) 0 14.29%,
-        var(--yellow) 0 28.57%,
-        var(--lime) 0 42.86%,
-        var(--orange) 0 57.14%,
-        var(--pink) 0 71.43%,
-        var(--cobalt) 0 85.71%,
-        var(--midnight) 0
-      );
-    box-shadow: 0 0 0 var(--line) var(--navy);
-  }
-  .tv-screen::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background: repeating-linear-gradient(rgb(10 13 51 / 0.14) 0 1px, transparent 1px 3px);
-    pointer-events: none;
-  }
-  /* The glass: a soft glare and dark corners over whatever plays. */
-  .tv-screen::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    z-index: 2;
-    background:
-      linear-gradient(155deg, rgb(255 255 255 / 0.16), transparent 32%),
-      radial-gradient(120% 120% at 50% 50%, transparent 62%, rgb(5 6 26 / 0.55));
-    pointer-events: none;
-  }
-  .tv-screen canvas,
-  .tv-screen img {
+  .wh-field {
     position: absolute;
     inset: 0;
     width: 100%;
     height: 100%;
-  }
-  .tv-screen canvas {
     opacity: 0;
-    transition: opacity 0.3s;
+    transition: opacity 1.2s var(--ease-out);
   }
-  .tv-screen canvas:global(.on) {
+  .wh-field:global(.on) {
     opacity: 1;
   }
-  .tv-screen img {
-    object-fit: cover;
-    object-position: top;
-  }
-  .tv-osd {
-    position: absolute;
-    top: 7%;
-    right: 7%;
-    z-index: 3;
-    padding: 0.125rem 0.5rem;
-    background: var(--navy);
-    color: var(--lime);
-    font-family: ui-monospace, "Cascadia Mono", Consolas, monospace;
-    font-weight: 700;
-    font-size: clamp(0.75rem, 1.3vw, 1rem);
-    letter-spacing: 0.06em;
+  .wh-in {
+    position: relative;
+    display: grid;
+    grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr);
+    gap: clamp(2.5rem, 6vw, 7rem);
+    align-items: end;
   }
 
-  /* The side panel: the channel display, a knob that turns with the channel, the two buttons, a speaker. */
-  .tv-panel {
-    display: grid;
-    grid-template-rows: auto auto auto 1fr;
-    justify-items: center;
-    gap: clamp(0.625rem, 1.2vw, 1rem);
-  }
-  .tv-led {
-    width: 100%;
-    padding: 0.25rem 0;
-    background: var(--navy);
-    color: var(--lime);
-    box-shadow: inset 0 0 0 2px rgb(201 242 74 / 0.25);
-    font-family: ui-monospace, "Cascadia Mono", Consolas, monospace;
-    font-weight: 700;
-    font-size: clamp(1.25rem, 2.2vw, 1.875rem);
-    line-height: 1.1;
-    text-align: center;
-    text-shadow: 0 0 0.5em rgb(201 242 74 / 0.6);
-  }
-  .tv-knob {
-    position: relative;
-    width: 78%;
-    aspect-ratio: 1;
-    border-radius: 50%;
-    background: var(--ice);
-    box-shadow:
-      0 0 0 var(--line) var(--navy),
-      4px 4px 0 var(--line) var(--navy);
-    rotate: calc(var(--ch, 0) * 45deg - 60deg);
-    transition: rotate 0.5s var(--ease-pop);
-  }
-  .tv-knob::after {
-    content: "";
-    position: absolute;
-    left: 50%;
-    top: 10%;
-    width: 4px;
-    height: 32%;
-    translate: -50% 0;
-    border-radius: 2px;
-    background: var(--navy);
-  }
-  .tv-btns {
-    display: grid;
-    gap: 0.5rem;
-    width: 100%;
-  }
-  .tv-btn {
-    display: grid;
-    place-items: center;
-    min-height: 2.75rem;
-    border: 0;
-    border-radius: 0.375rem;
-    background: var(--ice);
-    color: var(--navy);
-    box-shadow:
-      0 0 0 var(--line) var(--navy),
-      3px 3px 0 var(--line) var(--navy);
-    cursor: pointer;
-    transition:
-      translate 0.15s,
-      box-shadow 0.15s;
-  }
-  .tv-btn :global(.ico) {
-    width: 1.375rem;
-    height: 1.375rem;
-    stroke-width: 3;
-  }
-  .tv-btn :global(.tv-up) {
-    rotate: 180deg;
-  }
-  .tv-btn:active {
-    translate: 3px 3px;
-    box-shadow: 0 0 0 var(--line) var(--navy);
-  }
-  @media (hover: hover) and (pointer: fine) {
-    .tv-btn:hover {
-      background: var(--pink);
-    }
-  }
-  .tv-btn:focus-visible {
-    outline: 3px solid var(--navy);
-    outline-offset: 4px;
-  }
-  .tv-grill {
-    align-self: stretch;
-    width: 100%;
-    min-height: 2rem;
-    background: repeating-linear-gradient(var(--navy) 0 3px, transparent 3px 8px);
-    opacity: 0.85;
-  }
-
-  /* Now showing: a tilted ticket that hangs off the set and links to the card. */
-  .tv-now {
-    position: relative;
-    z-index: 1;
-    display: grid;
-    width: fit-content;
-    max-width: calc(100% - 2rem);
-    margin: -1.25rem 0 0 clamp(1rem, 3vw, 2rem);
-    padding: 0.625rem 1rem 0.75rem;
-    background: var(--ice);
-    color: var(--navy);
-    box-shadow:
-      0 0 0 var(--line) var(--navy),
-      7px 7px 0 var(--line) var(--cobalt);
-    rotate: -4deg;
-  }
-  .tv-kick {
-    font-weight: 800;
-    font-size: 0.6875rem;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-  }
-  .tv-now a {
+  .wh-kick {
     display: flex;
-    flex-wrap: wrap;
-    align-items: baseline;
-    gap: 0.125rem 0.625rem;
-    min-height: 2.75rem;
+    align-items: center;
+    gap: 0.75rem;
+    margin: 0 0 clamp(1rem, 2vw, 1.75rem);
+    color: var(--lime);
+  }
+  .wh-kick::before {
+    content: "";
+    width: 2.25rem;
+    height: 2px;
+    background: currentColor;
+  }
+  /* A plain title, not the fitted poster type: heavy, condensed, sentence case. */
+  .wh-title {
+    --ht-c: var(--lime);
+    --ht-thin: 300;
+    --ht-mid: 600;
+    max-width: 10ch;
+    margin: 0;
+    font-weight: 900;
+    font-size: clamp(3.25rem, 8.8vw, 9.5rem);
+    line-height: 0.97;
+    letter-spacing: -0.01em;
+    font-stretch: 70%;
+  }
+  .wh-lede {
+    max-width: 40ch;
+    margin: clamp(1.5rem, 2.6vw, 2.25rem) 0 0;
+    font-size: var(--text-lg);
+    line-height: 1.45;
+    color: var(--mute);
+  }
+
+  /* The index: number, name, kind · year, an arrow; hairlines between. */
+  .wh-toc-k {
+    margin: 0 0 0.75rem;
+    font-weight: 800;
+    font-size: 0.75rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    font-stretch: 120%;
+    color: var(--mute);
+  }
+  .wh-toc ol {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    border-top: 1px solid var(--hair);
+  }
+  /* One-line rows: plain wrapping (the site's "pretty" on li costs layout passes for nothing here). */
+  .wh-toc li {
+    border-bottom: 1px solid var(--hair);
+    text-wrap: wrap;
+  }
+  .wh-toc a {
+    position: relative;
+    display: grid;
+    grid-template-columns: 2.25rem minmax(0, 1fr) auto 1.125rem;
+    align-items: center;
+    gap: 0.75rem;
+    min-height: 2.875rem;
     text-decoration: none;
   }
-  .tv-now b {
-    font-weight: 900;
-    font-size: clamp(1.375rem, 2.2vw, 1.875rem);
-    line-height: 1.1;
-    text-transform: uppercase;
-    font-stretch: 72%;
+  /* The project's colour as a bar that grows from the left on hover or focus. */
+  .wh-toc a::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: -1px;
+    bottom: -1px;
+    width: 3px;
+    background: var(--c);
+    scale: 1 0;
+    transition: scale 0.35s var(--ease-out);
   }
-  .tv-meta {
-    font-weight: 700;
+  .wt-n {
+    padding-left: 0.625rem;
+    font-weight: 800;
     font-size: 0.8125rem;
+    color: var(--c);
   }
-  .tv-now :global(.ico) {
-    align-self: center;
+  .wt-name {
+    overflow: hidden;
+    font-weight: 800;
+    font-size: 1.0625rem;
+    font-stretch: 88%;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    transition: translate 0.35s var(--ease-out);
+  }
+  .wt-meta {
+    font-weight: 700;
+    font-size: 0.75rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    font-stretch: 105%;
+    color: var(--mute);
+    white-space: nowrap;
+  }
+  .wh-toc :global(.wt-ar) {
     width: 1.125rem;
     height: 1.125rem;
+    opacity: 0.45;
+    transition:
+      translate 0.35s var(--ease-out),
+      opacity 0.35s,
+      color 0.35s;
   }
-  @media (hover: hover) and (pointer: fine) {
-    .tv-now a:hover b {
-      text-decoration: underline;
-      text-decoration-thickness: 3px;
-      text-underline-offset: 4px;
-    }
+  .wh-toc a:focus-visible {
+    outline-offset: 2px;
+  }
+  .wh-toc a:is(:hover, :focus-visible)::before {
+    scale: 1 1;
+  }
+  .wh-toc a:is(:hover, :focus-visible) .wt-name {
+    translate: 0.375rem 0;
+  }
+  .wh-toc a:is(:hover, :focus-visible) :global(.wt-ar) {
+    translate: 0 3px;
+    opacity: 1;
+    color: var(--c);
   }
 
+  /* Tablets: the index under the title, two columns. Phones: names only. */
   @media (max-width: 64rem) {
-    .wh-grid {
+    .wh-in {
       grid-template-columns: minmax(0, 1fr);
+      align-items: start;
     }
-    .tv {
-      width: min(100%, 36rem);
-    }
-    .wh-card {
-      width: min(104%, 38rem);
-      top: 56%;
+    .wh-toc ol {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      column-gap: 1.5rem;
     }
   }
-  /* Phones: the panel lies under the screen as one row. */
   @media (max-width: 40rem) {
-    .tv {
-      rotate: 1deg;
+    .wh-toc ol {
+      column-gap: 1rem;
     }
-    .tv-box {
-      grid-template-columns: minmax(0, 1fr);
-      box-shadow:
-        0 0 0 var(--line) var(--navy),
-        8px 8px 0 var(--line) var(--pink);
+    .wh-toc a {
+      grid-template-columns: 1.75rem minmax(0, 1fr);
+      gap: 0.375rem;
+      min-height: 2.75rem;
     }
-    .tv-panel {
-      grid-template-columns: auto auto auto 1fr;
-      grid-template-rows: none;
-      align-items: center;
-      gap: 0.875rem;
+    .wt-n {
+      padding-left: 0.5rem;
+      font-size: 0.75rem;
     }
-    .tv-led {
-      width: auto;
-      padding: 0.25rem 0.625rem;
+    /* Long names wrap rather than lose their ends on narrow phones. */
+    .wt-name {
+      overflow: visible;
+      padding-block: 0.375rem;
+      font-size: 0.9375rem;
+      line-height: 1.15;
+      font-stretch: 80%;
+      white-space: normal;
+      overflow-wrap: anywhere;
     }
-    .tv-knob {
-      width: 2.5rem;
-    }
-    .tv-btns {
-      display: flex;
-    }
-    .tv-btn {
-      width: 2.75rem;
-    }
-    html:not(.js) .tv-panel {
-      grid-template-columns: auto auto 1fr;
-    }
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .tv,
-    .tv-ant i,
-    .wh-dot,
-    .wh-air {
-      animation: none;
+    .wt-meta,
+    .wh-toc :global(.wt-ar) {
+      display: none;
     }
   }
 </style>
 
 <script>
-  import "~/scripts/work-tv";
+  import "~/scripts/work-field";
 </script>

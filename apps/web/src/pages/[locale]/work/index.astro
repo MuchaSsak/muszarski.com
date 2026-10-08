@@ -1,17 +1,20 @@
 ---
 /**
- * All projects (structure.md § All projects, requirements.md F04) [user 2026-10-07: "no videos/screenshots, it
- * overwhelms users with so many buttons for filtering, and its so very boring ... not the same layout as on main
- * landing ... show off we can do a lot of different good looking things"]. Every project the build may show, flagships
- * first, as a wall of cards where each shows its work in its own way:
- * - a live-site capture in a browser frame that scrolls down the page on hover (and with the scroll on touch screens),
- * - the product reels (Linkoglot, the space flight; Clockful and the club screensaver once their recordings land)
- *   that play near the screen after the first interaction,
- * - small drawn scenes where there is nothing to film yet: the private Clockful dashboard, the CLI in a terminal, a
- *   particle swirl for the screensaver.
- * The head is a TV that flips through the captures (`work/WorkHero.astro`); the end is a cheeky note on the private
- * repositories (`work/PrivateRepos.astro`) [user 2026-10-08]. No filters and no counts [user 2026-10-08]. Case studies
- * live in the blog (open-questions Q43).
+ * All projects (structure.md § All projects, requirements.md F04). The night catalogue [user 2026-10-08: the card
+ * wall "has gone too much with illustrations and looks too vibe coded", "a better and different design, experiment
+ * with shaders, and interesting components", "a different style and theme"; the TV + spy room version is kept in
+ * `comps/history/work-tv-spyroom/`]. One ink field from the head to the end, hairlines instead of frames and hard
+ * shadows, colour only where it means a project:
+ * - the head (`work/WorkHero.astro`): a title on a live contour map, and an index of every project,
+ * - the catalogue: every project as a plate and a caption, in an offset two-column rhythm (a wide plate beside a
+ *   narrow one, the right column a step lower; one column on phones). A plate shows the real thing: a capture of the
+ *   live site in a browser window rising from the plate's foot, a product reel, or real text where there is nothing
+ *   to film (the CLI's run, Clockful's tests). No drawn scenes.
+ * - the X-ray (`scripts/work-xray.ts`): a pointer over a capture opens a square inspector lens that shows the page's
+ *   structure (its edges on a blueprint grid); on touch screens a scan line passes over the capture in the middle of
+ *   the screen, and keyboard focus sends one too.
+ * - "There's more." (`work/PrivateRepos.astro`).
+ * No filters and no counts [user 2026-10-08]. Case studies live in the blog (open-questions Q43).
  */
 import { t } from "lingui-for-astro/macro";
 
@@ -19,7 +22,7 @@ import BaseLayout from "~/components/layout/BaseLayout.astro";
 import JsonLd from "~/components/seo/JsonLd.astro";
 import Icon from "~/components/ui/Icon.astro";
 import PrivateRepos from "~/components/work/PrivateRepos.astro";
-import WorkHero, { type Channel } from "~/components/work/WorkHero.astro";
+import WorkHero, { type IndexItem } from "~/components/work/WorkHero.astro";
 import { type Context, type Project, visibleProjects } from "~/data/projects";
 import { SITE } from "~/data/site";
 import { thisSitePath } from "~/lib/blog-paths";
@@ -34,11 +37,11 @@ export const getStaticPaths = localeStaticPaths;
 const locale = Astro.locals.locale;
 const links = chromeLinks(locale);
 /**
- * Flagships first (chapter order), then the archive in an order that alternates the kinds of picture (a capture, a
- * drawing, a capture...), so neighbours never look alike; a project missing here goes last.
+ * Flagships first (chapter order), then the archive in an order that alternates the kinds of plate (a capture, text,
+ * a capture...), so neighbours never look alike; a project missing here goes last.
  */
-const ARCHIVE = ["this-site", "malatro", "lingui-translate-ai", "yws", "club-screensaver", "lingotype"];
-const rank = (project: Project) => (project.flagship ? project.flagship - 10 : (ARCHIVE.indexOf(project.slug) + 1 || 99));
+const ARCHIVE = ["this-site", "lingui-translate-ai", "malatro", "yws", "lingotype", "club-screensaver"];
+const rank = (project: Project) => (project.flagship ? project.flagship - 10 : ARCHIVE.indexOf(project.slug) + 1 || 99);
 const projects = visibleProjects().sort((a, b) => rank(a) - rank(b));
 const CONTEXT: Record<Context, string> = {
   client: t`Client work`,
@@ -50,24 +53,36 @@ const CONTEXT: Record<Context, string> = {
 };
 
 /**
- * How each card shows its work. `shot`: a capture of the owner's live site (public/media/work, temporary captures:
- * design/assets.md), `tall` when the capture is a long page that scrolls in the frame. `reel`: a product loop. The rest
- * are drawn scenes. Colours: the flagships wear their chapter's skin.
+ * What each plate shows. `shot`: a capture of the owner's live site (public/media/work, temporary captures:
+ * design/assets.md), `tall` when it is a long page that scrolls in the window. `reel`: a product loop. `poster`:
+ * this site's share card. `tests` / `cli`: real text (Clockful's test run, the CLI's run). `soon`: nothing to show yet.
  */
 type Media =
   | { kind: "shot"; src: string; url: string; height: number; tall?: boolean }
-  | { kind: "reel"; frame: "phone" | "browser"; url?: string; poster: string; av1?: string | undefined; mp4: string; width: number; height: number; label: string }
-  | { kind: "poster" | "clock" | "term" | "swirl" };
+  | {
+      kind: "reel";
+      frame: "phone" | "browser";
+      url?: string;
+      poster: string;
+      av1?: string | undefined;
+      mp4: string;
+      width: number;
+      height: number;
+      label: string;
+    }
+  | { kind: "poster" | "tests" | "cli" | "soon" };
 /**
  * A screen recording waiting for its files [user 2026-10-08: Clockful and the club screensaver get videos]: the reel
  * shows once `public/media/work/<slug>.mp4` and `<slug>-poster.webp` are there (`<slug>.av1.mp4` too, optional), and
- * the drawn scene stands in until then (design/assets.md).
+ * the stand-in shows until then (design/assets.md).
  */
 const recording = (slug: string, url: string, label: string): Media | undefined => {
   const at = (file: string) => (inPublic(`media/work/${file}`) ? `/media/work/${file}` : undefined);
   const mp4 = at(`${slug}.mp4`);
   const poster = at(`${slug}-poster.webp`);
-  return mp4 && poster ? { kind: "reel", frame: "browser", url, poster, av1: at(`${slug}.av1.mp4`), mp4, width: 1280, height: 720, label } : undefined;
+  return mp4 && poster
+    ? { kind: "reel", frame: "browser", url, poster, av1: at(`${slug}.av1.mp4`), mp4, width: 1280, height: 720, label }
+    : undefined;
 };
 const MEDIA: Record<string, Media> = {
   pstrykweb: { kind: "shot", src: "/media/work/pstrykweb.webp", url: "pstrykweb.pl", height: 1800, tall: true },
@@ -81,7 +96,12 @@ const MEDIA: Record<string, Media> = {
     height: 694,
     label: t`Linkoglot camera mode: point the phone at a street, a room, breakfast, a book and a park to learn the words`,
   },
-  "neoteric-clockful": recording("neoteric-clockful", "localhost:3000", t`Neoteric Clockful: a screen recording of the dashboard`) ?? { kind: "clock" },
+  // The test run is the dossier's (content/projects/neoteric-clockful.md): 49 Vitest + 69 Playwright, RLS on 5/5 tables.
+  "neoteric-clockful": recording(
+    "neoteric-clockful",
+    "localhost:3000",
+    t`Neoteric Clockful: a screen recording of the dashboard`,
+  ) ?? { kind: "tests" },
   "space-portfolio": {
     kind: "reel",
     frame: "browser",
@@ -96,49 +116,61 @@ const MEDIA: Record<string, Media> = {
   },
   "this-site": { kind: "poster" },
   yws: { kind: "shot", src: "/media/work/yws.webp", url: "yws.lu", height: 1800, tall: true },
-  "lingui-translate-ai": { kind: "term" },
+  "lingui-translate-ai": { kind: "cli" },
   malatro: { kind: "shot", src: "/media/work/malatro.webp", url: "malatro.vercel.app", height: 450 },
   lingotype: { kind: "shot", src: "/media/work/lingotype.webp", url: "lingotype.vercel.app", height: 450 },
-  "club-screensaver": recording("club-screensaver", "beniaminek03-screensaver.vercel.app", t`The club screensaver: the particles in motion`) ?? { kind: "swirl" },
+  // PLACEHOLDER (placeholders.md P24): "Recording soon" until the screensaver's recording lands in its video slot.
+  "club-screensaver": recording(
+    "club-screensaver",
+    "beniaminek03-screensaver.vercel.app",
+    t`The club screensaver: the particles in motion`,
+  ) ?? { kind: "soon" },
 };
-/** The skins, as tokens (the cards) and as hex (the TV's room glow and letterbox). */
-const HEX = { yellow: "#ffd23f", orange: "#ff5b1f", lime: "#c9f24a", pink: "#ff4fb8", cobalt: "#2433ff", navy: "#0a0d33", space: "#07081c" };
-const SKIN: Record<string, keyof typeof HEX> = {
-  pstrykweb: "yellow",
-  linkoglot: "orange",
-  "neoteric-clockful": "lime",
-  "space-portfolio": "pink",
-  "this-site": "cobalt",
-  yws: "orange",
-  "lingui-translate-ai": "navy",
-  malatro: "pink",
-  lingotype: "lime",
-  "club-screensaver": "space",
+/** Each project's colour, readable on the ink: its number, its rule, its plate's tint, the button's shadow, the map. */
+const COLOR: Record<string, string> = {
+  pstrykweb: "#ffd23f",
+  linkoglot: "#ff5b1f",
+  "neoteric-clockful": "#c9f24a",
+  "space-portfolio": "#ff4fb8",
+  "this-site": "#8c94ff",
+  "lingui-translate-ai": "#eef0ff",
+  malatro: "#ff5b1f",
+  yws: "#ffd23f",
+  lingotype: "#c9f24a",
+  "club-screensaver": "#8c94ff",
 };
-const skin = (project: Project) => SKIN[project.slug] ?? "cobalt";
+const color = (project: Project) => COLOR[project.slug] ?? "#8c94ff";
+/** Where each plate's contour rings centre (x %, y %): every plate shows a different patch of the map. */
+const MAP = [
+  [18, 115],
+  [92, -18],
+  [112, 62],
+  [-12, 30],
+  [55, 122],
+  [96, 108],
+  [4, -22],
+  [72, -28],
+  [-16, 96],
+  [118, 12],
+] as const;
 const posterSrc = `/media/work/this-site-${locale}.webp`;
 const shotAlt = (project: Project) => t`The ${project.name} website, the start of the page`;
 const labelPause = t`Pause video`;
 const labelPlay = t`Play video`;
 const newTab = t`(opens in a new tab)`;
+const soon = t`Recording soon`;
 
 const site = Astro.site ?? new URL("http://localhost:4321");
 const title = t`All projects`;
 const description = t`Every project by Mateusz Muszarski: client work, his own products, open source and experiments, with the tools, the year and the links.`;
 const url = new URL(pathTo(locale, "work"), site).href;
-const channels: Channel[] = projects.flatMap((project) => {
-  const media = MEDIA[project.slug];
-  const picture =
-    media?.kind === "shot"
-      ? { src: media.src, ar: 720 / media.height, contain: false }
-      : media?.kind === "reel"
-        ? { src: media.poster, ar: media.width / media.height, contain: media.frame === "phone" }
-        : media?.kind === "poster"
-          ? { src: posterSrc, ar: 960 / 504, contain: false }
-          : undefined;
-  if (!picture) return [];
-  return [{ slug: project.slug, name: project.name, meta: `${CONTEXT[project.context]} · ${project.year}`, bg: HEX[skin(project)], ...picture }];
-});
+const index: IndexItem[] = projects.map((project) => ({
+  slug: project.slug,
+  name: project.name,
+  kind: CONTEXT[project.context],
+  year: project.year,
+  color: color(project),
+}));
 ---
 
 <BaseLayout title={title} description={description} path="work" current="work" og="work">
@@ -149,358 +181,424 @@ const channels: Channel[] = projects.flatMap((project) => {
       { name: title, url },
     ])}
   />
-  <WorkHero channels={channels} />
+  <WorkHero items={index} />
 
-  <section class="sec field-alt wk" aria-label={t`Projects`}>
-    <ol class="wk-grid" role="list" data-grid>
-      {
-        projects.map((project) => {
-          const media = MEDIA[project.slug] ?? { kind: "poster" as const };
-          const primary = project.anchor
-            ? { href: links.project(project.anchor), label: t`Chapter`, external: false }
-            : project.links.caseStudy
-              ? { href: thisSitePath(locale), label: t`Case study`, external: false }
-              : project.links.live
-                ? { href: project.links.live, label: t`Live site`, external: true }
-                : project.links.npm
-                  ? { href: project.links.npm, label: "npm", external: true }
-                  : project.links.code
-                    ? { href: project.links.code, label: t`Code`, external: true }
-                    : undefined;
-          return (
-            <li
-              class:list={["wk-card", project.flagship ? "lg" : "md", `m-${media.kind}`]}
-              id={`wk-${project.slug}`}
-              style={`--skin:var(--${skin(project)})`}
-            >
-              <div class="wk-media">
-                {media.kind === "shot" && (
-                  <div class:list={["browser", { tall: media.tall }]}>
-                    <span class="b-top" aria-hidden="true">
-                      <i />
-                      <i />
-                      <i />
-                      <span class="b-url">{media.url}</span>
-                    </span>
-                    <span class="b-view">
-                      <img src={media.src} alt={shotAlt(project)} width="720" height={media.height} loading="lazy" decoding="async" />
-                    </span>
-                  </div>
-                )}
-                {media.kind === "reel" && (
-                  <figure class:list={["wk-reel", `f-${media.frame}`]} data-reel>
-                    <div class={media.frame === "phone" ? "phone" : "browser"}>
-                      {media.frame === "browser" && (
-                        <span class="b-top" aria-hidden="true">
-                          <i />
-                          <i />
-                          <i />
-                          <span class="b-url">{media.url}</span>
-                        </span>
-                      )}
-                      <span class="b-view">
-                        <video tabindex="-1" muted loop playsinline preload="none" poster={media.poster} width={media.width} height={media.height} aria-label={media.label}>
-                          {media.av1 && <source data-src={media.av1} type='video/mp4; codecs="av01.0.05M.08"' />}
-                          <source data-src={media.mp4} type="video/mp4" />
-                        </video>
-                        <span class="bigplay" aria-hidden="true">
-                          <Icon name="tbf:player-play" />
-                        </span>
-                        <button class="r-hit" type="button" data-toggle aria-pressed="true" aria-label={labelPlay} data-label-pause={labelPause} data-label-play={labelPlay} />
-                      </span>
-                    </div>
-                  </figure>
-                )}
-                {media.kind === "poster" && (
-                  <div class="browser">
-                    <span class="b-top" aria-hidden="true">
-                      <i />
-                      <i />
-                      <i />
-                      <span class="b-url">muszarski.com</span>
-                    </span>
-                    <span class="b-view">
-                      <img src={posterSrc} alt={t`This site's home page as a share card`} width="960" height="504" loading="lazy" decoding="async" />
-                    </span>
-                  </div>
-                )}
-                {media.kind === "clock" && (
-                  <div class="clock" aria-hidden="true">
-                    <span class="c-side">
-                      <i />
-                      <i class="on" />
-                      <i />
-                      <i />
-                    </span>
-                    <span class="c-main">
-                      <span class="c-rec">
-                        <b />
-                        REC
-                      </span>
-                      <span class="c-time tabular">
-                        02:14:<span class="c-sec" />
-                      </span>
-                      <span class="c-bars">
-                        {[62, 88, 45, 74, 96].map((h, k) => (
-                          <i style={`--h:${h}%;--k:${k}`} />
-                        ))}
-                      </span>
-                    </span>
-                    <span class="c-roles">
-                      {(["tb:shield-lock", "tb:users", "tb:user"] as const).map((icon) => (
-                        <i>
-                          <Icon name={icon} />
-                        </i>
-                      ))}
-                    </span>
-                  </div>
-                )}
-                {media.kind === "term" && (
-                  <div class="term" aria-hidden="true">
-                    <span class="t-line" style="--k:0">
-                      <b>$</b> npx lingui-translate-ai
-                    </span>
-                    <span class="t-line t-dim" style="--k:1">
-                      reading src/locales/en/messages.po
-                    </span>
-                    {["pl", "es", "de"].map((code, k) => (
-                      <span class="t-line t-ok" style={`--k:${k + 2}`}>
-                        → {code}/messages.po <Icon name="tb:check" />
-                      </span>
-                    ))}
-                    <span class="t-caret" />
-                  </div>
-                )}
-                {media.kind === "swirl" && (
-                  <div class="swirl" aria-hidden="true">
-                    {[0, 1, 2].map((ring) => (
-                      <span class="s-ring" style={`--r:${ring}`}>
-                        {Array.from({ length: 10 + ring * 4 }, (_, k) => (
-                          <i style={`--a:${(360 / (10 + ring * 4)) * k}deg`} />
-                        ))}
-                      </span>
-                    ))}
-                    <span class="s-core" />
-                  </div>
-                )}
-              </div>
-
-              <div class="wk-body">
-                <p class="wk-meta">
-                  <span class="tabular">{project.year}</span>
-                  <span>{CONTEXT[project.context]}</span>
-                </p>
-                <h2 class="wk-name">{project.name}</h2>
-                <p class="wk-line">{typo(locale, project.line[locale])}</p>
-                <p class="wk-tools">
-                  <span class="sr-only">{t`Tools`}: </span>
-                  {project.stack.join(" · ")}
-                </p>
-                <div class="wk-go">
-                  {primary && (
-                    <a
-                      class="btn btn-inv"
-                      href={primary.href}
-                      rel={primary.external ? "noopener" : undefined}
-                      target={primary.external ? "_blank" : undefined}
-                      data-umami-event={primary.external ? "outbound" : project.links.caseStudy ? "case_open" : "cta"}
-                      data-umami-event-project={project.slug}
-                    >
-                      {primary.label}
-                      <Icon name={primary.external ? "tb:arrow-up-right" : "tb:arrow-right"} class="nudge" />
-                      {primary.external && <span class="sr-only"> {newTab}</span>}
-                    </a>
-                  )}
-                  {project.anchor && project.links.live && (
-                    <a class="wk-link" href={project.links.live} rel="noopener" target="_blank" data-umami-event="outbound" data-umami-event-target="live" data-umami-event-project={project.slug}>
-                      {t`Live`}
-                      <Icon name="tb:arrow-up-right" />
-                      <span class="sr-only"> {newTab}</span>
-                    </a>
-                  )}
-                  {project.links.appStore && (
-                    <a class="wk-link" href={project.links.appStore} rel="noopener" target="_blank" data-umami-event="outbound" data-umami-event-target="app-store" data-umami-event-project={project.slug}>
-                      <Icon name="si:apple" />
-                      App Store
-                      <span class="sr-only"> {newTab}</span>
-                    </a>
-                  )}
-                  {project.links.googlePlay && (
-                    <a class="wk-link" href={project.links.googlePlay} rel="noopener" target="_blank" data-umami-event="outbound" data-umami-event-target="google-play" data-umami-event-project={project.slug}>
-                      <Icon name="si:googleplay" />
-                      Google Play
-                      <span class="sr-only"> {newTab}</span>
-                    </a>
-                  )}
-                  {project.links.npm && primary?.label !== "npm" && (
-                    <a class="wk-link" href={project.links.npm} rel="noopener" target="_blank" data-umami-event="outbound" data-umami-event-target="npm" data-umami-event-project={project.slug}>
-                      <Icon name="si:npm" />
-                      npm
-                      <span class="sr-only"> {newTab}</span>
-                    </a>
-                  )}
-                  {project.links.code && primary?.href !== project.links.code && (
-                    <a class="wk-link" href={project.links.code} rel="noopener" target="_blank" data-umami-event="outbound" data-umami-event-target="code" data-umami-event-project={project.slug}>
-                      <Icon name="si:github" />
-                      {t`Code`}
-                      <span class="sr-only"> {newTab}</span>
-                    </a>
-                  )}
-                  {project.slug === "neoteric-clockful" && <span class="wk-note">{t`Code private · walkthrough on request`}</span>}
+  <section class="sec wk" aria-label={t`Projects`}>
+    <ol class="wk-list" role="list">
+      {projects.map((project, k) => {
+        const media = MEDIA[project.slug] ?? { kind: "soon" as const };
+        // Rows alternate a wide plate and a narrow one; the right column sits a step lower (wide screens only).
+        const side = k % 2 ? "r" : "l";
+        const wide = (Math.floor(k / 2) % 2 === 0) === (side === "l");
+        const primary = project.anchor
+          ? { href: links.project(project.anchor), label: t`Chapter`, external: false }
+          : project.links.caseStudy
+            ? { href: thisSitePath(locale), label: t`Case study`, external: false }
+            : project.links.live
+              ? { href: project.links.live, label: t`Live site`, external: true }
+              : project.links.npm
+                ? { href: project.links.npm, label: "npm", external: true }
+                : project.links.code
+                  ? { href: project.links.code, label: t`Code`, external: true }
+                  : undefined;
+        return (
+          <li
+            class:list={["wk-item", side, wide ? "wide" : "narrow", { rv: k > 1 }]}
+            id={`wk-${project.slug}`}
+            style={`--c:${color(project)};--ox:${MAP[k % MAP.length]![0]}%;--oy:${MAP[k % MAP.length]![1]}%`}
+            data-wk
+          >
+            <div class:list={["wk-plate", `m-${media.kind}`, media.kind === "reel" && `f-${media.frame}`]}>
+              {(media.kind === "shot" || media.kind === "poster") && (
+                <div class:list={["wk-win", { tall: media.kind === "shot" && media.tall }]}>
+                  <span class="w-bar" aria-hidden="true">
+                    <i />
+                    <i />
+                    <i />
+                    <span class="w-url">{media.kind === "shot" ? media.url : "muszarski.com"}</span>
+                  </span>
+                  <span class="w-view" data-xray>
+                    {media.kind === "shot" ? (
+                      <img
+                        src={media.src}
+                        alt={shotAlt(project)}
+                        width="720"
+                        height={media.height}
+                        loading="lazy"
+                        decoding="async"
+                      />
+                    ) : (
+                      <img
+                        src={posterSrc}
+                        alt={t`This site's home page as a share card`}
+                        width="960"
+                        height="504"
+                        loading="lazy"
+                        decoding="async"
+                      />
+                    )}
+                  </span>
                 </div>
+              )}
+              {media.kind === "reel" && (
+                <figure class="wk-reel" data-reel>
+                  <div class={media.frame === "phone" ? "w-phone" : "wk-win"}>
+                    {media.frame === "browser" && (
+                      <span class="w-bar" aria-hidden="true">
+                        <i />
+                        <i />
+                        <i />
+                        <span class="w-url">{media.url}</span>
+                      </span>
+                    )}
+                    <span class="w-view">
+                      <video
+                        tabindex="-1"
+                        muted
+                        loop
+                        playsinline
+                        preload="none"
+                        poster={media.poster}
+                        width={media.width}
+                        height={media.height}
+                        aria-label={media.label}
+                      >
+                        {media.av1 && <source data-src={media.av1} type='video/mp4; codecs="av01.0.05M.08"' />}
+                        <source data-src={media.mp4} type="video/mp4" />
+                      </video>
+                      <span class="bigplay" aria-hidden="true">
+                        <Icon name="tbf:player-play" />
+                      </span>
+                      <button
+                        class="r-hit"
+                        type="button"
+                        data-toggle
+                        aria-pressed="true"
+                        aria-label={labelPlay}
+                        data-label-pause={labelPause}
+                        data-label-play={labelPlay}
+                      />
+                    </span>
+                  </div>
+                </figure>
+              )}
+              {media.kind === "tests" && (
+                <div class="wk-txt" aria-hidden="true">
+                  <span class="x-row">
+                    <span>Vitest</span>
+                    <b>49 passed</b>
+                  </span>
+                  <span class="x-row">
+                    <span>Playwright</span>
+                    <b>69 passed</b>
+                  </span>
+                  <span class="x-row">
+                    <span>Row-level security</span>
+                    <b>5/5 tables</b>
+                  </span>
+                  <span class="x-sum">
+                    <Icon name="tb:circle-check" />
+                    118 passed
+                  </span>
+                </div>
+              )}
+              {media.kind === "cli" && (
+                <div class="wk-txt" aria-hidden="true">
+                  <span class="x-cmd">
+                    <b>$</b> npx lingui-translate-ai
+                  </span>
+                  <span class="x-dim">reading src/locales/en/messages.po</span>
+                  {["pl", "es", "de"].map((code) => (
+                    <span class="x-ok">
+                      <Icon name="tb:check" /> {code}/messages.po
+                    </span>
+                  ))}
+                  <span class="x-caret" />
+                </div>
+              )}
+              {media.kind === "soon" && (
+                <div class="wk-soon">
+                  <Icon name="tb:movie" />
+                  <span>{soon}</span>
+                </div>
+              )}
+            </div>
+
+            <div class="wk-cap">
+              <p class="wk-meta">
+                <span class="wk-n tabular" aria-hidden="true">
+                  {String(k + 1).padStart(2, "0")}
+                </span>
+                <span class="wk-rule" aria-hidden="true" />
+                <span>{CONTEXT[project.context]}</span>
+                <span class="tabular">{project.year}</span>
+              </p>
+              <h2 class="wk-name">{project.name}</h2>
+              <p class="wk-line">{typo(locale, project.line[locale])}</p>
+              <p class="wk-tools">
+                <span class="sr-only">{t`Tools`}: </span>
+                {project.stack.join(" · ")}
+              </p>
+              <div class="wk-go">
+                {primary && (
+                  <a
+                    class="btn btn-inv"
+                    href={primary.href}
+                    rel={primary.external ? "noopener" : undefined}
+                    target={primary.external ? "_blank" : undefined}
+                    data-umami-event={primary.external ? "outbound" : project.links.caseStudy ? "case_open" : "cta"}
+                    data-umami-event-project={project.slug}
+                  >
+                    {primary.label}
+                    <Icon name={primary.external ? "tb:arrow-up-right" : "tb:arrow-right"} class="nudge" />
+                    {primary.external && <span class="sr-only"> {newTab}</span>}
+                  </a>
+                )}
+                {project.anchor && project.links.live && (
+                  <a
+                    class="wk-link"
+                    href={project.links.live}
+                    rel="noopener"
+                    target="_blank"
+                    data-umami-event="outbound"
+                    data-umami-event-target="live"
+                    data-umami-event-project={project.slug}
+                  >
+                    {t`Live`}
+                    <Icon name="tb:arrow-up-right" />
+                    <span class="sr-only"> {newTab}</span>
+                  </a>
+                )}
+                {project.links.appStore && (
+                  <a
+                    class="wk-link"
+                    href={project.links.appStore}
+                    rel="noopener"
+                    target="_blank"
+                    data-umami-event="outbound"
+                    data-umami-event-target="app-store"
+                    data-umami-event-project={project.slug}
+                  >
+                    <Icon name="si:apple" />
+                    App Store
+                    <span class="sr-only"> {newTab}</span>
+                  </a>
+                )}
+                {project.links.googlePlay && (
+                  <a
+                    class="wk-link"
+                    href={project.links.googlePlay}
+                    rel="noopener"
+                    target="_blank"
+                    data-umami-event="outbound"
+                    data-umami-event-target="google-play"
+                    data-umami-event-project={project.slug}
+                  >
+                    <Icon name="si:googleplay" />
+                    Google Play
+                    <span class="sr-only"> {newTab}</span>
+                  </a>
+                )}
+                {project.links.npm && primary?.label !== "npm" && (
+                  <a
+                    class="wk-link"
+                    href={project.links.npm}
+                    rel="noopener"
+                    target="_blank"
+                    data-umami-event="outbound"
+                    data-umami-event-target="npm"
+                    data-umami-event-project={project.slug}
+                  >
+                    <Icon name="si:npm" />
+                    npm
+                    <span class="sr-only"> {newTab}</span>
+                  </a>
+                )}
+                {project.links.code && primary?.href !== project.links.code && (
+                  <a
+                    class="wk-link"
+                    href={project.links.code}
+                    rel="noopener"
+                    target="_blank"
+                    data-umami-event="outbound"
+                    data-umami-event-target="code"
+                    data-umami-event-project={project.slug}
+                  >
+                    <Icon name="si:github" />
+                    {t`Code`}
+                    <span class="sr-only"> {newTab}</span>
+                  </a>
+                )}
+                {project.slug === "neoteric-clockful" && <span class="wk-note">{t`Code private · walkthrough on request`}</span>}
               </div>
-            </li>
-          );
-        })
-      }
+            </div>
+          </li>
+        );
+      })}
     </ol>
   </section>
   <PrivateRepos />
 </BaseLayout>
 
 <style>
-  /* The wall: six columns; a flagship takes half a row, every other project a third. */
-  .wk-grid {
+  /* The night field, shared by the catalogue (buttons read --sbg / --sfg). */
+  .wk {
+    --sbg: var(--space);
+    --sfg: var(--ice);
+    --hair: rgb(238 240 255 / 0.14);
+    --mute: #b2b4c6; /* ice at 74% on the ink, as a solid colour (no faded text) */
+    --stagger: clamp(3rem, 6vw, 7rem);
+    padding-top: clamp(1rem, 3vw, 2.5rem);
+    background: var(--space);
+    color: var(--ice);
+  }
+
+  /* The rhythm: twelve columns; a row is a wide plate (7) and a narrow one (5), swapping sides each row, and the right
+     column a step lower. */
+  .wk-list {
     display: grid;
-    grid-template-columns: repeat(6, minmax(0, 1fr));
-    gap: clamp(1.5rem, 2.6vw, 2.5rem) clamp(1.25rem, 2vw, 2rem);
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    align-items: start;
+    gap: clamp(3.5rem, 5.5vw, 6.5rem) clamp(2rem, 4vw, 5rem);
     margin: 0;
     padding: 0;
     list-style: none;
   }
-  .wk-card {
-    grid-column: span 2;
+  /* `--u` is about 1% of a plate's width, per layout: sizes inside the plate scale with it without making the plate a
+     size container (a container inside the grid cost whole extra layouts on load, lessons.md). */
+  .wk-item {
+    --u: 0.9vw;
+    --pop: var(--c);
     display: flex;
     flex-direction: column;
-    background: var(--ice);
-    color: var(--navy);
-    box-shadow:
-      0 0 0 3px var(--navy),
-      8px 8px 0 3px var(--navy);
-    transition:
-      transform 0.35s var(--ease-pop),
-      box-shadow 0.35s var(--ease-pop);
+    gap: clamp(1.25rem, 2vw, 1.75rem);
   }
-  .wk-card.lg {
-    grid-column: span 3;
+  /* Wide screens only: the placements out-rank the tablet and phone grids, so they live behind the query. */
+  @media (width > 64rem) {
+    .wk-item.wide {
+      --u: min(0.53vw, 10.2px);
+    }
+    .wk-item.narrow {
+      --u: min(0.37vw, 7.1px);
+    }
+    .wk-item.l.wide {
+      grid-column: 1 / span 7;
+    }
+    .wk-item.l.narrow {
+      grid-column: 1 / span 5;
+    }
+    .wk-item.r.narrow {
+      grid-column: 8 / span 5;
+    }
+    .wk-item.r.wide {
+      grid-column: 6 / span 7;
+    }
+    .narrow .wk-plate.f-phone {
+      aspect-ratio: 4 / 5;
+    }
   }
-  .wk-card {
-    scroll-margin-top: calc(var(--header-h) + 1.5rem);
+  /* The step is layout, not a transform: a translated tall plate ran into the next row and covered its own buttons. */
+  .wk-item.l {
+    margin-bottom: var(--stagger);
+  }
+  .wk-item.r {
+    margin-top: var(--stagger);
+  }
+
+  /* The plate: a dark field engraved with the head's contour lines in the project's colour, each plate its own patch
+     of the map (`--ox`, `--oy`); what it shows sits on its foot. */
+  .wk-plate {
+    --ring: color-mix(in srgb, var(--c) 22%, transparent);
+    --gap: clamp(1.25rem, 2.4vw, 3rem);
+    position: relative;
+    aspect-ratio: 16 / 10;
+    overflow: hidden;
+    background:
+      repeating-radial-gradient(
+        circle at var(--ox, 18%) var(--oy, 115%),
+        transparent 0 var(--gap),
+        var(--ring) var(--gap) calc(var(--gap) + 1px)
+      ),
+      #0c0e2b;
+    box-shadow: inset 0 0 0 1px var(--hair);
+    transition: --ring 0.6s var(--ease-out);
+  }
+  @property --ring {
+    syntax: "<color>";
+    inherits: false;
+    initial-value: transparent;
   }
   @media (hover: hover) and (pointer: fine) {
-    .wk-card:hover {
-      transform: translate(-3px, -3px);
-      box-shadow:
-        0 0 0 3px var(--navy),
-        11px 11px 0 3px var(--navy);
+    .wk-item:hover .wk-plate {
+      --ring: color-mix(in srgb, var(--c) 42%, transparent);
     }
   }
 
-  /* The media: a 16:10 field in the project's colour; everything drawn inside scales with it (cqw). */
-  .wk-media {
-    position: relative;
-    display: grid;
-    place-items: center;
-    aspect-ratio: 16 / 10;
-    overflow: hidden;
-    container-type: inline-size;
-    background: var(--skin);
-    border-bottom: 3px solid var(--navy);
-  }
-  .wk-media::before {
-    content: "";
+  /* A browser window rising from the plate's foot: a thin bar (the Mac lights and the address), then the page. */
+  .wk-win {
     position: absolute;
-    inset: 0;
-    background: radial-gradient(rgb(10 13 51 / 0.18) 1.2px, transparent 1.7px) 0 0 / 3.2cqw 3.2cqw;
-    pointer-events: none;
-  }
-  .wk-media :global(.ico) {
-    width: 100%;
-    height: 100%;
-  }
-
-  /* A browser window holding a live-site capture. A tall capture scrolls down the page on hover or focus; on touch
-     screens the scroll of the page drives it (where scroll-driven animations exist; elsewhere it rests at the top). */
-  /* Centred in the field, nudged up and left by half its hard shadow so the frame and shadow together sit in the
-     middle [user 2026-10-08: "a tiny little bit of too much space at top"]. */
-  .browser {
-    position: relative;
+    inset: 9% 7% 0;
     display: flex;
     flex-direction: column;
-    width: 84%;
-    height: 80%;
-    translate: -0.8cqw -0.8cqw;
-    background: var(--ice);
-    box-shadow:
-      0 0 0 3px var(--navy),
-      1.6cqw 1.6cqw 0 3px var(--navy);
-    rotate: -1.5deg;
-    transition: rotate 0.4s var(--ease-pop);
+    overflow: hidden;
+    border-radius: 0.625rem 0.625rem 0 0;
+    background: #fff;
+    box-shadow: 0 0 0 1px rgb(238 240 255 / 0.22);
   }
-  .lg .browser {
-    rotate: 1deg;
-  }
-  .b-top {
+  .w-bar {
     flex: none;
     display: flex;
     align-items: center;
-    gap: 1.1cqw;
-    height: 6.5cqw;
-    padding: 0 2cqw;
-    background: var(--navy);
-    color: var(--ice);
+    gap: max(5px, calc(0.75 * var(--u)));
+    height: max(1.625rem, calc(3.6 * var(--u)));
+    padding: 0 max(0.625rem, calc(1.6 * var(--u)));
+    background: #14173a;
+    color: var(--mute);
   }
-  /* The traffic lights of a Mac window [user 2026-10-08]. */
-  .b-top i {
-    width: 1.6cqw;
-    height: 1.6cqw;
+  .w-bar i {
+    width: max(7px, calc(0.95 * var(--u)));
+    aspect-ratio: 1;
     border-radius: 50%;
     background: #ff5f57;
   }
-  .b-top i:nth-child(2) {
+  .w-bar i:nth-child(2) {
     background: #febc2e;
   }
-  .b-top i:nth-child(3) {
+  .w-bar i:nth-child(3) {
     background: #28c840;
   }
-  .b-url {
-    margin-left: 1.4cqw;
-    padding: 0.2cqw 1.6cqw;
-    border-radius: 99px;
-    background: rgb(238 240 255 / 0.16);
-    font-size: max(0.625rem, 2.4cqw);
+  .w-url {
+    margin-left: max(0.5rem, calc(1.2 * var(--u)));
     font-weight: 700;
+    font-size: max(0.6875rem, calc(1.3 * var(--u)));
+    letter-spacing: 0.02em;
     white-space: nowrap;
   }
-  .b-view {
+  .w-view {
     position: relative;
     flex: 1;
     overflow: hidden;
-    container-type: size;
   }
-  .b-view img,
-  .b-view video {
+  .w-view img,
+  .w-view video {
     display: block;
     width: 100%;
     height: 100%;
     object-fit: cover;
     object-position: top;
   }
-  .tall .b-view img {
-    height: auto;
-    transition: translate 5s cubic-bezier(0.45, 0, 0.3, 1);
+  /* A long page scrolls down in its window on hover or focus; on touch screens the scroll of the page drives it. */
+  .tall .w-view img {
+    transition: object-position 6s cubic-bezier(0.45, 0, 0.3, 1);
   }
   @media (hover: hover) and (pointer: fine) {
-    .wk-card:is(:hover, :focus-within) .browser {
-      rotate: 0deg;
-    }
-    .wk-card:is(:hover, :focus-within) .tall .b-view img {
-      translate: 0 calc(-100% + 100cqh);
+    .wk-item:is(:hover, :focus-within) .tall .w-view img {
+      object-position: 50% 100%;
     }
   }
   @media (hover: none) {
     @supports (animation-timeline: view()) {
-      .tall .b-view img {
+      .tall .w-view img {
         animation: wk-pan linear both;
         animation-timeline: view();
         animation-range: cover 15% cover 85%;
@@ -509,39 +607,55 @@ const channels: Channel[] = projects.flatMap((project) => {
   }
   @keyframes wk-pan {
     to {
-      translate: 0 calc(-100% + 100cqh);
+      object-position: 50% 100%;
     }
   }
+  /* The X-ray lens (scripts/work-xray.ts) lies over the page, under nothing. */
+  .w-view :global(canvas.xr) {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+  }
+  /* The window rises into its plate as the plate comes into view (the first row is on the first screen: it never hides).
+     Only the reveal transitions: hiding below the fold on load is instant (lessons.md). */
+  .rv-ready:not(.still) .wk-item.rv:not(.in) .wk-win {
+    translate: 0 14%;
+  }
+  .rv-ready:not(.still) .wk-item.rv.in .wk-win {
+    transition: translate 0.9s var(--ease-out) 0.1s;
+  }
 
-  /* Reels: the phone and the monitor, the video plays near the screen after the first interaction (scripts/reel). */
-  /* One definite track: with an auto row, the phone's percentage height resolved against a row its own content had
-     grown, and the phone ran past the field. */
+  /* Reels: the phone rising from the foot, or the monitor window; the video plays near the screen after the first
+     interaction (scripts/reel). */
   .wk-reel {
     position: absolute;
     inset: 0;
-    display: grid;
-    grid-template: minmax(0, 1fr) / minmax(0, 1fr);
-    place-items: center;
     margin: 0;
   }
-  /* [user 2026-10-08: the phone was "badly aligned"] */
-  .wk-reel .phone {
-    position: relative;
-    min-width: 0;
-    height: 86%;
+  .w-phone {
+    position: absolute;
+    top: 9%;
+    bottom: -12%;
+    left: 50%;
     aspect-ratio: 320 / 694;
-    translate: -0.8cqw -0.8cqw;
-    padding: 1.1cqw;
-    border-radius: 3.2cqw;
-    background: var(--navy);
-    box-shadow: 1.6cqw 1.6cqw 0 rgb(10 13 51 / 0.35);
-    rotate: -4deg;
+    translate: -50% 0;
+    padding: max(5px, calc(1 * var(--u)));
+    border-radius: max(1.25rem, calc(4.5 * var(--u)));
+    background: #14173a;
+    box-shadow: 0 0 0 1px rgb(238 240 255 / 0.22);
   }
-  .wk-reel .phone .b-view {
+  .narrow .w-phone {
+    top: 7%;
+    bottom: -14%;
+  }
+  .w-phone .w-view {
     height: 100%;
-    border-radius: 2.4cqw;
+    border-radius: max(1rem, calc(3.6 * var(--u)));
   }
-  .wk-reel .browser .b-view video {
+  .wk-reel .wk-win .w-view video {
     object-position: center;
   }
   .bigplay {
@@ -551,13 +665,13 @@ const channels: Channel[] = projects.flatMap((project) => {
     place-items: center;
     opacity: 0;
     color: var(--ice);
-    background: rgb(10 13 51 / 0.35);
+    background: rgb(7 8 28 / 0.35);
     pointer-events: none;
     transition: opacity var(--dur-base);
   }
   .bigplay :global(.ico) {
-    width: 9cqw;
-    height: 9cqw;
+    width: max(2.5rem, calc(8 * var(--u)));
+    height: max(2.5rem, calc(8 * var(--u)));
   }
   .wk-reel:global(.paused) .bigplay {
     opacity: 1;
@@ -570,271 +684,169 @@ const channels: Channel[] = projects.flatMap((project) => {
     cursor: pointer;
   }
   .r-hit:focus-visible {
-    outline: 3px solid var(--yellow);
+    outline: 3px solid var(--lime);
     outline-offset: -3px;
   }
 
-  /* Clockful: the private dashboard, drawn: a running timer, the week's hours rising, three roles. */
-  .clock {
-    position: relative;
+  /* Real text where there is nothing to film: the CLI's run, Clockful's test run. */
+  .wk-txt {
+    position: absolute;
+    inset: 12% 9% auto;
     display: grid;
-    grid-template-columns: 9cqw 1fr;
-    grid-template-rows: 1fr auto;
-    gap: 2cqw;
-    width: 80%;
-    height: 76%;
-    padding: 2.4cqw;
-    background: var(--navy);
+    gap: max(0.375rem, calc(1.3 * var(--u)));
+    font-family: ui-monospace, "Cascadia Mono", Consolas, monospace;
+    font-size: max(0.75rem, calc(2.6 * var(--u)));
+    line-height: 1.35;
     color: var(--ice);
-    box-shadow: 1.6cqw 1.6cqw 0 rgb(10 13 51 / 0.35);
-    rotate: -1.5deg;
+    white-space: nowrap;
   }
-  .c-side {
-    grid-row: 1 / -1;
-    display: grid;
-    align-content: start;
-    gap: 1.6cqw;
-    padding-right: 2cqw;
-    border-right: 2px solid rgb(238 240 255 / 0.2);
+  .narrow .wk-txt {
+    font-size: max(0.75rem, calc(3.1 * var(--u)));
   }
-  .c-side i {
-    height: 1.6cqw;
-    background: rgb(238 240 255 / 0.25);
+  .x-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 1.5rem;
+    padding-bottom: max(0.375rem, calc(1.3 * var(--u)));
+    border-bottom: 1px dashed rgb(238 240 255 / 0.2);
+    color: var(--mute);
   }
-  .c-side .on {
-    background: var(--lime);
+  .x-row b,
+  .x-ok,
+  .x-cmd b {
+    font-weight: 700;
+    color: var(--c);
   }
-  .c-main {
-    display: grid;
-    align-content: start;
-    gap: 1.4cqw;
-  }
-  .c-rec {
+  .x-sum {
     display: flex;
     align-items: center;
-    gap: 1cqw;
-    font-weight: 900;
-    font-size: max(0.625rem, 2.2cqw);
-    letter-spacing: 0.1em;
+    gap: 0.6em;
+    margin-top: max(0.5rem, calc(1.6 * var(--u)));
+    font-weight: 800;
+    font-size: 2.1em;
+    line-height: 1;
+    color: var(--c);
   }
-  .c-rec b {
-    width: 1.8cqw;
-    height: 1.8cqw;
-    border-radius: 50%;
-    background: #ff5a5a;
-    animation: wk-blink 1.2s steps(1) infinite;
+  .x-dim {
+    color: var(--mute);
+  }
+  .x-ok {
+    display: flex;
+    align-items: center;
+    gap: 0.6em;
+  }
+  .wk-txt :global(.ico) {
+    width: 1em;
+    height: 1em;
+    stroke-width: 2.5;
+  }
+  .x-caret {
+    width: 0.6em;
+    height: 1.15em;
+    background: var(--c);
+    animation: wk-blink 1.1s steps(1) infinite;
   }
   @keyframes wk-blink {
     50% {
-      opacity: 0.2;
-    }
-  }
-  .c-time {
-    font-weight: 900;
-    font-size: 8cqw;
-    line-height: 1;
-    font-stretch: 75%;
-  }
-  /* The seconds count up in pure CSS: a counter stepped by the animation. */
-  .c-sec::after {
-    content: counter(s, decimal-leading-zero);
-    counter-reset: s var(--s);
-    animation: wk-tick 60s steps(60) infinite;
-  }
-  @property --s {
-    syntax: "<integer>";
-    inherits: false;
-    initial-value: 37;
-  }
-  @keyframes wk-tick {
-    from {
-      --s: 0;
-    }
-    to {
-      --s: 60;
-    }
-  }
-  .c-bars {
-    display: flex;
-    align-items: end;
-    gap: 1.4cqw;
-    height: 10cqw;
-  }
-  .c-bars i {
-    flex: 1;
-    height: var(--h);
-    background: var(--lime);
-    transform-origin: 50% 100%;
-  }
-  .c-roles {
-    display: flex;
-    gap: 1.2cqw;
-  }
-  .c-roles i {
-    display: grid;
-    width: 5cqw;
-    height: 5cqw;
-    padding: 1cqw;
-    border-radius: 50%;
-    background: var(--ice);
-    color: var(--navy);
-  }
-
-  /* lingui-translate-ai: the command, then each catalog ticks off. */
-  .term {
-    position: relative;
-    display: grid;
-    align-content: start;
-    gap: 1.6cqw;
-    width: 84%;
-    height: 74%;
-    padding: 3cqw 3.4cqw;
-    background: #05061a;
-    color: var(--ice);
-    box-shadow:
-      0 0 0 2px rgb(238 240 255 / 0.25),
-      1.6cqw 1.6cqw 0 rgb(0 0 0 / 0.4);
-    font-family: ui-monospace, "Cascadia Mono", Consolas, monospace;
-    font-size: max(0.6875rem, 3.4cqw);
-    white-space: nowrap;
-  }
-  .t-line {
-    display: flex;
-    align-items: center;
-    gap: 1.2cqw;
-  }
-  .t-line b {
-    color: var(--lime);
-  }
-  .t-dim {
-    opacity: 0.6;
-  }
-  .t-ok {
-    color: var(--lime);
-  }
-  .t-ok :global(.ico) {
-    width: 3.4cqw;
-    height: 3.4cqw;
-    stroke-width: 3;
-  }
-  .t-caret {
-    width: 2cqw;
-    height: 3.6cqw;
-    background: var(--lime);
-    animation: wk-blink 1s steps(1) infinite;
-  }
-
-  /* Club screensaver: GPU particles stand-in, three rings of dots turning at their own speed. */
-  .swirl {
-    position: relative;
-    width: 100%;
-    height: 100%;
-  }
-  .s-ring {
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    width: calc(22cqw + var(--r) * 18cqw);
-    aspect-ratio: 1;
-    translate: -50% -50%;
-    animation: wk-turn calc(14s + var(--r) * 8s) linear infinite;
-  }
-  .s-ring:nth-child(2) {
-    animation-direction: reverse;
-  }
-  .s-ring i {
-    position: absolute;
-    left: 50%;
-    top: 0;
-    width: 1.4cqw;
-    height: 1.4cqw;
-    margin-left: -0.7cqw;
-    border-radius: 50%;
-    background: var(--lime);
-    box-shadow: 0 0 2cqw var(--lime);
-    transform-origin: 0.7cqw calc(11cqw + var(--r) * 9cqw);
-    rotate: var(--a);
-  }
-  .s-ring:nth-child(2) i {
-    background: var(--pink);
-    box-shadow: 0 0 2cqw var(--pink);
-  }
-  .s-ring:nth-child(3) i {
-    background: var(--ice);
-    box-shadow: 0 0 2cqw var(--cobalt);
-  }
-  .s-core {
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    width: 9cqw;
-    aspect-ratio: 1;
-    border-radius: 50%;
-    background: radial-gradient(var(--ice), var(--cobalt) 60%, transparent 70%);
-    translate: -50% -50%;
-  }
-  @keyframes wk-turn {
-    to {
-      rotate: 360deg;
+      opacity: 0;
     }
   }
 
-  /* The text under the media. */
-  .wk-body {
+  /* Nothing to show yet: a quiet label, centred. */
+  .wk-soon {
+    position: absolute;
+    inset: 0;
     display: grid;
-    align-content: start;
-    gap: 0.5rem;
-    flex: 1;
-    padding: 1.125rem 1.25rem 1.25rem;
+    place-content: center;
+    justify-items: center;
+    gap: 0.75rem;
+    font-weight: 800;
+    font-size: 0.8125rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    font-stretch: 115%;
+    color: var(--mute);
+  }
+  .wk-soon :global(.ico) {
+    width: 2rem;
+    height: 2rem;
+    color: var(--c);
+  }
+
+  /* The caption: number, a rule that fills with the project's colour, kind, year; then the name, one line, the tools,
+     the actions. */
+  .wk-cap {
+    display: grid;
+    gap: 0.625rem;
+    max-width: 44rem;
   }
   .wk-meta {
     display: flex;
-    gap: 0.75rem;
+    align-items: center;
+    gap: 0.875rem;
     margin: 0;
     font-weight: 800;
     font-size: 0.75rem;
-    letter-spacing: 0.08em;
+    letter-spacing: 0.1em;
     text-transform: uppercase;
+    font-stretch: 110%;
+    color: var(--mute);
   }
-  .wk-meta span + span::before {
+  .wk-n {
+    color: var(--c);
+    font-size: 0.875rem;
+  }
+  .wk-rule {
+    position: relative;
+    flex: 1;
+    height: 1px;
+    background: var(--hair);
+  }
+  .wk-rule::after {
     content: "";
-    display: inline-block;
-    width: 0.5rem;
-    height: 0.5rem;
-    margin-right: 0.75rem;
-    background: var(--skin);
-    box-shadow: 0 0 0 1.5px var(--navy);
+    position: absolute;
+    inset: -1px 0 0;
+    background: var(--c);
+    scale: 0 1;
+    transform-origin: 0 50%;
+    transition: scale 0.7s var(--ease-out);
   }
   .wk-name {
-    margin: 0;
+    margin: 0.25rem 0 0;
     font-weight: 900;
-    font-size: clamp(1.5rem, 2.2vw, 2.125rem);
+    font-size: clamp(2rem, 3.2vw, 3.5rem);
     line-height: 0.95;
-    text-transform: uppercase;
-    font-stretch: 72%;
+    letter-spacing: -0.005em;
+    font-stretch: 78%;
     overflow-wrap: anywhere;
+    /* Short names: plain wrapping, not the headings' balance (a layout pass per name). */
+    text-wrap: wrap;
+    transition:
+      color 0.4s var(--ease-out),
+      translate 0.4s var(--ease-out);
   }
-  .lg .wk-name {
-    font-size: clamp(1.75rem, 3vw, 2.75rem);
+  .narrow .wk-name {
+    font-size: clamp(1.875rem, 2.6vw, 2.875rem);
   }
   .wk-line {
     max-width: 52ch;
     margin: 0;
-    line-height: 1.45;
+    line-height: 1.5;
+    color: var(--mute);
   }
   .wk-tools {
     margin: 0;
     font-weight: 700;
     font-size: 0.8125rem;
-    opacity: 0.75;
+    letter-spacing: 0.02em;
+    color: var(--mute);
   }
   .wk-go {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    gap: 0.5rem 1rem;
-    margin-top: auto;
-    padding-top: 0.5rem;
+    gap: 0.5rem 1.25rem;
+    margin-top: 0.5rem;
   }
   .wk-go .btn {
     min-height: 2.75rem;
@@ -865,45 +877,68 @@ const channels: Channel[] = projects.flatMap((project) => {
   .wk-note {
     font-weight: 700;
     font-size: 0.8125rem;
+    color: var(--mute);
   }
 
-  /* Paused, offscreen (a section without .near) or reduced motion: the drawings rest. */
-  :global(.still) .wk-media *,
-  :global(.still) .wk-media *::before,
-  :global(.still) .wk-media *::after {
-    animation: none !important;
+  /* A plate in play (hovered, focused, or in the middle of a touch screen): the rule fills and the name steps forward in
+     the project's colour, like a row of the index. Whole words, no letter spans: per-letter inline styles on every
+     name cost ~120 ms of style on a throttled phone (run-notes 2026-10-08). */
+  .wk-item:is(:hover, :focus-within, :global(.on)) .wk-rule::after {
+    scale: 1 1;
+  }
+  .wk-item:is(:hover, :focus-within, :global(.on)) .wk-name {
+    color: var(--c);
+    translate: 0.375rem 0;
+  }
+
+  /* Paused, offscreen (a section without .near) or reduced motion: the caret rests. */
+  :global(.still) .wk-plate *,
+  :global(.still) .wk-plate *::before,
+  :global(.still) .wk-plate *::after {
+    animation-play-state: paused !important;
   }
   @media (prefers-reduced-motion: reduce) {
-    .wk-media *,
-    .wk-media *::before,
-    .wk-media *::after {
+    .wk-plate *,
+    .wk-plate *::before,
+    .wk-plate *::after,
+    .wk-rule::after {
       animation: none !important;
       transition: none !important;
     }
   }
 
-  /* Tablets: two columns, a flagship spans both. Phones: one column. */
+  /* Tablets: two equal columns, a shorter step. Phones: one column, no step. */
   @media (max-width: 64rem) {
-    .wk-grid {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
+    .wk {
+      --stagger: 3.5rem;
     }
-    .wk-card,
-    .wk-card.lg {
-      grid-column: span 1;
+    .wk-item {
+      --u: 0.445vw;
+    }
+    .wk-list {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      row-gap: 4rem;
     }
   }
   @media (max-width: 40rem) {
-    .wk-grid {
-      grid-template-columns: minmax(0, 1fr);
+    .wk {
+      --stagger: 0px;
     }
-    .wk-card {
-      box-shadow:
-        0 0 0 3px var(--navy),
-        6px 6px 0 3px var(--navy);
+    .wk-item {
+      --u: 0.9vw;
+    }
+    .wk-list {
+      grid-template-columns: minmax(0, 1fr);
+      row-gap: 3.5rem;
+    }
+    .wk-plate.f-phone,
+    .narrow .wk-plate.f-phone {
+      aspect-ratio: 1;
     }
   }
 </style>
 
 <script>
   import "~/scripts/reel";
+  import "~/scripts/work-xray";
 </script>

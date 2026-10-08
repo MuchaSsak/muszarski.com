@@ -31,9 +31,11 @@ const msgstrs = (po: string) => [...po.matchAll(/^msg(?:id|str) "(.*)"$/gm)].map
 
 describe("font coverage", () => {
   const covered = ranges();
+  // An emoji renders in the system's colour emoji font on purpose (it sets its own emoji stack), never in Anybody.
+  const emoji = /\p{Extended_Pictographic}/u;
   const inFont = (char: string) => {
     const code = char.codePointAt(0) ?? 0;
-    return code < 0x20 || covered.some(([from, to]) => code >= from && code <= to);
+    return code < 0x20 || emoji.test(char) || covered.some(([from, to]) => code >= from && code <= to);
   };
 
   it("reads the subset ranges", () => {

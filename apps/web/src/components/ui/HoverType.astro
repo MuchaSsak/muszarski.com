@@ -1,0 +1,68 @@
+---
+/**
+ * A heading whose letters answer the pointer [user 2026-10-08: "maybe even the headings and some very micro hover
+ * effects"] (All projects). Each letter is its own span in an `aria-hidden` copy; one hidden copy reads as the text.
+ * - `hover`: the letter under a fine pointer thins out and takes the accent (`--ht-c`), its neighbours a little.
+ * - A wave: any ancestor that sets `--ht-run: ht-wave` (a tap on the title: `data-ht-tap`) sends one thin wave
+ *   through the word.
+ * Use it for a page's one or two big titles only: each letter carries an inline `--i`, which keeps Chrome from sharing
+ * styles; on every project name it cost ~120 ms of style on a throttled phone (run-notes 2026-10-08).
+ * Only the weight and the colour move, never on load and never under reduced motion; words never break inside.
+ * The markup stays on one line (prettier-ignore): a formatter's line breaks put spaces inside the words.
+ */
+interface Props {
+  text: string;
+  hover?: boolean;
+}
+
+const { text, hover = false } = Astro.props;
+let index = 0;
+const words = text.split(" ").map((word) => [...word].map((char) => ({ char, i: index++ })));
+---
+
+<!-- prettier-ignore -->
+<span class:list={["ht", { "ht-hover": hover }]} aria-hidden="true">{words.map((word, w) => (<><span class="ht-w">{word.map(({ char, i }) => <i style={`--i:${i}`}>{char}</i>)}</span>{w < words.length - 1 && " "}</>))}</span>
+<span class="sr-only">{text}</span>
+
+<style is:global>
+  .ht i {
+    font-style: normal;
+    transition:
+      font-weight 0.7s var(--ease-out),
+      color 0.7s var(--ease-out);
+  }
+  .ht-w {
+    white-space: nowrap;
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .ht-hover i:hover {
+      font-weight: var(--ht-thin, 400);
+      color: var(--ht-c, var(--pink));
+      transition-duration: 0.12s;
+    }
+    .ht-hover i:hover + i,
+    .ht-hover i:has(+ i:hover) {
+      font-weight: var(--ht-mid, 650);
+      transition-duration: 0.2s;
+    }
+  }
+  /* The wave: an ancestor sets `--ht-run: ht-wave` while it is hovered, focused or active. */
+  .ht i {
+    animation: var(--ht-run, none) 0.9s var(--ease-out) calc(var(--i) * 32ms) both;
+  }
+  @keyframes ht-wave {
+    30% {
+      font-weight: var(--ht-thin, 400);
+      color: var(--ht-c, var(--pink));
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .ht i {
+      animation: none;
+      transition: none;
+    }
+  }
+  .still .ht i {
+    animation: none !important;
+  }
+</style>
