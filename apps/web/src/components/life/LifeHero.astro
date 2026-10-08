@@ -304,7 +304,12 @@ const prints = GALLERY.filter((entry) => entry.hero)
 <script>
   import { afterInteraction } from "~/scripts/motion";
 
-  const GOO = `precision mediump float;
+  // highp where the GPU has it: Apple GPUs run mediump as 16-bit floats, and the cubed blob weights overflow those.
+  const GOO = `#ifdef GL_FRAGMENT_PRECISION_HIGH
+precision highp float;
+#else
+precision mediump float;
+#endif
 uniform vec2 u_res;uniform float u_time;uniform vec2 u_mouse;uniform float u_burst;
 float b(vec2 p,vec2 c,float r){vec2 d=p-c;return r*r/max(dot(d,d),1e-4);}
 vec3 goo(vec2 p,float t,vec2 m,vec2 k,float s,out float f){

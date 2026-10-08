@@ -143,8 +143,11 @@ test("my life: a hobby picks its print (a tap, a focus, the scroll)", async ({ p
   await prints.getByRole("button", { name: "Self-improvement", exact: true }).scrollIntoViewIfNeeded();
   await page.mouse.wheel(0, 400);
   await expect(prints.getByRole("button", { name: "Films", exact: true })).toHaveAttribute("aria-pressed", "false");
-  // The shader prints where WebGL exists (a scene that fails to compile leaves the canvas off).
-  const webgl = await page.evaluate(() => !!document.createElement("canvas").getContext("webgl"));
+  // The shader prints where WebGL runs on a GPU (a software renderer, or a scene that fails to compile, leaves the
+  // canvas off).
+  const webgl = await page.evaluate(
+    () => !!document.createElement("canvas").getContext("webgl", { failIfMajorPerformanceCaveat: true }),
+  );
   if (webgl) await expect(prints.locator("[data-canvas]")).toHaveClass(/on/);
 });
 

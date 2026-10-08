@@ -8,18 +8,24 @@
  *
  * Scenes, in the order of the list: 0 rings, 1 record, 2 light and a cross, 3 sun over the sea, 4 road, 5 Pong,
  * 6 film countdown, 7 mirror ball, 8 aperture, 9 a stair that grows by a step for ever.
+ *
+ * Each scene is its own small program that fills a grid with one texel per dot cell (the scene at the cell's centre,
+ * where its dot is printed from); the print reads the grids. One program with all ten scenes, inlined once per screen,
+ * took ~1 s to link on Windows (D3D) and froze the page; one scene links in tens of ms, in the background where the
+ * browser can, else one at a time while the page is idle.
  */
-import { runShader } from "~/scripts/life-gl";
+import { compilesInBackground, makeProgram, type Program, runShader } from "~/scripts/life-gl";
 import { motionStill } from "~/scripts/motion";
 
-const FRAG = `#ifdef GL_FRAGMENT_PRECISION_HIGH
+const PRECISION = `#ifdef GL_FRAGMENT_PRECISION_HIGH
 precision highp float;
 #else
 precision mediump float;
 #endif
-uniform vec2 u_res;uniform float u_time;uniform vec2 u_mouse;uniform float u_cell;
-uniform float u_a;uniform float u_b;uniform float u_mix;
-uniform vec3 u_pa;uniform vec3 u_1a;uniform vec3 u_2a;uniform vec3 u_pb;uniform vec3 u_1b;uniform vec3 u_2b;
+`;
+
+/** What every scene may use: the canvas (u_res), the time, the dot cell (AA) and the signed-distance helpers. */
+const COMMON = `${PRECISION}uniform vec2 u_res;uniform float u_time;uniform float u_cell;
 #define PI 3.14159265
 float ASP;float AA;
 float h21(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}
@@ -28,8 +34,23 @@ float tri(float x){return abs(fract(x)*2.-1.);}
 float fill(float d,float k){k=max(k,AA);return 1.-smoothstep(-k,k,d);}
 float box(vec2 p,vec2 b){vec2 q=abs(p)-b;return length(max(q,0.))+min(max(q.x,q.y),0.);}
 float seg(vec2 p,vec2 a,vec2 b){vec2 pa=p-a,ba=b-a;return length(pa-ba*clamp(dot(pa,ba)/dot(ba,ba),0.,1.));}
+float bit(float m,float d){return mod(floor(m/d+.001),2.);}
+float digit(vec2 p,float n){
+float m=n<.5?63.:n<1.5?6.:n<2.5?91.:n<3.5?79.:n<4.5?102.:n<5.5?109.:n<6.5?125.:n<7.5?7.:n<8.5?127.:111.;
+vec2 h=vec2(.085,.024),v=vec2(.024,.085);float d=9.;
+if(bit(m,1.)>.5)d=min(d,box(p-vec2(0.,.17),h));
+if(bit(m,2.)>.5)d=min(d,box(p-vec2(.085,.085),v));
+if(bit(m,4.)>.5)d=min(d,box(p-vec2(.085,-.085),v));
+if(bit(m,8.)>.5)d=min(d,box(p-vec2(0.,-.17),h));
+if(bit(m,16.)>.5)d=min(d,box(p-vec2(-.085,-.085),v));
+if(bit(m,32.)>.5)d=min(d,box(p-vec2(-.085,.085),v));
+if(bit(m,64.)>.5)d=min(d,box(p,h));
+return d;}
+vec2 ballAt(float k,vec2 r){return vec2(tri(k*.9)*2.-1.,tri(k*.63+.3)*2.-1.)*r;}`;
 
-vec2 rings(vec2 p,float t){
+/** The scenes, in the order of the list; each is a function `vec2 name(vec2 p,float t)`. */
+const SCENES = [
+  `vec2 rings(vec2 p,float t){
 float sw=.09*sin(t*1.1);
 float i1=0.,i2=.8*smoothstep(.42,0.,length(p-vec2(0.,-.08)));
 for(int i=0;i<2;i++){
@@ -41,9 +62,8 @@ i1=max(i1,fill(box(rot(-a)*(p-(c-dir*.115)),vec2(.032,.018)),.003));
 vec2 q=p-c;
 i1=max(i1,fill(abs(length(q)-.098)-.026,.003)*(.7+.3*sin(atan(q.y,q.x)+2.2)));}
 i1=max(i1,.45*smoothstep(1.,0.,length((p-vec2(sw*.8,-.43))*vec2(2.6,14.))));
-return vec2(i1,i2);}
-
-vec2 vinyl(vec2 p,float t){
+return vec2(i1,i2);}`,
+  `vec2 vinyl(vec2 p,float t){
 vec2 q=p-vec2(-.07,-.05);float r=length(q),a=atan(q.y,q.x);
 float i1=fill(r-.41,.003)*(.84+.16*sin(r*130.))*(1.-.75*smoothstep(.01,0.,abs(r-.29)))*(1.-.45*pow(abs(cos(a-.75)),14.));
 float label=fill(r-.135,.003);
@@ -54,9 +74,8 @@ float arm=min(min(seg(p,piv,elbow),seg(p,elbow,head))-.013,length(p-piv)-.05);
 arm=min(arm,box(rot(.6)*(p-head),vec2(.045,.026)));
 float m=fill(arm,.003);
 i1*=1.-fill(arm-.014,.003);
-return vec2(i1,max(i2*(1.-m),m));}
-
-vec2 light(vec2 p,float t){
+return vec2(i1,max(i2*(1.-m),m));}`,
+  `vec2 light(vec2 p,float t){
 vec2 q=p-vec2(0.,.72);float a=atan(q.x,-q.y);
 float rays=(.5+.5*sin(a*23.+sin(t*.3)*1.5))*(.55+.45*sin(a*7.-t*.21));
 float i1=rays*smoothstep(1.1,.25,abs(a))*smoothstep(1.45,.2,length(q))*.8;
@@ -64,9 +83,8 @@ vec2 c=p-vec2(0.,-.04);
 float cr=min(box(c,vec2(.03,.31)),box(c-vec2(0.,.12),vec2(.2,.03)));
 float i2=max(fill(cr,.003),.8*exp(-max(cr,0.)*(8.-1.5*sin(t*.8))));
 i1*=1.-fill(cr-.015,.003);
-return vec2(i1,i2);}
-
-vec2 sea(vec2 p,float t){
+return vec2(i1,i2);}`,
+  `vec2 sea(vec2 p,float t){
 float hz=-.05;vec2 sc=vec2(.09,.05);float i1=0.,i2=0.;
 if(p.y>hz){
 i2=max(fill(length(p-sc)-.2,.003),.38*smoothstep(.42,hz,p.y));
@@ -79,9 +97,8 @@ float w=sin(z*8.+sin(p.x*6.+t*.5+z*.7)*1.3-t*1.2);
 i1=mix(.3,.95,smoothstep(0.,.4,d))*(.75+.25*w);
 i2=smoothstep(.17+d*.3,0.,abs(p.x-sc.x))*step(.25,w)*smoothstep(.42,.02,d);
 i1*=1.-i2;}
-return vec2(i1,i2);}
-
-vec2 road(vec2 p,float t){
+return vec2(i1,i2);}`,
+  `vec2 road(vec2 p,float t){
 float hz=.08;float i1=0.,i2=0.;
 if(p.y<hz){
 float d=hz-p.y;float rx=p.x/d,z=1./d;
@@ -95,22 +112,8 @@ float s=p.y-hz;
 i2=fill(length(p-vec2(0.,hz))-.27,.003)*(1.-step(fract(s*13.-t*.3),.45-s*2.2));
 i1=fill(p.y-hz-.045-.035*sin(p.x*8.+1.)-.02*sin(p.x*21.),0.)*.85;
 i2*=1.-i1;}
-return vec2(i1,i2);}
-
-float bit(float m,float d){return mod(floor(m/d+.001),2.);}
-float digit(vec2 p,float n){
-float m=n<.5?63.:n<1.5?6.:n<2.5?91.:n<3.5?79.:n<4.5?102.:n<5.5?109.:n<6.5?125.:n<7.5?7.:n<8.5?127.:111.;
-vec2 h=vec2(.085,.024),v=vec2(.024,.085);float d=9.;
-if(bit(m,1.)>.5)d=min(d,box(p-vec2(0.,.17),h));
-if(bit(m,2.)>.5)d=min(d,box(p-vec2(.085,.085),v));
-if(bit(m,4.)>.5)d=min(d,box(p-vec2(.085,-.085),v));
-if(bit(m,8.)>.5)d=min(d,box(p-vec2(0.,-.17),h));
-if(bit(m,16.)>.5)d=min(d,box(p-vec2(-.085,-.085),v));
-if(bit(m,32.)>.5)d=min(d,box(p-vec2(-.085,.085),v));
-if(bit(m,64.)>.5)d=min(d,box(p,h));
-return d;}
-vec2 ballAt(float k,vec2 r){return vec2(tri(k*.9)*2.-1.,tri(k*.63+.3)*2.-1.)*r;}
-vec2 pong(vec2 p,float t){
+return vec2(i1,i2);}`,
+  `vec2 pong(vec2 p,float t){
 vec2 hs=vec2(min(.38,ASP*.5-.06),.24);
 vec2 sc=p-vec2(0.,.17);
 float scr=box(sc,hs-.04)-.04;
@@ -135,9 +138,8 @@ float btn=min(length(c-vec2(.055,.016))-.016,length(c-vec2(.088,-.012))-.016);
 i1=max(i1,fill(body,0.)*(1.-fill(pad,0.))*(1.-fill(btn,0.)));
 i2=max(i2,fill(btn,0.));
 i1=max(i1,fill(seg(p,vec2(side*.19,-.24),vec2(side*.07,-.08))-.006,0.)*(1.-inScr));}
-return vec2(i1,i2);}
-
-vec2 film(vec2 p,float t){
+return vec2(i1,i2);}`,
+  `vec2 film(vec2 p,float t){
 float cyc=t*.7;float r=length(p);float a=mod(atan(p.x,p.y)+2.*PI,2.*PI);
 float i1=.24*smoothstep(.58,0.,r)*(.8+.2*h21(vec2(floor(t*11.),1.7)));
 float i2=.6*step(a,fract(cyc)*2.*PI)*step(r,.315);
@@ -149,9 +151,8 @@ float edge=ASP*.5-.075;float strip=step(edge,abs(p.x));
 float hole=fill(box(vec2(abs(p.x)-edge-.035,mod(p.y-t*.22,.11)-.055),vec2(.016,.026)),.003);
 i1=max(i1*(1.-strip),strip*.75*(1.-hole));i2*=1.-strip;
 i1=max(i1,step(.965,h21(floor(p*64.)+floor(t*9.)))*.9);
-return vec2(i1,i2);}
-
-vec2 disco(vec2 p,float t){
+return vec2(i1,i2);}`,
+  `vec2 disco(vec2 p,float t){
 vec2 q=rot(t*.12)*p*3.2;vec2 id=floor(q);float h=h21(id);
 float spot=fill(length(fract(q)-.5-(vec2(h21(id+3.1),h)-.5)*.35)*.3125-.035-.025*h,0.);
 float i1=spot*step(.5,h)*.85,i2=spot*step(h,.2);
@@ -165,9 +166,8 @@ vec2 e=abs(fract(f)-.5);float seam=smoothstep(.36,.47,max(e.x,e.y));
 float lit=clamp(dot(n,normalize(vec3(-.5,.55,.65))),0.,1.);
 float glint=step(.8,h21(floor(f)))*lit;
 i1=mix(i1,(.25+.65*lit)*(1.-seam)*(1.-glint),ball);i2=mix(i2,glint*(1.-seam),ball);}
-return vec2(i1,i2);}
-
-vec2 iris(vec2 p,float t){
+return vec2(i1,i2);}`,
+  `vec2 iris(vec2 p,float t){
 float bok=0.;
 for(int i=0;i<7;i++){float k=float(i);
 vec2 c=vec2(sin(k*2.4+t*.13)*.42,cos(k*1.9+t*.1)*.44);
@@ -179,9 +179,8 @@ float s=(a-spin+r*2.8)/sector;
 float i1=blades*(.62+.3*h21(vec2(mod(floor(s),7.),4.)))*(1.-.75*smoothstep(.08,0.,fract(s)));
 float barrel=step(.33,r)*step(r,.405);
 i1=max(i1,barrel*(.5+.4*smoothstep(-.4,.4,sin(a*40.))));
-return vec2(i1,bok*(1.-blades)*(1.-barrel));}
-
-vec2 steps(vec2 p,float t){
+return vec2(i1,bok*(1.-blades)*(1.-barrel));}`,
+  `vec2 steps(vec2 p,float t){
 float g=1.3;
 vec2 w=(p-vec2(-ASP*.5-.03,-.53))*pow(g,fract(t*.16));
 float i=floor(log(max(w.x,1e-4)/.1)/log(g));
@@ -190,35 +189,56 @@ float inside=max(fill(w.y-top,0.),fill(.1*gi*g-w.x,0.)*fill(w.y-top*g,0.));
 float tread=fill(w.y-top,0.)*(1.-fill(w.y-top+.025*gi,0.));
 float i1=inside*(.68+.22*mod(i,2.))*(1.-tread);
 float i2=max(tread,.55*smoothstep(.46,0.,length(p-vec2(-ASP*.22,.36)))*(1.-inside));
-return vec2(i1,i2);}
+return vec2(i1,i2);}`,
+];
 
-vec2 pick(float s,vec2 p,float t){
-if(s<.5)return rings(p,t);if(s<1.5)return vinyl(p,t);if(s<2.5)return light(p,t);if(s<3.5)return sea(p,t);
-if(s<4.5)return road(p,t);if(s<5.5)return pong(p,t);if(s<6.5)return film(p,t);if(s<7.5)return disco(p,t);
-if(s<8.5)return iris(p,t);return steps(p,t);}
+/**
+ * A scene's grid for one dot screen (angle u_ang, first cell u_org): the scene at each cell's centre, square-rooted so
+ * small dots keep their size in 8 bits.
+ */
+const grid = (scene: string) => `${COMMON}uniform float u_ang;uniform vec2 u_org;
+${scene}
+void main(){
+ASP=u_res.x/u_res.y;AA=.75*u_cell/u_res.y;
+vec2 ctr=rot(-u_ang)*(gl_FragCoord.xy+u_org)*u_cell;
+gl_FragColor=vec4(sqrt(clamp(${/^vec2 (\w+)/.exec(scene)![1]}((ctr-.5*u_res)/u_res.y,u_time),0.,1.)),0.,1.);}`;
+
+/** The print: the paper, then the two screens' dots, each sized by its cell in the grids of the old and new pick. */
+const PRINT = `${PRECISION}uniform vec2 u_res;uniform float u_time;uniform vec2 u_mouse;uniform float u_cell;uniform float u_mix;
+uniform vec3 u_pa;uniform vec3 u_1a;uniform vec3 u_2a;uniform vec3 u_pb;uniform vec3 u_1b;uniform vec3 u_2b;
+uniform sampler2D u_g1a;uniform sampler2D u_g1b;uniform sampler2D u_g2a;uniform sampler2D u_g2b;
+uniform vec4 u_r1;uniform vec4 u_r2;
+float h21(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}
+mat2 rot(float a){float c=cos(a),s=sin(a);return mat2(c,s,-s,c);}
 float wipe(vec2 px,float jit){
 vec2 uv=px/u_res;
 float k=(uv.x*.55+(1.-uv.y)*.45)*(1.-jit)+jit;
 return smoothstep(k*.6,k*.6+.4,u_mix);}
-vec2 screen(vec2 f,float ang,float ink){
-vec2 q=rot(ang)*f/u_cell;vec2 id=floor(q)+.5;
+vec2 dots(vec2 q,float ang,float sa,float sb){
+vec2 id=floor(q)+.5;
 vec2 ctr=rot(-ang)*id*u_cell;
 float m=wipe(ctr,h21(id+ang)*.12);float b=step(.5,m);
-vec2 cov=pick(b>.5?u_b:u_a,(ctr-.5*u_res)/u_res.y,u_time);
-float c=(ink<.5?cov.x:cov.y)*abs(2.*m-1.);
+float s=b>.5?sb:sa;float c=s*s*abs(2.*m-1.);
 float r=sqrt(clamp(c,0.,1.))*.76;
 return vec2(clamp((r-length(q-id))*u_cell*.9+.5,0.,1.)*smoothstep(0.,.03,c),b);}
 void main(){
-ASP=u_res.x/u_res.y;AA=.75*u_cell/u_res.y;
 vec2 f=gl_FragCoord.xy;vec2 m=u_mouse*u_res;float R=.22*u_res.y;
 f=m+(f-m)*(1.-.4*exp(-dot(f-m,f-m)/(R*R)));
-vec2 s1=screen(f,.26,0.);
-vec2 s2=screen(f+vec2(1.2,-.9)*u_cell*.22,1.31,1.);
+vec2 q1=rot(.26)*f/u_cell;vec2 t1=(floor(q1)+.5-u_r1.xy)/u_r1.zw;
+vec2 q2=rot(1.31)*(f+vec2(1.2,-.9)*u_cell*.22)/u_cell;vec2 t2=(floor(q2)+.5-u_r2.xy)/u_r2.zw;
+vec2 s1=dots(q1,.26,texture2D(u_g1a,t1).x,texture2D(u_g1b,t1).x);
+vec2 s2=dots(q2,1.31,texture2D(u_g2a,t2).y,texture2D(u_g2b,t2).y);
 vec3 c=mix(u_pa,u_pb,step(.5,wipe(gl_FragCoord.xy,0.)));
 c=mix(c,mix(u_2a,u_2b,s2.y),s2.x);
 c=mix(c,mix(u_1a,u_1b,s1.y),s1.x*.96);
 c+=(h21(gl_FragCoord.xy+fract(u_time))-.5)*.03;
 gl_FragColor=vec4(c,1.);}`;
+
+/** The two dot screens: angle, and the second one's hair off register (in cells). */
+const SCREENS = [
+  { ang: 0.26, shift: [0, 0] },
+  { ang: 1.31, shift: [1.2 * 0.22, -0.9 * 0.22] },
+] as const;
 
 export interface PrintInks {
   paper: string;
@@ -231,6 +251,17 @@ const ease = (k: number) => (k < 0.5 ? 4 * k * k * k : 1 - Math.pow(-2 * k + 2, 
 /** One wipe; a pick that lands mid-wipe waits for it and then runs. */
 const WIPE_MS = 760;
 
+/** One screen's grid of one pick: a texture with a texel per dot cell, and the framebuffer that fills it. */
+interface Grid {
+  texture: WebGLTexture | null;
+  buffer: WebGLFramebuffer | null;
+  w: number;
+  h: number;
+}
+
+const idle = (fn: () => void) =>
+  "requestIdleCallback" in window ? requestIdleCallback(fn, { timeout: 3000 }) : setTimeout(fn, 300);
+
 export function startPrints(canvas: HTMLCanvasElement, host: HTMLElement, inks: PrintInks[], first: number) {
   const colours = inks.map((ink) => ({ paper: rgb(ink.paper), ink1: rgb(ink.ink1), ink2: rgb(ink.ink2) }));
   const start = performance.now();
@@ -238,13 +269,55 @@ export function startPrints(canvas: HTMLCanvasElement, host: HTMLElement, inks: 
   let to = first;
   let queued = -1;
   let since = 0;
-  const shader = runShader(canvas, FRAG, {
+  let mix = 1;
+  let time = 0;
+  let cell = 1;
+  /** Each screen's first cell and cell count, for the print to find a cell in the grids. */
+  const ranges = SCREENS.map(() => [0, 0, 1, 1]);
+
+  let gl: WebGLRenderingContext;
+  let programs: (Program | undefined)[] = [];
+  let grids: [Grid, Grid][] = [];
+  let generation = 0;
+  let warming = false;
+  const scene = (k: number) => (programs[k] ??= makeProgram(gl, grid(SCENES[k]!)));
+  const makeGrid = (): Grid => {
+    const texture = gl.createTexture();
+    gl.bindTexture(gl.TEXTURE_2D, texture);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+    return { texture, buffer: gl.createFramebuffer(), w: 0, h: 0 };
+  };
+  // Without background compiling, the other prints compile one at a time while the page is idle, nearest first.
+  const warmUp = (run: number) => {
+    if (run !== generation || gl.isContextLost()) return;
+    const next = SCENES.map((_, k) => k)
+      .filter((k) => !programs[k])
+      .sort((a, b) => Math.abs(a - to) - Math.abs(b - to))[0];
+    if (next === undefined) return;
+    scene(next).status();
+    idle(() => warmUp(run));
+  };
+
+  const shader = runShader(canvas, PRINT, {
     pointer: host,
     // The loupe rests below the print, out of sight.
     rest: [0.5, -0.8],
     dpr: 2,
-    frame(set, now) {
-      let mix = 1;
+    setup(context) {
+      gl = context;
+      generation++;
+      warming = false;
+      programs = [];
+      grids = SCREENS.map(() => [makeGrid(), makeGrid()]);
+      scene(to);
+      if (compilesInBackground(gl)) SCENES.forEach((_, k) => scene(k));
+    },
+    prepare(_, now) {
+      // The wipe; a pick that lands mid-wipe waits for it and then runs.
+      mix = 1;
       if (from !== to) {
         const k = motionStill() ? 1 : Math.min(1, (now - since) / WIPE_MS);
         mix = ease(k);
@@ -258,10 +331,78 @@ export function startPrints(canvas: HTMLCanvasElement, host: HTMLElement, inks: 
           queued = -1;
         }
       }
+      // A print still compiling: the last frame stays, and its wipe starts once it is ready.
+      const picks = from === to ? [to] : [from, to];
+      if (picks.some((k) => scene(k).status() === "pending")) {
+        since = now;
+        return false;
+      }
+      if (!warming) {
+        warming = true;
+        const run = generation;
+        idle(() => warmUp(run));
+      }
+      // Dots about 1/84 of the print, 5-9 CSS px: crisp on phones, still a print on a big screen.
+      const { width, height } = canvas;
+      cell = Math.min(9, Math.max(5, canvas.clientWidth / 84)) * (width / Math.max(1, canvas.clientWidth));
+      // Paused: one still frame, at a moment where every scene reads well.
+      time = motionStill() ? 2.4 : ((now - start) / 1000) % 3600;
+      // The loupe pulls a spot by up to ~4 % of the print's height: cells that far outside the print are filled too.
+      const margin = 2 + Math.ceil((0.045 * height) / cell);
+      gl.activeTexture(gl.TEXTURE0);
+      SCREENS.forEach(({ ang, shift }, i) => {
+        const [c, s] = [Math.cos(ang), Math.sin(ang)];
+        const qs = [
+          [0, 0],
+          [width, 0],
+          [0, height],
+          [width, height],
+        ].map(([x, y]) => {
+          const [fx, fy] = [x! + shift[0] * cell, y! + shift[1] * cell];
+          return [(c * fx - s * fy) / cell, (s * fx + c * fy) / cell];
+        });
+        const x0 = Math.floor(Math.min(...qs.map((q) => q[0]!))) - margin;
+        const y0 = Math.floor(Math.min(...qs.map((q) => q[1]!))) - margin;
+        const w = Math.ceil(Math.max(...qs.map((q) => q[0]!))) + margin - x0;
+        const h = Math.ceil(Math.max(...qs.map((q) => q[1]!))) + margin - y0;
+        ranges[i] = [x0, y0, w, h];
+        picks.forEach((k) => {
+          const target = grids[i]![k === to ? 1 : 0];
+          const program = scene(k);
+          if (program.status() !== "ok") return;
+          gl.bindTexture(gl.TEXTURE_2D, target.texture);
+          gl.bindFramebuffer(gl.FRAMEBUFFER, target.buffer);
+          if (target.w !== w || target.h !== h) {
+            gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, w, h, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
+            gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, target.texture, 0);
+            Object.assign(target, { w, h });
+          }
+          gl.viewport(0, 0, w, h);
+          program.use();
+          program.set("u_res", width, height);
+          program.set("u_time", time);
+          program.set("u_cell", cell);
+          program.set("u_ang", ang);
+          program.set("u_org", x0, y0);
+          gl.drawArrays(gl.TRIANGLES, 0, 3);
+        });
+      });
+      // Units 0-1: screen 1, old and new pick; 2-3: screen 2. Not wiping, both read the new pick.
+      grids.forEach((pair, i) =>
+        pair.forEach((target, slot) => {
+          gl.activeTexture(gl.TEXTURE0 + i * 2 + slot);
+          gl.bindTexture(gl.TEXTURE_2D, (from === to ? pair[1] : target).texture);
+        }),
+      );
+      gl.activeTexture(gl.TEXTURE0);
+      return true;
+    },
+    frame(set, _, program) {
       const a = colours[from]!;
       const b = colours[to]!;
-      set("u_a", from);
-      set("u_b", to);
+      ["u_g1a", "u_g1b", "u_g2a", "u_g2b"].forEach((name, unit) => program.int(name, unit));
+      set("u_r1", ...ranges[0]!);
+      set("u_r2", ...ranges[1]!);
       set("u_mix", from === to ? 1 : mix);
       set("u_pa", ...a.paper);
       set("u_1a", ...a.ink1);
@@ -269,11 +410,8 @@ export function startPrints(canvas: HTMLCanvasElement, host: HTMLElement, inks: 
       set("u_pb", ...b.paper);
       set("u_1b", ...b.ink1);
       set("u_2b", ...b.ink2);
-      // Dots about 1/84 of the print, 5-9 CSS px: crisp on phones, still a print on a big screen.
-      const ratio = canvas.width / Math.max(1, canvas.clientWidth);
-      set("u_cell", Math.min(9, Math.max(5, canvas.clientWidth / 84)) * ratio);
-      // Paused: one still frame, at a moment where every scene reads well.
-      set("u_time", motionStill() ? 2.4 : ((now - start) / 1000) % 3600);
+      set("u_cell", cell);
+      set("u_time", time);
     },
   });
   if (!shader) return null;
