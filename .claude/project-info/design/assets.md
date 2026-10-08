@@ -64,6 +64,24 @@
 | font in the site: Anybody (`apps/web/public/fonts/anybody.<hash>.woff2`, `bun run fonts`) | variable `wdth` 50-150 / `wght` 400-900, Latin + Latin-1 + Polish, 49.5 KB | github.com/google/fonts `ofl/anybody` | SIL OFL 1.1 (`public/fonts/LICENSE-Anybody.txt`) | any, incl. commercial; never sold alone | replaces Archivo + Plex Mono (Drafting Table, rejected) |
 | fonts in `comps/*.html` (Anybody, Roboto Flex, Mona Sans, Martian Mono, Recursive, Bodoni Moda, Hanken Grotesk, Schibsted Grotesk) | Google Fonts | fonts.google.com | SIL OFL 1.1 | any, incl. commercial | self-host with the licence file when one ships |
 
+## CV marks (2026-10-08) [user: "use logos and icons when you know its okay"]
+
+| Asset | Source | Permission | Use |
+| --- | --- | --- | --- |
+| LinkedIn [in] logo, white: `apps/web/public/media/cv/linkedin-in-white.webp` (280 px lossless, from 840 px) | brand.linkedin.com/downloads (`in-logo.zip`, `InBug-White.png`) | LinkedIn lets members use it "as a hyperlink to your LinkedIn profile", in blue, black or white, unmodified, only its own files ("logos found elsewhere on the web are not approved") | CV contact bar, as the profile link. The site's Tabler outline doesn't qualify (Q50) |
+| GitHub Invertocat (`si:github`, Simple Icons, source github.com/logos) | brand.github.com/foundations/logo | "Use the Invertocat logo as a social button to link to your GitHub profile"; white or black, unmodified | CV bar (white) and slip (black), as profile links only; not in a skills list |
+| Linkoglot app icon `public/media/linkoglot/icon.webp` (96 px) | his own app | owner's own | CV rail under the Linkoglot dates; a 512 px original would print sharper |
+| Portfolio mark | the sticker's outlines (`cv-fonts.gen.ts`) | owner's own | CV rail; the Jinx avatar stays off the CV (fan art of Riot's character) |
+| Flags (Poland; the Union Jack for English) | drawn in `CvSheet.astro`; the Union Jack after the public-domain construction | flags are public domain | CV languages |
+| QR code to the portfolio | generated at build by `uqr` 0.1.3 | MIT (devDependency) | CV contact slip |
+
+Tool logos on the CV, from each brand's own guidelines (read 2026-10-08): TypeScript **OK** (single-colour variant);
+Expo OK if less prominent than his name; Next.js OK only with Vercel's trademark notice printed; GitHub only as a
+profile link; Supabase, TanStack, Tailwind CSS, Astro, shadcn/ui and Mobbin **unclear** (no terms, colour-only marks,
+or "written consent" for the logomark); React and React Native (LF Projects), GitLab, Playwright (Microsoft),
+Lighthouse (Google) and Claude (Anthropic) **no** without permission. So the CV shows no tool logos: the tools are
+names in groups under outline icons. The site's tool marks (`si:`) face the same rules: Q50.
+
 ## Missing / needed (→ `open-questions.md`, `placeholders.md`)
 
 - **Owner recordings per flagship:** shot lists in the research files (PstrykWeb, Linkoglot 11 shots, space, Clockful).

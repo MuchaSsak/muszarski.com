@@ -46,14 +46,15 @@ project dossiers in `content/projects/` (what may be said about client work).
 
 ## 3. Sections and order
 
-Profile → Skills → Education → Experience → Selected projects → Qualifications and training → Languages + Interests
-→ Contact slip → (pl) clause. The order follows the skim (R 1, R 15): an overview, the stack as compact keyword rows
-(one line per group, so it costs little and answers the keyword scan at once), then school and work with dates, so
-page 1 alone covers who, what, where, stack, education and work. Education leads while he is still at school (one short
-entry, and the first question for a student applying full-time); after graduation it moves below Experience
-(`EDUCATION_FIRST` in the sheet). Certificates carry little weight with tech hiring, so they stay one compact block
-(R 17, hiring-perspective § credentials); hackathons and real projects weigh more. A new section goes after Selected
-projects unless there's a reason.
+Profile → Experience → Selected projects → Skills and qualifications (soft skills, technologies, then the
+qualifications and training) → Education → Languages + Interests → Contact slip → (pl) clause [user 2026-10-08]. Page
+1 sells the work: who, role, availability, contact, the profile (which names the stack), the jobs and the projects
+with their links. Skills come after the proof, shown as skills rather than a list of names: each soft skill with one
+line that shows it, the tools in a few small named groups. The research put the stack near the top (R 1, R 15); the
+profile carries it on page 1. Education sits last before the languages (the owner's call; it is one short entry).
+Certificates carry little weight with tech hiring (R 17, hiring-perspective § credentials), so they stay compact: a
+head line, then the certificate lines (courses) or one summary line (hackathons, youth projects). A new section goes
+after Selected projects unless there's a reason.
 
 ## 4. Writing rules
 
@@ -68,11 +69,16 @@ projects unless there's a reason.
 - **AI tells to avoid** (R 16, resume data 2023-2026): em dashes in prose, and the verbs spearheaded, leveraged,
   orchestrated, honed, streamlined, plus "passionate about", "results-driven", "dynamic". Plain verbs: built, shipped,
   wrote, designed, cut, moved.
-- **Stack** in plain text, spelled like job ads: TypeScript, React, Next.js, Node.js, PostgreSQL (R 7). Skills are
-  grouped lists, never bars, dots or percentages (R 16).
+- **Skills:** soft skills first (the owner's: teamwork and clients, problem solving, business thinking, conversions
+  and UX, user psychology, analytical thinking), each with one short line of proof drawn from the CV's own facts, kept
+  to one line at the meta size. Tools in plain text, spelled like job ads (TypeScript, Next.js, Tailwind CSS, TanStack
+  Query) (R 7), in a few named groups; never bars, dots or percentages (R 16), never the tools' logos (their brands
+  don't allow it, `template.md` § 1).
 - **Dates:** one format per locale (§ 5), the same in every entry; "now" / "obecnie" / "actualidad" for the current role.
 - **Languages:** CEFR code + word ("English — C1"). "Fluent" is not a CEFR level; the levels are the owner's to give
-  (L). Until then the words stay.
+  (L). Until then the words stay. Spanish is not listed [user 2026-10-08]. Each language shows its drawn flag (`flag`).
+- **Dates:** years, as everywhere else on the sheet ("2025", "2026 · 6 weeks"); a month only for the current role's
+  start [user 2026-10-08: no "January 2025" where the rest give no month].
 - **Links:** short readable text (`github.com/MuchaSsak`), the full URL in the link. A project with a store or live link
   shows it.
 
@@ -100,7 +106,8 @@ laboral", "Formación académica", "Formación complementaria".
    section). Anything else (a tool the ad names, a WCAG level, years of experience) needs the owner's word.
 5. Location: a job in another city or country never implies relocation; ask. UK, Irish and US ads: print without the
    photo (`--no-photo`).
-6. A tailored copy is temporary and touches only the locale(s) it is for. Copy `cv.ts` to the scratchpad first (the
+6. A tailored copy is temporary and touches only the locale(s) it is for. Copy the data file (`cv-draft.ts` until
+   the rollout, then `cv.ts`) to the scratchpad first (the
    working tree may hold uncommitted work: never restore with `git checkout`), edit, run
    `bun run cv:sheet --locales <l> --png --out .cache/cv-tailored/<company or role slug>` (gitignored), hand over the
    PDFs, then copy the backup back and diff to confirm. Skip the page sync, check, wiki and commit; the report lists

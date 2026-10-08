@@ -15,6 +15,7 @@ ones and be fluid enough with it that if I ever need to add or remove some more 
 | Piece | Where | Notes |
 | --- | --- | --- |
 | Data (the one source) | `apps/web/src/data/cv.ts` | per-locale `Text`. Never edit the PDF or the page alone. Also read by: home credentials and the Experience card (`when`, `short`), the Person JSON-LD `jobTitle` (`lib/schema.ts`, from `CV.title`) and `llms.txt`; say so when a change shows there too |
+| Draft data (until the rollout) | `apps/web/src/data/cv-draft.ts` | the English CV the sheet prints while the owner approves it: spreads `cv.ts`, overrides what changed, adds `softSkills`, `tools`, `logo`, `flag`. `/cv/`, home and the live PDFs still read `cv.ts` |
 | The sheet (PDF layout) | `apps/web/src/components/cv/CvSheet.astro` | how it works and its rules: `references/template.md` |
 | Print route | `apps/web/src/pages/[locale]/cv/print-v2/index.astro` | page CSS (`@page`), metadata, digest; noindex, out of the sitemap |
 | Fonts | `bun run cv:fonts` → `public/fonts/cv/`, `src/styles/cv-fonts.css`, `src/lib/cv-fonts.gen.ts` | static Anybody instances + the fitted name + the sticker outlines |
@@ -22,9 +23,11 @@ ones and be fluid enough with it that if I ever need to add or remove some more 
 | Web page | `apps/web/src/pages/[locale]/cv/index.astro` + `components/cv/CvBody.astro` | must say exactly what the PDF says (1:1) |
 | Evidence | `.claude/project-info/research/2026-10-08-cv-*.md` | recruiters + ATS, locale conventions, design inspiration |
 
-**Status [user 2026-10-08]: draft.** The owner approves the sheet and this skill first. Until then `cv:sheet` writes to
-`comps/cv/`; the live PDFs (`public/files/`, old template) and the `/cv/` page keep their layout. They still read
-`cv.ts`, so a data edit shows on `/cv/` at once, and the live PDFs must be reprinted or `cv.test.ts` fails. Without
+**Status [user 2026-10-08]: draft, English first.** The owner approves the sheet, this skill and the English content
+first ("lets just first agree on an english version"); the rollout then localizes it and rebuilds `/cv/`. Until then
+the sheet reads `cv-draft.ts` and `cv:sheet` writes to `comps/cv/`: print with `--locales en` (Polish and Spanish
+fields repeat the English). The live PDFs (`public/files/`, old template) and the `/cv/` page keep reading `cv.ts`, so
+an edit there shows on `/cv/` at once, and the live PDFs must be reprinted or `cv.test.ts` fails. Without
 a second preview server: after `cv:sheet` (it leaves its build in `apps/web/.cache/cv-dist/`), serve that folder on a
 free port (`python -m http.server <port> --bind 127.0.0.1 --directory .cache/cv-dist`), run
 `node scripts/cv-pdf.mjs --base http://127.0.0.1:<port>`, stop the server by its port's PID, and commit only the PDFs
@@ -42,7 +45,7 @@ delete this paragraph.
    string (that fails the print).
 2. **Decide the content** with `references/content.md`: what goes in, what stays out (personal data included), how to
    write a bullet, per-locale conventions, the cutting order. Page 1 must sell him alone.
-3. **Edit `cv.ts`**: English first, then Polish and Spanish (Spanish stays marked unreviewed, `i18n.md`). Keep the
+3. **Edit the data** (`cv-draft.ts`, English only, until the rollout; then `cv.ts`): English first, then Polish and Spanish (Spanish stays marked unreviewed, `i18n.md`). Keep the
    structure; add fields rather than overloading strings. A new section type also needs the sheet
    (`references/template.md` § Adding a section) and the page. Where things go:
    - Seniority words ("junior", "looking for") go in `CV.availability`, not `CV.title`: the title is fixed by
@@ -89,17 +92,25 @@ These broke once and cost time; `references/template.md` has the why and the fix
   (body 10 pt at `--d: 0`).
 - Every link is visible text (`github.com/MuchaSsak`), underlined, never colour alone; the email is a `mailto:` link.
 - Pink is a fill or a marker, never text on white (2.97:1).
+- Marks only where we know they're allowed: Tabler outline icons; GitHub and LinkedIn only as links to his profiles,
+  in white or black, LinkedIn's own artwork; a project's own logo; never a tool's, a company's or a client's logo.
+- Lists are reset by their own class, never by `.cs ul` (a scoped element rule outranks one class).
 
 ## Rollout (once, after the owner approves the sheet)
 
-1. Point the print route at the sheet: move `cv/print-v2/index.astro` to `cv/print/index.astro` (replacing the old one),
+1. Merge `cv-draft.ts` into `cv.ts`: its overrides become the data; add `softSkills`, `tools`, `logo`, `flag`. A
+   credential the CV shows as one line keeps its items for the home card (add a CV-only summary field instead of
+   dropping them). Write the Polish and Spanish text (es unreviewed), point the sheet and the print route back at
+   `cv.ts`, delete `cv-draft.ts`, reprint all three locales.
+2. Point the print route at the sheet: move `cv/print-v2/index.astro` to `cv/print/index.astro` (replacing the old one),
    drop `variant="print"` from `CvBody.astro`, update the sitemap filter in `astro.config.mjs`.
-2. Make `cv:sheet` the PDF command: default `--out public/files`, write `cv-digest.json` from the page's `cv-digest`
+3. Make `cv:sheet` the PDF command: default `--out public/files`, write `cv-digest.json` from the page's `cv-digest`
    meta (as `cv-pdf.mjs` does), set `ROUTE = "cv/print"`; point `cv:pdf` at it and delete `cv-pdf.mjs`.
-3. Rebuild `/cv/` to mirror the sheet 1:1 (sections, order, wording, the closing contact band, the Polish clause).
-4. `bun run cv:sheet` → commit the PDFs; `bun run check`, e2e; update `content-model.md` § CV,
+4. Rebuild `/cv/` to mirror the sheet 1:1 (sections, order, wording, the closing contact band, the Polish clause), and
+   make it more interesting and up to date [user 2026-10-08].
+5. `bun run cv:sheet` → commit the PDFs; `bun run check`, e2e; update `content-model.md` § CV,
    `technologies.md` (CV PDF row), `seo.md` (PDF metadata now set), `design.md` (§ CV sheet), `log.md`.
-5. Delete the Status paragraph above and this section's "once" note.
+6. Delete the Status paragraph above and this section's "once" note.
 
 ## Changing the template itself
 

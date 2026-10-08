@@ -71,7 +71,9 @@
   `cr-`, `ai-`) (2026-10-06).
 - A scoped `.cs :where(p)` reset is not low-specificity: Astro adds the scope attribute after the `:where()` too
   (`.cs[data-astro-cid-…] :where(p)[data-astro-cid-…]`, 0-3-0), so it beat the scoped class rules (0-2-0) and zeroed
-  every margin of the CV sheet. Put resets in an unscoped `<style is:global>` (2026-10-08).
+  every margin of the CV sheet. Put resets in an unscoped `<style is:global>` (2026-10-08). A plain scoped element rule
+  does the same: `.cs ul` (0-2-1) beat `.cs-bar` (0-2-0) and zeroed the contact bar's padding; reset lists by their own
+  class (2026-10-08).
 - `astro dev` is one per project too: a second one exits ("already running"). For a private run, `astro build --outDir
   .cache/<name>` and serve that folder yourself, as `scripts/cv-sheet.mjs` does (2026-10-08).
 

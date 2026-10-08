@@ -420,7 +420,7 @@ msgid "confirm email"
 msgstr "confirm email"
 
 #: src/components/cv/CvBody.astro:37
-#: src/components/cv/CvSheet.astro:62
+#: src/components/cv/CvSheet.astro:76
 #: src/components/home/Contact.astro:46
 #: src/components/layout/SiteFooter.astro:97
 #: src/components/layout/SiteHeader.astro:94
@@ -461,7 +461,7 @@ msgstr "Curriculum vitae"
 #: src/components/layout/SiteFooter.astro:63
 #: src/pages/[locale]/cv/index.astro:38
 #: src/pages/[locale]/cv/index.astro:114
-#: src/pages/[locale]/cv/print-v2/index.astro:25
+#: src/pages/[locale]/cv/print-v2/index.astro:26
 #: src/pages/[locale]/cv/print/index.astro:24
 msgid "CV"
 msgstr "CV"
@@ -536,7 +536,7 @@ msgid "drop-off points"
 msgstr "drop-off points"
 
 #: src/components/cv/CvBody.astro:31
-#: src/components/cv/CvSheet.astro:57
+#: src/components/cv/CvSheet.astro:73
 msgid "Education"
 msgstr "Education"
 
@@ -569,7 +569,7 @@ msgid "Every project by Mateusz Muszarski: client work, his own products, open s
 msgstr "Every project by Mateusz Muszarski: client work, his own products, open source and experiments, with the tools, the year and the links."
 
 #: src/components/cv/CvBody.astro:30
-#: src/components/cv/CvSheet.astro:56
+#: src/components/cv/CvSheet.astro:68
 msgid "Experience"
 msgstr "Experience"
 
@@ -789,7 +789,7 @@ msgid "interest"
 msgstr "interest"
 
 #: src/components/cv/CvBody.astro:36
-#: src/components/cv/CvSheet.astro:61
+#: src/components/cv/CvSheet.astro:75
 msgid "Interests"
 msgstr "Interests"
 
@@ -845,7 +845,7 @@ msgid "Language"
 msgstr "Language"
 
 #: src/components/cv/CvBody.astro:35
-#: src/components/cv/CvSheet.astro:60
+#: src/components/cv/CvSheet.astro:74
 msgid "Languages"
 msgstr "Languages"
 
@@ -1308,7 +1308,7 @@ msgid "Product|engineer"
 msgstr "Product|engineer"
 
 #: src/components/cv/CvBody.astro:29
-#: src/components/cv/CvSheet.astro:54
+#: src/components/cv/CvSheet.astro:67
 msgid "Profile"
 msgstr "Profile"
 
@@ -1326,7 +1326,6 @@ msgid "Qualification"
 msgstr "Qualification"
 
 #: src/components/cv/CvBody.astro:33
-#: src/components/cv/CvSheet.astro:59
 msgid "Qualifications and training"
 msgstr "Qualifications and training"
 
@@ -1419,7 +1418,7 @@ msgid "See the work"
 msgstr "See the work"
 
 #: src/components/cv/CvBody.astro:32
-#: src/components/cv/CvSheet.astro:58
+#: src/components/cv/CvSheet.astro:69
 msgid "Selected projects"
 msgstr "Selected projects"
 
@@ -1492,7 +1491,6 @@ msgid "Site"
 msgstr "Site"
 
 #: src/components/cv/CvBody.astro:34
-#: src/components/cv/CvSheet.astro:55
 msgid "Skills"
 msgstr "Skills"
 
@@ -1503,6 +1501,10 @@ msgstr "Skills + gates"
 #: src/components/home/AiWorkflow.astro:104
 msgid "Skills and gates check every change: types, tests, accessibility, speed."
 msgstr "Skills and gates check every change: types, tests, accessibility, speed."
+
+#: src/components/cv/CvSheet.astro:70
+msgid "Skills and qualifications"
+msgstr "Skills and qualifications"
 
 #: src/components/layout/BaseLayout.astro:124
 msgid "Skip to content"
@@ -1515,6 +1517,10 @@ msgstr "Snap a photo, get flashcards. A subscription language app, shipped solo 
 #: src/components/home/chapters/ChapterLinkoglot.astro:76
 msgid "Snapped → card"
 msgstr "Snapped → card"
+
+#: src/components/cv/CvSheet.astro:71
+msgid "Soft skills"
+msgstr "Soft skills"
 
 #: src/components/home/Hero.astro:44
 msgid "Solo, end to end"
@@ -1605,6 +1611,10 @@ msgstr "task: contact form"
 #: src/components/home/Credentials.astro:32
 msgid "Teamwork"
 msgstr "Teamwork"
+
+#: src/components/cv/CvSheet.astro:72
+msgid "Technologies"
+msgstr "Technologies"
 
 #: src/components/layout/SiteFooter.astro:79
 msgid "Terms"

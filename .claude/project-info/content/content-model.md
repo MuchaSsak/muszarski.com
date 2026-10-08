@@ -60,7 +60,10 @@
   until the owner approves it; then it replaces the print route and the live PDFs, and `/cv/` mirrors it 1:1 (rollout
   steps: `.claude/skills/new-cv/SKILL.md`). Decided for him: photo, email, region, links and availability in; date of
   birth, address, PESEL, marital status and salary out; phone, "EU citizen" and CEFR levels once he gives them (Q49);
-  the Polish CV ends with the one-line recruitment clause (`CV.clause.pl`, none in en / es). Section order, writing
+  the Polish CV ends with the one-line recruitment clause (`CV.clause.pl`, none in en / es). English first
+  [user 2026-10-08]: the sheet reads `src/data/cv-draft.ts` (spreads `cv.ts`, overrides what changed: title "Full-stack
+  product engineer", PstrykWeb, Linkoglot and Portfolio as projects, soft skills and grouped tools, no Spanish) until
+  the rollout merges it into `cv.ts` with Polish and Spanish text and rebuilds `/cv/`. Section order, writing
   and cutting rules: `.claude/skills/new-cv/references/content.md`. The digest picks a partial text (the pl-only
   clause) per locale, so it changes the pl digest alone.
 

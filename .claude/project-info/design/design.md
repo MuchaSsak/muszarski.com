@@ -106,12 +106,16 @@ button, flags, single theme, chapters, AI, credentials, writing, contact, footer
 
 ## CV sheet (draft 2026-10-08)
 
-The PDF CV is a poster on paper in the Cobalt palette (`components/cv/CvSheet.astro`; waits for the owner's approval):
-a full-bleed cobalt band (photo with a pink hard shadow, the fitted name in Anybody Black, the hero sticker's twin as
-outlines, role and place), a navy contact bar with the links spelled out, then a ledger: section labels (expanded caps,
-a pink tab, a navy rule to the edge), dates in a 27 mm cobalt rail, condensed titles, pink square bullets. Page 2 has an
-outline running head and the page number; a pink contact slip with a navy hard shadow closes the last page, pinned to
-its foot (or under the content when the page is short). Static Anybody instances only (a variable font prints as Type
+The PDF CV is a poster on paper in the Cobalt palette (`components/cv/CvSheet.astro`; waits for the owner's approval,
+English first): a full-bleed cobalt band (photo with a pink hard shadow, the fitted name in Anybody Black, the hero
+sticker's twin as outlines, role and availability), a navy contact bar of icon + text in three columns (email, place,
+site; GitHub, LinkedIn), then a ledger: section labels (expanded caps, a pink tab, a navy rule to the edge), dates in a
+27 mm cobalt rail with his own projects' logos under them, condensed titles, pink square bullets. Skills and
+qualifications: soft skills as icon, skill and one line of proof in two columns, the tools as small rows per group
+under an outline icon, then the credentials (the formal one first, then newest first). Languages carry drawn flags. Page 2 has an outline running head and the page number;
+a pink contact slip with a navy hard shadow and a QR code to the portfolio closes the last page, pinned to its foot (or
+under the content when the page is short). Icons are Tabler outlines; no tool or company logos (`assets.md` § CV
+marks). Static Anybody instances only (a variable font prints as Type
 3); one density variable `--d` scales the body (10-10.8 pt, the print floor) and every gap so any amount of content
 fills at most two pages. A no-photo variant (UK, IE, US) keeps the band whole. Pink is never text on white. Anatomy,
 invariants and their reasons: `.claude/skills/new-cv/references/template.md`.

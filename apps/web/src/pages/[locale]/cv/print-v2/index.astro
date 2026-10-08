@@ -1,8 +1,8 @@
 ---
 /**
  * The CV sheet, the source of the new CV PDF (`bun run cv:sheet` prints it with Playwright; design.md § CV sheet).
- * Same data as /cv/. Until the owner approves the sheet it lives next to the old print route and its PDFs go to
- * comps/cv/ [user 2026-10-08]. noindex and out of the sitemap; no site chrome, no motion, no global CSS: only the
+ * Same data as /cv/ (for now its English draft, cv-draft.ts [user 2026-10-08]). Until the owner approves the sheet it
+ * lives next to the old print route and its PDFs go to comps/cv/ [user 2026-10-08]. noindex and out of the sitemap; no site chrome, no motion, no global CSS: only the
  * sheet's static font instances (a variable font prints as Type 3 glyphs, scripts/cv-fonts.mjs).
  */
 import "~/styles/cv-fonts.css";
@@ -12,7 +12,8 @@ import { createHash } from "node:crypto";
 import { t } from "lingui-for-astro/macro";
 
 import CvSheet from "~/components/cv/CvSheet.astro";
-import { CV, cvDigestSource } from "~/data/cv";
+import { cvDigestSource } from "~/data/cv";
+import { CV_DRAFT as CV } from "~/data/cv-draft";
 import { SITE } from "~/data/site";
 import { CV_FONT_FILES } from "~/lib/cv-fonts.gen";
 import { localeStaticPaths, pathTo } from "~/lib/routes";
@@ -24,8 +25,8 @@ const site = Astro.site ?? new URL("http://localhost:4321");
 const home = new URL(pathTo(locale), site).href;
 const cvLabel = t`CV`;
 // Which CV data this sheet shows; `bun run cv:sheet` records it next to the PDF.
-const digest = createHash("sha256").update(cvDigestSource(locale)).digest("hex").slice(0, 16);
-const keywords = CV.skills.flatMap((group) => group.items).join(", ");
+const digest = createHash("sha256").update(cvDigestSource(locale, CV)).digest("hex").slice(0, 16);
+const keywords = CV.tools.flatMap((group) => group.tools).join(", ");
 ---
 
 <!doctype html>

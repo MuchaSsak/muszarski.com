@@ -1,18 +1,24 @@
 ---
 /**
- * The CV sheet: the CV PDF's layout (design.md § CV sheet, content-model.md § CV), rendered from `~/data/cv` like the
- * /cv/ page. A poster on paper: a cobalt band (photo, fitted name, sticker, role, place), a navy contact bar, then a
- * ledger (section rows, dates in a left rail, content on the right) over at most two A4 pages, closed by a pink
- * contact slip at the foot of the last page.
+ * The CV sheet: the CV PDF's layout (design.md § CV sheet, content-model.md § CV). A poster on paper: a cobalt band
+ * (photo, fitted name, sticker, role, availability), a navy contact bar with icons, then a ledger (section rows, dates
+ * in a left rail, content on the right) over at most two A4 pages, closed by a pink contact slip with a QR code at the
+ * foot of the last page.
+ *
+ * DRAFT [user 2026-10-08]: it reads `~/data/cv-draft` (English first) until the rollout merges that into cv.ts.
  *
  * Built for two readers at once (research/2026-10-08-cv-recruiters-ats.md):
- * - a recruiter's skim: page 1 alone says who, what, where, how to reach him, the stack, the work and the school;
+ * - a recruiter's skim: page 1 alone says who, what, where, how to reach him, the work and the projects;
  * - an ATS: real text in reading order, plain headings with tracking <= 0.05 em, static named TrueType fonts, links
- *   spelled out, decoration as outlines.
+ *   spelled out, decoration as outlines or images without text.
  *
  * Paint order is text order: Chrome writes the PDF's text in paint order, and a positioned or transformed box paints
  * after all in-flow content. So nothing that holds text is positioned or transformed: the rail is a grid column, the
  * bullet squares are in-flow boxes, the sticker (outlines, no text) is a grid item.
+ *
+ * Marks: a project's own logo only (never a company's or a client's); no tool logos (their brands don't allow it);
+ * GitHub and LinkedIn only as links to his profiles, as their own artwork in white or black (design/assets.md).
+ * Every other icon is a Tabler outline (MIT).
  *
  * Fluid: every size and gap in the body reads `--d` (0 = densest, 1 = roomiest); `scripts/cv-sheet.mjs` picks the
  * roomiest value that fits two pages, then sets `--end-gap` so the contact slip sits at the foot of the last page.
@@ -21,10 +27,14 @@
  */
 import { Image } from "astro:assets";
 import { t } from "lingui-for-astro/macro";
+import { encode } from "uqr";
 
-import { type CertItem, type CvEntry, CV, type Text } from "~/data/cv";
+import Icon from "~/components/ui/Icon.astro";
+import { type CertItem, type Credential, type CvEntry, type Text } from "~/data/cv";
+import { CV_DRAFT as CV } from "~/data/cv-draft";
 import { PROFILES, SITE } from "~/data/site";
 import { CV_NAME, CV_STICKER } from "~/lib/cv-fonts.gen";
+import { type IconName } from "~/lib/icons.gen";
 import { photoFile } from "~/lib/photos";
 import { pathTo } from "~/lib/routes";
 import { typo } from "~/lib/typography";
@@ -45,40 +55,60 @@ const short = (href: string) => href.replace(/^(https?:\/\/)?(www\.)?/, "").repl
 const nameEm = Math.max(...CV_NAME.map((line) => line.em));
 const github = PROFILES.find((profile) => profile.id === "github");
 const linkedin = PROFILES.find((profile) => profile.id === "linkedin");
-const contact = [
-  { text: SITE.email, href: `mailto:${SITE.email}` },
+// The contact bar: who and where on the first row, the web on the second. `icon: "in"` is LinkedIn's own artwork.
+const contact: { text: string; href?: string | undefined; icon: IconName | "in" }[] = [
+  { text: SITE.email, href: `mailto:${SITE.email}`, icon: "tb:mail" },
+  { text: l(CV.location), icon: "tb:map-pin" },
   // The domain alone reads better; the link opens the CV's own language.
-  { text: new URL(siteUrl).host, href: siteUrl },
-  ...[github, linkedin].flatMap((profile) => (profile ? [{ text: short(profile.href), href: profile.href }] : [])),
+  { text: new URL(siteUrl).host, href: siteUrl, icon: "tb:world" },
+  ...(github ? [{ text: short(github.href), href: github.href, icon: "si:github" as const }] : []),
+  ...(linkedin ? [{ text: short(linkedin.href), href: linkedin.href, icon: "in" as const }] : []),
 ];
 const sections = {
   summary: t`Profile`,
-  skills: t`Skills`,
   experience: t`Experience`,
-  education: t`Education`,
   projects: t`Selected projects`,
-  credentials: t`Qualifications and training`,
+  skills: t`Skills and qualifications`,
+  softSkills: t`Soft skills`,
+  tools: t`Technologies`,
+  education: t`Education`,
   languages: t`Languages`,
   interests: t`Interests`,
   contact: t`Contact`,
 };
-// Education leads while the owner is still at school: the skim looks for it, and it is one short entry. After
-// graduation it moves below Experience (content.md § 3).
-const EDUCATION_FIRST = true;
-const lists: { heading: string; entries: CvEntry[] }[] = [
-  ...(EDUCATION_FIRST ? [{ heading: sections.education, entries: CV.education }] : []),
-  { heading: sections.experience, entries: CV.experience },
-  ...(EDUCATION_FIRST ? [] : [{ heading: sections.education, entries: CV.education }]),
-  { heading: sections.projects, entries: CV.projects },
+// The order [user 2026-10-08]: the work first, then skills and qualifications, Education just before the languages.
+type Block = { kind: "list"; heading: string; entries: CvEntry[] } | { kind: "skills" };
+const blocks: Block[] = [
+  { kind: "list" as const, heading: sections.experience, entries: CV.experience },
+  { kind: "list" as const, heading: sections.projects, entries: CV.projects },
+  { kind: "skills" as const },
+  { kind: "list" as const, heading: sections.education, entries: CV.education },
   // A list with nothing in it leaves no empty heading behind.
-].filter((list) => list.entries.length > 0);
-const credentials = CV.credentials.filter((credential) => credential.kind !== "experience");
+].filter((block) => block.kind !== "list" || block.entries.length > 0);
+const credentials: Credential[] = CV.credentials.filter((credential) => credential.kind !== "experience");
 // A repository reads best as its address (a paper reader can type it); a store badge by its name.
 const linkText = (link: { label: string; href: string }) => (/github\.com\//.test(link.href) ? short(link.href) : link.label);
 const certMeta = (item: CertItem) => tx(item.when[locale]);
 const clause = (CV.clause as Partial<Record<string, string>>)[locale];
 // The web version of this CV, in the same language.
 const webCv = new URL(pathTo(locale, "cv/"), siteUrl);
+// The slip's QR code opens the portfolio in the CV's language: a printed sheet's one-step way to the work. One path
+// of unit squares, no text.
+const qr = encode(siteUrl, { ecc: "M", border: 0 });
+const qrPath = qr.data.flatMap((row, y) => row.flatMap((on, x) => (on ? [`M${x} ${y}h1v1h-1z`] : []))).join("");
+// Flags, drawn (Windows has no flag emoji, and an emoji font would print as Type 3): 3:2 with a hairline frame, so the
+// Polish white reads on white paper. The Union Jack follows the public-domain construction, counterchange clipped.
+const FLAGS: Record<"pl" | "gb", string> = {
+  pl: '<path fill="#fff" d="M0 0h45v15H0z"/><path fill="#dc143c" d="M0 15h45v15H0z"/>',
+  gb:
+    '<clipPath id="cs-gb-t"><path d="M22.5 15h22.5v15zv15h-22.5zh-22.5v-15zv-15h22.5z"/></clipPath>' +
+    '<path fill="#012169" d="M0 0h45v30H0z"/>' +
+    '<path d="M0 0l45 30M45 0L0 30" stroke="#fff" stroke-width="6"/>' +
+    '<path d="M0 0l45 30M45 0L0 30" clip-path="url(#cs-gb-t)" stroke="#c8102e" stroke-width="4"/>' +
+    '<path d="M22.5 0v30M0 15h45" stroke="#fff" stroke-width="10"/>' +
+    '<path d="M22.5 0v30M0 15h45" stroke="#c8102e" stroke-width="6"/>',
+};
+const FRAME = '<path fill="none" stroke="#0a0d33" stroke-width="1.2" d="M.6.6h43.8v28.8H.6z"/>';
 ---
 
 <div class="cs" style={`--name-em: ${nameEm}`}>
@@ -106,15 +136,24 @@ const webCv = new URL(pathTo(locale, "cv/"), siteUrl);
       <p class="cs-role" data-cv-must={CV.title[locale]}>
         {l(CV.title)}
       </p>
-      <p class="cs-avail" data-cv-must={CV.location[locale]}>{`${l(CV.location)} · ${l(CV.availability)}`}</p>
+      <p class="cs-avail">{l(CV.availability)}</p>
     </div>
   </header>
   <ul class="cs-bar" aria-label={sections.contact}>
     {contact.map((item) => (
       <li>
-        <a href={item.href} data-cv-link data-cv-must={item.text}>
-          {item.text}
-        </a>
+        {item.icon === "in" ? (
+          <img class="cs-in" src="/media/cv/linkedin-in-white.webp" alt="" width="280" height="260" />
+        ) : (
+          <Icon name={item.icon} inline class="cs-ico" />
+        )}
+        {item.href ? (
+          <a href={item.href} data-cv-link data-cv-must={item.text}>
+            {item.text}
+          </a>
+        ) : (
+          <span data-cv-must={item.text}>{item.text}</span>
+        )}
       </li>
     ))}
   </ul>
@@ -124,79 +163,109 @@ const webCv = new URL(pathTo(locale, "cv/"), siteUrl);
     <p class="cs-wide">{l(CV.summary)}</p>
   </section>
 
-  <section class="cs-sec">
-    <h2 data-cv-heading>{sections.skills}</h2>
-    <div class="cs-wide cs-skills">
-      {
-        // One line per group, the group name inline: every text extractor keeps it next to its tools.
-        CV.skills.map((group) => (
-          <p>
-            <strong>{l(group.group)}:</strong> {group.items.join(" · ")}
-          </p>
-        ))
-      }
-    </div>
-  </section>
-
-  {lists.map((list) => (
-    <section class="cs-sec" data-cv-list>
-      <h2 data-cv-heading>{list.heading}</h2>
-      {list.entries.map((entry) => (
-        <article class="cs-entry" data-cv-entry data-cv-placeholder={entry.placeholder ? l(entry.title) : undefined}>
-          <h3>{l(entry.title)}</h3>
-          {entry.org && <p class="cs-org">{l(entry.org)}</p>}
-          <p class="cs-when">{l(entry.when)}</p>
-          {entry.bullets.length > 0 && (
-            <ul class="cs-bullets">
-              {entry.bullets.map((bullet) => (
-                <li>{l(bullet)}</li>
-              ))}
-            </ul>
-          )}
-          {entry.links && (
-            <p class="cs-links">
-              {entry.links.map((link) => (
-                <a href={link.href}>{linkText(link)}</a>
-              ))}
-            </p>
-          )}
-        </article>
-      ))}
-    </section>
-  ))}
-
-  {credentials.length > 0 && (
-    <section class="cs-sec" data-cv-list>
-      <h2 data-cv-heading>{sections.credentials}</h2>
-      {
-        // Low weight with tech hiring (research): one head line (title · issuer), then the proof, one line each.
-        credentials.map((credential) => (
-          <article
-            class="cs-entry cs-cred"
-            data-cv-entry
-            data-cv-placeholder={credential.placeholder ? l(credential.title) : undefined}
-          >
-            <h3>
-              {credential.verifyUrl ? <a href={credential.verifyUrl}>{l(credential.title)}</a> : l(credential.title)}
-              <span class="cs-issuer"> · {l(credential.issuer)}</span>
-            </h3>
-            <p class="cs-when">{l(credential.when)}</p>
-            {credential.items ? (
-              <ul class="cs-certs">
-                {credential.items.map((item: CertItem) => (
+  {blocks.map((block) =>
+    block.kind === "list" ? (
+      <section class="cs-sec" data-cv-list>
+        <h2 data-cv-heading>{block.heading}</h2>
+        {block.entries.map((entry) => (
+          <article class="cs-entry" data-cv-entry data-cv-placeholder={entry.placeholder ? l(entry.title) : undefined}>
+            <h3>{l(entry.title)}</h3>
+            {entry.org && <p class="cs-org">{l(entry.org)}</p>}
+            <div class="cs-rail">
+              <p class="cs-when">{l(entry.when)}</p>
+              {entry.logo === "sticker" ? (
+                <svg class="cs-logo cs-sticker-mini" viewBox="34 34 132 132" aria-hidden="true">
+                  <circle cx="100" cy="100" r="64"></circle>
+                  <path d={CV_STICKER.core}></path>
+                </svg>
+              ) : (
+                entry.logo && <img class="cs-logo" src={entry.logo} alt="" width="96" height="96" />
+              )}
+            </div>
+            {entry.bullets.length > 0 && (
+              <ul class="cs-bullets">
+                {entry.bullets.map((bullet) => (
+                  <li>{l(bullet)}</li>
+                ))}
+              </ul>
+            )}
+            {entry.links && (
+              <p class="cs-links">
+                {entry.links.map((link) => (
+                  <a href={link.href}>{linkText(link)}</a>
+                ))}
+              </p>
+            )}
+          </article>
+        ))}
+      </section>
+    ) : (
+      <section class="cs-sec" data-cv-list>
+        <h2 data-cv-heading>{sections.skills}</h2>
+        {
+          // Soft skills lead [user 2026-10-08], each with the line that shows it: skills, not a list of names.
+          CV.softSkills.length > 0 && (
+            <div class="cs-row">
+              <p class="cs-when">{sections.softSkills}</p>
+              <ul class="cs-soft">
+                {CV.softSkills.map((skill) => (
                   <li>
-                    {item.href || item.site ? <a href={item.href ?? item.site}>{item.title}</a> : item.title}
-                    <span class="cs-meta"> · {certMeta(item)}</span>
+                    <Icon name={skill.icon} inline class="cs-soft-ico" />
+                    <strong>{l(skill.name)}</strong>
+                    <span>{l(skill.line)}</span>
                   </li>
                 ))}
               </ul>
-            ) : (
-              !credential.verifyUrl && <p class="cs-note">{l(credential.summary)}</p>
-            )}
-          </article>
-        ))
-      }
-    </section>
+            </div>
+          )
+        }
+        {
+          // The tools, small ("small font"): one row per group, its icon, the group, the tools by name (an ATS reads
+          // them). Rows, not tiles, so they don't repeat the soft skills' shape; a tool's name never breaks.
+          CV.tools.length > 0 && (
+            <div class="cs-row">
+              <p class="cs-when">{sections.tools}</p>
+              <ul class="cs-tools">
+                {CV.tools.map((group) => (
+                  <li>
+                    <Icon name={group.icon} inline class="cs-tools-ico" />
+                    <strong>{l(group.name)}:</strong> {group.tools.map((tool) => tool.replace(/ /g, NBSP)).join(" · ")}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )
+        }
+        {
+          // Low weight with tech hiring (research): one head line (title · issuer), then the proof or one line.
+          credentials.map((credential) => (
+            <article
+              class="cs-entry cs-cred"
+              data-cv-entry
+              data-cv-placeholder={credential.placeholder ? l(credential.title) : undefined}
+            >
+              <h3>
+                {credential.verifyUrl ? <a href={credential.verifyUrl}>{l(credential.title)}</a> : l(credential.title)}
+                <span class="cs-issuer"> · {l(credential.issuer)}</span>
+              </h3>
+              <p class="cs-when">{l(credential.when)}</p>
+              {credential.items ? (
+                <ul class="cs-certs">
+                  {credential.items.map((item: CertItem) => (
+                    <li>
+                      {item.href || item.site ? <a href={item.href ?? item.site}>{item.title}</a> : item.title}
+                      <span class="cs-meta"> · {certMeta(item)}</span>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                !credential.verifyUrl && <p class="cs-note">{l(credential.summary)}</p>
+              )}
+            </article>
+          ))
+        }
+      </section>
+    ),
   )}
 
   <section class="cs-sec cs-pair">
@@ -206,6 +275,7 @@ const webCv = new URL(pathTo(locale, "cv/"), siteUrl);
         <ul class="cs-langs">
           {CV.languages.map((language) => (
             <li>
+              <svg class="cs-flag" viewBox="0 0 45 30" aria-hidden="true" set:html={FLAGS[language.flag] + FRAME} />
               <strong>{l(language.name)}:</strong> {l(language.level)}
             </li>
           ))}
@@ -225,10 +295,24 @@ const webCv = new URL(pathTo(locale, "cv/"), siteUrl);
     <p class="cs-end-mail">
       <a href={`mailto:${SITE.email}`}>{SITE.email}</a>
     </p>
-    <p class="cs-end-web">
-      <a href={webCv.href}>{short(webCv.href)}</a>
-      {github && <a href={github.href}>{short(github.href)}</a>}
-    </p>
+    <ul class="cs-end-web">
+      <li>
+        <Icon name="tb:file-cv" inline class="cs-ico" />
+        <a href={webCv.href}>{short(webCv.href)}</a>
+      </li>
+      {github && (
+        <li>
+          <Icon name="si:github" inline class="cs-ico cs-gh" />
+          <a href={github.href}>{short(github.href)}</a>
+        </li>
+      )}
+    </ul>
+    <div class="cs-qr">
+      <svg viewBox={`-2 -2 ${qr.size + 4} ${qr.size + 4}`} aria-hidden="true">
+        <rect x="-2" y="-2" width={qr.size + 4} height={qr.size + 4} fill="#fff"></rect>
+        <path d={qrPath}></path>
+      </svg>
+    </div>
   </footer>
 
   {clause && <p class="cs-clause">{tx(clause)}</p>}
@@ -249,7 +333,7 @@ const webCv = new URL(pathTo(locale, "cv/"), siteUrl);
     --t-title: calc(var(--fs) * 1.2);
     --t-meta: calc(var(--fs) * 0.9);
     --t-label: 8.2pt;
-    --t-band: 8.2pt;
+    --t-band: 8.8pt;
     --lh: calc(1.3 + 0.1 * var(--d));
     --sec: calc(4.2mm + 3.4mm * var(--d));
     --entry: calc(2.2mm + 1.8mm * var(--d));
@@ -276,7 +360,7 @@ const webCv = new URL(pathTo(locale, "cv/"), siteUrl);
     font-weight: 700;
   }
 
-  /* The band: full bleed. Photo, fitted name and sticker share the top row at one height; role and place below. */
+  /* The band: full bleed. Photo, fitted name and sticker share the top row at one height; role and availability below. */
   .cs-band {
     display: grid;
     grid-template-columns: var(--photo) 1fr var(--stk);
@@ -359,27 +443,40 @@ const webCv = new URL(pathTo(locale, "cv/"), siteUrl);
     font: 700 var(--t-meta) / 1.35 "CV Strong";
   }
 
-  /* The contact bar: the site's navy bar field, one line, links spelled out. */
+  /* The contact bar: the site's navy bar field, links spelled out, each behind its icon. Three columns: who and where,
+     then the web; a lone last item takes the rest of its row. GitHub and LinkedIn marks stay white (their guidelines). */
   .cs-bar {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.6mm 4mm;
+    display: grid;
+    list-style: none;
+    grid-template-columns: repeat(3, max-content);
+    justify-content: space-between;
+    gap: 1.6mm 6mm;
     margin: 0 calc(-1 * var(--edge)) var(--sec);
-    padding: 2.4mm var(--edge);
+    padding: 2.6mm var(--edge) 2.8mm;
     background: var(--navy);
     color: var(--ice);
-    list-style: none;
     font: 700 var(--t-band) / 1.3 "CV Strong";
   }
-  /* The separator trails its item, so a wrapped line never starts with one. */
-  .cs-bar li:not(:last-child)::after {
-    content: "";
-    display: inline-block;
-    width: 1.3mm;
-    height: 1.3mm;
-    margin: 0 -2.7mm 0.3mm 1.4mm;
-    background: var(--pink);
-    vertical-align: middle;
+  .cs-bar li {
+    display: flex;
+    align-items: center;
+    gap: 1.8mm;
+  }
+  .cs-bar li:last-child:nth-child(3n + 2) {
+    grid-column: span 2;
+  }
+  .cs-ico,
+  .cs-in {
+    flex: none;
+    width: 3.6mm;
+    height: 3.6mm;
+  }
+  .cs-bar .cs-ico {
+    color: #fff;
+  }
+  .cs-in {
+    width: auto;
+    height: 3.2mm;
   }
 
   /* Sections: a heading row (pink tab, label, a rule to the edge), then the content. Tracking stays <= 0.05 em:
@@ -417,30 +514,39 @@ const webCv = new URL(pathTo(locale, "cv/"), siteUrl);
   .cs-wide {
     margin-left: calc(var(--rail) + var(--gutter));
   }
-  .cs-skills p + p {
-    margin-top: calc(0.3mm + 0.4mm * var(--d));
-  }
-  .cs-skills strong {
-    color: var(--cobalt);
-  }
 
-  /* Entries: a grid of rail + column. Title, place and date come first (the reading order an ATS expects), then the
-     bullets; grid items paint in DOM order. */
-  .cs-entry {
+  /* Entries and skill rows: a grid of rail + column. Title, place and date come first (the reading order an ATS
+     expects), then the bullets; grid items paint in DOM order. */
+  .cs-entry,
+  .cs-row {
     display: grid;
     grid-template-columns: var(--rail) minmax(0, 1fr);
     column-gap: var(--gutter);
     break-inside: avoid;
   }
-  .cs-entry > * {
+  .cs-entry > *,
+  .cs-row > * {
     grid-column: 2;
   }
   .cs-entry > .cs-when {
     grid-column: 1;
     grid-row: 1 / span 2;
   }
-  .cs-entry + .cs-entry {
+  /* The rail holds the date and, for his own projects, their logo. It spans every row, so a logo never pushes the
+     bullets down. */
+  .cs-entry > .cs-rail {
+    grid-column: 1;
+    grid-row: 1 / span 9;
+  }
+  .cs-row > .cs-when {
+    grid-column: 1;
+  }
+  .cs-entry + .cs-entry,
+  .cs-row + .cs-entry {
     margin-top: var(--entry);
+  }
+  .cs-row + .cs-row {
+    margin-top: calc(1.4mm + 1.4mm * var(--d));
   }
   .cs-entry h3 {
     font: 850 var(--t-title) / 1.12 "CV Head";
@@ -463,18 +569,43 @@ const webCv = new URL(pathTo(locale, "cv/"), siteUrl);
   /* The date shares the title's baseline: extractors (pdftotext -layout, ATS parsers) pair a date with the title on
      its row. scripts/cv-sheet.mjs checks it. */
   .cs-entry > h3,
-  .cs-entry > .cs-when {
+  .cs-entry > .cs-when,
+  .cs-entry > .cs-rail,
+  .cs-row > * {
     align-self: baseline;
+  }
+  .cs-sticker-mini {
+    transform: rotate(-12deg);
+  }
+  .cs-sticker-mini circle {
+    fill: var(--pink);
+  }
+  .cs-sticker-mini path {
+    fill: var(--navy);
+  }
+  .cs-logo {
+    display: block;
+    width: 8.5mm;
+    height: 8.5mm;
+    margin-top: 1.8mm;
+    border-radius: 1.9mm;
   }
   /* No one-word last lines ("school."). */
   .cs p,
   .cs li {
     text-wrap: pretty;
   }
-  .cs-bullets {
-    margin-top: calc(0.7mm + 0.5mm * var(--d));
+  .cs-bullets,
+  .cs-soft,
+  .cs-tools,
+  .cs-certs,
+  .cs-langs,
+  .cs-end-web {
     padding: 0;
     list-style: none;
+  }
+  .cs-bullets {
+    margin-top: calc(0.7mm + 0.5mm * var(--d));
   }
   .cs-bullets li {
     padding-left: 3.2mm;
@@ -503,14 +634,60 @@ const webCv = new URL(pathTo(locale, "cv/"), siteUrl);
     text-underline-offset: 0.6mm;
   }
 
+  /* Soft skills: two columns of an outline icon, the skill and the line that shows it. */
+  .cs-soft {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: calc(1.4mm + 1mm * var(--d)) 5mm;
+  }
+  /* align-content: a cell beside a taller one keeps its two lines together at the top. */
+  .cs-soft li {
+    display: grid;
+    grid-template-columns: 5mm minmax(0, 1fr);
+    align-content: start;
+    column-gap: 1.6mm;
+    line-height: 1.25;
+  }
+  .cs-soft-ico {
+    grid-row: 1 / span 2;
+    width: 5mm;
+    height: 5mm;
+    margin-top: 0.2mm;
+    color: var(--cobalt);
+  }
+  .cs-soft strong {
+    font-size: var(--fs);
+  }
+  .cs-soft span {
+    font-size: var(--t-meta);
+    color: var(--slate);
+  }
+  /* The skill name carries the cell's baseline (the icon has none), so the rail label sits on the first name's line. */
+  .cs-soft strong {
+    align-self: baseline;
+  }
+  /* Tools: one small row per group, the group in cobalt like the v6 skill rows. */
+  .cs-tools li {
+    font-size: var(--t-meta);
+  }
+  .cs-tools li + li {
+    margin-top: calc(0.5mm + 0.5mm * var(--d));
+  }
+  .cs-tools strong {
+    color: var(--cobalt);
+  }
+  .cs-tools-ico {
+    width: 1.3em;
+    height: 1.3em;
+    margin-right: 0.45em;
+    vertical-align: -0.3em;
+    color: var(--cobalt);
+  }
+
   /* Credentials: the proof lines are links on screen and plain lines on paper (a wall of underlines reads as noise). */
   .cs-certs,
   .cs-note {
     margin-top: calc(0.5mm + 0.4mm * var(--d));
-  }
-  .cs-certs {
-    padding: 0;
-    list-style: none;
   }
   .cs-certs li,
   .cs-cred h3 {
@@ -532,16 +709,23 @@ const webCv = new URL(pathTo(locale, "cv/"), siteUrl);
     gap: 6mm;
     break-inside: avoid;
   }
-  .cs-langs {
-    padding: 0;
-    list-style: none;
+  .cs-langs li + li {
+    margin-top: 0.6mm;
+  }
+  .cs-flag {
+    display: inline-block;
+    width: 1.5em;
+    height: 1em;
+    margin-right: 0.5em;
+    vertical-align: -0.14em;
   }
 
   /* The contact slip: the site's contact field (pink) with a hard navy shadow, at the foot of the last page
-     (--end-gap: the space left, from scripts/cv-sheet.mjs). The bottom margin keeps the shadow inside the page. */
+     (--end-gap: the space left, from scripts/cv-sheet.mjs). The QR code, in a white tile, opens the portfolio. The
+     bottom margin keeps the shadows inside the page. */
   .cs-end {
     display: grid;
-    grid-template-columns: calc(var(--rail) - 4mm) 1fr;
+    grid-template-columns: calc(var(--rail) - 4mm) 1fr auto;
     column-gap: calc(var(--gutter) + 4mm);
     align-items: baseline;
     margin: var(--end-gap, 0mm) 1.8mm 1.8mm 0;
@@ -558,14 +742,40 @@ const webCv = new URL(pathTo(locale, "cv/"), siteUrl);
   .cs-end-web {
     display: flex;
     flex-wrap: wrap;
-    gap: 0 5mm;
+    gap: 1mm 5mm;
     grid-column: 2;
-    margin-top: 1mm;
+    margin-top: 1.5mm;
     font: 700 var(--t-meta) / 1.3 "CV Strong";
+  }
+  .cs-end-web li {
+    display: flex;
+    align-items: center;
+    gap: 1.5mm;
+  }
+  .cs-end .cs-ico {
+    color: var(--navy);
+  }
+  .cs-end .cs-gh {
+    color: #000;
   }
   .cs-end a {
     text-decoration: underline 0.3mm var(--navy);
     text-underline-offset: 0.7mm;
+  }
+  .cs-qr {
+    grid-column: 3;
+    grid-row: 1 / span 2;
+    align-self: center;
+    width: 21mm;
+    height: 21mm;
+    border: 0.5mm solid var(--navy);
+    background: #fff;
+  }
+  .cs-qr svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+    fill: var(--navy);
   }
 
   /* The Polish recruitment clause: small, last, still real text. */

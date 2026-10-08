@@ -59,7 +59,7 @@ Turborepo (`usage/turborepo.md`): `apps/web/` (the site; folders in `conventions
 | fonts | `bun run fonts` (Anybody subset + metric fallbacks + `fit-metrics.gen.ts`; outputs committed) |
 | icons | `bun run icons` (the listed Simple Icons / Tabler icons → `src/lib/icons.gen.ts`; committed) |
 | CV PDFs | `bun run cv:pdf` (needs `bun run preview`; writes `public/files/*.pdf` + `cv-digest.json`; committed) |
-| CV sheet (draft) | `bun run cv:sheet [--png] [--locales en] [--no-build] [--stress more\|less]` (~35 s build + ~1 min per locale; writes `comps/cv/`) · `bun run cv:fonts` when a type role, the name or the sticker changes (outputs committed) |
+| CV sheet (draft) | `bun run cv:sheet [--png] [--locales en] [--no-build] [--stress more\|less] [--no-photo]` (~35 s build + ~1 min per locale; writes `comps/cv/`; English only until the rollout; the slip's QR code comes from `uqr` 0.1.3, MIT, devDependency) · `bun run cv:fonts` when a type role, the name or the sticker changes (outputs committed) |
 | share images + icons | `bun run og` (after a build; writes `public/og/<locale>/*.png`, `public/icons/*`, `manifest.webmanifest`; committed) |
 | video | ffmpeg by hand for now: AV1 (libsvtav1) + H.264, posters as WebP (`public/media/`) |
 | wiki | `node .claude/hooks/wiki-check.mjs` |

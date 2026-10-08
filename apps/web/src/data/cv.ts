@@ -21,6 +21,11 @@ export interface CvEntry {
   when: Text;
   bullets: Text[];
   links?: { label: string; href: string }[];
+  /**
+   * The project's own mark for the CV sheet's rail: a public path, or "sticker" (the portfolio's sticker). Never a
+   * company's or a client's [user 2026-10-08].
+   */
+  logo?: string;
   /** A one-line version for the home "Experience" card: the place and what it was. */
   short?: { name: string; note: Text };
   placeholder?: boolean;
@@ -554,7 +559,7 @@ export const CV = {
 };
 
 /** A stable digest of the CV content of one locale: the PDF records it, `cv.test.ts` compares. */
-export function cvDigestSource(locale: Locale): string {
+export function cvDigestSource(locale: Locale, cv: object = CV): string {
   const pick = (value: unknown): unknown => {
     if (Array.isArray(value)) return value.map(pick);
     if (value && typeof value === "object") {
@@ -568,5 +573,5 @@ export function cvDigestSource(locale: Locale): string {
     }
     return value;
   };
-  return JSON.stringify(pick(CV));
+  return JSON.stringify(pick(cv));
 }

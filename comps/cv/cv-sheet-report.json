@@ -1,12 +1,12 @@
 {
   "en": {
     "file": "..\\..\\comps\\cv\\mateusz-muszarski-cv-en.pdf",
-    "kb": 203.5,
+    "kb": 233.8,
     "pages": 2,
-    "d": 0.33,
+    "d": 0.22,
     "lastPageFill": 0.98,
-    "endGapMm": 5.8,
-    "digest": "6eeb2a82e077df69",
+    "endGapMm": 7.9,
+    "digest": "50c0bf8d32c7a95a",
     "fonts": [
       "Type0/CIDFontType2 AAAAAA+AnybodyCV-BlackName1",
       "Type0/CIDFontType2 BAAAAA+AnybodyCV-BlackName2",
@@ -20,127 +20,25 @@
       "https://muszarski.com/en/",
       "https://github.com/MuchaSsak",
       "https://www.linkedin.com/in/mateusz-muszarski-b1168a28a",
+      "https://github.com/MuchaSsak/lingui-translate-ai",
+      "https://pstrykweb.pl/",
       "https://apps.apple.com/app/id6768303316",
       "https://play.google.com/store/apps/details?id=com.linkoglot.app",
-      "https://github.com/MuchaSsak/3d-space-portfolio",
+      "https://muszarski.com/",
       "https://threejs-journey.com/certificate/view/45175",
       "https://www.udemy.com/certificate/UC-8c6e4b4f-2f3f-4c3e-9773-8b2b2f9ee1a7/",
       "https://www.udemy.com/certificate/UC-f3d532a0-be9d-43e9-b822-0f511752b87c/",
-      "https://www.youthpass.eu/en/verify/",
-      "https://www.youthpass.eu/en/verify/",
-      "https://www.youthpass.eu/en/verify/",
-      "https://hackyeah.pl/",
-      "https://hack4change.tech/",
-      "https://vibethefuture.pl/",
-      "https://www.udemy.com/certificate/UC-69a3d782-44a9-4e70-8502-92f4f87d39de/",
-      "https://www.udemy.com/certificate/UC-ccd766df-76e3-4c9d-8339-c87eabe681de/",
       "mailto:hi@muszarski.com",
       "https://muszarski.com/en/cv/",
       "https://github.com/MuchaSsak"
     ],
     "problems": [],
     "warnings": [
-      "facts still to confirm (placeholder: true in cv.ts): Intern; Freelance and own projects; INF.02 · INF.03 · INF.04"
+      "facts still to confirm (placeholder: true in cv.ts): Freelance and own projects; INF.02 · INF.03 · INF.04; International youth projects"
     ],
     "shots": [
       "..\\..\\comps\\cv\\mateusz-muszarski-cv-en-p1.png",
       "..\\..\\comps\\cv\\mateusz-muszarski-cv-en-p2.png"
-    ]
-  },
-  "pl": {
-    "file": "..\\..\\comps\\cv\\mateusz-muszarski-cv-pl.pdf",
-    "kb": 206.3,
-    "pages": 2,
-    "d": 0.05,
-    "lastPageFill": 1,
-    "endGapMm": 6.9,
-    "digest": "98dd36ac063ad1fd",
-    "fonts": [
-      "Type0/CIDFontType2 AAAAAA+AnybodyCV-BlackName1",
-      "Type0/CIDFontType2 BAAAAA+AnybodyCV-BlackName2",
-      "Type0/CIDFontType2 CAAAAA+AnybodyCV-ExtraBoldCondensed",
-      "Type0/CIDFontType2 DAAAAA+AnybodyCV-Bold",
-      "Type0/CIDFontType2 EAAAAA+AnybodyCV-ExtraBoldExpanded",
-      "Type0/CIDFontType2 FAAAAA+AnybodyCV-Regular"
-    ],
-    "links": [
-      "mailto:hi@muszarski.com",
-      "https://muszarski.com/pl/",
-      "https://github.com/MuchaSsak",
-      "https://www.linkedin.com/in/mateusz-muszarski-b1168a28a",
-      "https://apps.apple.com/app/id6768303316",
-      "https://play.google.com/store/apps/details?id=com.linkoglot.app",
-      "https://github.com/MuchaSsak/3d-space-portfolio",
-      "https://threejs-journey.com/certificate/view/45175",
-      "https://www.udemy.com/certificate/UC-8c6e4b4f-2f3f-4c3e-9773-8b2b2f9ee1a7/",
-      "https://www.udemy.com/certificate/UC-f3d532a0-be9d-43e9-b822-0f511752b87c/",
-      "https://www.youthpass.eu/en/verify/",
-      "https://www.youthpass.eu/en/verify/",
-      "https://www.youthpass.eu/en/verify/",
-      "https://hackyeah.pl/",
-      "https://hack4change.tech/",
-      "https://vibethefuture.pl/",
-      "https://www.udemy.com/certificate/UC-69a3d782-44a9-4e70-8502-92f4f87d39de/",
-      "https://www.udemy.com/certificate/UC-ccd766df-76e3-4c9d-8339-c87eabe681de/",
-      "mailto:hi@muszarski.com",
-      "https://muszarski.com/pl/cv/",
-      "https://github.com/MuchaSsak"
-    ],
-    "problems": [],
-    "warnings": [
-      "facts still to confirm (placeholder: true in cv.ts): Praktykant; Freelance i własne projekty; INF.02 · INF.03 · INF.04"
-    ],
-    "shots": [
-      "..\\..\\comps\\cv\\mateusz-muszarski-cv-pl-p1.png",
-      "..\\..\\comps\\cv\\mateusz-muszarski-cv-pl-p2.png"
-    ]
-  },
-  "es": {
-    "file": "..\\..\\comps\\cv\\mateusz-muszarski-cv-es.pdf",
-    "kb": 204.5,
-    "pages": 2,
-    "d": 0.14,
-    "lastPageFill": 0.99,
-    "endGapMm": 7.9,
-    "digest": "5ea68974c3634749",
-    "fonts": [
-      "Type0/CIDFontType2 AAAAAA+AnybodyCV-BlackName1",
-      "Type0/CIDFontType2 BAAAAA+AnybodyCV-BlackName2",
-      "Type0/CIDFontType2 CAAAAA+AnybodyCV-ExtraBoldCondensed",
-      "Type0/CIDFontType2 DAAAAA+AnybodyCV-Bold",
-      "Type0/CIDFontType2 EAAAAA+AnybodyCV-ExtraBoldExpanded",
-      "Type0/CIDFontType2 FAAAAA+AnybodyCV-Regular"
-    ],
-    "links": [
-      "mailto:hi@muszarski.com",
-      "https://muszarski.com/es/",
-      "https://github.com/MuchaSsak",
-      "https://www.linkedin.com/in/mateusz-muszarski-b1168a28a",
-      "https://apps.apple.com/app/id6768303316",
-      "https://play.google.com/store/apps/details?id=com.linkoglot.app",
-      "https://github.com/MuchaSsak/3d-space-portfolio",
-      "https://threejs-journey.com/certificate/view/45175",
-      "https://www.udemy.com/certificate/UC-8c6e4b4f-2f3f-4c3e-9773-8b2b2f9ee1a7/",
-      "https://www.udemy.com/certificate/UC-f3d532a0-be9d-43e9-b822-0f511752b87c/",
-      "https://www.youthpass.eu/en/verify/",
-      "https://www.youthpass.eu/en/verify/",
-      "https://www.youthpass.eu/en/verify/",
-      "https://hackyeah.pl/",
-      "https://hack4change.tech/",
-      "https://vibethefuture.pl/",
-      "https://www.udemy.com/certificate/UC-69a3d782-44a9-4e70-8502-92f4f87d39de/",
-      "https://www.udemy.com/certificate/UC-ccd766df-76e3-4c9d-8339-c87eabe681de/",
-      "mailto:hi@muszarski.com",
-      "https://muszarski.com/es/cv/",
-      "https://github.com/MuchaSsak"
-    ],
-    "problems": [],
-    "warnings": [
-      "facts still to confirm (placeholder: true in cv.ts): Becario; Freelance y proyectos propios; INF.02 · INF.03 · INF.04"
-    ],
-    "shots": [
-      "..\\..\\comps\\cv\\mateusz-muszarski-cv-es-p1.png",
-      "..\\..\\comps\\cv\\mateusz-muszarski-cv-es-p2.png"
     ]
   }
 }

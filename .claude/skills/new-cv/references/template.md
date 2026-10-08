@@ -21,28 +21,41 @@ can judge when a rule still applies.
 page 1 ┌───────────────────────────────────────────────┐  cobalt band, full bleed (no top margin on page 1)
        │ [photo 28mm]  MATEUSZ      (fitted)  [sticker] │  photo + h1 + sticker share one row
        │               MUSZARSKI                        │
-       │               ────────────────────────────     │  .cs-id: role (CV Head 12 pt) + place · availability
+       │               ────────────────────────────     │  .cs-id: role (CV Head 12 pt) + availability
        ├───────────────────────────────────────────────┤
-       │ email ▪ host ▪ github ▪ linkedin               │  navy contact bar (.cs-bar), links spelled out
+       │ (i) email      (i) place        (i) host        │  navy contact bar (.cs-bar): a 3-column grid of
+       │ (i) github     (i) linkedin                     │    icon + text; a lone last item spans the row
        ├───────────────────────────────────────────────┤
        │ ▪ PROFILE ──────────────────────────────────── │  h2: pink tab, label, navy rule to the edge
        │ [rail 27mm] │ text in the wide column           │  .cs-wide = rail + gutter of left margin
-       │ ▪ SKILLS ──  "Group: a · b · c" one row each    │
-       │ ▪ EDUCATION / EXPERIENCE / SELECTED PROJECTS    │  .cs-entry: grid [rail | 1fr]; EDUCATION_FIRST
-       │ date │ Title (h3)                               │    .cs-when in the rail, rows 1-2
-       │      │ org (slate)                              │    then bullets (pink squares), links
+       │ ▪ EXPERIENCE, then SELECTED PROJECTS            │  .cs-entry: grid [rail | 1fr]
+       │ date │ Title (h3)                               │    .cs-rail: the date, then the project's own logo
+       │ logo │ org (slate)                              │    (it spans every row), then bullets and links
 page 2 │ MATEUSZ MUSZARSKI · CV                    2 / 2 │  @page margin boxes: both outline SVGs (no text)
-       │ ▪ QUALIFICATIONS AND TRAINING                   │  .cs-cred: bold body head "title · issuer", items
-       │ ▪ LANGUAGES        │ ▪ INTERESTS                │  .cs-pair, two columns; one language per line
-       │ ┌ CONTACT  hi@…  web CV · GitHub ┐▌            │  pink contact slip, pinned to the last page's foot
-       │ └────────────────────────────────┘▌            │
+       │ ▪ SKILLS AND QUALIFICATIONS                     │
+       │ Soft skills  │ (i) skill      (i) skill        │  .cs-row + .cs-soft: two columns of icon, skill
+       │              │     its line       its line     │    (body bold) and the line that shows it (meta)
+       │ Technologies │ (i) Group: tool · tool · tool   │  .cs-tools: one small row per group (not tiles)
+       │ date │ title · issuer, then cert lines or 1 line │  .cs-cred
+       │ ▪ EDUCATION                                     │  an entry list
+       │ ▪ LANGUAGES (flags)  │ ▪ INTERESTS              │  .cs-pair; the flags are drawn SVG
+       │ ┌ CONTACT  hi@…  web CV · GitHub      [QR] ┐▌  │  pink slip pinned to the last page's foot; the QR
+       │ └──────────────────────────────────────────┘▌  │    code (white tile) opens the portfolio
        │ (pl) recruitment clause, small                  │
        └───────────────────────────────────────────────┘
 ```
 
-Section order and why: `content.md` § 3. Page 1 must sell him alone: who, role, place, contact, stack, school, work.
-`EDUCATION_FIRST` in the sheet's frontmatter puts Education before Experience while he is at school; set it to `false`
-after graduation. Empty lists and blocks render nothing.
+Section order and why: `content.md` § 3 (the owner's order, 2026-10-08): the work on page 1, then skills and
+qualifications, Education last before the languages. The `blocks` array in the sheet's frontmatter sets it. Empty
+lists and blocks render nothing.
+
+**Marks and icons** [user 2026-10-08: "use logos and icons when you know its okay"]: UI icons are Tabler outlines
+(MIT) through `Icon` with `inline`. GitHub and LinkedIn appear only as links to his profiles, which their guidelines
+allow: white on navy, black on pink, LinkedIn as its own artwork (`public/media/cv/linkedin-in-white.webp`, never
+Tabler's outline). No tool logos: React, GitLab, Playwright, Lighthouse and Claude forbid this use and most others
+don't say (`design/assets.md` § CV marks). A project shows only its own mark (`logo` in the data: a public path, or
+`"sticker"` for the portfolio), never a company's or a client's. Flags are drawn SVG: Windows has no flag emoji, and an
+emoji font would print as Type 3.
 
 Without a photo (`--no-photo`, or no photo file) the band drops to two columns: the name takes the photo's column at
 its capped size (18.2 mm, so the band keeps its height) and the sticker stays right.
@@ -55,7 +68,7 @@ global reset, `--d` default, metadata, digest), `styles/cv-fonts.css` + `lib/cv-
 
 - **`--d`** (0 = densest, 1 = roomiest) is one CSS variable on `:root`. Every body size and gap reads it: body
   `10pt + 0.8pt·d`, line height `1.3 + 0.1·d`, section gap `4.2 + 3.4·d` mm, entry gap `2.2 + 1.8·d` mm, list gaps.
-  The band, the labels (7.6 pt) and the bar (8.2 pt) are fixed: they are chrome, not content.
+  The band, the labels (8.2 pt) and the bar (8.8 pt) are fixed: they are chrome, not content.
 - `cv-sheet.mjs` prints at `d = 0`. More than 2 pages there = **error** (cut content, `content.md` § 7). If it fits one
   page, it searches the roomiest one-page `d`; one page wins when that is ≥ 0.4 (`ONE_PAGE_MIN_D`), so a short CV
   doesn't get crammed onto one sheet. Otherwise the roomiest two-page `d` (6 halvings, ~1/64).
@@ -77,11 +90,11 @@ global reset, `--d` default, metadata, digest), `styles/cv-fonts.css` + `lib/cv-
   shadow, the slip; never text on white, 2.97:1), slate `#4b4f78` (meta text, 7.8:1).
 - Type roles, one static font each: CV Text (400/100, body), CV Strong (700/100, bold inline, meta, bar), CV Head
   (850/78 condensed, job and project h3, role, slip email), CV Label (800/125 expanded, h2 labels; the running head
-  and page number are its outlines), CV Name 1/2 (900, fitted). Six steps of size: label 7.6 pt, band 8.2 pt, meta
+  and page number are its outlines), CV Name 1/2 (900, fitted). Six steps of size: label 8.2 pt, bar 8.8 pt, meta
   0.9·fs, body fs (also the credential head lines, in CV Strong), title 1.2·fs, slip email 2.1·fs (+ the role's 12 pt
-  and the fitted name). Labels, the contact bar and the band's role line are chrome: labels and bar 8.2 pt (the bar's
-  one line holds the LinkedIn address only up to 8.2 pt; the email repeats large in the slip), the availability line
-  at the meta size. Adding a step needs a reason.
+  and the fitted name). Labels, the contact bar and the band's role line are chrome: labels 8.2 pt, the bar 8.8 pt
+  on two rows, the availability line at the meta size. Skill names are bold body type; their lines and the tools run at
+  the meta size. Adding a step needs a reason.
 - Geometry: edge 14 mm (padding, see § 8), rail 27 mm, gutter 5 mm, photo 28 mm, sticker 26 mm, hard shadows 1.8 mm.
 
 ## 4. Invariants and why
@@ -101,6 +114,11 @@ global reset, `--d` default, metadata, digest), `styles/cv-fonts.css` + `lib/cv-
 | Body never below 10 pt (`d = 0`); 9 pt only for meta lines | print guidance (UT Austin, Tech Interview Handbook: never under 10 pt); overflow is a content problem, not a type problem |
 | The default `--d` lives on `:root`, never on `.cs` | a value on `.cs` shadows the one the script sets on `<html>`: `--d` silently did nothing |
 | Margin resets are global in the page (`:is(h1,h2,h3,p,ul) { margin: 0 }`), not scoped | Astro's scoped `.cs :where(…)` gains the scope attribute's specificity and beat the class rules: every margin was 0 |
+| Lists are reset by their own class (`.cs-bullets, .cs-soft, …`), never by a scoped `.cs ul` | an element rule under `.cs` outranks one class: it zeroed the contact bar's padding (v7) |
+| A rail logo sits in `.cs-rail`, which spans every row (`grid-row: 1 / span 9`) and aligns on the date's baseline | a rail spanning only the title rows pushed the bullets down by the logo's height |
+| A tool's name keeps its spaces as no-break spaces | "Tailwind / CSS" broke across two lines |
+| Soft-skill cells are `align-content: start`, and the skill name is `align-self: baseline` | beside a taller cell the line drifted from its name; without a baseline item the cell took the icon's bottom edge, so the rail label sat 6 pt low |
+| Only marks we know are allowed (§ 1 Marks and icons) | the owner's rule; most tool brands forbid logo use |
 
 ## 5. Checks
 
@@ -128,7 +146,7 @@ The checks prove the text layer; they don't see the page. Always look at the PNG
 1. Data: add the field to `cv.ts` (a `Text` per locale; optional fields stay optional so other CVs still build).
 2. Heading: a Lingui string in `CvSheet.astro`'s `sections` map (reuse the `/cv/` page's msgid when it says the same),
    `bun run i18n:extract`, translate pl + es in the `.po` files (es unreviewed).
-3. Markup: an entry list goes in the `[experience, education, projects]` map (same `cs-entry` shape, free stress
+3. Markup: an entry list goes in the `blocks` array (same `cs-entry` shape, free stress
    testing); a prose block uses `<section class="cs-sec">` + `h2[data-cv-heading]` + `.cs-wide`. Anything that must
    reach the text layer gets `data-cv-must`; a link that must be clickable, `data-cv-link`.
 4. Sizes and gaps read `--d` (`calc(base + span * var(--d))`); colours from the tokens; no new type size without a reason.
@@ -173,4 +191,7 @@ Run it when a role's axes, the name (`SITE.name`), the sticker words or the char
   any colour change.
 - The `pdftotext` here is xpdf 4.00, not poppler: its `-layout` mode guesses column blocks and can file a rail date
   under the wrong entry even when the baselines are identical (2026-10-08). For row pairing trust the built-in check
-  or PyMuPDF (`page.get_text("text", sort=True)`); use plain `pdftotext` for the reading order.
+  or PyMuPDF (`page.get_text("text", sort=True)`); use plain `pdftotext` for the reading order. It also reads a
+  two-column block (the skill cells, the contact bar) column by column: fine, each cell stays whole.
+- A hyphen at a line end reads as a word break to extractors: "15-requirement" came out as "15requirement". Reword
+  ("a spec of 15 requirements") rather than leave a hyphenated word to wrap.
