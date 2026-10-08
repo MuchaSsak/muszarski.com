@@ -542,6 +542,15 @@ export const CV = {
     pl: "Kalistenika, podróże, motocykle, filmy, muzyka każdego rodzaju, granie ze znajomymi.",
     es: "Calistenia, viajes, motos, cine, música de todo tipo, jugar con amigos.",
   } satisfies Text,
+
+  /**
+   * The recruitment consent line at the end of the CV. Polish recruiters still expect it although the Labour Code data
+   * needs no consent; Spanish and English CVs carry none (research/2026-10-08-cv-locale-conventions.md, RocketJobs'
+   * one-line wording: no company name, covers the photo and future recruitments).
+   */
+  clause: {
+    pl: "Wyrażam zgodę na przetwarzanie moich danych osobowych zawartych w aplikacji dla potrzeb niezbędnych do realizacji obecnego oraz przyszłych procesów rekrutacyjnych.",
+  } satisfies Partial<Text>,
 };
 
 /** A stable digest of the CV content of one locale: the PDF records it, `cv.test.ts` compares. */

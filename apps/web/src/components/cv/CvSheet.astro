@@ -1,0 +1,523 @@
+---
+/**
+ * The CV sheet: the CV PDF's layout (design.md § CV sheet, content-model.md § CV), rendered from `~/data/cv` like the
+ * /cv/ page. A poster on paper: a cobalt band (photo, fitted name, sticker, role, place), a navy contact bar, then a
+ * ledger (section rows, dates in a left rail, content on the right) over at most two A4 pages, closed by a pink
+ * contact slip at the foot of the last page.
+ *
+ * Built for two readers at once (research/2026-10-08-cv-recruiters-ats.md):
+ * - a recruiter's skim: page 1 alone says who, what, where, how to reach him, the stack, the work and the school;
+ * - an ATS: real text in reading order, plain headings with tracking <= 0.05 em, static named TrueType fonts, links
+ *   spelled out, decoration as outlines.
+ *
+ * Paint order is text order: Chrome writes the PDF's text in paint order, and a positioned or transformed box paints
+ * after all in-flow content. So nothing that holds text is positioned or transformed: the rail is a grid column, the
+ * bullet squares are in-flow boxes, the sticker (outlines, no text) is a grid item.
+ *
+ * Fluid: every size and gap in the body reads `--d` (0 = densest, 1 = roomiest); `scripts/cv-sheet.mjs` picks the
+ * roomiest value that fits two pages, then sets `--end-gap` so the contact slip sits at the foot of the last page.
+ * Entries never split across pages; sections may. `data-cv-*` hooks are for that script.
+ */
+import { Image } from "astro:assets";
+import { t } from "lingui-for-astro/macro";
+
+import { type CertItem, type CvEntry, CV, type Text } from "~/data/cv";
+import { PROFILES, SITE } from "~/data/site";
+import { CV_NAME, CV_STICKER } from "~/lib/cv-fonts.gen";
+import { photoFile } from "~/lib/photos";
+import { pathTo } from "~/lib/routes";
+import { typo } from "~/lib/typography";
+
+interface Props {
+  siteUrl: string;
+}
+
+const { siteUrl } = Astro.props;
+const locale = Astro.locals.locale;
+const NBSP = String.fromCharCode(160);
+// Locale typography (one-letter words and numbers bind to the next word), and a range dash stays with the word before
+// it, so a date never wraps into "– now" at the start of a line.
+const tx = (text: string) => typo(locale, text).replace(/ – /g, `${NBSP}– `);
+const l = (text: Text) => tx(text[locale]);
+const photo = photoFile("mateusz-muszarski-cv");
+const short = (href: string) => href.replace(/^(https?:\/\/)?(www\.)?/, "").replace(/\/$/, "");
+const nameEm = Math.max(...CV_NAME.map((line) => line.em));
+const github = PROFILES.find((profile) => profile.id === "github");
+const linkedin = PROFILES.find((profile) => profile.id === "linkedin");
+const contact = [
+  { text: SITE.email, href: `mailto:${SITE.email}` },
+  // The domain alone reads better; the link opens the CV's own language.
+  { text: new URL(siteUrl).host, href: siteUrl },
+  ...[github, linkedin].flatMap((profile) => (profile ? [{ text: short(profile.href), href: profile.href }] : [])),
+];
+const sections = {
+  summary: t`Profile`,
+  skills: t`Skills`,
+  experience: t`Experience`,
+  education: t`Education`,
+  projects: t`Selected projects`,
+  credentials: t`Qualifications and training`,
+  languages: t`Languages`,
+  interests: t`Interests`,
+  contact: t`Contact`,
+};
+const credentials = CV.credentials.filter((credential) => credential.kind !== "experience");
+// A repository reads best as its address (a paper reader can type it); a store badge by its name.
+const linkText = (link: { label: string; href: string }) => (/github\.com\//.test(link.href) ? short(link.href) : link.label);
+const certMeta = (item: CertItem) => tx(item.when[locale]);
+const clause = (CV.clause as Partial<Record<string, string>>)[locale];
+// The web version of this CV, in the same language.
+const webCv = new URL(pathTo(locale, "cv/"), siteUrl);
+---
+
+<div class="cs" style={`--name-em: ${nameEm}`}>
+  <header class="cs-band">
+    {
+      photo && (
+        <div class="cs-photo">
+          <Image src={photo} alt={SITE.name} width={Math.min(photo.width, 600)} format="webp" quality={92} />
+        </div>
+      )
+    }
+    <h1 class="cs-name">
+      {
+        CV_NAME.map((line, i) => (
+          <>
+            {i > 0 && " "}
+            <span style={`font-family: "${line.family}"`}>{line.text}</span>
+          </>
+        ))
+      }
+    </h1>
+    <svg class="cs-sticker" viewBox="0 0 200 200" aria-hidden="true">
+      <circle cx="100" cy="100" r="96"></circle>
+      <path d={CV_STICKER.ring}></path>
+      <path d={CV_STICKER.core}></path>
+    </svg>
+    <div class="cs-id">
+      <p class="cs-role" data-cv-must={CV.title[locale]}>{l(CV.title)}</p>
+      <p class="cs-avail" data-cv-must={CV.location[locale]}>{`${l(CV.location)} · ${l(CV.availability)}`}</p>
+    </div>
+  </header>
+  <ul class="cs-bar" aria-label={sections.contact}>
+    {
+      contact.map((item) => (
+        <li>
+          <a href={item.href} data-cv-link data-cv-must={item.text}>
+            {item.text}
+          </a>
+        </li>
+      ))
+    }
+  </ul>
+
+  <section class="cs-sec">
+    <h2 data-cv-heading>{sections.summary}</h2>
+    <p class="cs-wide">{l(CV.summary)}</p>
+  </section>
+
+  <section class="cs-sec">
+    <h2 data-cv-heading>{sections.skills}</h2>
+    <div class="cs-wide cs-skills">
+      {
+        // One line per group, the group name inline: every text extractor keeps it next to its tools.
+        CV.skills.map((group) => (
+          <p>
+            <strong>{l(group.group)}:</strong> {group.items.join(" · ")}
+          </p>
+        ))
+      }
+    </div>
+  </section>
+
+  {
+    (
+      [
+        { heading: sections.experience, entries: CV.experience },
+        { heading: sections.education, entries: CV.education },
+        { heading: sections.projects, entries: CV.projects },
+      ] satisfies { heading: string; entries: CvEntry[] }[]
+    ).map((list) => (
+      <section class="cs-sec" data-cv-list>
+        <h2 data-cv-heading>{list.heading}</h2>
+        {list.entries.map((entry) => (
+          <article class="cs-entry" data-cv-entry>
+            <h3>{l(entry.title)}</h3>
+            {entry.org && <p class="cs-org">{l(entry.org)}</p>}
+            <p class="cs-when">{l(entry.when)}</p>
+            {entry.bullets.length > 0 && (
+              <ul class="cs-bullets">
+                {entry.bullets.map((bullet) => (
+                  <li>{l(bullet)}</li>
+                ))}
+              </ul>
+            )}
+            {entry.links && (
+              <p class="cs-links">
+                {entry.links.map((link) => (
+                  <a href={link.href}>{linkText(link)}</a>
+                ))}
+              </p>
+            )}
+          </article>
+        ))}
+      </section>
+    ))
+  }
+
+  <section class="cs-sec" data-cv-list>
+    <h2 data-cv-heading>{sections.credentials}</h2>
+    {
+      // Low weight with tech hiring (research): one head line (title · issuer), then the proof, one line each.
+      credentials.map((credential) => (
+        <article class="cs-entry" data-cv-entry>
+          <h3>
+            {credential.verifyUrl ? <a href={credential.verifyUrl}>{l(credential.title)}</a> : l(credential.title)}
+            <span class="cs-issuer"> · {l(credential.issuer)}</span>
+          </h3>
+          <p class="cs-when">{l(credential.when)}</p>
+          {credential.items ? (
+            <ul class="cs-certs">
+              {credential.items.map((item) => (
+                <li>
+                  {item.href || item.site ? <a href={item.href ?? item.site}>{item.title}</a> : item.title}
+                  <span class="cs-meta"> · {certMeta(item)}</span>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            !credential.verifyUrl && <p class="cs-note">{l(credential.summary)}</p>
+          )}
+        </article>
+      ))
+    }
+  </section>
+
+  <section class="cs-sec cs-pair">
+    <div>
+      <h2 data-cv-heading>{sections.languages}</h2>
+      <p>
+        {
+          CV.languages.map((language, i) => (
+            <>
+              {i > 0 && " · "}
+              <strong>{l(language.name)}</strong>{`${NBSP}${l(language.level)}`}
+            </>
+          ))
+        }
+      </p>
+    </div>
+    <div>
+      <h2 data-cv-heading>{sections.interests}</h2>
+      <p>{l(CV.interests)}</p>
+    </div>
+  </section>
+
+  <footer class="cs-end">
+    <h2 data-cv-heading>{sections.contact}</h2>
+    <p class="cs-end-mail"><a href={`mailto:${SITE.email}`}>{SITE.email}</a></p>
+    <p class="cs-end-web">
+      <a href={webCv.href}>{short(webCv.href)}</a>
+      {github && <a href={github.href}>{short(github.href)}</a>}
+    </p>
+  </footer>
+
+  {clause && <p class="cs-clause">{tx(clause)}</p>}
+</div>
+
+<style>
+  /* Tokens: the Cobalt palette of global.css (this page loads no global CSS) plus one slate for meta text (7.8:1). */
+  .cs {
+    --cobalt: #2433ff;
+    --ice: #eef0ff;
+    --navy: #0a0d33;
+    --pink: #ff4fb8;
+    --slate: #4b4f78;
+    /* The type scale, six steps (the name is fitted): every body step reads --d, set on the root (the print page's
+       default, or scripts/cv-sheet.mjs while it fits the sheet): 0 = densest (body 9.6 pt), 1 = roomiest (10.6 pt). */
+    --fs: calc(9.6pt + 1pt * var(--d));
+    --t-title: calc(var(--fs) * 1.2);
+    --t-meta: calc(var(--fs) * 0.9);
+    --t-label: 7.6pt;
+    --t-band: 8.2pt;
+    --lh: calc(1.3 + 0.1 * var(--d));
+    --sec: calc(4.2mm + 3.4mm * var(--d));
+    --entry: calc(2.2mm + 1.8mm * var(--d));
+    --rail: 27mm;
+    --gutter: 5mm;
+    --photo: 28mm;
+    --stk: 26mm;
+    --edge: 14mm;
+    padding: 0 var(--edge);
+    color: var(--navy);
+    font: 400 var(--fs) / var(--lh) "CV Text";
+    font-kerning: normal;
+    font-variant-ligatures: none;
+    /* A weight or style the static fonts lack must show, not get synthesised (Chrome prints a fake bold as Type 3). */
+    font-synthesis: none;
+    print-color-adjust: exact;
+  }
+  .cs a {
+    color: inherit;
+    text-decoration: none;
+  }
+  .cs strong {
+    font-family: "CV Strong";
+    font-weight: 700;
+  }
+
+  /* The band: full bleed. Photo, fitted name and sticker share the top row at one height; role and place below. */
+  .cs-band {
+    display: grid;
+    grid-template-columns: var(--photo) 1fr var(--stk);
+    align-items: center;
+    column-gap: 6mm;
+    margin: 0 calc(-1 * var(--edge));
+    padding: 9mm var(--edge) 5mm;
+    background: var(--cobalt);
+    color: var(--ice);
+  }
+  .cs-photo {
+    width: var(--photo);
+    height: var(--photo);
+    border: 0.6mm solid var(--ice);
+    box-shadow: 1.8mm 1.8mm 0 var(--pink);
+    background: var(--ice);
+  }
+  .cs-photo img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .cs-name {
+    display: flex;
+    flex-direction: column;
+    font-weight: 900;
+    /* Each line is exactly as wide as its column: the width in em comes from scripts/cv-fonts.mjs. */
+    font-size: calc((210mm - 2 * var(--edge) - var(--photo) - var(--stk) - 12mm) / var(--name-em) * 0.995);
+    line-height: 0.78;
+    white-space: nowrap;
+  }
+  /* The hero sticker's twin: outlines only (no text), so it may turn. */
+  .cs-sticker {
+    width: var(--stk);
+    height: var(--stk);
+    transform: rotate(-12deg);
+  }
+  .cs-sticker circle {
+    fill: var(--pink);
+  }
+  .cs-sticker path {
+    fill: var(--navy);
+  }
+  .cs-id {
+    grid-column: 2 / -1;
+    margin-top: 3mm;
+    padding-top: 2mm;
+    border-top: 0.8mm solid var(--ice);
+  }
+  .cs-role {
+    font: 850 12pt / 1.12 "CV Head";
+    text-transform: uppercase;
+  }
+  .cs-avail {
+    margin-top: 1mm;
+    font: 700 var(--t-band) / 1.35 "CV Strong";
+  }
+
+  /* The contact bar: the site's navy bar field, one line, links spelled out. */
+  .cs-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6mm 4mm;
+    margin: 0 calc(-1 * var(--edge)) var(--sec);
+    padding: 2.4mm var(--edge);
+    background: var(--navy);
+    color: var(--ice);
+    list-style: none;
+    font: 700 var(--t-band) / 1.3 "CV Strong";
+  }
+  /* The separator trails its item, so a wrapped line never starts with one. */
+  .cs-bar li:not(:last-child)::after {
+    content: "";
+    display: inline-block;
+    width: 1.3mm;
+    height: 1.3mm;
+    margin: 0 -2.7mm 0.3mm 1.4mm;
+    background: var(--pink);
+    vertical-align: middle;
+  }
+
+  /* Sections: a heading row (pink tab, label, a rule to the edge), then the content. Tracking stays <= 0.05 em:
+     wider tracking splits words in text extractors (ATS). */
+  .cs-sec {
+    margin-bottom: var(--sec);
+  }
+  .cs-sec h2,
+  .cs-end h2 {
+    font: 800 var(--t-label) / 1.2 "CV Label";
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+  }
+  .cs-sec h2 {
+    display: flex;
+    align-items: center;
+    gap: 2.2mm;
+    margin-bottom: calc(1.6mm + 1mm * var(--d));
+    color: var(--cobalt);
+    break-after: avoid;
+  }
+  .cs-sec h2::before {
+    content: "";
+    flex: none;
+    width: 2.2mm;
+    height: 2.2mm;
+    background: var(--pink);
+  }
+  .cs-sec h2::after {
+    content: "";
+    flex: 1;
+    height: 0.45mm;
+    background: var(--navy);
+  }
+  .cs-wide {
+    margin-left: calc(var(--rail) + var(--gutter));
+  }
+  .cs-skills p + p {
+    margin-top: calc(0.3mm + 0.4mm * var(--d));
+  }
+  .cs-skills strong {
+    color: var(--cobalt);
+  }
+
+  /* Entries: a grid of rail + column. Title, place and date come first (the reading order an ATS expects), then the
+     bullets; grid items paint in DOM order. */
+  .cs-entry {
+    display: grid;
+    grid-template-columns: var(--rail) minmax(0, 1fr);
+    column-gap: var(--gutter);
+    break-inside: avoid;
+  }
+  .cs-entry > * {
+    grid-column: 2;
+  }
+  .cs-entry > .cs-when {
+    grid-column: 1;
+    grid-row: 1 / span 2;
+  }
+  .cs-entry + .cs-entry {
+    margin-top: var(--entry);
+  }
+  .cs-entry h3 {
+    font: 850 var(--t-title) / 1.12 "CV Head";
+  }
+  .cs-org,
+  .cs-issuer,
+  .cs-when,
+  .cs-links {
+    font: 700 var(--t-meta) / 1.3 "CV Strong";
+  }
+  .cs-org,
+  .cs-issuer,
+  .cs-meta {
+    color: var(--slate);
+  }
+  .cs-when {
+    padding-top: 0.2em;
+    font-variant-numeric: tabular-nums;
+    color: var(--cobalt);
+  }
+  .cs-bullets {
+    margin-top: calc(0.7mm + 0.5mm * var(--d));
+    padding: 0;
+    list-style: none;
+  }
+  .cs-bullets li {
+    padding-left: 3.2mm;
+  }
+  .cs-bullets li + li {
+    margin-top: calc(0.3mm + 0.5mm * var(--d));
+  }
+  .cs-bullets li::before {
+    content: "";
+    display: inline-block;
+    width: 1.3mm;
+    height: 1.3mm;
+    margin: 0 1.9mm 0.2em -3.2mm;
+    background: var(--pink);
+    vertical-align: middle;
+  }
+  /* Links read as links on paper too: an underline, never colour alone. */
+  .cs-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 4mm;
+    margin-top: 0.8mm;
+  }
+  .cs-links a {
+    text-decoration: underline 0.25mm var(--cobalt);
+    text-underline-offset: 0.6mm;
+  }
+
+  /* Credentials: the proof lines are links on screen and plain lines on paper (a wall of underlines reads as noise). */
+  .cs-certs,
+  .cs-note {
+    margin-top: calc(0.5mm + 0.4mm * var(--d));
+  }
+  .cs-certs {
+    padding: 0;
+    list-style: none;
+  }
+  .cs-meta {
+    font-size: var(--t-meta);
+  }
+
+  /* Languages and interests side by side: two short blocks, one row. */
+  .cs-pair {
+    display: grid;
+    grid-template-columns: 1fr 1.35fr;
+    gap: 6mm;
+    break-inside: avoid;
+  }
+
+  /* The contact slip: the site's contact field (pink) with a hard navy shadow, at the foot of the last page
+     (--end-gap: the space left, from scripts/cv-sheet.mjs). The bottom margin keeps the shadow inside the page. */
+  .cs-end {
+    display: grid;
+    grid-template-columns: calc(var(--rail) - 4mm) 1fr;
+    column-gap: calc(var(--gutter) + 4mm);
+    align-items: baseline;
+    margin: var(--end-gap, 0mm) 1.8mm 1.8mm 0;
+    padding: calc(4mm + 1.5mm * var(--d)) 4mm;
+    border: 0.5mm solid var(--navy);
+    box-shadow: 1.8mm 1.8mm 0 var(--navy);
+    background: var(--pink);
+    color: var(--navy);
+    break-inside: avoid;
+  }
+  .cs-end-mail {
+    font: 850 calc(var(--fs) * 2.1) / 1.05 "CV Head";
+  }
+  .cs-end-web {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 5mm;
+    grid-column: 2;
+    margin-top: 1mm;
+    font: 700 var(--t-meta) / 1.3 "CV Strong";
+  }
+  .cs-end a {
+    text-decoration: underline 0.3mm var(--navy);
+    text-underline-offset: 0.7mm;
+  }
+
+  /* The Polish recruitment clause: small, last, still real text. */
+  .cs-clause {
+    margin-top: 2.5mm;
+    font-size: var(--t-label);
+    line-height: 1.35;
+    color: var(--slate);
+    break-inside: avoid;
+  }
+</style>

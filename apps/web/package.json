@@ -21,6 +21,8 @@
     "fonts": "node ./scripts/fonts.mjs",
     "icons": "node ./scripts/icons.mjs",
     "cv:pdf": "node ./scripts/cv-pdf.mjs",
+    "cv:sheet": "node ./scripts/cv-sheet.mjs",
+    "cv:fonts": "node ./scripts/cv-fonts.mjs",
     "og": "node ./scripts/og.mjs"
   },
   "dependencies": {
@@ -55,6 +57,8 @@
     "chrome-launcher": "^1.2.2",
     "fontkit": "^2.0.4",
     "lighthouse": "^13.5.0",
+    "pdf-lib": "^1.17.1",
+    "pdfjs-dist": "^6.4.299",
     "simple-icons": "16.34.0",
     "subset-font": "^2.9.0",
     "typescript": "~6.0.3",
