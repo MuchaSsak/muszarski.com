@@ -1,0 +1,602 @@
+---
+title: "Próbuję zbudować brutalistyczne portfolio na miarę Awwwards: proces, sposób myślenia i narzędzia"
+seoTitle: "Jak zbudowałem to portfolio (case study)"
+description: "Case study: dlaczego zamieniłem portfolio 3D na plakat. Research, strony, od których się uczyłem, każda wersja i shadery, które nie przeszkadzają."
+translationKey: this-site
+published: 2026-10-05
+updated: 2026-10-08
+tags: [case-study, ai, astro, performance]
+cover: blueprint
+featured: true
+related: [llm-wiki, fitted-type, reduced-motion]
+sources:
+  - title: "llm-wiki.md, plik z pomysłem Andreja Karpathy'ego (GitHub Gist, 4 kwietnia 2026)"
+    url: "https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f"
+    accessed: 2026-10-07
+  - title: "Lighthouse performance scoring (Chrome for Developers)"
+    url: "https://developer.chrome.com/docs/lighthouse/performance/performance-scoring"
+    accessed: 2026-10-05
+  - title: "Understanding Success Criterion 2.2.2: Pause, Stop, Hide (W3C)"
+    url: "https://www.w3.org/WAI/WCAG22/Understanding/pause-stop-hide.html"
+    accessed: 2026-10-05
+  - title: "Awwwards, Sites of the Day"
+    url: "https://www.awwwards.com/websites/"
+    accessed: 2026-10-05
+  - title: "Mobbin, biblioteka prawdziwych ekranów aplikacji i stron"
+    url: "https://mobbin.com/"
+    accessed: 2026-10-05
+  - title: "Playwright"
+    url: "https://playwright.dev/"
+    accessed: 2026-10-07
+  - title: "axe-core, silnik reguł dostępności (Deque)"
+    url: "https://github.com/dequelabs/axe-core"
+    accessed: 2026-10-07
+  - title: "Solar System Scope, tekstury planet (CC BY 4.0) użyte w starym kosmicznym portfolio"
+    url: "https://www.solarsystemscope.com/textures/"
+    accessed: 2026-10-05
+  - title: "Anybody, zmienny font (Google Fonts)"
+    url: "https://fonts.google.com/specimen/Anybody"
+    accessed: 2026-10-05
+---
+
+import Breaker from "~/components/blog/case/Breaker.astro";
+import Clips from "~/components/blog/case/Clips.astro";
+import Flow from "~/components/blog/case/Flow.astro";
+import Matrix from "~/components/blog/case/Matrix.astro";
+import Shots from "~/components/blog/case/Shots.astro";
+import Timeline from "~/components/blog/case/Timeline.astro";
+import Versions from "~/components/blog/case/Versions.astro";
+import oldSpace from "~/assets/case/old-space.webp";
+import draftingTable from "~/assets/case/drafting-table.webp";
+import dirOrbit from "~/assets/case/dir-orbit.webp";
+import dirPoster from "~/assets/case/dir-poster.webp";
+import dirToybox from "~/assets/case/dir-toybox.webp";
+import dirExhibit from "~/assets/case/dir-exhibit.webp";
+import heroNow from "~/assets/case/hero-now.webp";
+import aiR2 from "~/assets/case/ai-r2.webp";
+import aiR3 from "~/assets/case/ai-r3.webp";
+import aiNow from "~/assets/case/ai-now.webp";
+import credR2 from "~/assets/case/credentials-r2.webp";
+import credR3 from "~/assets/case/credentials-r3.webp";
+import credNow from "~/assets/case/credentials-now.webp";
+import contactR2 from "~/assets/case/contact-r2.webp";
+import contactR3 from "~/assets/case/contact-r3.webp";
+import contactNow from "~/assets/case/contact-now.webp";
+import howR2 from "~/assets/case/how-r2.webp";
+import howNow from "~/assets/case/how-now.webp";
+import coversBefore from "~/assets/case/covers-before.webp";
+import coversAfter from "~/assets/case/covers-after.webp";
+import pageWork from "~/assets/case/page-work-pl.webp";
+import pageLife from "~/assets/case/page-life-pl.webp";
+import pageCv from "~/assets/case/page-cv-pl.webp";
+import pageBlog from "~/assets/case/page-blog-pl.webp";
+import pagesPhone from "~/assets/case/pages-phone-pl.webp";
+import qaSweep from "~/assets/case/qa-sweep.webp";
+import lighthouseReport from "~/assets/case/lighthouse.webp";
+import refBruno from "~/assets/case/ref-bruno-simon.webp";
+import refSamsy from "~/assets/case/ref-samsy.webp";
+import refJordan from "~/assets/case/ref-jordan-delcros.webp";
+import refEdoardo from "~/assets/case/ref-edoardo-lunardi.webp";
+import refJesper from "~/assets/case/ref-jesper-landberg.webp";
+import refAntoine from "~/assets/case/ref-antoine-wodniack.webp";
+import refStefan from "~/assets/case/ref-stefan-vitasovic.webp";
+import seoAuthor from "~/assets/case/seo-author-pl.webp";
+import seoFooter from "~/assets/case/seo-footer-pl.webp";
+
+Moje stare portfolio było lotem WebGL od Ziemi do Neptuna. Na moim komputerze wyglądało świetnie. Na telefonie pokazywało ekran „Oops!”. To historia zamiany go na plakat: wersje, research, strony, od których się uczyłem, i powody każdej decyzji, głównie w obrazkach.
+
+> **W skrócie**
+>
+> - **Przed:** strona 3D z wynikiem 34 w mobilnym Lighthouse, która nie działała na telefonach.
+> - **Po:** Astro, trzy języki, jeden font, kilka shaderów, które nigdy nie przeszkadzają, i od 95 do 100 punktów w mobilnym Lighthouse.
+> - **Jak:** wiki projektu przed pierwszą linijką kodu, research nagradzanych stron i prawdziwych produktów, cztery działające projekty do wyboru i kontrola przy każdej zmianie.
+
+## Według jakich zasad pracowałem?
+
+Sześć zasad: większość spisana przed pierwszą linijką kodu, reszta wyniesiona po drodze. Wszystko poniżej z nich wynika.
+
+1. **Najpierw plan, potem kod.** Projekt żyje w wiki, które każda sesja AI czyta na początku.
+2. **Najpierw praktyczność, potem efekt wow.** Robi wrażenie w 3 sekundy i działa jednym dotknięciem na telefonie.
+3. **Najpierw research, potem wybór.** Najpierw prawdziwe strony i ekrany; wybieram spośród działających opcji, nie szkiców.
+4. **Pokaż zamiast opisywać.** Obraz albo ruchome demo wszędzie tam, gdzie byłby akapit.
+5. **Każda wersja zostaje.** Żeby pokazać, jak się zmieniało, i móc wrócić.
+6. **Nic nie wychodzi bez sprawdzenia.** Testy, zrzuty ekranu, które oglądam sam, szybkość na wolnym telefonie.
+
+## Jak to szło, wersja po wersji?
+
+Około czterech dni, a każda wersja zostaje.
+
+<Timeline
+  label="Wersje tej strony, od najstarszej"
+  steps={[
+    {
+      date: "Wcześniej",
+      title: "Kosmiczne portfolio 3D",
+      image: oldSpace,
+      alt: "Stara strona: świecąca planeta i napis Projects w kosmosie",
+      verdict: "Zastąpione",
+      tone: "no",
+      note: "Lot WebGL do Neptuna. Piękny na moim komputerze, ekran „Oops!” na telefonach.",
+    },
+    {
+      date: "5 paź 2026",
+      title: "Faza 0: wiki zamiast kodu",
+      cover: "wiki",
+      verdict: "Zostaje",
+      tone: "plain",
+      decision: "Najpierw plan, potem kod.",
+      note: "Research, wymagania, marka, prawo i zasady projektu, zanim powstał jakikolwiek komponent.",
+    },
+    {
+      date: "5 paź 2026",
+      title: "Drafting Table",
+      image: draftingTable,
+      alt: "Pierwszy projekt: jasna strona jak papier, siatka rysunku technicznego i mały nagłówek",
+      verdict: "Odrzucony",
+      tone: "no",
+      decision: "Czysty system to jeszcze nie dobry projekt.",
+      note: "Papier, cyjanotypia i nagłówek jak tabelka rysunku. Przechodził wszystkie testy i niczym nie zapadał w pamięć.",
+    },
+    {
+      date: "5 paź 2026",
+      title: "Cztery działające kierunki",
+      image: dirPoster,
+      alt: "Kierunek Poster: imię i nazwisko wielkimi białymi literami na kobaltowym tle i różowa okrągła naklejka",
+      verdict: "Wybrany Poster",
+      tone: "yes",
+      decision: "Typografia jest obrazem.",
+      note: "Orbit, Poster, Toybox i Exhibit jako działające strony. Claude polecał Orbit. Ja wybrałem Poster.",
+    },
+    {
+      date: "5 paź 2026",
+      title: "Runda 2: Poster wszędzie",
+      image: contactR2,
+      alt: "Runda 2 Postera: sekcja kontaktu, Let's talk wielkimi literami na różowym tle",
+      verdict: "Uwagi",
+      tone: "plain",
+      note: "Cała strona główna w stylu Poster, trzy motywy kolorów i dwa fonty sprawdzane obok siebie.",
+    },
+    {
+      date: "5 paź 2026",
+      title: "Runda 3: mniej tekstu",
+      image: credR3,
+      alt: "Runda 3 Postera: kwalifikacje jako wysokie karty z bocznymi tytułami, jedna otwarta",
+      verdict: "Zatwierdzone",
+      tone: "yes",
+      decision: "Mniej tekstu, więcej do zobaczenia.",
+      note: "Logotypy narzędzi z nazwami, krótki film dla każdego projektu, krócej wszędzie. Tu kończą się makiety i zaczyna prawdziwy kod.",
+    },
+    {
+      date: "6-8 paź 2026",
+      title: "Strona, na której jesteś",
+      image: heroNow,
+      alt: "Dzisiejszy nagłówek: imię i nazwisko od krawędzi do krawędzi na kobalcie, rola i dwa przyciski",
+      verdict: "Działa",
+      tone: "yes",
+      note: "Zbudowana w Astro sekcja po sekcji, a potem przerobiona po kolejnych rundach moich uwag na żywej stronie.",
+    },
+  ]}
+/>
+
+## Po co ją przebudowywać?
+
+Tak wyglądało stare portfolio w ruchu:
+
+<Clips
+  clips={[{ src: "flight", dir: "/media/space/", width: 960, height: 540, label: "Stare kosmiczne portfolio: kamera przelatuje obok Marsa do Jowisza", name: "Stara strona" }]}
+  caption="Kosmiczne portfolio 3D nagrane na komputerze. Tekstury planet: Solar System Scope, CC BY 4.0."
+/>
+
+Na moim komputerze wyglądało pięknie. Potem je zmierzyłem, 5 października 2026:
+
+- **13,8 MB przed przyciskiem „start”.** Z czego 7,6 MB to font z emoji.
+- **34 punkty w mobilnym Lighthouse.** Na spowolnionym telefonie główna treść pojawiała się po 46,9 sekundy.
+- **Telefony dostawały ekran „Oops!”.** Strona w ogóle tam nie działała.
+- **Ruszało nią tylko kółko myszy.** Bez gestów, bez klawiatury.
+- **Nic dla wyszukiwarek.** W surowym HTML nie było tekstu do zaindeksowania.
+
+Ktoś, kto otwiera portfolio z wiadomości na LinkedInie, na telefonie, daje mu może dziesięć sekund. Moja stara strona wydawała je na pasek ładowania. Udowadniała, że umiem pisać shadery, ale też, że nie pomyślałem o osobie po drugiej stronie.
+
+Dlatego bez ekranu ładowania, bez bramki na wejściu, bez przejmowania przewijania i z tą samą treścią na każdym ekranie.
+
+## Po co jest portfolio?
+
+Żeby pokazać pracę. Brzmi oczywiście, a jednak wiele portfolio zasypuje odwiedzających akapitami „o mnie” albo sprzedaje swój stack technologiczny, jakby był czymś świętym, a projekty lądują trzy przewinięcia niżej. Tutaj projekty są zaraz po imieniu: „Zobacz projekty” to pierwszy przycisk, narzędzia to jeden pasek logotypów, a „o mnie” ma własną stronę.
+
+## Jak wyglądało planowanie?
+
+Zanim powstała pierwsza linijka kodu, spisałem projekt w wiki ze stron w markdownie: odbiorców, markę, budżety, teksty prawne. Pomysł pochodzi z [LLM Wiki](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f) Andreja Karpathy'ego: AI samo aktualizuje wiki, więc to, czego się nauczy, odkłada się zamiast przepadać. Trzy hooki Claude Code podsuwają właściwe strony każdej sesji:
+
+<Flow
+  label="Jak wiki trafia do każdej sesji"
+  steps={[
+    {
+      icon: "tb:notebook",
+      title: "Start sesji",
+      text: "Najpierw ładują się zasady pracy i lekcje.",
+    },
+    {
+      icon: "tb:route",
+      title: "Każde polecenie",
+      text: "Hook wskazuje strony wiki, których potrzebuje zadanie.",
+    },
+    {
+      icon: "tb:code",
+      title: "Praca",
+      text: "Claude Code buduje i sprawdza, mając te strony przed sobą.",
+    },
+    {
+      icon: "tb:shield-lock",
+      title: "Koniec tury",
+      text: "Jeśli zmienił się kod, a wiki nie, tura raz się zatrzymuje.",
+    },
+  ]}
+  loop="Błąd staje się jednozdaniową lekcją, a następna sesja zaczyna już z nią."
+/>
+
+Więcej w tekście [LLM wiki: pamięć projektu dla Claude Code](/pl/blog/llm-wiki-pamiec-projektu-dla-claude-code/).
+
+## Co pokazał research?
+
+Agenci otworzyli 20 portfolio programistów nagrodzonych na Awwwards w latach 2023-2026, na komputerze i na spowolnionym telefonie (1,6 Mb/s, procesor 4× wolniejszy). Każde dostało dwie oceny od 1 do 5: **Wow** za to, jak bardzo zapada w pamięć, i **Praktyczność** za to, jak szybko dojdziesz do projektów i kontaktu, mierzoną jako moment, w którym pierwszy prawdziwy link daje się kliknąć.
+
+<Matrix
+  caption="20 nagradzanych portfolio według Wow i Praktyczności (po jednym pomiarze, 5 października 2026)"
+  xLabel="Praktyczność"
+  yLabel="Wow"
+  good={4}
+  goodLabel="Obie oceny 4 lub więcej: tylko 4 z 20 stron"
+  points={[
+    { name: "Edoardo Lunardi", x: 5, y: 4 },
+    { name: "Clément Grellier", x: 5, y: 3 },
+    { name: "Elliott Mangham", x: 5, y: 3 },
+    { name: "Valentin Mor", x: 5, y: 2 },
+    { name: "Antoine Wodniack", x: 4, y: 4 },
+    { name: "Jesper Landberg", x: 4, y: 5 },
+    { name: "Stefan Vitasović", x: 4, y: 4 },
+    { name: "Grégory Lallé", x: 4, y: 3 },
+    { name: "Rafa de las Heras", x: 3, y: 4 },
+    { name: "Hiroto Sato", x: 3, y: 4 },
+    { name: "Ravi Klaassens", x: 3, y: 4 },
+    { name: "Abhishek Jha", x: 3, y: 4 },
+    { name: "Francesco Michelini", x: 3, y: 3 },
+    { name: "Lusion (studio)", x: 3, y: 5 },
+    { name: "Max Milkin", x: 2, y: 4 },
+    { name: "Corentin Bernadou", x: 2, y: 4 },
+    { name: "Kris Temmerman", x: 1, y: 4 },
+    { name: "Bruno Simon", x: 1, y: 5 },
+    { name: "Samsy", x: 1, y: 5 },
+    { name: "Jordan Delcros", x: 1, y: 5 },
+  ]}
+/>
+
+Co z tego wyszło:
+
+- **Nagroda nie oznacza użyteczności.** Na spowolnionym telefonie tylko 8 z 20 stron dało się użyć w ciągu 3 sekund, a 9 nie dało się użyć nawet w ciągu 10. Cztery najmniej praktyczne (światy jak z gier i intra z bramką) miały nawet wyższą średnią ocenę Site of the Day niż trzy najbardziej praktyczne.
+- **Jury nie zatrudnia.** Awwwards liczy projekt graficzny w 40%, użyteczność w 30%, kreatywność w 20% i treść w 10%, a jurorzy to projektanci i programiści. Rekruter pyta o jedno: czy znajdę projekty i kontakt?
+- **Efektowna i praktyczna naraz jest możliwa, ale rzadka.** Tylko cztery strony dostały co najmniej 4 w obu ocenach. Co je łączy: prawdziwe linki od pierwszego ekranu i pokaz obok treści, nigdy przed nią.
+
+Tak to wygląda na telefonie. Najpierw immersyjny koniec skali:
+
+<Shots
+  phones
+  shots={[
+    { image: refBruno, alt: "Portfolio Bruno Simona na telefonie: mały samochód 3D w fioletowym świecie i napis Click to start", name: "Bruno Simon", tag: "Kliknij, żeby zacząć" },
+    { image: refSamsy, alt: "Portfolio Samsy na telefonie: ciemny ekran ze świecącym czerwonym robotem i bez linków", name: "Samsy", tag: "Brak linków w HTML" },
+    { image: refJordan, alt: "Portfolio Jordana Delcrosa na telefonie: czarny ekran z cienkim paskiem ładowania", name: "Jordan Delcros", tag: "Około 20 s ładowania" },
+  ]}
+  caption="Trzy z najbardziej zapadających w pamięć stron w badaniu, na spowolnionym telefonie (5 października 2026). Cytowane w celu omówienia; strony należą do ich autorów: bruno-simon.com, samsy.ninja, jordan-delcros.com."
+/>
+
+I cztery, którym udało się jedno i drugie. Każda dała tej stronie jakiś pomysł:
+
+<Shots
+  phones
+  shots={[
+    { image: refEdoardo, alt: "Portfolio Edoardo Lunardiego na telefonie: okna jak w systemie operacyjnym z tekstem o autorze, linkami i galerią prac", name: "Edoardo Lunardi", tag: "Prawdziwe linki od pierwszego ekranu" },
+    { image: refJesper, alt: "Portfolio Jespera Landberga na telefonie: pionowa lista kart z projektami", name: "Jesper Landberg", tag: "Pokaz obok treści" },
+    { image: refAntoine, alt: "Portfolio Antoine'a Wodniacka na telefonie: czerwone faliste linie, napis Creative Developer i przycisk Hire me w nagłówku", name: "Antoine Wodniack", tag: "Hire me w nagłówku" },
+    { image: refStefan, alt: "Portfolio Stefana Vitasovicia na telefonie: duża typografia przecięta szarymi paskami cenzury", name: "Stefan Vitasović", tag: "Jeden charakterystyczny efekt" },
+  ]}
+  caption="Efektowne i praktyczne, i co wziąłem od każdej. Cytowane w celu omówienia; strony należą do ich autorów: edoardolunardi.dev, jesperlandberg.com, wodniack.dev, stefanvitasovic.dev."
+/>
+
+Pomysły na sekcje dał [Mobbin](https://mobbin.com/), biblioteka prawdziwych ekranów z działających produktów. Tematy do wyboru nad moim formularzem kontaktowym to jeden z nich: zaczynasz od dotknięcia, a nie od pustego pola.
+
+## Dlaczego nie kolejny świat 3D?
+
+Szczerze? Uwielbiam je. Moje poprzednie portfolio było jednym z nich. Ale zmierzyłem już wtedy oba rodzaje stron, a bilans wyglądał tak:
+
+| | Pełny świat 3D | Ta strona |
+| --- | --- | --- |
+| Pierwszy ekran | ekran ładowania albo „kliknij, żeby zacząć” | moje imię i nazwisko, rola i dwa przyciski |
+| Linki | często żadnych w HTML (Samsy, Jordan Delcros) | każdy link to prawdziwy HTML |
+| Wyszukiwarki i czytniki ekranu | tekst narysowany w WebGL jest dla nich niewidoczny | prawdziwy tekst, malowany jako pierwszy |
+| Wolny telefon | 9 z 20 nagrodzonych stron bezużytecznych przez 10 s | shadery startują po tekście i tylko wtedy, gdy je widać |
+| Brak WebGL lub WebGPU | błąd zamiast strony (Kris Temmerman) | obraz w CSS pod spodem |
+
+Efekt wow zostaje, ale jako warstwa, a nie bramka. Na tej stronie działają cztery shadery, napisane dla niej bez żadnej biblioteki:
+
+<Clips
+  clips={[
+    { src: "contour", label: "Nagłówek strony Wszystkie projekty: mapa poziomic, która wznosi się pod kursorem", name: "Mapa poziomic" },
+    { src: "xray", label: "Soczewka rentgenowska podąża za kursorem nad zrzutem projektu i pokazuje jego strukturę na siatce jak z planu", name: "Rentgen" },
+    { src: "prints", label: "Odbitki hobby na stronie Moje życie: wybór hobby kropka po kropce drukuje nową dwukolorową odbitkę riso", name: "Odbitki riso" },
+    { src: "goo", label: "Nagłówek strony Moje życie: kolorowy glut za tytułem pęcznieje po szturchnięciu", name: "Glut" },
+  ]}
+  caption="Mapa poziomic i rentgen na stronie Wszystkie projekty, odbitki riso i glut na stronie Moje życie. Każdy startuje, gdy tekst jest już na ekranie, działa tylko wtedy, gdy go widać, i stoi w miejscu przy ograniczeniu ruchu albo po wciśnięciu pauzy."
+/>
+
+## Jak prowadzę AI?
+
+Jak mały zespół. Daję brief głównemu agentowi, subagenci robią research równolegle, serwery MCP dostarczają prawdziwe dane, hooki pilnują ryzykownych poleceń, testy sprawdzają wynik, a ja go przeglądam. AI pisze dużo kodu; decyzje należą do mnie.
+
+<Breaker
+  id="bk-ai"
+  kicker="Na stronie głównej"
+  title="Zobacz jedną zmianę krok po kroku"
+  text="Ten sam proces jako żywa historia: kto pracuje przy każdym kroku i jak to wygląda."
+  steps={["Brief", "Pamięć", "Research", "Narzędzia", "Budowa", "Kontrola", "Review"]}
+  href="/pl/#ai"
+  cta="Zobacz siedem kroków"
+/>
+
+Klocki, z których to zbudowałem, opisałem w tekście o [skillach, hookach, MCP i subagentach w Claude Code](/pl/blog/claude-code-skille-hooki-mcp-subagenty/).
+
+## Co się stało z pierwszym projektem?
+
+<Shots
+  shots={[{ image: draftingTable, alt: "Odrzucony pierwszy projekt: jasna strona z delikatną siatką, mały nagłówek i blok kontaktu w ramce" }]}
+  caption="Drafting Table, pierwszy wygląd. Przechodził wszystkie testy i nikt by go nie zapamiętał."
+/>
+
+Dlatego Claude zbudował cztery naprawdę różne kierunki jako działające strony. Polecał Orbit. Ja wybrałem Poster: brutalizm z dobrymi manierami. Płaskie nasycone kolory, twarde przesunięte cienie, kwadratowe przyciski i typografia dopasowana od krawędzi do krawędzi.
+
+<Shots
+  shots={[
+    { image: dirOrbit, alt: "Orbit: imię i nazwisko na tle planety z cząsteczek", name: "Orbit", tag: "Wybór Claude" },
+    { image: dirPoster, alt: "Poster: imię i nazwisko ogromnymi literami na kobalcie", name: "Poster", tag: "Mój wybór", picked: true },
+    { image: dirToybox, alt: "Toybox: miękkie zabawkowe bryły 3D obok imienia", name: "Toybox" },
+    { image: dirExhibit, alt: "Exhibit: imię i nazwisko szeryfowym krojem na ciemnoczerwonej poświacie", name: "Exhibit" },
+  ]}
+  caption="W Posterze obrazem jest sama typografia, więc projekt widać już przy pierwszym malowaniu."
+/>
+
+## Jak zmieniała się każda część i dlaczego?
+
+Pięć części strony w kolejnych wersjach. Przeklikaj je.
+
+<Versions
+  id="v-ai"
+  title="Sekcja o AI"
+  frames={[
+    {
+      label: "Runda 2",
+      image: aiR2,
+      alt: "Runda 2: nagłówek Delegate. Verify. obok listy kontroli",
+      note: "Lista kontroli. Wszystko prawda i wszystko to podłoga. Sprzedawała testy, a nie mój sposób pracy.",
+    },
+    {
+      label: "Runda 3",
+      image: aiR3,
+      alt: "Runda 3: nagłówek Delegate. Automate. nad rzędem liczników hooków, stron wiki, subagentów, serwerów MCP, skilli i lekcji",
+      note: "Liczniki hooków, stron i agentów. Liczby, które zmieniają się co tydzień i nic nie mówią o pracy.",
+    },
+    {
+      label: "Teraz",
+      image: aiNow,
+      alt: "Teraz: nagłówek I run AI like a team, zespół złożony ze mnie i sześciu agentów nad siedmioma ponumerowanymi krokami; otwarty krok 5, Build, pokazuje terminal, w którym force push dostaje pieczątkę Blocked",
+      decision: "Pokaż, jak powstaje praca, a nie ile jej jest.",
+      note: "Jedna zmiana w siedmiu krokach, od mojego briefu do mojego przeglądu, każdy z małą rysowaną sceną.",
+    },
+  ]}
+/>
+
+<Versions
+  id="v-cred"
+  title="Kompetencje (wcześniej Kwalifikacje)"
+  frames={[
+    {
+      label: "Runda 2",
+      image: credR2,
+      alt: "Runda 2: siatka siedmiu kart z kwalifikacjami, każda z akapitem",
+      note: "Siedem kart, każda z akapitem. Wszystko widać, nic nie da się przeczytać na pierwszy rzut oka.",
+    },
+    {
+      label: "Runda 3",
+      image: credR3,
+      alt: "Runda 3: wysokie zwinięte karty z pionowymi tytułami i jedna otwarta ze zdjęciem",
+      note: "Boczne tytuły, które otwierają się po najechaniu. Zwięźle, ale trudno to czytać.",
+    },
+    {
+      label: "Teraz",
+      image: credNow,
+      alt: "Teraz: czytelna lista po lewej i otwarta po prawej karta z doświadczeniem, w której szkoła i trzy praktyki wyglądają jak bilety",
+      decision: "Najpierw doświadczenie, a każdy certyfikat do sprawdzenia.",
+      note: "Lista po lewej, jedna otwarta karta po prawej, link do sprawdzenia każdego certyfikatu.",
+    },
+  ]}
+/>
+
+<Versions
+  id="v-contact"
+  title="Kontakt"
+  frames={[
+    {
+      label: "Runda 2",
+      image: contactR2,
+      alt: "Runda 2: Let's talk z polem e-mail, polem wiadomości i rzędem przycisków",
+      note: "Zwykły formularz, a każde pole to powód, żeby się zatrzymać.",
+    },
+    {
+      label: "Runda 3",
+      image: contactR3,
+      alt: "Runda 3: Let's talk z jednym polem wiadomości i trzema tematami do wyboru",
+      decision: "Jak najmniej pól.",
+      note: "Najpierw wiadomość. Pole na odpowiedź pojawia się, gdy zaczniesz pisać.",
+    },
+    {
+      label: "Teraz",
+      image: contactNow,
+      alt: "Teraz: Let's talk z tematami, polem wiadomości, przyciskiem Wyślij i trzema bezpośrednimi linkami",
+      note: "Wklej e-mail, numer telefonu albo link do LinkedIna, a pole na odpowiedź wypełni się samo. Działa też bez JavaScriptu.",
+    },
+  ]}
+/>
+
+<Versions
+  id="v-how"
+  title="Jak pracuję"
+  frames={[
+    {
+      label: "Runda 2",
+      image: howR2,
+      alt: "Runda 2: Jak pracuję jako cztery ponumerowane zasady z małymi dowodami",
+      note: "Cztery zasady w ponumerowanych linijkach. Łatwo je napisać, łatwo przeskoczyć.",
+    },
+    {
+      label: "Teraz",
+      image: howNow,
+      alt: "Teraz: Product engineer, pierścień siedmiu przystanków od klienta do przeglądu i otwarty przystanek z rysowaną sceną sklepu oraz listą: cel, budżet, termin",
+      decision: "Opowiedz to jako historię, którą widać.",
+      note: "Pierścień siedmiu przystanków, każdy z rysowaną sceną i prawdziwym przykładem.",
+    },
+  ]}
+/>
+
+<Versions
+  id="v-covers"
+  title="Okładki bloga"
+  frames={[
+    {
+      label: "Przed",
+      image: coversBefore,
+      alt: "Sześć starych okładek: stos kartek, dwa wykresy słupkowe, rząd pudełek, tarcza, litery A A a oraz dymki EN i PL",
+      note: "Kolory zależały od miejsca karty na liście, więc wpis zmieniał kolor między stronami.",
+    },
+    {
+      label: "Po",
+      image: coversAfter,
+      alt: "Sześć nowych okładek: połączone strony wiki, skala z poziomami, terminal podpięty do pomocników, przekreślone ciastko obok słupków, jedna szeroka litera między dwiema ścianami i dwa zamienione dymki",
+      decision: "Jedna paleta na okładkę i temat narysowany dosłownie.",
+      note: "Skala dla porównania, przekreślone ciastko dla analityki bez cookies. Bez słów.",
+    },
+  ]}
+/>
+
+Za wszystkimi pięcioma stoi jedna zasada: pokaż rzecz, utnij akapit.
+
+## Jak wyglądają pozostałe strony?
+
+Każda strona dostaje tyle samo uwagi co strona główna, na laptopie i na telefonie.
+
+<Shots
+  shots={[
+    { image: pageWork, alt: "Wszystkie projekty: nagłówek Rzeczy, które zbudowałem na tle shadera z poziomicami, obok ponumerowany spis projektów", name: "Wszystkie projekty" },
+    { image: pageLife, alt: "Moje życie: napis Moje życie ogromnymi obrysowanymi literami na kolorowej plamie, obok stos zdjęć z wakacji", name: "Moje życie" },
+    { image: pageCv, alt: "Strona CV: imię i nazwisko ogromnymi literami na kobalcie, zdjęcie, rola i przycisk Pobierz PDF obok wydruku CV", name: "CV" },
+    { image: pageBlog, alt: "Blog: słowo Blog ogromnymi literami na kobalcie nad wyszukiwarką i filtrami rodzaju, tematu i sortowania", name: "Blog" },
+  ]}
+  caption="Wszystkie projekty, Moje życie, CV i blog w szerokości 1440 px."
+/>
+
+<Shots
+  shots={[{ image: pagesPhone, alt: "Cztery ekrany telefonu obok siebie: strona główna, Wszystkie projekty, Moje życie i CV" }]}
+  caption="Ta sama strona na telefonie: główna, Wszystkie projekty, Moje życie i CV. Ta sama treść, jedna kolumna."
+/>
+
+## Jakie są drobne szczegóły?
+
+**Imię wypełnia ekran bez JavaScriptu.** Przy budowaniu skrypt mierzy font i liczy dokładną szerokość każdej linii, więc imię i nazwisko sięgają od krawędzi do krawędzi, zanim ruszy jakikolwiek skrypt ([jak to działa](/pl/blog/dopasowanie-tekstu-do-szerokosci/)).
+
+<Shots
+  shots={[{ image: qaSweep, alt: "Strona główna w trzech szerokościach obok siebie: telefon, tablet i szeroki monitor, na każdym imię i nazwisko wypełnia całą szerokość" }]}
+  caption="Strona główna w szerokościach 390, 1024 i 1920 pikseli."
+/>
+
+**Telefony dostają tę samą stronę.** Każdy efekt po najechaniu ma odpowiednik dotykowy ([jak](/pl/blog/efekty-hover-na-telefonach/)), a formularz kontaktowy ma własny opis, razem z błędem ([formularz kontaktowy na statycznej stronie](/pl/blog/formularz-kontaktowy-na-statycznej-stronie/)).
+
+## Dla kogo jeszcze jest ta strona?
+
+Dla wszystkich, także dla osób, które korzystają z sieci inaczej. Strona, która działa tylko z myszką i przy idealnym wzroku, kogoś wyklucza, a ja wolę, żeby tak nie było. Dlatego:
+
+- **Ruch, który możesz zatrzymać.** Jeden przycisk „Zatrzymaj animacje” zatrzymuje wszystko, a przy włączonym ograniczeniu ruchu wszystko od razu pokazuje stan końcowy ([więcej](/pl/blog/reduced-motion-i-przycisk-pauzy/)).
+- **Klawiatura dociera wszędzie.** Link „przejdź do treści” omija nagłówek, każdy efekt po najechaniu ma odpowiednik przy fokusie, a fokus nigdy nie chowa się pod przyklejonym nagłówkiem.
+- **Czytnik ekranu słyszy całą historię.** Ukryty tekst dodaje to, co oko widzi z kontekstu, na przykład „otwiera się w nowej karcie”, a nazwa każdego przycisku zaczyna się od słów, które na nim widać.
+- **Kontrast jest testowany, nie oceniany na oko.** Test jednostkowy sprawdza każdą parę kolorów, a axe przechodzi przez każdą stronę.
+
+## Skąd wyszukiwarki wiedzą, kim jestem?
+
+Mapa strony i meta tagi to podłoga. Żeby znaleźć mnie po nazwisku, a kiedyś pokazać panel wiedzy, wyszukiwarka musi mieć pewność, o kim jest ta strona. Dlatego każda podstrona opowiada jej tę samą historię:
+
+- **Jedna osoba, jeden identyfikator.** Strona główna i CV opisują mnie w danych strukturalnych jako jedną osobę (`Person`): imię i nazwisko, rola, prawdziwe zdjęcie i moje profile. Każdy wpis i strona Moje życie wskazują na nią, a linki do moich profili mają `rel="me"`.
+- **Prawdziwe zdjęcia z prawdziwymi faktami.** Moje życie pokazuje moje własne zdjęcia, każde z opisem, gdzie i kiedy powstało, i każde w mapie obrazów.
+- **Podpisany autor.** Każdy wpis to `BlogPosting` tej samej osoby, z ramką o autorze pod spodem, a każdy fakt z zewnątrz ma źródło z datą.
+- **Stopka, która pracuje.** Każda strona linkuje do projektów, CV, bloga, jego kanału RSS i moich profili.
+- **Jeden adres na stronę.** Jeden kanoniczny URL, wersje językowe połączone ze sobą i karta do udostępniania dla każdej strony w każdym języku.
+
+Build się wywraca, jeśli strona zgubi tytuł, opis albo adres kanoniczny albo jeśli dane strukturalne przestaną się parsować.
+
+<Shots
+  shots={[
+    { image: seoAuthor, alt: "Ramka o autorze pod wpisem: mój awatar, imię i nazwisko, krótkie bio i linki Więcej o mnie, CV i Kontakt", name: "O autorze" },
+    { image: seoFooter, alt: "Stopka strony: kolumny Projekty, Strona z blogiem, CV, Moim życiem i RSS, Gdzie indziej z moimi profilami, strony prawne i przycisk zatrzymania animacji", name: "Stopka" },
+  ]}
+  caption="Ramka o autorze pod każdym wpisem i stopka na każdej stronie: ta sama osoba i te same linki wszędzie."
+/>
+
+## Jak sprawdzam każdą zmianę?
+
+<Flow
+  label="Pętla sprawdzania każdej zmiany"
+  steps={[
+    {
+      icon: "tb:list-check",
+      title: "Statycznie",
+      text: "Typy, lint i testy jednostkowe.",
+    },
+    {
+      icon: "tb:accessible",
+      title: "Przeglądarki",
+      text: "Playwright na każdej stronie, z axe do dostępności.",
+    },
+    {
+      icon: "tb:camera",
+      title: "Oczy",
+      text: "Zrzuty ekranu w szerokościach telefonu, tabletu i komputera, które oglądam sam.",
+    },
+    {
+      icon: "tb:gauge",
+      title: "Szybkość",
+      text: "Lighthouse na wolnym telefonie.",
+    },
+  ]}
+  loop="Wszystko, co nie przejdzie, staje się poprawką, a powtarzający się błąd lekcją w wiki."
+/>
+
+Nic nie jest gotowe, dopóki testy nie przechodzą i dopóki sam nie obejrzę zrzutów.
+
+## Z czego jest zbudowana?
+
+| Część | Narzędzie |
+| --- | --- |
+| Framework | Astro 7 ([dlaczego nie Next.js](/pl/blog/astro-czy-nextjs-na-portfolio/)) |
+| Język i style | TypeScript, Tailwind CSS 4 |
+| Tłumaczenia | Lingui |
+| Repozytorium | Turborepo i bun |
+| Font | Anybody, zmienny font (OFL) |
+| Ikony | Tabler (MIT) i Simple Icons (CC0) |
+| Hosting | Vercel |
+| Formularz kontaktowy | EmailJS za funkcją Vercel, Cloudflare Turnstile |
+| Analityka | Umami Cloud, bez cookies |
+| Testy | Playwright, axe-core, Vitest, Lighthouse |
+| AI | Claude Code |
+
+## Gdzie to wylądowało?
+
+<Shots
+  shots={[{ image: lighthouseReport, alt: "Raport Lighthouse dla strony głównej na telefonie: cztery zielone wskaźniki dla Performance, Accessibility, Best Practices i SEO" }]}
+  caption="Strona główna w Lighthouse na telefonie, lokalny build produkcyjny z 7 października 2026. To liczby z laboratorium: dane od prawdziwych użytkowników pojawią się po starcie."
+/>
+
+Jeśli chcesz porozmawiać o podobnym projekcie albo o pracy, [mój formularz kontaktowy to jedna wiadomość](/pl/#contact).

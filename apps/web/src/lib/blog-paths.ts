@@ -7,7 +7,8 @@ import { pathTo } from "~/lib/routes";
  * Fixed paths into the blog that chrome and sections link to (the case study #0 lives in the blog: structure.md,
  * open-questions Q43). Posts exist in en + pl; a Spanish page links the English post (i18n.md § Locale coverage).
  */
-export const THIS_SITE_SLUGS = { en: "how-this-site-was-built", pl: "jak-powstala-ta-strona" } as const;
+/** The main case study keeps one clean slug in both languages [user 2026-10-08: "make the url /blog/case-study"]. */
+export const THIS_SITE_SLUGS = { en: "case-study", pl: "case-study" } as const;
 
 export const blogLocaleFor = (locale: Locale): "en" | "pl" => (BLOG_LOCALES.includes(locale) ? (locale as "en" | "pl") : "en");
 

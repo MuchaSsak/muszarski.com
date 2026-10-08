@@ -173,6 +173,6 @@ window.setTimeout(() => {
 
 `go()` imports a tiny runner on demand. No three.js: one triangle over the canvas, a low-power GPU hint (three.js's `WebGLRenderer` takes the same `powerPreference`), a pixel ratio capped at 1.5, a loop that runs only while the canvas is in view and the tab is visible, and one still frame when motion is paused or reduced. Without WebGL it gives up, and the same colours painted in CSS stay. One honest gap: under reduced motion it still downloads the runner to draw that one frame. The checklist says skip it; that's the next thing I'd tighten.
 
-The result is in [the case study of this site](/en/blog/how-this-site-was-built/): the home page scores 99 for mobile performance, with an LCP of about 1.95 s (median of 3 runs).
+The result is in [the case study of this site](/en/blog/case-study/): the home page scores 99 for mobile performance, with an LCP of about 1.95 s (median of 3 runs).
 
 The space portfolio is still live, with its code public. Both links are on [my work page](/en/work/).

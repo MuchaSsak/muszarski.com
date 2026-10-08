@@ -454,7 +454,7 @@ msgstr "Copy link"
 msgid "Course"
 msgstr "Course"
 
-#: src/pages/[locale]/cv/index.astro:80
+#: src/pages/[locale]/cv/index.astro:82
 msgid "Curriculum vitae"
 msgstr "Curriculum vitae"
 
@@ -518,7 +518,7 @@ msgstr "Done"
 msgid "Download CV"
 msgstr "Download CV"
 
-#: src/pages/[locale]/cv/index.astro:112
+#: src/pages/[locale]/cv/index.astro:114
 msgid "Download PDF"
 msgstr "Download PDF"
 
@@ -630,13 +630,13 @@ msgstr "Found your LinkedIn in your message"
 msgid "Full-stack Developer · TypeScript, React, three.js"
 msgstr "Full-stack Developer · TypeScript, React, three.js"
 
-#: src/pages/[locale]/blog/[slug].astro:179
-msgid "Full-stack developer from Poland. I build web and mobile products end to end, and I write down what I learn while doing it."
-msgstr "Full-stack developer from Poland. I build web and mobile products end to end, and I write down what I learn while doing it."
-
 #: src/components/home/Hero.astro:28
 msgid "Full-stack product engineer"
 msgstr "Full-stack product engineer"
+
+#: src/pages/[locale]/blog/[slug].astro:179
+msgid "Full-stack product engineer from Poland. I always think about the users, the business, conversions and the psychology behind my visuals. I measure my work by the results it brings."
+msgstr "Full-stack product engineer from Poland. I always think about the users, the business, conversions and the psychology behind my visuals. I measure my work by the results it brings."
 
 #: src/components/home/Contact.astro:59
 msgid "Full-time or contract"
@@ -1266,7 +1266,7 @@ msgstr "Previous posts"
 msgid "pricing"
 msgstr "pricing"
 
-#: src/pages/[locale]/cv/index.astro:117
+#: src/pages/[locale]/cv/index.astro:119
 msgid "Print"
 msgstr "Print"
 
@@ -1465,7 +1465,7 @@ msgstr "sign-up"
 msgid "sign-ups"
 msgstr "sign-ups"
 
-#: src/pages/[locale]/cv/index.astro:83
+#: src/pages/[locale]/cv/index.astro:85
 msgid "Since"
 msgstr "Since"
 
@@ -1899,7 +1899,7 @@ msgstr "Your message"
 msgid "Your message reached Mateusz Muszarski. He replies to the address you gave."
 msgstr "Your message reached Mateusz Muszarski. He replies to the address you gave."
 
-#: src/pages/[locale]/cv/index.astro:131
+#: src/pages/[locale]/cv/index.astro:133
 msgid "Your PDF is downloading. Nothing yet? Use the Download PDF button."
 msgstr "Your PDF is downloading. Nothing yet? Use the Download PDF button."
 

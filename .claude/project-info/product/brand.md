@@ -16,6 +16,10 @@
 ## Positioning (default = option A; options B and C in `research/2026-10-05-software-house-hiring.md` § 7.1)
 
 - **Role line** (under the fitted-name H1): "Full-stack product engineer".
+- **Author box bio** (under every post, `pages/[locale]/blog/[slug].astro`) [user 2026-10-08, his draft "Always thinking
+  about the users, business, conversions and psychology behind my visuals ... results, not just for code to work",
+  rewritten positive per rule 1]: "Full-stack product engineer from Poland. I always think about the users, the business,
+  conversions and the psychology behind my visuals. I measure my work by the results it brings."
 - **Hero line** (2026-10-06, `home/Hero.astro`; P6, waits for the owner's OK): "Code is the tool. I build products
   that solve real business problems, at a cost that makes sense." (pl "Kod to narzędzie. Buduję produkty, które
   rozwiązują prawdziwe problemy firm, w rozsądnym budżecie.", es translated, unreviewed). A positive rewrite of the

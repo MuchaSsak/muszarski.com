@@ -1,0 +1,41 @@
+---
+/**
+ * A breaker between the parts of a post: a dark band that sends the reader to a live, step-by-step showcase on the site
+ * (the home page's "I run AI like a team" story) [user 2026-10-08: "a cool breaker component that links to a step by
+ * step visual showcase of this process"]. The steps are text, not links; a light walks through them like the home
+ * story's auto-advance, only while the post body is near the viewport, never under reduced motion or the pause button.
+ * Text comes from the post (per-locale MDX); the CSS lives in styles/case.css (prefix `bk-`).
+ */
+import Icon from "~/components/ui/Icon.astro";
+
+interface Props {
+  /** Unique per post: ties the band's name to its title. */
+  id: string;
+  kicker: string;
+  title: string;
+  text: string;
+  steps: string[];
+  href: string;
+  cta: string;
+}
+
+const { id, kicker, title, text, steps, href, cta } = Astro.props;
+---
+
+<aside class="bk field-bar" aria-labelledby={id}>
+  <p class="bk-kick">{kicker}</p>
+  <p class="bk-title" id={id}>{title}</p>
+  <p class="bk-text">{text}</p>
+  <ol class="bk-steps" style={`--n:${steps.length}`}>
+    {steps.map((step, i) => (
+      <li style={`--i:${i}`}>
+        <span class="bk-n tabular">{String(i + 1).padStart(2, "0")}</span>
+        {step}
+      </li>
+    ))}
+  </ol>
+  <a class="btn btn-acc bk-go" href={href} data-umami-event="cta" data-umami-event-id="ai-steps" data-umami-event-source="blog">
+    {cta}
+    <Icon name="tb:arrow-right" />
+  </a>
+</aside>

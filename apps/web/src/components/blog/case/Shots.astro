@@ -19,23 +19,25 @@ interface Shot {
 interface Props {
   shots: Shot[];
   caption: string;
+  /** Phone screens: all in one row on wide screens, two per row on phones. */
+  phones?: boolean;
 }
 
-const { shots, caption } = Astro.props;
+const { shots, caption, phones = false } = Astro.props;
 const many = shots.length > 1;
+const widths = phones ? [240, 480] : many ? [400, 800] : [480, 800, 1200];
+const sizes = phones
+  ? "(min-width: 64rem) 11rem, (min-width: 40rem) 22vw, 46vw"
+  : many
+    ? "(min-width: 64rem) 22rem, 46vw"
+    : "(min-width: 64rem) 46rem, 94vw";
 ---
 
-<figure class:list={["cs-shots", { "cs-many": many }]}>
+<figure class:list={["cs-shots", { "cs-many": many, "cs-phones": phones }]} style={phones ? `--n:${shots.length}` : undefined}>
   <div class="cs-grid">
     {shots.map((shot) => (
       <div class:list={["cs-frame", { "cs-picked": shot.picked }]}>
-        <Image
-          src={shot.image}
-          alt={shot.alt}
-          widths={many ? [400, 800] : [480, 800, 1200]}
-          sizes={many ? "(min-width: 64rem) 22rem, 46vw" : "(min-width: 64rem) 46rem, 94vw"}
-          loading="lazy"
-        />
+        <Image src={shot.image} alt={shot.alt} widths={widths} sizes={sizes} loading="lazy" />
         {shot.tag && <span class="cs-tag">{shot.tag}</span>}
         {shot.name && <span class="cs-name">{shot.name}</span>}
       </div>

@@ -1,7 +1,7 @@
 /*
- * Case-study pieces used inside posts (components/blog/case/*): Timeline, Versions, Shots. Kept here, imported by
- * the post page, because styles of components rendered inside MDX are inlined without a CSP hash and get blocked.
- * Class names carry their component's prefix (cs-, v-, tl-): this is global CSS.
+ * Case-study pieces used inside posts (components/blog/case/*): Timeline, Versions, Shots, Flow, Breaker, Matrix. Kept
+ * here, imported by the post page, because styles of components rendered inside MDX are inlined without a CSP hash and
+ * get blocked. Class names carry their component's prefix (cs-, v-, tl-, fl-, bk-, mx-): this is global CSS.
  */
 
 /* Timeline */
@@ -341,6 +341,75 @@
     grid-template-columns: minmax(0, 1fr);
   }
 }
+/* Phone screens sit in one row (two on phones), each with its name and tag. */
+.cs-phones .cs-grid {
+  grid-template-columns: repeat(var(--n), minmax(0, 1fr));
+  gap: 1rem;
+}
+.cs-phones .cs-tag {
+  max-width: calc(100% - 0.5rem);
+  white-space: normal;
+  line-height: 1.2;
+}
+@media (max-width: 40rem) {
+  .cs-phones .cs-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+/* Clips: a tap on the frame pauses or plays; the play button shows while paused (scripts/reel.ts). */
+.cs-clip video {
+  display: block;
+  width: 100%;
+  height: auto;
+  background: var(--navy);
+}
+.cs-hit {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+}
+.cs-hit:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: -6px;
+}
+.cs-play {
+  position: absolute;
+  z-index: 1;
+  left: 50%;
+  top: 50%;
+  display: grid;
+  place-items: center;
+  width: 3.5rem;
+  height: 3.5rem;
+  border-radius: 50%;
+  background: var(--accent);
+  color: var(--on-accent);
+  box-shadow: 0 0 0 3px var(--navy);
+  opacity: 0;
+  pointer-events: none;
+  transform: translate(-50%, -50%) scale(0.8);
+  transition:
+    opacity var(--dur-base),
+    transform 0.4s var(--ease-pop);
+}
+.cs-play .ico {
+  width: 1.5rem;
+  height: 1.5rem;
+}
+.cs-clip.paused .cs-play {
+  opacity: 1;
+  transform: translate(-50%, -50%);
+}
+.cs-clip .cs-name {
+  z-index: 3;
+  pointer-events: none;
+}
 
 /* Flow: a process as a chain of tickets; wide screens run it across, phones down. Arrows are drawn between steps. */
 .fl {
@@ -453,6 +522,118 @@
 .fl-back .ico {
   width: 1.125rem;
   height: 1.125rem;
+}
+
+/* Breaker: a dark band that links to a live showcase. The steps light up one by one (the home story's colours); the
+   loop runs only near the viewport and never under reduced motion or the pause button (global.css). */
+.bk {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  justify-items: start;
+  gap: 0.75rem;
+  margin: 2.5em 0 2.75em;
+  padding: clamp(1.25rem, 3vw, 2rem);
+  box-shadow: 8px 8px 0 var(--accent);
+  rotate: -0.4deg;
+}
+.bk p {
+  margin: 0 !important;
+}
+.bk-kick {
+  color: var(--lime);
+  font-weight: 800;
+  font-size: 0.8125rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  font-stretch: 125%;
+}
+.bk-title {
+  font-weight: 900;
+  font-size: clamp(1.75rem, 1.25rem + 2vw, 2.75rem);
+  line-height: 0.95;
+  font-stretch: 120%;
+  text-transform: uppercase;
+  text-wrap: balance;
+}
+.bk-text {
+  max-width: 44ch;
+  font-size: 1rem;
+  line-height: 1.5;
+}
+.bk-steps {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 0.375rem 0 0.5rem !important;
+  padding: 0 !important;
+  list-style: none;
+}
+.bk-steps li {
+  --c: var(--yellow);
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.375rem;
+  margin: 0 !important;
+  padding: 0.375rem 0.625rem;
+  box-shadow: inset 0 0 0 2px currentColor;
+  font-weight: 800;
+  font-size: 0.8125rem;
+  line-height: 1.2;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.bk-steps li:nth-child(5n + 2) {
+  --c: var(--lime);
+}
+.bk-steps li:nth-child(5n + 3) {
+  --c: var(--pink);
+}
+.bk-steps li:nth-child(5n + 4) {
+  --c: var(--orange);
+}
+.bk-steps li:nth-child(5n + 5) {
+  --c: var(--ice);
+}
+.bk-n {
+  font-size: 0.6875rem;
+  opacity: 0.7;
+}
+/* Long labels (Polish) wrap at 320 px instead of widening the band. */
+.bk-go {
+  max-width: 100%;
+  margin-top: 0.25rem;
+  white-space: normal;
+  line-height: 1.15;
+  text-align: left;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .bk-steps li {
+    animation-name: bk-on;
+    animation-duration: calc(var(--n) * 1.2s);
+    animation-timing-function: linear;
+    animation-delay: calc(var(--i) * 1.2s);
+    animation-iteration-count: infinite;
+  }
+}
+@keyframes bk-on {
+  0% {
+    background: transparent;
+    color: inherit;
+  }
+  2%,
+  13% {
+    background: var(--c);
+    color: var(--navy);
+    box-shadow:
+      inset 0 0 0 2px var(--c),
+      3px 3px 0 var(--ice);
+    translate: -2px -2px;
+  }
+  15%,
+  100% {
+    background: transparent;
+    color: inherit;
+  }
 }
 
 /* Matrix: two scores as a table; the sweet-spot cells are hatched and outlined (never colour alone). */

@@ -7,7 +7,7 @@ import { expect, test } from "@playwright/test";
 test.use({ viewport: { width: 1440, height: 900 } });
 
 test("inner pages: one h1, canonical, share image, title with the name", async ({ page }) => {
-  for (const path of ["/en/work/", "/pl/cv/", "/es/my-life/", "/en/blog/", "/pl/blog/jak-powstala-ta-strona/"]) {
+  for (const path of ["/en/work/", "/pl/cv/", "/es/my-life/", "/en/blog/", "/pl/blog/case-study/"]) {
     await page.goto(path);
     await expect(page.locator("h1")).toHaveCount(1);
     const canonical = await page.locator('link[rel="canonical"]').getAttribute("href");
@@ -18,22 +18,22 @@ test("inner pages: one h1, canonical, share image, title with the name", async (
 });
 
 test("a post links its translation (hreflang) and the language switch keeps it", async ({ page }) => {
-  await page.goto("/en/blog/how-this-site-was-built/");
+  await page.goto("/en/blog/case-study/");
   const hreflangs = await page
     .locator('link[rel="alternate"][hreflang]')
     .evaluateAll((links) =>
       links.map((link) => `${link.getAttribute("hreflang")} ${new URL(link.getAttribute("href")!).pathname}`),
     );
   expect(hreflangs).toEqual([
-    "en /en/blog/how-this-site-was-built/",
-    "pl /pl/blog/jak-powstala-ta-strona/",
-    "x-default /en/blog/how-this-site-was-built/",
+    "en /en/blog/case-study/",
+    "pl /pl/blog/case-study/",
+    "x-default /en/blog/case-study/",
   ]);
   const jsonLd = await page
     .locator('script[type="application/ld+json"]')
     .evaluateAll((scripts) => scripts.map((s) => s.textContent).join(""));
   expect(jsonLd).toContain('"BlogPosting"');
-  await expect(page.locator(".site-header .h-loc a[hreflang=pl]")).toHaveAttribute("href", "/pl/blog/jak-powstala-ta-strona/");
+  await expect(page.locator(".site-header .h-loc a[hreflang=pl]")).toHaveAttribute("href", "/pl/blog/case-study/");
   // No Spanish blog: the switch goes to the Spanish home.
   await expect(page.locator(".site-header .h-loc a[hreflang=es]")).toHaveAttribute("href", "/es/");
 });

@@ -160,7 +160,7 @@ Na zalecanym modelu minuta rozmowy głosowej kosztuje tyle kredytów, co mniej w
 
 App Store podaje 30 języków Linkoglota, a strona produktu ma te same 30 wersji językowych, każdą z alternatywą hreflang. Tekst mieszka w czterech miejscach i każde ma własną drogę:
 
-1. **Teksty aplikacji.** Lingui z katalogiem `.po` dla każdego języka, ta sama biblioteka, której używa ta strona ([jak powstała ta strona](/pl/blog/jak-powstala-ta-strona/)). Obie biblioteki porównuję w tekście [Lingui czy i18next](/pl/blog/lingui-czy-i18next/).
+1. **Teksty aplikacji.** Lingui z katalogiem `.po` dla każdego języka, ta sama biblioteka, której używa ta strona ([jak powstała ta strona](/pl/blog/case-study/)). Obie biblioteki porównuję w tekście [Lingui czy i18next](/pl/blog/lingui-czy-i18next/).
 2. **Tłumaczenie na dużą skalę.** Skrypt w repozytorium wysyłał katalogi do LLM partiami. 17 czerwca 2026 stał się narzędziem CLI `lingui-translate-ai` w npm, a wersja 1.1.0 z obsługą liczby mnogiej ICU wyszła 10 lipca 2026, tego samego dnia, w którym aplikacja pojawiła się w Google Play. [Jak działa to narzędzie i jak sprawdzam jego szkice](/pl/blog/tlumaczenie-katalogow-lingui-przez-llm/).
 3. **Treści w bazie.** Nazwy i opisy osiągnięć są zapisane jako jsonb, a tłumaczenia uzupełnia trigger `translate_column`.
 4. **Wpisy w sklepach.** Przetłumaczony opis i zrzuty ekranu dla każdego języka.

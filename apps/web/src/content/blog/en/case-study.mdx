@@ -1,0 +1,602 @@
+---
+title: "Trying to build an Awwwards-winning brutalist portfolio: the process, the mindset and the tools"
+seoTitle: "How I built this portfolio (case study)"
+description: "Case study: why I swapped my 3D portfolio for a poster. The research, the sites I learned from, every version, and shaders that never get in the way."
+translationKey: this-site
+published: 2026-10-05
+updated: 2026-10-08
+tags: [case-study, ai, astro, performance]
+cover: blueprint
+featured: true
+related: [llm-wiki, fitted-type, reduced-motion]
+sources:
+  - title: "llm-wiki.md, Andrej Karpathy's idea file (GitHub Gist, 4 April 2026)"
+    url: "https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f"
+    accessed: 2026-10-07
+  - title: "Lighthouse performance scoring (Chrome for Developers)"
+    url: "https://developer.chrome.com/docs/lighthouse/performance/performance-scoring"
+    accessed: 2026-10-05
+  - title: "Understanding Success Criterion 2.2.2: Pause, Stop, Hide (W3C)"
+    url: "https://www.w3.org/WAI/WCAG22/Understanding/pause-stop-hide.html"
+    accessed: 2026-10-05
+  - title: "Awwwards, Sites of the Day"
+    url: "https://www.awwwards.com/websites/"
+    accessed: 2026-10-05
+  - title: "Mobbin, a library of real app and web screens"
+    url: "https://mobbin.com/"
+    accessed: 2026-10-05
+  - title: "Playwright"
+    url: "https://playwright.dev/"
+    accessed: 2026-10-07
+  - title: "axe-core, accessibility rules engine (Deque)"
+    url: "https://github.com/dequelabs/axe-core"
+    accessed: 2026-10-07
+  - title: "Solar System Scope, planet textures (CC BY 4.0), used in the old space portfolio"
+    url: "https://www.solarsystemscope.com/textures/"
+    accessed: 2026-10-05
+  - title: "Anybody, a variable font (Google Fonts)"
+    url: "https://fonts.google.com/specimen/Anybody"
+    accessed: 2026-10-05
+---
+
+import Breaker from "~/components/blog/case/Breaker.astro";
+import Clips from "~/components/blog/case/Clips.astro";
+import Flow from "~/components/blog/case/Flow.astro";
+import Matrix from "~/components/blog/case/Matrix.astro";
+import Shots from "~/components/blog/case/Shots.astro";
+import Timeline from "~/components/blog/case/Timeline.astro";
+import Versions from "~/components/blog/case/Versions.astro";
+import oldSpace from "~/assets/case/old-space.webp";
+import draftingTable from "~/assets/case/drafting-table.webp";
+import dirOrbit from "~/assets/case/dir-orbit.webp";
+import dirPoster from "~/assets/case/dir-poster.webp";
+import dirToybox from "~/assets/case/dir-toybox.webp";
+import dirExhibit from "~/assets/case/dir-exhibit.webp";
+import heroNow from "~/assets/case/hero-now.webp";
+import aiR2 from "~/assets/case/ai-r2.webp";
+import aiR3 from "~/assets/case/ai-r3.webp";
+import aiNow from "~/assets/case/ai-now.webp";
+import credR2 from "~/assets/case/credentials-r2.webp";
+import credR3 from "~/assets/case/credentials-r3.webp";
+import credNow from "~/assets/case/credentials-now.webp";
+import contactR2 from "~/assets/case/contact-r2.webp";
+import contactR3 from "~/assets/case/contact-r3.webp";
+import contactNow from "~/assets/case/contact-now.webp";
+import howR2 from "~/assets/case/how-r2.webp";
+import howNow from "~/assets/case/how-now.webp";
+import coversBefore from "~/assets/case/covers-before.webp";
+import coversAfter from "~/assets/case/covers-after.webp";
+import pageWork from "~/assets/case/page-work-en.webp";
+import pageLife from "~/assets/case/page-life-en.webp";
+import pageCv from "~/assets/case/page-cv-en.webp";
+import pageBlog from "~/assets/case/page-blog-en.webp";
+import pagesPhone from "~/assets/case/pages-phone-en.webp";
+import qaSweep from "~/assets/case/qa-sweep.webp";
+import lighthouseReport from "~/assets/case/lighthouse.webp";
+import refBruno from "~/assets/case/ref-bruno-simon.webp";
+import refSamsy from "~/assets/case/ref-samsy.webp";
+import refJordan from "~/assets/case/ref-jordan-delcros.webp";
+import refEdoardo from "~/assets/case/ref-edoardo-lunardi.webp";
+import refJesper from "~/assets/case/ref-jesper-landberg.webp";
+import refAntoine from "~/assets/case/ref-antoine-wodniack.webp";
+import refStefan from "~/assets/case/ref-stefan-vitasovic.webp";
+import seoAuthor from "~/assets/case/seo-author-en.webp";
+import seoFooter from "~/assets/case/seo-footer-en.webp";
+
+My old portfolio was a WebGL flight from Earth to Neptune. It looked great on my desktop. On a phone it showed an “Oops!” screen. This is the story of swapping it for a poster: the versions, the research, the sites I learned from and the reasons behind each call, mostly in pictures.
+
+> **TL;DR**
+>
+> - **Before:** a 3D site that scored 34 on mobile Lighthouse and didn't work on phones.
+> - **After:** Astro, three languages, one font, a few shaders that never get in the way, and 95 to 100 on mobile Lighthouse.
+> - **How:** a project wiki before any code, research on award winners and real products, four live designs to pick from, and checks on every change.
+
+## What rules did I work by?
+
+Six rules: most written down before the first line of code, the rest learned on the way. Everything below follows from them.
+
+1. **Plan before code.** The project lives in a wiki that every AI session reads first.
+2. **Practical first, then wow.** Impressive within 3 seconds, usable in one tap on a phone.
+3. **Research, then pick.** Real sites and real screens first; I choose between live options, not sketches.
+4. **Show, don't tell.** A picture or a moving demo wherever a paragraph would go.
+5. **Keep every version.** So I can show how it changed, and go back.
+6. **Nothing ships unchecked.** Tests, screenshots I look at myself, speed on a slow phone.
+
+## How did it go, version by version?
+
+About four days, and every version is kept.
+
+<Timeline
+  label="Versions of this site, oldest first"
+  steps={[
+    {
+      date: "Before",
+      title: "The 3D space portfolio",
+      image: oldSpace,
+      alt: "The old site: a glowing planet and the word Projects in space",
+      verdict: "Replaced",
+      tone: "no",
+      note: "A WebGL flight to Neptune. Beautiful on my desktop, an “Oops!” screen on phones.",
+    },
+    {
+      date: "5 Oct 2026",
+      title: "Phase 0: a wiki, no code",
+      cover: "wiki",
+      verdict: "Kept",
+      tone: "plain",
+      decision: "Plan first, code second.",
+      note: "Research, requirements, brand, legal and the rules of the project, before a single component.",
+    },
+    {
+      date: "5 Oct 2026",
+      title: "Drafting Table",
+      image: draftingTable,
+      alt: "The first design: a pale paper page with a blueprint grid and a small heading",
+      verdict: "Rejected",
+      tone: "no",
+      decision: "A clean system is not a good design.",
+      note: "Paper, cyanotype and a title-block header. It passed every check and looked forgettable.",
+    },
+    {
+      date: "5 Oct 2026",
+      title: "Four live directions",
+      image: dirPoster,
+      alt: "The Poster direction: the name in huge white capitals on cobalt with a pink round sticker",
+      verdict: "Poster picked",
+      tone: "yes",
+      decision: "The type is the picture.",
+      note: "Orbit, Poster, Toybox and Exhibit as working pages. Claude recommended Orbit. I picked Poster.",
+    },
+    {
+      date: "5 Oct 2026",
+      title: "Round 2: Poster everywhere",
+      image: contactR2,
+      alt: "Round 2 of Poster: the contact section, Let's talk in huge capitals on pink",
+      verdict: "Notes",
+      tone: "plain",
+      note: "The whole home page in Poster, three colour themes and two fonts tried side by side.",
+    },
+    {
+      date: "5 Oct 2026",
+      title: "Round 3: less text",
+      image: credR3,
+      alt: "Round 3 of Poster: credentials as tall cards with sideways titles, one open",
+      verdict: "Approved",
+      tone: "yes",
+      decision: "Less text, more to see.",
+      note: "Tool logos with their names, a reel per project, a shorter everything. The comps stop here and the real code starts.",
+    },
+    {
+      date: "6-8 Oct 2026",
+      title: "The site you are on",
+      image: heroNow,
+      alt: "Today's hero: the name fitted edge to edge on cobalt, the role and two buttons",
+      verdict: "Live",
+      tone: "yes",
+      note: "Built in Astro one section at a time, then reshaped by rounds of my notes on the live site.",
+    },
+  ]}
+/>
+
+## Why rebuild it?
+
+Here is the old portfolio in motion:
+
+<Clips
+  clips={[{ src: "flight", dir: "/media/space/", width: 960, height: 540, label: "The old space portfolio: the camera flies past Mars to Jupiter", name: "The old site" }]}
+  caption="The 3D space portfolio, recorded on a desktop. Planet textures: Solar System Scope, CC BY 4.0."
+/>
+
+Beautiful on my desktop. Then I measured it, on 5 October 2026:
+
+- **13.8 MB before the start button.** 7.6 MB of it was an emoji font.
+- **34 on mobile Lighthouse.** On a throttled phone the main content took 46.9 seconds to appear.
+- **Phones got an “Oops!” screen.** The site didn't run there at all.
+- **Only a mouse wheel moved it.** No touch swipe, no keyboard.
+- **Nothing for search engines.** The raw HTML had no text to index.
+
+Someone opening a portfolio from a LinkedIn message on a phone gives it maybe ten seconds. My old site spent them on a loading bar. It proved I can write shaders; it also proved I hadn't thought about the person on the other side.
+
+So no preloader, no gate, no scroll-jacking, and the same content on every screen.
+
+## What is a portfolio for?
+
+Showing your work. It sounds obvious, yet many portfolios bury the visitor under “about me” paragraphs, or pitch their tech stack as if it were sacred, and the projects end up three scrolls down. Here the projects come right after the name: “See the work” is the first button, the tools are one strip of logos, and the about-me has a page of its own.
+
+## How did the planning work?
+
+Before any code, I wrote the project down in a wiki of markdown pages: the audience, the brand, the budgets, the legal texts. The idea comes from Andrej Karpathy's [LLM Wiki](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f): the AI keeps the wiki up to date itself, so what it learns builds up. Three Claude Code hooks put the right pages in front of every session:
+
+<Flow
+  label="How the wiki reaches every session"
+  steps={[
+    {
+      icon: "tb:notebook",
+      title: "Session starts",
+      text: "The working rules and the lessons load first.",
+    },
+    {
+      icon: "tb:route",
+      title: "Each prompt",
+      text: "A hook names the wiki pages the task needs.",
+    },
+    {
+      icon: "tb:code",
+      title: "The work",
+      text: "Claude Code builds and checks with those pages open.",
+    },
+    {
+      icon: "tb:shield-lock",
+      title: "Turn ends",
+      text: "If the code changed and the wiki didn't, the turn stops once.",
+    },
+  ]}
+  loop="A mistake becomes a one-line lesson, and the next session starts with it."
+/>
+
+More in [An LLM wiki: project memory for Claude Code](/en/blog/llm-wiki-project-memory-for-claude-code/).
+
+## What did the research show?
+
+Agents opened 20 developer portfolios that won Awwwards awards in 2023-2026, on a desktop and on a throttled phone (1.6 Mbps, a 4× slower CPU). Each got two scores from 1 to 5: **Wow** for how memorable it is, and **Practicality** for how fast you can reach the projects and the contact, measured as the moment the first real link becomes clickable.
+
+<Matrix
+  caption="20 award-winning portfolios by Wow and Practicality (one run each, 5 October 2026)"
+  xLabel="Practicality"
+  yLabel="Wow"
+  good={4}
+  goodLabel="Both scores 4 or more: only 4 of 20 sites"
+  points={[
+    { name: "Edoardo Lunardi", x: 5, y: 4 },
+    { name: "Clément Grellier", x: 5, y: 3 },
+    { name: "Elliott Mangham", x: 5, y: 3 },
+    { name: "Valentin Mor", x: 5, y: 2 },
+    { name: "Antoine Wodniack", x: 4, y: 4 },
+    { name: "Jesper Landberg", x: 4, y: 5 },
+    { name: "Stefan Vitasović", x: 4, y: 4 },
+    { name: "Grégory Lallé", x: 4, y: 3 },
+    { name: "Rafa de las Heras", x: 3, y: 4 },
+    { name: "Hiroto Sato", x: 3, y: 4 },
+    { name: "Ravi Klaassens", x: 3, y: 4 },
+    { name: "Abhishek Jha", x: 3, y: 4 },
+    { name: "Francesco Michelini", x: 3, y: 3 },
+    { name: "Lusion (studio)", x: 3, y: 5 },
+    { name: "Max Milkin", x: 2, y: 4 },
+    { name: "Corentin Bernadou", x: 2, y: 4 },
+    { name: "Kris Temmerman", x: 1, y: 4 },
+    { name: "Bruno Simon", x: 1, y: 5 },
+    { name: "Samsy", x: 1, y: 5 },
+    { name: "Jordan Delcros", x: 1, y: 5 },
+  ]}
+/>
+
+What came out of it:
+
+- **An award doesn't mean usable.** On the throttled phone only 8 of the 20 were usable within 3 seconds, and 9 weren't usable within 10. The four least practical (game worlds and gated intros) even had a higher average Site of the Day score than the three most practical ones.
+- **The jury isn't hiring.** Awwwards weighs design 40%, usability 30%, creativity 20% and content 10%, and the jurors are designers and developers. A recruiter asks one thing: can I find the projects and the contact?
+- **Stunning and practical is possible, but rare.** Only four sites scored 4 or more on both. What they share: real links on the first screen, and the show beside the content, never in front of it.
+
+Here is what that looks like on a phone. First, the immersive end:
+
+<Shots
+  phones
+  shots={[
+    { image: refBruno, alt: "Bruno Simon's portfolio on a phone: a small 3D car in a purple world and the words Click to start", name: "Bruno Simon", tag: "Click to start" },
+    { image: refSamsy, alt: "Samsy's portfolio on a phone: a dark screen with a glowing red robot and no links", name: "Samsy", tag: "No links in the HTML" },
+    { image: refJordan, alt: "Jordan Delcros's portfolio on a phone: a black screen with a thin loading bar", name: "Jordan Delcros", tag: "About 20 s of loading" },
+  ]}
+  caption="Three of the most memorable sites in the study, on the throttled phone (5 October 2026). Quoted for review; the sites belong to their authors: bruno-simon.com, samsy.ninja, jordan-delcros.com."
+/>
+
+And the four that did both. Each one gave this site an idea:
+
+<Shots
+  phones
+  shots={[
+    { image: refEdoardo, alt: "Edoardo Lunardi's portfolio on a phone: desktop-style windows with an About text, links and a work gallery", name: "Edoardo Lunardi", tag: "Real links on the first screen" },
+    { image: refJesper, alt: "Jesper Landberg's portfolio on a phone: a vertical list of project cards", name: "Jesper Landberg", tag: "The show beside the content" },
+    { image: refAntoine, alt: "Antoine Wodniack's portfolio on a phone: red wavy lines, the words Creative Developer and a Hire me button in the header", name: "Antoine Wodniack", tag: "Hire me in the header" },
+    { image: refStefan, alt: "Stefan Vitasović's portfolio on a phone: big type cut by grey redaction bars", name: "Stefan Vitasović", tag: "One signature effect" },
+  ]}
+  caption="Stunning and practical, and what I took from each. Quoted for review; the sites belong to their authors: edoardolunardi.dev, jesperlandberg.com, wodniack.dev, stefanvitasovic.dev."
+/>
+
+Section ideas came from [Mobbin](https://mobbin.com/), a library of real screens from shipped products. The topic chips above my contact form are one of them: you start with a tap, not a blank field.
+
+## Why not another 3D world?
+
+Honestly, I love them. My last portfolio was one. But I had measured both kinds of site by then, and the trade looked like this:
+
+| | A full 3D world | This site |
+| --- | --- | --- |
+| First screen | a loader or “click to start” | my name, my role and two buttons |
+| Links | often none in the HTML (Samsy, Jordan Delcros) | every link is real HTML |
+| Search engines and screen readers | text drawn in WebGL is invisible to them | real text, painted first |
+| Slow phone | 9 of 20 award winners unusable within 10 s | shaders start after the text, only while visible |
+| No WebGL or WebGPU | an error instead of the site (Kris Temmerman) | a CSS picture underneath |
+
+So the wow stays, as a layer instead of a gate. Four shaders run on this site, all written for it with no library:
+
+<Clips
+  clips={[
+    { src: "contour", label: "The All projects head: a contour-line map that rises under the pointer", name: "Contour map" },
+    { src: "xray", label: "An X-ray lens following the pointer over a project capture, showing its structure on a blueprint grid", name: "X-ray lens" },
+    { src: "prints", label: "Hobby prints on My life: picking a hobby wipes a new two-ink riso print in dot by dot", name: "Riso prints" },
+    { src: "goo", label: "The My life head: a colourful goo behind the title swells when poked", name: "Goo" },
+  ]}
+  caption="Contour map and X-ray lens on All projects, riso prints and goo on My life. Each starts after the text is on screen, runs only while visible, and holds still for reduced motion or the pause button."
+/>
+
+## How do I run the AI?
+
+Like a small team. I brief the lead agent, subagents research in parallel, MCP servers bring real data, hooks guard the risky commands, checks gate the result, and I review it. The AI does a lot of the typing; I own the decisions.
+
+<Breaker
+  id="bk-ai"
+  kicker="On the home page"
+  title="Watch one change, step by step"
+  text="The same process as a live story: who works on each step and what it looks like."
+  steps={["Brief", "Memory", "Research", "Tools", "Build", "Check", "Review"]}
+  href="/en/#ai"
+  cta="See the seven steps"
+/>
+
+The building blocks are in [Claude Code skills, hooks, MCP servers and subagents](/en/blog/claude-code-skills-hooks-mcp-subagents/).
+
+## What happened to the first design?
+
+<Shots
+  shots={[{ image: draftingTable, alt: "The rejected first design: a pale paper page with a faint grid, a small heading and a boxed contact block" }]}
+  caption="Drafting Table, the first look. It passed every test and nobody would remember it."
+/>
+
+So Claude built four very different directions as live pages. It recommended Orbit. I picked Poster: brutalism with manners. Flat saturated colour, hard offset shadows, square buttons and type fitted edge to edge.
+
+<Shots
+  shots={[
+    { image: dirOrbit, alt: "Orbit: the name over a particle planet", name: "Orbit", tag: "Claude's pick" },
+    { image: dirPoster, alt: "Poster: the name in huge capitals on cobalt", name: "Poster", tag: "My pick", picked: true },
+    { image: dirToybox, alt: "Toybox: soft 3D toy shapes next to the name", name: "Toybox" },
+    { image: dirExhibit, alt: "Exhibit: the name in a serif over a dark red glow", name: "Exhibit" },
+  ]}
+  caption="In Poster the type itself is the picture, so the design is already there at first paint."
+/>
+
+## How did each part change, and why?
+
+Five parts of the site through their versions. Tap through them.
+
+<Versions
+  id="v-ai"
+  title="The AI section"
+  frames={[
+    {
+      label: "Round 2",
+      image: aiR2,
+      alt: "Round 2: the heading Delegate. Verify. next to a checklist of gates",
+      note: "A checklist of gates. All true, and all the floor. It sold the checks, not the way I work.",
+    },
+    {
+      label: "Round 3",
+      image: aiR3,
+      alt: "Round 3: the heading Delegate. Automate. above a row of counters for hooks, wiki pages, subagents, MCP servers, skills and lessons",
+      note: "Counters for hooks, pages and agents. Numbers that change every week and say nothing about the work.",
+    },
+    {
+      label: "Now",
+      image: aiNow,
+      alt: "Now: I run AI like a team. The team of me and six agents above seven numbered steps, with step 5, Build, open: a terminal where a force push is stamped Blocked",
+      decision: "Show how the work gets done, not how much of it there is.",
+      note: "One change in seven steps, from my brief to my review, each with a small drawn scene.",
+    },
+  ]}
+/>
+
+<Versions
+  id="v-cred"
+  title="Competences (once Credentials)"
+  frames={[
+    {
+      label: "Round 2",
+      image: credR2,
+      alt: "Round 2: a grid of seven credential cards, each with a paragraph",
+      note: "Seven cards, each a paragraph. Everything visible, nothing readable at a glance.",
+    },
+    {
+      label: "Round 3",
+      image: credR3,
+      alt: "Round 3: tall collapsed cards with vertical titles and one card open with a picture",
+      note: "Sideways titles that open on hover. Compact, and hard to read.",
+    },
+    {
+      label: "Now",
+      image: credNow,
+      alt: "Now: a readable list on the left and the Experience card open on the right, with school and three internships as tickets",
+      decision: "Experience first, and every certificate checkable.",
+      note: "A list on the left, one open card on the right, a link to check every certificate.",
+    },
+  ]}
+/>
+
+<Versions
+  id="v-contact"
+  title="Contact"
+  frames={[
+    {
+      label: "Round 2",
+      image: contactR2,
+      alt: "Round 2: Let's talk, with an email field, a message field and a row of buttons",
+      note: "A normal form, and every field is a reason to stop.",
+    },
+    {
+      label: "Round 3",
+      image: contactR3,
+      alt: "Round 3: Let's talk, with one message box and three topic chips",
+      decision: "As few fields as possible.",
+      note: "Message first. The reply field appears once you start typing.",
+    },
+    {
+      label: "Now",
+      image: contactNow,
+      alt: "Now: Let's talk, with topic chips, a message box, a Send button and three direct links",
+      note: "Paste an email, a phone number or a LinkedIn link and the reply field fills itself. It works without JavaScript too.",
+    },
+  ]}
+/>
+
+<Versions
+  id="v-how"
+  title="How I work"
+  frames={[
+    {
+      label: "Round 2",
+      image: howR2,
+      alt: "Round 2: How I work as four numbered principles with small receipts",
+      note: "Four principles as numbered lines. Easy to write, easy to skip.",
+    },
+    {
+      label: "Now",
+      image: howNow,
+      alt: "Now: Product engineer, a ring of seven stops from client to review, and an open stop with a drawn scene of a shop and a goal, budget and deadline checklist",
+      decision: "Tell it as a story you can see.",
+      note: "A ring of seven stops, each with a drawn scene and a real example.",
+    },
+  ]}
+/>
+
+<Versions
+  id="v-covers"
+  title="Blog covers"
+  frames={[
+    {
+      label: "Before",
+      image: coversBefore,
+      alt: "Six old covers: a stack of papers, two bar charts, a row of boxes, a shield, the letters A A a, and EN and PL bubbles",
+      note: "Colours came from the card's place in the list, so a post changed colour between pages.",
+    },
+    {
+      label: "After",
+      image: coversAfter,
+      alt: "Six new covers: linked wiki pages, a level scale, a terminal wired to helpers, a crossed-out cookie next to bars, one wide letter between two walls, and two swapped speech bubbles",
+      decision: "One palette per cover, and the topic drawn literally.",
+      note: "A scale for a comparison, a crossed-out cookie for cookieless analytics. No words.",
+    },
+  ]}
+/>
+
+The rule behind all five: show the thing, cut the paragraph.
+
+## What do the other pages look like?
+
+Every page gets the same care as the home page, on a laptop and on a phone.
+
+<Shots
+  shots={[
+    { image: pageWork, alt: "All projects: the heading Things I've built over a contour-line shader, next to a numbered index of projects", name: "All projects" },
+    { image: pageLife, alt: "My life: the words My life in huge outlined capitals over a colourful blob, next to a stack of holiday photos", name: "My life" },
+    { image: pageCv, alt: "The CV page: the name in huge capitals on cobalt, a photo, the role and a Download PDF button next to the printed CV", name: "CV" },
+    { image: pageBlog, alt: "The blog: the word Blog in huge capitals on cobalt above search, kind, topic and sort filters", name: "Blog" },
+  ]}
+  caption="All projects, My life, the CV and the blog at 1440 px."
+/>
+
+<Shots
+  shots={[{ image: pagesPhone, alt: "Four phone screens side by side: the home page, All projects, My life and the CV" }]}
+  caption="The same site on a phone: home, All projects, My life and the CV. Same content, one column."
+/>
+
+## What are the small details?
+
+**The name fills the screen without JavaScript.** At build time a script measures the font and works out the exact width for each line, so the name fits edge to edge before any script runs ([how it works](/en/blog/fit-text-to-width-at-build-time/)).
+
+<Shots
+  shots={[{ image: qaSweep, alt: "The home page at three widths side by side: a phone, a tablet and a wide desktop, each with the name filling the width" }]}
+  caption="The home page at 390, 1024 and 1920 pixels."
+/>
+
+**Phones get the same site.** Every hover effect has a twin for touch ([how](/en/blog/hover-effects-on-phones/)), and the contact form has its own write-up, bug included ([a contact form on a static site](/en/blog/contact-form-on-a-static-site/)).
+
+## Who else is it built for?
+
+Everyone, including people who use the web differently. A site that only works with a mouse and perfect eyesight shuts people out, and I'd rather it didn't. So:
+
+- **Motion you can stop.** One “Pause motion” button stops everything, and with reduced motion turned on, everything shows its final state ([more](/en/blog/reduced-motion-and-a-pause-button/)).
+- **A keyboard gets everywhere.** A skip link jumps past the header, every hover has a focus twin, and focus never hides under the sticky header.
+- **Screen readers hear the full story.** Hidden text adds what the eye gets from context, like “opens in a new tab”, and every button's name starts with the words you see on it.
+- **Contrast is tested, not eyeballed.** A unit test checks every colour pair, and axe runs on every page.
+
+## How do search engines know who I am?
+
+Sitemaps and meta tags are the floor. To find me by name, and one day show a knowledge panel, a search engine has to be sure who the site is about. So every page tells it the same story:
+
+- **One person, one id.** The home page and the CV describe me as one `Person` in structured data: my name, my role, my real portrait and my profiles. Every post and My life point back to it, and the links to my profiles carry `rel="me"`.
+- **Real photos with real facts.** My life shows my own photos, each one marked up with where and when it was taken, and listed in the image sitemap.
+- **A named author.** Every post is a `BlogPosting` by that same person, with an author box under it, and every outside fact has a dated source.
+- **A footer that does the work.** Every page links to the projects, the CV, the blog, its RSS feed and my profiles.
+- **One address per page.** One canonical URL, the language versions linked to each other, and a share card for every page in every language.
+
+The build fails if a page loses its title, description or canonical, or if the structured data stops parsing.
+
+<Shots
+  shots={[
+    { image: seoAuthor, alt: "The author box under a post: my avatar, my name, a one-line bio and links to More about me, the CV and Contact", name: "Author box" },
+    { image: seoFooter, alt: "The site footer: columns for Work, Site with Blog, CV, My life and RSS, Elsewhere with my profiles, the legal pages and a Pause motion button", name: "Footer" },
+  ]}
+  caption="The author box under every post and the footer on every page: the same person, the same links, everywhere."
+/>
+
+## How is every change checked?
+
+<Flow
+  label="The check loop for every change"
+  steps={[
+    {
+      icon: "tb:list-check",
+      title: "Static",
+      text: "Types, lint and unit tests.",
+    },
+    {
+      icon: "tb:accessible",
+      title: "Browsers",
+      text: "Playwright on every page, with axe for accessibility.",
+    },
+    {
+      icon: "tb:camera",
+      title: "Eyes",
+      text: "Screenshots at phone, tablet and desktop widths that I look at myself.",
+    },
+    {
+      icon: "tb:gauge",
+      title: "Speed",
+      text: "Lighthouse on a slow phone.",
+    },
+  ]}
+  loop="Anything that fails becomes a fix, and a repeated mistake becomes a lesson in the wiki."
+/>
+
+Nothing is done until the checks pass and I've looked at the screenshots myself.
+
+## What is it built with?
+
+| Part | Tool |
+| --- | --- |
+| Framework | Astro 7 ([why not Next.js](/en/blog/astro-vs-nextjs-for-a-portfolio/)) |
+| Language and styling | TypeScript, Tailwind CSS 4 |
+| Translations | Lingui |
+| Repo | Turborepo and bun |
+| Font | Anybody, a variable font (OFL) |
+| Icons | Tabler (MIT) and Simple Icons (CC0) |
+| Hosting | Vercel |
+| Contact form | EmailJS behind a Vercel function, Cloudflare Turnstile |
+| Analytics | Umami Cloud, cookieless |
+| Tests | Playwright, axe-core, Vitest, Lighthouse |
+| AI | Claude Code |
+
+## Where did it end up?
+
+<Shots
+  shots={[{ image: lighthouseReport, alt: "A Lighthouse report for the home page on mobile: four green gauges for Performance, Accessibility, Best Practices and SEO" }]}
+  caption="The home page in Lighthouse on mobile, from a local production build on 7 October 2026. Lab numbers: real-user data comes after launch."
+/>
+
+If you'd like to talk about building something like this, or about a role, [my contact form is one message long](/en/#contact).

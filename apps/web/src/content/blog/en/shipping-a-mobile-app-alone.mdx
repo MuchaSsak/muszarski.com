@@ -160,7 +160,7 @@ On the recommended model, one minute of voice costs as many credits as about 59 
 
 The App Store lists 30 languages for Linkoglot, and the landing page has the same 30 locales, each with an hreflang alternate. Text lives in four places, and each one has its own route:
 
-1. **App strings.** Lingui, with a `.po` catalog per language, the same library this site uses ([how this site was built](/en/blog/how-this-site-was-built/)). [Lingui vs i18next](/en/blog/lingui-vs-i18next/) compares the two libraries.
+1. **App strings.** Lingui, with a `.po` catalog per language, the same library this site uses ([how this site was built](/en/blog/case-study/)). [Lingui vs i18next](/en/blog/lingui-vs-i18next/) compares the two libraries.
 2. **Translation at scale.** An in-repo script sent catalogs to an LLM in batches. On 17 June 2026 it became the npm CLI `lingui-translate-ai`, and version 1.1.0, with ICU plural support, came out on 10 July 2026, the day the Play release went live. [How the tool works, and how I check its drafts](/en/blog/translate-lingui-catalogs-with-an-llm/).
 3. **Database content.** Achievement names and descriptions are stored as jsonb, and a `translate_column` trigger fills in the translations.
 4. **Store listings.** Translated listing text and screenshots per language.

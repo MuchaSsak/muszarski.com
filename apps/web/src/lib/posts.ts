@@ -27,11 +27,16 @@ export const postSlug = (post: Post) => slugOf(post.id);
 export const postPath = (post: Post) => pathTo(postLocale(post), `blog/${postSlug(post)}`);
 export const postMinutes = (post: Post) => readingMinutes(post.body ?? "");
 
-/** The post's path in each locale it exists in (`translationKey`), for hreflang and the language switch. */
+/**
+ * The post's path in each locale it exists in (`translationKey`), for hreflang and the language switch, in locale
+ * order (the collection order ties on equal dates, which flipped the hreflang order).
+ */
 export async function translationsOf(post: Post): Promise<Partial<Record<BlogLocale, string>>> {
+  const posts = await allPosts();
   const map: Partial<Record<BlogLocale, string>> = {};
-  for (const other of await allPosts()) {
-    if (other.data.translationKey === post.data.translationKey) map[postLocale(other)] = `blog/${postSlug(other)}`;
+  for (const locale of BLOG_LOCALES as readonly BlogLocale[]) {
+    const other = posts.find((p) => p.data.translationKey === post.data.translationKey && postLocale(p) === locale);
+    if (other) map[locale] = `blog/${postSlug(other)}`;
   }
   return map;
 }

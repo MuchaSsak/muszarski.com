@@ -10,7 +10,9 @@
 ## Art direction
 
 - **Mental model:** the site is a series of printed posters. Each section is one flat colour field; the type is fitted
-  edge to edge; depth is a hard offset shadow; a fine print grain sits over everything [user picked, round 1].
+  edge to edge; depth is a hard offset shadow; a fine print grain sits over everything [user picked, round 1]. The owner calls the style
+  brutalism [user 2026-10-08]; in the case study it is "brutalism with manners" (neo-brutalism: flat saturated colour,
+  hard offset shadows, square buttons, type fitted edge to edge).
 - **Signature moment (F20):** the fitted name in the hero. It renders final from the server (no JS on the LCP path);
   after load the letters breathe as an accordion that follows the pointer and idles as a slow wave. No WebGL in the
   hero; 3D lives only inside the space chapter's own media.

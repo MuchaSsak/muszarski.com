@@ -60,5 +60,6 @@
 - One `astro preview` and one `astro dev` per project: e2e, shots and Lighthouse share port 4322; for speed work build to a scratch `--outDir` and serve it on its own port (`E2E_PORT`, `lhci --base`). A busy machine fakes regressions (other sessions' headless Chrome at 100% CPU): check the load, rerun - 2026-10-07.
 - After a Playwright update, run `./node_modules/.bin/playwright install chromium` in `apps/web` (browser version mismatch) - 2026-10-06.
 - The owner works on two PCs and runs parallel sessions (one committed another's WIP, 2026-10-07): `git pull`/`git log` first, stage your own paths only; on a merge take one side's `.po`, re-add the other's msgids, extract; regenerate PDFs - 2026-10-06.
+- sharp runs `resize` before `composite` in one pipeline whatever the call order (a phone strip lost its last tile): composite to a buffer, then resize it in a second pipeline; look at every generated image - 2026-10-08.
 - WebSearch has a budget shared by parallel agents; prefer WebFetch of known URLs, then Playwright - 2026-10-05.
 - Routing: a generic phrase in one row outscores a project name; put shared task words in every row they apply to and re-run `wiki-context.mjs --test` - 2026-10-05.

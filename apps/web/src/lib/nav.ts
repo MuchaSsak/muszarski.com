@@ -25,7 +25,7 @@ export function chromeLinks(locale: Locale) {
     rss: `/${blogLocale}/rss.xml`,
     cv: pathTo(locale, "cv"),
     myLife: pathTo(locale, "my-life"),
-    thisSite: pathTo(blogLocale, `blog/${blogLocale === "pl" ? "jak-powstala-ta-strona" : "how-this-site-was-built"}`),
+    thisSite: pathTo(blogLocale, "blog/case-study"),
     privacy: pathTo(locale, "privacy"),
     terms: pathTo(locale, "terms"),
     /** A flagship's chapter on the home page (case studies live in the blog: open-questions Q43). */

@@ -33,7 +33,7 @@ Wired so far (no-ops until `PUBLIC_UMAMI_WEBSITE_ID` is set):
 - slice 1: `cta` id=contact (header "Hire me", footer), `outbound` (GitHub, LinkedIn, npm, astro) - data attributes
 - overnight build 2026-10-05: `cta` (see-work, all-projects, walkthrough, this-site, blog), `outbound` (every chapter and
   /work/ link with `project`), `cv_download` (cv-page: data attributes), `copy_email` (contact),
-  `contact_submit` (topic) / `contact_error` (kind), `case_open` (/work/ → case study), `motion_toggle`
+  `contact_submit` (topic) / `contact_error` (kind), `case_open` (/work/ → case study), `cta` id=ai-steps source=blog (the case study's breaker → home `#ai`, 2026-10-08), `motion_toggle`
 - 2026-10-06 [user feedback pass]: the CV button (`layout/CvLink.astro`) sends `cv_download` with source
   header/hero/menu/footer **from its script** (`umami.track`), because Umami's own click handler would race the
   navigation to `/cv/`; the `cv` cta id, `theme_toggle` (theme switch cut) and the `open-to-projects` cta (line removed)

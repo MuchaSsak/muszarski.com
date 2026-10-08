@@ -12,7 +12,7 @@
 /<locale>/                       home                            locale ∈ en (default) · pl · es
 /<locale>/work/                  ALL projects index (F04) [user] 2026-10-05; no filters since 2026-10-08 [user]
 /<locale>/work/<slug>/           not built: **case studies live in the blog** [user 2026-10-05] (Q43); `/work/` links a
-                                 flagship's home chapter (`/<locale>/#<anchor>`) and case study #0 (`/blog/how-this-site-was-built/`)
+                                 flagship's home chapter (`/<locale>/#<anchor>`) and case study #0 (`/blog/case-study/`, the same slug in en and pl)
 /<locale>/blog/                  blog index (F12); en + pl only (i18n.md § Locale coverage)
 /<locale>/blog/<slug>/           post (slug per locale)
 /<locale>/cv/                    web CV, same data as the PDF (F11)

@@ -455,7 +455,7 @@ msgstr "Copiar enlace"
 msgid "Course"
 msgstr "Curso"
 
-#: src/pages/[locale]/cv/index.astro:80
+#: src/pages/[locale]/cv/index.astro:82
 msgid "Curriculum vitae"
 msgstr "Currículum vítae"
 
@@ -519,7 +519,7 @@ msgstr "Hecho"
 msgid "Download CV"
 msgstr "Descargar CV"
 
-#: src/pages/[locale]/cv/index.astro:112
+#: src/pages/[locale]/cv/index.astro:114
 msgid "Download PDF"
 msgstr "Descargar PDF"
 
@@ -631,13 +631,13 @@ msgstr "Encontré tu LinkedIn en tu mensaje"
 msgid "Full-stack Developer · TypeScript, React, three.js"
 msgstr "Desarrollador full stack · TypeScript, React, three.js"
 
-#: src/pages/[locale]/blog/[slug].astro:179
-msgid "Full-stack developer from Poland. I build web and mobile products end to end, and I write down what I learn while doing it."
-msgstr "Desarrollador full stack de Polonia. Creo productos web y móviles de principio a fin, y escribo lo que aprendo por el camino."
-
 #: src/components/home/Hero.astro:28
 msgid "Full-stack product engineer"
 msgstr "Ingeniero de producto full stack"
+
+#: src/pages/[locale]/blog/[slug].astro:179
+msgid "Full-stack product engineer from Poland. I always think about the users, the business, conversions and the psychology behind my visuals. I measure my work by the results it brings."
+msgstr "Ingeniero de producto full stack de Polonia. Siempre pienso en los usuarios, el negocio, las conversiones y la psicología detrás de lo que se ve en pantalla. Mido mi trabajo por los resultados que consigue."
 
 #: src/components/home/Contact.astro:59
 msgid "Full-time or contract"
@@ -1267,7 +1267,7 @@ msgstr "Artículos anteriores"
 msgid "pricing"
 msgstr "precios"
 
-#: src/pages/[locale]/cv/index.astro:117
+#: src/pages/[locale]/cv/index.astro:119
 msgid "Print"
 msgstr "Imprimir"
 
@@ -1466,7 +1466,7 @@ msgstr "registro"
 msgid "sign-ups"
 msgstr "registros"
 
-#: src/pages/[locale]/cv/index.astro:83
+#: src/pages/[locale]/cv/index.astro:85
 msgid "Since"
 msgstr "Desde"
 
@@ -1900,7 +1900,7 @@ msgstr "Tu mensaje"
 msgid "Your message reached Mateusz Muszarski. He replies to the address you gave."
 msgstr "Tu mensaje ha llegado a Mateusz Muszarski. Responde a la dirección que indicaste."
 
-#: src/pages/[locale]/cv/index.astro:131
+#: src/pages/[locale]/cv/index.astro:133
 msgid "Your PDF is downloading. Nothing yet? Use the Download PDF button."
 msgstr "Tu PDF se está descargando. ¿Nada aún? Usa el botón Descargar PDF."
 

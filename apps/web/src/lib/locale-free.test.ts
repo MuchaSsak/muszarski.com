@@ -86,10 +86,20 @@ describe("locale-free addresses", () => {
   it("send a blog post's own slug to that post", () => {
     expect(posts.length).toBeGreaterThan(0);
     for (const post of posts) {
-      const target = redirect(`/blog/${post.slug}/`, "es-ES");
-      expect(target).toBe(`/${post.locale}/blog/${post.slug}/`);
+      // A slug both languages share (the case study) goes by the reader's language, English for any other.
+      const shared = posts.filter((other) => other.slug === post.slug).length > 1;
+      const header = shared && post.locale === "pl" ? "pl-PL" : "es-ES";
+      const target = redirect(`/blog/${post.slug}/`, header);
+      expect(target, `/blog/${post.slug}/ for "${header}"`).toBe(`/${post.locale}/blog/${post.slug}/`);
       expect(exists(target!)).toBe(true);
     }
+  });
+
+  it("move the case study's old addresses to /blog/case-study/", () => {
+    expect(redirect("/en/blog/how-this-site-was-built/")).toBe("/en/blog/case-study/");
+    expect(redirect("/pl/blog/jak-powstala-ta-strona/")).toBe("/pl/blog/case-study/");
+    expect(redirect("/blog/jak-powstala-ta-strona/", "es-ES")).toBe("/pl/blog/case-study/");
+    expect(redirect("/blog/how-this-site-was-built/", "pl-PL")).toBe("/en/blog/how-this-site-was-built/");
   });
 
   it("leave localized pages and files alone", () => {
@@ -98,7 +108,8 @@ describe("locale-free addresses", () => {
     }
   });
 
-  it("stay temporary (307): the target depends on the reader", () => {
-    expect(rules.every((rule) => rule.permanent === false)).toBe(true);
+  it("stay temporary (307): the target depends on the reader; only moved addresses are permanent (308)", () => {
+    const moved = ["/en/blog/how-this-site-was-built/", "/pl/blog/jak-powstala-ta-strona/", "/blog/jak-powstala-ta-strona/"];
+    for (const rule of rules) expect(rule.permanent, rule.source).toBe(moved.includes(rule.source));
   });
 });

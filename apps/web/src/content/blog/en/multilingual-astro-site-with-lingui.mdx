@@ -183,7 +183,7 @@ export const onRequest = defineMiddleware((context, next) => {
 
 The catalogs are `.po` files, one per language. `@lingui/vite-plugin` compiles them on import, so no compiled catalog sits in the repository. Production builds set `failOnMissing: "catalog"`, which fails the build when the Polish or Spanish catalog lacks a message, checked before fallback locales apply. The wider comparison is in [Lingui vs i18next](/en/blog/lingui-vs-i18next/).
 
-Browser scripts never load Lingui. The contact form, for example, gets its translated error messages as a JSON data attribute rendered at build time, so the page ships words, not a catalog. None of this costs the reader anything: the home page scores 99 for performance and 100 for accessibility, best practices and SEO in all three languages (mobile Lighthouse, median of three runs on a local production build), as described in [the case study of this site](/en/blog/how-this-site-was-built/).
+Browser scripts never load Lingui. The contact form, for example, gets its translated error messages as a JSON data attribute rendered at build time, so the page ships words, not a catalog. None of this costs the reader anything: the home page scores 99 for performance and 100 for accessibility, best practices and SEO in all three languages (mobile Lighthouse, median of three runs on a local production build), as described in [the case study of this site](/en/blog/case-study/).
 
 The loop for a new string:
 

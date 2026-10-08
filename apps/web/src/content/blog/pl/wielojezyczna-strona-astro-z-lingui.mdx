@@ -185,7 +185,7 @@ export const onRequest = defineMiddleware((context, next) => {
 
 Katalogi to pliki `.po`, po jednym na język. `@lingui/vite-plugin` kompiluje je przy imporcie, więc w repozytorium nie leży żaden skompilowany katalog. Build produkcyjny ustawia `failOnMissing: "catalog"`: pada, gdy w katalogu polskim albo hiszpańskim brakuje komunikatu, i sprawdza to, zanim zadziałają języki zapasowe. Szersze porównanie opisałem w [Lingui czy i18next](/pl/blog/lingui-czy-i18next/).
 
-Skrypty w przeglądarce w ogóle nie ładują Lingui. Formularz kontaktowy dostaje na przykład przetłumaczone komunikaty o błędach jako JSON w atrybucie `data-` wygenerowanym w czasie builda, więc strona wysyła słowa, a nie katalog. Czytelnik nic na tym nie traci: strona główna ma w mobilnym Lighthouse 99 za wydajność i 100 za dostępność, dobre praktyki i SEO we wszystkich trzech językach (mediana z trzech pomiarów na lokalnym buildzie produkcyjnym), jak opisałem w [studium przypadku tej strony](/pl/blog/jak-powstala-ta-strona/).
+Skrypty w przeglądarce w ogóle nie ładują Lingui. Formularz kontaktowy dostaje na przykład przetłumaczone komunikaty o błędach jako JSON w atrybucie `data-` wygenerowanym w czasie builda, więc strona wysyła słowa, a nie katalog. Czytelnik nic na tym nie traci: strona główna ma w mobilnym Lighthouse 99 za wydajność i 100 za dostępność, dobre praktyki i SEO we wszystkich trzech językach (mediana z trzech pomiarów na lokalnym buildzie produkcyjnym), jak opisałem w [studium przypadku tej strony](/pl/blog/case-study/).
 
 Pętla dla nowego tekstu:
 

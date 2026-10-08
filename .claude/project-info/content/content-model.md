@@ -103,9 +103,22 @@ cover (code-drawn or real), coverAlt, author: "mateusz", draft, canonical? }`.
 - The author is the single Person entity (`seo.md`).
 - Posts may import the case-study pieces (`components/blog/case/`): `Timeline` (versions in order: thumbnail, date,
   verdict stamp, the owner's words verbatim, one line), `Versions` (one part of the site through its rounds as tabs:
-  screenshot, what the owner said, why it changed) and `Shots` (framed screenshots with tags such as "Claude's pick").
+  screenshot, what the owner said, why it changed) and `Shots` (framed screenshots with tags such as "Claude's pick";
+  `phones` puts phone screens in one row), `Flow` (a process as tickets), `Matrix` (two scores as a table), `Clips`
+  (muted loops of the site in motion, `public/media/case/<src>.{av1.mp4,mp4}` + `-poster.webp`, played by
+  `scripts/reel.ts`: sources only after the first interaction and near, play while half visible) and `Breaker` (a dark
+  band that links to a live showcase, e.g. the home AI story; its steps light up in turn, off under reduced motion).
   All text is passed from the per-locale MDX; their CSS lives in `styles/case.css` (see `tech/usage/astro.md` § Gotchas: MDX component styles
   and the CSP). Images live in `src/assets/case/` (1200 px webp, made from `comps/` and fresh shots of the site).
+  Shots of the site come from a launch-mode build (`IS_FULL_PRODUCTION=true astro build --outDir <scratch>`) so
+  rights-`check` projects never appear in them.
+- **Case study #0** (`/en/blog/case-study/` + `/pl/blog/case-study/`, renamed 2026-10-08 from `how-this-site-was-built` / `jak-powstala-ta-strona`, which 308 to it; later case studies about projects get their own slugs, this one stays the main one) [user 2026-10-08: "fun to read and go
+  through", "highly informational, with accurate research and quick explanations of my thought processes and of my
+  framework"; "talks too many times about lighthouse and numbers such as KB"]: the working rules first, the versions,
+  why rebuild, what a portfolio is for (the work first), the wiki, the research with quoted reference screenshots,
+  why not another 3D world (a fact table + the site's four shaders as clips), the AI team with a breaker to the home
+  story, the rejected design, the parts through their rounds, the other pages, accessibility, SEO, checks, the stack,
+  the result. Speed numbers appear only in the TL;DR, the old site's measured issues (under its flight clip, `public/media/space/flight.*`, with the CC BY texture credit) and the result picture [user 2026-10-08: "include a video about old 3d portfolio, and then list some of the most important issues with it"].
 - 2026-10-06 round [user: "make sure all of the blogs are quality and nice to read, write a bunch more"]: every post
   has a TL;DR, question headings and short paragraphs; seven new posts in en + pl (portfolio Lighthouse data, the
   three.js portfolio on mobile, multilingual Astro with Lingui, the contact form, CV + PDF from one source, hover on

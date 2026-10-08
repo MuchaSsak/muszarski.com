@@ -1,0 +1,76 @@
+---
+/**
+ * Short muted loops of this site in motion (the case study's shaders) [user 2026-10-08: "include videos if its going
+ * to be performant"]. Same rules as the home reels (`scripts/reel.ts`): sources attach only after the reader's first
+ * interaction and when a clip comes near; it plays while half visible, pauses offscreen, on the pause button and under
+ * reduced motion (the poster stays, with a play button); a tap pauses or resumes it. Files: `public/media/case/<src>` (or `dir`)
+ * (AV1 + H.264 + a WebP poster, 960×600). Text comes from the post; the CSS lives in styles/case.css (prefix `cs-`).
+ */
+import { t } from "lingui-for-astro/macro";
+
+import Icon from "~/components/ui/Icon.astro";
+
+interface Clip {
+  /** The file stem in `dir`. */
+  src: string;
+  /** The folder in public/ (default /media/case/; the space flight lives in /media/space/). */
+  dir?: string;
+  /** The video's size (default 960×600). */
+  width?: number;
+  height?: number;
+  /** What the clip shows (the video's accessible name). */
+  label: string;
+  /** A short name on the frame. */
+  name?: string;
+}
+interface Props {
+  clips: Clip[];
+  caption: string;
+}
+
+const { clips, caption } = Astro.props;
+const many = clips.length > 1;
+const labelPause = t`Pause video`;
+const labelPlay = t`Play video`;
+---
+
+<figure class:list={["cs-shots", { "cs-many": many }]}>
+  <div class="cs-grid">
+    {clips.map((clip) => (
+      <div class="cs-frame cs-clip paused" data-reel>
+        <video
+          tabindex="-1"
+          muted
+          loop
+          playsinline
+          preload="none"
+          poster={`${clip.dir ?? "/media/case/"}${clip.src}-poster.webp`}
+          width={clip.width ?? 960}
+          height={clip.height ?? 600}
+          aria-label={clip.label}
+        >
+          <source data-src={`${clip.dir ?? "/media/case/"}${clip.src}.av1.mp4`} type='video/mp4; codecs="av01.0.04M.08"' />
+          <source data-src={`${clip.dir ?? "/media/case/"}${clip.src}.mp4`} type="video/mp4" />
+        </video>
+        <span class="cs-play" aria-hidden="true">
+          <Icon name="tbf:player-play" />
+        </span>
+        <button
+          class="cs-hit"
+          type="button"
+          data-toggle
+          aria-pressed="true"
+          aria-label={labelPlay}
+          data-label-pause={labelPause}
+          data-label-play={labelPlay}
+        ></button>
+        {clip.name && <span class="cs-name">{clip.name}</span>}
+      </div>
+    ))}
+  </div>
+  <figcaption>{caption}</figcaption>
+</figure>
+
+<script>
+  import "~/scripts/reel";
+</script>

@@ -74,7 +74,7 @@ export function GET(request: Request): Response {
 }
 ```
 
-No adapter means `astro preview` still serves the built site as it is. The function runs in Frankfurt (`fra1`, set in `vercel.json`), answers with `Cache-Control: no-store`, and stores nothing, because there is no database. The rest of the stack is in [the case study of this site](/en/blog/how-this-site-was-built/).
+No adapter means `astro preview` still serves the built site as it is. The function runs in Frankfurt (`fra1`, set in `vercel.json`), answers with `Cache-Control: no-store`, and stores nothing, because there is no database. The rest of the stack is in [the case study of this site](/en/blog/case-study/).
 
 A POST goes through five steps, and the first failure answers:
 

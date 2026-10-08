@@ -454,7 +454,7 @@ msgstr "Kopiuj link"
 msgid "Course"
 msgstr "Kurs"
 
-#: src/pages/[locale]/cv/index.astro:80
+#: src/pages/[locale]/cv/index.astro:82
 msgid "Curriculum vitae"
 msgstr "Curriculum vitae"
 
@@ -518,7 +518,7 @@ msgstr "Gotowe"
 msgid "Download CV"
 msgstr "Pobierz CV"
 
-#: src/pages/[locale]/cv/index.astro:112
+#: src/pages/[locale]/cv/index.astro:114
 msgid "Download PDF"
 msgstr "Pobierz PDF"
 
@@ -630,13 +630,13 @@ msgstr "Znalazłem Twój profil LinkedIn w wiadomości"
 msgid "Full-stack Developer · TypeScript, React, three.js"
 msgstr "Programista full stack · TypeScript, React, three.js"
 
-#: src/pages/[locale]/blog/[slug].astro:179
-msgid "Full-stack developer from Poland. I build web and mobile products end to end, and I write down what I learn while doing it."
-msgstr "Programista full stack z Polski. Buduję produkty webowe i mobilne od początku do końca i zapisuję, czego się przy tym uczę."
-
 #: src/components/home/Hero.astro:28
 msgid "Full-stack product engineer"
 msgstr "Full-stack product engineer"
+
+#: src/pages/[locale]/blog/[slug].astro:179
+msgid "Full-stack product engineer from Poland. I always think about the users, the business, conversions and the psychology behind my visuals. I measure my work by the results it brings."
+msgstr "Full-stack product engineer z Polski. Zawsze myślę o użytkownikach, biznesie, konwersjach i psychologii stojącej za tym, co widać na ekranie. Swoją pracę mierzę efektami, które przynosi."
 
 #: src/components/home/Contact.astro:59
 msgid "Full-time or contract"
@@ -1266,7 +1266,7 @@ msgstr "Poprzednie wpisy"
 msgid "pricing"
 msgstr "cennik"
 
-#: src/pages/[locale]/cv/index.astro:117
+#: src/pages/[locale]/cv/index.astro:119
 msgid "Print"
 msgstr "Drukuj"
 
@@ -1465,7 +1465,7 @@ msgstr "rejestracja"
 msgid "sign-ups"
 msgstr "rejestracje"
 
-#: src/pages/[locale]/cv/index.astro:83
+#: src/pages/[locale]/cv/index.astro:85
 msgid "Since"
 msgstr "Od"
 
@@ -1899,7 +1899,7 @@ msgstr "Twoja wiadomość"
 msgid "Your message reached Mateusz Muszarski. He replies to the address you gave."
 msgstr "Twoja wiadomość dotarła do Mateusza Muszarskiego. Odpowie na podany przez Ciebie adres."
 
-#: src/pages/[locale]/cv/index.astro:131
+#: src/pages/[locale]/cv/index.astro:133
 msgid "Your PDF is downloading. Nothing yet? Use the Download PDF button."
 msgstr "PDF się pobiera. Nic się nie dzieje? Użyj przycisku Pobierz PDF."
 

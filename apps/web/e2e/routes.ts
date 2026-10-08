@@ -5,8 +5,8 @@ export const PAGES = [
   ...(["en", "pl", "es"] as const).flatMap((locale) => PER_LOCALE.map((path) => `/${locale}/${path}`)),
   "/en/blog/",
   "/pl/blog/",
-  "/en/blog/how-this-site-was-built/",
-  "/pl/blog/jak-powstala-ta-strona/",
+  "/en/blog/case-study/",
+  "/pl/blog/case-study/",
   "/en/blog/lingui-vs-i18next/",
 ] as const;
 export const ROUTES = [...PAGES, "/does-not-exist/"] as const;
