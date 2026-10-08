@@ -60,6 +60,21 @@
   20 July 2025 (Regulation (EU) 2024/3228).
 - Analytics position (b) is implemented [assumption, Q34]: no banner, disclosure, opt-out switch on the privacy page,
   DNT/GPC honoured (the script isn't loaded).
+
+## Keeping the legal pages current [user 2026-10-08]
+
+The privacy policy and terms describe what the site really does, so they change in the same change as the site, in
+pl, en and es (Polish prevails; bump `version` and `updated`). Triggers:
+
+- **Privacy policy:** a new or dropped service that sees visitor data (hosting, form delivery, analytics, bot check,
+  embeds, fonts or scripts from a third party, linked profiles); a new form field or data collected; a cookie or
+  storage key; a change to retention, region or transfers; a new purpose (e.g. a newsletter). Update the vendor table
+  above too.
+- **Terms:** a new kind of service or content on the site (downloads, comments, paid work), a change to the rules of use,
+  the owner's contact details or the licence of what the site publishes.
+
+The drafts are not lawyer-reviewed (Q15): a change that adds a new legal basis or a transfer outside the EU goes to the
+owner in chat before it ships.
 - For counsel (from the drafter): art. 399 without consent for statistics; whether he is a "usługodawca" at all; the
   IP retention window for rate limiting; Vercel CDN log retention; DPF re-certification status of Cloudflare; EmailJS email-history retention (not stated beyond 30 days).
 

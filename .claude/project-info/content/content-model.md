@@ -119,6 +119,22 @@ cover (code-drawn or real), coverAlt, author: "mateusz", draft, canonical? }`.
   why not another 3D world (a fact table + the site's four shaders as clips), the AI team with a breaker to the home
   story, the rejected design, the parts through their rounds, the other pages, accessibility, SEO, checks, the stack,
   the result. Speed numbers appear only in the TL;DR, the old site's measured issues (under its flight clip, `public/media/space/flight.*`, with the CC BY texture credit) and the result picture [user 2026-10-08: "include a video about old 3d portfolio, and then list some of the most important issues with it"].
+- **Keeping the case study current** [user 2026-10-08: "keep this case study up to date ... if we change sections like
+  my life, then replace the old screenshots with new screenshots, you know, obvious stuff"]. The post describes the
+  live site, so a change to the site updates the post in the same change, en and pl (bump `updated`). What mirrors what:
+
+  | The site changes | Update in the post |
+  | --- | --- |
+  | Home AI story (`home/AiWorkflow.astro`): steps, their names, the team | the `Breaker` steps and its CTA count ("See the seven steps"), the AI section's text, the `ai-now` shot |
+  | A home section's look (hero, how I work, credentials, AI, contact) | its `*-now` shot in "How did each part change"; a redesign adds a round there |
+  | `/work/`, `/my-life/`, `/cv/`, `/blog/` | `page-<page>-<locale>.webp` and the `pages-phone-<locale>.webp` strip |
+  | Blog author box, footer | `seo-author-*`, `seo-footer-*`; the SEO bullets |
+  | A shader added, removed or reworked | its clip in "Why not another 3D world?" (`public/media/case/`) and the table |
+  | Stack, checks, accessibility or SEO measures (`technologies.md`, `requirements.md`, `seo.md`) | the stack table, the checks `Flow`, the accessibility and SEO bullets |
+  | A new Lighthouse result worth showing | `lighthouse.webp` and its caption date |
+
+  Shots are re-taken the way the originals were (launch-mode build, same size, both locales). History stays as it was:
+  old rounds, rejected directions, the old site and quoted references are never replaced.
 - 2026-10-06 round [user: "make sure all of the blogs are quality and nice to read, write a bunch more"]: every post
   has a TL;DR, question headings and short paragraphs; seven new posts in en + pl (portfolio Lighthouse data, the
   three.js portfolio on mobile, multilingual Astro with Lingui, the contact form, CV + PDF from one source, hover on

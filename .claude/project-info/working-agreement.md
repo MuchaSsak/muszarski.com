@@ -63,7 +63,10 @@
 
 1. Verify at the scale of the change and read the real output.
 2. Docs in the same change: the page that describes the behaviour + a `log.md` line. CV content changed →
-   the page and the PDF regenerate (`content-model.md` § CV).
+   the page and the PDF regenerate (`content-model.md` § CV). Two pages on the site describe the site itself and stay
+   current in the same change [user 2026-10-08]: the case study (what changed is shown there → its text and shots,
+   `content-model.md` § Keeping the case study current) and the privacy policy + terms (what the site collects, uses
+   or promises changed → `compliance-and-data.md` § Keeping the legal pages current).
 3. Lessons (§ 7).
 4. Commit as a Conventional Commit (`conventions.md`); author and push per `CLAUDE.local.md`. Never skip hooks.
 5. Report (§ 6).
