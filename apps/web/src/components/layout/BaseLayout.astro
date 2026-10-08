@@ -114,8 +114,15 @@ const umamiDomains = SITE_HOSTS.flatMap((host) => [host, `www.${host}`]).join(",
     {article && <meta property="article:published_time" content={article.published.toISOString()} />}
     {article && <meta property="article:modified_time" content={(article.updated ?? article.published).toISOString()} />}
     {article && <meta property="article:author" content={SITE.name} />}
-    {article?.tags.map((tag) => <meta property="article:tag" content={tag} />)}
-    <link rel="alternate" type="application/rss+xml" title={`${SITE.name} – Blog`} href={`/${locale === "pl" ? "pl" : "en"}/rss.xml`} />
+    {article?.tags.map((tag) => (
+      <meta property="article:tag" content={tag} />
+    ))}
+    <link
+      rel="alternate"
+      type="application/rss+xml"
+      title={`${SITE.name} – Blog`}
+      href={`/${locale === "pl" ? "pl" : "en"}/rss.xml`}
+    />
     {PUBLIC_GOOGLE_SITE_VERIFICATION && <meta name="google-site-verification" content={PUBLIC_GOOGLE_SITE_VERIFICATION} />}
     {PUBLIC_UMAMI_WEBSITE_ID && <UmamiLoader src={PUBLIC_UMAMI_SCRIPT_URL} id={PUBLIC_UMAMI_WEBSITE_ID} domains={umamiDomains} />}
     <slot name="head" />
@@ -131,6 +138,7 @@ const umamiDomains = SITE_HOSTS.flatMap((host) => [host, `www.${host}`]).join(",
     <script>
       import "~/scripts/motion";
     </script>
+    <slot name="end" />
   </body>
 </html>
 

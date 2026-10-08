@@ -1,34 +1,9 @@
 ---
 /**
- * Foundation 404 (English). The 404 slice (working-agreement.md § 9, 11+) adds the per-locale swap by
- * first path segment and its own poster (site/i18n.md § 404, requirements.md F21).
+ * The 404 every missing address gets (Vercel and `astro preview` serve this one file): English, with the Polish and
+ * Spanish copies folded in by the build and swapped in by the address's first segment (components/NotFound.astro).
  */
-import { t } from "lingui-for-astro/macro";
-
-import BaseLayout from "~/components/layout/BaseLayout.astro";
-import Fit from "~/components/ui/Fit.astro";
-import { pathTo } from "~/lib/routes";
-
-const locale = Astro.locals.locale;
+import NotFound from "~/components/NotFound.astro";
 ---
 
-<BaseLayout title={t`Page not found`} description={t`This page does not exist.`} path={null}>
-  <section class="sec field-hero near">
-    <Fit lines={["404"]} base={[100, 100]} decorative />
-    <h1 class="nf-title">{t`Page not found`}</h1>
-    <p>
-      <a href={pathTo(locale)} class="btn btn-inv">{t`Go to the home page`}</a>
-    </p>
-  </section>
-</BaseLayout>
-
-<style>
-  .nf-title {
-    margin: 1.5rem 0 1.25rem;
-    font-weight: 800;
-    font-size: clamp(1.875rem, 3.4vw, 3.375rem);
-    line-height: 0.92;
-    font-stretch: 62%;
-    text-transform: uppercase;
-  }
-</style>
+<NotFound swap />

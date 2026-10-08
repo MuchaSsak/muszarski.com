@@ -266,3 +266,31 @@ test("legal: noindex, numbered sections, the Polish version prevails", async ({ 
   expect(await page.locator(".legal-text h2").count()).toBeGreaterThan(5);
   await expect(page.getByRole("link", { name: "Wersja polska" })).toHaveAttribute("href", "/pl/terms/");
 });
+
+test("404: a missing address answers 404 in its locale's language, and the menu still works", async ({ page }) => {
+  const errors: string[] = [];
+  page.on("pageerror", (error) => errors.push(error.message));
+  page.on("console", (message) => {
+    if (message.type() === "error" && !/404 \(Not Found\)|status of 404/.test(message.text())) errors.push(message.text());
+  });
+  const cases = [
+    { path: "/no-such-page/", lang: "en", title: "Page not found", home: "/en/" },
+    { path: "/pl/no-such-page/", lang: "pl", title: "Nie znaleziono strony", home: "/pl/" },
+    { path: "/es/work/no-such-project/", lang: "es", title: "Página no encontrada", home: "/es/" },
+  ];
+  for (const { path, lang, title, home } of cases) {
+    const response = await page.goto(path);
+    expect(response?.status(), path).toBe(404);
+    await expect(page.locator("html")).toHaveAttribute("lang", lang);
+    await expect(page.locator("h1")).toHaveText(title);
+    await expect(page).toHaveTitle(new RegExp(`^${title}`));
+    await expect(page.locator(".nf-ctas a").first()).toHaveAttribute("href", home);
+    await expect(page.locator('meta[name="robots"]')).toHaveAttribute("content", /noindex/);
+  }
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/pl/no-such-page/");
+  await page.locator(".menu-btn").click();
+  await expect(page.locator("#site-menu")).toBeVisible();
+  await expect(page.locator("#site-menu").getByRole("link", { name: "Projekty", exact: true })).toBeVisible();
+  expect(errors).toEqual([]);
+});

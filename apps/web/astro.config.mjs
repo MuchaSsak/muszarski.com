@@ -9,6 +9,7 @@ import { defineConfig, envField } from "astro/config";
 import linguiForAstro from "lingui-for-astro/integration";
 
 import { isLaunchBuild, siteUrl } from "./scripts/launch.mjs";
+import { notFoundLocales } from "./scripts/not-found.mjs";
 import { sitemapImages } from "./scripts/sitemap-images.mjs";
 import { SITE } from "./src/data/site.ts";
 
@@ -136,12 +137,13 @@ export default defineConfig({
     react(),
     mdx(),
     sitemap({
-      // Only real, indexable pages: never the root redirect, 404, legal pages (noindex), the CV print route or the
-      // contact result pages (seo.md § Robots).
-      filter: (page) => /\/(en|pl|es)\//.test(page) && !/\/(privacy|terms|cv\/print|contact)\//.test(page),
+      // Only real, indexable pages: never the root redirect, 404 (and its folded pl/es copies), legal pages (noindex),
+      // the CV print route or the contact result pages (seo.md § Robots).
+      filter: (page) => /\/(en|pl|es)\//.test(page) && !/\/(privacy|terms|cv\/print|contact|404)\//.test(page),
       i18n: { defaultLocale: "en", locales: { en: "en", pl: "pl", es: "es" } },
     }),
     sitemapImages(),
+    notFoundLocales(),
   ],
   // Code blocks: Shiki with the css-variables theme, so token colours come from the site's tokens (style attributes
   // are allowed by the CSP). Smart punctuation is off: English curly quotes are wrong in Polish.

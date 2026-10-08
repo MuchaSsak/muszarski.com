@@ -1,0 +1,11 @@
+---
+/**
+ * The Polish and Spanish 404 copies. Build input only: scripts/not-found.mjs folds them into `404.html` and deletes
+ * these files, so `/pl/404/` never ships as a page (components/NotFound.astro).
+ */
+import NotFound from "~/components/NotFound.astro";
+
+export const getStaticPaths = () => [{ params: { locale: "pl" } }, { params: { locale: "es" } }];
+---
+
+<NotFound />

@@ -12,10 +12,10 @@ msgstr ""
 #: src/components/home/chapters/ChapterLinkoglot.astro:102
 #: src/components/home/chapters/ChapterLinkoglot.astro:114
 #: src/components/home/chapters/ChapterPstrykWeb.astro:51
-#: src/components/home/chapters/ChapterSpace.astro:69
-#: src/components/home/chapters/ChapterSpace.astro:71
-#: src/components/home/chapters/ChapterSpace.astro:95
-#: src/components/home/chapters/ChapterSpace.astro:117
+#: src/components/home/chapters/ChapterSpace.astro:70
+#: src/components/home/chapters/ChapterSpace.astro:70
+#: src/components/home/chapters/ChapterSpace.astro:94
+#: src/components/home/chapters/ChapterSpace.astro:116
 #: src/components/home/Contact.astro:188
 #: src/components/home/Contact.astro:202
 #: src/components/home/Credentials.astro:258
@@ -74,7 +74,7 @@ msgstr "Właściciel lokalnej firmy odpowiada na kilka pytań w jednym formularz
 msgid "A one-step contact form"
 msgstr "Formularz w jednym kroku"
 
-#: src/components/home/chapters/ChapterSpace.astro:76
+#: src/components/home/chapters/ChapterSpace.astro:75
 msgid "A portfolio you fly through: Earth to Neptune in 12 camera stops."
 msgstr "Portfolio, przez które przelatujesz: od Ziemi do Neptuna w 12 przystankach kamery."
 
@@ -151,6 +151,7 @@ msgstr "Wszystkie wpisy"
 
 #: src/components/home/Chapters.astro:96
 #: src/components/layout/SiteFooter.astro:55
+#: src/components/NotFound.astro:48
 #: src/pages/[locale]/contact/sent/index.astro:25
 #: src/pages/[locale]/work/index.astro:164
 msgid "All projects"
@@ -370,7 +371,7 @@ msgstr "Praca dla klientów, moje własne produkty, open source i eksperymenty. 
 msgid "Close menu"
 msgstr "Zamknij menu"
 
-#: src/components/home/chapters/ChapterSpace.astro:116
+#: src/components/home/chapters/ChapterSpace.astro:115
 #: src/components/home/HowIWork.astro:69
 #: src/pages/[locale]/work/index.astro:202
 #: src/pages/[locale]/work/index.astro:428
@@ -421,6 +422,7 @@ msgstr "potwierdź e-mail"
 #: src/components/layout/SiteFooter.astro:97
 #: src/components/layout/SiteHeader.astro:94
 #: src/components/layout/SiteHeader.astro:121
+#: src/components/NotFound.astro:49
 #: src/pages/[locale]/blog/[slug].astro:189
 #: src/pages/[locale]/cv/index.astro:53
 #: src/pages/[locale]/my-life/index.astro:79
@@ -494,7 +496,7 @@ msgstr "Design"
 msgid "Desktop · WebGL2 · ~14 MB."
 msgstr "Na komputery · WebGL2 · ~14 MB."
 
-#: src/components/home/chapters/ChapterSpace.astro:104
+#: src/components/home/chapters/ChapterSpace.astro:103
 msgid "Desktop only · copy link"
 msgstr "Tylko na komputer · skopiuj link"
 
@@ -659,7 +661,7 @@ msgstr "Zacznij"
 msgid "Go back and try again, or write to me directly:"
 msgstr "Wróć i spróbuj ponownie albo napisz do mnie bezpośrednio:"
 
-#: src/pages/404.astro:20
+#: src/components/NotFound.astro:47
 msgid "Go to the home page"
 msgstr "Przejdź na stronę główną"
 
@@ -853,7 +855,7 @@ msgstr "Języki"
 msgid "Latest"
 msgstr "Najnowszy"
 
-#: src/components/home/chapters/ChapterSpace.astro:93
+#: src/components/home/chapters/ChapterSpace.astro:92
 msgid "Launch on desktop"
 msgstr "Uruchom na komputerze"
 
@@ -902,7 +904,7 @@ msgstr "Lingui, Claude Code, Lighthouse"
 msgid "Link copied"
 msgstr "Skopiowano link"
 
-#: src/components/home/chapters/ChapterSpace.astro:101
+#: src/components/home/chapters/ChapterSpace.astro:100
 msgid "Link copied. Open it on a computer."
 msgstr "Skopiowano link. Otwórz go na komputerze."
 
@@ -1022,7 +1024,7 @@ msgstr "Mój ulubiony"
 msgid "My life"
 msgstr "Moje życie"
 
-#: src/components/home/chapters/ChapterSpace.astro:80
+#: src/components/home/chapters/ChapterSpace.astro:79
 msgid "My previous portfolio: a scroll-driven flight through the solar system, where each planet holds one section. 13 shaders written by hand in GLSL. Best on a computer."
 msgstr "Moje poprzednie portfolio: lot przez Układ Słoneczny sterowany przewijaniem, w którym każda planeta to jedna sekcja. 13 shaderów napisanych ręcznie w GLSL. Najlepiej na komputerze."
 
@@ -1078,6 +1080,10 @@ msgstr "Notatki z budowania produktów webowych i mobilnych: programowanie z AI 
 #: src/pages/[locale]/blog/index.astro:53
 msgid "Notes from the work"
 msgstr "Notatki z pracy"
+
+#: src/components/NotFound.astro:45
+msgid "Nothing lives at this address. The link may be old, or the address has a typo."
+msgstr "Pod tym adresem nic nie ma. Link może być nieaktualny albo w adresie jest literówka."
 
 #: src/pages/[locale]/blog/index.astro:116
 msgid "Nothing matches. Try fewer words or another topic."
@@ -1141,8 +1147,8 @@ msgstr "Własny produkt"
 msgid "Own product · solo · 2026"
 msgstr "Własny produkt · solo · 2026"
 
-#: src/pages/404.astro:15
-#: src/pages/404.astro:18
+#: src/components/NotFound.astro:27
+#: src/components/NotFound.astro:44
 msgid "Page not found"
 msgstr "Nie znaleziono strony"
 
@@ -1726,7 +1732,7 @@ msgstr "To nie wszystko."
 msgid "Things I’ve built"
 msgstr "Rzeczy, które zbudowałem"
 
-#: src/pages/404.astro:15
+#: src/components/NotFound.astro:27
 msgid "This page does not exist."
 msgstr "Ta strona nie istnieje."
 

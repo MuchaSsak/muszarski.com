@@ -1,0 +1,89 @@
+---
+/**
+ * The 404 page (requirements.md F21, site/i18n.md § 404): the fitted "404", the title, one line and the three ways on
+ * (home, all projects, contact), in the reader's language. A static host serves one `404.html` for every missing
+ * address, so `pages/404.astro` renders the English page with `swap`, `pages/[locale]/404.astro` renders the Polish and
+ * Spanish copies, and the build folds those into the English file as templates (scripts/not-found.mjs). Before first
+ * paint the head script reads the address's first segment (`/pl/…`, `/es/…`), sets `lang` and hides the page; the end
+ * script swaps the body for that locale's template, sets the title and shows it. Without JavaScript the page stays
+ * English. The page's module scripts run after parsing, so they bind to the swapped body.
+ */
+import { t } from "lingui-for-astro/macro";
+
+import BaseLayout from "~/components/layout/BaseLayout.astro";
+import Fit from "~/components/ui/Fit.astro";
+import Icon from "~/components/ui/Icon.astro";
+import { chromeLinks } from "~/lib/nav";
+
+interface Props {
+  /** The served page: carries the scripts that swap in the other locales. */
+  swap?: boolean;
+}
+
+const { swap = false } = Astro.props;
+const links = chromeLinks(Astro.locals.locale);
+---
+
+<BaseLayout title={t`Page not found`} description={t`This page does not exist.`} path={null} noindex>
+  {swap && <script is:inline slot="head">
+    (() => {
+      const locale = location.pathname.split("/")[1];
+      if (locale !== "pl" && locale !== "es") return;
+      const root = document.documentElement;
+      root.lang = locale;
+      root.dataset.nf = locale;
+      root.style.visibility = "hidden";
+    })();
+  </script>}
+  <section class="sec field-hero near nf">
+    <Fit lines={["404"]} base={[100, 100]} decorative />
+    <h1 class="nf-title">{t`Page not found`}</h1>
+    <p class="nf-lede">{t`Nothing lives at this address. The link may be old, or the address has a typo.`}</p>
+    <div class="nf-ctas">
+      <a href={links.home} class="btn btn-inv">
+        {t`Go to the home page`}
+        <Icon name="tb:arrow-right" class="nudge" />
+      </a>
+      <a href={links.workIndex} class="btn btn-line">{t`All projects`}</a>
+      <a href={links.contact} class="btn btn-line">{t`Contact`}</a>
+    </div>
+  </section>
+  {swap && <script is:inline slot="end" data-nf-swap>
+    (() => {
+      const root = document.documentElement;
+      const template = root.dataset.nf ? document.getElementById(`nf-${root.dataset.nf}`) : null;
+      if (template instanceof HTMLTemplateElement) {
+        for (const node of [...document.body.childNodes]) {
+          if (!(node instanceof HTMLScriptElement || node instanceof HTMLTemplateElement)) node.remove();
+        }
+        document.body.prepend(template.content.cloneNode(true));
+        document.title = template.dataset.title ?? document.title;
+      }
+      root.style.visibility = "";
+    })();
+  </script>}
+</BaseLayout>
+
+<style>
+  .nf {
+    min-height: 70svh;
+  }
+  .nf-title {
+    margin: 1.5rem 0 1rem;
+    font-weight: 800;
+    font-size: clamp(1.875rem, 3.4vw, 3.375rem);
+    line-height: 0.92;
+    font-stretch: 62%;
+    text-transform: uppercase;
+  }
+  .nf-lede {
+    max-width: 40ch;
+    margin: 0 0 1.75rem;
+    font-size: clamp(1.1875rem, 1.6vw, 1.5rem);
+  }
+  .nf-ctas {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+</style>
