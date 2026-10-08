@@ -1,23 +1,23 @@
+import { PRECISION, quadProgram } from "~/scripts/gl-quad";
 import { afterInteraction, motionStill, onMotion } from "~/scripts/motion";
 
 /**
- * The All projects head (components/work/WorkHero.astro): contour lines of a slowly warping height field, like a map
- * at night. The pointer raises a hill under itself (the lines crowd around it and take the accent), a tap or click
- * sends a ripple out, the scroll slides the map, and hovering or focusing a name in the index washes the lines in
- * that project's colour. One fragment shader, no library; lines are anti-aliased with screen-space derivatives
- * (OES_standard_derivatives) and fade where they would crowd into moiré. It starts at the first interaction (or a
- * pointer over the head), runs only while in view, at ~30 fps when nobody moves and at full rate while they do.
- * Paused or reduced motion: no drift, a frame only when the pointer moves. Without WebGL the CSS rings stay.
+ * The All projects head (components/work/WorkHero.astro) [user 2026-10-09: the background "more colorful slightly",
+ * "a bit different and better looking" than the contour lines, which moved to the footer]: a slow cloud of colour
+ * printed as an ordered dither, like a screen print. Four inks (night, indigo, cobalt and an accent) are picked per
+ * cell through an 8×8 Bayer matrix, so the gradient breaks into crisp square dots. The colour gathers behind the wall
+ * of projects (its centre and size come from the wall's box) and stays dark behind the title; a mouse brings a glow
+ * with it, and hovering or focusing a project washes the accent in that project's colour.
+ * The canvas has one pixel per dither cell (3 CSS px) and the browser scales it up without smoothing: a few thousand
+ * times cheaper than full resolution and sharp on every screen. It starts at the first interaction or a pointer over
+ * the head, runs only while in view, ~30 fps. Paused or reduced motion: one still frame. Without WebGL: the CSS glow.
  */
-const FRAG = `#extension GL_OES_standard_derivatives : enable
-precision highp float;
-uniform vec2 u_res;
-uniform float u_px;
+const FRAG = `${PRECISION}uniform vec2 u_res;
 uniform float u_time;
 uniform float u_scroll;
 uniform vec2 u_mouse;
-uniform float u_hill;
-uniform vec3 u_drop;
+uniform float u_glow;
+uniform vec3 u_focus;
 uniform vec3 u_tint;
 uniform float u_wash;
 vec2 g(vec2 p){
@@ -31,226 +31,160 @@ float n(vec2 p){
 }
 float fbm(vec2 p){
   float s=0.,a=.5;
-  for(int k=0;k<3;k++){s+=a*n(p);p=mat2(1.6,1.2,-1.2,1.6)*p;a*=.5;}
+  for(int k=0;k<4;k++){s+=a*n(p);p=mat2(1.6,1.2,-1.2,1.6)*p;a*=.5;}
   return s;
 }
+float b2(vec2 a){a=floor(a);return fract(a.x*.5+a.y*a.y*.75);}
+float b8(vec2 a){return (b2(.25*a)*.25+b2(.5*a))*.25+b2(a);}
 void main(){
-  vec2 px=gl_FragCoord.xy/u_px;
-  vec2 p=px/430.+vec2(0.,u_scroll/1500.);
-  float t=u_time*.035;
-  vec2 q=vec2(fbm(p+vec2(t,0.)),fbm(p+vec2(3.1,1.7)-t));
-  float h=fbm(p+1.35*q);
-  vec2 m=(px-u_mouse)/170.;
-  float near=exp(-dot(m,m));
-  h+=u_hill*.3*near;
-  float dd=length(px-u_drop.xy);
-  float age=u_drop.z;
-  h+=.05*sin(dd*.05-age*7.)*exp(-age*1.3)*exp(-dd*.005)*(1.-smoothstep(age*300.,age*300.+60.,dd));
-  float v=h*11.;
-  float w=length(vec2(dFdx(v),dFdy(v)));
-  float d=abs(fract(v+.5)-.5)/max(w,1e-4);
-  float idx=1.-step(.5,mod(floor(v+.5),5.));
-  float lw=mix(.5,1.,idx)*u_px;
-  float line=clamp(lw+.5-d,0.,1.)*(1.-smoothstep(.22,.55,w));
-  float glow=clamp(u_hill*near*1.4+u_wash,0.,1.);
-  vec3 col=mix(vec3(.26,.31,1.),vec3(.93,.94,1.),idx*.5);
-  col=mix(col,u_tint,glow);
-  float a=line*mix(.34,.56,idx)*(.6+.4*glow);
-  a*=smoothstep(0.,.32,gl_FragCoord.y/u_res.y);
-  vec3 bg=vec3(.027,.031,.11);
-  vec3 c=mix(bg,col,a);
-  c+=(fract(sin(dot(gl_FragCoord.xy,vec2(12.9898,78.233)))*43758.5453)-.5)/255.;
-  gl_FragColor=vec4(c,1.);
+  vec2 c=gl_FragCoord.xy;
+  vec2 p=c/90.+vec2(0.,u_scroll/240.);
+  float t=u_time*.06;
+  vec2 q=vec2(fbm(p+vec2(t,0.)),fbm(p+vec2(5.2,1.3)-t*.8));
+  float f=fbm(p+1.7*q+vec2(0.,t*.5))*1.7+.5;
+  vec2 d=(c-u_focus.xy)/u_focus.z;
+  float focus=exp(-dot(d,d)*1.6);
+  vec2 m=(c-u_mouse)/45.;
+  float glow=u_glow*exp(-dot(m,m));
+  float v=clamp(f*(.16+1.08*focus)+.4*glow-.05,0.,1.);
+  float warm=smoothstep(.35,.65,fbm(p*.6-q+vec2(t*.4,7.))+.5);
+  vec3 ink=mix(mix(vec3(1.,.31,.722),vec3(1.,.357,.122),warm*.8),u_tint,u_wash);
+  float x=v*3.+b8(c)-.5;
+  float l=clamp(floor(x+.5),0.,3.);
+  vec3 col=l<.5?vec3(.027,.031,.11):l<1.5?vec3(.078,.098,.33):l<2.5?vec3(.141,.2,1.):ink;
+  gl_FragColor=vec4(col,1.);
 }`;
 
-const LIME: [number, number, number] = [0.788, 0.949, 0.29];
+const CELL = 3;
 const rgb = (hex: string): [number, number, number] =>
   [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16) / 255) as [number, number, number];
 
-function createField(canvas: HTMLCanvasElement) {
-  const gl = canvas.getContext("webgl", {
-    antialias: false,
-    alpha: false,
-    powerPreference: "low-power",
-    failIfMajorPerformanceCaveat: true,
-  });
-  if (!gl || !gl.getExtension("OES_standard_derivatives")) return null;
-  const compile = (type: number, source: string) => {
-    const shader = gl.createShader(type)!;
-    gl.shaderSource(shader, source);
-    gl.compileShader(shader);
-    if (gl.getShaderParameter(shader, gl.COMPILE_STATUS)) return shader;
-    if (import.meta.env.DEV) console.warn(gl.getShaderInfoLog(shader));
-    return null;
-  };
-  const vs = compile(gl.VERTEX_SHADER, "attribute vec2 p;void main(){gl_Position=vec4(p,0.,1.);}");
-  const fs = compile(gl.FRAGMENT_SHADER, FRAG);
-  if (!vs || !fs) return null;
-  const program = gl.createProgram()!;
-  gl.attachShader(program, vs);
-  gl.attachShader(program, fs);
-  gl.linkProgram(program);
-  if (!gl.getProgramParameter(program, gl.LINK_STATUS)) return null;
-  gl.useProgram(program);
-  gl.bindBuffer(gl.ARRAY_BUFFER, gl.createBuffer());
-  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 3, -1, -1, 3]), gl.STATIC_DRAW);
-  const loc = gl.getAttribLocation(program, "p");
-  gl.enableVertexAttribArray(loc);
-  gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
-  const u = (name: string) => gl.getUniformLocation(program, name);
-  const uRes = u("u_res");
-  const uPx = u("u_px");
-  const uTime = u("u_time");
-  const uScroll = u("u_scroll");
-  const uMouse = u("u_mouse");
-  const uHill = u("u_hill");
-  const uDrop = u("u_drop");
-  const uTint = u("u_tint");
-  const uWash = u("u_wash");
-
-  return (s: {
-    time: number;
-    scroll: number;
-    mx: number;
-    my: number;
-    hill: number;
-    drop: [number, number, number];
-    tint: [number, number, number];
-    wash: number;
-  }) => {
-    // Thin lines want real pixels, so the cap is generous on desktop and tighter on phones.
-    const cap = matchMedia("(pointer: coarse)").matches ? 1.25 : 1.5;
-    const ratio = Math.min(window.devicePixelRatio || 1, cap);
-    const w = Math.max(1, Math.round(canvas.clientWidth * ratio));
-    const h = Math.max(1, Math.round(canvas.clientHeight * ratio));
-    if (canvas.width !== w || canvas.height !== h) {
-      canvas.width = w;
-      canvas.height = h;
-      gl.viewport(0, 0, w, h);
-    }
-    gl.uniform2f(uRes, w, h);
-    gl.uniform1f(uPx, ratio);
-    gl.uniform1f(uTime, s.time);
-    gl.uniform1f(uScroll, s.scroll);
-    gl.uniform2f(uMouse, s.mx, s.my);
-    gl.uniform1f(uHill, s.hill);
-    gl.uniform3f(uDrop, ...s.drop);
-    gl.uniform3f(uTint, ...s.tint);
-    gl.uniform1f(uWash, s.wash);
-    gl.drawArrays(gl.TRIANGLES, 0, 3);
-  };
-}
-
 function setup(host: HTMLElement) {
   const canvas = host.querySelector<HTMLCanvasElement>("[data-field]");
+  const wall = host.querySelector<HTMLElement>("[data-wall]");
   if (!canvas) return;
-  let draw: ReturnType<typeof createField> | undefined;
+  let quad: ReturnType<typeof quadProgram> | undefined;
   let started = false;
   let visible = false;
   let raf = 0;
   let last = 0;
   let movedAt = -1e9;
-  let dropAt = -1e9;
-  // Positions in CSS px from the canvas's bottom-left corner (the shader's frame).
+  let echo = false;
+  let clock = (performance.now() % 1000) / 10;
+  // Positions in dither cells from the canvas's bottom-left corner (the shader's frame).
   const s = {
-    time: 0,
     scroll: scrollY,
     mx: -9999,
     my: -9999,
     tx: -9999,
     ty: -9999,
-    hill: 0,
-    hillTo: 0,
-    drop: [-9999, -9999, 99] as [number, number, number],
-    tint: [...LIME] as [number, number, number],
-    tintTo: [...LIME] as [number, number, number],
+    glow: 0,
+    glowTo: 0,
+    tint: [1, 0.31, 0.722] as [number, number, number],
+    tintTo: [1, 0.31, 0.722] as [number, number, number],
     wash: 0,
     washTo: 0,
   };
-  const begin = performance.now();
-  let clock = 0;
 
   const frame = (now: number) => {
     raf = 0;
-    if (!draw) return;
+    if (!quad) return;
+    // Still compiling in the background: look again next frame (a failed program leaves the CSS glow).
+    if (!quad.ready()) {
+      if (!quad.failed()) raf = requestAnimationFrame(frame);
+      return;
+    }
     const still = motionStill();
-    const busy = now - movedAt < 1500 || now - dropAt < 2500 || Math.abs(s.wash - s.washTo) > 0.01;
-    // Idle: every other frame is enough for a drift this slow.
+    const busy = now - movedAt < 1500 || Math.abs(s.wash - s.washTo) > 0.01 || Math.abs(s.glow - s.glowTo) > 0.01;
     if (!still && !busy && now - last < 30) {
       raf = requestAnimationFrame(frame);
       return;
     }
     const dt = Math.min(0.1, (now - (last || now)) / 1000);
     last = now;
-    if (!still) clock += dt;
-    const k = still ? 1 : 1 - Math.pow(0.0005, dt);
+    if (!still) {
+      clock += dt;
+      s.scroll = scrollY;
+    }
+    const k = still ? 1 : 1 - Math.pow(0.002, dt);
+    const ease = still ? 1 : 1 - Math.pow(0.03, dt);
     s.mx += (s.tx - s.mx) * k;
     s.my += (s.ty - s.my) * k;
-    s.hill += (s.hillTo - s.hill) * (still ? 1 : 1 - Math.pow(0.05, dt));
-    s.wash += (s.washTo - s.wash) * (still ? 1 : 1 - Math.pow(0.02, dt));
-    for (let i = 0; i < 3; i++) s.tint[i]! += (s.tintTo[i]! - s.tint[i]!) * (still ? 1 : 1 - Math.pow(0.02, dt));
-    s.drop[2] = still ? 99 : (now - dropAt) / 1000;
-    draw({ ...s, time: clock + (begin % 1000) / 10 });
+    s.glow += (s.glowTo - s.glow) * ease;
+    s.wash += (s.washTo - s.wash) * ease;
+    for (let i = 0; i < 3; i++) s.tint[i]! += (s.tintTo[i]! - s.tint[i]!) * ease;
+
+    const { gl, size, u, draw } = quad;
+    const box = canvas.getBoundingClientRect();
+    size(Math.max(1, Math.ceil(box.width / CELL)), Math.max(1, Math.ceil(box.height / CELL)));
+    // The colour gathers behind the wall: its centre, and a radius of about half its larger side.
+    const w = wall?.getBoundingClientRect();
+    const focus: [number, number, number] = w
+      ? [
+          (w.left + w.width / 2 - box.left) / CELL,
+          (box.bottom - w.top - w.height / 2) / CELL,
+          Math.max(w.width, w.height) / CELL / 1.6,
+        ]
+      : [(box.width * 0.75) / CELL, (box.height * 0.5) / CELL, (box.width * 0.3) / CELL];
+    gl.uniform2f(u("u_res"), canvas.width, canvas.height);
+    gl.uniform1f(u("u_time"), clock);
+    gl.uniform1f(u("u_scroll"), s.scroll / CELL);
+    gl.uniform2f(u("u_mouse"), s.mx, s.my);
+    gl.uniform1f(u("u_glow"), s.glow);
+    gl.uniform3f(u("u_focus"), ...focus);
+    gl.uniform3f(u("u_tint"), ...s.tint);
+    gl.uniform1f(u("u_wash"), s.wash);
+    draw();
     canvas.classList.add("on");
+    // WebKit shows a frame drawn on demand one draw late: a still frame is drawn twice.
     if (visible && !still && !document.hidden) raf = requestAnimationFrame(frame);
+    else if (still && !echo) {
+      echo = true;
+      raf = requestAnimationFrame(frame);
+      return;
+    }
+    echo = false;
   };
   const kick = () => {
-    if (started && draw && !raf) raf = requestAnimationFrame(frame);
+    if (started && quad && !raf) raf = requestAnimationFrame(frame);
   };
   const start = () => {
     if (started) return;
     started = true;
-    draw = createField(canvas);
+    // A restored context (after iOS dropped it) draws again.
+    quad = quadProgram(canvas, FRAG, [], kick);
     kick();
   };
 
-  const at = (event: PointerEvent): [number, number] => {
-    const box = canvas.getBoundingClientRect();
-    return [event.clientX - box.left, box.bottom - event.clientY];
-  };
   host.addEventListener("pointermove", (event) => {
     if (event.pointerType !== "mouse" && event.pointerType !== "pen") return;
     start();
-    const [x, y] = at(event);
+    const box = canvas.getBoundingClientRect();
+    s.tx = (event.clientX - box.left) / CELL;
+    s.ty = (box.bottom - event.clientY) / CELL;
     if (s.mx < -9000) {
-      s.mx = x;
-      s.my = y;
+      s.mx = s.tx;
+      s.my = s.ty;
     }
-    s.tx = x;
-    s.ty = y;
-    s.hillTo = 1;
+    s.glowTo = 1;
     movedAt = performance.now();
     kick();
   });
   host.addEventListener("pointerleave", () => {
-    s.hillTo = 0;
+    s.glowTo = 0;
     kick();
   });
-  host.addEventListener("pointerdown", (event) => {
-    start();
-    const [x, y] = at(event);
-    s.drop = [x, y, 0];
-    dropAt = performance.now();
-    kick();
-  });
-  addEventListener(
-    "scroll",
-    () => {
-      s.scroll = scrollY;
-      if (visible) kick();
-    },
-    { passive: true },
-  );
+  addEventListener("scroll", () => visible && kick(), { passive: true });
 
-  // The index tints the map: hover or focus a name, the lines take its colour.
+  // A project in play (hovered or focused) washes the accent ink in its colour.
   for (const link of host.querySelectorAll<HTMLElement>("[data-tint]")) {
     const on = () => {
-      s.tintTo = rgb(link.dataset.tint ?? "#c9f24a");
-      s.washTo = 0.55;
+      s.tintTo = rgb(link.dataset.tint ?? "#ff4fb8");
+      s.washTo = 1;
+      movedAt = performance.now();
       kick();
     };
     const off = () => {
-      s.tintTo = [...LIME];
       s.washTo = 0;
       kick();
     };
@@ -271,6 +205,27 @@ function setup(host: HTMLElement) {
 }
 
 for (const host of document.querySelectorAll<HTMLElement>("[data-field-host]")) setup(host);
+
+/**
+ * The wall leans toward a mouse (a degree or two, on its wrapper only) [user 2026-10-08: "very micro hover effects"].
+ */
+for (const wall of document.querySelectorAll<HTMLElement>("[data-wall]")) {
+  const host = wall.closest<HTMLElement>("[data-field-host]") ?? wall;
+  let raf = 0;
+  host.addEventListener("pointermove", (event) => {
+    if (event.pointerType !== "mouse" || motionStill() || raf) return;
+    raf = requestAnimationFrame(() => {
+      raf = 0;
+      const box = host.getBoundingClientRect();
+      wall.style.setProperty("--lx", ((event.clientX - box.left) / box.width - 0.5).toFixed(3));
+      wall.style.setProperty("--ly", ((event.clientY - box.top) / box.height - 0.5).toFixed(3));
+    });
+  });
+  host.addEventListener("pointerleave", () => {
+    wall.style.removeProperty("--lx");
+    wall.style.removeProperty("--ly");
+  });
+}
 
 // A tap on a title sends one thin wave through its letters (the touch twin of the letters' hover, `HoverType`).
 for (const title of document.querySelectorAll<HTMLElement>("[data-ht-tap]")) {

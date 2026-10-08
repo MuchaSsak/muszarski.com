@@ -1,15 +1,18 @@
 ---
 /**
- * All projects, the head [user 2026-10-08: the TV head was "not far from being good, but i wish the background was
- * more alive, and maybe even the headings and some very micro hover effects"; the page "too vibe coded", "go for a
- * different style and theme"]. The night catalogue: a plain title on an ink field of contour lines that drift like a
- * map; the pointer raises a hill under itself (a tap sends a ripple, the scroll slides the map), and hovering or
- * focusing a name in the index tints the lines in that project's colour (`scripts/work-field.ts`, one fragment
- * shader, no library). The title's letters thin out under the pointer (`HoverType`). The index on the right is the
- * page in one glance: every project, its kind and year, one click to its plate.
- * The title is real text, painted first (the LCP); the shader starts at the first interaction or a pointer over the
- * head, only while it is in view, and concentric lines in CSS stand in until then (or for good without WebGL).
- * Paused or reduced motion: one still frame that moves only with the pointer.
+ * All projects, the head [user 2026-10-09: the background "more colorful slightly", the "On this page" list replaced
+ * by something "more visual", the contour lines moved to the footer and a "different and better looking" effect here].
+ * - The title (`HoverType`: the letter under a fine pointer thins out, a tap sends a wave) and one lede, real text,
+ *   painted first (the LCP).
+ * - A wall of every project: a tile per project with its real picture (a capture of the live site, the app's poster)
+ *   or its real text (the test run, the CLI), and its name on a tab in its colour. One click jumps to the project.
+ *   On wide screens the wall leans back in 3D, its columns drift at different speeds with the scroll and the whole
+ *   wall leans a degree toward the mouse; a hovered or focused tile steps forward and the others dim. On tablets and
+ *   phones it is a flat two-row strip you swipe.
+ * - Behind it a dithered colour field (`scripts/work-field.ts`, one fragment shader, no library) that gathers behind
+ *   the wall and takes the colour of the project in play. It starts at the first interaction or a pointer over the
+ *   head, only while in view; until then (or for good without WebGL) a CSS glow stands in. Paused or reduced motion:
+ *   one still frame, no drift, no lean.
  */
 import { t } from "lingui-for-astro/macro";
 
@@ -17,14 +20,15 @@ import HoverType from "~/components/ui/HoverType.astro";
 import Icon from "~/components/ui/Icon.astro";
 import { typo } from "~/lib/typography";
 
+/** What a tile shows: a picture (`phone` for an app's portrait poster), or real text where there's nothing to film. */
+export type Thumb = { src: string; phone?: boolean } | { text: "tests" | "cli" | "soon" };
+
 export interface IndexItem {
   slug: string;
   name: string;
-  /** Kind of work, e.g. "Own product". */
-  kind: string;
-  year: number;
-  /** The project's colour, readable on the ink (`#rrggbb`); the shader tints its lines with it. */
+  /** The project's colour (`#rrggbb`), readable with navy text: its tab, its tile, the field's accent. */
   color: string;
+  thumb: Thumb;
 }
 
 interface Props {
@@ -34,6 +38,14 @@ interface Props {
 const { items } = Astro.props;
 const locale = Astro.locals.locale;
 const title = t`Things I’ve built`;
+const soon = t`Recording soon`;
+/**
+ * Three columns, or two when there are few projects (the launch build shows only the ones cleared for it), so the
+ * tiles stay big. The second column of the three (the second of two) sits half a tile lower, and each column drifts
+ * at its own speed.
+ */
+const cols = items.length > 6 ? 3 : 2;
+const DRIFT = cols === 3 ? ["-3rem", "-7rem", "-1.5rem"] : ["-2.5rem", "-6rem"];
 ---
 
 <section class="sec wh near" aria-labelledby="t-work" data-field-host>
@@ -48,20 +60,45 @@ const title = t`Things I’ve built`;
         {typo(locale, t`Client work, my own products, open source and experiments. Pick one, or scroll through all of them.`)}
       </p>
     </div>
-    <nav class="wh-toc rise" aria-labelledby="t-toc" style="--d:3">
-      <p class="wh-toc-k" id="t-toc">{t`On this page`}</p>
-      <ol role="list">
+    <nav class="wh-wall rise" aria-label={t`On this page`} style="--d:3" data-textfit="skip">
+      <ol class:list={["ww", { few: cols === 2 }]} role="list" data-wall>
         {items.map((item, k) => (
-          <li>
-            <a href={`#wk-${item.slug}`} data-tint={item.color} style={`--c:${item.color}`}>
-              <span class="wt-n tabular" aria-hidden="true">
-                {String(k + 1).padStart(2, "0")}
+          <li class:list={["wt", { low: k % cols === 1 }]} style={`--c:${item.color};--drift:${DRIFT[k % cols]}`}>
+            <a class="wt-a" href={`#wk-${item.slug}`} data-tint={item.color}>
+              <span
+                class:list={["wt-pic", "text" in item.thumb ? `t-${item.thumb.text}` : { "t-phone": item.thumb.phone }]}
+                aria-hidden="true"
+              >
+                {"src" in item.thumb && (
+                  <img
+                    src={item.thumb.src}
+                    alt=""
+                    width={item.thumb.phone ? 320 : 480}
+                    height={item.thumb.phone ? 694 : 300}
+                    loading="lazy"
+                    decoding="async"
+                    fetchpriority="low"
+                  />
+                )}
+                {"text" in item.thumb && item.thumb.text === "tests" && (
+                  <span class="wt-txt">
+                    <Icon name="tb:circle-check" />
+                    118 passed
+                  </span>
+                )}
+                {"text" in item.thumb && item.thumb.text === "cli" && (
+                  <span class="wt-txt">
+                    <b>$</b> npx lingui-translate-ai
+                  </span>
+                )}
+                {"text" in item.thumb && item.thumb.text === "soon" && (
+                  <span class="wt-txt">
+                    <Icon name="tb:movie" />
+                    {soon}
+                  </span>
+                )}
               </span>
               <span class="wt-name">{item.name}</span>
-              <span class="wt-meta">
-                {item.kind} · <span class="tabular">{item.year}</span>
-              </span>
-              <Icon name="tb:arrow-down" class="wt-ar" />
             </a>
           </li>
         ))}
@@ -71,22 +108,25 @@ const title = t`Things I’ve built`;
 </section>
 
 <style>
-  /* The night field. Until the shader runs: rings of the same lines in CSS. */
+  /* The night field, and the glow the shader replaces. */
   .wh {
-    --hair: rgb(238 240 255 / 0.14);
     --mute: #b2b4c6; /* ice at 74% on the ink, as a solid colour (no faded text) */
     overflow: clip;
-    padding-top: clamp(3rem, 7vw, 6.5rem);
-    padding-bottom: clamp(3.5rem, 7vw, 6.5rem);
-    background: repeating-radial-gradient(circle at 82% 18%, transparent 0 38px, rgb(58 70 255 / 0.32) 38px 39px), var(--space);
+    padding-top: clamp(2.5rem, 5vw, 5rem);
+    padding-bottom: clamp(3rem, 6vw, 6rem);
+    background:
+      radial-gradient(34% 52% at 76% 52%, rgb(255 79 184 / 0.22), transparent 70%),
+      radial-gradient(48% 70% at 74% 50%, rgb(36 51 255 / 0.55), transparent 72%), var(--space);
     color: var(--ice);
   }
+  /* One canvas pixel per dither cell, scaled up without smoothing. */
   .wh-field {
     position: absolute;
     inset: 0;
     width: 100%;
     height: 100%;
     opacity: 0;
+    image-rendering: pixelated;
     transition: opacity 1.2s var(--ease-out);
   }
   .wh-field:global(.on) {
@@ -95,9 +135,10 @@ const title = t`Things I’ve built`;
   .wh-in {
     position: relative;
     display: grid;
-    grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr);
-    gap: clamp(2.5rem, 6vw, 7rem);
-    align-items: end;
+    grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+    gap: clamp(2rem, 4vw, 5rem);
+    align-items: center;
+    min-height: min(40rem, calc(100svh - var(--header-h) - 8rem));
   }
 
   .wh-kick {
@@ -116,152 +157,250 @@ const title = t`Things I’ve built`;
   /* A plain title, not the fitted poster type: heavy, condensed, sentence case. */
   .wh-title {
     --ht-c: var(--lime);
-    --ht-thin: 300;
-    --ht-mid: 600;
+    --ht-thin: 400;
+    --ht-mid: 650;
     max-width: 10ch;
     margin: 0;
     font-weight: 900;
-    font-size: clamp(3.25rem, 8.8vw, 9.5rem);
+    font-size: clamp(3.25rem, 7vw, 8rem);
     line-height: 0.97;
     letter-spacing: -0.01em;
     font-stretch: 70%;
   }
   .wh-lede {
-    max-width: 40ch;
+    max-width: 36ch;
     margin: clamp(1.5rem, 2.6vw, 2.25rem) 0 0;
     font-size: var(--text-lg);
     line-height: 1.45;
     color: var(--mute);
   }
 
-  /* The index: number, name, kind · year, an arrow; hairlines between. */
-  .wh-toc-k {
-    margin: 0 0 0.75rem;
-    font-weight: 800;
-    font-size: 0.75rem;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    font-stretch: 120%;
-    color: var(--mute);
+  /* The wall: three columns leaning back toward the right edge; the middle column half a tile lower. The lean
+     follows the mouse by a degree or two (`--lx`, `--ly`, set on the wrapper by scripts/work-field). */
+  /* The mask box reaches past the wall on the left: the near side of the wall grows toward the title. */
+  .wh-wall {
+    margin: 0 calc(-1 * var(--pad-x)) 0 -5rem;
+    padding: 2rem 0 7rem 5rem;
+    mask-image: linear-gradient(to bottom, transparent, #000 10%, #000 82%, transparent);
   }
-  .wh-toc ol {
-    margin: 0;
+  /* Capped, so the four rows of the first column fit the head on wide screens. */
+  .ww {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: clamp(0.875rem, 1.3vw, 1.5rem);
+    max-width: 50rem;
+    margin: 0 0 0 auto;
     padding: 0;
     list-style: none;
-    border-top: 1px solid var(--hair);
+    transform: perspective(2200px) rotateX(calc(9deg - var(--ly, 0) * 4deg)) rotateY(calc(16deg + var(--lx, 0) * 6deg))
+      rotateZ(-2deg);
+    transform-origin: 100% 50%;
+    transform-style: preserve-3d;
+    transition: transform 1.2s var(--ease-out);
   }
-  /* One-line rows: plain wrapping (the site's "pretty" on li costs layout passes for nothing here). */
-  .wh-toc li {
-    border-bottom: 1px solid var(--hair);
-    text-wrap: wrap;
+  .ww.few {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    max-width: 40rem;
   }
-  .wh-toc a {
+  .wt {
+    transform-style: preserve-3d;
+  }
+  /* The column step is a relative offset (half the row), so it never pushes the layout. */
+  .wt.low {
     position: relative;
-    display: grid;
-    grid-template-columns: 2.25rem minmax(0, 1fr) auto 1.125rem;
-    align-items: center;
-    gap: 0.75rem;
-    min-height: 2.875rem;
-    text-decoration: none;
+    top: 50%;
   }
-  /* The project's colour as a bar that grows from the left on hover or focus. */
-  .wh-toc a::before {
-    content: "";
-    position: absolute;
-    left: 0;
-    top: -1px;
-    bottom: -1px;
-    width: 3px;
-    background: var(--c);
-    scale: 1 0;
-    transition: scale 0.35s var(--ease-out);
-  }
-  .wt-n {
-    padding-left: 0.625rem;
-    font-weight: 800;
-    font-size: 0.8125rem;
-    color: var(--c);
-  }
-  .wt-name {
+  .wt-a {
+    position: relative;
+    display: block;
+    aspect-ratio: 16 / 10;
     overflow: hidden;
-    font-weight: 800;
-    font-size: 1.0625rem;
-    font-stretch: 88%;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    transition: translate 0.35s var(--ease-out);
-  }
-  .wt-meta {
-    font-weight: 700;
-    font-size: 0.75rem;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    font-stretch: 105%;
-    color: var(--mute);
-    white-space: nowrap;
-  }
-  .wh-toc :global(.wt-ar) {
-    width: 1.125rem;
-    height: 1.125rem;
-    opacity: 0.45;
+    border-radius: 0.625rem;
+    background: var(--c);
+    color: var(--navy);
+    text-decoration: none;
+    box-shadow:
+      0 0 0 1px rgb(238 240 255 / 0.18),
+      0 22px 44px -22px rgb(0 0 0 / 0.7);
     transition:
-      translate 0.35s var(--ease-out),
-      opacity 0.35s,
-      color 0.35s;
+      transform 0.45s var(--ease-out),
+      box-shadow 0.45s var(--ease-out);
   }
-  .wh-toc a:focus-visible {
-    outline-offset: 2px;
+  .wt-a:focus-visible {
+    outline: 3px solid var(--ice);
+    outline-offset: 3px;
   }
-  .wh-toc a:is(:hover, :focus-visible)::before {
-    scale: 1 1;
+  .wt-pic {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    transition: filter 0.45s var(--ease-out);
   }
-  .wh-toc a:is(:hover, :focus-visible) .wt-name {
-    translate: 0.375rem 0;
+  .wt-pic img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: top;
   }
-  .wh-toc a:is(:hover, :focus-visible) :global(.wt-ar) {
-    translate: 0 3px;
-    opacity: 1;
-    color: var(--c);
+  /* The app's portrait poster as a phone rising from the tile's foot. */
+  .t-phone img {
+    position: absolute;
+    top: 12%;
+    left: 50%;
+    width: auto;
+    height: 118%;
+    aspect-ratio: 320 / 694;
+    translate: -50% 0;
+    border: 3px solid var(--navy);
+    border-radius: 0.75rem;
+  }
+  .wt-txt {
+    display: flex;
+    align-items: center;
+    gap: 0.5em;
+    padding: 0 0.75rem 1.5rem;
+    font-family: ui-monospace, "Cascadia Mono", Consolas, monospace;
+    font-weight: 700;
+    font-size: clamp(0.6875rem, 0.85vw, 1rem);
+    line-height: 1.2;
+    white-space: nowrap;
+  }
+  .wt-txt :global(.ico) {
+    width: 1.25em;
+    height: 1.25em;
+  }
+  .t-cli {
+    background: var(--midnight);
+    color: var(--ice);
+  }
+  .t-cli b {
+    color: var(--lime);
+  }
+  .t-soon {
+    color: var(--navy);
+  }
+  .t-soon .wt-txt {
+    font-family: inherit;
+    font-weight: 800;
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    font-stretch: 115%;
+  }
+  /* The name on a tab in the project's colour (navy text reads on every project colour). */
+  .wt-name {
+    position: absolute;
+    left: 0.5rem;
+    bottom: 0.5rem;
+    max-width: calc(100% - 1rem);
+    padding: 0.3125rem 0.5625rem;
+    border-radius: 0.3125rem;
+    background: var(--c);
+    color: var(--navy);
+    font-weight: 800;
+    font-size: clamp(0.75rem, 0.8vw, 0.9375rem);
+    line-height: 1.15;
+    font-stretch: 92%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    box-shadow: 0 0 0 1px rgb(10 13 51 / 0.25);
+  }
+  /* A tile in play steps forward; the others' pictures dim (pictures only: the names keep their contrast). */
+  .wt-a:is(:hover, :focus-visible) {
+    transform: translateZ(48px);
+    box-shadow:
+      0 0 0 2px var(--c),
+      0 34px 60px -24px rgb(0 0 0 / 0.8);
+  }
+  .ww:has(.wt-a:is(:hover, :focus-visible)) .wt-a:not(:hover, :focus-visible) .wt-pic {
+    filter: brightness(0.5) saturate(0.6);
   }
 
-  /* Tablets: the index under the title, two columns. Phones: names only. */
+  /* The columns drift apart with the scroll (wide screens, motion on). Longhands: the build folds a shorthand with
+     animation-timeline into one Chrome rejects (lessons.md). */
+  @media (width > 64rem) and (prefers-reduced-motion: no-preference) {
+    @supports (animation-timeline: scroll()) {
+      .wt {
+        animation-name: wt-drift;
+        animation-timing-function: linear;
+        animation-fill-mode: both;
+        animation-timeline: scroll(root);
+        animation-range: 0 90vh;
+      }
+    }
+  }
+  @keyframes wt-drift {
+    to {
+      translate: 0 var(--drift, 0);
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .ww,
+    .wt-a,
+    .wt-pic {
+      transition: none;
+    }
+  }
+  /* Paused: no lean, and no drift (a scroll timeline ignores the global pause, so the animation goes). */
+  :global(.still) .ww {
+    --lx: 0 !important;
+    --ly: 0 !important;
+  }
+  :global(.still) .wt {
+    animation: none !important;
+  }
+
+  /* Tablets and phones: the wall becomes a two-row strip under the title, flat, to swipe. */
   @media (max-width: 64rem) {
     .wh-in {
       grid-template-columns: minmax(0, 1fr);
       align-items: start;
+      min-height: 0;
     }
-    .wh-toc ol {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      column-gap: 1.5rem;
+    .wh-title {
+      max-width: none;
+    }
+    .wh-wall {
+      margin-inline: calc(-1 * var(--pad-x));
+      padding: 0;
+      mask-image: none;
+    }
+    .ww,
+    .ww.few {
+      grid-template-columns: none;
+      grid-template-rows: repeat(2, auto);
+      grid-auto-flow: column;
+      grid-auto-columns: 31%;
+      gap: 1rem;
+      max-width: none;
+      overflow-x: auto;
+      padding: 0.25rem var(--pad-x) 0.75rem;
+      scroll-padding-inline: var(--pad-x);
+      scroll-snap-type: x mandatory;
+      scrollbar-width: none;
+      transform: none;
+    }
+    .ww::-webkit-scrollbar {
+      display: none;
+    }
+    .wt {
+      scroll-snap-align: start;
+    }
+    .wt.low {
+      top: 0;
     }
   }
   @media (max-width: 40rem) {
-    .wh-toc ol {
-      column-gap: 1rem;
+    .ww,
+    .ww.few {
+      grid-auto-columns: 62%;
+      gap: 0.75rem;
     }
-    .wh-toc a {
-      grid-template-columns: 1.75rem minmax(0, 1fr);
-      gap: 0.375rem;
-      min-height: 2.75rem;
-    }
-    .wt-n {
-      padding-left: 0.5rem;
-      font-size: 0.75rem;
-    }
-    /* Long names wrap rather than lose their ends on narrow phones. */
     .wt-name {
-      overflow: visible;
-      padding-block: 0.375rem;
-      font-size: 0.9375rem;
-      line-height: 1.15;
-      font-stretch: 80%;
-      white-space: normal;
-      overflow-wrap: anywhere;
-    }
-    .wt-meta,
-    .wh-toc :global(.wt-ar) {
-      display: none;
+      font-size: 0.8125rem;
     }
   }
 </style>

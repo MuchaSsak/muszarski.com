@@ -49,6 +49,7 @@
 - A % height inside an auto grid row resolves against the row the item itself grew (the Linkoglot phone overflowed its field): give the grid a definite track, `grid-template: minmax(0, 1fr) / minmax(0, 1fr)` - 2026-10-08.
 - Reading a WebGL program's link status blocks until it compiles: one shader with ten scenes froze every browser for ~1 s on Windows (D3D). Keep programs small (one scene each), compile through `makeProgram` in `life-gl.ts` (`KHR_parallel_shader_compile`, polled per frame) and measure the longest frame gap cold - 2026-10-09.
 - WebKit shows a WebGL frame drawn on demand one draw late (a pick showed the previous print): still and paused paths draw twice, on two frames in a row - 2026-10-09.
+- A hover that changes the hovered box's size picks its target from rest geometry measured once, never from `:hover` on that box: the thinning title letters swapped back and forth under a resting pointer [user 2026-10-09]. An inline-block per letter holds the width but draws hairline seams where heavy letters touch - 2026-10-09.
 
 ### Privacy of inputs
 - Images pasted in chat never reach the disk: ask the owner to drop the files in the repo, and build the slot so it switches on when they land - 2026-10-06.
@@ -59,6 +60,7 @@
 - Bash heredocs break on quotes and lose backslashes (again 2026-10-07, twice 2026-10-08), and `cd` persists: write scripts with Write, use absolute paths; Write/Edit decode `\uXXXX`, so emit invisible characters with `chr()` - 2026-10-05.
 - Python on Windows writes CRLF: always `open(..., "w", newline="\n")` (a fixer pass caught 6 files on 2026-10-06) - 2026-10-05.
 - Git Bash rewrites URL-path arguments (`/en/` → `P:/Git/en/`): prefix with `MSYS_NO_PATHCONV=1`, also for `bun run lhci` - 2026-10-05.
+- Node on Windows reads a Git Bash path `/c/Users/...` as `C:\c\Users\...` (shots landed in a stray `C:\c`): give node scripts `C:/...` paths - 2026-10-09.
 - `bun run check` stops at the first failing task: a red test hid a typecheck error that got committed. Read every task's result, re-run `astro check` after fixing a test - 2026-10-06.
 - e2e role queries match substrings ("Pull-up" hit "Pull-ups"): pass `exact: true` for short names - 2026-10-06.
 - Stop a server by its port's PID (`netstat -ano | grep :<port>` → `taskkill //F //PID`), never by image name: `taskkill /IM python.exe` ends every Python on the machine, other sessions' too - 2026-10-08.

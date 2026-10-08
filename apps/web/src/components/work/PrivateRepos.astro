@@ -1,14 +1,17 @@
 ---
 /**
  * The end of All projects: the owner's note on the work in private repositories [user 2026-10-08: "a small fun and
- * cheeky disclaimer"; then the spy room was "too vibe coded", and "in there's more dont include the 'wink wink' text,
- * just some emoji"]. Type only, on the same night field as the page: the title whose letters answer the pointer (a tap
- * sends a wave), the line, and a winking emoji that winks again on hover. The head's contour rings come back faintly
- * in the corner to close the page. No links and no counts.
+ * cheeky disclaimer", "just some emoji"; 2026-10-09: it was "slightly too boring", "i like the text effect but other
+ * than that, its got nothing going on for it", and it ran into the footer]. Its own cobalt field between the light
+ * catalogue and the night footer: the title whose letters answer the pointer (a tap sends a wave), the line ending in a
+ * winking emoji, and a fanned stack of repository cards marked Private with every name and line blacked out. The stack
+ * opens as it comes into view; a mouse over it spreads it further and lifts a card, whose bars catch a light sweep.
+ * No links, no names and no counts: the cards are a picture of "private", not a list.
  */
 import { t } from "lingui-for-astro/macro";
 
 import HoverType from "~/components/ui/HoverType.astro";
+import Icon from "~/components/ui/Icon.astro";
 import { typo } from "~/lib/typography";
 
 const locale = Astro.locals.locale;
@@ -16,54 +19,78 @@ const line = typo(
   locale,
   t`There are actually a lot more projects I've built that I won't show here: they live in private repositories. I mean, I could show you, but then I'd have to neutralize you, you know?`,
 );
+const label = t`Private`;
+/** Each card's bars (name, two lines, the language) and its language dot, so no two look alike. */
+const CARDS = [
+  { name: 58, lines: [94, 71], lang: 34, dot: "var(--yellow)" },
+  { name: 44, lines: [88, 52], lang: 26, dot: "var(--lime)" },
+  { name: 66, lines: [97, 63], lang: 40, dot: "var(--orange)" },
+  { name: 50, lines: [82, 58], lang: 30, dot: "var(--pink)" },
+];
 ---
 
-<section class="sec pr" aria-labelledby="t-more">
+<section class="sec field-hero pr" aria-labelledby="t-more">
   <div class="pr-in">
-    <h2 class="pr-title" id="t-more" data-ht-tap>
-      <HoverType text={t`There's more.`} hover />
-    </h2>
-    <!-- prettier-ignore -->
-    <p class="pr-line">{line}{"\u00a0"}<span class="pr-emoji">😉</span></p>
+    <div class="pr-text">
+      <h2 class="pr-title" id="t-more" data-ht-tap>
+        <HoverType text={t`There's more.`} hover />
+      </h2>
+      <!-- prettier-ignore -->
+      <p class="pr-line">{line}{" "}<span class="pr-emoji">😉</span></p>
+    </div>
+    <div class="pr-stack rv" aria-hidden="true">
+      {CARDS.map((card, k) => (
+        <div class="rp" style={`--k:${k - (CARDS.length - 1) / 2}`}>
+          <span class="rp-head">
+            <Icon name="tb:lock" />
+            <span class="rp-bar" style={`--w:${card.name}%`} />
+            <span class="rp-pill">{label}</span>
+          </span>
+          {card.lines.map((width) => (
+            <span class="rp-bar rp-thin" style={`--w:${width}%`} />
+          ))}
+          <span class="rp-foot">
+            <i style={`--dot:${card.dot}`} />
+            <span class="rp-bar rp-tiny" style={`--w:${card.lang}%`} />
+          </span>
+        </div>
+      ))}
+    </div>
   </div>
 </section>
 
+<script>
+  import "~/scripts/work-field";
+</script>
+
 <style>
   .pr {
-    --mute: #b2b4c6; /* ice at 74% on the ink, as a solid colour (no faded text) */
     overflow: clip;
-    padding-block: clamp(4rem, 8vw, 8rem) clamp(4.5rem, 9vw, 9rem);
-    background:
-      repeating-radial-gradient(circle at 100% 100%, transparent 0 38px, rgb(58 70 255 / 0.28) 38px 39px) 100% 100% /
-        min(60%, 44rem) 100% no-repeat,
-      var(--space);
-    color: var(--ice);
+    padding-block: clamp(4.5rem, 9vw, 9rem);
+    border-bottom: 3px solid var(--navy);
   }
   .pr-in {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-    gap: clamp(1.5rem, 5vw, 6rem);
-    align-items: end;
-    padding-top: clamp(2.5rem, 5vw, 4.5rem);
-    border-top: 1px solid rgb(238 240 255 / 0.14);
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+    gap: clamp(3rem, 6vw, 7rem);
+    align-items: center;
   }
   .pr-title {
-    --ht-c: var(--lime);
-    --ht-thin: 300;
-    --ht-mid: 600;
+    --ht-c: var(--yellow);
+    --ht-thin: 400;
+    --ht-mid: 650;
     margin: 0;
     font-weight: 900;
-    font-size: clamp(3rem, 7.5vw, 7.5rem);
+    font-size: clamp(3.25rem, 9vw, 9.5rem);
     line-height: 0.86;
     letter-spacing: -0.01em;
     font-stretch: 70%;
   }
   .pr-line {
-    max-width: 46ch;
-    margin: 0;
+    max-width: 44ch;
+    margin: clamp(1.5rem, 2.6vw, 2.25rem) 0 0;
     font-size: var(--text-lg);
     line-height: 1.5;
-    color: var(--mute);
   }
   .pr-emoji {
     display: inline-block;
@@ -81,10 +108,136 @@ const line = typo(
       scale: 1.2;
     }
   }
+
+  /* The stack: four cards on one spot, fanned by `--k` (-1.5 … 1.5). It opens when it comes into view (`.rv.in`),
+     and opens further under a mouse. */
+  .pr-stack {
+    --spread: 1;
+    position: relative;
+    display: grid;
+    place-items: center;
+    min-height: clamp(17rem, 28vw, 25rem);
+  }
+  .rv-ready:not(.still) .pr-stack.rv:not(.in) {
+    --spread: 0;
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .pr-stack:hover {
+      --spread: 1.45;
+    }
+  }
+  .rp {
+    grid-area: 1 / 1;
+    display: grid;
+    gap: 0.625rem;
+    width: min(100%, 25rem);
+    padding: 1.125rem 1.25rem 1.25rem;
+    border: 2px solid var(--navy);
+    background: var(--ice);
+    color: var(--navy);
+    box-shadow: 5px 5px 0 var(--navy);
+    /* A hand of cards: each turns about a point far below the stack. */
+    transform-origin: 50% 260%;
+    rotate: calc(var(--k) * 5deg * var(--spread));
+    transition:
+      translate 0.35s var(--ease-out),
+      rotate 0.7s var(--ease-out),
+      box-shadow 0.35s var(--ease-out);
+  }
+  /* A slow ripple through the stack as it opens. */
+  .rv-ready:not(.still) .pr-stack.rv.in .rp {
+    transition-delay: calc((var(--k) + 1.5) * 70ms);
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .pr-stack:hover .rp {
+      transition-delay: 0s;
+    }
+    .rp:hover {
+      z-index: 1;
+      translate: 0 -1rem;
+      box-shadow: 9px 9px 0 var(--navy);
+    }
+  }
+  .rp-head {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+  }
+  .rp-head :global(.ico) {
+    flex: none;
+    width: 1.125rem;
+    height: 1.125rem;
+  }
+  .rp-head .rp-bar {
+    flex: 0 1 auto;
+    height: 0.875rem;
+  }
+  .rp-pill {
+    flex: none;
+    margin-left: auto;
+    padding: 0.125rem 0.5rem;
+    border: 1.5px solid currentColor;
+    border-radius: 999px;
+    font-weight: 700;
+    font-size: 0.6875rem;
+    line-height: 1.3;
+    letter-spacing: 0.02em;
+  }
+  /* A blacked-out line; a lifted card's bars catch a light sweep. */
+  .rp-bar {
+    display: block;
+    width: var(--w);
+    height: 0.625rem;
+    background:
+      linear-gradient(100deg, transparent 40%, rgb(238 240 255 / 0.55) 50%, transparent 60%) -150% 0 / 250% 100% no-repeat,
+      var(--navy);
+  }
+  .rp-thin {
+    height: 0.5rem;
+    opacity: 0.85;
+  }
+  .rp-tiny {
+    height: 0.4375rem;
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .rp:hover .rp-bar {
+      background-position:
+        150% 0,
+        0 0;
+      transition: background-position 0.9s var(--ease-out);
+    }
+  }
+  .rp-foot {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 0.25rem;
+  }
+  .rp-foot i {
+    flex: none;
+    width: 0.75rem;
+    height: 0.75rem;
+    border-radius: 50%;
+    background: var(--dot);
+    box-shadow: inset 0 0 0 1.5px var(--navy);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .rp,
+    .rp-bar,
+    .pr-emoji {
+      transition: none !important;
+    }
+  }
   @media (max-width: 48rem) {
     .pr-in {
       grid-template-columns: minmax(0, 1fr);
-      align-items: start;
+    }
+    .pr-stack {
+      min-height: 13rem;
+    }
+    .rp {
+      width: min(80%, 20rem);
     }
   }
 </style>

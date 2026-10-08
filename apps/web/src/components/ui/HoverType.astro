@@ -2,9 +2,13 @@
 /**
  * A heading whose letters answer the pointer [user 2026-10-08: "maybe even the headings and some very micro hover
  * effects"] (All projects). Each letter is its own span in an `aria-hidden` copy; one hidden copy reads as the text.
- * - `hover`: the letter under a fine pointer thins out and takes the accent (`--ht-c`), its neighbours a little.
+ * - `hover`: the letter under a mouse thins out and takes the accent (`--ht-c`), its neighbours a little.
  * - A wave: any ancestor that sets `--ht-run: ht-wave` (a tap on the title: `data-ht-tap`) sends one thin wave
  *   through the word.
+ * Which letter is under the mouse comes from the letters' places at rest, measured once (again after a resize), not
+ * from `:hover`: a thinner letter is narrower, so with `:hover` a pointer resting between two letters fell onto the
+ * next one as the first thinned, and the two swapped back and forth in a loop [user 2026-10-09]. The letters stay
+ * inline (an inline-block per letter keeps its width, but drew hairline seams where the heavy glyphs touch).
  * Use it for a page's one or two big titles only: each letter carries an inline `--i`, which keeps Chrome from sharing
  * styles; on every project name it cost ~120 ms of style on a throttled phone (run-notes 2026-10-08).
  * Only the weight and the colour move, never on load and never under reduced motion; words never break inside.
@@ -25,8 +29,10 @@ const words = text.split(" ").map((word) => [...word].map((char) => ({ char, i: 
 <span class="sr-only">{text}</span>
 
 <style is:global>
+  /* A hairline stroke in the letter's own colour: heavy letters that touch drew a pale seam where two spans meet. */
   .ht i {
     font-style: normal;
+    -webkit-text-stroke: max(1px, 0.012em) currentColor;
     transition:
       font-weight 0.7s var(--ease-out),
       color 0.7s var(--ease-out);
@@ -34,17 +40,15 @@ const words = text.split(" ").map((word) => [...word].map((char) => ({ char, i: 
   .ht-w {
     white-space: nowrap;
   }
-  @media (hover: hover) and (pointer: fine) {
-    .ht-hover i:hover {
-      font-weight: var(--ht-thin, 400);
-      color: var(--ht-c, var(--pink));
-      transition-duration: 0.12s;
-    }
-    .ht-hover i:hover + i,
-    .ht-hover i:has(+ i:hover) {
-      font-weight: var(--ht-mid, 650);
-      transition-duration: 0.2s;
-    }
+  /* `ht-on` and `ht-nb` (the letter under the mouse and its neighbours in the word) come from the script below. */
+  .ht-hover i.ht-on {
+    font-weight: var(--ht-thin, 400);
+    color: var(--ht-c, var(--pink));
+    transition-duration: 0.12s;
+  }
+  .ht-hover i.ht-nb {
+    font-weight: var(--ht-mid, 650);
+    transition-duration: 0.2s;
   }
   /* The wave: an ancestor sets `--ht-run: ht-wave` while it is hovered, focused or active. */
   .ht i {
@@ -66,3 +70,40 @@ const words = text.split(" ").map((word) => [...word].map((char) => ({ char, i: 
     animation: none !important;
   }
 </style>
+
+<script>
+  /** The letter under a mouse, from the letters' places at rest (page coordinates), so their changing widths never move it. */
+  for (const word of document.querySelectorAll<HTMLElement>(".ht-hover")) {
+    const host = word.parentElement ?? word;
+    const letters = [...word.querySelectorAll<HTMLElement>("i")];
+    let boxes: { left: number; right: number; top: number; bottom: number }[] | null = null;
+    let on: HTMLElement | undefined;
+    const mark = (letter: HTMLElement | undefined) => {
+      if (letter === on) return;
+      for (const el of [on, on?.previousElementSibling, on?.nextElementSibling]) el?.classList.remove("ht-on", "ht-nb");
+      on = letter;
+      letter?.classList.add("ht-on");
+      letter?.previousElementSibling?.classList.add("ht-nb");
+      letter?.nextElementSibling?.classList.add("ht-nb");
+    };
+    host.addEventListener("pointermove", (event) => {
+      if (event.pointerType !== "mouse" && event.pointerType !== "pen") return;
+      // Measured at the first move (nothing is thinned yet) and again after a resize.
+      boxes ??= letters.map((letter) => {
+        const box = letter.getBoundingClientRect();
+        return { left: box.left + scrollX, right: box.right + scrollX, top: box.top + scrollY, bottom: box.bottom + scrollY };
+      });
+      const k = boxes.findIndex(
+        (box) => event.pageX >= box.left && event.pageX < box.right && event.pageY >= box.top && event.pageY < box.bottom,
+      );
+      mark(letters[k]);
+    });
+    host.addEventListener("pointerleave", () => mark(undefined));
+    new ResizeObserver(() => {
+      if (!on) boxes = null;
+    }).observe(host);
+    void document.fonts.ready.then(() => {
+      if (!on) boxes = null;
+    });
+  }
+</script>

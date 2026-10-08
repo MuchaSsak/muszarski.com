@@ -3,6 +3,8 @@
  * The footer (structure.md § Navigation and footer, requirements.md F10; design.md § Footer): a last-chance contact
  * line, the 4 link columns (this list owns the footer links), the language codes, credits for the marks, icons and
  * font, a pause-motion button, the build revision, and the surname fitted edge to edge as the poster's last line.
+ * Behind it all, faint contour lines that drift (`scripts/footer-field.ts`, loaded only once the footer is near and the
+ * reader has interacted; without WebGL, the plain bar).
  */
 import { type Locale } from "@package/shared/locales";
 import { IS_FULL_PRODUCTION } from "astro:env/server";
@@ -82,7 +84,8 @@ const columns = [
 ] as const;
 ---
 
-<footer class="sec field-bar site-footer">
+<footer class="sec field-bar site-footer" data-contour>
+  <canvas class="f-field" aria-hidden="true" data-contour-canvas></canvas>
   <div class="cols">
     <div class="say-col">
       <!-- PLACEHOLDER: draft line; the owner rewrites it in his voice (placeholders.md P6). -->
@@ -190,8 +193,23 @@ const columns = [
     height: 1.375rem;
   }
   .site-footer {
+    isolation: isolate;
     padding-bottom: 0;
     overflow: clip;
+  }
+  /* The contour lines lie under everything in the footer and fade in once drawn. */
+  .f-field {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 1.2s var(--ease-out);
+  }
+  .f-field:global(.on) {
+    opacity: 1;
   }
   /* The say-line takes only its own width, so the link columns start further left [user 2026-10-06]. */
   .cols {
@@ -314,3 +332,19 @@ const columns = [
     }
   }
 </style>
+
+<script>
+  import { afterInteraction } from "~/scripts/motion";
+
+  // The footer's contour lines: the module loads once the footer is near the screen and the reader has interacted.
+  const footer = document.querySelector<HTMLElement>("[data-contour]");
+  if (footer)
+    new IntersectionObserver(
+      ([entry], observer) => {
+        if (!entry?.isIntersecting) return;
+        observer.disconnect();
+        afterInteraction(() => void import("~/scripts/footer-field").then(({ startFooterField }) => startFooterField(footer)));
+      },
+      { rootMargin: "400px 0px" },
+    ).observe(footer);
+</script>

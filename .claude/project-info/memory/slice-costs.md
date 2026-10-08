@@ -33,3 +33,4 @@ Notes:
   2296 → 2285 ms, perf 98 both: the 2.0 s LCP miss on /work/ predates it. The TV shader script starts after interaction.
 - All projects, night catalogue (2026-10-08, `/en/work/`): HTML 21.8 KB gz (TV version ~24 KB); perf 97 vs 95-97, LCP
   2.28-2.48 vs 2.26-2.28 s, both missing 2.0 s locally; JS +1.8 KB gz, after interaction (run-notes).
+- All projects, grid with a wall + footer contours (2026-10-09, launch builds, local, median of 3): `/en/work/` perf 98, LCP 2.26-2.33 s vs 2.28 s for the night catalogue (A/B), CLS 0, TBT 0, 253 vs 237 KB (the wall's six thumbnails, 3-14 KB each, lazy, low priority); HTML 21.7 KB gz. Every page: +445 B gz (the footer's loader); the contour module (1.7 KB gz) loads only after the first interaction near the footer. `/en/` unchanged: perf 98, LCP 2.26 s, 197 vs 195 KB.

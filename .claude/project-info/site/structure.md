@@ -71,18 +71,26 @@ Reworked twice on 2026-10-08: first a TV hero and a spy-room breaker [user: "bas
 vibe coded", "experiment with shaders, and interesting components", "a different style and theme"; the reason, for
 the case study: "fun, but not that overly fun", `design.md` § Art direction]. The TV version: `comps/HISTORY.md` row 9.
 
-- **Head:** the H1 "Things I’ve built" on a live contour map (a shader), a one-line lede, and an "On this page" index of
-  every project (name, kind · year) that jumps to its plate. No counts, no "flagships" wording [user 2026-10-08].
-- **Every project:** the 4 chapters first, then the archive, wide and narrow items alternating left and right, ordered
-  so neighbours never look alike. **No filter row** [user 2026-10-08]; each item has an `id` (`wk-<slug>`) the index
-  links to.
-- **Item:** a plate (a live-site capture in a browser window, with an X-ray lens over it; a reel; a video; or real text
-  where there is nothing to film), then number · kind · year, name, one line, tools, one primary action (the home
-  chapter, the case study, or the live site / npm / code) + small links.
-- **"There's more."** after the catalogue: the title and the private-repositories line ending in a winking emoji, type
-  only [user 2026-10-08: no "wink wink" text].
-- Phones: one column; the index lists names only; captures pan with the page instead of on hover, and the card in the
-  middle of the screen gets a scan line instead of the lens.
+Reworked again 2026-10-09, the **grid with a wall** [user: the offset layout was "hard to read", "i even liked the
+previous simpler version with grid better", "perhaps even the background for them should be seperated so e.g. white";
+the X-ray lens "i dont love it"; the "On this page" list replaced by something "more visual"; the head's background
+"more colorful slightly" with a different effect, the contour lines moved to the footer; "There's more" "a bit more
+interesting" and apart from the footer]. The night catalogue: `comps/HISTORY.md` row 11.
+
+- **Head:** the H1 "Things I’ve built" over a dithered colour field (a shader), a one-line lede, and a **wall** of every
+  project as the index: a tile per project with its real picture or real text and its name on a tab in its colour, one
+  click to its card. No counts, no "flagships" wording [user 2026-10-08].
+- **Every project**, on the light field: the 4 chapters first, two to a row, then the rest three to a row (a short last
+  row shares its width), ordered so neighbours never look alike. **No filter row** [user 2026-10-08]; each card has an
+  `id` (`wk-<slug>`) the wall links to.
+- **Card:** a plate in the project's colour (a live-site capture in a browser window; a reel; a video; or real text in a
+  terminal window where there is nothing to film), then number · kind · year, name, one line, tools, one primary action
+  (the home chapter, the case study, or the live site / npm / code) + small links, level across a row.
+- **"There's more."** on its own cobalt field between the cards and the footer: the title, the private-repositories line
+  ending in a winking emoji [user 2026-10-08: no "wink wink" text], and a fanned stack of repository cards marked
+  Private with their names blacked out (no names, no counts).
+- Tablets and phones: the wall is a two-row strip to swipe; cards two to a row on tablets, one on phones; captures pan
+  with the page instead of on hover.
 
 ## Case study `/<locale>/work/<slug>/`
 

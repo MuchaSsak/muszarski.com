@@ -34,19 +34,27 @@ test("a post links its translation (hreflang) and the language switch keeps it",
   await expect(page.locator(".site-header .h-loc a[hreflang=es]")).toHaveAttribute("href", "/es/");
 });
 
-test("work: the index jumps to a plate, a capture opens the X-ray, the end winks", async ({ page }) => {
+test("work: the wall jumps to a card, a resting mouse never flickers the title, the end winks", async ({ page }) => {
   await page.goto("/en/work/");
-  await expect(page.getByRole("heading", { level: 1, name: "Things I’ve built" })).toBeVisible();
-  const index = page.getByRole("navigation", { name: "On this page" });
-  await index.getByRole("link", { name: /^Linkoglot/ }).click();
+  const title = page.getByRole("heading", { level: 1, name: "Things I’ve built" });
+  await expect(title).toBeVisible();
+  // A mouse parked on the edge between two letters keeps one letter thin: the letter is picked from the letters'
+  // places at rest, so its own change of width can't hand the pointer to its neighbour (owner, 2026-10-09).
+  const letter = page.locator("#t-work .ht i").nth(1);
+  const box = (await letter.boundingBox())!;
+  await page.mouse.move(box.x - 30, box.y + box.height / 2);
+  await page.mouse.move(box.x + box.width - 0.5, box.y + box.height / 2, { steps: 4 });
+  const seen = new Set<number>();
+  for (let i = 0; i < 12; i++) {
+    seen.add(await page.locator("#t-work .ht i").evaluateAll((all) => all.findIndex((el) => el.classList.contains("ht-on"))));
+    await page.waitForTimeout(50);
+  }
+  expect(seen.size).toBe(1);
+  const wall = page.getByRole("navigation", { name: "On this page" });
+  await wall.getByRole("link", { name: "Linkoglot", exact: true }).click();
   await expect(page).toHaveURL(/#wk-linkoglot$/);
   await expect(page.locator("#wk-linkoglot")).toBeInViewport();
-  // A pointer over a capture opens the X-ray lens: the page's one canvas moves into it (where WebGL runs).
-  const webgl = await page.evaluate(() => !!document.createElement("canvas").getContext("webgl"));
-  const view = page.locator("#wk-malatro [data-xray]");
-  await view.scrollIntoViewIfNeeded();
-  await view.hover();
-  if (webgl) await expect(view.locator("canvas.xr")).toHaveCount(1);
+  await expect(page.locator("[data-xray], canvas.xr")).toHaveCount(0);
   await expect(page.getByRole("heading", { name: "There's more." })).toBeVisible();
   await expect(page.locator(".pr-line")).toContainText("😉");
   await expect(page.getByText("Wink wink")).toHaveCount(0);

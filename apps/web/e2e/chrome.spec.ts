@@ -150,4 +150,8 @@ test("footer: 4 labelled columns, rel=me profiles in a new tab, language flags, 
   await expect(footer.locator('a[rel~="me"][target="_blank"]')).toHaveCount(profiles);
   await expect(footer.locator(".meta time")).toHaveAttribute("datetime", /^\d{4}-\d{2}-\d{2}$/);
   await expect(footer.locator(".f-loc a")).toHaveCount(3);
+  // The contour lines are decoration under the content: hidden from screen readers, never in the way of a click.
+  const field = footer.locator("canvas[data-contour-canvas]");
+  await expect(field).toHaveAttribute("aria-hidden", "true");
+  expect(await field.evaluate((canvas) => getComputedStyle(canvas).pointerEvents)).toBe("none");
 });

@@ -9,23 +9,23 @@ msgstr ""
 
 #: src/components/cv/CvWeb.astro:36
 #: src/components/home/Chapters.astro:84
-#: src/components/home/chapters/ChapterLinkoglot.astro:102
-#: src/components/home/chapters/ChapterLinkoglot.astro:114
+#: src/components/home/chapters/ChapterLinkoglot.astro:104
+#: src/components/home/chapters/ChapterLinkoglot.astro:116
 #: src/components/home/chapters/ChapterPstrykWeb.astro:51
-#: src/components/home/chapters/ChapterSpace.astro:70
-#: src/components/home/chapters/ChapterSpace.astro:70
-#: src/components/home/chapters/ChapterSpace.astro:94
-#: src/components/home/chapters/ChapterSpace.astro:116
+#: src/components/home/chapters/ChapterSpace.astro:72
+#: src/components/home/chapters/ChapterSpace.astro:72
+#: src/components/home/chapters/ChapterSpace.astro:96
+#: src/components/home/chapters/ChapterSpace.astro:118
 #: src/components/home/Contact.astro:188
 #: src/components/home/Contact.astro:202
-#: src/components/home/Credentials.astro:258
-#: src/components/home/Credentials.astro:287
-#: src/components/home/Credentials.astro:300
-#: src/components/layout/SiteFooter.astro:46
+#: src/components/home/Credentials.astro:260
+#: src/components/home/Credentials.astro:289
+#: src/components/home/Credentials.astro:302
+#: src/components/layout/SiteFooter.astro:48
 #: src/pages/[locale]/blog/[slug].astro:161
 #: src/pages/[locale]/cv/index.astro:50
 #: src/pages/[locale]/my-life/index.astro:111
-#: src/pages/[locale]/work/index.astro:160
+#: src/pages/[locale]/work/index.astro:177
 msgid "(opens in a new tab)"
 msgstr "(opens in a new tab)"
 
@@ -75,7 +75,7 @@ msgstr "A local business owner answers a few questions in one online form and or
 msgid "A one-step contact form"
 msgstr "A one-step contact form"
 
-#: src/components/home/chapters/ChapterSpace.astro:75
+#: src/components/home/chapters/ChapterSpace.astro:77
 msgid "A portfolio you fly through: Earth to Neptune in 12 camera stops."
 msgstr "A portfolio you fly through: Earth to Neptune in 12 camera stops."
 
@@ -151,10 +151,10 @@ msgid "All posts"
 msgstr "All posts"
 
 #: src/components/home/Chapters.astro:96
-#: src/components/layout/SiteFooter.astro:55
+#: src/components/layout/SiteFooter.astro:57
 #: src/components/NotFound.astro:47
 #: src/pages/[locale]/contact/sent/index.astro:25
-#: src/pages/[locale]/work/index.astro:164
+#: src/pages/[locale]/work/index.astro:181
 msgid "All projects"
 msgstr "All projects"
 
@@ -174,7 +174,7 @@ msgstr "An internship brief from Neoteric, a Polish software house: a time track
 msgid "analytics"
 msgstr "analytics"
 
-#: src/components/layout/SiteFooter.astro:160
+#: src/components/layout/SiteFooter.astro:163
 msgid "and love"
 msgstr "and love"
 
@@ -242,7 +242,7 @@ msgstr "Bespoke websites for local businesses, ordered through one online form."
 msgid "blocked by a hook"
 msgstr "blocked by a hook"
 
-#: src/components/layout/SiteFooter.astro:62
+#: src/components/layout/SiteFooter.astro:64
 #: src/components/layout/SiteHeader.astro:47
 #: src/pages/[locale]/blog/[slug].astro:53
 #: src/pages/[locale]/blog/index.astro:36
@@ -291,7 +291,7 @@ msgstr "Build"
 msgid "builds"
 msgstr "builds"
 
-#: src/components/layout/SiteFooter.astro:156
+#: src/components/layout/SiteFooter.astro:159
 #: src/components/ui/StackList.astro:22
 msgid "Built with"
 msgstr "Built with"
@@ -328,15 +328,15 @@ msgstr "Case studies"
 #: src/components/blog/PostCard.astro:64
 #: src/components/blog/TagLabel.astro:15
 #: src/pages/[locale]/blog/[slug].astro:96
-#: src/pages/[locale]/work/index.astro:196
+#: src/pages/[locale]/work/index.astro:209
 msgid "Case study"
 msgstr "Case study"
 
-#: src/components/home/Credentials.astro:298
+#: src/components/home/Credentials.astro:300
 msgid "Certificate"
 msgstr "Certificate"
 
-#: src/pages/[locale]/work/index.astro:194
+#: src/pages/[locale]/work/index.astro:207
 msgid "Chapter"
 msgstr "Chapter"
 
@@ -360,11 +360,11 @@ msgstr "Clear filters"
 msgid "Client"
 msgstr "Client"
 
-#: src/pages/[locale]/work/index.astro:47
+#: src/pages/[locale]/work/index.astro:44
 msgid "Client work"
 msgstr "Client work"
 
-#: src/components/work/WorkHero.astro:48
+#: src/components/work/WorkHero.astro:60
 msgid "Client work, my own products, open source and experiments. Pick one, or scroll through all of them."
 msgstr "Client work, my own products, open source and experiments. Pick one, or scroll through all of them."
 
@@ -372,10 +372,10 @@ msgstr "Client work, my own products, open source and experiments. Pick one, or 
 msgid "Close menu"
 msgstr "Close menu"
 
-#: src/components/home/chapters/ChapterSpace.astro:115
+#: src/components/home/chapters/ChapterSpace.astro:117
 #: src/components/home/HowIWork.astro:69
-#: src/pages/[locale]/work/index.astro:202
-#: src/pages/[locale]/work/index.astro:428
+#: src/pages/[locale]/work/index.astro:215
+#: src/pages/[locale]/work/index.astro:455
 msgid "Code"
 msgstr "Code"
 
@@ -391,7 +391,7 @@ msgstr "Code is the tool. I build products that solve real business problems, at
 msgid "Code private · no public deployment"
 msgstr "Code private · no public deployment"
 
-#: src/pages/[locale]/work/index.astro:432
+#: src/pages/[locale]/work/index.astro:459
 msgid "Code private · walkthrough on request"
 msgstr "Code private · walkthrough on request"
 
@@ -420,7 +420,7 @@ msgstr "confirm email"
 #: src/components/cv/CvSheet.astro:75
 #: src/components/cv/CvWeb.astro:50
 #: src/components/home/Contact.astro:46
-#: src/components/layout/SiteFooter.astro:97
+#: src/components/layout/SiteFooter.astro:100
 #: src/components/layout/SiteHeader.astro:94
 #: src/components/layout/SiteHeader.astro:121
 #: src/components/NotFound.astro:48
@@ -453,7 +453,7 @@ msgid "Copy link"
 msgstr "Copy link"
 
 #: src/components/home/Credentials.astro:30
-#: src/pages/[locale]/work/index.astro:52
+#: src/pages/[locale]/work/index.astro:49
 msgid "Course"
 msgstr "Course"
 
@@ -462,7 +462,7 @@ msgid "Curriculum vitae"
 msgstr "Curriculum vitae"
 
 #: src/components/layout/CvLink.astro:36
-#: src/components/layout/SiteFooter.astro:63
+#: src/components/layout/SiteFooter.astro:65
 #: src/pages/[locale]/cv/index.astro:43
 #: src/pages/[locale]/cv/print/index.astro:24
 msgid "CV"
@@ -493,15 +493,15 @@ msgstr "deploy"
 msgid "Design"
 msgstr "Design"
 
-#: src/components/home/chapters/ChapterSpace.astro:65
+#: src/components/home/chapters/ChapterSpace.astro:67
 msgid "Desktop · WebGL2 · ~14 MB."
 msgstr "Desktop · WebGL2 · ~14 MB."
 
-#: src/components/home/chapters/ChapterSpace.astro:103
+#: src/components/home/chapters/ChapterSpace.astro:105
 msgid "Desktop only · copy link"
 msgstr "Desktop only · copy link"
 
-#: src/components/home/Credentials.astro:317
+#: src/components/home/Credentials.astro:319
 msgid "Details on the CV"
 msgstr "Details on the CV"
 
@@ -542,7 +542,7 @@ msgstr "drop-off points"
 msgid "Education"
 msgstr "Education"
 
-#: src/components/layout/SiteFooter.astro:71
+#: src/components/layout/SiteFooter.astro:73
 msgid "Elsewhere"
 msgstr "Elsewhere"
 
@@ -568,7 +568,7 @@ msgstr "Employee"
 msgid "English · Polish"
 msgstr "English · Polish"
 
-#: src/pages/[locale]/work/index.astro:165
+#: src/pages/[locale]/work/index.astro:182
 msgid "Every project by Mateusz Muszarski: client work, his own products, open source and experiments, with the tools, the year and the links."
 msgstr "Every project by Mateusz Muszarski: client work, his own products, open source and experiments, with the tools, the year and the links."
 
@@ -606,7 +606,7 @@ msgstr "Films"
 msgid "Findings"
 msgstr "Findings"
 
-#: src/components/layout/SiteFooter.astro:101
+#: src/components/layout/SiteFooter.astro:104
 msgid "Footer"
 msgstr "Footer"
 
@@ -717,7 +717,7 @@ msgid "How it earns is designed in from day one."
 msgstr "How it earns is designed in from day one."
 
 #: src/components/home/AiWorkflow.astro:470
-#: src/components/layout/SiteFooter.astro:65
+#: src/components/layout/SiteFooter.astro:67
 msgid "How this site was built"
 msgstr "How this site was built"
 
@@ -802,7 +802,7 @@ msgstr "Interests"
 msgid "International"
 msgstr "International"
 
-#: src/pages/[locale]/work/index.astro:48
+#: src/pages/[locale]/work/index.astro:45
 msgid "Internship"
 msgstr "Internship"
 
@@ -835,7 +835,7 @@ msgstr "Kind"
 msgid "Knowledge"
 msgstr "Knowledge"
 
-#: src/components/home/chapters/ChapterLinkoglot.astro:78
+#: src/components/home/chapters/ChapterLinkoglot.astro:80
 msgid "la maceta"
 msgstr "la maceta"
 
@@ -856,7 +856,7 @@ msgstr "Languages"
 msgid "Latest"
 msgstr "Latest"
 
-#: src/components/home/chapters/ChapterSpace.astro:92
+#: src/components/home/chapters/ChapterSpace.astro:94
 msgid "Launch on desktop"
 msgstr "Launch on desktop"
 
@@ -864,7 +864,7 @@ msgstr "Launch on desktop"
 msgid "lead"
 msgstr "lead"
 
-#: src/components/layout/SiteFooter.astro:76
+#: src/components/layout/SiteFooter.astro:78
 msgid "Legal"
 msgstr "Legal"
 
@@ -881,7 +881,7 @@ msgstr "Legal · terms of service"
 msgid "lessons"
 msgstr "lessons"
 
-#: src/components/layout/SiteFooter.astro:89
+#: src/components/layout/SiteFooter.astro:92
 msgid "Let's talk about what you're building."
 msgstr "Let's talk about what you're building."
 
@@ -905,12 +905,12 @@ msgstr "Lingui, Claude Code, Lighthouse"
 msgid "Link copied"
 msgstr "Link copied"
 
-#: src/components/home/chapters/ChapterSpace.astro:100
+#: src/components/home/chapters/ChapterSpace.astro:102
 msgid "Link copied. Open it on a computer."
 msgstr "Link copied. Open it on a computer."
 
 #: src/components/home/chapters/ChapterLinkoglot.astro:56
-#: src/pages/[locale]/work/index.astro:97
+#: src/pages/[locale]/work/index.astro:94
 msgid "Linkoglot camera mode: point the phone at a street, a room, breakfast, a book and a park to learn the words"
 msgstr "Linkoglot camera mode: point the phone at a street, a room, breakfast, a book and a park to learn the words"
 
@@ -920,15 +920,15 @@ msgstr "Lint"
 
 #: src/components/home/chapters/ChapterPstrykWeb.astro:54
 #: src/components/home/HowIWork.astro:431
-#: src/pages/[locale]/work/index.astro:367
+#: src/pages/[locale]/work/index.astro:394
 msgid "Live"
 msgstr "Live"
 
-#: src/components/home/chapters/ChapterLinkoglot.astro:117
+#: src/components/home/chapters/ChapterLinkoglot.astro:119
 msgid "Live · pre-traction"
 msgstr "Live · pre-traction"
 
-#: src/pages/[locale]/work/index.astro:198
+#: src/pages/[locale]/work/index.astro:211
 msgid "Live site"
 msgstr "Live site"
 
@@ -949,7 +949,7 @@ msgstr "Main"
 msgid "map"
 msgstr "map"
 
-#: src/components/layout/SiteFooter.astro:154
+#: src/components/layout/SiteFooter.astro:157
 msgid "Marks: Simple Icons (CC0), Playwright (Apache 2.0). Icons: Tabler (MIT). Font: Anybody (SIL OFL)."
 msgstr "Marks: Simple Icons (CC0), Playwright (Apache 2.0). Icons: Tabler (MIT). Font: Anybody (SIL OFL)."
 
@@ -1018,14 +1018,14 @@ msgstr "Music"
 msgid "My favourite"
 msgstr "My favourite"
 
-#: src/components/layout/SiteFooter.astro:64
+#: src/components/layout/SiteFooter.astro:66
 #: src/components/layout/SiteHeader.astro:120
 #: src/components/life/LifeHero.astro:33
 #: src/pages/[locale]/my-life/index.astro:39
 msgid "My life"
 msgstr "My life"
 
-#: src/components/home/chapters/ChapterSpace.astro:79
+#: src/components/home/chapters/ChapterSpace.astro:81
 msgid "My previous portfolio: a scroll-driven flight through the solar system, where each planet holds one section. 13 shaders written by hand in GLSL. Best on a computer."
 msgstr "My previous portfolio: a scroll-driven flight through the solar system, where each planet holds one section. 13 shaders written by hand in GLSL. Best on a computer."
 
@@ -1037,7 +1037,7 @@ msgstr "My space portfolio, built with what the course taught"
 msgid "My|life"
 msgstr "My|life"
 
-#: src/pages/[locale]/work/index.astro:103
+#: src/pages/[locale]/work/index.astro:100
 msgid "Neoteric Clockful: a screen recording of the dashboard"
 msgstr "Neoteric Clockful: a screen recording of the dashboard"
 
@@ -1103,7 +1103,7 @@ msgstr "Off the clock"
 msgid "On it. Briefing the team."
 msgstr "On it. Briefing the team."
 
-#: src/components/work/WorkHero.astro:52
+#: src/components/work/WorkHero.astro:63
 #: src/pages/[locale]/blog/[slug].astro:54
 msgid "On this page"
 msgstr "On this page"
@@ -1124,7 +1124,7 @@ msgstr "One man once said: “Riding is living, everything else is waiting.”"
 msgid "One message is enough"
 msgstr "One message is enough"
 
-#: src/pages/[locale]/work/index.astro:50
+#: src/pages/[locale]/work/index.astro:47
 msgid "Open source"
 msgstr "Open source"
 
@@ -1140,7 +1140,7 @@ msgstr "Order a website"
 msgid "Order website"
 msgstr "Order website"
 
-#: src/pages/[locale]/work/index.astro:49
+#: src/pages/[locale]/work/index.astro:46
 msgid "Own product"
 msgstr "Own product"
 
@@ -1180,7 +1180,7 @@ msgstr "Pause motion"
 #: src/components/blog/case/Clips.astro:33
 #: src/components/home/chapters/ChapterLinkoglot.astro:21
 #: src/components/home/chapters/ChapterSpace.astro:19
-#: src/pages/[locale]/work/index.astro:158
+#: src/pages/[locale]/work/index.astro:175
 msgid "Pause video"
 msgstr "Pause video"
 
@@ -1196,7 +1196,7 @@ msgstr "payments"
 msgid "Performance"
 msgstr "Performance"
 
-#: src/pages/[locale]/work/index.astro:51
+#: src/pages/[locale]/work/index.astro:48
 msgid "Personal"
 msgstr "Personal"
 
@@ -1225,7 +1225,7 @@ msgstr "Pin board"
 msgid "Places I've been, pinned."
 msgstr "Places I've been, pinned."
 
-#: src/components/home/chapters/ChapterSpace.astro:66
+#: src/components/home/chapters/ChapterSpace.astro:68
 msgid "Planet textures:"
 msgstr "Planet textures:"
 
@@ -1240,7 +1240,7 @@ msgstr "Play motion"
 #: src/components/blog/case/Clips.astro:34
 #: src/components/home/chapters/ChapterLinkoglot.astro:22
 #: src/components/home/chapters/ChapterSpace.astro:20
-#: src/pages/[locale]/work/index.astro:159
+#: src/pages/[locale]/work/index.astro:176
 msgid "Play video"
 msgstr "Play video"
 
@@ -1285,9 +1285,13 @@ msgid "Privacy"
 msgstr "Privacy"
 
 #: src/components/home/Contact.astro:147
-#: src/components/layout/SiteFooter.astro:78
+#: src/components/layout/SiteFooter.astro:80
 msgid "Privacy policy"
 msgstr "Privacy policy"
+
+#: src/components/work/PrivateRepos.astro:22
+msgid "Private"
+msgstr "Private"
 
 #: src/components/home/HowIWork.astro:336
 msgid "Pro"
@@ -1302,7 +1306,7 @@ msgstr "Product|engineer"
 msgid "Profile"
 msgstr "Profile"
 
-#: src/pages/[locale]/work/index.astro:186
+#: src/pages/[locale]/work/index.astro:202
 msgid "Projects"
 msgstr "Projects"
 
@@ -1326,7 +1330,7 @@ msgstr "read"
 msgid "Read next"
 msgstr "Read next"
 
-#: src/components/home/Credentials.astro:312
+#: src/components/home/Credentials.astro:314
 msgid "Read: psychology in UX"
 msgstr "Read: psychology in UX"
 
@@ -1334,7 +1338,8 @@ msgstr "Read: psychology in UX"
 msgid "real app references"
 msgstr "real app references"
 
-#: src/pages/[locale]/work/index.astro:161
+#: src/components/work/WorkHero.astro:41
+#: src/pages/[locale]/work/index.astro:178
 msgid "Recording soon"
 msgstr "Recording soon"
 
@@ -1378,7 +1383,7 @@ msgstr "Review"
 msgid "routing hook"
 msgstr "routing hook"
 
-#: src/components/layout/SiteFooter.astro:66
+#: src/components/layout/SiteFooter.astro:68
 msgid "RSS"
 msgstr "RSS"
 
@@ -1479,7 +1484,7 @@ msgstr "sign-ups"
 msgid "Since"
 msgstr "Since"
 
-#: src/components/layout/SiteFooter.astro:60
+#: src/components/layout/SiteFooter.astro:62
 msgid "Site"
 msgstr "Site"
 
@@ -1504,7 +1509,7 @@ msgstr "Skip to content"
 msgid "Snap a photo, get flashcards. A subscription language app, shipped solo to both stores."
 msgstr "Snap a photo, get flashcards. A subscription language app, shipped solo to both stores."
 
-#: src/components/home/chapters/ChapterLinkoglot.astro:77
+#: src/components/home/chapters/ChapterLinkoglot.astro:79
 msgid "Snapped → card"
 msgstr "Snapped → card"
 
@@ -1525,7 +1530,7 @@ msgstr "Sort"
 msgid "Sources"
 msgstr "Sources"
 
-#: src/components/home/chapters/ChapterLinkoglot.astro:81
+#: src/components/home/chapters/ChapterLinkoglot.astro:83
 msgid "Spanish → English"
 msgstr "Spanish → English"
 
@@ -1607,7 +1612,7 @@ msgstr "Teamwork"
 msgid "Technologies"
 msgstr "Technologies"
 
-#: src/components/layout/SiteFooter.astro:79
+#: src/components/layout/SiteFooter.astro:81
 msgid "Terms"
 msgstr "Terms"
 
@@ -1636,11 +1641,11 @@ msgid "That's a long one. Please keep it under 4,000 characters."
 msgstr "That's a long one. Please keep it under 4,000 characters."
 
 #. placeholder {0}: project.name
-#: src/pages/[locale]/work/index.astro:157
+#: src/pages/[locale]/work/index.astro:174
 msgid "The {0} website, the start of the page"
 msgstr "The {0} website, the start of the page"
 
-#: src/pages/[locale]/work/index.astro:126
+#: src/pages/[locale]/work/index.astro:123
 msgid "The club screensaver: the particles in motion"
 msgstr "The club screensaver: the particles in motion"
 
@@ -1648,7 +1653,7 @@ msgstr "The club screensaver: the particles in motion"
 msgid "The contact form could not send your message. Write directly to Mateusz Muszarski instead."
 msgstr "The contact form could not send your message. Write directly to Mateusz Muszarski instead."
 
-#: src/components/home/Credentials.astro:285
+#: src/components/home/Credentials.astro:287
 msgid "The course"
 msgstr "The course"
 
@@ -1660,7 +1665,7 @@ msgstr "The CV of Mateusz Muszarski, full-stack product engineer: experience, pr
 msgid "The decision"
 msgstr "The decision"
 
-#: src/components/home/chapters/ChapterLinkoglot.astro:82
+#: src/components/home/chapters/ChapterLinkoglot.astro:84
 msgid "the flowerpot"
 msgstr "the flowerpot"
 
@@ -1701,7 +1706,7 @@ msgid "The same loop on every project"
 msgstr "The same loop on every project"
 
 #: src/components/home/chapters/ChapterSpace.astro:43
-#: src/pages/[locale]/work/index.astro:115
+#: src/pages/[locale]/work/index.astro:112
 msgid "The space portfolio: the camera flies past Mars to Jupiter"
 msgstr "The space portfolio: the camera flies past Mars to Jupiter"
 
@@ -1717,7 +1722,7 @@ msgstr "The team"
 msgid "Then the code: web, mobile and backend, end to end, tested."
 msgstr "Then the code: web, mobile and backend, end to end, tested."
 
-#: src/components/work/PrivateRepos.astro:17
+#: src/components/work/PrivateRepos.astro:20
 msgid "There are actually a lot more projects I've built that I won't show here: they live in private repositories. I mean, I could show you, but then I'd have to neutralize you, you know?"
 msgstr "There are actually a lot more projects I've built that I won't show here: they live in private repositories. I mean, I could show you, but then I'd have to neutralize you, you know?"
 
@@ -1725,11 +1730,11 @@ msgstr "There are actually a lot more projects I've built that I won't show here
 msgid "There was no address to reply to."
 msgstr "There was no address to reply to."
 
-#: src/components/work/PrivateRepos.astro:24
+#: src/components/work/PrivateRepos.astro:36
 msgid "There's more."
 msgstr "There's more."
 
-#: src/components/work/WorkHero.astro:36
+#: src/components/work/WorkHero.astro:40
 msgid "Things I’ve built"
 msgstr "Things I’ve built"
 
@@ -1737,7 +1742,7 @@ msgstr "Things I’ve built"
 msgid "This page does not exist."
 msgstr "This page does not exist."
 
-#: src/pages/[locale]/work/index.astro:233
+#: src/pages/[locale]/work/index.astro:245
 msgid "This site's home page as a share card"
 msgstr "This site's home page as a share card"
 
@@ -1745,7 +1750,7 @@ msgstr "This site's home page as a share card"
 msgid "This Spanish text is a machine-assisted translation pending review."
 msgstr "This Spanish text is a machine-assisted translation pending review."
 
-#: src/components/layout/SiteFooter.astro:172
+#: src/components/layout/SiteFooter.astro:175
 msgid "This Spanish version was translated with AI and has not been reviewed by a native speaker yet."
 msgstr "This Spanish version was translated with AI and has not been reviewed by a native speaker yet."
 
@@ -1758,7 +1763,7 @@ msgid "Too many messages were sent from your connection. Please wait a few minut
 msgstr "Too many messages were sent from your connection. Please wait a few minutes."
 
 #: src/components/home/AiWorkflow.astro:79
-#: src/pages/[locale]/work/index.astro:339
+#: src/pages/[locale]/work/index.astro:366
 msgid "Tools"
 msgstr "Tools"
 
@@ -1879,9 +1884,9 @@ msgstr "Who uses it, what they want done, and where they give up."
 msgid "Wiki"
 msgstr "Wiki"
 
-#: src/components/layout/SiteFooter.astro:51
+#: src/components/layout/SiteFooter.astro:53
 #: src/components/layout/SiteHeader.astro:41
-#: src/components/work/WorkHero.astro:43
+#: src/components/work/WorkHero.astro:55
 msgid "Work"
 msgstr "Work"
 
