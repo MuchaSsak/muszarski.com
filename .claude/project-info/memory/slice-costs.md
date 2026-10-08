@@ -29,3 +29,5 @@ Notes:
   first mobile viewport on the stub page) moves. Re-check in slice 2, when the footer leaves the first viewport.
 - The React client chunk (68 KB gz) is emitted into `dist/_astro/` but no page references it until an island hydrates.
 - Desktop: 100 × 4, LCP 0.28 s.
+- All projects rework (2026-10-08, `/en/work/`): HTML +3.2 KB gz (20.8 → 24.0 KB); A/B against the previous commit, LCP
+  2296 → 2285 ms, perf 98 both: the 2.0 s LCP miss on /work/ predates it. The TV shader script starts after interaction.

@@ -42,6 +42,8 @@
 - Astro does not scope `@keyframes` names: two components' `bob` collided. Prefix keyframes per component (`hw-`, `cr-`, `ai-`) - 2026-10-06.
 - Reduced motion keeps `animation-delay`: staged entrances stay hidden for their delay. Switch staged scenes off under reduced motion and `.still` - 2026-10-06.
 - Load cost hides in style and layout: animate an HTML wrapper, never an `<svg>` (a layout per frame); no grid around a `container-type` box (~1 s layouts); set `top`, not an inherited custom property, on big subtrees; never toggle a class a `*` rule reads on a big ancestor (`.off *` restyled 1,658 elements: start paused, mark what is near); transition only the revealed state. Find each with traces and CSS A/B via `page.route` - 2026-10-07.
+- A % height inside an auto grid row resolves against the row the item itself grew (the Linkoglot phone overflowed its field): give the grid a definite track, `grid-template: minmax(0, 1fr) / minmax(0, 1fr)` - 2026-10-08.
+- A class that names a component (`browser`, `phone`) is a selector: putting it on a wrapper as a modifier drew a second frame. Prefix modifiers (`f-browser`) - 2026-10-08.
 
 ### Privacy of inputs
 - Images pasted in chat never reach the disk: ask the owner to drop the files in the repo, and build the slot so it switches on when they land - 2026-10-06.
@@ -56,6 +58,7 @@
 - `bun run check` stops at the first failing task: a red test hid a typecheck error that got committed. Read every task's result, re-run `astro check` after fixing a test - 2026-10-06.
 - e2e role queries match substrings ("Pull-up" hit "Pull-ups"): pass `exact: true` for short names - 2026-10-06.
 - Stop a server by its port's PID (`netstat -ano | grep :<port>` → `taskkill //F //PID`), never by image name: `taskkill /IM python.exe` ends every Python on the machine, other sessions' too - 2026-10-08.
+- A git worktree under the long temp path builds pages with no CSS ("Filename too long") and won't delete: put A/B worktrees at a short path (`C:/Users/<you>/wtb`), remove them with `git worktree remove` - 2026-10-08.
 - One `astro preview` per project: e2e, shots and Lighthouse share port 4322; for speed work build to a scratch `--outDir` and serve it on its own port (`E2E_PORT`, `lhci --base`). A busy machine fakes regressions (other sessions' headless Chrome at 100% CPU): check the load, rerun - 2026-10-07.
 - After a Playwright update, run `./node_modules/.bin/playwright install chromium` in `apps/web` (browser version mismatch) - 2026-10-06.
 - The owner works on two PCs and runs parallel sessions (one committed another's WIP, 2026-10-07): `git pull`/`git log` first, stage your own paths only; on a merge take one side's `.po`, re-add the other's msgids, extract; regenerate PDFs - 2026-10-06.

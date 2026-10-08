@@ -31,10 +31,11 @@ which to show and which private ones to add (Enrollo, others: Q41) [user].
 | malatro | side | Balatro × matura maths; openly AI-built (fits the AI story) |
 | lingotype | side | **team project** (co-author Fabian Dróżkowski, RocketPLN). Credit him; counters "solo" |
 | beniaminek03-screensaver | client | GPGPU particles in R3F for a sports club. Ask before using the club's name/logo |
-| lndexecutivetaxi.com | client | a real shipped client site, vibe-coded on Replit; owner confirms |
-| expo-i18n-auth-boilerplate · nextjs-i18n-boilerplate · r3f-vite-boilerplate | oss (starters) | grouped as one "starters" row |
-| react-clickme (+ clickme-website) | oss | npm library (2023); kept low |
 | mesku.art | client | only if the domain comes back or a recording exists (no DNS today) |
+
+**Removed from `/work/`** [user 2026-10-08]: lndexecutivetaxi.com, the starters (expo-i18n-auth-boilerplate,
+nextjs-i18n-boilerplate, r3f-vite-boilerplate), react-clickme (+ clickme-website). The breaker after the grid says the
+rest lives in private repositories.
 
 **Hide (suggested):**
 - not projects or superseded: MuchaSsak (profile config), language-ai (made private by the owner 2026-10-05),

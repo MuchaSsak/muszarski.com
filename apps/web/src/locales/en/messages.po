@@ -420,7 +420,7 @@ msgid "confirm email"
 msgstr "confirm email"
 
 #: src/components/cv/CvBody.astro:37
-#: src/components/cv/CvSheet.astro:79
+#: src/components/cv/CvSheet.astro:62
 #: src/components/home/Contact.astro:46
 #: src/components/layout/SiteFooter.astro:97
 #: src/components/layout/SiteHeader.astro:94
@@ -448,7 +448,6 @@ msgid "Copy email"
 msgstr "Copy email"
 
 #: src/components/cv/CvBody.astro:23
-#: src/components/cv/CvSheet.astro:41
 #: src/components/home/Credentials.astro:30
 #: src/pages/[locale]/work/index.astro:49
 msgid "Course"
@@ -537,7 +536,7 @@ msgid "drop-off points"
 msgstr "drop-off points"
 
 #: src/components/cv/CvBody.astro:31
-#: src/components/cv/CvSheet.astro:51
+#: src/components/cv/CvSheet.astro:57
 msgid "Education"
 msgstr "Education"
 
@@ -570,7 +569,7 @@ msgid "Every project by Mateusz Muszarski: client work, his own products, open s
 msgstr "Every project by Mateusz Muszarski: client work, his own products, open source and experiments, with the tools, the year and the links."
 
 #: src/components/cv/CvBody.astro:30
-#: src/components/cv/CvSheet.astro:48
+#: src/components/cv/CvSheet.astro:56
 msgid "Experience"
 msgstr "Experience"
 
@@ -790,12 +789,11 @@ msgid "interest"
 msgstr "interest"
 
 #: src/components/cv/CvBody.astro:36
-#: src/components/cv/CvSheet.astro:54
+#: src/components/cv/CvSheet.astro:61
 msgid "Interests"
 msgstr "Interests"
 
 #: src/components/cv/CvBody.astro:24
-#: src/components/cv/CvSheet.astro:42
 #: src/components/home/Credentials.astro:31
 msgid "International"
 msgstr "International"
@@ -830,7 +828,6 @@ msgid "Kind"
 msgstr "Kind"
 
 #: src/components/cv/CvBody.astro:26
-#: src/components/cv/CvSheet.astro:44
 #: src/components/home/Credentials.astro:33
 msgid "Knowledge"
 msgstr "Knowledge"
@@ -848,7 +845,7 @@ msgid "Language"
 msgstr "Language"
 
 #: src/components/cv/CvBody.astro:35
-#: src/components/cv/CvSheet.astro:53
+#: src/components/cv/CvSheet.astro:60
 msgid "Languages"
 msgstr "Languages"
 
@@ -1311,7 +1308,7 @@ msgid "Product|engineer"
 msgstr "Product|engineer"
 
 #: src/components/cv/CvBody.astro:29
-#: src/components/cv/CvSheet.astro:47
+#: src/components/cv/CvSheet.astro:54
 msgid "Profile"
 msgstr "Profile"
 
@@ -1324,13 +1321,12 @@ msgid "purchases"
 msgstr "purchases"
 
 #: src/components/cv/CvBody.astro:22
-#: src/components/cv/CvSheet.astro:40
 #: src/components/home/Credentials.astro:29
 msgid "Qualification"
 msgstr "Qualification"
 
 #: src/components/cv/CvBody.astro:33
-#: src/components/cv/CvSheet.astro:52
+#: src/components/cv/CvSheet.astro:59
 msgid "Qualifications and training"
 msgstr "Qualifications and training"
 
@@ -1423,7 +1419,7 @@ msgid "See the work"
 msgstr "See the work"
 
 #: src/components/cv/CvBody.astro:32
-#: src/components/cv/CvSheet.astro:49
+#: src/components/cv/CvSheet.astro:58
 msgid "Selected projects"
 msgstr "Selected projects"
 
@@ -1496,7 +1492,7 @@ msgid "Site"
 msgstr "Site"
 
 #: src/components/cv/CvBody.astro:34
-#: src/components/cv/CvSheet.astro:50
+#: src/components/cv/CvSheet.astro:55
 msgid "Skills"
 msgstr "Skills"
 
@@ -1606,7 +1602,6 @@ msgid "task: contact form"
 msgstr "task: contact form"
 
 #: src/components/cv/CvBody.astro:25
-#: src/components/cv/CvSheet.astro:43
 #: src/components/home/Credentials.astro:32
 msgid "Teamwork"
 msgstr "Teamwork"
@@ -1722,7 +1717,7 @@ msgstr "The team"
 msgid "Then the code: web, mobile and backend, end to end, tested."
 msgstr "Then the code: web, mobile and backend, end to end, tested."
 
-#: src/components/work/PrivateRepos.astro:30
+#: src/components/work/PrivateRepos.astro:34
 msgid "There are actually a lot more projects I've built that I won't show here: they live in private repositories. I mean, I could show you, but then I'd have to neutralize you, you know?"
 msgstr "There are actually a lot more projects I've built that I won't show here: they live in private repositories. I mean, I could show you, but then I'd have to neutralize you, you know?"
 
@@ -1730,7 +1725,7 @@ msgstr "There are actually a lot more projects I've built that I won't show here
 msgid "There was no address to reply to."
 msgstr "There was no address to reply to."
 
-#: src/components/work/PrivateRepos.astro:25
+#: src/components/work/PrivateRepos.astro:29
 msgid "There's more."
 msgstr "There's more."
 
@@ -1880,7 +1875,7 @@ msgstr "Who uses it, what they want done, and where they give up."
 msgid "Wiki"
 msgstr "Wiki"
 
-#: src/components/work/PrivateRepos.astro:35
+#: src/components/work/PrivateRepos.astro:39
 msgid "Wink wink."
 msgstr "Wink wink."
 

@@ -10,7 +10,7 @@
 ```
 /                                → 308 /en/                      (vercel.json; i18n.md)
 /<locale>/                       home                            locale ∈ en (default) · pl · es
-/<locale>/work/                  ALL projects index, filterable (F04) [user] 2026-10-05
+/<locale>/work/                  ALL projects index (F04) [user] 2026-10-05; no filters since 2026-10-08 [user]
 /<locale>/work/<slug>/           not built: **case studies live in the blog** [user 2026-10-05] (Q43); `/work/` links a
                                  flagship's home chapter (`/<locale>/#<anchor>`) and case study #0 (`/blog/how-this-site-was-built/`)
 /<locale>/blog/                  blog index (F12); en + pl only (i18n.md § Locale coverage)
@@ -65,13 +65,17 @@ very boring ... completely rethink"]; research: Mobbin sections (Unseen Studio a
 Koto: an asymmetric wall of media; MOUTHWASH and Studio Freight: media first, little text). The look: `design.md` §
 Components, All projects.
 
-- Every project: the 4 flagships first (half a row each), then the archive (a third each), ordered so neighbours
-  never look alike.
-- **One filter row:** type pills only (`context` values that have projects), each with its count; the tool filter is
-  gone (tools show as text on each card). Without JS everything shows.
-- **Card:** media first (a live-site capture that scrolls, a reel, or a drawn scene), then year · type, name, one
+Hero and breaker reworked 2026-10-08 [user: "basically the same as on main landing", "more creative and visually impressive"].
+
+- **Hero:** the H1 "All my projects, ON AIR", a one-line lede, and a retro TV that flips through the projects as channels (a
+  shader screen; "Now showing" jumps to the card). No counts, no "flagships" wording [user 2026-10-08].
+- **Every project:** the 4 chapters first (half a row each), then the archive (a third each), ordered so neighbours never
+  look alike. **No filter row** [user 2026-10-08]; each card has an `id` (`wk-<slug>`) the TV links to.
+- **Card:** media first (a live-site capture that scrolls, a reel, a video, or a drawn scene), then year · type, name, one
   line, tools, one primary action (the home chapter, the case study, or the live site / npm / code) + small links.
-- Phones: one column; captures scroll with the page instead of on hover.
+- **Breaker** after the grid: "There's more." + the private-repositories line with a wink, as a spy scene (lasers, a camera
+  that follows you, a safe that says "Nice try") [user 2026-10-08].
+- Phones: one column; captures scroll with the page instead of on hover; the TV stacks under the title.
 
 ## Case study `/<locale>/work/<slug>/`
 
