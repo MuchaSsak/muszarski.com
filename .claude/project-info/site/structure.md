@@ -33,6 +33,7 @@
 
 | # | Section | Must prove / do | CTA |
 | --- | --- | --- | --- |
+| 0 | WIP strip | One line, ~23 px, accent pink, above the header on every page, scrolls away: "Work in progress: this site isn't finished yet." Every build but `IS_FULL_PRODUCTION=true` [user 2026-10-08] (`BaseLayout`) | none |
 | 0 | Header (sticky) | M—M mark → home · Work (`#work`) · How I work (`#how-i-work`) · AI (`#ai`) · Blog · language flags · CV · **Hire me** [user 2026-10-06]. My life sits in the footer + the menu. Built 2026-10-05, reworked 2026-10-06 (`design.md` § Components) | Hire me (primary, → `#contact`), CV |
 | 1 | Hero | the fitted name (H1, the signature moment F20), role, one-line positioning (P6, `brand.md` § Positioning), icon facts, the availability sticker; then the tool band (marks + names). Built 2026-10-05 | See the work (primary) · Download CV |
 | 2 | Selected work | the 4 flagship chapters (`content/projects.md`), each in its own skin, read in one order: badge → title → media → outcome → description → CTA → status → tools (`design.md` § Components, Chapters); then "Also shipped" (a tilted label tag, then Malatro and yws.lu as tilted tickets over moving colour blobs, lingui-translate-ai removed [user 2026-10-07]; client work behind the rights gate) + "All projects →", one row tall on wide screens | one primary per chapter: Visit pstrykweb.pl (the landing, never the konfigurator [user 2026-10-06]) · App Store + Google Play · Ask for a walkthrough · Launch (+ Code, secondary); All projects |

@@ -130,6 +130,8 @@ const umamiDomains = SITE_HOSTS.flatMap((host) => [host, `www.${host}`]).join(",
   <body>
     <a href="#main" class="skip sr-only-focusable">{t`Skip to content`}</a>
     <div class="grain" aria-hidden="true"></div>
+    {/* Every build but the launch says it is unfinished (scripts/launch.mjs). In the flow, so the sticky header still sticks. */}
+    {!IS_FULL_PRODUCTION && <p class="wip">{t`Work in progress: this site isn't finished yet.`}</p>}
     <SiteHeader path={path ?? ""} locales={locales} current={current} home={home} fallback={fallback} />
     <main id="main" tabindex="-1" class="outline-none">
       <slot />
@@ -152,6 +154,16 @@ const umamiDomains = SITE_HOSTS.flatMap((host) => [host, `www.${host}`]).join(",
     background: var(--accent);
     color: var(--on-accent);
     font-weight: 800;
+  }
+  .wip {
+    margin: 0;
+    padding: 0.25rem var(--pad-x);
+    background: var(--accent);
+    color: var(--on-accent);
+    font-size: 0.75rem;
+    font-weight: 700;
+    line-height: 1.25;
+    text-align: center;
   }
   /* Print grain over every field: one fixed, pre-rasterised noise tile, no repaint on scroll. */
   .grain {

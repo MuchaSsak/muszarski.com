@@ -37,7 +37,8 @@ msgstr "(opcjonalnie)"
 msgid "(PDF, then the CV page)"
 msgstr "(PDF, potem strona CV)"
 
-#: src/components/blog/PostCard.astro:65
+#: src/components/blog/PostCard.astro:66
+#: src/components/blog/PostCard.astro:80
 #: src/pages/[locale]/blog/[slug].astro:121
 msgid "{minutes} min read"
 msgstr "{minutes} min czytania"
@@ -151,7 +152,7 @@ msgstr "Wszystkie wpisy"
 
 #: src/components/home/Chapters.astro:96
 #: src/components/layout/SiteFooter.astro:55
-#: src/components/NotFound.astro:48
+#: src/components/NotFound.astro:47
 #: src/pages/[locale]/contact/sent/index.astro:25
 #: src/pages/[locale]/work/index.astro:164
 msgid "All projects"
@@ -193,7 +194,7 @@ msgstr "zatwierdzone"
 msgid "Apps and testing"
 msgstr "Aplikacje i testy"
 
-#: src/components/blog/PostCard.astro:63
+#: src/components/blog/PostCard.astro:64
 msgid "Article"
 msgstr "Artykuł"
 
@@ -323,8 +324,8 @@ msgstr "Nie widzę ceny."
 msgid "Case studies"
 msgstr "Case studies"
 
-#: src/components/blog/PostCard.astro:50
-#: src/components/blog/PostCard.astro:63
+#: src/components/blog/PostCard.astro:51
+#: src/components/blog/PostCard.astro:64
 #: src/components/blog/TagLabel.astro:15
 #: src/pages/[locale]/blog/[slug].astro:96
 #: src/pages/[locale]/work/index.astro:196
@@ -422,7 +423,7 @@ msgstr "potwierdź e-mail"
 #: src/components/layout/SiteFooter.astro:97
 #: src/components/layout/SiteHeader.astro:94
 #: src/components/layout/SiteHeader.astro:121
-#: src/components/NotFound.astro:49
+#: src/components/NotFound.astro:48
 #: src/pages/[locale]/blog/[slug].astro:189
 #: src/pages/[locale]/cv/index.astro:53
 #: src/pages/[locale]/my-life/index.astro:79
@@ -588,7 +589,7 @@ msgstr "Wiara"
 msgid "fast pages"
 msgstr "szybkie strony"
 
-#: src/components/blog/PostCard.astro:55
+#: src/components/blog/PostCard.astro:56
 #: src/components/home/chapters/ChapterPstrykWeb.astro:87
 msgid "Featured"
 msgstr "Polecany"
@@ -661,7 +662,7 @@ msgstr "Zacznij"
 msgid "Go back and try again, or write to me directly:"
 msgstr "Wróć i spróbuj ponownie albo napisz do mnie bezpośrednio:"
 
-#: src/components/NotFound.astro:47
+#: src/components/NotFound.astro:44
 msgid "Go to the home page"
 msgstr "Przejdź na stronę główną"
 
@@ -1081,7 +1082,7 @@ msgstr "Notatki z budowania produktów webowych i mobilnych: programowanie z AI 
 msgid "Notes from the work"
 msgstr "Notatki z pracy"
 
-#: src/components/NotFound.astro:45
+#: src/components/NotFound.astro:41
 msgid "Nothing lives at this address. The link may be old, or the address has a typo."
 msgstr "Pod tym adresem nic nie ma. Link może być nieaktualny albo w adresie jest literówka."
 
@@ -1148,7 +1149,7 @@ msgid "Own product · solo · 2026"
 msgstr "Własny produkt · solo · 2026"
 
 #: src/components/NotFound.astro:27
-#: src/components/NotFound.astro:44
+#: src/components/NotFound.astro:40
 msgid "Page not found"
 msgstr "Nie znaleziono strony"
 
@@ -1495,7 +1496,7 @@ msgstr "Skille i bramki sprawdzają każdą zmianę: typy, testy, dostępność,
 msgid "Skills and qualifications"
 msgstr "Umiejętności i kwalifikacje"
 
-#: src/components/layout/BaseLayout.astro:124
+#: src/components/layout/BaseLayout.astro:131
 msgid "Skip to content"
 msgstr "Przejdź do treści"
 
@@ -1883,6 +1884,10 @@ msgstr "Wiki"
 #: src/components/work/WorkHero.astro:43
 msgid "Work"
 msgstr "Projekty"
+
+#: src/components/layout/BaseLayout.astro:134
+msgid "Work in progress: this site isn't finished yet."
+msgstr "Strona w budowie: jeszcze nie jest skończona."
 
 #: src/components/home/Contact.astro:27
 msgid "Write a message first. One line is enough."
