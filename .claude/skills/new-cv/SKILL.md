@@ -93,14 +93,15 @@ These broke once and cost time; `references/template.md` has the why and the fix
 - Every link is visible text (`github.com/MuchaSsak`), underlined, never colour alone; the email is a `mailto:` link.
 - Pink is a fill or a marker, never text on white (2.97:1).
 - Marks only where we know they're allowed: Tabler outline icons; GitHub and LinkedIn only as links to his profiles,
-  in white or black, LinkedIn's own artwork; a project's own logo; never a tool's, a company's or a client's logo.
+  in white or black, LinkedIn's own artwork; no other logo (not a tool's, a company's, a client's, nor the projects'
+  own: the owner dropped them, 2026-10-08).
 - Lists are reset by their own class, never by `.cs ul` (a scoped element rule outranks one class).
 
 ## Rollout (once, after the owner approves the sheet)
 
-1. Merge `cv-draft.ts` into `cv.ts`: its overrides become the data; add `softSkills`, `tools`, `logo`, `flag`. A
-   credential the CV shows as one line keeps its items for the home card (add a CV-only summary field instead of
-   dropping them). Write the Polish and Spanish text (es unreviewed), point the sheet and the print route back at
+1. Merge `cv-draft.ts` into `cv.ts`: its overrides become the data; add `softSkills`, `tools`, `flag` and the
+   credentials' `gain` (`CvCredential`). A credential the CV shows as one line keeps its items for the home card (add a
+   CV-only summary field instead of dropping them). yws.lu (Freelance) is client work: its rights need `ok` first. Write the Polish and Spanish text (es unreviewed), point the sheet and the print route back at
    `cv.ts`, delete `cv-draft.ts`, reprint all three locales.
 2. Point the print route at the sheet: move `cv/print-v2/index.astro` to `cv/print/index.astro` (replacing the old one),
    drop `variant="print"` from `CvBody.astro`, update the sitemap filter in `astro.config.mjs`.

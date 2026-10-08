@@ -53,8 +53,11 @@ with their links. Skills come after the proof, shown as skills rather than a lis
 line that shows it, the tools in a few small named groups. The research put the stack near the top (R 1, R 15); the
 profile carries it on page 1. Education sits last before the languages (the owner's call; it is one short entry).
 Certificates carry little weight with tech hiring (R 17, hiring-perspective § credentials), so they stay compact: a
-head line, then the certificate lines (courses) or one summary line (hackathons, youth projects). A new section goes
-after Selected projects unless there's a reason.
+head line, then the certificate lines (courses) or one summary line (hackathons, youth projects, what a course
+covers). A credential may add one **gain** line, what it gave him (time pressure and teamwork; fluency with people,
+in English), set apart in cobalt bold behind a rising-line icon so it isn't buried in the description [user
+2026-10-08]. Keep gains for credentials whose value is a soft skill; one sentence, his words. A new section goes after
+Selected projects unless there's a reason.
 
 ## 4. Writing rules
 
@@ -66,6 +69,9 @@ after Selected projects unless there's a reason.
   you don't give ("passionate", "results-driven").
 - **Bullets:** 1-3 per entry; start with what he built or shipped, end with the result, the scale or the proof (a
   number with a source, a store, a test count) (R 14). Vary their length and shape: identical bullets read as AI (R 16).
+  The owner trims engineering counts he finds noisy (the Clockful test and security counts went, 2026-10-08): ask
+  before adding counts back. Freelance and own work reads general, with one or two named examples (a landing for
+  Youth Work Synergy, the youth-space app his school's principal gave him an award for), not a list of repos.
 - **AI tells to avoid** (R 16, resume data 2023-2026): em dashes in prose, and the verbs spearheaded, leveraged,
   orchestrated, honed, streamlined, plus "passionate about", "results-driven", "dynamic". Plain verbs: built, shipped,
   wrote, designed, cut, moved.

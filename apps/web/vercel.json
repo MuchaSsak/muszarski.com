@@ -4,8 +4,98 @@
   "redirects": [
     {
       "source": "/",
+      "has": [
+        {
+          "type": "header",
+          "key": "accept-language",
+          "value": {
+            "pre": "pl"
+          }
+        }
+      ],
+      "destination": "/pl/",
+      "permanent": false
+    },
+    {
+      "source": "/",
+      "has": [
+        {
+          "type": "header",
+          "key": "accept-language",
+          "value": {
+            "pre": "es"
+          }
+        }
+      ],
+      "destination": "/es/",
+      "permanent": false
+    },
+    {
+      "source": "/",
       "destination": "/en/",
-      "permanent": true
+      "permanent": false
+    },
+    {
+      "source": "/:page(work|cv|my-life|privacy|terms)/",
+      "has": [
+        {
+          "type": "header",
+          "key": "accept-language",
+          "value": {
+            "pre": "pl"
+          }
+        }
+      ],
+      "destination": "/pl/:page/",
+      "permanent": false
+    },
+    {
+      "source": "/:page(work|cv|my-life|privacy|terms)/",
+      "has": [
+        {
+          "type": "header",
+          "key": "accept-language",
+          "value": {
+            "pre": "es"
+          }
+        }
+      ],
+      "destination": "/es/:page/",
+      "permanent": false
+    },
+    {
+      "source": "/:page(work|cv|my-life|privacy|terms)/",
+      "destination": "/en/:page/",
+      "permanent": false
+    },
+    {
+      "source": "/blog/",
+      "has": [
+        {
+          "type": "header",
+          "key": "accept-language",
+          "value": {
+            "pre": "pl"
+          }
+        }
+      ],
+      "destination": "/pl/blog/",
+      "permanent": false
+    },
+    {
+      "source": "/blog/",
+      "destination": "/en/blog/",
+      "permanent": false
+    },
+    {
+      "source": "/blog/:slug(analityka-bez-cookies-w-polsce|aplikacja-mobilna-w-pojedynke|astro-czy-nextjs-na-portfolio|claude-code-po-polsku|claude-code-skille-hooki-mcp-subagenty|cv-strona-i-pdf-z-jednego-zrodla|dlaczego-moje-portfolio-threejs-bylo-wolne|dopasowanie-tekstu-do-szerokosci|efekty-hover-na-telefonach|formularz-kontaktowy-na-statycznej-stronie|jak-powstala-ta-strona|lighthouse-16-portfolio-programistow|lingui-czy-i18next|llm-wiki-pamiec-projektu-dla-claude-code|psychologia-w-ux-i-frontendzie|reduced-motion-i-przycisk-pauzy|tlumaczenie-katalogow-lingui-przez-llm|wielojezyczna-strona-astro-z-lingui)/",
+      "destination": "/pl/blog/:slug/",
+      "permanent": false
+    },
+    {
+      "source": "/blog/:slug/",
+      "destination": "/en/blog/:slug/",
+      "permanent": false
     }
   ],
   "headers": [

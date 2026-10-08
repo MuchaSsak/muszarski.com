@@ -1,12 +1,12 @@
 {
   "en": {
     "file": "..\\..\\comps\\cv\\mateusz-muszarski-cv-en.pdf",
-    "kb": 233.8,
+    "kb": 219.1,
     "pages": 2,
-    "d": 0.22,
-    "lastPageFill": 0.98,
-    "endGapMm": 7.9,
-    "digest": "50c0bf8d32c7a95a",
+    "d": 0,
+    "lastPageFill": 0.99,
+    "endGapMm": 0,
+    "digest": "421dcc85c8fc48f4",
     "fonts": [
       "Type0/CIDFontType2 AAAAAA+AnybodyCV-BlackName1",
       "Type0/CIDFontType2 BAAAAA+AnybodyCV-BlackName2",
@@ -20,7 +20,7 @@
       "https://muszarski.com/en/",
       "https://github.com/MuchaSsak",
       "https://www.linkedin.com/in/mateusz-muszarski-b1168a28a",
-      "https://github.com/MuchaSsak/lingui-translate-ai",
+      "https://yws.lu/",
       "https://pstrykweb.pl/",
       "https://apps.apple.com/app/id6768303316",
       "https://play.google.com/store/apps/details?id=com.linkoglot.app",
@@ -34,6 +34,7 @@
     ],
     "problems": [],
     "warnings": [
+      "at the densest setting: no room left; cut before adding",
       "facts still to confirm (placeholder: true in cv.ts): Freelance and own projects; INF.02 · INF.03 · INF.04; International youth projects"
     ],
     "shots": [

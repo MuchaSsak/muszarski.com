@@ -1,0 +1,44 @@
+{
+  "en": {
+    "file": "..\\..\\comps\\cv\\mateusz-muszarski-cv-en.pdf",
+    "kb": 233.8,
+    "pages": 2,
+    "d": 0.22,
+    "lastPageFill": 0.98,
+    "endGapMm": 7.9,
+    "digest": "50c0bf8d32c7a95a",
+    "fonts": [
+      "Type0/CIDFontType2 AAAAAA+AnybodyCV-BlackName1",
+      "Type0/CIDFontType2 BAAAAA+AnybodyCV-BlackName2",
+      "Type0/CIDFontType2 CAAAAA+AnybodyCV-ExtraBoldCondensed",
+      "Type0/CIDFontType2 DAAAAA+AnybodyCV-Bold",
+      "Type0/CIDFontType2 EAAAAA+AnybodyCV-ExtraBoldExpanded",
+      "Type0/CIDFontType2 FAAAAA+AnybodyCV-Regular"
+    ],
+    "links": [
+      "mailto:hi@muszarski.com",
+      "https://muszarski.com/en/",
+      "https://github.com/MuchaSsak",
+      "https://www.linkedin.com/in/mateusz-muszarski-b1168a28a",
+      "https://github.com/MuchaSsak/lingui-translate-ai",
+      "https://pstrykweb.pl/",
+      "https://apps.apple.com/app/id6768303316",
+      "https://play.google.com/store/apps/details?id=com.linkoglot.app",
+      "https://muszarski.com/",
+      "https://threejs-journey.com/certificate/view/45175",
+      "https://www.udemy.com/certificate/UC-8c6e4b4f-2f3f-4c3e-9773-8b2b2f9ee1a7/",
+      "https://www.udemy.com/certificate/UC-f3d532a0-be9d-43e9-b822-0f511752b87c/",
+      "mailto:hi@muszarski.com",
+      "https://muszarski.com/en/cv/",
+      "https://github.com/MuchaSsak"
+    ],
+    "problems": [],
+    "warnings": [
+      "facts still to confirm (placeholder: true in cv.ts): Freelance and own projects; INF.02 · INF.03 · INF.04; International youth projects"
+    ],
+    "shots": [
+      "..\\..\\comps\\cv\\mateusz-muszarski-cv-en-p1.png",
+      "..\\..\\comps\\cv\\mateusz-muszarski-cv-en-p2.png"
+    ]
+  }
+}

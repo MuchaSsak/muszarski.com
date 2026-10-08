@@ -34,6 +34,9 @@ export interface ToolGroup {
   tools: string[];
 }
 
+/** A credential with what it gave him: one line the sheet sets apart in the accent colour [user 2026-10-08]. */
+export type CvCredential = Credential & { gain?: Text };
+
 export const CV_DRAFT = {
   ...CV,
   // [user 2026-10-08] "call me more like on website, full-stack product engineer" (the hero's role line).
@@ -54,12 +57,12 @@ export const CV_DRAFT = {
     },
     {
       ...byId(CV.experience, "neoteric"),
-      // "15-requirement" broke at its hyphen and extractors joined it into "15requirement".
+      // "15-requirement" broke at its hyphen and extractors joined it into "15requirement". The test and security
+      // counts are off the CV [user 2026-10-08].
       bullets: [
         en(
           "Built Clockful, a role-based time tracker, with AI agents only, from a spec of 15 requirements in about 9 days (an estimate from the repo dates).",
         ),
-        byId(CV.experience, "neoteric").bullets[1]!,
       ],
     },
     // [user 2026-10-08] "ks beniaminek was 2025". Title and place like the other internships.
@@ -70,9 +73,19 @@ export const CV_DRAFT = {
       when: en("2025 · 1 month"),
       placeholder: false,
     },
+    // [user 2026-10-08] described generally, with two examples: the yws.lu landing (Youth Work Synergy, a nonprofit
+    // that houses young people in Luxembourg: yws.lu, checked 2026-10-08) and the youth-space app his school's
+    // principal gave him an award for (gallery.ts). lingui-translate-ai is off the CV. yws.lu is client work: rights
+    // `check` (projects.ts) until the client's OK, before the live PDF.
     {
       ...byId(CV.experience, "freelance"),
-      links: [{ label: "GitHub", href: "https://github.com/MuchaSsak/lingui-translate-ai" }],
+      bullets: [
+        en(
+          "Landing pages for businesses and organisations, such as a 3D site for Youth Work Synergy, a youth housing nonprofit in Luxembourg (React, React Three Fiber, GSAP).",
+        ),
+        en("A mobile app for a local youth space; the principal of my technical secondary school gave me an award for it."),
+      ],
+      links: [{ label: "yws.lu", href: "https://yws.lu/" }],
     },
   ] satisfies CvEntry[],
 
@@ -87,19 +100,24 @@ export const CV_DRAFT = {
       // Public info only, and the landing is the one link (content/projects/pstrykweb.md). No logo: the brand is the
       // software house's.
       links: [{ label: "pstrykweb.pl", href: "https://pstrykweb.pl/" }],
-      bullets: [en("Built PstrykWeb: bespoke websites for local businesses, ordered through one online form.")],
+      // The title names it: the line says what it is (one line, no orphan).
+      bullets: [en("Bespoke websites for local businesses, ordered through one online form.")],
     },
+    // No project logos [user 2026-10-08: "i changed my mind about project logos"].
     {
       ...byId(CV.experience, "linkoglot"),
       title: en("Linkoglot"),
       org: en("Own product, founder and developer"),
-      logo: "/media/linkoglot/icon.webp",
     },
-    // The portfolio's own mark is its sticker (the site logo is fan art: not on the CV).
     {
       ...byId(CV.projects, "this-site"),
       title: en("Portfolio"),
-      logo: "sticker",
+      // Two lines, not three (the sheet's fit): the same facts, the scores as a range.
+      bullets: [
+        en(
+          "Astro, React and Lingui (en/pl/es); Lighthouse mobile 99–100, about 8 KB of JavaScript; built with a Claude Code setup: a project wiki, hooks and skills.",
+        ),
+      ],
       links: [{ label: "muszarski.com", href: "https://muszarski.com/" }],
     },
   ] satisfies CvEntry[],
@@ -141,17 +159,18 @@ export const CV_DRAFT = {
   // [user 2026-10-08] the owner's list, "small font", "in good visual order", icons only where we know they're
   // allowed: the tools' own logos are not (React, GitLab, Playwright, Lighthouse and Claude forbid this use, most
   // others don't say; design/assets.md § CV marks), so each group gets an outline icon and the tools stay names.
-  // Node.js and PostgreSQL come from the profile (ATS keywords).
+  // Node.js and PostgreSQL come from the profile (ATS keywords). [user 2026-10-08] WebGL under Web; Mobbin under
+  // Quality (so the group says "and UX": Mobbin is a library of real app screens); Vercel API in the workflow.
   tools: [
     {
       icon: "tb:browser",
       name: en("Web"),
-      tools: ["TypeScript", "React", "Next.js", "Astro", "Tailwind CSS", "shadcn/ui"],
+      tools: ["TypeScript", "React", "Next.js", "Astro", "Tailwind CSS", "shadcn/ui", "WebGL"],
     },
     { icon: "tb:device-mobile", name: en("Mobile"), tools: ["React Native", "Expo"] },
     { icon: "tb:database", name: en("Back end and data"), tools: ["Node.js", "Supabase", "PostgreSQL", "TanStack Query"] },
-    { icon: "tb:test-pipe", name: en("Quality"), tools: ["Playwright E2E testing", "Lighthouse MCP"] },
-    { icon: "tb:terminal-2", name: en("AI and workflow"), tools: ["Claude Code", "GitHub", "GitLab", "Mobbin"] },
+    { icon: "tb:test-pipe", name: en("Quality and UX"), tools: ["Playwright E2E testing", "Lighthouse MCP", "Mobbin"] },
+    { icon: "tb:terminal-2", name: en("AI and workflow"), tools: ["Claude Code", "GitHub", "GitLab", "Vercel API"] },
   ] satisfies ToolGroup[],
 
   credentials: [
@@ -165,25 +184,37 @@ export const CV_DRAFT = {
       summary: en(
         "HackYeah 2026 in Kraków, Europe's biggest on-site hackathon; Hack4Change 2026 in Gdańsk, 48 hours for the Baltic Sea; Product Challenge 2026: Vibe the Future in Rzeszów.",
       ),
+      // [user 2026-10-08] "they helped me improve in working under time pressure and in a team".
+      gain: en("Made me better at working under time pressure and in a team."),
       items: undefined,
     },
     {
       ...erasmus,
       title: en("International youth projects"),
       issuer: en("Erasmus+, European Solidarity Corps, Visegrad"),
-      // [user 2026-10-08] "visegrad project in georgia bakuriani for alternative youth participation".
+      // [user 2026-10-08] "visegrad project in georgia bakuriani for alternative youth participation". The issuer
+      // line says what kind of projects; "in English" moved to the gain line (two lines, the sheet's fit).
       // PLACEHOLDER (P11): the years of Bakuriani and Demre.
       summary: en(
-        "Youth exchanges, trainings and volunteering in English: digital youth work in Latvia, youth entrepreneurship in Lithuania, alternative youth participation in Bakuriani (Georgia), two months with sea turtles in Demre (Türkiye).",
+        "Digital youth work in Latvia, youth entrepreneurship in Lithuania, alternative youth participation in Bakuriani (Georgia), two months with sea turtles in Demre (Türkiye).",
       ),
+      // [user 2026-10-08] "it helped me achieve fluency in communication with people, especially in English".
+      gain: en("Made me fluent in communicating with people, especially in English."),
       items: undefined,
       placeholder: true,
     },
-    // [user 2026-10-08] a year, like every other date on the sheet.
-    { ...credential("threejs-journey"), when: en("2025") },
+    // [user 2026-10-08] a year, like every other date on the sheet; what the course covers: "the webgl and stuff and
+    // 90h+ of video and challenges" (the three.js course: 93 h of video, threejs-journey.com, checked 2026-10-08).
+    {
+      ...credential("threejs-journey"),
+      when: en("2025"),
+      summary: en(
+        "90+ hours of video and challenges: WebGL with three.js, GLSL shaders, physics, Blender models, post-processing, performance and React Three Fiber.",
+      ),
+    },
     credential("jonas"),
     // "Marketing, psychology and UX" is off the list: the soft skills carry it [user 2026-10-08].
-  ],
+  ] as CvCredential[],
 
   // Spanish is off the CV [user 2026-10-08]; the flags are drawn in the sheet (Windows has no flag emoji).
   languages: [

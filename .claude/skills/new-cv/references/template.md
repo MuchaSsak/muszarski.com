@@ -23,20 +23,21 @@ page 1 ┌───────────────────────�
        │               MUSZARSKI                        │
        │               ────────────────────────────     │  .cs-id: role (CV Head 12 pt) + availability
        ├───────────────────────────────────────────────┤
-       │ (i) email      (i) place        (i) host        │  navy contact bar (.cs-bar): a 3-column grid of
-       │ (i) github     (i) linkedin                     │    icon + text; a lone last item spans the row
+       │ (i) email     (i) place       ┌(i) host ┐▌    │  navy contact bar (.cs-bar): two columns of icon +
+       │ (i) github    (i) linkedin    └─────────┘▌    │    text; the portfolio apart in a pink tile (.cs-web)
        ├───────────────────────────────────────────────┤
        │ ▪ PROFILE ──────────────────────────────────── │  h2: pink tab, label, navy rule to the edge
        │ [rail 27mm] │ text in the wide column           │  .cs-wide = rail + gutter of left margin
        │ ▪ EXPERIENCE, then SELECTED PROJECTS            │  .cs-entry: grid [rail | 1fr]
-       │ date │ Title (h3)                               │    .cs-rail: the date, then the project's own logo
-       │ logo │ org (slate)                              │    (it spans every row), then bullets and links
+       │ date │ Title (h3)                               │    the date in the rail on the title's baseline,
+       │      │ org (slate)                              │    then bullets and links
 page 2 │ MATEUSZ MUSZARSKI · CV                    2 / 2 │  @page margin boxes: both outline SVGs (no text)
        │ ▪ SKILLS AND QUALIFICATIONS                     │
        │ Soft skills  │ (i) skill      (i) skill        │  .cs-row + .cs-soft: two columns of icon, skill
        │              │     its line       its line     │    (body bold) and the line that shows it (meta)
        │ Technologies │ (i) Group: tool · tool · tool   │  .cs-tools: one small row per group (not tiles)
-       │ date │ title · issuer, then cert lines or 1 line │  .cs-cred
+       │ date │ title · issuer, then cert lines or 1 line │  .cs-cred; an optional gain line (↗, cobalt bold):
+       │      │ ↗ what it gave him                         │    what it gave him (`gain`)
        │ ▪ EDUCATION                                     │  an entry list
        │ ▪ LANGUAGES (flags)  │ ▪ INTERESTS              │  .cs-pair; the flags are drawn SVG
        │ ┌ CONTACT  hi@…  web CV · GitHub      [QR] ┐▌  │  pink slip pinned to the last page's foot; the QR
@@ -53,9 +54,13 @@ lists and blocks render nothing.
 (MIT) through `Icon` with `inline`. GitHub and LinkedIn appear only as links to his profiles, which their guidelines
 allow: white on navy, black on pink, LinkedIn as its own artwork (`public/media/cv/linkedin-in-white.webp`, never
 Tabler's outline). No tool logos: React, GitLab, Playwright, Lighthouse and Claude forbid this use and most others
-don't say (`design/assets.md` § CV marks). A project shows only its own mark (`logo` in the data: a public path, or
-`"sticker"` for the portfolio), never a company's or a client's. Flags are drawn SVG: Windows has no flag emoji, and an
-emoji font would print as Type 3.
+don't say (`design/assets.md` § CV marks). No project logos either: v7 had Linkoglot's icon and the sticker in the rail,
+and the owner dropped them [user 2026-10-08]. Flags are drawn SVG: Windows has no flag emoji, and an emoji font would
+print as Type 3. The band's sticker reads MUSZARSKI.COM on top, upright, and PORTFOLIO on the flipped bottom [user
+2026-10-08].
+
+**Links on paper are locale-free** where the site has one: the slip prints `muszarski.com/cv` (vercel.json sends a
+typed address to the reader's language, `site/i18n.md`) and links the sheet's own language.
 
 Without a photo (`--no-photo`, or no photo file) the band drops to two columns: the name takes the photo's column at
 its capped size (18.2 mm, so the band keeps its height) and the sticker stays right.
@@ -67,21 +72,25 @@ global reset, `--d` default, metadata, digest), `styles/cv-fonts.css` + `lib/cv-
 ## 2. How it fits
 
 - **`--d`** (0 = densest, 1 = roomiest) is one CSS variable on `:root`. Every body size and gap reads it: body
-  `10pt + 0.8pt·d`, line height `1.3 + 0.1·d`, section gap `4.2 + 3.4·d` mm, entry gap `2.2 + 1.8·d` mm, list gaps.
+  `10pt + 0.8pt·d`, line height `1.3 + 0.1·d`, section gap `5.4 + 3.4·d` mm, entry gap `3.1 + 1.8·d` mm, list gaps
+  (raised in v8 [user 2026-10-08: "slightly more living room"]; the page edges stay).
   The band, the labels (8.2 pt) and the bar (8.8 pt) are fixed: they are chrome, not content.
 - `cv-sheet.mjs` prints at `d = 0`. More than 2 pages there = **error** (cut content, `content.md` § 7). If it fits one
   page, it searches the roomiest one-page `d`; one page wins when that is ≥ 0.4 (`ONE_PAGE_MIN_D`), so a short CV
   doesn't get crammed onto one sheet. Otherwise the roomiest two-page `d` (6 halvings, ~1/64).
-- **End gap:** then it halves `--end-gap` over 0-270 mm (8 steps) for the largest top margin on the contact slip that
-  keeps the page count, minus 0.5 mm. That pins the slip to the foot of the last page. Above `MAX_END_GAP` (40 mm)
-  the slip follows the content instead: a band alone at the foot of a mostly empty page reads as a layout error.
+- **End gap:** then it halves `--end-gap` over 0-270 mm (8 steps) for the largest extra space above the contact slip
+  that keeps the page count, minus 0.5 mm. That pins the slip to the foot of the last page. Above `MAX_END_GAP` (40 mm)
+  the slip follows the content instead: a band alone at the foot of a mostly empty page reads as a layout error. The
+  slip's top margin is `--sec + --end-gap`: a bare `--end-gap` collapsed with the section margin above, so until v8 any
+  gap under `--sec` moved nothing and the report overstated the room.
 - Entries never split across pages (`break-inside: avoid`); sections may. So page 1 can end with a gap the height of
   the next entry (6-20 mm today). That is the price of whole entries; don't fight it with `orphans` tricks.
 - The report: `d`, pages, `lastPageFill` (body text only, before the end gap), `endGapMm`, fonts, links, problems,
   warnings. `warn page 2 holds only N%` (below 30%): add substance or cut to one page. `warn facts still to confirm`
   lists entries with `placeholder: true` in `cv.ts` (`data-cv-placeholder` on the article).
 - `--d` reported near 0 means no headroom: the next addition needs a cut first. Say so in the report. Polish runs
-  longest (0.08 on 2026-10-08, with the 10 pt floor).
+  longest (0.08 on 2026-10-08, with the 10 pt floor). The English v8 draft prints at 0 (`warn ... no room left`): its
+  air went into the gaps, so Polish needs cuts at the rollout (`content.md` § 7).
 
 ## 3. Tokens
 
@@ -91,8 +100,8 @@ global reset, `--d` default, metadata, digest), `styles/cv-fonts.css` + `lib/cv-
 - Type roles, one static font each: CV Text (400/100, body), CV Strong (700/100, bold inline, meta, bar), CV Head
   (850/78 condensed, job and project h3, role, slip email), CV Label (800/125 expanded, h2 labels; the running head
   and page number are its outlines), CV Name 1/2 (900, fitted). Six steps of size: label 8.2 pt, bar 8.8 pt, meta
-  0.9·fs, body fs (also the credential head lines, in CV Strong), title 1.2·fs, slip email 2.1·fs (+ the role's 12 pt
-  and the fitted name). Labels, the contact bar and the band's role line are chrome: labels 8.2 pt, the bar 8.8 pt
+  0.9·fs, body fs (also the credential head lines and gain lines, in CV Strong), title 1.2·fs, slip email 2.1·fs (+ the
+  role's 12 pt, the portfolio tile's 1.25 × bar and the fitted name). Labels, the contact bar and the band's role line are chrome: labels 8.2 pt, the bar 8.8 pt
   on two rows, the availability line at the meta size. Skill names are bold body type; their lines and the tools run at
   the meta size. Adding a step needs a reason.
 - Geometry: edge 14 mm (padding, see § 8), rail 27 mm, gutter 5 mm, photo 28 mm, sticker 26 mm, hard shadows 1.8 mm.
@@ -115,10 +124,12 @@ global reset, `--d` default, metadata, digest), `styles/cv-fonts.css` + `lib/cv-
 | The default `--d` lives on `:root`, never on `.cs` | a value on `.cs` shadows the one the script sets on `<html>`: `--d` silently did nothing |
 | Margin resets are global in the page (`:is(h1,h2,h3,p,ul) { margin: 0 }`), not scoped | Astro's scoped `.cs :where(…)` gains the scope attribute's specificity and beat the class rules: every margin was 0 |
 | Lists are reset by their own class (`.cs-bullets, .cs-soft, …`), never by a scoped `.cs ul` | an element rule under `.cs` outranks one class: it zeroed the contact bar's padding (v7) |
-| A rail logo sits in `.cs-rail`, which spans every row (`grid-row: 1 / span 9`) and aligns on the date's baseline | a rail spanning only the title rows pushed the bullets down by the logo's height |
+| The slip's top margin adds `--end-gap` to `--sec` | adjoining margins collapse to the larger: `--end-gap` alone moved the slip only past `--sec` |
+| Room under the slip's shadow is in flow (`.cs::after`, 2 mm), never a bottom margin | Chrome drops a margin at a page's end, so the fit set the slip on the page edge and clipped its shadow (v7, v8) |
 | A tool's name keeps its spaces as no-break spaces | "Tailwind / CSS" broke across two lines |
 | Soft-skill cells are `align-content: start`, and the skill name is `align-self: baseline` | beside a taller cell the line drifted from its name; without a baseline item the cell took the icon's bottom edge, so the rail label sat 6 pt low |
 | Only marks we know are allowed (§ 1 Marks and icons) | the owner's rule; most tool brands forbid logo use |
+| Debug the print page through the CSSOM (`insertRule`, `el.style`), never an injected `<style>` | the page's CSP blocks an injected style silently: every variant printed the same |
 
 ## 5. Checks
 

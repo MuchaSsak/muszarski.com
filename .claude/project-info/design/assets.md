@@ -70,8 +70,7 @@
 | --- | --- | --- | --- |
 | LinkedIn [in] logo, white: `apps/web/public/media/cv/linkedin-in-white.webp` (280 px lossless, from 840 px) | brand.linkedin.com/downloads (`in-logo.zip`, `InBug-White.png`) | LinkedIn lets members use it "as a hyperlink to your LinkedIn profile", in blue, black or white, unmodified, only its own files ("logos found elsewhere on the web are not approved") | CV contact bar, as the profile link. The site's Tabler outline doesn't qualify (Q50) |
 | GitHub Invertocat (`si:github`, Simple Icons, source github.com/logos) | brand.github.com/foundations/logo | "Use the Invertocat logo as a social button to link to your GitHub profile"; white or black, unmodified | CV bar (white) and slip (black), as profile links only; not in a skills list |
-| Linkoglot app icon `public/media/linkoglot/icon.webp` (96 px) | his own app | owner's own | CV rail under the Linkoglot dates; a 512 px original would print sharper |
-| Portfolio mark | the sticker's outlines (`cv-fonts.gen.ts`) | owner's own | CV rail; the Jinx avatar stays off the CV (fan art of Riot's character) |
+| Project logos (Linkoglot's icon, the sticker as the Portfolio mark) | owner's own | owner's own | none since v8: the owner dropped them [user 2026-10-08]; the Jinx avatar stays off the CV either way (fan art of Riot's character) |
 | Flags (Poland; the Union Jack for English) | drawn in `CvSheet.astro`; the Union Jack after the public-domain construction | flags are public domain | CV languages |
 | QR code to the portfolio | generated at build by `uqr` 0.1.3 | MIT (devDependency) | CV contact slip |
 

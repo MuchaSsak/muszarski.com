@@ -50,9 +50,10 @@ function siteName() {
 /**
  * The sticker on the band (the hero sticker's twin): a ring of text around the "M—M" mark, drawn as outlines so it
  * stays decoration and never reaches the PDF's text layer (an ATS reads the real links in the contact bar). The words
- * read the same in en, pl and es. Geometry in a 200 x 200 viewBox; the template draws the disc.
+ * read the same in en, pl and es. Geometry in a 200 x 200 viewBox; the template draws the disc. The first word is
+ * centred on top, where the ring reads upright: the address there, "portfolio" on the flipped bottom [user 2026-10-08].
  */
-const STICKER = { ring: "PORTFOLIO • MUSZARSKI.COM • ", core: "M—M", radius: 75, tracking: 0.1 };
+const STICKER = { ring: "MUSZARSKI.COM • PORTFOLIO • ", core: "M—M", radius: 75, tracking: 0.1 };
 const round = (d) => d.replace(/-?\d+\.\d+/g, (n) => String(Math.round(Number(n) * 10) / 10));
 
 function stickerPaths(font) {
@@ -62,7 +63,9 @@ function stickerPaths(font) {
   const em = advances.reduce((sum, adv) => sum + adv + STICKER.tracking, 0);
   const size = (2 * Math.PI * STICKER.radius) / em;
   const k = size / font.unitsPerEm;
-  let s = 0;
+  // Start half the first word before the top, so the word sits centred on it.
+  const firstWord = run.glyphs.findIndex((glyph) => glyph.codePoints.includes(32));
+  let s = (-advances.slice(0, firstWord).reduce((sum, adv) => sum + adv + STICKER.tracking, -STICKER.tracking) * size) / 2;
   const ringD = run.glyphs.map((glyph, i) => {
     const adv = advances[i] * size;
     const angle = (s + adv / 2) / STICKER.radius;

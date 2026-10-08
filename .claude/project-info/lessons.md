@@ -28,7 +28,7 @@
 - Heavy media loads near visibility, plays only when visible and after a first interaction (a load-time loop cost 270–480 ms TBT) - 2026-10-05.
 - Shared review pages show nothing the site couldn't (internal PstrykWeb stack, client names); ask those in chat - 2026-10-05.
 - Keep every version for the build story: tag `history/*`, archive old shots, index in `comps/HISTORY.md`; never delete a superseded look - 2026-10-05.
-- Logos only where the brand's own guideline allows the use, checked per brand: most tool brands forbid it (React, GitLab, Playwright, Lighthouse, Claude), LinkedIn allows only its own artwork; CC0 artwork is not permission [user 2026-10-08: "use logos and icons when you know its okay"] - 2026-10-08.
+- Logos only where the brand's own guideline allows the use, checked per brand: most tool brands forbid it (React, GitLab, Playwright, Lighthouse, Claude), LinkedIn allows only its own artwork; CC0 artwork is not permission [user 2026-10-08: "use logos and icons when you know its okay"]; on the CV the owner then dropped his own projects' logos too: propose a mark, don't assume it stays - 2026-10-08.
 
 ### Code and quality
 - A visible label must start the accessible name (WCAG 2.5.3): visually hidden text after the visible text, not a replacing `aria-label` - 2026-10-05.

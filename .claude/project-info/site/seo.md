@@ -72,6 +72,7 @@ Success signal: Google autocomplete starts completing "mateusz muszarski" to "�
   - The H1 agrees with the title.
 - **Descriptions:** ≤ ~155 chars, factual, per locale. No `meta keywords`.
 - **Canonical:** absolute, self-referencing per locale; one host with a 308 from the other; `og:url` = canonical.
+  Locale-free addresses (`/cv/`, `/` itself) are 307s by the reader's language and never canonical (i18n.md).
 - **OG:**
   - per page × locale, generated at build: `og:image` 1200×630, `og:image:alt`
   - `og:type` article on posts

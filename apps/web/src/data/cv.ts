@@ -21,11 +21,6 @@ export interface CvEntry {
   when: Text;
   bullets: Text[];
   links?: { label: string; href: string }[];
-  /**
-   * The project's own mark for the CV sheet's rail: a public path, or "sticker" (the portfolio's sticker). Never a
-   * company's or a client's [user 2026-10-08].
-   */
-  logo?: string;
   /** A one-line version for the home "Experience" card: the place and what it was. */
   short?: { name: string; note: Text };
   placeholder?: boolean;

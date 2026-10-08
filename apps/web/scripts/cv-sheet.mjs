@@ -28,7 +28,7 @@
  * `--png` also writes page previews (pdf.js in the browser, 2x) next to each PDF.
  */
 import { spawnSync } from "node:child_process";
-import { existsSync, mkdirSync, readFileSync, statSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, readFileSync, rmSync, statSync, writeFileSync } from "node:fs";
 import { createServer } from "node:http";
 import { createRequire } from "node:module";
 import { dirname, extname, join, normalize, relative, resolve } from "node:path";
@@ -226,6 +226,8 @@ async function previews(pdf, stem) {
     }
     return doc.numPages;
   });
+  // A shorter print leaves no stale page behind (a failed 3-page run wrote a -p3.png).
+  for (let n = count + 1; existsSync(`${stem}-p${n}.png`); n++) rmSync(`${stem}-p${n}.png`);
   const shots = [];
   for (let n = 1; n <= count; n++) {
     const file = `${stem}-p${n}.png`;
