@@ -30,13 +30,29 @@ export interface GalleryPhoto {
   when?: string;
   /** One of the prints stacked in the hero. */
   hero?: boolean;
+  /** `false`: a hero print only, kept off the pin board (and so out of its JSON-LD and the image sitemap). */
+  board?: false;
 }
 
 const LITHUANIA: Text = { en: "Lithuania", pl: "Litwa", es: "Lituania" };
+const POLAND: Text = { en: "Poland", pl: "Polska", es: "Polonia" };
 /** A country-level place: the board shows the country once. */
 const TURKIYE: Text = { en: "Türkiye", pl: "Turcja", es: "Turquía" };
 
 export const GALLERY: GalleryPhoto[] = [
+  {
+    // [user 2026-10-08] The first print in the hero, off the board ("the one that's not on the pinboard, me in a hat").
+    // PLACEHOLDER (P15): where it was taken, owner to say (the coast looks Turkish; not guessed).
+    file: "mateusz-muszarski-coast",
+    alt: {
+      en: "Mateusz Muszarski in a straw hat and sunglasses, the sea and a rocky coast behind him",
+      pl: "Mateusz Muszarski w słomkowym kapeluszu i okularach przeciwsłonecznych, za nim morze i skaliste wybrzeże",
+      es: "Mateusz Muszarski con sombrero de paja y gafas de sol, con el mar y una costa rocosa detrás",
+    },
+    caption: { en: "me, probably smiling", pl: "ja, chyba uśmiechnięty", es: "yo, probablemente sonriendo" },
+    hero: true,
+    board: false,
+  },
   {
     // [user 2026-10-07] Palanga, on the Baltic, on an Erasmus+ project (cv.ts: Youth Entrepreneurship 2025, June 2025).
     file: "mateusz-muszarski-palanga",
@@ -88,5 +104,45 @@ export const GALLERY: GalleryPhoto[] = [
     },
     place: { name: { en: "Vilnius", pl: "Wilno", es: "Vilna" }, country: LITHUANIA, countryCode: "LT" },
     when: "2025-05",
+  },
+  {
+    // [user 2026-10-08] In front of the University of Rzeszów, before the Vibe the Future 2026 hackathon (cv.ts:
+    // May 2026, Rzeszów).
+    file: "mateusz-muszarski-rzeszow",
+    alt: {
+      en: "Mateusz Muszarski in a white shirt and black tie in front of a curved glass university building",
+      pl: "Mateusz Muszarski w białej koszuli i czarnym krawacie przed zaokrąglonym, przeszklonym budynkiem uczelni",
+      es: "Mateusz Muszarski con camisa blanca y corbata negra delante de un edificio universitario curvo de cristal",
+    },
+    caption: { en: "me, before the hackathon", pl: "ja, przed hackathonem", es: "yo, antes del hackathon" },
+    description: {
+      en: "At the University of Rzeszów, before the Vibe the Future 2026 hackathon.",
+      pl: "Na Uniwersytecie Rzeszowskim, przed hackathonem Vibe the Future 2026.",
+      es: "En la Universidad de Rzeszów, antes del hackathon Vibe the Future 2026.",
+    },
+    place: { name: { en: "Rzeszów", pl: "Rzeszów", es: "Rzeszów" }, country: POLAND, countryCode: "PL" },
+    when: "2026-05",
+  },
+  {
+    // [user 2026-10-08] The principal of his school (ZSE Starogard Gdański, cv.ts) at the end-of-year ceremony, giving
+    // him a money award and a commendation for building an app for a local youth space. The school published the
+    // photo on its Facebook page; the principal appears in his official role (owner's call, 2026-10-08).
+    file: "mateusz-muszarski-starogard-gdanski",
+    alt: {
+      en: "Mateusz Muszarski in a dark suit and red tie next to his school's principal, under an end-of-school-year banner",
+      pl: "Mateusz Muszarski w ciemnym garniturze i czerwonym krawacie obok dyrektora szkoły, pod banerem uroczystości zakończenia roku szkolnego",
+      es: "Mateusz Muszarski con traje oscuro y corbata roja junto al director de su escuela, bajo una pancarta de fin de curso",
+    },
+    caption: { en: "me, in a full suit", pl: "ja, w pełnym garniturze", es: "yo, de traje completo" },
+    description: {
+      en: "My school's principal gave me a money award and a commendation for building a real project: an app for a local youth space.",
+      pl: "Dyrektor mojej szkoły wręczył mi nagrodę pieniężną i pochwałę za zbudowanie prawdziwego projektu: aplikacji dla lokalnej przestrzeni dla młodzieży.",
+      es: "El director de mi escuela me dio un premio en metálico y una mención por crear un proyecto real: una aplicación para un espacio juvenil local.",
+    },
+    place: {
+      name: { en: "Starogard Gdański", pl: "Starogard Gdański", es: "Starogard Gdański" },
+      country: POLAND,
+      countryCode: "PL",
+    },
   },
 ];

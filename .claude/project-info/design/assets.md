@@ -60,6 +60,7 @@
 | tool marks in `comps/poster-r3.html` (TypeScript, React, Next.js, Astro, Expo, Supabase, PostgreSQL, Tailwind, three.js, GSAP, Vercel, Claude, MCP, …) | brand silhouettes, one colour | Simple Icons 16.34.0 (npm `simple-icons`) | package CC0-1.0; the marks stay their owners' trademarks (Git's logo is CC BY 3.0, not used) | nominative only: name a tool he uses, unaltered, one colour, no endorsement implied | check each brand's guideline link (in the package data) before launch; LinkedIn is not in Simple Icons (Tabler's outline is used) |
 | UI icons in `comps/poster-r3.html` | outline icons | Tabler Icons 3.49.0 (npm `@tabler/icons`) | MIT | any, incl. commercial | keep the MIT notice with the bundle |
 | icons in the site (`apps/web/src/lib/icons.gen.ts`, `bun run icons`) | tool marks (`si:`), UI outline (`tb:`) and filled (`tbf:`) icons, only the listed ones, inlined | Simple Icons 16.34.0 + Tabler Icons 3.49.0 (devDependencies) | CC0-1.0 (marks stay trademarks, nominative use) + MIT (`public/licenses/tabler-icons-MIT.txt`) | as above | credits line in the footer |
+| logo, favicon and blog author avatar: `apps/web/public/favicon.svg` (+ `public/icons/*.png` from `bun run og`) | the owner's social-media avatar: pixel art of Jinx (Arcane / League of Legends), traced cell by cell into a 64×64 SVG (crisp edges, a tight square crop) | made by someone else for the owner; his source PNG is private in `context/art/` | the artist's OK to the owner [user 2026-10-08: "someone else, I have OK"]; the character is Riot Games' (fan art) | his personal mark only: never on products, merch or anything sold | artist's name for a credit line still to come (Q) |
 | font in the site: Anybody (`apps/web/public/fonts/anybody.<hash>.woff2`, `bun run fonts`) | variable `wdth` 50-150 / `wght` 400-900, Latin + Latin-1 + Polish, 49.5 KB | github.com/google/fonts `ofl/anybody` | SIL OFL 1.1 (`public/fonts/LICENSE-Anybody.txt`) | any, incl. commercial; never sold alone | replaces Archivo + Plex Mono (Drafting Table, rejected) |
 | fonts in `comps/*.html` (Anybody, Roboto Flex, Mona Sans, Martian Mono, Recursive, Bodoni Moda, Hanken Grotesk, Schibsted Grotesk) | Google Fonts | fonts.google.com | SIL OFL 1.1 | any, incl. commercial | self-host with the licence file when one ships |
 
@@ -67,11 +68,13 @@
 
 - **Owner recordings per flagship:** shot lists in the research files (PstrykWeb, Linkoglot 11 shots, space, Clockful).
 - **Owner photos (2026-10-07):** `apps/web/src/assets/photos/mateusz-muszarski.jpg` (800×800 crop of the Vilnius
-  photo: Person image, author box) and `mateusz-muszarski-<place>.jpg` (coast, palanga, turkiye, vilnius: the My life
-  pin board, listed with alt, caption, place, month and story in `src/data/gallery.ts`). Name new files by place. The
-  superseded 460 px portrait is kept in `photos/archive/` (not shipped). Photos with other people (e.g. the ZSE award
-  photo with the principal, kept private in `context/photos/`) need that person's consent and the photographer's OK
-  first (Q47).
+  photo: the Person image; the blog author box shows the Jinx logo since 2026-10-08) and
+  `mateusz-muszarski-<place>.jpg` (palanga, turkiye, vilnius, rzeszow, starogard-gdanski: the My life pin board;
+  coast: the first hero print only, `board: false`), listed with alt, caption, place, month and story in
+  `src/data/gallery.ts`. Name new files by place. The superseded 460 px portrait is kept in `photos/archive/` (not
+  shipped). Photos with other people need that person's consent and the photographer's OK: the ZSE award photo with
+  the principal (2026-10-08) rests on the school's own Facebook post and the principal's official role (art. 81
+  ust. 2 pkt 1 prawa autorskiego); the school's written OK is still recommended (open-questions).
 - **Owner photo (history):** square ≥ 800 px, same as the GitHub/LinkedIn avatars (Q7). **Slots ready 2026-10-06** [owner sent two photos in chat: a pier selfie for the avatar, a straw-hat seaside selfie for My life; chat images don't reach the disk]: drop `me.*` and `life.*` into `apps/web/src/assets/photos/` (`lib/photos.ts`); the author box, the home Person JSON-LD `image` and the My life hero switch on by themselves. Own photos = owner's rights. Astro re-encodes them and strips EXIF/GPS (verified with a GPS-tagged test JPEG).
 - **Fonts (Poster, 2026-10-05):** `apps/web/public/fonts/` holds one subset variable woff2 (Anybody, 49.5 KB) +
   `LICENSE-Anybody.txt` (SIL OFL 1.1, from github.com/google/fonts). The Drafting Table faces (Archivo, Plex Mono) are gone

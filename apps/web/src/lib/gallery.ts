@@ -21,12 +21,12 @@ export interface Pin {
 
 const FULL_WIDTH = 1600;
 
-/** Every gallery entry whose file is on disk, newest data first as listed (data/gallery.ts). */
+/** Every board entry whose file is on disk, newest data first as listed (data/gallery.ts). */
 export async function galleryPins(locale: Locale): Promise<Pin[]> {
   const { getImage } = await import("astro:assets");
   const month = new Intl.DateTimeFormat(locale, { month: "short", year: "numeric", timeZone: "UTC" });
   const pins = await Promise.all(
-    GALLERY.map(async (entry): Promise<Pin | undefined> => {
+    GALLERY.filter((entry) => entry.board !== false).map(async (entry): Promise<Pin | undefined> => {
       const src = photoFile(entry.file);
       if (!src) return undefined;
       const width = Math.min(src.width, FULL_WIDTH);

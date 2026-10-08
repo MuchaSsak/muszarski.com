@@ -35,7 +35,7 @@
 | --- | --- | --- | --- |
 | 0 | Header (sticky) | M—M mark → home · Work (`#work`) · How I work (`#how-i-work`) · AI (`#ai`) · Blog · language flags · CV · **Hire me** [user 2026-10-06]. My life sits in the footer + the menu. Built 2026-10-05, reworked 2026-10-06 (`design.md` § Components) | Hire me (primary, → `#contact`), CV |
 | 1 | Hero | the fitted name (H1, the signature moment F20), role, one-line positioning (P6, `brand.md` § Positioning), icon facts, the availability sticker; then the tool band (marks + names). Built 2026-10-05 | See the work (primary) · Download CV |
-| 2 | Selected work | the 4 flagship chapters (`content/projects.md`), each in its own skin, read in one order: badge → title → media → outcome → description → CTA → status → tools (`design.md` § Components, Chapters); then "Also shipped" (Malatro and yws.lu as tilted tickets, lingui-translate-ai removed [user 2026-10-07]; client work behind the rights gate) + "All projects →", one row tall on wide screens | one primary per chapter: Visit pstrykweb.pl (the landing, never the konfigurator [user 2026-10-06]) · App Store + Google Play · Ask for a walkthrough · Launch (+ Code, secondary); All projects |
+| 2 | Selected work | the 4 flagship chapters (`content/projects.md`), each in its own skin, read in one order: badge → title → media → outcome → description → CTA → status → tools (`design.md` § Components, Chapters); then "Also shipped" (a tilted label tag, then Malatro and yws.lu as tilted tickets over moving colour blobs, lingui-translate-ai removed [user 2026-10-07]; client work behind the rights gate) + "All projects →", one row tall on wide screens | one primary per chapter: Visit pstrykweb.pl (the landing, never the konfigurator [user 2026-10-06]) · App Store + Google Play · Ask for a walkthrough · Launch (+ Code, secondary); All projects |
 | 3 | How I work | product thinking: a 7-stop ring; each stop shows a drawn scene from a real project, one line and a receipt (F06) [user 2026-10-06: tell it visually, less reading] | links into case studies |
 | 4 | AI workflow | an org chart (F07) [user 2026-10-06]: "I run AI like a team.", Me (Lead) → Claude Code (Builder) → a crew of six (memory, rules, research, tools, playbooks, quality gates), each with examples and tool pins, never counts [user 2026-10-06] | "How this site was built" (F23), the only CTA |
 | 5 | Credentials | list + detail panel on wide screens, accordion on phones; each credential its own colour; on wide screens an idle tour (a drawn cursor opens the next card after 5 s without hover, focus or click) [user 2026-10-06]; media loads on open; learning; teamwork (F08). **The Stack section is cut** [user 2026-10-05: "they dont care THAT MUCH to have a whole section dedicated just for this"]: tools show in the band and per chapter | Certificate (verify) · Details on the CV |
@@ -108,9 +108,9 @@ Components, All projects.
 ## `/<locale>/my-life/`
 
 Hero (the title over a goo shader, a fanned stack of the owner's prints: tap, click or "Next photo" deals the next;
-entries marked `hero` in `src/data/gallery.ts`) · **pin board** [user 2026-10-07: "an actual real life pinboard ...
+entries marked `hero` in `src/data/gallery.ts`; the coast print comes first and is hero-only, `board: false` [user 2026-10-08]) · **pin board** [user 2026-10-07: "an actual real life pinboard ...
 evidence board", "great for seo and google knowledge panel"]: a cork board in a wooden frame, every photo from
-`gallery.ts` as a tacked print with its caption, the country flag (`ui/Flag.astro`, drawn SVG) + place + month on
+`gallery.ts` (except `board: false`) as a tacked print with its caption, rows wrapped and centred, the country flag (`ui/Flag.astro`, drawn SVG) + place + month on
 yellow tape and his story on an index card (real text next to the image), red yarn tying the prints of a row, on a
 light plaster wall; prints are not links, no lightbox [user 2026-10-07]; `LifeBoard.astro` · a playground of
 toys, one per interest, each a card with a title, one line and a small game: calisthenics reps, music beats, faith

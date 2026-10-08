@@ -9,7 +9,6 @@ import "~/styles/prose.css";
 import "~/styles/case.css";
 
 import type { Locale } from "@package/shared/locales";
-import { Image } from "astro:assets";
 import { render } from "astro:content";
 import { t } from "lingui-for-astro/macro";
 
@@ -22,7 +21,6 @@ import JsonLd from "~/components/seo/JsonLd.astro";
 import Icon from "~/components/ui/Icon.astro";
 import { SITE } from "~/data/site";
 import { proseWords, tocOf } from "~/lib/blog";
-import { portrait } from "~/lib/photos";
 import { chromeLinks } from "~/lib/nav";
 import { allPosts, type Post, postLocale, postMinutes, postPath, postSlug, relatedTo, translationsOf } from "~/lib/posts";
 import { pathTo } from "~/lib/routes";
@@ -40,7 +38,6 @@ const { post } = Astro.props;
 const locale = postLocale(post);
 const links = chromeLinks(locale);
 const { Content, headings } = await render(post);
-const me = portrait();
 const toc = tocOf(headings);
 const translations = await translationsOf(post);
 const otherLocale = locale === "en" ? "pl" : "en";
@@ -174,13 +171,8 @@ const tocLabel = t`On this page`;
         )}
 
         <aside class="author" aria-label={t`About the author`}>
-          {me ? (
-            <Image class="avatar photo" src={me} alt={SITE.name} width={144} height={144} loading="lazy" />
-          ) : (
-            <div class="avatar" aria-hidden="true">
-              MM
-            </div>
-          )}
+          {/* His avatar, the same picture as the logo [user 2026-10-08: the Jinx pfp]. */}
+          <img class="avatar photo" src="/favicon.svg" alt="" width="144" height="144" loading="lazy" decoding="async" />
           <div>
             <p class="a-name">{SITE.name}</p>
             <p>
