@@ -110,7 +110,7 @@ button, flags, single theme, chapters, AI, credentials, writing, contact, footer
   shadow on hover, stagger in the menu. Ease-out `cubic-bezier(.2,.75,.1,1)`, pop `cubic-bezier(.3,1.6,.5,1)`;
   200-900 ms.
 - **Rules:** the H1 never fades or moves on load; first-screen entrances are CSS and never hide content (no opacity 0,
-  no delay over ~150 ms: a first visit showed only the name for up to 1 s [user 2026-10-06]); `.rv` reveals below the fold only
+  no delay over ~150 ms: a first visit showed only the name for up to 1 s [user 2026-10-06]); `.rv` reveals below the fold only (on phones the project chapters reveal 15% before entering, in 0.4 s [user 2026-10-08])
   hide once the script runs (`html.rv-ready`), so a failed script hides nothing. A section runs its CSS loops only while
   near the viewport (`.near`; each page's first section has it in the markup), and the chapters' loops wait for the
   reader's first move (`html.woke`); `html.still` pauses everything (WCAG 2.2.2); reduced motion shows the final state.

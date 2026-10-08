@@ -58,17 +58,17 @@ function countUp(el: HTMLElement) {
   requestAnimationFrame(tick);
 }
 
-const reveals = new IntersectionObserver(
-  (entries, observer) =>
-    entries.forEach((e) => {
-      if (!e.isIntersecting) return;
-      e.target.classList.add("in");
-      observer.unobserve(e.target);
-      for (const el of e.target.querySelectorAll<HTMLElement>("[data-count]")) countUp(el);
-    }),
-  { rootMargin: "0px 0px -8% 0px" },
-);
-for (const el of document.querySelectorAll(".rv, .draw")) reveals.observe(el);
+const reveal: IntersectionObserverCallback = (entries, observer) =>
+  entries.forEach((e) => {
+    if (!e.isIntersecting) return;
+    e.target.classList.add("in");
+    observer.unobserve(e.target);
+    for (const el of e.target.querySelectorAll<HTMLElement>("[data-count]")) countUp(el);
+  });
+const reveals = new IntersectionObserver(reveal, { rootMargin: "0px 0px -8% 0px" });
+// On phones the project chapters reveal just before they scroll in, so a fast scroll never lands on empty space [owner].
+const early = matchMedia("(max-width: 40rem)").matches ? new IntersectionObserver(reveal, { rootMargin: "0px 0px 15% 0px" }) : reveals;
+for (const el of document.querySelectorAll(".rv, .draw")) (el.closest(".chapter") ? early : reveals).observe(el);
 root.classList.add("rv-ready");
 
 /**

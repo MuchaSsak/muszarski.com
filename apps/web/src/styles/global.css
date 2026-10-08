@@ -495,6 +495,13 @@ html:not(.js) .js-only {
     transform 0.8s var(--ease-out);
   transition-delay: calc(var(--d, 0) * 70ms);
 }
+/* Phones: the project chapters fade in quicker (motion.ts also starts them earlier). */
+@media (max-width: 40rem) {
+  .rv-ready:not(.still) .chapter .rv.in {
+    transition-duration: 0.4s, 0.45s;
+    transition-delay: calc(var(--d, 0) * 40ms);
+  }
+}
 .rv-ready:not(.still) .rv:not(.in) {
   opacity: 0;
   transform: translateY(1.5rem);
