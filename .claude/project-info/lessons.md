@@ -21,28 +21,31 @@
 - Prove the "product engineer" profile with evidence; never put the negative ("task executor", "klepacz", "not just a coder") in copy - 2026-10-05.
 - Owner-stated numbers can be off (~6 years was ~4, since 2022): when an owner fact and a public source disagree, show both and ask - 2026-10-05.
 - Visuals ambitious first, then practical (the safe first look was rejected): show bold live directions (`comps/`, desktop + phone) and let the owner pick before freezing a system - 2026-10-05.
-- Less text, more to see: tools as one-colour marks WITH names, products as video ("sometimes less is more"); in chapters a short text description beats icon tiles; How I work tells each stop with a drawn scene, not a headline [2026-10-06] - 2026-10-05.
+- Less text, more to see: tool marks WITH names, products as video, a short description over icon tiles, a drawn scene per How I work stop - 2026-10-05.
 - Every hover has a tap, focus or scroll twin; phones get the same content and a premium feel ("they dont have cursors") - 2026-10-05.
 - Blog voice = a person writing, not an AI answering a prompt: no "What would I do differently?" / "Takeaways" sections - 2026-10-07.
 - Do exactly the one thing asked ("so overachieving"); copy stays close to the owner's words: no overselling, no counts, never repeat what the picture already shows - 2026-10-07.
 - Heavy media loads near visibility, plays only when visible and after a first interaction (a load-time loop cost 270–480 ms TBT) - 2026-10-05.
 - Shared review pages show nothing the site couldn't (internal PstrykWeb stack, client names); ask those in chat - 2026-10-05.
 - Keep every version for the build story: tag `history/*`, archive old shots, index in `comps/HISTORY.md`; never delete a superseded look - 2026-10-05.
-- Fun, not overly fun: a drawn prop in every section (a TV, lasers, a safe) read as "too vibe coded" and slightly unprofessional; lead with real media, type and one interesting component (a shader, a lens); a wink is an emoji, not a gag with copy - 2026-10-08.
-- Logos only where the brand's own guideline allows it, checked per brand (most tool brands forbid it; CC0 artwork is not permission) [user 2026-10-08: "use logos and icons when you know its okay"]; propose a mark, don't assume it stays (`assets.md` § CV marks) - 2026-10-08.
+- Fun, not overly fun: a drawn prop in every section read as "too vibe coded"; lead with real media, type and one interesting component; a wink is an emoji, not a gag - 2026-10-08.
+- Logos only where the brand's own guideline allows it, checked per brand (CC0 artwork is not permission); propose a mark, don't assume it stays (`assets.md` § CV marks) - 2026-10-08.
+- Every section built or edited is checked in en, pl and es at phone, laptop and desktop before done (`bun run e2e text-fit` + the three locales' shots side by side); boxes are sized for the longest locale, never the English word (`visual-qa.md` § Locales) - 2026-10-08.
+- Commit only what the site ships: QA screenshots and scratch stay local or gitignored ("why waste repo space") - 2026-10-08.
+- Job terms follow job-board usage, not a literal translation ("inżynier produktu" is a factory role and implies a degree): `i18n.md` § Terminology - 2026-10-08.
 
 ### Code and quality
 - A visible label must start the accessible name (WCAG 2.5.3): visually hidden text after the visible text, not a replacing `aria-label` - 2026-10-05.
 - Run `bun run i18n:extract` before a production build: a missing message renders as its id and fitted titles (`a|b`) crash - 2026-10-05.
 - `.still` pauses every animation, freezing delayed entrances on their hidden frame: mark entrances `.rise`/`.enter` and test a stored pause - 2026-10-05.
 - Scroll-driven CSS goes in longhands (`animation-name`, `-timing-function`, `-fill-mode`, `-timeline`, `-range`): the build folds `animation` + `animation-timeline` into one shorthand Chrome rejects whole, and the effect silently never runs; check `getComputedStyle(el).animationName` in a browser, not the source - 2026-10-08.
-- Chrome holds first paint for a preloaded font, and HTML bytes compete with it: keep page HTML lean (icons in the cached sprite; first-screen icons `inline`). Keep the preload: without it home LCP fell 0.6 s but the parse landed after first paint (TBT 33 → 775 ms) - 2026-10-06.
+- Keep page HTML lean (icons in the cached sprite, first-screen icons `inline`) and keep the font preload: Chrome holds first paint for it, and dropping it cost TBT 33 → 775 ms - 2026-10-06.
 - A focus target taller than the viewport minus the header always sits under the sticky header: cap media by viewport height (`100svh - var(--header-h)`) - 2026-10-06.
 - Reduced motion keeps `animation-delay`: staged entrances stay hidden for their delay. Switch staged scenes off under reduced motion and `.still` - 2026-10-06.
-- Load cost hides in style and layout (numbers: `run-notes.md` 2026-10-07): animate an HTML wrapper, never an `<svg>`; no grid around a `container-type` box; set `top`, not an inherited custom property, on big subtrees; never toggle a class a `*` rule reads on a big ancestor (start paused, mark what is near); no inline style per letter beyond a title or two. Find each with traces and CSS A/B via `page.route` - 2026-10-07.
+- Load cost hides in style and layout (`run-notes.md` 2026-10-07): animate an HTML wrapper, never an `<svg>`; no grid around a `container-type` box; no inherited custom property or `*`-read class toggled on big subtrees; no inline style per letter beyond a title. Find each with traces and CSS A/B - 2026-10-07.
 - Offset a grid column with margins, not `translate` (a translated item covered the next row's buttons) - 2026-10-08.
 - Never mute text with `opacity`: on a lit or animated fill it falls under 4.5:1, and the e2e axe pass sees one frame (the breaker's pink step); use weight or size - 2026-10-08.
-- Posts drift with the code they explain (the CV post named a component deleted that day): a change to a feature greps `content/blog` for its files and fixes the posts in the same change; `post-check.mjs` flags named files that are gone - 2026-10-08.
+- Posts drift with the code they explain: a feature change greps `content/blog` for its files and fixes the posts too (`post-check.mjs` flags gone files) - 2026-10-08.
 - A % height inside an auto grid row resolves against the row the item itself grew (the Linkoglot phone overflowed its field): give the grid a definite track, `grid-template: minmax(0, 1fr) / minmax(0, 1fr)` - 2026-10-08.
 
 ### Privacy of inputs
@@ -51,7 +54,7 @@
 
 ### Tools and environment
 - Splicing text by slices or offsets drops or misplaces content: replace named blocks, then `node --check` / build and render-check at once - 2026-10-05.
-- Bash heredocs break on quotes and lose backslashes (again 2026-10-07, 2026-10-08), and `cd` persists: write scripts with Write, use absolute paths; Write/Edit decode `\uXXXX`, so emit invisible characters with `chr()` - 2026-10-05.
+- Bash heredocs break on quotes and lose backslashes (again 2026-10-07, twice 2026-10-08), and `cd` persists: write scripts with Write, use absolute paths; Write/Edit decode `\uXXXX`, so emit invisible characters with `chr()` - 2026-10-05.
 - Python on Windows writes CRLF: always `open(..., "w", newline="\n")` (a fixer pass caught 6 files on 2026-10-06) - 2026-10-05.
 - Git Bash rewrites URL-path arguments (`/en/` → `P:/Git/en/`): prefix with `MSYS_NO_PATHCONV=1`, also for `bun run lhci` - 2026-10-05.
 - `bun run check` stops at the first failing task: a red test hid a typecheck error that got committed. Read every task's result, re-run `astro check` after fixing a test - 2026-10-06.
@@ -59,7 +62,7 @@
 - Stop a server by its port's PID (`netstat -ano | grep :<port>` → `taskkill //F //PID`), never by image name: `taskkill /IM python.exe` ends every Python on the machine, other sessions' too - 2026-10-08.
 - A git worktree under the long temp path builds pages with no CSS ("Filename too long") and won't delete: put A/B worktrees at a short path (`C:/Users/<you>/wtb`), remove them with `git worktree remove` - 2026-10-08.
 - Headless Chromium draws WebGL with SwiftShader (software): shaders starve the page and states look broken. Shoot and QA shaders with `--use-angle=d3d11 --enable-gpu --ignore-gpu-blocklist` - 2026-10-08.
-- One `astro preview` and one `astro dev` per project: e2e, shots and Lighthouse share port 4322; for speed work build to a scratch `--outDir` and serve it on its own port (`E2E_PORT`, `lhci --base`). A busy machine fakes regressions (other sessions' headless Chrome at 100% CPU): check the load, rerun - 2026-10-07.
+- One `astro preview` per project, and a running one may serve another session's `--outDir` (a whole audit ran on a peer's build, 2026-10-08): build to your own `--outDir`, serve it on your own port (`E2E_PORT`, `lhci --base`). A busy machine fakes regressions: check the load, rerun - 2026-10-07.
 - After a Playwright update, run `./node_modules/.bin/playwright install chromium` in `apps/web` (browser version mismatch) - 2026-10-06.
 - The owner works on two PCs and runs parallel sessions (one committed another's WIP, 2026-10-07): `git pull`/`git log` first, stage your own paths only; on a merge take one side's `.po`, re-add the other's msgids, extract; regenerate PDFs - 2026-10-06.
 - WebSearch has a budget shared by parallel agents; prefer WebFetch of known URLs, then Playwright - 2026-10-05.

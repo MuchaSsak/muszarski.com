@@ -190,7 +190,7 @@ screenshot QA loop defined in `.claude/project-info/tech/usage/visual-qa.md`: bu
 shoot each changed route from `apps/web`:
 
 ```bash
-MSYS_NO_PATHCONV=1 node scripts/shots.mjs --paths /en/,/pl/ --widths 390,1024,1920,2560 [--full] [--reduced]
+MSYS_NO_PATHCONV=1 node scripts/shots.mjs --paths /en/,/pl/,/es/ --widths 390,1440,1920,2560 [--full] [--reduced]
 ```
 
 (On Windows Git Bash the `MSYS_NO_PATHCONV=1` prefix stops `/en/` being rewritten
@@ -214,11 +214,16 @@ provably renders nothing — that is how a 25-minute fix becomes a 5-hour run.
 
 Non-negotiables that make this enforceable rather than eyeballed:
 
-- **Keep the proof.** When a view is accepted, re-run the shot with `--accept`: it
-  writes the 1920 + 390 webp proof to repo-root `screenshots/<route>/` (the 1024
-  pass is reviewed but not kept; scratch stays in the git-ignored
-  `screenshots/.work/`). Log each accepted view in `screenshots/VISUAL-QA.md`. A
-  green build never proves the loop ran; these do.
+- **Every locale, every time [user 2026-10-08].** A section built or edited is
+  checked in en, pl and es at phone, laptop and desktop before it is done: run
+  `bun run e2e text-fit` (spill, clipping, off-screen text, split words, overlaps
+  and boxes over text, in every locale and switchable state) and compare the
+  three locales' shots side by side (`tech/usage/visual-qa.md` § Locales). Size
+  stickers, tags and buttons for the longest locale, never for the English word.
+- **Keep the proof local.** When a view is accepted, `--accept` writes the 1920 +
+  390 webp proof to repo-root `screenshots/<route>/`; log the view in
+  `screenshots/VISUAL-QA.md`. The shots are gitignored (only that log is tracked)
+  [owner 2026-10-08: only commit the assets the site needs].
 - **Run the readability gate.** `e2e/a11y.spec.ts` (part of `bun run e2e`) runs axe
   WCAG 2.2 AA on every route in `e2e/routes.ts` (one colour theme, Cobalt; Paper and
   Ink were cut 2026-10-06), plus the skip-link check. Never place text on an image without a scrim (`tech/conventions.md`

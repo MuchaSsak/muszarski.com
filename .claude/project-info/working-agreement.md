@@ -26,7 +26,9 @@
   - **reduced motion**, axe contrast AA (one colour theme, Cobalt, since 2026-10-06: the light/dark pass is gone)
   - **Lighthouse mobile ≥ 90** (`lighthouse-qa` skill) when a change can move a score
   - **design score ≥ 8/10** (`design-quality.md`, ported in Phase 1)
-  - Keep the accepted 1920 + 390 shots in `screenshots/<route>/` (webp) and `screenshots/VISUAL-QA.md`
+  - **Every locale [user 2026-10-08]:** each section built or edited is checked in en, pl and es at 390 / 1440 / 1920
+    (`bun run e2e text-fit` + shots of the three locales side by side; `visual-qa.md` § Locales), never English only
+  - Log accepted views in `screenshots/VISUAL-QA.md`; the shots themselves stay local (gitignored, owner 2026-10-08)
   - Skip the visual loops only when the diff cannot move a pixel or a score
 - **i18n:** en, pl and es all render. The strict Lingui compile has no missing ids. New es strings are marked
   unreviewed (`i18n.md`).
@@ -139,7 +141,8 @@ landing (study it first: `context/pstryk-turborepo/apps/pstrykweb.pl`, patterns 
 1. **Research** the section (Mobbin, Awwwards, registry, `design-references.md`): a short plan naming the adopted patterns.
 2. **Build** with real content where it exists; every placeholder logged (`placeholders.md`).
 3. **Evaluate:**
-   - screenshots 390 / 1024 / 1920 + the 2560 sweep, reduced motion, en / pl / es (pl runs longest)
+   - screenshots 390 / 1024 / 1440 / 1920 + the 2560 sweep, reduced motion, **en / pl / es side by side** (pl and es
+     run longest) and `bun run e2e text-fit` (`visual-qa.md` § Locales)
    - axe AA, the keyboard path, visible focus
    - Lighthouse mobile on the page: ≥ 90 (aim 95+), within the `requirements.md` budgets; record the slice's own
      cost (JS KB, LCP/CLS delta) in `memory/` so later slices know what's left
