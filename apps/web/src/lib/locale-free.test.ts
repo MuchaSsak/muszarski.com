@@ -5,15 +5,17 @@ import { describe, expect, it } from "vitest";
 
 /**
  * Locale-free addresses (wiki: site/i18n.md § Locales and URL scheme): `muszarski.com/cv` sends a reader to the page
- * in their language, English for any other [user 2026-10-08]. Vercel runs the rules in vercel.json at the edge (they
- * don't run in `astro preview`); this test runs them the same way (first match wins, `has` = the Accept-Language
- * header's prefix) and checks that they reach every page.
+ * in their language, English for any other [user 2026-10-08]: the browser's first language, else the visitor's country
+ * (Poland → Polish, a Spanish-speaking country → Spanish) [user 2026-10-08: "by default for polish recruiters its
+ * polish"]. Vercel runs the rules in vercel.json at the edge (they don't run in `astro preview`); this test runs them
+ * the same way (first match wins, `has` = the Accept-Language prefix or the `x-vercel-ip-country` list) and checks
+ * that they reach every page.
  */
 interface Rule {
   source: string;
   destination: string;
   permanent?: boolean;
-  has?: { type: string; key: string; value: { pre: string } }[];
+  has?: { type: string; key: string; value: { pre?: string; inc?: string[] } }[];
 }
 
 const APP = new URL("../../", import.meta.url);
@@ -27,11 +29,14 @@ const pattern = (source: string) =>
     `^${source.replace(/:(\w+)(?:\(([^)]+)\))?/g, (_, name: string, alt?: string) => `(?<${name}>${alt ?? "[^/]+"})`)}$`,
   );
 
-function redirect(path: string, acceptLanguage = ""): string | null {
+function redirect(path: string, acceptLanguage = "", country = ""): string | null {
   for (const rule of rules) {
     const match = pattern(rule.source).exec(path);
     if (!match) continue;
-    if (!(rule.has ?? []).every((condition) => acceptLanguage.startsWith(condition.value.pre))) continue;
+    const met = (rule.has ?? []).every(({ key, value }) =>
+      key === "accept-language" ? acceptLanguage.startsWith(value.pre!) : value.inc!.includes(country),
+    );
+    if (!met) continue;
     return rule.destination.replace(/:(\w+)/g, (_, name: string) => match.groups?.[name] ?? "");
   }
   return null;
@@ -70,6 +75,20 @@ describe("locale-free addresses", () => {
     expect(redirect("/")).toBe("/en/");
     // No Spanish blog (i18n.md): its readers get the English one.
     expect(redirect("/blog/", "es-ES")).toBe("/en/blog/");
+  });
+
+  it("fall back to the visitor's country when the browser's language isn't one of ours", () => {
+    // A recruiter in Poland with an English browser reads Polish; the browser's own pl or es still wins.
+    expect(redirect("/", "en-US,en;q=0.9", "PL")).toBe("/pl/");
+    expect(redirect("/cv/", "", "PL")).toBe("/pl/cv/");
+    expect(redirect("/cv/", "en-GB", "MX")).toBe("/es/cv/");
+    expect(redirect("/", "de-DE", "AR")).toBe("/es/");
+    expect(redirect("/", "es-ES", "PL")).toBe("/es/");
+    expect(redirect("/", "pl-PL", "ES")).toBe("/pl/");
+    expect(redirect("/", "en-US", "DE")).toBe("/en/");
+    expect(redirect("/blog/", "en-US", "PL")).toBe("/pl/blog/");
+    expect(redirect("/blog/", "en-US", "ES")).toBe("/en/blog/");
+    expect(redirect("/blog/case-study/", "en-US", "PL")).toBe("/pl/blog/case-study/");
   });
 
   it("reach every section in every language", () => {

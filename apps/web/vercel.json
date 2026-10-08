@@ -32,6 +32,58 @@
     },
     {
       "source": "/",
+      "has": [
+        {
+          "type": "header",
+          "key": "x-vercel-ip-country",
+          "value": {
+            "inc": [
+              "PL"
+            ]
+          }
+        }
+      ],
+      "destination": "/pl/",
+      "permanent": false
+    },
+    {
+      "source": "/",
+      "has": [
+        {
+          "type": "header",
+          "key": "x-vercel-ip-country",
+          "value": {
+            "inc": [
+              "AR",
+              "BO",
+              "CL",
+              "CO",
+              "CR",
+              "CU",
+              "DO",
+              "EC",
+              "ES",
+              "GQ",
+              "GT",
+              "HN",
+              "MX",
+              "NI",
+              "PA",
+              "PE",
+              "PR",
+              "PY",
+              "SV",
+              "UY",
+              "VE"
+            ]
+          }
+        }
+      ],
+      "destination": "/es/",
+      "permanent": false
+    },
+    {
+      "source": "/",
       "destination": "/en/",
       "permanent": false
     },
@@ -65,6 +117,58 @@
     },
     {
       "source": "/:page(work|cv|my-life|privacy|terms)/",
+      "has": [
+        {
+          "type": "header",
+          "key": "x-vercel-ip-country",
+          "value": {
+            "inc": [
+              "PL"
+            ]
+          }
+        }
+      ],
+      "destination": "/pl/:page/",
+      "permanent": false
+    },
+    {
+      "source": "/:page(work|cv|my-life|privacy|terms)/",
+      "has": [
+        {
+          "type": "header",
+          "key": "x-vercel-ip-country",
+          "value": {
+            "inc": [
+              "AR",
+              "BO",
+              "CL",
+              "CO",
+              "CR",
+              "CU",
+              "DO",
+              "EC",
+              "ES",
+              "GQ",
+              "GT",
+              "HN",
+              "MX",
+              "NI",
+              "PA",
+              "PE",
+              "PR",
+              "PY",
+              "SV",
+              "UY",
+              "VE"
+            ]
+          }
+        }
+      ],
+      "destination": "/es/:page/",
+      "permanent": false
+    },
+    {
+      "source": "/:page(work|cv|my-life|privacy|terms)/",
       "destination": "/en/:page/",
       "permanent": false
     },
@@ -76,6 +180,22 @@
           "key": "accept-language",
           "value": {
             "pre": "pl"
+          }
+        }
+      ],
+      "destination": "/pl/blog/",
+      "permanent": false
+    },
+    {
+      "source": "/blog/",
+      "has": [
+        {
+          "type": "header",
+          "key": "x-vercel-ip-country",
+          "value": {
+            "inc": [
+              "PL"
+            ]
           }
         }
       ],
@@ -110,6 +230,22 @@
           "key": "accept-language",
           "value": {
             "pre": "pl"
+          }
+        }
+      ],
+      "destination": "/pl/blog/:slug/",
+      "permanent": false
+    },
+    {
+      "source": "/blog/:slug(case-study)/",
+      "has": [
+        {
+          "type": "header",
+          "key": "x-vercel-ip-country",
+          "value": {
+            "inc": [
+              "PL"
+            ]
           }
         }
       ],
