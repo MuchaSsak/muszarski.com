@@ -46,7 +46,7 @@
   - A "Why it was rebuilt" note.
   - Fine pointer: "Launch on desktop ↗". Coarse pointer: "Desktop-only experience" + Copy link.
   - **No WebGL on the home page.**
-- **Theme:** a dark sheet with an orrery / star-chart plate. The motif is orbit ellipses as compass construction lines.
+- **Theme:** a dark sheet with a twinkling star field only (the orrery of orbit ellipses was removed [user 2026-10-08]).
 - **Temporary media** (`assets/projects/space-portfolio/`): 15 `tmp-` screenshots (13 desktop journey stops, 2 phone) +
   raw 100 s journey and two 20 s clips. `placeholders.md` P9.
 - **Credits:** third-party textures/models are credited in the site's credits dialog. Carry those credits into the case study

@@ -24,17 +24,6 @@ const labelPlay = t`Play video`;
   <div class="sky" aria-hidden="true">
     <div class="stars"></div>
     <div class="stars s2"></div>
-    <div class="orbits">
-      <span class="sun"></span>
-      <span class="orbit r1"></span>
-      <span class="orbit r2"></span>
-      <span class="orbit r3"></span>
-      <span class="orbit r4"></span>
-      <span class="planet p1"></span>
-      <span class="planet p2"></span>
-      <span class="planet p3"></span>
-      <span class="planet p4"></span>
-    </div>
   </div>
   <ChapterBadge icon="tb:planet" label={t`Personal · solo · 2025`} />
   <div class="sp-grid grid-2">
@@ -190,96 +179,6 @@ const labelPlay = t`Play video`;
     }
   }
 
-  /* An orrery: planets ride ellipses (CSS motion path); without support they rest at the start of their orbit. */
-  .orbits {
-    position: absolute;
-    left: 35%;
-    top: 52%;
-    width: 0;
-    height: 0;
-    opacity: 0.6;
-    transform: rotate(-12deg);
-  }
-  .orbit,
-  .planet,
-  .sun {
-    position: absolute;
-    left: 0;
-    top: 0;
-  }
-  .orbit {
-    width: var(--w);
-    height: calc(var(--w) * 0.34);
-    border: 1.5px dashed rgb(238 240 255 / 0.28);
-    border-radius: 50%;
-    transform: translate(-50%, -50%);
-  }
-  .r1 {
-    --w: 30vw;
-  }
-  .r2 {
-    --w: 55vw;
-  }
-  .r3 {
-    --w: 83vw;
-  }
-  .r4 {
-    --w: 116vw;
-  }
-  .sun {
-    width: 2.75rem;
-    height: 2.75rem;
-    border-radius: 50%;
-    background: var(--yellow);
-    transform: translate(-50%, -50%);
-  }
-  .planet {
-    width: var(--s);
-    height: var(--s);
-    margin: calc(var(--s) / -2) 0 0 calc(var(--s) / -2);
-    border-radius: 50%;
-    background: var(--c);
-    offset-path: ellipse(calc(var(--w) / 2) calc(var(--w) * 0.17) at 0 0);
-    offset-rotate: 0deg;
-    offset-anchor: center;
-    animation: orbit var(--d) linear infinite;
-    animation-delay: var(--ph);
-  }
-  .p1 {
-    --w: 30vw;
-    --s: 0.75rem;
-    --c: var(--ice);
-    --d: 20s;
-    --ph: -3s;
-  }
-  .p2 {
-    --w: 55vw;
-    --s: 1.25rem;
-    --c: var(--pink);
-    --d: 30s;
-    --ph: -19s;
-  }
-  .p3 {
-    --w: 83vw;
-    --s: 1.625rem;
-    --c: var(--cobalt);
-    --d: 45s;
-    --ph: -30s;
-    box-shadow: 0 0 0 2px var(--ice);
-  }
-  .p4 {
-    --w: 116vw;
-    --s: 1.125rem;
-    --c: var(--yellow);
-    --d: 70s;
-    --ph: -12s;
-  }
-  @keyframes orbit {
-    to {
-      offset-distance: 100%;
-    }
-  }
-
   .sp-grid {
     display: grid;
     grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
@@ -321,12 +220,6 @@ const labelPlay = t`Play video`;
     font-size: 0.75rem;
     opacity: 0.75;
   }
-  /* The orrery passes behind the copy: a halo in the sky colour keeps every letter clear of a planet. */
-  .ch-info :is(.outcome, .desc) {
-    text-shadow:
-      0 0 0.5rem var(--space),
-      0 0 0.1875rem var(--space);
-  }
 
   @media (max-width: 40rem) {
     .monitor {
@@ -338,9 +231,6 @@ const labelPlay = t`Play video`;
     }
     .stand {
       height: 1.5rem;
-    }
-    .orbits {
-      opacity: 0.45;
     }
   }
 </style>
