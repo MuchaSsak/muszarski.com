@@ -170,6 +170,7 @@ const english = links.blogLocale !== locale;
   .strip.dragging {
     scroll-snap-type: none;
     cursor: grabbing;
+    -webkit-user-select: none; /* Safari before 26 knows only the prefixed name */
     user-select: none;
   }
   @media (hover: hover) and (pointer: fine) {

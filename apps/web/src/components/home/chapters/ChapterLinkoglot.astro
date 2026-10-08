@@ -55,8 +55,10 @@ const labelPlay = t`Play video`;
               height="694"
               aria-label={t`Linkoglot camera mode: point the phone at a street, a room, breakfast, a book and a park to learn the words`}
             >
-              <source data-src="/media/linkoglot/camera.av1.mp4" type='video/mp4; codecs="av01.0.05M.08"' />
-              <source data-src="/media/linkoglot/camera.mp4" type="video/mp4" />
+              <template>
+                <source src="/media/linkoglot/camera.av1.mp4" type='video/mp4; codecs="av01.0.05M.08"' />
+                <source src="/media/linkoglot/camera.mp4" type="video/mp4" />
+              </template>
             </video>
             <span class="bigplay" aria-hidden="true">
               <Icon name="tbf:player-play" />
@@ -176,10 +178,19 @@ const labelPlay = t`Play video`;
   }
   @supports (animation-timeline: view()) {
     @media (prefers-reduced-motion: no-preference) {
+      /* Longhands, never the shorthand: the minifier folds the timeline into `animation`, which Chrome rejects. */
       .phone {
-        animation: tilt linear both;
+        animation-name: tilt;
+        animation-timing-function: linear;
+        animation-fill-mode: both;
         animation-timeline: view();
         animation-range: entry 10% cover 50%;
+      }
+      /* Paused before it ran, the phone would stay on its tilted first frame: show it upright. Upright too while its
+         button has keyboard focus: the focus scroll placed it, then the tilt slid it up under the sticky header. */
+      :global(.still) .phone,
+      .phone:has(:focus-visible) {
+        animation: none !important;
       }
     }
     @keyframes tilt {

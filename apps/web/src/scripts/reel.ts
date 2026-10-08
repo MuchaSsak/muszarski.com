@@ -1,4 +1,5 @@
 import { afterInteraction, motionStill, onMotion } from "~/scripts/motion";
+import { attachSources } from "~/scripts/video-sources";
 
 /**
  * Reels (design.md § Imagery, requirements.md F03): one muted loop per project. Sources are attached only after the
@@ -12,13 +13,6 @@ interface Reel {
 }
 
 const reels: Reel[] = [];
-
-function attachSources(video: HTMLVideoElement) {
-  if (video.dataset.loaded) return;
-  video.dataset.loaded = "1";
-  for (const source of video.querySelectorAll<HTMLSourceElement>("source[data-src]")) source.src = source.dataset.src!;
-  video.load();
-}
 
 for (const figure of document.querySelectorAll<HTMLElement>("[data-reel]")) {
   const video = figure.querySelector("video");
@@ -47,15 +41,15 @@ for (const figure of document.querySelectorAll<HTMLElement>("[data-reel]")) {
     video.pause();
     setUi(false);
   };
-  const autoplay = () => {
-    if (visible && !userPaused && !motionStill()) afterInteraction(play);
-  };
+  // Checked again when the first interaction comes: the reel may have left the screen by then.
+  const autoplay = () => afterInteraction(() => visible && !userPaused && !motionStill() && play());
   setUi(false);
 
   new IntersectionObserver(
     ([entry]) => {
       near = !!entry?.isIntersecting;
-      if (near) afterInteraction(() => near && attachSources(video));
+      // Paused or reduced motion: nothing loads until the play button asks.
+      if (near) afterInteraction(() => near && !motionStill() && attachSources(video));
     },
     { rootMargin: "400px 0px" },
   ).observe(figure);
@@ -72,6 +66,7 @@ for (const figure of document.querySelectorAll<HTMLElement>("[data-reel]")) {
   ).observe(figure);
 
   toggle?.addEventListener("click", () => (video.paused ? play() : pause(true)));
+  video.addEventListener("sourcefallback", autoplay);
   reels.push({ pauseAuto: () => pause(false), resume: autoplay });
 }
 

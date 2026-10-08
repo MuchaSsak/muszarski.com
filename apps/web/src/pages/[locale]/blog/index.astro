@@ -256,6 +256,12 @@ const showing = t`Showing`;
     appearance: none;
     cursor: pointer;
   }
+  /* iOS Safari zooms into a field set under 16 px when it is tapped, and stays zoomed. */
+  @media (pointer: coarse) {
+    .pick select {
+      font-size: 1rem;
+    }
+  }
   .pick select:focus-visible {
     outline: 3px solid var(--accent);
     outline-offset: 2px;

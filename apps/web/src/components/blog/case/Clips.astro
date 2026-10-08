@@ -49,8 +49,10 @@ const labelPlay = t`Play video`;
           height={clip.height ?? 600}
           aria-label={clip.label}
         >
-          <source data-src={`${clip.dir ?? "/media/case/"}${clip.src}.av1.mp4`} type='video/mp4; codecs="av01.0.04M.08"' />
-          <source data-src={`${clip.dir ?? "/media/case/"}${clip.src}.mp4`} type="video/mp4" />
+          <template>
+            <source src={`${clip.dir ?? "/media/case/"}${clip.src}.av1.mp4`} type='video/mp4; codecs="av01.0.04M.08"' />
+            <source src={`${clip.dir ?? "/media/case/"}${clip.src}.mp4`} type="video/mp4" />
+          </template>
         </video>
         <span class="cs-play" aria-hidden="true">
           <Icon name="tbf:player-play" />

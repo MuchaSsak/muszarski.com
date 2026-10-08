@@ -596,12 +596,19 @@ const index: IndexItem[] = projects.map((project) => ({
       object-position: 50% 100%;
     }
   }
-  @media (hover: none) {
+  /* Longhands, never the shorthand: the minifier folds the timeline into `animation`, which Chrome rejects. Reduced
+     motion keeps the top of the page: the global reduce rule shortens durations, which a scroll timeline ignores. */
+  @media (hover: none) and (prefers-reduced-motion: no-preference) {
     @supports (animation-timeline: view()) {
       .tall .w-view img {
-        animation: wk-pan linear both;
+        animation-name: wk-pan;
+        animation-timing-function: linear;
+        animation-fill-mode: both;
         animation-timeline: view();
         animation-range: cover 15% cover 85%;
+      }
+      :global(.still) .tall .w-view img {
+        animation: none !important;
       }
     }
   }

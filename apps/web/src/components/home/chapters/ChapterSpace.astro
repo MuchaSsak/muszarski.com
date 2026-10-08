@@ -42,8 +42,10 @@ const labelPlay = t`Play video`;
               height="540"
               aria-label={t`The space portfolio: the camera flies past Mars to Jupiter`}
             >
-              <source data-src="/media/space/flight.av1.mp4" type='video/mp4; codecs="av01.0.05M.08"' />
-              <source data-src="/media/space/flight.mp4" type="video/mp4" />
+              <template>
+                <source src="/media/space/flight.av1.mp4" type='video/mp4; codecs="av01.0.05M.08"' />
+                <source src="/media/space/flight.mp4" type="video/mp4" />
+              </template>
             </video>
             <span class="bigplay" aria-hidden="true">
               <Icon name="tbf:player-play" />
