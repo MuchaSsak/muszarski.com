@@ -9,7 +9,8 @@ export const PAGES = [
   "/pl/blog/case-study/",
   "/en/blog/lingui-vs-i18next/",
 ] as const;
-export const ROUTES = [...PAGES, "/does-not-exist/"] as const;
+/** The 404 in each language (one 404.html, swapped by the first segment: components/NotFound.astro). */
+export const ROUTES = [...PAGES, "/does-not-exist/", "/pl/does-not-exist/", "/es/does-not-exist/"] as const;
 export const WIDTHS = [320, 390, 768, 1024, 1280, 1440, 1920, 2560] as const;
 /** In-between screens (large phones, small tablets, small laptops): the header's Menu sat off screen at 480-590 px,
  *  between the gate widths (2026-10-08). The header and text-fit sweeps add them on the home pages. */

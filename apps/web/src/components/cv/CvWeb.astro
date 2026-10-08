@@ -1249,22 +1249,25 @@ const num = (id: string) => String(sections.findIndex((section) => section.id ==
       color: var(--accent);
     }
   }
+  /* The code has the fixed size and the box hugs the wider of code and caption, so the address never runs past the
+     screen edge (768 px, 2026-10-08). Not `min-width: max-content` on the box: that grew the code to the SVG's default
+     300 px in Chromium and Firefox, and WebKit sized the grid track without it (the caption overflowed). */
   .cw-qr {
     display: grid;
     justify-items: center;
     gap: 0.5rem;
-    width: clamp(7.5rem, 11vw, 10rem);
-    /* never narrower than its caption (the address ran past the screen edge at 768 px, 2026-10-08) */
-    min-width: max-content;
     font-weight: 800;
     font-size: 0.75rem;
     letter-spacing: 0.04em;
     text-transform: uppercase;
     font-stretch: 115%;
   }
+  .cw-qr span {
+    white-space: nowrap;
+  }
   .cw-qr svg {
     display: block;
-    width: 100%;
+    width: clamp(7.5rem, 11vw, 10rem);
     border: 3px solid var(--navy);
     box-shadow: 6px 6px 0 var(--navy);
     fill: var(--navy);
