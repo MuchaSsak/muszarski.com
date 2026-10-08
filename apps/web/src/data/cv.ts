@@ -532,7 +532,7 @@ export const CV = {
       },
       summary: {
         // [user 2026-10-07] also two months of ESC volunteering with Caretta caretta turtles in Demre (Türkiye) and a
-        // project in Georgia (Erasmus+ or Visegrad, the owner isn't sure), so the line stays general.
+        // project in Georgia [user 2026-10-08: a Visegrad Fund project].
         en: "Youth exchanges, trainings and volunteering in Latvia, Lithuania, Georgia and Türkiye, with people from other countries, in English. In Demre I spent two months volunteering with the European Solidarity Corps for Caretta caretta sea turtles.",
         pl: "Wymiany młodzieżowe, szkolenia i wolontariat na Łotwie, Litwie, w Gruzji i Turcji, z ludźmi z innych krajów, po angielsku. W Demre spędziłem dwa miesiące jako wolontariusz Europejskiego Korpusu Solidarności, pomagając żółwiom Caretta caretta.",
         es: "Intercambios juveniles, formaciones y voluntariado en Letonia, Lituania, Georgia y Turquía, con gente de otros países, en inglés. En Demre pasé dos meses de voluntariado del Cuerpo Europeo de Solidaridad con las tortugas Caretta caretta.",
@@ -549,9 +549,9 @@ export const CV = {
           es: "Proyectos juveniles internacionales",
         },
         issuer: {
-          en: "Erasmus+, European Solidarity Corps, Visegrad",
-          pl: "Erasmus+, Korpus Solidarności, Wyszehrad",
-          es: "Erasmus+, Cuerpo Europeo de Solidaridad, Visegrado",
+          en: "Erasmus+, European Solidarity Corps, Visegrad\u00a0Fund",
+          pl: "Erasmus+, Korpus Solidarności, Fundusz\u00a0Wyszehradzki",
+          es: "Erasmus+, Cuerpo Europeo de Solidaridad, Fondo\u00a0de\u00a0Visegrado",
         },
         summary: {
           en: "Digital youth work in Latvia, youth entrepreneurship in Lithuania, alternative youth participation in Bakuriani (Georgia), two months with sea turtles in Demre (Türkiye).",
