@@ -38,18 +38,17 @@ test("a post links its translation (hreflang) and the language switch keeps it",
   await expect(page.locator(".site-header .h-loc a[hreflang=es]")).toHaveAttribute("href", "/es/");
 });
 
-test("work: the type pills filter the cards", async ({ page }) => {
+test("work: the TV flips to the next project and the safe says no", async ({ page }) => {
   await page.goto("/en/work/");
-  const rows = page.locator("[data-grid] > .wk-card");
-  const all = await rows.count();
-  expect(all).toBeGreaterThan(6);
-  const shown = () => rows.evaluateAll((list) => list.filter((row) => !(row as HTMLElement).hidden).length);
-  // The cards swap inside a view transition, whose callback WebKit runs a frame after the click: poll.
-  await page.getByRole("button", { name: /^Open source/ }).click();
-  await expect.poll(shown).toBeLessThan(all);
-  expect(await shown()).toBeGreaterThan(0);
-  await page.getByRole("button", { name: /^All/ }).click();
-  await expect.poll(shown).toBe(all);
+  const link = page.locator("[data-tv-link]");
+  const first = await link.getAttribute("href");
+  await page.getByRole("button", { name: "Next channel", exact: true }).click();
+  // The channel changes once its capture has loaded (after a beat of static): poll.
+  await expect.poll(() => link.getAttribute("href")).not.toBe(first);
+  const target = await link.getAttribute("href");
+  await expect(page.locator(target!)).toHaveCount(1);
+  await page.getByRole("button", { name: /^Locked/ }).click();
+  await expect(page.locator("[data-safe-live]")).toHaveText("Nice try");
 });
 
 test("contact: the reply address fills itself from the message, and a sent message shows the thanks", async ({ page }) => {

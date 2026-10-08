@@ -1,0 +1,513 @@
+---
+/**
+ * The breaker at the end of All projects [user 2026-10-08: "a small fun and cheeky disclaimer breaker section" about
+ * the projects in private repositories; then "purely for visuals ... you can go nuts on it slightly", no repeating
+ * marquees, no "Classified"]: a little spy scene for the owner's line about having to neutralize you. Laser beams
+ * sweep a midnight room, a security camera follows the pointer (or the last tap), and a locked safe answers a press
+ * with "Nice try" while the alarm flashes. No links and no counts. Paused or reduced motion: the room holds still, the
+ * camera still turns to a tap and the safe still answers.
+ */
+import { t } from "lingui-for-astro/macro";
+
+import Icon from "~/components/ui/Icon.astro";
+import { typo } from "~/lib/typography";
+
+const locale = Astro.locals.locale;
+const nope = t`Nice try`;
+---
+
+<section class="sec pr" aria-labelledby="t-more" data-vault>
+  <div class="pr-lasers" aria-hidden="true">
+    {[0, 1, 2, 3].map((k) => <i style={`--k:${k}`} />)}
+  </div>
+  <span class="pr-cam" aria-hidden="true">
+    <span class="pr-rod"></span>
+    <span class="pr-head" data-cam><span class="pr-lens"></span><b></b></span>
+  </span>
+  <div class="pr-in">
+    <div class="pr-txt">
+      <h2 class="pr-title" id="t-more">{t`There's more.`}</h2>
+      <p class="pr-line">
+        {
+          typo(
+            locale,
+            t`There are actually a lot more projects I've built that I won't show here: they live in private repositories. I mean, I could show you, but then I'd have to neutralize you, you know?`,
+          )
+        }
+        <span class="pr-wink">
+          <Icon name="tb:mood-wink" />
+          {t`Wink wink.`}
+        </span>
+      </p>
+    </div>
+    <div class="pr-scene">
+      <button class="pr-safe" type="button" data-safe data-nope={nope}>
+        <span class="pr-lcd" aria-hidden="true">
+          <span class="pr-locked">{t`Locked`}</span>
+          <span class="pr-nope">{nope}</span>
+        </span>
+        <span class="sr-only">{t`Locked safe: try to open it`}</span>
+        <span class="pr-door" aria-hidden="true">
+          <span class="pr-dial"><span></span></span>
+          <span class="pr-handle"></span>
+        </span>
+        <span class="pr-led" aria-hidden="true"></span>
+      </button>
+      <p class="sr-only" aria-live="polite" data-safe-live></p>
+    </div>
+  </div>
+</section>
+
+<style>
+  .pr {
+    overflow: clip;
+    padding-block: clamp(3.5rem, 7vw, 6rem);
+    background:
+      radial-gradient(70% 90% at 72% 50%, rgb(255 79 184 / 0.12), transparent 70%),
+      radial-gradient(rgb(238 240 255 / 0.07) 1.2px, transparent 1.7px) 0 0 / 20px 20px,
+      var(--midnight);
+    color: var(--ice);
+  }
+
+  /* The lasers: thin pink beams that sweep the room, each from its own corner at its own pace; brighter on alarm. */
+  .pr-lasers i {
+    position: absolute;
+    top: calc(12% + var(--k) * 24%);
+    left: -10%;
+    width: 120%;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--pink) 12% 88%, transparent);
+    box-shadow: 0 0 10px 1px rgb(255 79 184 / 0.75);
+    opacity: 0.55;
+    rotate: calc(-9deg + var(--k) * 6deg);
+    animation: pr-sweep calc(5s + var(--k) * 1.3s) ease-in-out infinite alternate;
+    animation-delay: calc(var(--k) * -1.7s);
+    transition: opacity 0.2s;
+  }
+  .pr-lasers i:nth-child(even) {
+    animation-direction: alternate-reverse;
+  }
+  @keyframes pr-sweep {
+    to {
+      transform: translateY(2.5rem) rotate(7deg);
+    }
+  }
+  .pr:global(.alarm) .pr-lasers i {
+    opacity: 1;
+    animation-name: pr-sweep, pr-flash;
+    animation-duration: 0.9s, 0.25s;
+    animation-iteration-count: infinite;
+  }
+  @keyframes pr-flash {
+    50% {
+      opacity: 0.2;
+    }
+  }
+
+  .pr-in {
+    position: relative;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 22rem);
+    gap: clamp(2rem, 6vw, 6rem);
+    align-items: center;
+    max-width: 70rem;
+    margin: 0 auto;
+  }
+  .pr-title {
+    margin: 0;
+    font-weight: 900;
+    font-size: clamp(2.75rem, 7vw, 5.5rem);
+    line-height: 0.88;
+    text-transform: uppercase;
+    font-stretch: 66%;
+    color: var(--yellow);
+    text-shadow: 0.06em 0.06em 0 var(--navy);
+  }
+  .pr-line {
+    max-width: 44ch;
+    margin: 1rem 0 0;
+    font-size: clamp(1.0625rem, 1.4vw, 1.25rem);
+    line-height: 1.5;
+  }
+  .pr-wink {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    font-weight: 800;
+    white-space: nowrap;
+  }
+  .pr-wink :global(.ico) {
+    width: 1.5em;
+    height: 1.5em;
+    color: var(--yellow);
+    animation: pr-wink 2.4s var(--ease-pop) infinite;
+  }
+  @keyframes pr-wink {
+    0%,
+    70%,
+    100% {
+      transform: none;
+    }
+    80% {
+      transform: rotate(-14deg) scale(1.2);
+    }
+    90% {
+      transform: rotate(8deg);
+    }
+  }
+
+  /* A security camera hangs from the ceiling: a rod, then the head with its hood, a glass lens and a REC light. The head
+     turns around its joint at the rod and points left at 0deg; idle it scans, tracking it follows the pointer. */
+  .pr-cam {
+    position: absolute;
+    top: 0;
+    right: clamp(1.75rem, 4vw, 4rem);
+    z-index: 1;
+    width: 0;
+    height: 0;
+  }
+  .pr-rod {
+    position: absolute;
+    top: 0;
+    left: -0.375rem;
+    width: 0.75rem;
+    height: 2.75rem;
+    background: var(--ice);
+    box-shadow: 0 0 0 3px var(--navy);
+  }
+  .pr-head {
+    position: absolute;
+    top: 2.25rem;
+    right: -1.25rem;
+    width: 7.5rem;
+    height: 2.75rem;
+    border-radius: 0.375rem;
+    background: var(--ice);
+    box-shadow:
+      0 0 0 3px var(--navy),
+      5px 5px 0 3px var(--navy);
+    transform-origin: calc(100% - 1.25rem) 50%;
+    rotate: -24deg;
+    animation: pr-scan 6s ease-in-out infinite alternate;
+  }
+  /* The hood over the lens. */
+  .pr-head::before {
+    content: "";
+    position: absolute;
+    top: -0.75rem;
+    left: -1.375rem;
+    right: 1.75rem;
+    height: 0.625rem;
+    border-radius: 0.25rem 0.25rem 0 0;
+    background: var(--navy);
+  }
+  /* A stripe down the body. */
+  .pr-head::after {
+    content: "";
+    position: absolute;
+    top: 0.5rem;
+    bottom: 0.5rem;
+    right: 2.5rem;
+    width: 0.375rem;
+    background: var(--yellow);
+    box-shadow: 0 0 0 2px var(--navy);
+  }
+  .pr-lens {
+    position: absolute;
+    top: 50%;
+    left: -1.25rem;
+    width: 2.5rem;
+    height: 2.5rem;
+    translate: 0 -50%;
+    border-radius: 50%;
+    background:
+      radial-gradient(circle at 36% 34%, var(--ice) 0 10%, transparent 12%),
+      radial-gradient(circle, #05061a 0 40%, var(--cobalt) 42% 55%, var(--navy) 57%);
+    box-shadow: 0 0 0 3px var(--navy);
+  }
+  .pr-head b {
+    position: absolute;
+    right: 3.375rem;
+    top: 0.5rem;
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 50%;
+    background: var(--pink);
+    box-shadow: 0 0 8px var(--pink);
+    animation: pr-blink 1.2s steps(1) infinite;
+  }
+  @keyframes pr-scan {
+    from {
+      rotate: -50deg;
+    }
+    to {
+      rotate: 4deg;
+    }
+  }
+  @keyframes pr-blink {
+    50% {
+      opacity: 0.15;
+    }
+  }
+  .pr-head:global(.track) {
+    animation: none;
+    transition: rotate 0.25s var(--ease-out);
+  }
+  /* The safe sits below the camera's sweep. */
+  .pr-scene {
+    position: relative;
+    display: grid;
+    justify-items: center;
+    padding-top: clamp(3rem, 7vw, 5.5rem);
+  }
+
+  /* The safe: a heavy door with a dial and a handle, a little screen and a light. */
+  .pr-safe {
+    position: relative;
+    display: grid;
+    gap: 0.875rem;
+    width: min(100%, 17rem);
+    padding: 1rem 1rem 1.25rem;
+    border: 0;
+    border-radius: 0.75rem;
+    background: var(--ice);
+    color: var(--navy);
+    box-shadow:
+      0 0 0 3px var(--navy),
+      12px 12px 0 3px var(--navy);
+    font: inherit;
+    cursor: pointer;
+    rotate: 2deg;
+  }
+  /* The hinges. */
+  .pr-safe::before,
+  .pr-safe::after {
+    content: "";
+    position: absolute;
+    left: -0.6rem;
+    width: 0.6rem;
+    height: 2.25rem;
+    border-radius: 0.25rem 0 0 0.25rem;
+    background: var(--navy);
+  }
+  .pr-safe::before {
+    top: 22%;
+  }
+  .pr-safe::after {
+    bottom: 18%;
+  }
+  .pr-safe:focus-visible {
+    outline: 3px solid var(--yellow);
+    outline-offset: 6px;
+  }
+  .pr-lcd {
+    display: grid;
+    padding: 0.375rem 0.75rem;
+    background: var(--navy);
+    color: var(--lime);
+    font-family: ui-monospace, "Cascadia Mono", Consolas, monospace;
+    font-weight: 700;
+    font-size: 0.9375rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    text-align: center;
+    text-shadow: 0 0 0.5em rgb(201 242 74 / 0.6);
+  }
+  .pr-lcd > span {
+    grid-area: 1 / 1;
+  }
+  .pr-nope {
+    visibility: hidden;
+    color: var(--pink);
+    text-shadow: 0 0 0.5em rgb(255 79 184 / 0.7);
+  }
+  .pr-door {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1.25rem;
+    aspect-ratio: 1.25;
+    border-radius: 0.5rem;
+    box-shadow:
+      inset 0 0 0 3px var(--navy),
+      inset 0 0 0 9px var(--ice),
+      inset 0 0 0 11px rgb(10 13 51 / 0.35);
+  }
+  .pr-dial {
+    position: relative;
+    display: grid;
+    place-items: center;
+    width: 46%;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    background:
+      radial-gradient(circle, var(--yellow) 0 22%, var(--navy) 23% 26%, transparent 27%),
+      repeating-conic-gradient(var(--ice) 0 2deg, transparent 2deg 15deg) content-box,
+      var(--navy);
+    padding: 7%;
+    box-shadow: 4px 4px 0 rgb(10 13 51 / 0.35);
+    animation: pr-dial 9s ease-in-out infinite alternate;
+  }
+  .pr-dial span {
+    position: absolute;
+    top: 6%;
+    left: 50%;
+    width: 4px;
+    height: 16%;
+    translate: -50% 0;
+    background: var(--pink);
+  }
+  @keyframes pr-dial {
+    30% {
+      rotate: 140deg;
+    }
+    60% {
+      rotate: -70deg;
+    }
+    to {
+      rotate: 210deg;
+    }
+  }
+  .pr-handle {
+    position: relative;
+    width: 0.875rem;
+    height: 42%;
+    border-radius: 99px;
+    background: var(--yellow);
+    box-shadow:
+      0 0 0 3px var(--navy),
+      3px 3px 0 3px var(--navy);
+  }
+  .pr-led {
+    position: absolute;
+    top: 1.5rem;
+    right: 1.5rem;
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 50%;
+    background: var(--lime);
+    box-shadow: 0 0 6px var(--lime);
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .pr-safe:hover .pr-dial {
+      animation-duration: 2.5s;
+    }
+  }
+
+  /* A press: the dial spins wild, the safe shakes its head, the light and the screen turn pink. */
+  .pr-safe:global(.no) {
+    animation: pr-shake 0.5s ease-in-out 2;
+  }
+  .pr-safe:global(.no) .pr-dial {
+    animation: pr-spin 0.6s cubic-bezier(0.3, 0.7, 0.4, 1) 2;
+  }
+  .pr-safe:global(.no) .pr-locked {
+    visibility: hidden;
+  }
+  .pr-safe:global(.no) .pr-nope {
+    visibility: visible;
+  }
+  .pr-safe:global(.no) .pr-led {
+    background: var(--pink);
+    box-shadow: 0 0 10px var(--pink);
+  }
+  @keyframes pr-shake {
+    20% {
+      translate: -7px 0;
+    }
+    45% {
+      translate: 6px 0;
+    }
+    70% {
+      translate: -4px 0;
+    }
+  }
+  @keyframes pr-spin {
+    to {
+      rotate: 540deg;
+    }
+  }
+
+  @media (max-width: 48rem) {
+    .pr-in {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .pr-in {
+      padding-top: 2.5rem;
+    }
+    .pr-scene {
+      padding-top: 0;
+    }
+    .pr-safe {
+      width: min(100%, 14rem);
+    }
+    .pr-cam {
+      scale: 0.8;
+      transform-origin: 0 0;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .pr-lasers i,
+    .pr-head,
+    .pr-head b,
+    .pr-dial,
+    .pr-wink :global(.ico) {
+      animation: none !important;
+    }
+  }
+</style>
+
+<script>
+  import { motionStill } from "~/scripts/motion";
+
+  // The camera follows the pointer (or the last tap) over the section; the safe says no on a press.
+  for (const room of document.querySelectorAll<HTMLElement>("[data-vault]")) {
+    const head = room.querySelector<HTMLElement>("[data-cam]");
+    const safe = room.querySelector<HTMLElement>("[data-safe]");
+    const live = room.querySelector<HTMLElement>("[data-safe-live]");
+    let frame = 0;
+    let x = 0;
+    let y = 0;
+    const rod = room.querySelector<HTMLElement>(".pr-rod");
+    const aim = () => {
+      frame = 0;
+      if (!head || !rod) return;
+      // The joint hangs just below the rod's end (3.625rem from the ceiling on a 2.75rem rod); measuring the rod keeps
+      // the aim right when phones scale the camera down. The lens points left at 0deg.
+      const box = rod.getBoundingClientRect();
+      const jx = box.left + box.width / 2;
+      const jy = box.top + box.height * (3.625 / 2.75);
+      const angle = (Math.atan2(y - jy, x - jx) * 180) / Math.PI;
+      const turn = (((angle - 180) % 360) + 540) % 360 - 180;
+      head.style.rotate = `${Math.max(-75, Math.min(40, turn))}deg`;
+    };
+    const follow = (event: PointerEvent) => {
+      x = event.clientX;
+      y = event.clientY;
+      head?.classList.add("track");
+      if (!frame) frame = requestAnimationFrame(aim);
+    };
+    room.addEventListener("pointermove", follow);
+    room.addEventListener("pointerdown", follow);
+    room.addEventListener("pointerleave", (event) => {
+      if (event.pointerType !== "mouse" || !head) return;
+      head.classList.remove("track");
+      head.style.rotate = "";
+    });
+
+    let timer = 0;
+    safe?.addEventListener("click", () => {
+      safe.classList.remove("no");
+      void safe.offsetWidth;
+      safe.classList.add("no");
+      if (!motionStill()) room.classList.add("alarm");
+      if (live) live.textContent = safe.dataset.nope ?? "";
+      clearTimeout(timer);
+      timer = window.setTimeout(() => {
+        safe.classList.remove("no");
+        room.classList.remove("alarm");
+        if (live) live.textContent = "";
+      }, 1800);
+    });
+  }
+</script>

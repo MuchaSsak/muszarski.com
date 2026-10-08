@@ -5,21 +5,25 @@
  * landing ... show off we can do a lot of different good looking things"]. Every project the build may show, flagships
  * first, as a wall of cards where each shows its work in its own way:
  * - a live-site capture in a browser frame that scrolls down the page on hover (and with the scroll on touch screens),
- * - the product reels (Linkoglot, the space flight) that play near the screen after the first interaction,
- * - small drawn scenes where there is nothing to film: the private Clockful dashboard, the CLI in a terminal, the
- *   starters as a fan of repos, a particle swirl for the screensaver, and react-clickme's buttons, live.
- * One row of type pills filters (without JS everything shows). Case studies live in the blog (open-questions Q43).
+ * - the product reels (Linkoglot, the space flight; Clockful and the club screensaver once their recordings land)
+ *   that play near the screen after the first interaction,
+ * - small drawn scenes where there is nothing to film yet: the private Clockful dashboard, the CLI in a terminal, a
+ *   particle swirl for the screensaver.
+ * The head is a TV that flips through the captures (`work/WorkHero.astro`); the end is a cheeky note on the private
+ * repositories (`work/PrivateRepos.astro`) [user 2026-10-08]. No filters and no counts [user 2026-10-08]. Case studies
+ * live in the blog (open-questions Q43).
  */
-import { plural, t } from "lingui-for-astro/macro";
+import { t } from "lingui-for-astro/macro";
 
 import BaseLayout from "~/components/layout/BaseLayout.astro";
 import JsonLd from "~/components/seo/JsonLd.astro";
-import Fit from "~/components/ui/Fit.astro";
 import Icon from "~/components/ui/Icon.astro";
+import PrivateRepos from "~/components/work/PrivateRepos.astro";
+import WorkHero, { type Channel } from "~/components/work/WorkHero.astro";
 import { type Context, type Project, visibleProjects } from "~/data/projects";
 import { SITE } from "~/data/site";
 import { thisSitePath } from "~/lib/blog-paths";
-import { type IconName } from "~/lib/icons.gen";
+import { inPublic } from "~/lib/media";
 import { chromeLinks } from "~/lib/nav";
 import { localeStaticPaths, pathTo } from "~/lib/routes";
 import { pageGraph } from "~/lib/schema";
@@ -33,7 +37,7 @@ const links = chromeLinks(locale);
  * Flagships first (chapter order), then the archive in an order that alternates the kinds of picture (a capture, a
  * drawing, a capture...), so neighbours never look alike; a project missing here goes last.
  */
-const ARCHIVE = ["this-site", "malatro", "lingui-translate-ai", "yws", "club-screensaver", "lingotype", "starters", "taxi-landing", "react-clickme"];
+const ARCHIVE = ["this-site", "malatro", "lingui-translate-ai", "yws", "club-screensaver", "lingotype"];
 const rank = (project: Project) => (project.flagship ? project.flagship - 10 : (ARCHIVE.indexOf(project.slug) + 1 || 99));
 const projects = visibleProjects().sort((a, b) => rank(a) - rank(b));
 const CONTEXT: Record<Context, string> = {
@@ -44,9 +48,6 @@ const CONTEXT: Record<Context, string> = {
   side: t`Personal`,
   course: t`Course`,
 };
-const contexts = (Object.keys(CONTEXT) as Context[])
-  .map((context) => ({ context, count: projects.filter((project) => project.context === context).length }))
-  .filter((entry) => entry.count > 0);
 
 /**
  * How each card shows its work. `shot`: a capture of the owner's live site (public/media/work, temporary captures:
@@ -55,8 +56,19 @@ const contexts = (Object.keys(CONTEXT) as Context[])
  */
 type Media =
   | { kind: "shot"; src: string; url: string; height: number; tall?: boolean }
-  | { kind: "reel"; frame: "phone" | "browser"; poster: string; av1: string; mp4: string; width: number; height: number; label: string }
-  | { kind: "poster" | "clock" | "term" | "repos" | "swirl" | "clickme" };
+  | { kind: "reel"; frame: "phone" | "browser"; url?: string; poster: string; av1?: string | undefined; mp4: string; width: number; height: number; label: string }
+  | { kind: "poster" | "clock" | "term" | "swirl" };
+/**
+ * A screen recording waiting for its files [user 2026-10-08: Clockful and the club screensaver get videos]: the reel
+ * shows once `public/media/work/<slug>.mp4` and `<slug>-poster.webp` are there (`<slug>.av1.mp4` too, optional), and
+ * the drawn scene stands in until then (design/assets.md).
+ */
+const recording = (slug: string, url: string, label: string): Media | undefined => {
+  const at = (file: string) => (inPublic(`media/work/${file}`) ? `/media/work/${file}` : undefined);
+  const mp4 = at(`${slug}.mp4`);
+  const poster = at(`${slug}-poster.webp`);
+  return mp4 && poster ? { kind: "reel", frame: "browser", url, poster, av1: at(`${slug}.av1.mp4`), mp4, width: 1280, height: 720, label } : undefined;
+};
 const MEDIA: Record<string, Media> = {
   pstrykweb: { kind: "shot", src: "/media/work/pstrykweb.webp", url: "pstrykweb.pl", height: 1800, tall: true },
   linkoglot: {
@@ -69,10 +81,11 @@ const MEDIA: Record<string, Media> = {
     height: 694,
     label: t`Linkoglot camera mode: point the phone at a street, a room, breakfast, a book and a park to learn the words`,
   },
-  "neoteric-clockful": { kind: "clock" },
+  "neoteric-clockful": recording("neoteric-clockful", "localhost:3000", t`Neoteric Clockful: a screen recording of the dashboard`) ?? { kind: "clock" },
   "space-portfolio": {
     kind: "reel",
     frame: "browser",
+    url: "3d-space-folio.vercel.app",
     // The cockpit's start screen (a capture of the live site) says more than the flight's first, mostly black frame.
     poster: "/media/work/space-portfolio.webp",
     av1: "/media/space/flight.av1.mp4",
@@ -86,32 +99,24 @@ const MEDIA: Record<string, Media> = {
   "lingui-translate-ai": { kind: "term" },
   malatro: { kind: "shot", src: "/media/work/malatro.webp", url: "malatro.vercel.app", height: 450 },
   lingotype: { kind: "shot", src: "/media/work/lingotype.webp", url: "lingotype.vercel.app", height: 450 },
-  "club-screensaver": { kind: "swirl" },
-  // Cut above the reviews: they carry real customers' names.
-  "taxi-landing": { kind: "shot", src: "/media/work/taxi-landing.webp", url: "lndexecutivetaxi.com", height: 1097, tall: true },
-  starters: { kind: "repos" },
-  "react-clickme": { kind: "clickme" },
+  "club-screensaver": recording("club-screensaver", "beniaminek03-screensaver.vercel.app", t`The club screensaver: the particles in motion`) ?? { kind: "swirl" },
 };
-const SKIN: Record<string, string> = {
-  pstrykweb: "var(--yellow)",
-  linkoglot: "var(--orange)",
-  "neoteric-clockful": "var(--lime)",
-  "space-portfolio": "var(--pink)",
-  "this-site": "var(--cobalt)",
-  yws: "var(--orange)",
-  "lingui-translate-ai": "var(--navy)",
-  malatro: "var(--pink)",
-  lingotype: "var(--lime)",
-  "club-screensaver": "var(--space)",
-  "taxi-landing": "var(--yellow)",
-  starters: "var(--cobalt)",
-  "react-clickme": "var(--pink)",
+/** The skins, as tokens (the cards) and as hex (the TV's room glow and letterbox). */
+const HEX = { yellow: "#ffd23f", orange: "#ff5b1f", lime: "#c9f24a", pink: "#ff4fb8", cobalt: "#2433ff", navy: "#0a0d33", space: "#07081c" };
+const SKIN: Record<string, keyof typeof HEX> = {
+  pstrykweb: "yellow",
+  linkoglot: "orange",
+  "neoteric-clockful": "lime",
+  "space-portfolio": "pink",
+  "this-site": "cobalt",
+  yws: "orange",
+  "lingui-translate-ai": "navy",
+  malatro: "pink",
+  lingotype: "lime",
+  "club-screensaver": "space",
 };
-const STARTERS: { icon: IconName; name: string }[] = [
-  { icon: "si:expo", name: "Expo + Supabase" },
-  { icon: "si:nextdotjs", name: "Next.js + Lingui" },
-  { icon: "si:threedotjs", name: "R3F + Vite" },
-];
+const skin = (project: Project) => SKIN[project.slug] ?? "cobalt";
+const posterSrc = `/media/work/this-site-${locale}.webp`;
 const shotAlt = (project: Project) => t`The ${project.name} website, the start of the page`;
 const labelPause = t`Pause video`;
 const labelPlay = t`Play video`;
@@ -121,8 +126,19 @@ const site = Astro.site ?? new URL("http://localhost:4321");
 const title = t`All projects`;
 const description = t`Every project by Mateusz Muszarski: client work, his own products, open source and experiments, with the tools, the year and the links.`;
 const url = new URL(pathTo(locale, "work"), site).href;
-const [line1, line2] = t`All|projects`.split("|") as [string, string];
-const count = projects.length;
+const channels: Channel[] = projects.flatMap((project) => {
+  const media = MEDIA[project.slug];
+  const picture =
+    media?.kind === "shot"
+      ? { src: media.src, ar: 720 / media.height, contain: false }
+      : media?.kind === "reel"
+        ? { src: media.poster, ar: media.width / media.height, contain: media.frame === "phone" }
+        : media?.kind === "poster"
+          ? { src: posterSrc, ar: 960 / 504, contain: false }
+          : undefined;
+  if (!picture) return [];
+  return [{ slug: project.slug, name: project.name, meta: `${CONTEXT[project.context]} · ${project.year}`, bg: HEX[skin(project)], ...picture }];
+});
 ---
 
 <BaseLayout title={title} description={description} path="work" current="work" og="work">
@@ -133,33 +149,9 @@ const count = projects.length;
       { name: title, url },
     ])}
   />
-  <section class="sec field-hero top near" aria-labelledby="t-work">
-    <div class="sbar draw">
-      <p>{t`Work`}</p>
-      <p>{plural(count, { one: "# project", other: "# projects" })}</p>
-      <p>{t`Flagships first`}</p>
-    </div>
-    <Fit as="h1" id="t-work" lines={[line1, line2]} base={[100, 140]} />
-    <p class="lede rise">
-      {typo(locale, t`Client work, my own products, open source and experiments. The four flagships have their own chapter on the home page.`)}
-    </p>
-  </section>
+  <WorkHero channels={channels} />
 
   <section class="sec field-alt wk" aria-label={t`Projects`}>
-    <div class="wk-filter js-only" role="group" aria-label={t`Filter by type`} data-filter>
-      <button class="wk-pill" type="button" aria-pressed="true" data-value="">
-        {t`All`}<sup>{count}</sup>
-      </button>
-      {
-        contexts.map((entry) => (
-          <button class="wk-pill" type="button" aria-pressed="false" data-value={entry.context}>
-            {CONTEXT[entry.context]}
-            <sup>{entry.count}</sup>
-          </button>
-        ))
-      }
-    </div>
-
     <ol class="wk-grid" role="list" data-grid>
       {
         projects.map((project) => {
@@ -178,8 +170,8 @@ const count = projects.length;
           return (
             <li
               class:list={["wk-card", project.flagship ? "lg" : "md", `m-${media.kind}`]}
-              data-context={project.context}
-              style={`--skin:${SKIN[project.slug] ?? "var(--cobalt)"};view-transition-name:wk-${project.slug}`}
+              id={`wk-${project.slug}`}
+              style={`--skin:var(--${skin(project)})`}
             >
               <div class="wk-media">
                 {media.kind === "shot" && (
@@ -196,19 +188,19 @@ const count = projects.length;
                   </div>
                 )}
                 {media.kind === "reel" && (
-                  <figure class:list={["wk-reel", media.frame]} data-reel>
+                  <figure class:list={["wk-reel", `f-${media.frame}`]} data-reel>
                     <div class={media.frame === "phone" ? "phone" : "browser"}>
                       {media.frame === "browser" && (
                         <span class="b-top" aria-hidden="true">
                           <i />
                           <i />
                           <i />
-                          <span class="b-url">3d-space-folio.vercel.app</span>
+                          <span class="b-url">{media.url}</span>
                         </span>
                       )}
                       <span class="b-view">
                         <video tabindex="-1" muted loop playsinline preload="none" poster={media.poster} width={media.width} height={media.height} aria-label={media.label}>
-                          <source data-src={media.av1} type='video/mp4; codecs="av01.0.05M.08"' />
+                          {media.av1 && <source data-src={media.av1} type='video/mp4; codecs="av01.0.05M.08"' />}
                           <source data-src={media.mp4} type="video/mp4" />
                         </video>
                         <span class="bigplay" aria-hidden="true">
@@ -228,7 +220,7 @@ const count = projects.length;
                       <span class="b-url">muszarski.com</span>
                     </span>
                     <span class="b-view">
-                      <img src={`/media/work/this-site-${locale}.webp`} alt={t`This site's home page as a share card`} width="960" height="504" loading="lazy" decoding="async" />
+                      <img src={posterSrc} alt={t`This site's home page as a share card`} width="960" height="504" loading="lazy" decoding="async" />
                     </span>
                   </div>
                 )}
@@ -279,22 +271,6 @@ const count = projects.length;
                     <span class="t-caret" />
                   </div>
                 )}
-                {media.kind === "repos" && (
-                  <div class="repos" aria-hidden="true">
-                    {STARTERS.map((starter, k) => (
-                      <span class="repo" style={`--k:${k}`}>
-                        <span class="r-head">
-                          <Icon name="tb:git-branch" />
-                          main
-                        </span>
-                        <span class="r-mark">
-                          <Icon name={starter.icon} />
-                        </span>
-                        <b>{starter.name}</b>
-                      </span>
-                    ))}
-                  </div>
-                )}
                 {media.kind === "swirl" && (
                   <div class="swirl" aria-hidden="true">
                     {[0, 1, 2].map((ring) => (
@@ -305,13 +281,6 @@ const count = projects.length;
                       </span>
                     ))}
                     <span class="s-core" />
-                  </div>
-                )}
-                {media.kind === "clickme" && (
-                  <div class="clickme" aria-hidden="true">
-                    <span class="cm-btn cm-sweep">sweepToRight</span>
-                    <span class="cm-btn cm-shutter">shutterOutVertical</span>
-                    <span class="cm-btn cm-press">shutterOutHorizontal</span>
                   </div>
                 )}
               </div>
@@ -386,69 +355,10 @@ const count = projects.length;
       }
     </ol>
   </section>
+  <PrivateRepos />
 </BaseLayout>
 
 <style>
-  .top {
-    padding-bottom: clamp(2rem, 4vw, 3.5rem);
-  }
-  .lede {
-    max-width: 52ch;
-    margin: clamp(1.25rem, 2.4vw, 2rem) 0 0;
-    font-size: clamp(1.1875rem, 1.6vw, 1.5rem);
-    line-height: 1.4;
-  }
-
-  /* One row of pills [user 2026-10-07: too many filter buttons]: the types only; a phone scrolls the row sideways. */
-  .wk-filter {
-    display: flex;
-    gap: 0.5rem;
-    margin: 0 calc(var(--pad-x) * -1) clamp(1.5rem, 3vw, 2.25rem);
-    padding: 0.25rem var(--pad-x) 0.5rem;
-    overflow-x: auto;
-    scrollbar-width: none;
-  }
-  .wk-pill {
-    flex: none;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.25rem;
-    min-height: 2.5rem;
-    padding: 0 1rem;
-    border: 0;
-    border-radius: 99px;
-    background: none;
-    color: inherit;
-    box-shadow: inset 0 0 0 2px currentColor;
-    font: inherit;
-    font-weight: 800;
-    font-size: 0.8125rem;
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
-    cursor: pointer;
-    transition:
-      background-color var(--dur-base),
-      color var(--dur-base);
-  }
-  .wk-pill sup {
-    font-size: 0.6875rem;
-    font-variant-numeric: tabular-nums;
-    opacity: 0.75;
-  }
-  .wk-pill[aria-pressed="true"] {
-    background: var(--sfg);
-    color: var(--sbg);
-  }
-  @media (hover: hover) and (pointer: fine) {
-    .wk-pill:hover:not([aria-pressed="true"]) {
-      background: color-mix(in srgb, currentColor 12%, transparent);
-    }
-  }
-  .wk-pill:focus-visible {
-    outline: 3px solid currentColor;
-    outline-offset: 3px;
-  }
-
   /* The wall: six columns; a flagship takes half a row, every other project a third. */
   .wk-grid {
     display: grid;
@@ -474,8 +384,8 @@ const count = projects.length;
   .wk-card.lg {
     grid-column: span 3;
   }
-  .wk-card[hidden] {
-    display: none;
+  .wk-card {
+    scroll-margin-top: calc(var(--header-h) + 1.5rem);
   }
   @media (hover: hover) and (pointer: fine) {
     .wk-card:hover {
@@ -511,13 +421,15 @@ const count = projects.length;
 
   /* A browser window holding a live-site capture. A tall capture scrolls down the page on hover or focus; on touch
      screens the scroll of the page drives it (where scroll-driven animations exist; elsewhere it rests at the top). */
+  /* Centred in the field, nudged up and left by half its hard shadow so the frame and shadow together sit in the
+     middle [user 2026-10-08: "a tiny little bit of too much space at top"]. */
   .browser {
     position: relative;
     display: flex;
     flex-direction: column;
     width: 84%;
-    height: 82%;
-    margin-top: 6%;
+    height: 80%;
+    translate: -0.8cqw -0.8cqw;
     background: var(--ice);
     box-shadow:
       0 0 0 3px var(--navy),
@@ -538,12 +450,18 @@ const count = projects.length;
     background: var(--navy);
     color: var(--ice);
   }
+  /* The traffic lights of a Mac window [user 2026-10-08]. */
   .b-top i {
     width: 1.6cqw;
     height: 1.6cqw;
     border-radius: 50%;
-    background: var(--ice);
-    opacity: 0.6;
+    background: #ff5f57;
+  }
+  .b-top i:nth-child(2) {
+    background: #febc2e;
+  }
+  .b-top i:nth-child(3) {
+    background: #28c840;
   }
   .b-url {
     margin-left: 1.4cqw;
@@ -596,19 +514,23 @@ const count = projects.length;
   }
 
   /* Reels: the phone and the monitor, the video plays near the screen after the first interaction (scripts/reel). */
+  /* One definite track: with an auto row, the phone's percentage height resolved against a row its own content had
+     grown, and the phone ran past the field. */
   .wk-reel {
-    position: relative;
+    position: absolute;
+    inset: 0;
     display: grid;
+    grid-template: minmax(0, 1fr) / minmax(0, 1fr);
     place-items: center;
-    width: 100%;
-    height: 100%;
     margin: 0;
   }
+  /* [user 2026-10-08: the phone was "badly aligned"] */
   .wk-reel .phone {
     position: relative;
-    height: 88%;
+    min-width: 0;
+    height: 86%;
     aspect-ratio: 320 / 694;
-    margin-top: 4%;
+    translate: -0.8cqw -0.8cqw;
     padding: 1.1cqw;
     border-radius: 3.2cqw;
     background: var(--navy);
@@ -802,61 +724,6 @@ const count = projects.length;
     animation: wk-blink 1s steps(1) infinite;
   }
 
-  /* Starters: three repos fanned like cards; they spread on hover. */
-  .repos {
-    position: relative;
-    display: grid;
-    width: 100%;
-    height: 100%;
-    place-items: center;
-  }
-  .repo {
-    grid-area: 1 / 1;
-    display: grid;
-    justify-items: start;
-    gap: 1.6cqw;
-    width: 29cqw;
-    padding: 2.4cqw;
-    background: var(--ice);
-    box-shadow:
-      0 0 0 3px var(--navy),
-      1.2cqw 1.2cqw 0 3px var(--navy);
-    rotate: calc((var(--k) - 1) * 7deg);
-    translate: calc((var(--k) - 1) * 25cqw) calc((1 - var(--k)) * (1 - var(--k)) * 2.5cqw);
-    transition:
-      rotate 0.45s var(--ease-pop),
-      translate 0.45s var(--ease-pop);
-  }
-  .r-head {
-    display: flex;
-    align-items: center;
-    gap: 0.8cqw;
-    font-family: ui-monospace, "Cascadia Mono", Consolas, monospace;
-    font-size: max(0.625rem, 2.4cqw);
-  }
-  .r-head :global(.ico) {
-    width: 2.8cqw;
-    height: 2.8cqw;
-  }
-  .r-mark {
-    display: grid;
-    width: 8cqw;
-    height: 8cqw;
-  }
-  .repo b {
-    font-weight: 900;
-    font-size: max(0.6875rem, 3cqw);
-    line-height: 1.05;
-    text-transform: uppercase;
-    font-stretch: 80%;
-  }
-  @media (hover: hover) and (pointer: fine) {
-    .wk-card:hover .repo {
-      rotate: calc((var(--k) - 1) * 3deg);
-      translate: calc((var(--k) - 1) * 30cqw) -1cqw;
-    }
-  }
-
   /* Club screensaver: GPU particles stand-in, three rings of dots turning at their own speed. */
   .swirl {
     position: relative;
@@ -910,62 +777,6 @@ const count = projects.length;
     to {
       rotate: 360deg;
     }
-  }
-
-  /* react-clickme: three of its button effects, live and named as in the library (hover, or press on a touch screen). */
-  .clickme {
-    position: relative;
-    display: grid;
-    gap: 2.6cqw;
-    justify-items: center;
-  }
-  .cm-btn {
-    position: relative;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    min-width: 52cqw;
-    padding: 2cqw 4cqw;
-    overflow: hidden;
-    isolation: isolate;
-    background: var(--ice);
-    color: var(--navy);
-    box-shadow:
-      0 0 0 3px var(--navy),
-      1cqw 1cqw 0 3px var(--navy);
-    font-family: ui-monospace, "Cascadia Mono", Consolas, monospace;
-    font-weight: 700;
-    font-size: max(0.6875rem, 3.2cqw);
-    cursor: pointer;
-    transition: color 0.35s;
-  }
-  .cm-btn::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    z-index: -1;
-    background: var(--navy);
-    transition: transform 0.45s var(--ease-out);
-  }
-  .cm-sweep::before {
-    transform: scaleX(0);
-    transform-origin: 0 50%;
-  }
-  .cm-shutter::before {
-    transform: scaleY(0);
-  }
-  .cm-press::before {
-    transform: scaleX(0);
-  }
-  .cm-btn:is(:hover, :active) {
-    color: var(--ice);
-  }
-  .cm-btn:is(:hover, :active)::before {
-    transform: none;
-  }
-  .cm-press:active {
-    translate: 1cqw 1cqw;
-    box-shadow: 0 0 0 3px var(--navy);
   }
 
   /* The text under the media. */
@@ -1095,23 +906,4 @@ const count = projects.length;
 
 <script>
   import "~/scripts/reel";
-  import { motionStill } from "~/scripts/motion";
-
-  // Type pills: one pressed at a time; cards of other types hide. The change animates where view transitions exist.
-  const filter = document.querySelector<HTMLElement>("[data-filter]");
-  if (filter) {
-    const cards = [...document.querySelectorAll<HTMLElement>("[data-grid] > .wk-card")];
-    const pills = [...filter.querySelectorAll<HTMLButtonElement>("[data-value]")];
-    for (const pill of pills) {
-      pill.addEventListener("click", () => {
-        const value = pill.dataset.value ?? "";
-        const apply = () => {
-          pills.forEach((p) => p.setAttribute("aria-pressed", String(p === pill)));
-          for (const card of cards) card.hidden = !!value && card.dataset.context !== value;
-        };
-        if ("startViewTransition" in document && !motionStill()) document.startViewTransition(apply);
-        else apply();
-      });
-    }
-  }
 </script>

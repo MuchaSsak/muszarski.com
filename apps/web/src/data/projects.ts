@@ -182,48 +182,6 @@ export const PROJECTS: Project[] = [
     stack: ["React Three Fiber", "three.js", "GLSL"],
     links: { live: "https://beniaminek03-screensaver.vercel.app", code: gh("beniaminek03-screensaver") },
   },
-  {
-    slug: "taxi-landing",
-    name: "lndexecutivetaxi.com",
-    context: "client",
-    year: 2026,
-    rights: "check",
-    line: {
-      en: "A landing page for a family taxi business, built with AI on Replit.",
-      pl: "Landing dla rodzinnej firmy taksówkowej, zbudowany z AI na Replit.",
-      es: "Una landing para un negocio familiar de taxis, hecha con IA en Replit.",
-    },
-    stack: ["React", "Vite"],
-    links: { live: "https://lndexecutivetaxi.com", code: gh("lndexecutivetaxi.com") },
-  },
-  {
-    slug: "starters",
-    name: "Starters",
-    context: "oss",
-    year: 2025,
-    rights: "ok",
-    line: {
-      en: "Three open starters: Expo with Supabase auth and i18n, Next.js with Lingui, React Three Fiber with Vite.",
-      pl: "Trzy otwarte startery: Expo z autoryzacją Supabase i i18n, Next.js z Lingui, React Three Fiber z Vite.",
-      es: "Tres plantillas abiertas: Expo con auth de Supabase e i18n, Next.js con Lingui, React Three Fiber con Vite.",
-    },
-    stack: ["Expo", "Next.js", "Lingui", "Supabase", "React Three Fiber"],
-    links: { code: gh("expo-i18n-auth-boilerplate") },
-  },
-  {
-    slug: "react-clickme",
-    name: "react-clickme",
-    context: "oss",
-    year: 2023,
-    rights: "ok",
-    line: {
-      en: "A small React library of animated buttons, published on npm.",
-      pl: "Mała biblioteka Reacta z animowanymi przyciskami, opublikowana na npm.",
-      es: "Una pequeña librería de React con botones animados, publicada en npm.",
-    },
-    stack: ["React", "TypeScript"],
-    links: { live: "https://react-clickme.vercel.app", npm: "https://www.npmjs.com/package/react-clickme", code: gh("react-clickme") },
-  },
 ];
 
 const visible = (project: Project) => project.rights === "ok" || (!IS_FULL_PRODUCTION && project.rights === "check");
