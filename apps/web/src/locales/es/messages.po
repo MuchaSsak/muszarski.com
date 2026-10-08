@@ -38,7 +38,7 @@ msgstr "(opcional)"
 msgid "(PDF, then the CV page)"
 msgstr "(PDF y luego la página del CV)"
 
-#: src/components/blog/PostCard.astro:56
+#: src/components/blog/PostCard.astro:64
 #: src/pages/[locale]/blog/[slug].astro:121
 msgid "{minutes} min read"
 msgstr "{minutes} min de lectura"
@@ -193,7 +193,7 @@ msgstr "aprobado"
 msgid "Apps and testing"
 msgstr "Aplicaciones y pruebas"
 
-#: src/components/blog/PostCard.astro:54
+#: src/components/blog/PostCard.astro:62
 msgid "Article"
 msgstr "Artículo"
 
@@ -323,8 +323,8 @@ msgstr "No encuentro el precio."
 msgid "Case studies"
 msgstr "Casos de estudio"
 
-#: src/components/blog/PostCard.astro:48
-#: src/components/blog/PostCard.astro:54
+#: src/components/blog/PostCard.astro:49
+#: src/components/blog/PostCard.astro:62
 #: src/components/blog/TagLabel.astro:15
 #: src/pages/[locale]/blog/[slug].astro:96
 #: src/pages/[locale]/work/index.astro:196
@@ -587,6 +587,7 @@ msgstr "Fe"
 msgid "fast pages"
 msgstr "páginas rápidas"
 
+#: src/components/blog/PostCard.astro:54
 #: src/components/home/chapters/ChapterPstrykWeb.astro:87
 msgid "Featured"
 msgstr "Destacado"
@@ -1170,6 +1171,7 @@ msgstr "Pausa"
 msgid "Pause motion"
 msgstr "Pausar animaciones"
 
+#: src/components/blog/case/Clips.astro:33
 #: src/components/home/chapters/ChapterLinkoglot.astro:21
 #: src/components/home/chapters/ChapterSpace.astro:19
 #: src/pages/[locale]/work/index.astro:158
@@ -1229,6 +1231,7 @@ msgstr "Reproducir"
 msgid "Play motion"
 msgstr "Reanudar animaciones"
 
+#: src/components/blog/case/Clips.astro:34
 #: src/components/home/chapters/ChapterLinkoglot.astro:22
 #: src/components/home/chapters/ChapterSpace.astro:20
 #: src/pages/[locale]/work/index.astro:159
