@@ -132,6 +132,8 @@ Success signal: Google autocomplete starts completing "mateusz muszarski" to "â€
 
 ## Content plan (blog, 1â€“2 posts/month, update in place with "Updated" dates)
 
+Each post is written with the `new-blog` skill (its `references/seo.md` is the per-post checklist).
+
 Launch set, in priority order:
 1. Case study #0: how this site scores 90+ on mobile. The owner wants the whole build process kept for it [user 2026-10-05]:
    wiki-first planning, the rejected first look, comp rounds on an artifact, the owner's notes per round (`log.md` is the

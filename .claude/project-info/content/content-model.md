@@ -96,6 +96,10 @@ Chips show counts; a chip with 0 projects is hidden.
 
 ## Blog post (MDX per locale)
 
+How to write, update or audit one: the `new-blog` skill (`.claude/skills/new-blog/`: workflow, writing, pictures,
+search, case studies, plus `post-check.mjs` and `capture.mjs`) [user 2026-10-08: "the robust skill that builds the
+quality articles so either case studies or blog articles similar to how we approached it today"].
+
 `{ title, description (≤ 155 chars), slug (per locale), translationKey, published, updated?, tags[],
 cover (code-drawn or real), coverAlt, author: "mateusz", draft, canonical? }`.
 - `translationKey` links translations for hreflang. A post that exists in one locale has no
