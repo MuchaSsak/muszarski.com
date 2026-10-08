@@ -75,6 +75,8 @@
 - **Indexing and language:** noindex is fine (no duty to index; the footer link on every page is what counts). Every
   language version must be **accurate** (WP260 para 13). The es version needs a fluent check. A prevailing-language
   clause can't cure an inaccurate notice.
+- **Style** [user 2026-10-05]: formal "lawyer grade" text with the statutes cited, `noindex,follow`, and a
+  recommendation that a lawyer review it.
 
 ## Rights to showcased work and images
 

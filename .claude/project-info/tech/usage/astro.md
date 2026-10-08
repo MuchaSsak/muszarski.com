@@ -66,6 +66,12 @@
   (2026-10-06).
 - `Icon.astro` forwards Astro's scope attribute, so a scoped `svg` selector also hits icons: target drawn SVGs by class
   (2026-10-05).
+- Prefix classes: one named after a Tailwind utility (`.ring` drew a box-shadow ring) or a component (`browser` as a
+  modifier drew a second frame) is already a selector; use `lp-ring`, `f-browser` (2026-10-05).
+- A grid-stacked hidden label still sets the grid's width (it pushed the header off a 320 px screen): size stacks for
+  the visible state (2026-10-05).
+- A child rule like `.dlink > span { width: 100% }` also hits an added `.sr-only` span (a 1,193 px overflow): exclude
+  `.sr-only` or wrap the visible text (2026-10-06).
 - Inline `<script>`s render between sibling sections: count siblings with `:nth-of-type`, not `:nth-child` (2026-10-05).
 - Astro does not scope `@keyframes` names: two components' `bob` collided. Prefix keyframes per component (`hw-`,
   `cr-`, `ai-`) (2026-10-06).

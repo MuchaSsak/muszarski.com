@@ -104,3 +104,22 @@
   help: less below-the-fold DOM and CSS (home HTML 60 KB gz; 149 KB inline CSS: global 34, How I work 26, AI 25,
   credentials 19). Hidden scenes as `<template>` gained nothing (display:none costs no layout).
 - The case study quotes this run (home 95+, the other pages 96-100); its report image is a real home report.
+
+## All projects, night catalogue (2026-10-08, `/<locale>/work/`, Lighthouse mobile, median of 3)
+
+- Interleaved A/B against the TV version (scratch builds served with gzip on their own ports): perf en/pl/es 97/97/97
+  (one noisy 92 on a rerun) vs the TV's 97/95; LCP 2.28-2.48 s vs 2.26-2.28 s (the 2.0 s budget is missed by both
+  locally); HTML 111 KB raw / 21.8 KB gz (TV 120 KB), page weight 254 KB (TV 290 KB); JS +1.8 KB gz (head 2.7 + page
+  2.9 KB gz, both shaders start after interaction).
+- The first build had TBT ~300 ms (TV ~100-160). Trace sums at 4× CPU found it in style, not script:
+  - `style="--i:N"` on ~160 letter spans (the project names split for a hover wave) cost ~121 ms of style: an inline
+    style per element keeps Chrome from sharing computed styles between siblings. The names went back to plain text;
+    the split (`ui/HoverType.astro`) stays on the page's two titles only;
+  - `container-type` on every item (cqw units) + a grid around them, `cqh` pan transforms, per-row staggered entrance
+    animations and `text-wrap: balance` on names each added a little: now `--u` vw units, an `object-position` pan,
+    one `rise` on the whole index, `text-wrap: wrap`.
+  - After: style 450 / layout 908 ms vs the TV's 344 / 885.
+- Headless Chromium draws WebGL with SwiftShader (software): the shaders starve the page and hover states look broken
+  in shots. QA shaders with `--use-angle=d3d11 --enable-gpu --ignore-gpu-blocklist` (the real GPU).
+- Checks on that build: `bun run check` 193 tests; e2e 233 + 2 artifacts of a plain static server (its own 404 page) + 1
+  flaky that passed on rerun; Firefox + WebKit 163/164 (the same 404 artifact); no overflow at 320-2560 px.

@@ -37,7 +37,7 @@
 | 1 | Hero | the fitted name (H1, the signature moment F20), role, one-line positioning (P6, `brand.md` § Positioning), icon facts, the availability sticker; then the tool band (marks + names). Built 2026-10-05 | See the work (primary) · Download CV |
 | 2 | Selected work | the 4 flagship chapters (`content/projects.md`), each in its own skin, read in one order: badge → title → media → outcome → description → CTA → status → tools (`design.md` § Components, Chapters); then "Also shipped" (a tilted label tag, then Malatro and yws.lu as tilted tickets over moving colour blobs, lingui-translate-ai removed [user 2026-10-07]; client work behind the rights gate) + "All projects →", one row tall on wide screens | one primary per chapter: Visit pstrykweb.pl (the landing, never the konfigurator [user 2026-10-06]) · App Store + Google Play · Ask for a walkthrough · Launch (+ Code, secondary); All projects |
 | 3 | How I work | product thinking: a 7-stop ring; each stop shows a drawn scene from a real project, one line and a receipt (F06) [user 2026-10-06: tell it visually, less reading] | links into case studies |
-| 4 | AI workflow | an org chart (F07) [user 2026-10-06]: "I run AI like a team.", Me (Lead) → Claude Code (Builder) → a crew of six (memory, rules, research, tools, playbooks, quality gates), each with examples and tool pins, never counts [user 2026-10-06] | "How this site was built" (F23), the only CTA |
+| 4 | AI workflow | an org chart (F07) [user 2026-10-06]: "I run AI like a team.", Me (Lead) → Claude Code (Builder) → a crew of six (memory, rules, research, tools, playbooks, quality gates), each with examples and tool pins, never counts [user 2026-10-06: "dont give precise numbers"]; typecheck, lint and tests are "the floor", one line [user 2026-10-06] | "How this site was built" (F23), the only CTA |
 | 5 | Credentials | list + detail panel on wide screens, accordion on phones; each credential its own colour; on wide screens an idle tour (a drawn cursor opens the next card after 5 s without hover, focus or click) [user 2026-10-06]; media loads on open; learning; teamwork (F08). **The Stack section is cut** [user 2026-10-05: "they dont care THAT MUCH to have a whole section dedicated just for this"]: tools show in the band and per chapter | Certificate (verify) · Details on the CV |
 | 6 | Latest writing (hidden without posts) | a compact teaser: kicker + plain heading, the case study on this site always first [user 2026-10-07], then the newest posts (at most 8, 2026-10-07: every card is inline HTML) as small cards (taped paper notes on a faint dot grid), for internal links [user 2026-10-06] | All posts |
 | 7 | Contact | form + quick facts + three direct tiles (F09). The "Open to selected freelance projects / Start with a project" line and the CV tile are removed [user 2026-10-06] | Send · Copy email · LinkedIn · GitHub |
@@ -65,17 +65,23 @@ very boring ... completely rethink"]; research: Mobbin sections (Unseen Studio a
 Koto: an asymmetric wall of media; MOUTHWASH and Studio Freight: media first, little text). The look: `design.md` §
 Components, All projects.
 
-Hero and breaker reworked 2026-10-08 [user: "basically the same as on main landing", "more creative and visually impressive"].
+Reworked twice on 2026-10-08: first a TV hero and a spy-room breaker [user: "basically the same as on main landing",
+"more creative and visually impressive"], then, the same day, the **night catalogue** [user: the TV version "looks too
+vibe coded", "experiment with shaders, and interesting components", "a different style and theme"; the reason, for
+the case study: "fun, but not that overly fun", `design.md` § Art direction]. The TV version: `comps/HISTORY.md` row 9.
 
-- **Hero:** the H1 "All my projects, ON AIR", a one-line lede, and a retro TV that flips through the projects as channels (a
-  shader screen; "Now showing" jumps to the card). No counts, no "flagships" wording [user 2026-10-08].
-- **Every project:** the 4 chapters first (half a row each), then the archive (a third each), ordered so neighbours never
-  look alike. **No filter row** [user 2026-10-08]; each card has an `id` (`wk-<slug>`) the TV links to.
-- **Card:** media first (a live-site capture that scrolls, a reel, a video, or a drawn scene), then year · type, name, one
-  line, tools, one primary action (the home chapter, the case study, or the live site / npm / code) + small links.
-- **Breaker** after the grid: "There's more." + the private-repositories line with a wink, as a spy scene (lasers, a camera
-  that follows you, a safe that says "Nice try") [user 2026-10-08].
-- Phones: one column; captures scroll with the page instead of on hover; the TV stacks under the title.
+- **Head:** the H1 "Things I’ve built" on a live contour map (a shader), a one-line lede, and an "On this page" index of
+  every project (name, kind · year) that jumps to its plate. No counts, no "flagships" wording [user 2026-10-08].
+- **Every project:** the 4 chapters first, then the archive, wide and narrow items alternating left and right, ordered
+  so neighbours never look alike. **No filter row** [user 2026-10-08]; each item has an `id` (`wk-<slug>`) the index
+  links to.
+- **Item:** a plate (a live-site capture in a browser window, with an X-ray lens over it; a reel; a video; or real text
+  where there is nothing to film), then number · kind · year, name, one line, tools, one primary action (the home
+  chapter, the case study, or the live site / npm / code) + small links.
+- **"There's more."** after the catalogue: the title and the private-repositories line ending in a winking emoji, type
+  only [user 2026-10-08: no "wink wink" text].
+- Phones: one column; the index lists names only; captures pan with the page instead of on hover, and the card in the
+  middle of the screen gets a scan line instead of the lens.
 
 ## Case study `/<locale>/work/<slug>/`
 

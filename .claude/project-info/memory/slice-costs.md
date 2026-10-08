@@ -31,3 +31,5 @@ Notes:
 - Desktop: 100 × 4, LCP 0.28 s.
 - All projects rework (2026-10-08, `/en/work/`): HTML +3.2 KB gz (20.8 → 24.0 KB); A/B against the previous commit, LCP
   2296 → 2285 ms, perf 98 both: the 2.0 s LCP miss on /work/ predates it. The TV shader script starts after interaction.
+- All projects, night catalogue (2026-10-08, `/en/work/`): HTML 21.8 KB gz (TV version ~24 KB); perf 97 vs 95-97, LCP
+  2.28-2.48 vs 2.26-2.28 s, both missing 2.0 s locally; JS +1.8 KB gz, after interaction (run-notes).
