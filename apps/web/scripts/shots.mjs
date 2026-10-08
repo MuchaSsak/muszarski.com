@@ -6,7 +6,7 @@
  *                          [--settle 1800] [--full] [--reduced] [--accept]
  *
  * Writes repo-root screenshots/.work/<route>/<width>-<theme>.png (gitignored scratch). With --accept, the
- * 1920 and 390 shots are also saved as webp to screenshots/<route>/ (the committed proof).
+ * 1920 and 390 shots are also saved as webp to screenshots/<route>/ (the accepted proof; gitignored, it stays local).
  * Prints horizontal overflow per shot so a broken layout can't hide behind a nice crop. `--settle` waits for the
  * entrance animations before the shot.
  */

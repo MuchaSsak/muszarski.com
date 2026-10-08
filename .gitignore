@@ -43,11 +43,13 @@ dist/
 __pycache__/
 *.pyc
 
-# test and audit output (accepted screenshots live in /screenshots/, scratch in .work/)
+# test and audit output. QA screenshots are for development only and stay local [owner 2026-10-08: "lets only use
+# the assets we need"]: only VISUAL-QA.md, the text log of accepted views, is tracked.
 test-results/
 playwright-report/
 lighthouse/
-/screenshots/.work/
+/screenshots/*
+!/screenshots/VISUAL-QA.md
 
 # env files (names live in .env.example and tech/technologies.md)
 .env
