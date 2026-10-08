@@ -4,7 +4,7 @@ seoTitle: "Jak zbudowałem to portfolio (case study)"
 description: "Case study: dlaczego zamieniłem portfolio 3D na plakat. Research, strony, od których się uczyłem, każda wersja i shadery, które nie przeszkadzają."
 translationKey: this-site
 published: 2026-10-05
-updated: 2026-10-08
+updated: 2026-10-09
 tags: [case-study, ai, astro, performance]
 cover: blueprint
 featured: true
@@ -64,6 +64,9 @@ import contactR3 from "~/assets/case/contact-r3.webp";
 import contactNow from "~/assets/case/contact-now.webp";
 import howR2 from "~/assets/case/how-r2.webp";
 import howNow from "~/assets/case/how-now.webp";
+import workTv from "~/assets/case/work-tv-pl.webp";
+import workNight from "~/assets/case/work-night-pl.webp";
+import workNow from "~/assets/case/work-now-pl.webp";
 import coversBefore from "~/assets/case/covers-before.webp";
 import coversAfter from "~/assets/case/covers-after.webp";
 import pageWork from "~/assets/case/page-work-pl.webp";
@@ -319,12 +322,12 @@ Efekt wow zostaje, ale jako warstwa, a nie bramka. Na tej stronie działają czt
 
 <Clips
   clips={[
-    { src: "contour", label: "Nagłówek strony Wszystkie projekty: mapa poziomic, która wznosi się pod kursorem", name: "Mapa poziomic" },
-    { src: "xray", label: "Soczewka rentgenowska podąża za kursorem nad zrzutem projektu i pokazuje jego strukturę na siatce jak z planu", name: "Rentgen" },
+    { src: "dither", label: "Nagłówek strony Wszystkie projekty: zrastrowana chmura koloru zbiera się za ścianą kafelków z projektami i bierze kolor kafelka pod kursorem", name: "Raster" },
+    { src: "contour", label: "Stopka: blade poziomice dryfują pod linkami i wznoszą się pod kursorem", name: "Poziomice" },
     { src: "prints", label: "Odbitki hobby na stronie Moje życie: wybór hobby kropka po kropce drukuje nową dwukolorową odbitkę riso", name: "Odbitki riso" },
     { src: "goo", label: "Nagłówek strony Moje życie: kolorowy glut za tytułem pęcznieje po szturchnięciu", name: "Glut" },
   ]}
-  caption="Mapa poziomic i rentgen na stronie Wszystkie projekty, odbitki riso i glut na stronie Moje życie. Każdy startuje, gdy tekst jest już na ekranie, działa tylko wtedy, gdy go widać, i stoi w miejscu przy ograniczeniu ruchu albo po wciśnięciu pauzy."
+  caption="Raster na stronie Wszystkie projekty, poziomice w każdej stopce, odbitki riso i glut na stronie Moje życie. Każdy startuje, gdy tekst jest już na ekranie, działa tylko wtedy, gdy go widać, i stoi w miejscu przy ograniczeniu ruchu albo po wciśnięciu pauzy."
 />
 
 ## Jak prowadzę AI?
@@ -364,7 +367,7 @@ Dlatego Claude zbudował cztery naprawdę różne kierunki jako działające str
 
 ## Jak zmieniała się każda część i dlaczego?
 
-Pięć części strony w kolejnych wersjach. Przeklikaj je.
+Sześć części strony w kolejnych wersjach. Przeklikaj je.
 
 <Versions
   id="v-ai"
@@ -465,6 +468,32 @@ Pięć części strony w kolejnych wersjach. Przeklikaj je.
 />
 
 <Versions
+  id="v-work"
+  title="Wszystkie projekty"
+  frames={[
+    {
+      label: "Telewizor",
+      image: workTv,
+      alt: "Wersja z telewizorem: nagłówek Wszystkie moje projekty NA ANTENIE obok żółtego telewizora retro z Linkoglotem, pod spodem karty projektów w jaskrawych kolorach",
+      note: "Telewizor retro, który przełączał projekty, i rysowana scena wszędzie tam, gdzie nie było czego nagrać. Fajne, ale za dużo tego: wyglądało na vibe coding.",
+    },
+    {
+      label: "Noc",
+      image: workNight,
+      alt: "Nocna wersja: nagłówek Rzeczy, które zbudowałem na tle poziomic, po prawej ponumerowana lista projektów, niżej plansze projektów przesunięte raz w lewo, raz w prawo",
+      note: "Jedno ciemne pole, mapa poziomic pod tytułem, plansze na przemian w lewo i w prawo i soczewka rentgenowska nad każdym zrzutem. Spokojniej, ale trudno się to czytało.",
+    },
+    {
+      label: "Teraz",
+      image: workNow,
+      alt: "Teraz: nagłówek Rzeczy, które zbudowałem obok przechylonej ściany kafelków z projektami na tle zrastrowanej niebiesko-różowej poświaty, pod spodem siatka kart projektów na jasnym tle",
+      decision: "Najpierw łatwo przejrzeć, potem efekt.",
+      note: "Ściana wszystkich projektów, z której skaczesz do wybranego, a pod nią zwykła siatka kart na jasnym tle. Poziomice przeszły do stopki.",
+    },
+  ]}
+/>
+
+<Versions
   id="v-covers"
   title="Okładki bloga"
   frames={[
@@ -484,7 +513,7 @@ Pięć części strony w kolejnych wersjach. Przeklikaj je.
   ]}
 />
 
-Za wszystkimi pięcioma stoi jedna zasada: pokaż rzecz, utnij akapit.
+Za wszystkimi sześcioma stoi jedna zasada: pokaż rzecz, utnij akapit.
 
 ## Jak wyglądają pozostałe strony?
 
@@ -492,7 +521,7 @@ Każda strona dostaje tyle samo uwagi co strona główna, na laptopie i na telef
 
 <Shots
   shots={[
-    { image: pageWork, alt: "Wszystkie projekty: nagłówek Rzeczy, które zbudowałem na tle shadera z poziomicami, obok ponumerowany spis projektów", name: "Wszystkie projekty" },
+    { image: pageWork, alt: "Wszystkie projekty: nagłówek Rzeczy, które zbudowałem obok przechylonej ściany kafelków z projektami na tle zrastrowanej niebiesko-różowej poświaty", name: "Wszystkie projekty" },
     { image: pageLife, alt: "Moje życie: napis Moje życie ogromnymi obrysowanymi literami na kolorowej plamie, obok stos zdjęć z wakacji", name: "Moje życie" },
     { image: pageCv, alt: "Strona CV: imię i nazwisko ogromnymi literami na kobalcie, zdjęcie, rola i przycisk Pobierz PDF obok wydruku CV", name: "CV" },
     { image: pageBlog, alt: "Blog: słowo Blog ogromnymi literami na kobalcie nad wyszukiwarką i filtrami rodzaju, tematu i sortowania", name: "Blog" },

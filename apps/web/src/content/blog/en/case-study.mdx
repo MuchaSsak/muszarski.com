@@ -4,7 +4,7 @@ seoTitle: "How I built this portfolio (case study)"
 description: "Case study: why I swapped my 3D portfolio for a poster. The research, the sites I learned from, every version, and shaders that never get in the way."
 translationKey: this-site
 published: 2026-10-05
-updated: 2026-10-08
+updated: 2026-10-09
 tags: [case-study, ai, astro, performance]
 cover: blueprint
 featured: true
@@ -64,6 +64,9 @@ import contactR3 from "~/assets/case/contact-r3.webp";
 import contactNow from "~/assets/case/contact-now.webp";
 import howR2 from "~/assets/case/how-r2.webp";
 import howNow from "~/assets/case/how-now.webp";
+import workTv from "~/assets/case/work-tv-en.webp";
+import workNight from "~/assets/case/work-night-en.webp";
+import workNow from "~/assets/case/work-now-en.webp";
 import coversBefore from "~/assets/case/covers-before.webp";
 import coversAfter from "~/assets/case/covers-after.webp";
 import pageWork from "~/assets/case/page-work-en.webp";
@@ -319,12 +322,12 @@ So the wow stays, as a layer instead of a gate. Four shaders run on this site, a
 
 <Clips
   clips={[
-    { src: "contour", label: "The All projects head: a contour-line map that rises under the pointer", name: "Contour map" },
-    { src: "xray", label: "An X-ray lens following the pointer over a project capture, showing its structure on a blueprint grid", name: "X-ray lens" },
+    { src: "dither", label: "The All projects head: a dithered cloud of colour gathers behind a wall of project tiles and takes the colour of the tile under the pointer", name: "Dither field" },
+    { src: "contour", label: "The footer: faint contour lines drift under the links and rise under the pointer", name: "Contour lines" },
     { src: "prints", label: "Hobby prints on My life: picking a hobby wipes a new two-ink riso print in dot by dot", name: "Riso prints" },
     { src: "goo", label: "The My life head: a colourful goo behind the title swells when poked", name: "Goo" },
   ]}
-  caption="Contour map and X-ray lens on All projects, riso prints and goo on My life. Each starts after the text is on screen, runs only while visible, and holds still for reduced motion or the pause button."
+  caption="A dither field on All projects, contour lines in every footer, riso prints and goo on My life. Each starts after the text is on screen, runs only while visible, and holds still for reduced motion or the pause button."
 />
 
 ## How do I run the AI?
@@ -364,7 +367,7 @@ So Claude built four very different directions as live pages. It recommended Orb
 
 ## How did each part change, and why?
 
-Five parts of the site through their versions. Tap through them.
+Six parts of the site through their versions. Tap through them.
 
 <Versions
   id="v-ai"
@@ -465,6 +468,32 @@ Five parts of the site through their versions. Tap through them.
 />
 
 <Versions
+  id="v-work"
+  title="All projects"
+  frames={[
+    {
+      label: "TV",
+      image: workTv,
+      alt: "The TV version: the heading All my projects, ON AIR, next to a yellow retro TV showing Linkoglot, above project cards in bright colours",
+      note: "A retro TV flipping through the projects, and a drawn scene wherever there was nothing to film. Fun, but too much of it: it looked vibe coded.",
+    },
+    {
+      label: "Night",
+      image: workNight,
+      alt: "The night version: the heading Things I've built over contour lines, a numbered list of projects on the right, and project plates staggered left and right below",
+      note: "One dark field, a contour map under the title, plates staggered left and right and an X-ray lens over every capture. Calmer, and hard to read.",
+    },
+    {
+      label: "Now",
+      image: workNow,
+      alt: "Now: the heading Things I've built next to a tilted wall of project tiles over a dithered blue and pink glow, above a grid of project cards on a light background",
+      decision: "Easy to scan first, then the show.",
+      note: "A wall of every project to jump from, then a plain grid of cards on a light field. The contour lines moved to the footer.",
+    },
+  ]}
+/>
+
+<Versions
   id="v-covers"
   title="Blog covers"
   frames={[
@@ -484,7 +513,7 @@ Five parts of the site through their versions. Tap through them.
   ]}
 />
 
-The rule behind all five: show the thing, cut the paragraph.
+The rule behind all six: show the thing, cut the paragraph.
 
 ## What do the other pages look like?
 
@@ -492,7 +521,7 @@ Every page gets the same care as the home page, on a laptop and on a phone.
 
 <Shots
   shots={[
-    { image: pageWork, alt: "All projects: the heading Things I've built over a contour-line shader, next to a numbered index of projects", name: "All projects" },
+    { image: pageWork, alt: "All projects: the heading Things I've built next to a tilted wall of project tiles over a dithered blue and pink glow", name: "All projects" },
     { image: pageLife, alt: "My life: the words My life in huge outlined capitals over a colourful blob, next to a stack of holiday photos", name: "My life" },
     { image: pageCv, alt: "The CV page: the name in huge capitals on cobalt, a photo, the role and a Download PDF button next to the printed CV", name: "CV" },
     { image: pageBlog, alt: "The blog: the word Blog in huge capitals on cobalt above search, kind, topic and sort filters", name: "Blog" },

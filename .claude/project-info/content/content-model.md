@@ -132,6 +132,7 @@ cover (code-drawn or real), coverAlt, author: "mateusz", draft, canonical? }`.
   | Home AI story (`home/AiWorkflow.astro`): steps, their names, the team | the `Breaker` steps and its CTA count ("See the seven steps"), the AI section's text, the `ai-now` shot |
   | A home section's look (hero, how I work, credentials, AI, contact) | its `*-now` shot in "How did each part change"; a redesign adds a round there |
   | `/work/`, `/my-life/`, `/cv/`, `/blog/` | `page-<page>-<locale>.webp` and the `pages-phone-<locale>.webp` strip |
+| All projects redesigned | a new frame in the `v-work` Versions (`work-<version>-<locale>.webp`: the top 1920×1440 of a launch build of that version, so only cleared projects show; old versions build from their `history/*` tag in a short-path worktree) |
   | Blog author box, footer | `seo-author-*`, `seo-footer-*`; the SEO bullets |
   | A shader added, removed or reworked | its clip in "Why not another 3D world?" (`public/media/case/`) and the table |
   | Stack, checks, accessibility or SEO measures (`technologies.md`, `requirements.md`, `seo.md`) | the stack table, the checks `Flow`, the accessibility and SEO bullets |
