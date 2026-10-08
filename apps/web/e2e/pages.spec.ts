@@ -24,11 +24,7 @@ test("a post links its translation (hreflang) and the language switch keeps it",
     .evaluateAll((links) =>
       links.map((link) => `${link.getAttribute("hreflang")} ${new URL(link.getAttribute("href")!).pathname}`),
     );
-  expect(hreflangs).toEqual([
-    "en /en/blog/case-study/",
-    "pl /pl/blog/case-study/",
-    "x-default /en/blog/case-study/",
-  ]);
+  expect(hreflangs).toEqual(["en /en/blog/case-study/", "pl /pl/blog/case-study/", "x-default /en/blog/case-study/"]);
   const jsonLd = await page
     .locator('script[type="application/ld+json"]')
     .evaluateAll((scripts) => scripts.map((s) => s.textContent).join(""));
@@ -236,7 +232,8 @@ test("CV: the PDF downloads directly and the page and PDF come from the same dat
 test("CV: the web page shows the sheet's sections in the sheet's order, and the Polish clause", async ({ page }) => {
   await page.goto("/pl/cv/");
   const heads = await page.locator(".cv h2").allTextContents();
-  expect(heads.map((head) => head.trim())).toEqual([
+  // Whitespace normalised: the typography pass binds "i" to the next word with a no-break space.
+  expect(heads.map((head) => head.replace(/\s+/g, " ").trim())).toEqual([
     "Profil",
     "Doświadczenie",
     "Wybrane projekty",

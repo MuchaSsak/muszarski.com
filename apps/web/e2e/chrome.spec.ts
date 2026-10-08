@@ -1,12 +1,12 @@
 import { expect, test } from "@playwright/test";
 
-import { LOCALIZED, WIDTHS } from "./routes";
+import { LOCALIZED, ODD_WIDTHS, WIDTHS } from "./routes";
 
 /**
  * Header + footer (structure.md § Navigation and footer, design.md § Header). The page-level overflow sweep can't see
  * a control spilling out of the header row, so every visible child is checked against the header's box.
  */
-for (const width of WIDTHS) {
+for (const width of [...WIDTHS, ...ODD_WIDTHS]) {
   for (const route of LOCALIZED) {
     test(`header fits ${width} ${route}`, async ({ page }) => {
       await page.setViewportSize({ width, height: 900 });
