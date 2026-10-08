@@ -7,7 +7,7 @@ import "~/styles/global.css";
 
 import { type Locale, LOCALES, OG_LOCALES } from "@package/shared/locales";
 import { PUBLIC_UMAMI_SCRIPT_URL, PUBLIC_UMAMI_WEBSITE_ID } from "astro:env/client";
-import { LAUNCH_BUILD, PUBLIC_GOOGLE_SITE_VERIFICATION } from "astro:env/server";
+import { IS_FULL_PRODUCTION, PUBLIC_GOOGLE_SITE_VERIFICATION } from "astro:env/server";
 import { t } from "lingui-for-astro/macro";
 
 import SiteFooter from "~/components/layout/SiteFooter.astro";
@@ -68,7 +68,7 @@ const otherLocales = path === null ? [] : localesOf(path, locales).filter((other
 const fullTitle = rawTitle ? title : home ? `${SITE.name} – ${title}` : `${title} – ${SITE.name}`;
 const ogImage = new URL(`/og/${ogLocale ?? locale}/${og}.png`, site).href;
 // Every build but the launch is noindex (scripts/launch.mjs); legal pages stay out of the index.
-const robots = !LAUNCH_BUILD ? "noindex, nofollow" : noindex ? "noindex, follow" : "index, follow, max-image-preview:large";
+const robots = !IS_FULL_PRODUCTION ? "noindex, nofollow" : noindex ? "noindex, follow" : "index, follow, max-image-preview:large";
 const preloads = FONT_FILES.filter((font) => font.preload);
 // Umami counts visits on the production domain only, apex or www (site/analytics.md): never a preview or localhost.
 // The build's own origin is no good here: a production deploy built before the domain existed baked in its preview

@@ -22,7 +22,7 @@
 | install | `bun install` | text lockfile `bun.lock` is committed; CI and Vercel use `--frozen-lockfile` |
 | dev | `bun run dev` | `turbo run dev --filter=@package/web` (astro dev on 4321) |
 | check | `bun run check` | typecheck + lint + test in every package, cached by turbo |
-| build | `bun run build` | `turbo run build` (cached by inputs; `PUBLIC_*`, `LAUNCH_BUILD`, `VERCEL_*` are part of the hash) |
+| build | `bun run build` | `turbo run build` (cached by inputs; `PUBLIC_*`, `IS_FULL_PRODUCTION`, `VERCEL_*` are part of the hash) |
 | app scripts | `bun run e2e` · `lhci` · `shots` · `fonts` · `i18n:extract` | forwarded to `apps/web` |
 
 - Binaries live in each package's `node_modules/.bin` (bun's isolated linker). Use `bun run <script>` or `bunx <bin>`; `npx lingui`
@@ -34,5 +34,5 @@
 - Project **Root Directory = `apps/web`**; framework Astro; install and build on auto (bun is detected from `bun.lock`).
 - The quick deploy check before a push: a clean clone (only committed files), `bun install --frozen-lockfile`, `bun run build`.
   Passed 2026-10-05 (install 5.3 s, build 1/1). `bun.lock` carries the Linux Lingui native binary.
-- Never attach `matmuszarski.space` before launch: a production build on that domain counts as the launch, and the launch gate fails it
+- A production build on the domain (`muszarski.com`) is not the launch: only `IS_FULL_PRODUCTION=true` is, and the launch gate fails it
   while placeholders remain (`apps/web/scripts/launch.mjs`, `placeholders.md`).

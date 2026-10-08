@@ -116,10 +116,10 @@ export function alternates(site: string, path: LocalizedPath): Alternate[] {
 This is the head of the Polish version of my Lingui post, as built:
 
 ```html
-<link rel="canonical" href="https://matmuszarski.space/pl/blog/lingui-czy-i18next/">
-<link rel="alternate" hreflang="pl" href="https://matmuszarski.space/pl/blog/lingui-czy-i18next/">
-<link rel="alternate" hreflang="en" href="https://matmuszarski.space/en/blog/lingui-vs-i18next/">
-<link rel="alternate" hreflang="x-default" href="https://matmuszarski.space/en/blog/lingui-vs-i18next/">
+<link rel="canonical" href="https://muszarski.com/pl/blog/lingui-czy-i18next/">
+<link rel="alternate" hreflang="pl" href="https://muszarski.com/pl/blog/lingui-czy-i18next/">
+<link rel="alternate" hreflang="en" href="https://muszarski.com/en/blog/lingui-vs-i18next/">
+<link rel="alternate" hreflang="x-default" href="https://muszarski.com/en/blog/lingui-vs-i18next/">
 ```
 
 The codes are bare because the pages target languages, not countries; Google's format is an ISO 639-1 language code with an optional region. `x-default` points at English. A page that exists in one language gets no hreflang at all: my Polish-only post about Claude Code has none, because there is nothing to pair it with.

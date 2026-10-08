@@ -20,7 +20,7 @@
 
 | # | What is not real | Where it lives | Real value comes from | At launch | Q |
 | --- | --- | --- | --- | --- | --- |
-| P1 | ~~Site domain~~ **resolved** [user] 2026-10-05: `https://matmuszarski.space` ("for now", `seo.md` § Domain); `apps/web/scripts/launch.mjs` | — | — | attach the domain to the new Vercel project only at launch; Search Console | 5 |
+| P1 | ~~Site domain~~ **resolved** [owner] 2026-10-08: `https://muszarski.com` (was `matmuszarski.space`, `seo.md` § Domain); `apps/web/scripts/launch.mjs` | — | — | attach the domain to the new Vercel project only at launch; Search Console | 5 |
 | P2 | Seniority line: "since 2022" is real; years of paid work and student status are not yet | hero, CV, LinkedIn copy | owner | fill + same words on LinkedIn/GitHub | 25 |
 | P3 | City line "Pomorskie, Poland" | hero, CV, `Person.address` | owner | replace | 27 |
 | P4 | Availability line (role, B2B/UoP, remote/hybrid, start date) | hero sticker ("Open to work · Poland, CET · Remote"), contact, CV | owner | replace | 3 |
@@ -47,16 +47,16 @@
 
 ## Launch runbook (in order; owner steps marked **owner**)
 
-1. **owner** Replace or accept every row above; `LAUNCH_BUILD=true bun run build` (apps/web) lists what still blocks.
+1. **owner** Replace or accept every row above; `IS_FULL_PRODUCTION=true bun run build` (apps/web) lists what still blocks.
 2. **owner** Lawyer review of `/privacy/` + `/terms/` (P13); the gap values go in `astro.config.mjs` `legalTokens` (P22).
 3. **owner** Services: Resend (verify the sending domain's DNS, SPF + DKIM), Turnstile widget for the domain, Umami Cloud
    website. Names of the values: `apps/web/.env.example`.
-4. **owner** Vercel (Pro): Root Directory `apps/web`; env vars in Production (+ Preview without `LAUNCH_BUILD`);
-   `LAUNCH_BUILD=true` in Production only; WAF rate-limit rule on `/api/contact/` (e.g. 5 per 10 min per IP, the
+4. **owner** Vercel (Pro): Root Directory `apps/web`; env vars in Production (+ Preview without `IS_FULL_PRODUCTION`);
+   `IS_FULL_PRODUCTION=true` in Production only; WAF rate-limit rule on `/api/contact/` (e.g. 5 per 10 min per IP, the
    function's own limit).
 5. Preview deploy (no domain): send a real message through the form, check the mail arrives with the reply address;
    Lighthouse mobile against the preview URL (`--base`); compare the LCP with `memory/run-notes.md`.
-6. **owner** Attach `matmuszarski.space` (+ `www`, redirected by `vercel.json`); the production build must pass the gate.
+6. **owner** Make `muszarski.com` primary in Vercel → Domains (www → apex) and 308 `matmuszarski.space` (+ www) to it; the production build must pass the gate.
 7. **owner** Search Console: Domain property (DNS TXT), submit `/sitemap-index.xml`, URL Inspection on home, the case
    study, one post and `/en/cv/`; Bing Webmaster: import from GSC.
 8. **owner** Same day: the site URL on LinkedIn, GitHub and the CV sources (`sameAs` must match).

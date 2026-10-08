@@ -7,6 +7,7 @@
  * Turnstile loads only once the visitor starts typing, and only when its site key is set.
  */
 import { PUBLIC_TURNSTILE_SITE_KEY } from "astro:env/client";
+import { IS_AVAILABLE_FOR_HIRE } from "astro:env/server";
 import { t } from "lingui-for-astro/macro";
 
 import Fit from "~/components/ui/Fit.astro";
@@ -52,10 +53,12 @@ const found = {
       <p class="lede rv">{typo(locale, t`A role, a project or a question. One line is fine.`)}</p>
       <!-- PLACEHOLDER: availability facts wait for the owner (placeholders.md P4, Q3). -->
       <ul class="ifacts rv" style="--d:1" role="list">
-        <li>
-          <Icon name="tb:briefcase" />
-          {t`Full-time or contract`}
-        </li>
+        {IS_AVAILABLE_FOR_HIRE && (
+          <li>
+            <Icon name="tb:briefcase" />
+            {t`Full-time or contract`}
+          </li>
+        )}
         <li>
           <Icon name="tb:map-pin" />
           {t`Remote · Poland, CET`}

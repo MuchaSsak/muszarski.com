@@ -10,6 +10,7 @@
  * to 320 px. The CV button downloads the PDF and opens the web CV (`CvLink`).
  */
 import { type Locale } from "@package/shared/locales";
+import { IS_AVAILABLE_FOR_HIRE } from "astro:env/server";
 import { t } from "lingui-for-astro/macro";
 
 import CvLink from "~/components/layout/CvLink.astro";
@@ -90,7 +91,7 @@ const homeLabel = t`${name}, home`;
       data-umami-event-id="contact"
       data-umami-event-source="header"
     >
-      {t`Hire me`}
+      {IS_AVAILABLE_FOR_HIRE ? t`Hire me` : t`Contact`}
     </a>
     <button type="button" class="btn btn-line menu-btn" popovertarget="site-menu">
       <Icon inline name="tb:menu-2" />

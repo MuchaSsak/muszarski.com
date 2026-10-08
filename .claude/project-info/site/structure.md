@@ -156,7 +156,7 @@ overload (moving windows, notifications) was called off [user 2026-10-06]. Toy s
 
 | CTA | Where | Goes to |
 | --- | --- | --- |
-| Hire me | header, every width [user 2026-10-06] | `#contact` |
+| Hire me | header, every width [user 2026-10-06]; reads "Contact" when `IS_AVAILABLE_FOR_HIRE=false` [owner 2026-10-08] | `#contact` |
 | Contact | menu, footer, `/cv/`, post author box | `#contact` |
 | CV / Download CV (one button, `CvLink`) | header ("CV"), hero + menu ("Download CV"), footer (text link) | PDF download inside the tap, then `/cv/` (§ `/cv/`) |
 | Download PDF | `/cv/`, post author box ("PDF") | direct PDF download |

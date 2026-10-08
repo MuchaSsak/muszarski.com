@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 
 import { alternates, localeFromPath, pathTo, switchPath } from "~/lib/routes";
 
-const SITE = "https://matmuszarski.space";
+const SITE = "https://muszarski.com";
 
 describe("pathTo", () => {
   it("prefixes the locale and always ends with a slash", () => {

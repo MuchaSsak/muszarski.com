@@ -71,14 +71,15 @@ Template with every name: `apps/web/.env.example`. Values live in the Vercel pro
 
 | Name | Purpose | Where | Required |
 | --- | --- | --- | --- |
-| `PUBLIC_SITE_URL` | canonical origin; default `https://matmuszarski.space` (`seo.md` § Domain); a production deploy uses `VERCEL_PROJECT_PRODUCTION_URL`, review deploys their own `VERCEL_URL` | host env | no |
+| `PUBLIC_SITE_URL` | canonical origin; default `https://muszarski.com` (`seo.md` § Domain); a production deploy uses `VERCEL_PROJECT_PRODUCTION_URL`, review deploys their own `VERCEL_URL` | host env | no |
 | `PUBLIC_TURNSTILE_SITE_KEY` / `TURNSTILE_SECRET_KEY` | contact bot check | host env | yes |
 | `EMAILJS_SERVICE_ID` / `EMAILJS_TEMPLATE_ID` / `EMAILJS_PUBLIC_KEY` / `EMAILJS_PRIVATE_KEY` | contact delivery through EmailJS (Account → Security: "Allow EmailJS API for non-browser applications" on, private key on); template: To = his Gmail, Reply-To `{{reply_to}}`, Subject `{{subject}}`, body `{{text}}`; unset = the form answers "can't send right now, copy my email" | host env | yes |
 | `PUBLIC_UMAMI_WEBSITE_ID` | analytics; unset = no script | host env | no |
 | `PUBLIC_UMAMI_SCRIPT_URL` / `PUBLIC_UMAMI_COLLECT_ORIGIN` | overrides for the Umami script and collector (defaults: Umami Cloud); the CSP follows them | host env | no |
 | `PUBLIC_GOOGLE_SITE_VERIFICATION` | only if not verified by DNS | host env | no |
 | `INDEXNOW_KEY` | IndexNow pings after deploy (not wired yet: post-launch, `seo.md`) | host env | no |
-| `LAUNCH_BUILD` | true only when the owner calls the launch [owner 2026-10-06: "full prod when i say it is, regardless of whether deployed to domain"]; every other build, a production deploy on the domain included, is noindex | host env | yes |
+| `IS_FULL_PRODUCTION` | true only when the owner calls the launch [owner 2026-10-06: "full prod when i say it is, regardless of whether deployed to domain"]; every other build, a production deploy on the domain included, is noindex. Renamed from `LAUNCH_BUILD` [owner 2026-10-08] | host env | yes |
+| `IS_AVAILABLE_FOR_HIRE` | default true; `false` while he is not looking for work [owner 2026-10-08]: the header CTA reads "Contact" instead of "Hire me" and the contact section drops "Full-time or contract". Nothing else changes | host env | no |
 
 ## External services and limits
 

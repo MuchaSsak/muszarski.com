@@ -1,4 +1,4 @@
-import { LAUNCH_BUILD } from "astro:env/server";
+import { IS_FULL_PRODUCTION } from "astro:env/server";
 
 import type { Text } from "~/data/cv";
 
@@ -100,7 +100,7 @@ export const PROJECTS: Project[] = [
   },
   {
     slug: "this-site",
-    name: "matmuszarski.space",
+    name: "muszarski.com",
     context: "side",
     year: 2026,
     rights: "ok",
@@ -226,7 +226,7 @@ export const PROJECTS: Project[] = [
   },
 ];
 
-const visible = (project: Project) => project.rights === "ok" || (!LAUNCH_BUILD && project.rights === "check");
+const visible = (project: Project) => project.rights === "ok" || (!IS_FULL_PRODUCTION && project.rights === "check");
 
 /** Every project the build may show, flagships first (in chapter order), then the archive by year. */
 export const visibleProjects = () =>

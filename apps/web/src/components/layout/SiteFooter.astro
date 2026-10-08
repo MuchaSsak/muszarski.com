@@ -5,7 +5,7 @@
  * font, a pause-motion button, the build revision, and the surname fitted edge to edge as the poster's last line.
  */
 import { type Locale } from "@package/shared/locales";
-import { LAUNCH_BUILD } from "astro:env/server";
+import { IS_FULL_PRODUCTION } from "astro:env/server";
 import { t } from "lingui-for-astro/macro";
 
 import CvLink from "~/components/layout/CvLink.astro";
@@ -159,7 +159,7 @@ const columns = [
         </a>{" "}
         {t`and love`}
         {/* The revision helps check a preview deploy; the launched site doesn't show it [user 2026-10-07]. */}
-        {!LAUNCH_BUILD && (
+        {!IS_FULL_PRODUCTION && (
           <>
             · <time datetime={BUILD_INFO.date}>{BUILD_INFO.date}</time>
             {BUILD_INFO.sha && <span class="tabular">{BUILD_INFO.sha}</span>}

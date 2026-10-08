@@ -180,7 +180,7 @@ h1 { font-weight: 900; line-height: .92; text-transform: uppercase; font-stretch
 </style></head><body>
 <div class="top">${logo}<span>Mateusz Muszarski</span><span class="k">${escape(kicker)}</span></div>
 <div class="mid"><h1 id="t">${escape(job.title)}</h1>${art(job)}</div>
-<div class="foot"><span><i class="dot"></i>matmuszarski.space</span><span>${escape(t.line)}</span></div>
+<div class="foot"><span><i class="dot"></i>muszarski.com</span><span>${escape(t.line)}</span></div>
 </body></html>`;
 };
 

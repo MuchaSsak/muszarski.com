@@ -196,7 +196,9 @@ export default defineConfig({
       // Search Console's HTML-tag token, only when the property is not verified by DNS. Unset = no tag.
       PUBLIC_GOOGLE_SITE_VERIFICATION: envField.string({ context: "server", access: "public", optional: true }),
       // True only for the real launch build (scripts/launch.mjs); every other build is noindex.
-      LAUNCH_BUILD: envField.boolean({ context: "server", access: "public", default: LAUNCH }),
+      IS_FULL_PRODUCTION: envField.boolean({ context: "server", access: "public", default: LAUNCH }),
+      // False while he is not looking for work: the header CTA reads "Contact", the contact section drops the role line.
+      IS_AVAILABLE_FOR_HIRE: envField.boolean({ context: "server", access: "public", default: true }),
     },
   },
 });

@@ -9,7 +9,7 @@
 | 2 | City for local SEO and the JSON-LD address (city or region only?) | `seo.md` titles, hero, schema | owner | "Pomorskie, Poland" | merged into Q27 |
 | 3 | Target job titles; contract (B2B / UoP); mode (remote / hybrid / on-site, relocation?); start date | hero availability, quick facts, CV | owner | "Full-stack developer · B2B or UoP · remote/hybrid · available now" [assumption] | open |
 | 4 | Deadline for the job hunt / launch | v1 scope cut | owner | none; build in vertical slices | open |
-| 5 | Domain: keep `matmuszarski.space` or move to a name domain (availability via SEO research) | canonical URLs, Search Console, OG | owner | — | **partly answered** [user] 2026-10-05: `matmuszarski.space` for now (`seo.md` § Domain). Open: a name domain later? Renew before 2027-03-17 |
+| 5 | Domain: keep `matmuszarski.space` or move to a name domain (availability via SEO research) | canonical URLs, Search Console, OG | owner | — | **answered** [owner] 2026-10-08: `muszarski.com` (`seo.md` § Domain); keep `matmuszarski.space` renewed past 2027-03-17 as a redirect. Open: email on the new domain (Q11) |
 | 6 | Real client testimonials (name, role, written consent)? | proof elements | owner | no testimonials shown | open |
 | 7 | Photos of the owner (my-life, Person image, maybe hero) | F13, schema image, OG | owner | my-life + schema only; the hero uses a drawing | **answered 2026-10-06** (two photos sent in chat; the owner drops them as `apps/web/src/assets/photos/me.*` and `life.*`) |
 | 8 | Locale URL segments `/en/` or pstryk-style `/eng/`? | routing, hreflang | owner | `/en/` | answered 2026-10-05: `/en/` |

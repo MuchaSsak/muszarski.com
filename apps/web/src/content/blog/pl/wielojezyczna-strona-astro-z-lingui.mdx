@@ -118,10 +118,10 @@ export function alternates(site: string, path: LocalizedPath): Alternate[] {
 Tak wygląda nagłówek polskiej wersji mojego wpisu o Lingui po zbudowaniu:
 
 ```html
-<link rel="canonical" href="https://matmuszarski.space/pl/blog/lingui-czy-i18next/">
-<link rel="alternate" hreflang="pl" href="https://matmuszarski.space/pl/blog/lingui-czy-i18next/">
-<link rel="alternate" hreflang="en" href="https://matmuszarski.space/en/blog/lingui-vs-i18next/">
-<link rel="alternate" hreflang="x-default" href="https://matmuszarski.space/en/blog/lingui-vs-i18next/">
+<link rel="canonical" href="https://muszarski.com/pl/blog/lingui-czy-i18next/">
+<link rel="alternate" hreflang="pl" href="https://muszarski.com/pl/blog/lingui-czy-i18next/">
+<link rel="alternate" hreflang="en" href="https://muszarski.com/en/blog/lingui-vs-i18next/">
+<link rel="alternate" hreflang="x-default" href="https://muszarski.com/en/blog/lingui-vs-i18next/">
 ```
 
 Kody nie mają regionu, bo strony celują w języki, a nie w kraje. Format Google to kod języka z ISO 639-1 z opcjonalnym kodem regionu. `x-default` wskazuje angielski. Podstrona, która istnieje w jednym języku, nie dostaje hreflang wcale: mój wpis o Claude Code tylko po polsku nie ma żadnego, bo nie ma go z czym połączyć.

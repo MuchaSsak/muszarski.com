@@ -10,7 +10,7 @@ let ipCounter = 0;
 function post(fields: Record<string, string>, { json = true, ip }: { json?: boolean; ip?: string } = {}): Request {
   const body = new FormData();
   for (const [key, value] of Object.entries(fields)) body.set(key, value);
-  return new Request("https://matmuszarski.space/api/contact/", {
+  return new Request("https://muszarski.com/api/contact/", {
     method: "POST",
     body,
     headers: { ...(json ? { accept: "application/json" } : {}), "x-forwarded-for": ip ?? `10.0.0.${++ipCounter}` },
@@ -82,9 +82,9 @@ describe("POST /api/contact/", () => {
     const { POST } = await load();
     const ok = await POST(post(valid(), { json: false }));
     expect(ok.status).toBe(303);
-    expect(ok.headers.get("location")).toBe("https://matmuszarski.space/pl/contact/sent/");
+    expect(ok.headers.get("location")).toBe("https://muszarski.com/pl/contact/sent/");
     const bad = await POST(post({ ...valid(), message: "" }, { json: false }));
-    expect(bad.headers.get("location")).toBe("https://matmuszarski.space/pl/contact/error/?e=message-empty");
+    expect(bad.headers.get("location")).toBe("https://muszarski.com/pl/contact/error/?e=message-empty");
   });
 
   it("finds the reply address in the message when the field is empty (no JavaScript)", async () => {
@@ -148,8 +148,8 @@ describe("POST /api/contact/", () => {
 
   it("sends GET visitors to the form", async () => {
     const { GET } = await load();
-    const response = GET(new Request("https://matmuszarski.space/api/contact/"));
+    const response = GET(new Request("https://muszarski.com/api/contact/"));
     expect(response.status).toBe(303);
-    expect(response.headers.get("location")).toBe("https://matmuszarski.space/en/#contact");
+    expect(response.headers.get("location")).toBe("https://muszarski.com/en/#contact");
   });
 });

@@ -14,7 +14,7 @@
 - **The identity is split:**
   - names: "Mateusz" / "Matt" / "Matthew"
   - handles: MuchaSsak / muchassakkk / mat.muszarski
-  - hosts: matmuszarski.space (the new site from now on), plus muszarski.space (lapsed, still linked from the GitHub README)
+  - hosts: matmuszarski.space (the new site until 2026-10-08, now muszarski.com), plus muszarski.space (lapsed, still linked from the GitHub README)
   - seniority: now consistent: "since 2022" (owner confirmed 2026-10-05; the brief's "~6 years" was wrong)
 - **Fixing consistency is lever #1 and costs nothing** (owner actions: open-questions Q25–Q28).
 
@@ -55,9 +55,12 @@ Success signal: Google autocomplete starts completing "mateusz muszarski" to "�
    2026-10-07]; add the Play developer page), `worksFor` only for a real employer or his own business.
    The markup must match the visible text.
 4. **Bidirectional links:** each profile links to the site and the site links to each profile (`rel="me"`). Owner
-   to-do: put matmuszarski.space in the LinkedIn website field, the Instagram bio, the Facebook intro and the GitHub
+   to-do: put muszarski.com in the LinkedIn website field, the Instagram bio, the Facebook intro and the GitHub
    profile. Search Console can't verify social profiles; once a knowledge panel shows, claim it with Google.
 5. **Earned mentions (P1):** 3–5 independent links (client credits, npm READMEs, a Tricity meetup write-up, a guest post).
+   Credits on his other projects come from the user-level skill `/link-portfolio-author-to-website` (outside this
+   repo, 2026-10-08): JSON-LD `creator` → the live `#person` id, `meta creator`, `humans.txt`, one visible footer link;
+   client or employer sites only with the owner's written OK. Re-run it on each project after a domain move.
 
 ## Metadata rules
 
@@ -75,7 +78,7 @@ Success signal: Google autocomplete starts completing "mateusz muszarski" to "�
   - `twitter:card=summary_large_image`
   - `og:locale` + alternates
 - **Robots:** `max-image-preview:large` sitewide; legal pages `noindex,follow` (never robots.txt-blocked) and out of
-  the sitemap; preview builds `noindex` (`LAUNCH_BUILD`).
+  the sitemap; preview builds `noindex` (`IS_FULL_PRODUCTION`).
 - **Favicons:** PNG/ICO ≥ 48 px (Google doesn't list SVG) + SVG + apple-touch 180 + manifest 192/512.
 - **PDF CV:** served with `Link: <…/cv/>; rel="canonical"`, `Content-Disposition: attachment`; PDF Title/Author metadata set.
 
@@ -147,11 +150,16 @@ Every post links one case study and one pillar.
 
 ## Domain (open-questions Q5)
 
+- **Decided [owner] 2026-10-08: `https://muszarski.com`** is the site's domain. Every live reference moved (canonical
+  fallback, Umami host, CV `Link` headers, the share-card footer, this site's project name). Before launch:
+  `muszarski.com` primary in Vercel → Domains (www → apex), `matmuszarski.space` (+ www) 308 to it with the path kept,
+  renewed past 2027-03-17 so old links land. Never indexed, so no Change of Address. The public email stays
+  `hi@matmuszarski.space` until mail runs on the new domain. The bullets below are the history.
 - **Decided for now [user] 2026-10-05:** the new site launches on **`matmuszarski.space`**. The old space site moved to
   `3d-space-folio.vercel.app`, so the domain's indexed content gets replaced, not redirected (the old site was one URL).
   Renew it before it expires (2027-03-17). A name domain stays an option; if it comes, the migration below applies.
 - **Deployed, not launched [owner] 2026-10-06:** the site runs on the domain as a noindex build until the owner calls the
-  launch (`LAUNCH_BUILD`). The www/apex redirect lives only in Vercel → Domains (the apex should be primary, www → apex);
+  launch (`IS_FULL_PRODUCTION`). The www/apex redirect lives only in Vercel → Domains (the apex should be primary, www → apex);
   `vercel.json` has no host redirect (one there plus the dashboard's apex → www looped every font and script).
 
 - **All candidates are unregistered (2026-10-05):** mateuszmuszarski .com/.pl/.dev/.me, muszarski .com/.pl/.dev,

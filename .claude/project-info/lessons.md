@@ -11,7 +11,7 @@
 ## Rules
 
 ### The user's way of working
-- Deploying to the domain is not the launch: launch mode (indexable, placeholder gate) only on the owner's word (`LAUNCH_BUILD`) - 2026-10-06.
+- Deploying to the domain is not the launch: launch mode (indexable, placeholder gate) only on the owner's word (`IS_FULL_PRODUCTION`) - 2026-10-06.
 - Research before designing a section: Mobbin, Awwwards (skill), the component registry, Playwright shots, Lighthouse, web research - 2026-10-05.
 - Prove the "product engineer" profile with evidence; never put the negative ("task executor", "klepacz", "not just a coder") in copy - 2026-10-05.
 - Legal pages: formal "lawyer grade" text, noindex,follow, cited statutes, recommend a lawyer review - 2026-10-05.
@@ -55,6 +55,7 @@
 - Git Bash rewrites URL-path arguments (`/en/` → `P:/Git/en/`): prefix with `MSYS_NO_PATHCONV=1`, also for `bun run lhci` - 2026-10-05.
 - `bun run check` stops at the first failing task: a red test hid a typecheck error that got committed. Read every task's result, re-run `astro check` after fixing a test - 2026-10-06.
 - e2e role queries match substrings ("Pull-up" hit "Pull-ups"): pass `exact: true` for short names - 2026-10-06.
+- Stop a server by its port's PID (`netstat -ano | grep :<port>` → `taskkill //F //PID`), never by image name: `taskkill /IM python.exe` ends every Python on the machine, other sessions' too - 2026-10-08.
 - One `astro preview` per project: e2e, shots and Lighthouse share port 4322; for speed work build to a scratch `--outDir` and serve it on its own port (`E2E_PORT`, `lhci --base`). A busy machine fakes regressions (other sessions' headless Chrome at 100% CPU): check the load, rerun - 2026-10-07.
 - After a Playwright update, run `./node_modules/.bin/playwright install chromium` in `apps/web` (browser version mismatch) - 2026-10-06.
 - The owner works on two PCs and runs parallel sessions (one committed another's WIP, 2026-10-07): `git pull`/`git log` first, stage your own paths only; on a merge take one side's `.po`, re-add the other's msgids, extract; regenerate PDFs - 2026-10-06.

@@ -12,7 +12,7 @@
   motion pause; there is one colour theme), font preload, Umami and the skip link.
 - Pass `locales` when a page exists in fewer locales; `path={null}` only for pages without a canonical (404).
 - URLs: only through `~/lib/routes` (`pathTo`, `alternates`, `switchPath`). Never hand-write `/en/...`.
-- Internal QA pages (the `/specimen/` token sheet) are built only in review builds (`getStaticPaths` returns `[]` when `LAUNCH_BUILD`).
+- Internal QA pages (the `/specimen/` token sheet) are built only in review builds (`getStaticPaths` returns `[]` when `IS_FULL_PRODUCTION`).
 
 ## Components
 
