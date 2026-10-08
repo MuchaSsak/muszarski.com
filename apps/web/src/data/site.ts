@@ -11,7 +11,7 @@ export const SITE = {
   /** Building software since (product/project-brief.md: ~4 years, since 2022). */
   since: 2022,
   /** Public contact address [owner, 2026-10-07]. */
-  email: "hi@matmuszarski.space",
+  email: "hi@muszarski.com",
   // PLACEHOLDER (P3): the public city line (open-questions Q27); region + country only, never a street.
   region: "Pomorskie",
   countryCode: "PL",

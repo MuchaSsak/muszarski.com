@@ -187,7 +187,7 @@ export default defineConfig({
       PUBLIC_UMAMI_WEBSITE_ID: envField.string({
         context: "client",
         access: "public",
-        default: "ceeca8b5-55ea-4bce-a1f2-a9f7c45c3590",
+        default: "3c3097b2-b273-4428-99d3-958383450a61",
       }),
       PUBLIC_UMAMI_SCRIPT_URL: envField.string({ context: "client", access: "public", default: UMAMI_SCRIPT }),
       // Turnstile's public site key; unset = the form sends without the widget (the function then skips the check

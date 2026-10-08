@@ -24,7 +24,7 @@
 | P2 | Seniority line: "since 2022" is real; years of paid work and student status are not yet | hero, CV, LinkedIn copy | owner | fill + same words on LinkedIn/GitHub | 25 |
 | P3 | City line "Pomorskie, Poland" | hero, CV, `Person.address` | owner | replace | 27 |
 | P4 | Availability line (role, B2B/UoP, remote/hybrid, start date) | hero sticker ("Open to work · Poland, CET · Remote"), contact, CV | owner | replace | 3 |
-| P5 | Contact facts (public email `hi@matmuszarski.space` real since 2026-10-07 [owner]; Discord, Messenger, Telegram real since 2026-10-06): LinkedIn = the profile the SEO research found (`mateusz-muszarski-b1168a28a`), owner to confirm | `src/data/site.ts`, footer, `sameAs` | owner | replace / confirm; test every link | 11 |
+| P5 | Contact facts (public email `hi@muszarski.com` [owner 2026-10-08, was `hi@matmuszarski.space`]; Discord, Messenger, Telegram real since 2026-10-06): LinkedIn = the profile the SEO research found (`mateusz-muszarski-b1168a28a`), owner to confirm | `src/data/site.ts`, footer, `sameAs` | owner | replace / confirm; test every link | 11 |
 | P6 | Positioning copy drafts: the hero line "Code is the tool. I build products that solve real business problems, at a cost that makes sense." (2026-10-06: Claude's positive rewrite of the owner's draft, waiting for his OK; `brand.md` § Positioning), the proof line, section copy, the footer line "Let's talk about what you're building." | `home/Hero.astro`, `layout/SiteFooter.astro` (`PLACEHOLDER` comments), `brand.md` drafts → catalogs | owner OKs the hero line; rewrites the rest in his voice | owner approves the final copy | — |
 | P7 | PstrykWeb temporary captures (show the OLD landing, stock people, 3rd-party thumbnails) | `assets/projects/pstrykweb/` | owner recordings | delete; never publish | 1, 21 |
 | P8 | Linkoglot store screenshots + 332×720 preview as interim media | `assets/projects/linkoglot/` | owner recordings | replace with real loops (own app, OK as interim) | 1 |
@@ -56,7 +56,7 @@
    function's own limit).
 5. Preview deploy (no domain): send a real message through the form, check the mail arrives with the reply address;
    Lighthouse mobile against the preview URL (`--base`); compare the LCP with `memory/run-notes.md`.
-6. **owner** Make `muszarski.com` primary in Vercel → Domains (www → apex) and 308 `matmuszarski.space` (+ www) to it; the production build must pass the gate.
+6. **owner** Make `muszarski.com` primary in Vercel → Domains (www → apex); the production build must pass the gate.
 7. **owner** Search Console: Domain property (DNS TXT), submit `/sitemap-index.xml`, URL Inspection on home, the case
    study, one post and `/en/cv/`; Bing Webmaster: import from GSC.
 8. **owner** Same day: the site URL on LinkedIn, GitHub and the CV sources (`sameAs` must match).

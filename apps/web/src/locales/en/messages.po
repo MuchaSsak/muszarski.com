@@ -22,7 +22,7 @@ msgstr ""
 #: src/components/home/Credentials.astro:285
 #: src/components/home/Credentials.astro:298
 #: src/components/layout/SiteFooter.astro:46
-#: src/pages/[locale]/blog/[slug].astro:164
+#: src/pages/[locale]/blog/[slug].astro:161
 #: src/pages/[locale]/my-life/index.astro:111
 #: src/pages/[locale]/work/index.astro:118
 msgid "(opens in a new tab)"
@@ -41,7 +41,7 @@ msgid "{count, plural, one {# project} other {# projects}}"
 msgstr "{count, plural, one {# project} other {# projects}}"
 
 #: src/components/blog/PostCard.astro:56
-#: src/pages/[locale]/blog/[slug].astro:124
+#: src/pages/[locale]/blog/[slug].astro:121
 msgid "{minutes} min read"
 msgstr "{minutes} min read"
 
@@ -105,11 +105,11 @@ msgstr "A to Z"
 msgid "About"
 msgstr "About"
 
-#: src/pages/[locale]/blog/[slug].astro:176
+#: src/pages/[locale]/blog/[slug].astro:173
 msgid "About the author"
 msgstr "About the author"
 
-#: src/pages/[locale]/blog/[slug].astro:168
+#: src/pages/[locale]/blog/[slug].astro:165
 msgid "accessed"
 msgstr "accessed"
 
@@ -149,7 +149,7 @@ msgid "All"
 msgstr "All"
 
 #: src/components/home/LatestWriting.astro:65
-#: src/pages/[locale]/blog/[slug].astro:212
+#: src/pages/[locale]/blog/[slug].astro:204
 msgid "All posts"
 msgstr "All posts"
 
@@ -250,7 +250,7 @@ msgstr "blocked by a hook"
 
 #: src/components/layout/SiteFooter.astro:62
 #: src/components/layout/SiteHeader.astro:46
-#: src/pages/[locale]/blog/[slug].astro:56
+#: src/pages/[locale]/blog/[slug].astro:53
 #: src/pages/[locale]/blog/index.astro:36
 #: src/pages/[locale]/blog/index.astro:52
 msgid "Blog"
@@ -264,7 +264,7 @@ msgstr "Bold"
 msgid "Both app stores"
 msgstr "Both app stores"
 
-#: src/pages/[locale]/blog/[slug].astro:96
+#: src/pages/[locale]/blog/[slug].astro:93
 msgid "Breadcrumb"
 msgstr "Breadcrumb"
 
@@ -306,7 +306,7 @@ msgstr "Built with"
 msgid "Business name"
 msgstr "Business name"
 
-#: src/pages/[locale]/blog/[slug].astro:116
+#: src/pages/[locale]/blog/[slug].astro:113
 msgid "By"
 msgstr "By"
 
@@ -333,7 +333,7 @@ msgstr "Case studies"
 #: src/components/blog/PostCard.astro:48
 #: src/components/blog/PostCard.astro:54
 #: src/components/blog/TagLabel.astro:15
-#: src/pages/[locale]/blog/[slug].astro:99
+#: src/pages/[locale]/blog/[slug].astro:96
 #: src/pages/[locale]/work/index.astro:170
 msgid "Case study"
 msgstr "Case study"
@@ -432,7 +432,7 @@ msgstr "confirm email"
 #: src/components/home/Contact.astro:45
 #: src/components/layout/SiteFooter.astro:97
 #: src/components/layout/SiteHeader.astro:120
-#: src/pages/[locale]/blog/[slug].astro:197
+#: src/pages/[locale]/blog/[slug].astro:189
 #: src/pages/[locale]/cv/index.astro:104
 #: src/pages/[locale]/my-life/index.astro:79
 msgid "Contact"
@@ -641,7 +641,7 @@ msgstr "Found your LinkedIn in your message"
 msgid "Full-stack Developer · TypeScript, React, three.js"
 msgstr "Full-stack Developer · TypeScript, React, three.js"
 
-#: src/pages/[locale]/blog/[slug].astro:187
+#: src/pages/[locale]/blog/[slug].astro:179
 msgid "Full-stack developer from Poland. I build web and mobile products end to end, and I write down what I learn while doing it."
 msgstr "Full-stack developer from Poland. I build web and mobile products end to end, and I write down what I learn while doing it."
 
@@ -1001,7 +1001,7 @@ msgstr "Message not sent"
 msgid "Message sent"
 msgstr "Message sent"
 
-#: src/pages/[locale]/blog/[slug].astro:190
+#: src/pages/[locale]/blog/[slug].astro:182
 msgid "More about me"
 msgstr "More about me"
 
@@ -1094,7 +1094,7 @@ msgstr "Off the clock"
 msgid "On it. Briefing the team."
 msgstr "On it. Briefing the team."
 
-#: src/pages/[locale]/blog/[slug].astro:57
+#: src/pages/[locale]/blog/[slug].astro:54
 msgid "On this page"
 msgstr "On this page"
 
@@ -1310,7 +1310,7 @@ msgstr "Qualifications and training"
 msgid "read"
 msgstr "read"
 
-#: src/pages/[locale]/blog/[slug].astro:208
+#: src/pages/[locale]/blog/[slug].astro:200
 msgid "Read next"
 msgstr "Read next"
 
@@ -1498,7 +1498,7 @@ msgstr "Solo, end to end"
 msgid "Sort"
 msgstr "Sort"
 
-#: src/pages/[locale]/blog/[slug].astro:158
+#: src/pages/[locale]/blog/[slug].astro:155
 msgid "Sources"
 msgstr "Sources"
 
@@ -1764,7 +1764,7 @@ msgstr "Unit tests"
 msgid "Up for a game or a chat? Find me here."
 msgstr "Up for a game or a chat? Find me here."
 
-#: src/pages/[locale]/blog/[slug].astro:121
+#: src/pages/[locale]/blog/[slug].astro:118
 msgid "Updated"
 msgstr "Updated"
 

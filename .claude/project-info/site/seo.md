@@ -151,10 +151,10 @@ Every post links one case study and one pillar.
 ## Domain (open-questions Q5)
 
 - **Decided [owner] 2026-10-08: `https://muszarski.com`** is the site's domain. Every live reference moved (canonical
-  fallback, Umami host, CV `Link` headers, the share-card footer, this site's project name). Before launch:
-  `muszarski.com` primary in Vercel → Domains (www → apex), `matmuszarski.space` (+ www) 308 to it with the path kept,
-  renewed past 2027-03-17 so old links land. Never indexed, so no Change of Address. The public email stays
-  `hi@matmuszarski.space` until mail runs on the new domain. The bullets below are the history.
+  fallback, Umami host and website, CV `Link` headers, the share-card footer, this site's project name, the public
+  email `hi@muszarski.com`). Before launch: `muszarski.com` primary in Vercel → Domains (www → apex). No redirect or
+  legacy support for `matmuszarski.space` [owner: "nobody knew about this yet"]; never indexed, so no Change of
+  Address. The bullets below are the history.
 - **Decided for now [user] 2026-10-05:** the new site launches on **`matmuszarski.space`**. The old space site moved to
   `3d-space-folio.vercel.app`, so the domain's indexed content gets replaced, not redirected (the old site was one URL).
   Renew it before it expires (2027-03-17). A name domain stays an option; if it comes, the migration below applies.
