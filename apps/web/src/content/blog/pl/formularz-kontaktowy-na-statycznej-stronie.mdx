@@ -1,12 +1,13 @@
 ---
 title: "Formularz kontaktowy na statycznej stronie: jedna funkcja, wysyłka z serwera i jeden błąd 500"
-seoTitle: "Formularz kontaktowy na statycznej stronie Astro"
-description: "Jak statyczna strona w Astro wysyła wiadomości: jedna funkcja Vercel, formularz od treści, ochrona przed botami, EmailJS z serwera i działanie bez JS."
+seoTitle: "Formularz kontaktowy na stronie Astro: Vercel i EmailJS"
+description: "Jedna funkcja Vercel obok statycznego Astro: formularz od treści, trzy zabezpieczenia przed botami, EmailJS z serwera, działanie bez JS i jeden błąd ESM."
 translationKey: "contact-form"
 published: 2026-10-06
+updated: 2026-10-08
 tags: [astro, accessibility, privacy]
 cover: mailbox
-related: [astro-i18n, astro-vs-next, this-site]
+related: [astro-vs-next, cookieless-analytics, this-site]
 sources:
   - title: "Using the Node.js Runtime with Vercel Functions (Vercel Docs)"
     url: "https://vercel.com/docs/functions/runtimes/node-js"
@@ -38,6 +39,9 @@ sources:
   - title: "EmailJS: SDK options (private key)"
     url: "https://www.emailjs.com/docs/sdk/options/"
     accessed: 2026-10-06
+  - title: "EmailJS Node.js SDK, README (GitHub)"
+    url: "https://github.com/emailjs-com/emailjs-nodejs"
+    accessed: 2026-10-08
   - title: "303 See Other (MDN)"
     url: "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status/303"
     accessed: 2026-10-06
@@ -52,16 +56,22 @@ sources:
     accessed: 2026-10-06
 ---
 
-Ta strona jest statyczna, więc formularz kontaktowy wysyła dane do jednej funkcji Vercel, `api/contact.ts`. Funkcja sprawdza, czy pisze człowiek, waliduje wiadomość tym samym modułem co strona i wysyła ją przez REST API EmailJS z serwera, gdzie przeglądarka nie odczyta klucza prywatnego ani nie ominie zabezpieczeń. Ten sam formularz działa bez JavaScriptu, a 6 października 2026 nauczył mnie, że import może przejść wszystkie testy i mimo to wywracać każde żądanie.
+import Flow from "~/components/blog/case/Flow.astro";
+import Shots from "~/components/blog/case/Shots.astro";
+import formEmpty from "~/assets/blog/contact-form/form-empty-pl.webp";
+import formFound from "~/assets/blog/contact-form/form-found-pl.webp";
+import formError from "~/assets/blog/contact-form/form-error-pl.webp";
+
+Ta strona jest statyczna, więc formularz kontaktowy wysyła dane do jednej funkcji Vercel, `api/contact.ts`. Funkcja odsiewa boty, waliduje wiadomość tym samym modułem co strona i wysyła ją przez REST API EmailJS, więc żaden klucz nie trafia do przeglądarki, a zabezpieczeń nie da się ominąć. Formularz działa też bez JavaScriptu, a 6 października 2026 jeden import sprawił, że nie doszła żadna wiadomość.
 
 > **TL;DR**
 > - Jedna funkcja obok statycznego builda: bez adaptera, bez bazy danych, z jednym modułem walidacji wspólnym dla strony i serwera.
 > - Najpierw treść: jedno pole tekstowe, adres do odpowiedzi znaleziony w samej wiadomości i trzy zabezpieczenia przed botami (honeypot, Turnstile, limit żądań).
-> - Import względny bez rozszerzenia sprawił, że każda wiadomość wysłana na produkcji kończyła się błędem HTTP 500. Naprawiło go `.js`, a test jednostkowy pilnuje teraz tego importu.
+> - Import bez `.js` przeszedł wszystkie testy, a na produkcji wywracał każde żądanie błędem HTTP 500. Teraz pilnuje go test jednostkowy.
 
 ## Dlaczego jedna funkcja, a nie serwer?
 
-Strona buduje się z `output: "static"`: każda podstrona to zwykły HTML z CDN Vercela. Typowa odpowiedź Astro na jedną dynamiczną trasę to adapter i `prerender = false` na tej trasie, o czym pisałem w [Astro czy Next.js na portfolio](/pl/blog/astro-czy-nextjs-na-portfolio/). Zrobiłem mniejszy krok: zwykłą funkcję Vercel w `apps/web/api/`, obok statycznych plików. Środowisko Node.js na Vercelu zamienia plik z folderu `/api` w funkcję i pozwala wyeksportować każdą metodę HTTP osobno:
+Strona buduje się z `output: "static"`: każda podstrona to zwykły HTML z CDN Vercela. Typowa odpowiedź Astro na jedną dynamiczną trasę to adapter i `prerender = false`, o czym pisałem w [Astro czy Next.js na portfolio](/pl/blog/astro-czy-nextjs-na-portfolio/). Zrobiłem mniejszy krok: zwykłą funkcję Vercel w `apps/web/api/`. Środowisko Node.js na Vercelu zamienia plik z folderu `/api` w funkcję i pozwala wyeksportować każdą metodę HTTP osobno:
 
 ```ts
 export async function POST(request: Request): Promise<Response> {
@@ -74,23 +84,68 @@ export function GET(request: Request): Response {
 }
 ```
 
-Bez adaptera `astro preview` dalej serwuje zbudowaną stronę bez zmian. Funkcja działa we Frankfurcie (region `fra1` ustawiony w `vercel.json`), odpowiada z `Cache-Control: no-store` i niczego nie zapisuje, bo nie ma bazy danych. Resztę stosu opisałem w [studium przypadku tej strony](/pl/blog/case-study/).
+Bez adaptera `astro preview` dalej serwuje zbudowaną stronę bez zmian, a region funkcji (`fra1`) to jedno ustawienie w `vercel.json`. Resztę stosu opisałem w [studium przypadku tej strony](/pl/blog/case-study/).
 
-Żądanie POST przechodzi przez pięć kroków, a odpowiada pierwszy, który się nie powiedzie:
+## Co dzieje się z wiadomością?
 
-| Krok | Sprawdzenie | Odpowiedź przy porażce |
+<Flow
+  label="Droga jednej wiadomości"
+  steps={[
+    {
+      icon: "tb:forms",
+      title: "Formularz",
+      text: "Zwykły POST na /api/contact/ albo to samo żądanie wysłane w miejscu przez skrypt strony.",
+    },
+    {
+      icon: "tb:server",
+      title: "Funkcja",
+      text: "api/contact.ts we Frankfurcie, bez żadnej bazy danych.",
+    },
+    {
+      icon: "tb:shield-lock",
+      title: "Sprawdzenia",
+      text: "Honeypot, limit żądań, wspólna walidacja, Turnstile. Odpowiada pierwsze, które się nie uda.",
+    },
+    {
+      icon: "tb:send",
+      title: "EmailJS",
+      text: "Jego REST API, wołane kluczami, które zna tylko serwer.",
+    },
+    {
+      icon: "tb:mail",
+      title: "Skrzynka",
+      text: "Reply-To niesie e-mail nadawcy, jeśli go podał, więc odpowiedź to jedno kliknięcie.",
+    },
+  ]}
+/>
+
+Każde sprawdzenie ma własną odpowiedź, więc strona może powiedzieć dokładnie, co poszło nie tak:
+
+| Sprawdzenie | Kiedy się nie udaje | Odpowiedź |
 | --- | --- | --- |
-| 1 | Wypełniony honeypot | 400, `spam` |
-| 2 | Ponad 5 wiadomości w 10 minut z jednego IP (w jednej instancji) | 429, `rate` |
-| 3 | Wspólna walidacja: wiadomość od 2 do 4000 znaków i adres, na który da się odpowiedzieć | 400, konkretny problem |
-| 4 | Token Turnstile, jeśli ustawiony jest jego sekret | 400, `turnstile` |
-| 5 | Wywołanie EmailJS | 503, gdy poczta nie jest skonfigurowana, 502, gdy wywołanie się nie uda |
+| Honeypot | ukryte pole jest wypełnione | 400, `spam` |
+| Limit żądań | ponad 5 wiadomości w 10 minut z jednego IP (w jednej instancji) | 429, `rate` |
+| Walidacja | wiadomość nie ma od 2 do 4000 znaków albo brakuje adresu, na który da się odpowiedzieć | 400, konkretny problem |
+| Turnstile | token nie przechodzi `siteverify` (tylko gdy ustawiony jest sekret) | 400, `turnstile` |
+| EmailJS | poczta nie jest skonfigurowana albo wywołanie się nie udaje | 503 albo 502 |
+
+Zdarzenia formularza w statystykach strony niosą temat i rodzaj błędu, nigdy treść ([jak te statystyki obywają się bez cookies](/pl/blog/analityka-bez-cookies-w-polsce/)).
 
 ## Co znaczy „najpierw treść”?
 
-Formularz nie zaczyna się od pól na imię, e-mail i temat. Otwiera go jedno pole tekstowe z podpowiedzią „Cześć Mateusz, szukamy kogoś do…”. Trzy opcjonalne przyciski (Praca, Projekt, Pytanie) ustawiają temat.
+<Shots
+  shots={[
+    { image: formEmpty, alt: "Formularz kontaktowy: trzy przyciski tematu, jedno puste pole tekstowe i przycisk Wyślij", tag: "Pusty" },
+    {
+      image: formFound,
+      alt: "Ten sam formularz z wiadomością zakończoną adresem e-mail, który wypełnił też pole odpowiedzi, z notką, że został znaleziony",
+      tag: "Adres znaleziony",
+    },
+  ]}
+  caption="Formularz na stronie głównej przed pisaniem i w trakcie. Pole odpowiedzi pojawia się, gdy tylko zaczniesz pisać, i wypełnia się z treści wiadomości."
+/>
 
-Gdy zaczniesz pisać, pojawia się drugie pole: „Gdzie mam odpowiedzieć?”. Przyjmuje e-mail, numer telefonu albo link do profilu na LinkedIn i wypełnia się samo, jeśli Twoja wiadomość już zawiera któryś z nich. Napisz „odpisz na anna@example.com”, a pole pokaże ten adres z krótką notką „Znalazłem e-mail w Twojej wiadomości”, którą czytnik ekranu odczyta bez przerywania. Gdy sam zmienisz zawartość pola, skrypt przestaje ją nadpisywać.
+Formularz pomija zwykłe pola na imię, e-mail i temat. Pole odpowiedzi przyjmuje e-mail, numer telefonu albo link do profilu na LinkedIn i wypełnia się samo, jeśli wiadomość już któryś z nich zawiera. Notka pod nim ma `aria-live="polite"`, więc czytnik ekranu odczyta ją bez przerywania. Gdy sam zmienisz zawartość pola, skrypt przestaje ją nadpisywać.
 
 ```ts
 export function findReply(message: string): { kind: ReplyKind; value: string } | null {
@@ -106,25 +161,26 @@ export function findReply(message: string): { kind: ReplyKind; value: string } |
 }
 ```
 
-Pierwszeństwo ma e-mail, potem LinkedIn, potem numer telefonu od 7 do 15 cyfr. Serwer uruchamia tę samą funkcję, gdy JavaScript jest wyłączony i pole odpowiedzi przychodzi puste. Drobiazg: kiedy adres wygląda na numer telefonu, atrybut `inputmode` pola zmienia się z `email` na `tel`, co według MDN pozwala przeglądarce pokazać klawiaturę telefoniczną.
-
-Reguły mieszkają w `src/lib/contact.ts`, który importują i skrypt strony, i funkcja. Przeglądarka i serwer nie mogą się różnić w ocenie, co jest poprawną wiadomością, bo definicja jest jedna.
+Pierwszeństwo ma e-mail, potem LinkedIn, potem numer telefonu od 7 do 15 cyfr. Reguły mieszkają w `src/lib/contact.ts`, wspólnym dla skryptu strony i funkcji, więc przeglądarka i serwer nie mogą się różnić w ocenie poprawnej wiadomości. Przy wyłączonym JavaScripcie serwer uruchamia tę samą funkcję `findReply`. Gdy w polu odpowiedzi jest numer telefonu, `inputmode` zmienia się na `tel`, co według MDN pozwala przeglądarce pokazać klawiaturę telefoniczną.
 
 ## Jak zatrzymać boty, nie męcząc ludzi?
 
 Trzy warstwy, od najtańszej:
 
-- **Honeypot.** Pole `website` leży poza ekranem z `aria-hidden`, `tabindex="-1"` i `autocomplete="off"`. Nikt go nie widzi, a klawiatura i czytniki ekranu do niego nie trafiają. Trafia bot, który wypełnia każde pole.
-- **Turnstile.** Skrypt Cloudflare ładuje się dopiero, gdy zaczniesz pisać, i tylko wtedy, gdy ustawiony jest jego publiczny klucz witryny, więc kto nie dotknie formularza, nie pobiera tego skryptu wcale. Widżet renderuje się jawnie z `appearance: "interaction-only"`, czyli według Cloudflare staje się widoczny tylko wtedy, gdy potrzebna jest interakcja odwiedzającego. Cloudflare pisze wprost, że sam widżet po stronie klienta nie chroni formularza, więc funkcja wysyła token do endpointu `siteverify`. Token jest ważny 300 sekund i da się go zweryfikować tylko raz, dlatego po nieudanej wysyłce strona resetuje widżet.
-- **Limit żądań.** Funkcja trzyma w pamięci mały licznik: 5 wiadomości na 10 minut z jednego IP. Żyje w jednej instancji, więc to tylko dodatkowa warstwa. Prawdziwy limit należy do reguły rate limiting w Vercel WAF, która zatrzymuje żądania, zanim dotrą do funkcji, domyślnie odpowiada 429 i liczy osobno dla każdego regionu.
+- **Honeypot.** Pole `website` leży poza ekranem w kontenerze z `aria-hidden`, z `tabindex="-1"` i `autocomplete="off"`. Ludzie, klawiatura i czytniki ekranu do niego nie trafiają; trafia bot, który wypełnia każde pole.
+- **Turnstile.** Skrypt Cloudflare ładuje się dopiero, gdy zaczniesz pisać, i tylko wtedy, gdy ustawiony jest klucz witryny. Z `appearance: "interaction-only"` widżet pokazuje się tylko wtedy, gdy potrzebna jest Twoja interakcja. Cloudflare ostrzega, że sam widżet po stronie klienta nie chroni formularza, więc funkcja sprawdza każdy token przez `siteverify`. Token da się zweryfikować tylko raz, dlatego po nieudanej wysyłce strona resetuje widżet.
+- **Limit żądań.** Funkcja liczy wiadomości z jednego IP w pamięci. Licznik żyje w jednej instancji, więc to tylko dodatkowa warstwa; twardy limit należy do reguły w Vercel WAF, która zatrzymuje żądania, zanim dotrą do funkcji.
 
-## Dlaczego EmailJS wywołuje serwer, a nie przeglądarka?
+Czwarta warstwa nie przetrwała. Minimalny czas wypełniania blokował prawdziwych ludzi, którzy piszą szybko, więc 7 października go usunąłem. Test jednostkowy mówi to teraz wprost: „rejects a filled honeypot, never a fast sender”.
 
-EmailJS jest pomyślany do wywoływania z kodu po stronie klienta. FAQ EmailJS mówi, że ujawnienie klucza publicznego jest w porządku: ktoś, kto go skopiuje, wyśle tylko Twoje szablony z Twoją treścią. Ukrywanie klucza publicznego nie jest więc powodem.
+## Dlaczego to serwer wywołuje EmailJS, a nie przeglądarka?
 
-Powody są dwa. Po pierwsze, zabezpieczenia przed botami mają sens tylko wtedy, gdy nie da się ich ominąć. Gdyby strona sama wołała EmailJS, każdy skrypt mógłby zawołać EmailJS tak samo, z pominięciem honeypota, licznika czasu i Turnstile.
+EmailJS jest pomyślany do wywoływania z przeglądarki, a jego FAQ mówi, że ktoś, kto skopiuje klucz publiczny, wyśle tylko Twoje szablony z Twoją treścią. Ukrywanie tego klucza nie jest więc powodem. Powody są dwa:
 
-Po drugie, funkcja uwierzytelnia się kluczem prywatnym konta (`accessToken`), który EmailJS przyjmuje po włączeniu tej opcji na stronie Security w ustawieniach konta. Ten klucz istnieje tylko w zmiennych środowiskowych hostingu.
+1. **Zabezpieczenia liczą się tylko wtedy, gdy nie da się ich ominąć.** Gdyby strona sama wołała EmailJS, każdy skrypt mógłby zawołać go tak samo, z pominięciem honeypota i Turnstile.
+2. **Klucz prywatny zostaje prywatny.** Funkcja wysyła klucz prywatny konta jako `accessToken`, a ten klucz istnieje tylko w zmiennych środowiskowych hostingu.
+
+EmailJS domyślnie to blokuje: żądania API z aplikacji spoza przeglądarki są wyłączone, dopóki nie włączysz ich w ustawieniach Security konta, gdzie włącza się też klucz prywatny.
 
 ```ts
 await fetch("https://api.emailjs.com/api/v1.0/email/send", {
@@ -140,42 +196,46 @@ await fetch("https://api.emailjs.com/api/v1.0/email/send", {
 });
 ```
 
-Szablon w panelu EmailJS trzyma odbiorcę i układ maila, a funkcja tylko uzupełnia zmienne. `reply_to` niesie adres nadawcy, jeśli to e-mail, więc „Odpowiedz” w mojej skrzynce trafia prosto do tej osoby. Jeśli brakuje któregoś z trzech wymaganych ustawień, funkcja odpowiada 503, a strona pisze, że formularz nie może teraz wysłać wiadomości. Turnstile też ma parę: `PUBLIC_TURNSTILE_SITE_KEY` na stronie i `TURNSTILE_SECRET_KEY` w funkcji.
+Szablon EmailJS trzyma odbiorcę i układ maila, a funkcja tylko uzupełnia zmienne. Bez ID usługi, ID szablonu albo klucza publicznego odpowiada 503. Po tym, jak 7 października wysyłki na produkcji kończyły się błędem 502, funkcja zapisuje w logu status i powód odmowy EmailJS, nigdy treść ani nadawcę.
 
 ## Czy działa bez JavaScriptu?
 
-Tak. Formularz to zwykłe `<form action="/api/contact/" method="post">`. Ścieżka kończy się ukośnikiem, jak każdy adres na tej stronie, więc POST nigdy nie jest przekierowywany. Ukryte pole przekazuje język strony.
+Tak. Formularz to zwykłe `<form action="/api/contact/" method="post">`, a jego ścieżka kończy się ukośnikiem jak każdy adres na tej stronie, więc POST nigdy nie jest przekierowywany. Ukryte pole przekazuje język strony.
 
-Funkcja czyta nagłówek `Accept`. Skrypt strony prosi o `application/json` i dostaje `{ "ok": true }` albo `{ "ok": false, "error": "reply-missing" }`. Zwykłe wysłanie formularza dostaje 303 See Other na stronę wyniku w języku nadawcy, na przykład `/pl/contact/sent/` albo `/pl/contact/error/?e=reply-missing`.
-
-MDN opisuje 303 jako typową odpowiedź na POST, po której klient może pobrać potwierdzenie, a przeglądarka zawsze pobiera je metodą GET. Odświeżenie strony wyniku nie wysyła więc wiadomości drugi raz. Obie strony wyniku mają `noindex` i nie trafiają do mapy strony.
+Funkcja czyta nagłówek `Accept`. Skrypt strony prosi o JSON i dostaje `{ "ok": true }` albo `{ "ok": false, "error": "reply-missing" }`. Zwykłe wysłanie formularza dostaje 303 See Other na stronę wyniku w języku nadawcy, na przykład `/pl/contact/sent/`. MDN opisuje 303 jako typową odpowiedź na POST, po której klient pobiera potwierdzenie metodą GET, więc odświeżenie nie wysyła wiadomości drugi raz. Obie strony wyniku mają `noindex` i nie trafiają do mapy strony.
 
 ## Jak pokazywane są błędy?
 
-Słowami, w osobnej ramce, bez kasowania Twojego tekstu. Kryterium WCAG 3.3.1 Error Identification (poziom A) wymaga, żeby błąd był opisany użytkownikowi tekstem. Każdy rodzaj porażki ma własne zdanie:
+<Shots
+  shots={[
+    {
+      image: formError,
+      alt: "Formularz po nieudanej wysyłce: ciemna ramka pod polem odpowiedzi mówi, że formularz nie może teraz wysłać wiadomości, a tekst nadal jest na miejscu",
+    },
+  ]}
+  caption="Zrzut z lokalnego builda, w którym pod /api/contact/ nie ma funkcji: 404 to nie jej odpowiedź, więc formularz wraca do „nie może teraz wysłać” i zostawia wszystko, co wpisano."
+/>
+
+Słowami, w osobnej ramce, bez kasowania Twojego tekstu. Kryterium WCAG 3.3.1 Error Identification (poziom A) wymaga, żeby błąd był opisany użytkownikowi tekstem, więc każdy rodzaj porażki ma własne zdanie:
 
 | Rodzaj | Co mówi strona |
 | --- | --- |
 | `message-empty` | Najpierw napisz wiadomość. Wystarczy jedno zdanie. |
 | `reply-invalid` | Na to nie mogę odpowiedzieć. Podaj e-mail, numer telefonu albo link do profilu LinkedIn. |
-| `unavailable` | Formularz nie może teraz wysłać wiadomości. Skopiuj mój e-mail; Twój tekst nadal tu jest. |
+| `rate` | Za dużo wiadomości z tego połączenia. Odczekaj kilka minut albo skopiuj mój e-mail. |
 | `network` | Brak połączenia. Twój tekst nadal tu jest; spróbuj ponownie albo skopiuj mój e-mail. |
 
-Ta ramka to akapit z `role="alert"`, ukryty, dopóki coś nie pójdzie źle. MDN pisze, że ta rola jest dla treści pojawiającej się dynamicznie i trzeba jej używać oszczędnie. Pasuje: jeden alert, tylko po nieudanej wysyłce.
-
-Pole, w którym jest problem, dostaje `aria-invalid` i fokus. Nic nie znika, a przycisk „Skopiuj e-mail” pod formularzem zawsze jest wyjściem awaryjnym.
-
-Te zdania to teksty Lingui, przetłumaczone w czasie builda i przekazane skryptowi jako JSON w atrybucie `data-`. Jak to działa, pokazuję we [wpisie o tym, jak ta strona działa w trzech językach](/pl/blog/wielojezyczna-strona-astro-z-lingui/).
+Ramka to jeden akapit z `role="alert"`, ukryty, dopóki coś nie pójdzie źle. Pasuje to do rady MDN, by tej roli używać dla treści pojawiającej się dynamicznie. Pole, w którym jest problem, dostaje `aria-invalid` i fokus. Te zdania to teksty Lingui, przetłumaczone w czasie builda i przekazane skryptowi jako JSON w atrybucie `data-` ([jak ta strona działa w trzech językach](/pl/blog/wielojezyczna-strona-astro-z-lingui/)).
 
 ## Co się zepsuło 6 października 2026?
 
 Każda wiadomość wysłana przez formularz na produkcji kończyła się błędem HTTP 500. Log funkcji podawał nazwę błędu: `ERR_MODULE_NOT_FOUND`.
 
-Przyczyną była jedna linia. Plik `api/contact.ts` importował wspólne reguły jako `../src/lib/contact`, bez rozszerzenia. `package.json` aplikacji ustawia `"type": "module"`, co każe Node.js traktować jej JavaScript jako moduły ES, a loader modułów ES w Node jest surowy: przy imporcie ścieżki względnej albo bezwzględnej rozszerzenie pliku jest obowiązkowe. Funkcja się skompilowała, wdrożyła, a potem przy każdym żądaniu nie dawała się załadować.
+Przyczyną była jedna linia. Plik `api/contact.ts` importował wspólne reguły jako `../src/lib/contact`, bez rozszerzenia. `package.json` aplikacji ustawia `"type": "module"`, więc Node.js ładuje funkcję jako moduł ES. Ten loader jest surowy: przy imporcie ścieżki względnej albo bezwzględnej rozszerzenie pliku jest obowiązkowe. Funkcja się skompilowała i wdrożyła, a potem przy każdym żądaniu nie dawała się załadować.
 
-Lokalnie nic tego nie wyłapało. Vitest rozwiązuje importy tak jak Vite, a `resolve.extensions` w Vite to lista rozszerzeń, które Vite próbuje dla importów bez rozszerzenia, z `.ts` na liście domyślnej. Testy jednostkowe importowały ten sam plik i przechodziły. Odtworzyłem błąd, kompilując oba pliki do modułów ES i importując je w Node: bez rozszerzenia ten sam błąd, z rozszerzeniem czysty import.
+Lokalnie nic tego nie wyłapało. Vitest rozwiązuje importy tak jak Vite, a `resolve.extensions` w Vite próbuje `.ts` dla importów bez rozszerzenia, więc testy jednostkowe przechodziły. Odtworzyłem błąd, kompilując oba pliki do modułów ES i importując je w Node: bez rozszerzenia ten sam błąd, z rozszerzeniem czysty import.
 
-Poprawka to `../src/lib/contact.js`. Test czyta teraz źródło funkcji i sprawdza każdy import względny:
+Poprawka to `../src/lib/contact.js`, a test czyta teraz źródło funkcji:
 
 ```ts
 it("imports relative files with their .js extension", () => {
@@ -186,6 +246,13 @@ it("imports relative files with their .js extension", () => {
 });
 ```
 
-Ten sam incydent odsłonił drugi błąd. Gdy platforma odpowiadała własnym błędem, skrypt strony czytał treść odpowiedzi Vercela tak, jakby zawierała jeden z moich rodzajów błędów, nie znajdował dla niego zdania i pokazywał pusty komunikat. Teraz każda odpowiedź, która nie pochodzi od mojej funkcji, kończy się komunikatem „Formularz nie może teraz wysłać wiadomości”, z zachowanym tekstem i e-mailem jedno kliknięcie dalej.
+Ten sam incydent odsłonił drugi błąd. Gdy platforma odpowiadała własnym błędem, skrypt strony czytał treść odpowiedzi Vercela jak jeden z moich rodzajów błędów, nie znajdował dla niego zdania i pokazywał pusty komunikat. Teraz każda odpowiedź, która nie pochodzi od mojej funkcji, kończy się komunikatem „nie może teraz wysłać”, jak na zrzucie wyżej.
+
+## Ograniczenia
+
+- Limit żądań w funkcji działa w jednej instancji i zaczyna od zera w każdej nowej. Twardy limit wymaga reguły WAF na hostingu, poza tym repozytorium.
+- Turnstile chroni formularz tylko wtedy, gdy ustawione są oba jego klucze: klucz witryny ładuje widżet, a sekret sprawia, że funkcja go sprawdza. Bez nich jedynymi zabezpieczeniami są honeypot i limit żądań.
+- Jeśli w wiadomości pada inny długi numer, na przykład numer zamówienia, może on trafić do pola odpowiedzi. Pole da się poprawić, a notka mówi, co zostało znalezione.
+- Nic nie czeka w kolejce. Gdy EmailJS odmówi, formularz to mówi i podsuwa mój adres e-mail; wiadomość nie zostanie wysłana później.
 
 Jeśli chcesz to sprawdzić, w [formularzu kontaktowym](/pl/#contact) wystarczy jedno zdanie.

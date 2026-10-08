@@ -1,16 +1,17 @@
 ---
 title: "Efekty hover na telefonach: każdy ma odpowiednik dla palca, klawiatury lub przewijania"
 seoTitle: "Efekty hover na telefonach: dotyk i fokus"
-description: "Telefon nie ma kursora. Jak ta strona zamyka hover w (hover: hover) and (pointer: fine) i daje każdemu efektowi odpowiednik dla dotyku, fokusu i przewijania."
+description: "Telefon nie ma kursora. Jak ta strona zamyka hover w (hover: hover) and (pointer: fine) i daje każdemu efektowi odpowiednik dla dotyku i fokusu."
 translationKey: "hover-tap"
 published: 2026-10-06
+updated: 2026-10-08
 tags: [accessibility, design]
 cover: tap
 related: [reduced-motion, this-site, fitted-type]
 sources:
   - title: ":hover (MDN)"
     url: "https://developer.mozilla.org/en-US/docs/Web/CSS/:hover"
-    accessed: 2026-10-06
+    accessed: 2026-10-08
   - title: "hover media feature (MDN)"
     url: "https://developer.mozilla.org/en-US/docs/Web/CSS/@media/hover"
     accessed: 2026-10-06
@@ -43,36 +44,41 @@ sources:
     accessed: 2026-10-06
 ---
 
-Telefon nie ma kursora, więc efekt hover na telefonie może nie zadziałać wcale, zadziałać przez ułamek sekundy albo przykleić się po dotknięciu. Na tej stronie obowiązuje zasada: hover, który coś przesuwa, siedzi za `@media (hover: hover) and (pointer: fine)`, a każdy efekt ma odpowiednik dla całej reszty: stan wciśnięcia, styl fokusu, dotknięcie, które robi to samo, albo treść, która po prostu jest widoczna. Nic, czego potrzebujesz, nie chowa się za najechaniem kursorem.
+import Clips from "~/components/blog/case/Clips.astro";
+import Shots from "~/components/blog/case/Shots.astro";
+import tapRows from "~/assets/blog/hover-tap/tap-rows-pl.webp";
+import tapSpace from "~/assets/blog/hover-tap/tap-space-pl.webp";
+
+Telefon nie ma kursora, więc efekt hover może na nim nie zadziałać wcale, mignąć przez chwilę albo przykleić się po dotknięciu. Na tej stronie hover, który coś przesuwa, siedzi za `@media (hover: hover) and (pointer: fine)`. Każdy efekt ma też odpowiednik dla dotyku i klawiatury: wciśnięcie, styl fokusu, dotknięcie, które robi to samo, albo treść widoczną od początku.
 
 > **TL;DR**
 > - Ruch na hover zamykaj w `(hover: hover) and (pointer: fine)`. `:active` i `:focus-visible` trzymaj poza tym zapytaniem, żeby dotyk i klawiatura dostały własną reakcję.
 > - Hover może ozdabiać albo dawać podgląd. Nigdy nie jest jedyną drogą do etykiety, panelu czy wideo.
-> - Granice wyznacza WCAG: 1.4.13 dla treści, która pojawia się po najechaniu lub fokusie, 2.5.3 dla etykiet, które widać i da się wypowiedzieć, 2.5.8 dla celów, w które trafi kciuk.
+> - Granice wyznacza WCAG: 1.4.13 dla treści pokazywanej po najechaniu lub fokusie, 2.5.3 dla etykiet, które widać i da się wypowiedzieć, 2.5.8 dla celów, w które trafi kciuk.
 
 ## Skąd się wzięła ta zasada?
 
-Z mojego własnego przeglądu makiet tej strony: każdy efekt hover potrzebuje odpowiednika na ekranach dotykowych, bo telefony nie mają kursora. Dziś to linijka w pliku z lekcjami projektu i w tabeli „rób / nie rób” systemu projektowego. Resztę tamtego przeglądu opisałem w [studium przypadku tej strony](/pl/blog/case-study/).
+Z mojego przeglądu makiet tej strony 5 października: telefony nie mają kursora, więc każdy efekt hover potrzebuje odpowiednika. Dziś to linijka w pliku z lekcjami projektu i w tabeli „rób / nie rób” systemu projektowego. Resztę tamtego przeglądu opisałem w [studium przypadku tej strony](/pl/blog/case-study/).
 
-Odpowiednik to wszystko, co daje tę samą informację albo tę samą reakcję bez kursora zawieszonego nad elementem. Ta strona używa czterech rodzajów: wciśnięcia, stylu fokusu, dotknięcia, które robi to, co hover, i przewinięcia czegoś w pole widzenia.
+Odpowiednik daje tę samą informację albo reakcję bez kursora nad elementem. Ta strona używa czterech rodzajów: wciśnięcia, stylu fokusu, dotknięcia, które robi to, co hover, i przewinięcia czegoś w pole widzenia.
 
 ## Co telefon robi z :hover?
 
-MDN mówi to wprost: `:hover` na ekranach dotykowych sprawia problemy. Zależnie od przeglądarki może nie pasować nigdy, pasować tylko przez chwilę po dotknięciu albo pasować dalej, po oderwaniu palca, aż dotkniesz czegoś innego. Ten ostatni przypadek widać najbardziej: karta zostaje uniesiona, kiedy w nią stukniesz i do niej wrócisz.
+MDN mówi wprost, że `:hover` na ekranach dotykowych sprawia problemy. Zależnie od przeglądarki może nie pasować nigdy, pasować przez chwilę po dotknięciu albo pasować dalej, aż dotkniesz czegoś innego. Ten ostatni przypadek widać najbardziej: karta zostaje uniesiona, kiedy w nią stukniesz i do niej wrócisz.
 
-CSS ma cechy mediów, które pytają o sposób obsługi, zamiast zgadywać po szerokości ekranu:
+CSS potrafi zapytać o sposób obsługi, zamiast zgadywać po szerokości ekranu:
 
 | Cecha | O co pyta (według MDN) | Przykładowe wartości |
 | --- | --- | --- |
-| `hover` | Czy główne urządzenie wejścia wygodnie obsługuje najechanie? | `none`: wiele urządzeń mobilnych tylko udaje hover długim przytrzymaniem |
-| `pointer` | Czy jest urządzenie wskazujące i jak precyzyjne jest to główne? | `fine`: mysz; `coarse`: palec na ekranie dotykowym |
+| `hover` | Czy główne urządzenie wejścia wygodnie obsługuje najechanie? | `none`: wiele telefonów tylko udaje hover długim przytrzymaniem |
+| `pointer` | Czy jest urządzenie wskazujące i jak precyzyjne jest to główne? | `fine`: mysz; `coarse`: palec |
 | `any-hover`, `any-pointer` | To samo dla dowolnego dostępnego urządzenia | przydatne, gdy liczy się drugie urządzenie |
 
 Korzystam z wersji dla głównego urządzenia: przy dekoracji liczy się to, jak strona jest najpewniej używana w tej chwili.
 
 ## Jak hover jest odgrodzony na tej stronie?
 
-Przyciski pokazują cały wzorzec. Główny przycisk spoczywa na twardym cieniu 4 px. Pod myszą hover unosi go o 3 px, a cień rośnie do 7 px. Wciśnij go, myszą albo palcem, a zapadnie się w swój cień.
+Przyciski pokazują cały wzorzec. Główny przycisk spoczywa na twardym cieniu 4 px. Pod myszą unosi się, a cień rośnie do 7 px. Wciśnij go, myszą albo palcem, a zapadnie się w swój cień.
 
 ```css
 @media (hover: hover) and (pointer: fine) {
@@ -94,35 +100,51 @@ Przyciski pokazują cały wzorzec. Główny przycisk spoczywa na twardym cieniu 
 }
 ```
 
-Trzy stany, trzy grupy odbiorców: hover dla myszy, wciśnięcie dla każdego, obwódka 3 px dla klawiatury. Przy ograniczonym ruchu wszystkie te przejścia kończą się od razu, tak jak opisałem we [wpisie o ruchu i przycisku pauzy](/pl/blog/reduced-motion-i-przycisk-pauzy/).
+Trzy stany, trzy grupy odbiorców: uniesienie dla myszy, wciśnięcie dla każdego, obwódka dla klawiatury. Przy ograniczonym ruchu wszystkie kończą się od razu, o czym więcej we [wpisie o ruchu i przycisku pauzy](/pl/blog/reduced-motion-i-przycisk-pauzy/).
 
 ## Co liczy się jako odpowiednik?
 
-Oto efekty hover na stronie głównej i to, co je zastępuje:
+Efekty hover na stronie głównej i to, co je zastępuje:
 
 | Efekt hover | Gdzie | Odpowiednik |
 | --- | --- | --- |
-| Przycisk się unosi, cień rośnie | każdy przycisk | stan wciśnięcia przy dotknięciu; obwódka fokusu |
+| Przycisk się unosi, cień rośnie | każdy przycisk | wciśnięcie przy dotknięciu; obwódka fokusu |
 | Wiersz otwiera panel ze szczegółami | Kompetencje | otwiera go dotknięcie albo fokus; na telefonie akordeon |
 | Krok opowieści się podświetla | sekcja o AI | dotknięcie odtwarza ten krok; obwódka fokusu |
-| Przystanek na pierścieniu rośnie | Jak pracuję | dotknięcie pokazuje ten przystanek i trzyma go 9 s |
+| Przystanek na pierścieniu rośnie | Jak pracuję | dotknięcie pokazuje przystanek i trzyma go 9 s |
 | Karteczki z wpisami prostują się i unoszą | sekcja z wpisami | to samo uniesienie, gdy link karty ma fokus z klawiatury |
-| Flaga się przechyla, rysuje się podkreślenie | przełącznik języka | podkreślenie przy fokusie i przy bieżącym języku; nazwa jako tekst |
-| Kafelek „Skopiuj e-mail” odwraca kolory | kontakt | dotknięcie kopiuje adres, a komunikat statusu to potwierdza |
+| Flaga się przechyla, rysuje się podkreślenie | przełącznik języka | podkreślenie przy fokusie i przy bieżącym języku |
+| Kafelek „Skopiuj e-mail” odwraca kolory | kontakt | dotknięcie kopiuje adres, komunikat to potwierdza |
 
-Kafelek „Skopiuj e-mail” pokazuje też sam adres, bez żadnej interakcji, a jeśli przeglądarka odmówi dostępu do schowka, komunikat statusu wyświetli adres zamiast potwierdzenia.
+Kafelek „Skopiuj e-mail” pokazuje sam adres od początku, a jeśli przeglądarka odmówi dostępu do schowka, komunikat wyświetli adres zamiast potwierdzenia.
 
-Jeden odpowiednik w ogóle nie dotyczy stylów. Moje stare portfolio 3D nie ma nawigacji dotykiem, więc rozdział o nim podmienia główny przycisk przy `(pointer: coarse)`. Mysz dostaje „Uruchom na komputerze”, palec dostaje „Tylko na komputer · skopiuj link”, co kopiuje adres i podpowiada, żeby otworzyć go na komputerze. Ta sama intencja, uczciwie wobec urządzenia.
+Dwa odpowiedniki na telefonie:
+
+<Shots
+  phones
+  shots={[
+    { image: tapRows, alt: "Sekcja Kompetencje na telefonie: stuknięty wiersz z egzaminami zawodowymi otwarty jak akordeon, z rysunkiem arkuszy", tag: "Dotyk otwiera wiersz" },
+    { image: tapSpace, alt: "Rozdział o portfolio w kosmosie na telefonie: główny przycisk mówi „Tylko na komputer · skopiuj link”", tag: "Dotyk kopiuje link" },
+  ]}
+  caption="Chromium z emulacją dotyku (pointer: coarse, hover: none), 8 października 2026. Mysz dostaje zamiast tego listę z panelem obok i przycisk „Uruchom na komputerze”."
+/>
+
+Drugi w ogóle nie dotyczy stylów. Moje stare portfolio 3D nie ma nawigacji dotykiem, więc rozdział o nim podmienia główny przycisk przy `(pointer: coarse)`. Mysz dostaje „Uruchom na komputerze”. Palec dostaje „Tylko na komputer · skopiuj link”, co kopiuje adres i podpowiada, żeby otworzyć go na komputerze. Ta sama intencja, uczciwie wobec urządzenia.
+
+Przewijanie to czwarty odpowiednik. Wiele portfolio odtwarza podgląd projektu, kiedy kursor na nim spocznie. Tu wideo projektu gra, gdy jest widoczne co najmniej w połowie (po Twojej pierwszej interakcji ze stroną), staje poza ekranem, a dotknięcie kadru je wstrzymuje. Podgląd dostajesz, przewijając, a to i tak robisz na telefonie.
 
 Jeden hover celowo nie ma odpowiednika. W pasku z narzędziami nazwa narzędzia robi się różowa pod myszą. Nazwy są widoczne zawsze, a pasek nie jest kontrolką, więc na telefonie nic nie ginie.
 
-## Gdzie w tym wszystkim przewijanie?
-
-Przewijanie to czwarty odpowiednik. Wiele portfolio odtwarza podgląd projektu, kiedy kursor na nim spocznie. Tutaj wideo projektu gra, gdy jest widoczne co najmniej w połowie (po Twojej pierwszej interakcji ze stroną), zatrzymuje się poza ekranem, a dotknięcie kadru je wstrzymuje albo wznawia. Podgląd dostajesz, robiąc to, co i tak robisz na telefonie: przewijając.
-
 ## Jak jeden wiersz otwiera się na hover, fokus i dotknięcie?
 
-Najwięcej dzieje się w sekcji Kompetencje. Na szerokim ekranie to lista po lewej i szczegóły otwartego wiersza po prawej, przy czym jeden wiersz jest zawsze otwarty. Na telefonie robi się z tego akordeon. Każdy wiersz to prawdziwy `<button>` z `aria-expanded`, a bez JavaScriptu wszystkie wiersze są po prostu otwarte, jeden pod drugim.
+Najwięcej dzieje się w Kompetencjach. Powyżej 900 px to lista ze szczegółami otwartego wiersza obok, przy czym jeden wiersz jest zawsze otwarty. Poniżej robi się z tego akordeon. Każdy wiersz to prawdziwy `<button>` z `aria-expanded`, a bez JavaScriptu wszystkie wiersze są po prostu otwarte.
+
+<Clips
+  clips={[{ src: "rows-pl", dir: "/media/blog/hover-tap/", label: "Lista Kompetencji na stronie głównej: gdy mysz przesuwa się w dół, każdy wiersz otwiera w panelu własny rysunek", name: "Hover" }]}
+  caption="Mysz przesuwa się w dół listy w oknie szerokim na 1200 px (kursora nie widać w nagraniu). Każdy wiersz otwiera się, gdy mysz nad nim przejeżdża, i nic się nie zamyka, gdy z niego zjedzie."
+/>
+
+Skrypt, przycięty do tego, co ważne:
 
 ```ts
 const wide = matchMedia("(min-width: 56.3125rem)");
@@ -136,7 +158,7 @@ for (const card of cards) {
 }
 ```
 
-Dotknięcia obsługuje `click` i to jedyna ścieżka, która działa wszędzie. Na szerokim ekranie fokus otwiera wiersz, więc przechodzenie Tabem po liście przypomina przesuwanie po niej kursorem. Nasłuch `pointerenter` sprawdza w JavaScripcie to samo zapytanie i ten warunek ma znaczenie: MDN zaznacza, że `pointerenter` odpala się także w wyniku `pointerdown` z urządzenia, które nie obsługuje najechania. Na ekranie dotykowym taki „hover” to tak naprawdę początek stuknięcia. Warunek zostawia hover myszy.
+Dotknięcia obsługuje `click` i to jedyna ścieżka, która działa wszędzie. Na szerokim ekranie fokus otwiera wiersz, więc przechodzenie Tabem po liście przypomina przesuwanie po niej kursorem. Warunek przy `pointerenter` ma znaczenie: MDN zaznacza, że to zdarzenie odpala się także po `pointerdown` z urządzenia, które nie obsługuje najechania. Na ekranie dotykowym taki „hover” to tak naprawdę początek stuknięcia.
 
 ## Gdzie jest miejsce na fokus z klawiatury?
 
@@ -151,9 +173,9 @@ W linkach łączę hover i fokus w jednym selektorze, żeby nie mogły się rozj
 }
 ```
 
-Linki w menu poszerzają się na osi szerokości fontu, tej samej, której strona używa w [dopasowanych nagłówkach](/pl/blog/dopasowanie-tekstu-do-szerokosci/).
+Linki w menu poszerzają się na osi szerokości fontu, tej samej, która stoi za [dopasowanymi nagłówkami](/pl/blog/dopasowanie-tekstu-do-szerokosci/) strony.
 
-Karty wymagają jeszcze jednego kroku. Link w tytule karteczki rozciąga się na całą kartę, więc fokus trafia na mały element w środku dużego. `:has()` pasuje do elementu, gdy selektor pasuje do czegoś w jego wnętrzu, więc karta może zareagować na własny link:
+Karty wymagają jeszcze jednego kroku. Link w tytule karteczki rozciąga się na całą kartę, więc fokus trafia na mały element w środku dużego. `:has()` pozwala karcie zareagować na własny link:
 
 ```css
 .card.compact:has(.title a:focus-visible) {
@@ -164,24 +186,24 @@ Karty wymagają jeszcze jednego kroku. Link w tytule karteczki rozciąga się na
 
 ## Które kryteria WCAG tu obowiązują?
 
-**1.4.13 Content on Hover or Focus** (poziom AA) dotyczy dodatkowej treści, która pojawia się po najechaniu albo fokusie. Musi dać się ją zamknąć bez ruszania kursora czy fokusu (chyba że niczego nie zasłania), musi dać się na nią najechać, nie znikając, i musi zostać na ekranie, dopóki jej nie opuścisz, nie zamkniesz albo nie przestanie być aktualna. Tutaj dotyczy to panelu w sekcji Kompetencje. Panel nie zamyka się, gdy kursor go opuści, zostaje, dopóki nie wybierzesz innego wiersza, i stoi we własnej kolumnie, więc lista pozostaje czytelna. Czy podmiana jednego panelu na drugi to „zastąpienie treści”, jest kwestią interpretacji; traktuję wiersze jak zakładki.
+**1.4.13 Content on Hover or Focus** (poziom AA) dotyczy dodatkowej treści, która pojawia się po najechaniu albo fokusie. Musi dać się ją zamknąć, najechać na nią bez jej znikania i musi zostać, dopóki jej nie opuścisz albo nie zamkniesz. Tutaj dotyczy to panelu Kompetencji. Panel nie zamyka się, gdy kursor go opuści, i stoi we własnej kolumnie, więc lista pozostaje czytelna. Czy podmiana panelu to „zastąpienie treści”, jest kwestią interpretacji; traktuję wiersze jak zakładki.
 
-Kryterium wyłącza dymki, które rysuje sama przeglądarka z atrybutu `title`. To nie znaczy, że są dobrym pomysłem: MDN nazywa `title` wysoce problematycznym dla osób na urządzeniach tylko dotykowych, osób korzystających z klawiatury i użytkowników czytników ekranu. Flagi w przełączniku języka mają `title`, ale nikt od niego nie zależy. Każdy link z flagą niesie nazwę języka jako tekst dla czytnika ekranu, a menu pokazuje nazwy obok flag.
+Kryterium wyłącza dymki, które przeglądarka rysuje z atrybutu `title`. To nie znaczy, że są dobrym pomysłem: MDN nazywa `title` wysoce problematycznym dla osób z samym ekranem dotykowym, z klawiaturą i z czytnikiem ekranu. Flagi w przełączniku języka mają `title`, ale nic od niego nie zależy. Każdy link z flagą niesie nazwę języka jako tekst dla czytnika ekranu, a menu pokazuje nazwy obok flag.
 
-**2.5.3 Label in Name** (poziom A) wymaga, żeby dostępna nazwa kontrolki zawierała widoczny tekst, a dokument „Understanding” uznaje umieszczenie go na początku za dobrą praktykę. Chodzi o sterowanie głosem: ludzie wypowiadają etykietę, którą widzą. Etykieta pokazywana tylko na hover to etykieta, której osoba z telefonem nigdy nie zobaczy, więc każda etykieta jest tu widoczna od początku. Przycisk CV mówi „CV”, a dalej, tylko dla czytników ekranu, „(PDF, potem strona CV)”. Kafelek kontaktu zaczyna się od „Skopiuj e-mail”.
+**2.5.3 Label in Name** (poziom A) wymaga, żeby dostępna nazwa kontrolki zawierała widoczny tekst, najlepiej na początku. Chodzi o sterowanie głosem: ludzie wypowiadają etykietę, którą widzą. Etykiety pokazywanej tylko na hover osoba z telefonem nigdy nie zobaczy, więc każda etykieta jest tu widoczna od razu. Przycisk CV mówi „CV”, a dalej, tylko dla czytników ekranu, „(PDF, potem strona CV)”.
 
 **2.5.8 Target Size (Minimum)** (poziom AA) wymaga 24 na 24 piksele CSS albo wystarczających odstępów. Celuję wyżej: przyciski mają 46 px wysokości (40 px w przyklejonym nagłówku), a linki z flagami 44 px.
 
 ## Jak to sprawdzam?
 
-Głównie czytając kod. Szukam w źródłach `:hover` i sortuję wyniki. Uniesienia, cienie i wszystko, co się rusza, powinno siedzieć w zapytaniu. Zwykłe style linków (podkreślenie, kolor) mogą zostać poza nim: jeśli taki styl się przyklei po dotknięciu, dostajesz kolorowy link, a nie rozjechany układ.
+Głównie czytając kod. Szukam w źródłach `:hover` i sortuję wyniki. Uniesienia, cienie i wszystko, co się rusza, powinno siedzieć w zapytaniu. Zwykłe style linków (podkreślenie, kolor) mogą zostać poza nim: jeśli taki styl się przyklei, dostajesz kolorowy link, a nie rozjechany układ.
 
-Przy pisaniu tego wpisu sortowanie wyłapało cztery drobne ruchy, które nie były odgrodzone: bilety „Wypuściłem też” pod rozdziałami projektów, przechylenie flagi oraz dymki i żetony jednej z zabawek na stronie „Moje życie”. Wszystkie miały styl fokusu, więc osoby z klawiaturą dostawały tę samą reakcję, ale na telefonie bilet mógł zostać uniesiony po dotknięciu, czyli dokładnie to przyklejenie, które opisuje MDN. Tego samego dnia każdy trafił za `(hover: hover)`, a styl fokusu został dla wszystkich.
+Sortowanie 6 października, przy pisaniu pierwszej wersji tego wpisu, wyłapało cztery drobne ruchy bez tej bramki. Były to bilety „Wypuściłem też” pod rozdziałami projektów, przechylenie flagi i dwa elementy strony „Moje życie”. Wszystkie miały styl fokusu, ale na telefonie bilet mógł zostać uniesiony po dotknięciu. Tego samego dnia każdy z tych ruchów trafił za `(hover: hover)`, a styl fokusu został dla wszystkich.
 
 ## Ograniczenia
 
-- Żaden automatyczny test nie sprawdza hovera. Testy end-to-end działają na profilu przeglądarki desktopowej, więc odpowiedniki sprawdzam, czytając kod i ręcznie, a nie w przebiegu z emulacją dotyku.
-- Stanu wciśnięcia nie sprawdziłem na prawdziwym iPhonie. Moje testy na różnych silnikach używają WebKita na Windowsie.
+- Żaden automatyczny test nie sprawdza hovera. Testy end-to-end działają na profilu desktopowego Chrome'a, więc odpowiedniki sprawdzam, czytając kod i ręcznie.
+- Zdjęcia z telefonu pochodzą z emulacji dotyku w Chromium, a stanu wciśnięcia nie sprawdziłem na prawdziwym iPhonie (testy WebKita puszczam na Windowsie).
 - Ocena panelu Kompetencji względem 1.4.13 to moja lektura kryterium, a nie audyt.
 
-Jeśli czytasz to na telefonie, przyciski na [stronie z moimi projektami](/pl/work/) powinny reagować na Twój kciuk, a nie czekać na kursor.
+Jeśli czytasz to na telefonie, najszybszy test to [sekcja Kompetencje na stronie głównej](/pl/#credentials): stuknij wiersz, a otworzy się pod Twoim kciukiem, bez kursora.

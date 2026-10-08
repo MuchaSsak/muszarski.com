@@ -6,7 +6,7 @@ Date: 2026-10-05
 
 1. **Mobile is the first impression, even in desktop-heavy Poland.** Worldwide web traffic is 59 % mobile; Poland is 56 % desktop / 43 % mobile (StatCounter, Sep 2026) [data]. LinkedIn is used mostly via its app, so links open in phone WebViews. No primary data on recruiter devices exists — design so the phone version can win the job on its own.
 2. **Nobody in the genre disables mobile any more** — all 10 famous immersive portfolios measured render on a 390-px viewport (only one still warns "best viewed on desktop") [measured]. The old site's "3D off on mobile" is below the bar.
-3. **Immersive portfolios are slow in practice, not in principle**: LH mobile median **35.5 vs 74.5** for minimal ones; **~11.4 MB vs ~0.87 MB** transferred; good lab LCP on **1 of 16** sites; perf ≥ 90 on **1 of 16**, and **no** immersive site above 64 [measured, LH 13.5, median of 3]. Scoring 90+ *with* 3D is a real differentiator.
+3. **Immersive portfolios are slow in practice, not in principle**: LH mobile median **35.5 vs 74.5** for minimal ones; **~11.4 MiB vs ~0.85 MiB** transferred (11.9 vs 0.89 MB; the raw medians are 11,637 vs 869 KiB, unit fixed 2026-10-08); good lab LCP on **1 of 16** sites; perf ≥ 90 on **1 of 16**, and **no** immersive site above 64 [measured, LH 13.5, median of 3]. Scoring 90+ *with* 3D is a real differentiator.
 4. **Architecture = SSR HTML first, 3D as a lazy, optional layer.** The only fast immersive site (Jesper Landberg, LCP 1.1 s) puts its bio text in HTML; the slowest make a loader or the canvas the LCP. `<canvas>` is never an LCP candidate [expert, web.dev] — all real content must be DOM text/AVIF.
 5. **Budget** (§7): LCP ≤ 2.5 s lab mobile, TBT ≤ 200 ms, CLS ≤ 0.05, initial JS ≤ 150 KB gz, fonts ≤ 100 KB, initial page ≤ 1 MB; 3D chunk lazy ≤ 200–250 KB gz + assets ≤ 1 MB (mid) / 2 MB (high). A React-Three-Fiber + drei stack alone is **310–400 KB gz** before any model; tree-shaken three is 131 KB; OGL 14 KB [measured, esbuild].
 6. **Stay on WebGL 2 (`WebGLRenderer`), not WebGPU.** three.js's own manual still calls `WebGPURenderer` "experimental"; a minimal WebGPU bundle is 240 vs 131 KB gz; WebGPU is missing on Firefox Android/Linux and ~12 % of iPhones (pre-iOS 26) while WebGL 2 is at 96 % [expert + data + measured].
@@ -193,7 +193,7 @@ Take-aways:
 | joshwcomeau.com | Crafted (micro-interactions) | **65** (62–66) | 4.9 | 562 | 0 | 681 | 283 | 93 | 98 | article text |
 | brittanychiang.com | Minimal | **65** (58–67) | 11.2 | 187 | 0 | 1,515 | 307 | **1,159** (9 files) | 96 | intro text; GTM 157 KB |
 
-Group medians: **immersive perf 35.5 vs minimal 74.5**; total transfer **~11.4 MB vs ~0.87 MB** (13×); JS **~734 KB vs ~259 KB**. Good lab LCP (≤ 2.5 s): **1 of 16** (Jesper Landberg — the only immersive site whose LCP is server-rendered text). Perf ≥ 90: **1 of 16** (leerob.com).
+Group medians: **immersive perf 35.5 vs minimal 74.5**; total transfer **11,637 vs 869 KiB** (≈ 11.9 vs 0.89 MB, 13×); JS **~734 vs ~259 KiB** (≈ 750 vs 265 KB; units fixed 2026-10-08: these were KiB labelled MB/KB). Good lab LCP (≤ 2.5 s): **1 of 16** (Jesper Landberg — the only immersive site whose LCP is server-rendered text). Perf ≥ 90: **1 of 16** (leerob.com).
 
 Desktop (`--preset=desktop`, 1 run; Bruno/Brittany = 2nd run at lower contention):
 
@@ -305,7 +305,7 @@ Targets assume a mid-range Android (Lighthouse "Moto G Power" mobile profile: 15
 | **Fonts** | ≤ **100 KB** total WOFF2, ≤ 2 families | Almanac median mobile = 122 KB [S9]; > 1 MB font payloads correlated with the worst LCPs among "minimal" sites [measured] |
 | **Initial page weight (no interaction, mobile)** | ≤ **1 MB** | Almanac median mobile home = 2,559 KB; pages < 2 MB pass LCP far more often [S9] |
 | **3D JS chunk (lazy, gzip)** | ≤ **200 KB** plain three (131–190 KB measured) · ≤ **250 KB** if R3F+drei on top of an existing React app (R3F stack adds ~243–335 KB over React) | §3.4 [measured] |
-| **3D assets (lazy)** | High ≤ **2 MB** · Mid ≤ **1 MB** · Low **0** | Total mobile transfer: Lusion ~10 MB, Igloo ~17 MB, Bruno ~7.5 MB, immersive median ~11.4 MB [measured] — that's the anti-target |
+| **3D assets (lazy)** | High ≤ **2 MB** · Mid ≤ **1 MB** · Low **0** | Total mobile transfer: Lusion ~10 MB, Igloo ~17 MB, Bruno ~7.5 MB, immersive median ~11.9 MB (11,637 KiB) [measured] — that's the anti-target |
 | **GPU memory (mobile)** | ≤ ~150 MB est. (render targets + textures) | iOS canvas caps 224–384 MB reported [S29]; KTX2 reduces VRAM |
 | **Frame time** | ≤ 16.7 ms (60 Hz) on Mid tier; stay ≥ 30 fps in Low Power Mode | [S33] |
 | **Draw calls** | ≤ ~100 mobile, few hundred desktop | R3F guidance: keep under 1000, ideally a few hundred [S45] |

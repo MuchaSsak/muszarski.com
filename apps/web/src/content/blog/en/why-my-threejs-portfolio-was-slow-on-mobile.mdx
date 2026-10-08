@@ -4,64 +4,76 @@ seoTitle: "Why my three.js portfolio was slow on mobile"
 description: "My old three.js portfolio scored 34 on mobile Lighthouse. What made it slow, and a checklist for a 3D site that stays fast on phones."
 translationKey: "threejs-mobile"
 published: 2026-10-06
+updated: 2026-10-08
 tags: [performance, react, accessibility]
 cover: planet
 related: [portfolio-lighthouse, this-site, reduced-motion]
 sources:
   - title: "Largest Contentful Paint (LCP), web.dev"
     url: "https://web.dev/articles/lcp"
-    accessed: 2026-10-06
+    accessed: 2026-10-08
   - title: "Responsive Design (three.js manual)"
     url: "https://threejs.org/manual/#en/responsive"
-    accessed: 2026-10-06
+    accessed: 2026-10-08
   - title: "Rendering on Demand (three.js manual)"
     url: "https://threejs.org/manual/#en/rendering-on-demand"
-    accessed: 2026-10-06
-  - title: "WebGLRenderer (three.js docs)"
-    url: "https://threejs.org/docs/pages/WebGLRenderer.html"
-    accessed: 2026-10-06
+    accessed: 2026-10-08
   - title: "Scaling performance (React Three Fiber docs)"
     url: "https://r3f.docs.pmnd.rs/advanced/scaling-performance"
     accessed: 2026-10-06
   - title: "Canvas (React Three Fiber docs)"
     url: "https://r3f.docs.pmnd.rs/api/canvas"
-    accessed: 2026-10-06
+    accessed: 2026-10-08
   - title: "import() (MDN)"
     url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/import"
-    accessed: 2026-10-06
+    accessed: 2026-10-08
   - title: "Window: requestIdleCallback() method (MDN)"
     url: "https://developer.mozilla.org/en-US/docs/Web/API/Window/requestIdleCallback"
-    accessed: 2026-10-06
+    accessed: 2026-10-08
   - title: "requestIdleCallback (Can I use)"
     url: "https://caniuse.com/requestidlecallback"
-    accessed: 2026-10-06
+    accessed: 2026-10-08
   - title: "Window: requestAnimationFrame() method (MDN)"
     url: "https://developer.mozilla.org/en-US/docs/Web/API/Window/requestAnimationFrame"
-    accessed: 2026-10-06
+    accessed: 2026-10-08
   - title: "prefers-reduced-motion (MDN)"
     url: "https://developer.mozilla.org/en-US/docs/Web/CSS/@media/prefers-reduced-motion"
-    accessed: 2026-10-06
+    accessed: 2026-10-08
+  - title: "Understanding Success Criterion 2.2.2: Pause, Stop, Hide (W3C)"
+    url: "https://www.w3.org/WAI/WCAG22/Understanding/pause-stop-hide.html"
+    accessed: 2026-10-08
   - title: "touch-action (MDN)"
     url: "https://developer.mozilla.org/en-US/docs/Web/CSS/touch-action"
-    accessed: 2026-10-06
+    accessed: 2026-10-08
   - title: "Lighthouse accessibility scoring (Chrome for Developers)"
     url: "https://developer.chrome.com/docs/lighthouse/accessibility/scoring"
     accessed: 2026-10-06
+  - title: "Solar System Scope, planet textures (CC BY 4.0), used in the old space portfolio"
+    url: "https://www.solarsystemscope.com/textures/"
+    accessed: 2026-10-08
 ---
 
-My old three.js portfolio was slow on mobile because it asked a phone to download 13.8 MB and boot a whole 3D app up front, with no text in the HTML to show in the meantime. Mobile Lighthouse scored it 34, with the largest contentful paint at 46.9 s. The fix isn't "less 3D": it's text first, 3D loaded later and on a budget, and input that works without a mouse wheel.
+import Clips from "~/components/blog/case/Clips.astro";
+import Flow from "~/components/blog/case/Flow.astro";
+
+My old three.js portfolio was slow on mobile because it made a phone download 13.8 MB and boot a whole 3D app before it showed any text. Mobile Lighthouse scored it 34, with the largest contentful paint (LCP) at 46.9 s. The fix isn't less 3D. It's text first, 3D later and on a budget, and controls that work without a mouse wheel.
 
 > **TL;DR**
 >
-> - **What went wrong:** 13.8 MB before the start button (7.6 MB of it an emoji font), no text in the HTML, everything waiting on the 3D app, and navigation by mouse wheel only.
-> - **What a 3D site needs on phones:** real text in the HTML first, the 3D chunk loaded on idle or interaction, a byte budget, a capped pixel ratio, frames only when something changes, reduced motion honoured, zoom never locked.
-> - **What I do now:** no WebGL in the hero of this site. The old flight is a lazy video, and the one shader on the site waits until the page is idle.
+> - **What went wrong:** most of the first download was an emoji font and a 3D model, the HTML had no text, and only a mouse wheel could move the journey.
+> - **What a 3D site needs on phones:** text in the HTML first, the 3D loaded on demand, a byte budget, fewer pixels and frames, reduced motion honoured, zoom never locked.
+> - **What I do now:** no WebGL in the hero. The old flight is a lazy video, and the shaders on this site wait for the reader's first move.
 
 ## What was the old site?
 
-A portfolio you fly through: a 12-stop, scroll-driven WebGL camera journey from Earth to Neptune, where each planet holds one section (about, experience, CV, certificates, projects, contact). I built it alone in 2025 with three.js 0.177, React Three Fiber 9, drei, postprocessing for a lens flare, GSAP and Vite 6. It has 13 GLSL shader programs written by hand, built on the approach taught in Bruno Simon's Three.js Journey course.
+A portfolio you fly through: 12 camera stops from Earth to Neptune, driven by scrolling, with one section on each planet. I built it alone in 2025 with three.js 0.177, React Three Fiber 9, drei, postprocessing, GSAP and Vite 6. It has 13 GLSL shader programs written by hand, on the approach from Bruno Simon's Three.js Journey course.
 
-It was my favourite thing to show. Then I measured it, on 5 October 2026.
+<Clips
+  clips={[{ src: "flight", dir: "/media/space/", width: 960, height: 540, label: "The old space portfolio: the camera flies past Mars to Jupiter", name: "The old site" }]}
+  caption="The old portfolio in motion, recorded on a desktop. On a phone it never got this far. Planet textures: Solar System Scope, CC BY 4.0."
+/>
+
+It was my favourite thing to show. Then, on 5 October 2026, I measured it.
 
 ## How slow was it, in numbers?
 
@@ -72,26 +84,26 @@ It was my favourite thing to show. Then I measured it, on 5 October 2026.
 | Largest contentful paint | 1.2 s | 46.9 s |
 | Total blocking time | 1,240 ms | 930 ms |
 
-The mobile run emulates a mid-range phone on a 1.6 Mbps connection with the CPU slowed down 4×. Before the start button, the browser had downloaded 13.8 MB. The rest doesn't show up in a score:
+The mobile run emulates a mid-range phone on a 1.6 Mbps connection with a 4× slower CPU; each profile ran once. The worst part doesn't show up in a score:
 
-- Phones, and any window 900 px wide or less, got a full-screen "Oops" message saying the device was incompatible. The same 13.8 MB downloaded behind it.
-- After dismissing it and tapping start, a touch swipe did nothing. The journey listened only to the `wheel` event, so a phone could never leave the first stop.
-- There was no keyboard path at all.
-- A script scrolling as fast as the camera allowed took about 85 s to get from the start button to the contact form.
+- **Phones got an “Oops!” screen.** Any window 900 px wide or less was told the device was incompatible, while the same 13.8 MB downloaded behind it.
+- **Touch did nothing.** The journey listened only to the `wheel` event, so a phone could never leave the first stop.
+- **There was no keyboard path** at all.
+- **About 85 seconds** from the start button to the contact form, for a script scrolling as fast as the camera allowed.
 
 ## Why was it slow?
 
 ### Nothing in the HTML to paint
 
-The raw HTML had no indexable body text. The sections lived in drei `<Html>` overlays inside the 3D scene, so they existed only once the app was running. web.dev's list of elements that can be the LCP (images, video, CSS background images, block-level text) has no `<canvas>`. With no text in the HTML, every paint waited for JavaScript: the largest came at 1.2 s on my desktop and at 46.9 s on a throttled phone.
+The raw HTML had no indexable text. Every section lived in a drei `<Html>` overlay inside the 3D scene, so it existed only once the app ran. On web.dev, the list of elements that can be the LCP (images, video, CSS background images, block-level text) has no `<canvas>`. So the first paint waited for the whole app to boot.
 
 ### Bytes nobody needed first
 
-The two biggest files arrived before anyone pressed start: a colour emoji font, 7.6 MB compressed, and an asteroid model, 4.5 MB. An Earth texture added 1.65 MB. The emoji font alone was more than half of the first download. At 1.6 Mbps, 13.8 MB is about 69 seconds of transfer on paper (13.8 × 8 / 1.6), before anything is parsed.
+Two files made up most of the first download, before anyone pressed start: a colour emoji font (7.6 MB compressed) and an asteroid model (4.5 MB). Neither is needed to show a name and a role.
 
 ### A whole 3D app on the main thread
 
-The first load carried the full stack: three.js, React Three Fiber, drei, postprocessing and GSAP, about 0.7 MB of JavaScript over the wire. Downloading it was not the expensive part. Running it was: on the mobile run, Lighthouse counted 40.5 s of JavaScript boot-up and 43.1 s of main-thread work under the 4× CPU slowdown.
+The first load booted the whole 3D stack: three.js, React Three Fiber, drei, postprocessing and GSAP. Downloading it wasn't the expensive part; running it was. Under the 4× CPU slowdown, Lighthouse counted 40.5 s of JavaScript boot-up and 43.1 s of main-thread work.
 
 ### A gate, then a slow tour
 
@@ -99,17 +111,17 @@ A start button, a door animation, then camera moves of 1-8 s each, with input ig
 
 ## What does a 3D site need to stay fast on phones?
 
-This is the checklist I'd hand my 2025 self. These are not solved problems: in [Lighthouse on 16 developer portfolios](/en/blog/lighthouse-scores-of-16-developer-portfolios/), the immersive median was 35.5.
+This is the checklist I'd hand my 2025 self. The genre hasn't solved it: in [my Lighthouse study of 16 developer portfolios](/en/blog/lighthouse-scores-of-16-developer-portfolios/), the 3D ones had a median score of 35.5.
 
 ### 1. Text first
 
-Render every real fact (name, role, projects, contact) as HTML on the server. Make the LCP element text or a poster image, never a loader label. The 3D is a layer on top of the content, not its container.
+Render every real fact (name, role, projects, contact) as HTML on the server. Make the LCP element text or a poster image, never a loader label. The 3D is a layer over the content, not its container.
 
-### 2. Load the 3D later, or not at all
+### 2. Load the 3D on demand, or not at all
 
-Load the 3D chunk with a dynamic `import()`. MDN puts it plainly: dynamic imports "are only evaluated when needed". Start it on the first interaction, when the canvas scrolls into view, or when the browser is idle. `requestIdleCallback` isn't Baseline (caniuse shows it disabled by default in current Safari), and MDN recommends a `timeout` for work that must run, so pair it with a `setTimeout` fallback.
+Load the 3D chunk with a dynamic `import()` (MDN: dynamic imports "are only evaluated when needed"), on the first interaction or when the canvas nears the viewport. Idle time is a weaker trigger. `requestIdleCallback` isn't Baseline (Safari ships it disabled), should get a `timeout` for work that must run, and isn't free, as my own shader showed (below).
 
-Better still, skip the download when it won't be used: under reduced motion, or without WebGL, show the poster and stop there.
+Under reduced motion or without WebGL, skip the download: show the poster and stop there.
 
 ### 3. Set a budget before the first commit
 
@@ -121,13 +133,13 @@ Better still, skip the download when it won't be used: under reduced motion, or 
 | 3D chunk, lazy (gzip) | 200 KB or less with plain three.js |
 | 3D assets, lazy, on phones | 1 MB or less |
 
-For scale, in a bundle test on 5 October 2026 (esbuild, minified, gzip): a tree-shaken minimal three.js scene was about 131 KB; React, React Three Fiber and a minimal scene about 310 KB; a few drei helpers on top, about 400 KB. All before any model or texture. That's not a reason to avoid R3F, just to keep it off the critical path.
+For scale, from a bundle test on 5 October 2026 (esbuild, minified, gzip): a tree-shaken three.js scene is about 131 KB. With React and React Three Fiber it's about 310 KB, and a few drei helpers make it about 400 KB, before any model or texture. So keep R3F off the critical path.
 
 ### 4. Draw fewer pixels, fewer times
 
-The three.js manual on high-density screens: the top phones have 9 device pixels for every pixel of a standard display, so "they have to do 9x the rendering". React Three Fiber's default `dpr` is `[1, 2]`. On phones, cap it lower: at 1.5 the GPU fills a quarter of the pixels it would at 3.
+The three.js manual on high-density screens: top phones have 9 device pixels for each pixel of a standard display, so "they have to do 9x the rendering". React Three Fiber's default `dpr` is `[1, 2]`; on phones, cap it lower. At 1.5, the GPU fills a quarter of the pixels it would at 3.
 
-Then draw only when something changes. The three.js manual again: "rendering continuously is a waste of the devices power and if the user is on portable device it wastes the user's battery." In R3F that's one prop:
+Then draw only when something changes. The manual again: "rendering continuously is a waste of the devices power and if the user is on portable device it wastes the user's battery." In R3F that's one prop:
 
 ```tsx
 import { Canvas } from "@react-three/fiber";
@@ -143,36 +155,57 @@ export function Scene() {
 }
 ```
 
-For a scene that has to animate, stop the loop when the canvas leaves the screen. MDN notes that `requestAnimationFrame` is paused in most browsers in background tabs and hidden iframes. A canvas scrolled out of view in the visible tab is neither, so an IntersectionObserver has to stop it.
+If the scene must animate, stop the loop offscreen. Browsers pause `requestAnimationFrame` in background tabs and hidden iframes (MDN), not for a canvas scrolled out of view. That's an IntersectionObserver's job.
 
 ### 5. Honour reduced motion
 
-MDN describes `prefers-reduced-motion` as detecting a device setting "to minimize the amount of non-essential motion". A camera flight between planets is exactly that. Give those visitors a still frame or the poster, and give everyone a pause button for anything that moves for more than five seconds. How this site does both is in [the reduced-motion post](/en/blog/reduced-motion-and-a-pause-button/).
+MDN describes `prefers-reduced-motion` as a setting "to minimize the amount of non-essential motion". A camera flight between planets is exactly that. Give those visitors a still frame or the poster. And give everyone a pause button for anything that moves on its own for more than five seconds ([WCAG 2.2.2](https://www.w3.org/WAI/WCAG22/Understanding/pause-stop-hide.html)). How this site does both is in [the post on reduced motion and a pause button](/en/blog/reduced-motion-and-a-pause-button/).
 
 ### 6. Never lock zoom; support touch and keys
 
-Keep `user-scalable=no` and a low `maximum-scale` out of the viewport tag; Lighthouse has an accessibility audit for exactly this. If the canvas needs drag gestures, set `touch-action` on the canvas, not the page (MDN warns it can still block zoom over that area).
+Keep `user-scalable=no` and a low `maximum-scale` out of the viewport tag; Lighthouse has an accessibility audit for exactly that. If the canvas needs drag gestures, set `touch-action` on the canvas, not the page. MDN warns that `touch-action: none` can still block zoom over that area.
 
 Every way through the scene needs a touch path and a keyboard path: swipes, arrow keys, buttons or plain links. Mine had a wheel listener and nothing else.
 
 ## What do I do now?
 
-This site has no WebGL in the hero. The H1 is my name, real text, final in the first paint. The old flight appears on the home page as a short video: a poster image, `preload="none"`, and sources attached only after the first interaction, when the reel comes near. It plays while half visible and pauses offscreen; under reduced motion the poster stays. The real site opens in a new tab, on desktop.
+This site has no WebGL in the hero. The H1 is my name in real text, final in the first paint. The old flight is now the video above, on [the home page](/en/#space): a poster and `preload="none"`, with sources attached after the reader's first interaction. It plays only while half visible; under reduced motion the poster stays.
 
-The one live shader here, the colour goo behind the title of the "My life" page, follows the same rules:
+Four small shaders run on other pages now, written without a library. The simplest is the goo behind the My life title:
+
+<Clips
+  clips={[{ src: "goo", label: "The My life head: a colourful goo behind the title swells when poked", name: "Goo" }]}
+  caption="The goo behind the My life title, recorded on this site: blobs of the brand colours that follow the pointer and swell on a tap."
+/>
+
+My first version followed my own checklist and started the goo when the page went idle. Lighthouse disagreed: compiling the shader during load cost 150-350 ms of blocking time, and My life fell to 83-91 on mobile. Now the goo waits for the reader:
 
 ```ts
-// Text first: the goo starts after the reader's first move,
-// or once the page has been idle a moment.
+// Text first: the goo starts at the reader's first interaction
+// or a pointer move over it. Not on an idle timer.
 afterInteraction(() => void go());
-window.setTimeout(() => {
-  if ("requestIdleCallback" in window) requestIdleCallback(() => void go(), { timeout: 2000 });
-  else void go();
-}, 1800);
+host.addEventListener("pointermove", () => void go(), { once: true, passive: true });
 ```
 
-`go()` imports a tiny runner on demand. No three.js: one triangle over the canvas, a low-power GPU hint (three.js's `WebGLRenderer` takes the same `powerPreference`), a pixel ratio capped at 1.5, a loop that runs only while the canvas is in view and the tab is visible, and one still frame when motion is paused or reduced. Without WebGL it gives up, and the same colours painted in CSS stay. One honest gap: under reduced motion it still downloads the runner to draw that one frame. The checklist says skip it; that's the next thing I'd tighten.
+The whole order, which the other three shaders follow too:
 
-The result is in [the case study of this site](/en/blog/case-study/): the home page scores 99 for mobile performance, with an LCP of about 1.95 s (median of 3 runs).
+<Flow
+  label="How the goo on My life loads"
+  steps={[
+    { icon: "tb:file-text", title: "Text paints", text: "The title, with the same colours in CSS behind it" },
+    { icon: "tb:hand-click", title: "The reader moves", text: "A tap, key, scroll or pointer move" },
+    { icon: "tb:download", title: "The runner loads", text: "One triangle and one fragment shader, no library" },
+    { icon: "tb:eye", title: "It draws while seen", text: "Pixel ratio capped at 1.5, stopped offscreen" },
+    { icon: "tbf:player-pause", title: "It holds still", text: "One frame when paused or for reduced motion" },
+  ]}
+/>
 
-The space portfolio is still live, with its code public. Both links are on [my work page](/en/work/).
+The home page that replaced the flight scores 95-96 on mobile Lighthouse (local production build, median of 3 runs, 7 October 2026). How the rest was built is in [the case study of this site](/en/blog/case-study/).
+
+## Limits
+
+- The old site's numbers are one lab run per profile, from headless Chrome without a GPU. Nothing here ran on a physical phone.
+- The checklist comes from research and from this site's small shaders, not from rebuilding a full 3D world like the old one.
+- Under reduced motion, the goo still downloads its runner to draw one still frame. My checklist says skip it; that's the next fix.
+
+The space portfolio is still live, with its code public: both links are on [my work page](/en/work/).

@@ -45,7 +45,7 @@ import pressEn from "~/assets/blog/hover-tap/press-en.webp";
    ```
 2. **Capture** with `scripts/capture.mjs` (repo root; `--out` is relative to `apps/web`):
    - `page --url /en/work/ --out src/assets/blog/<key>/work-en.webp` (1440×900 → 1200 px; `--phone` for 390×844 @2×)
-   - `el --url /en/ --sel ".more" --out ...` (one element, e.g. a card, the footer, the author box)
+   - `el --url /en/ --sel ".more" --out ... [--scale 2]` (one element, e.g. a card, the footer, the author box; `--scale 2` for small ones)
    - `strip --urls /en/,/en/work/,/en/cv/ --out ...` (phone screens side by side on navy)
    - `clip --url /en/work/ --sel "[data-xray]" --out public/media/blog/<key>/xray [--seconds 6] [--click]` (records
      while the pointer glides over the element; writes AV1 + H.264 + a WebP poster). Needs `ffmpeg` with libsvtav1.

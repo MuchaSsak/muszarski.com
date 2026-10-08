@@ -13,7 +13,7 @@
  *   node .claude/skills/new-blog/scripts/capture.mjs overflow --urls /en/blog/my-post/,/pl/blog/moj-wpis/
  *
  * Common: --base http://localhost:4345 · --wait 2500 (ms for entrances and shaders) · --reduced (reduced motion) ·
- * --dark. Paths in --out are relative to apps/web. Stills: WebP, 1200 px wide (desktop 1440×900 at 1×; --phone
+ * --dark · --scale 2 (el: device pixels, for small elements). Paths in --out are relative to apps/web. Stills: WebP, 1200 px wide (desktop 1440×900 at 1×; --phone, touch-emulated,
  * 390×844 at 2×). Clips: --seconds 6, recorded at 1200×750 and written as <out>.av1.mp4 (AV1, CRF 46),
  * <out>.mp4 (H.264, CRF 28) and <out>-poster.webp, 960×600, with ffmpeg on the PATH.
  */
@@ -43,17 +43,26 @@ const out = opt("out") && resolve(WEB, opt("out"));
 const GPU = ["--use-angle=d3d11", "--enable-gpu", "--ignore-gpu-blocklist"];
 
 const browser = await chromium.launch({ args: GPU });
-const open = async (url, viewport, scale = 1) => {
+/**
+ * A page at the given size. `touch` emulates a phone (pointer: coarse, hover: none), so hover-gated parts show their
+ * touch twin (the Space chapter's "Desktop only · copy link", tap accordions) instead of the mouse version.
+ */
+const open = async (url, viewport, scale = 1, touch = false) => {
   const page = await browser.newPage({
     viewport,
     deviceScaleFactor: scale,
+    isMobile: touch,
+    hasTouch: touch,
     colorScheme: flag("dark") ? "dark" : "light",
     reducedMotion: flag("reduced") ? "reduce" : "no-preference",
   });
   await page.goto(base + site(url), { waitUntil: "networkidle" });
-  // A first interaction: media on this site waits for one before it loads.
-  await page.mouse.move(viewport.width / 2, viewport.height / 2);
-  await page.mouse.move(viewport.width / 3, viewport.height / 3);
+  // A first interaction: media on this site waits for one before it loads (a scroll on a phone, a move with a mouse).
+  if (touch) await page.mouse.wheel(0, 1).catch(() => {});
+  else {
+    await page.mouse.move(viewport.width / 2, viewport.height / 2);
+    await page.mouse.move(viewport.width / 3, viewport.height / 3);
+  }
   return page;
 };
 const webp = async (input, file, width = 1200) => {
@@ -76,12 +85,13 @@ try {
   if (command === "page") {
     const phone = flag("phone");
     const viewport = phone ? { width: 390, height: 844 } : { width: Number(opt("width", "1440")), height: Number(opt("height", "900")) };
-    const page = await open(opt("url"), viewport, phone ? 2 : 1);
+    const page = await open(opt("url"), viewport, phone ? 2 : 1, phone);
     if (opt("scroll")) await page.locator(opt("scroll")).first().scrollIntoViewIfNeeded();
     await page.waitForTimeout(wait);
     await webp(await page.screenshot(), out, phone ? 780 : 1200);
   } else if (command === "el") {
-    const page = await open(opt("url"), { width: Number(opt("width", "1280")), height: Number(opt("height", "900")) });
+    // A small element (a footer row, a button) shot at 1× blurs once the post scales it up: --scale 2.
+    const page = await open(opt("url"), { width: Number(opt("width", "1280")), height: Number(opt("height", "900")) }, Number(opt("scale", "1")));
     const element = page.locator(opt("sel")).first();
     await element.scrollIntoViewIfNeeded();
     await page.waitForTimeout(wait);
@@ -93,7 +103,7 @@ try {
     const urls = opt("urls").split(",");
     const tiles = [];
     for (const url of urls) {
-      const page = await open(url, { width: w, height: h }, 2);
+      const page = await open(url, { width: w, height: h }, 2, true);
       await page.waitForTimeout(wait);
       tiles.push(await sharp(await page.screenshot()).resize(w, h).png().toBuffer());
       await page.close();

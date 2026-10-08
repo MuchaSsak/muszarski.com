@@ -4,10 +4,10 @@ seoTitle: "Psychology in UX: honest persuasion on the frontend"
 description: "Scarcity, social proof, anchors, defaults and progress bars, built honestly in code, and where EU and Polish law draws the line on dark patterns."
 translationKey: "ux-psychology"
 published: 2026-10-07
-updated: 2026-10-07
+updated: 2026-10-08
 tags: [design]
 cover: anchor
-related: [solo-app, cookieless-analytics, hover-tap]
+related: [contact-form, solo-app, cookieless-analytics]
 sources:
   - title: "Kahneman, D. & Tversky, A. (1979). Prospect Theory: An Analysis of Decision under Risk. Econometrica 47(2), 263-291"
     url: "https://doi.org/10.2307/1914185"
@@ -62,22 +62,27 @@ sources:
     accessed: 2026-10-07
 ---
 
-Every interface persuades. The order of the plans, the plan that is already selected, the colour of "Buy" next to "No, thanks", the number under the stars: someone chose each of those, and often it was the developer who wrote the component. The psychology behind them is well studied, and most of it can be used honestly. The line is simple to say and harder to hold: use real data, tell the whole price, and make "no" as easy as "yes". EU law draws that line too, and Poland's consumer authority, UOKiK, fines shops that cross it.
+import Flow from "~/components/blog/case/Flow.astro";
+import Shots from "~/components/blog/case/Shots.astro";
+import cvEn from "~/assets/blog/ux-psychology/cv-phone-en.webp";
+import formEn from "~/assets/blog/ux-psychology/form-fail-en.webp";
+
+Every interface persuades: the order of the plans, the plan already selected, the number under the stars. Someone chose each of those, often the developer who wrote the component. Most of the psychology behind them can be used honestly, and the line is simple: real data, the whole price, and a "no" as easy as "yes". EU law draws the same line, and Poland's consumer watchdog fines shops that cross it.
 
 > **TL;DR**
-> - Eight effects do most of the work on screens: loss aversion, scarcity, social proof, anchoring, defaults, the decoy effect, the goal gradient and reciprocity.
-> - The honest version reads real data: a stock note from the inventory, a countdown to the offer's real end, a crossed-out price that is the lowest price of the last 30 days.
-> - The dark version invents it: timers that reset, made-up viewer counts, pre-ticked boxes, guilt on the "no" button. The UCPD guidance names these, and UOKiK has fined a Polish shop for a countdown that kept starting over.
+> - Eight effects do most of the work on screens: loss aversion, scarcity, social proof, anchoring, defaults, decoys, the goal gradient and reciprocity.
+> - The honest version reads real data: stock from the inventory, a countdown to the offer's real end, a crossed-out price that was the lowest of the last 30 days.
+> - The dark version invents it. EU guidance bans fake timers and made-up counts, and UOKiK fined a Polish shop for countdowns that kept starting over.
 
-> This is not legal advice. I'm a developer who read the primary sources. If a pricing page matters to your business, ask a lawyer.
+> Not legal advice: I'm a developer who read the primary sources. If a pricing page matters to your business, ask a lawyer.
 
 ## Why is this a frontend developer's problem?
 
-Because the decisions land in code. Which radio button has `checked`, whether the checkbox starts ticked, what the decline link says, where the strike-through price comes from: these are props, defaults and data bindings, not only design files.
+Because the decisions land in code. Which radio button has `checked`, whether a box starts ticked, where the crossed-out price comes from: these are props, defaults and data bindings.
 
-The European Commission's guidance on the Unfair Commercial Practices Directive (UCPD) is blunt about two things. First, "The UCPD does not require intention for the deployment of the dark pattern." Second, under the duty of professional diligence, traders "should take appropriate measures to ensure that the design of their interface does not distort the transactional decisions of consumers." A dark pattern shipped by accident is still a dark pattern.
+The European Commission's guidance on the Unfair Commercial Practices Directive (UCPD) is blunt: "The UCPD does not require intention for the deployment of the dark pattern". A dark pattern shipped by accident is still a dark pattern. For an ordinary shop, the UCPD is the rule that bites. The Digital Services Act also bans deceptive interfaces (art. 25), but only on online platforms that aren't micro or small, and not where the UCPD or GDPR already apply.
 
-I came to this from two directions. In 2025 I took two Udemy courses, Marketing Psychology and Consumer Behavior and UX Writing, and I build products where a screen has to sell something. My own app, Linkoglot, has a free trial and then a monthly or yearly subscription, which is exactly the kind of screen this post is about.
+I came to this from two sides: two Udemy courses in 2025, on marketing psychology and UX writing ([listed on my CV](/en/cv/)), and my own app, Linkoglot, whose free trial turns into a subscription. My test for any persuasive component: would I be comfortable if the user read the code?
 
 ## Which effects show up most on screens?
 
@@ -88,15 +93,32 @@ I came to this from two directions. In 2025 I took two Udemy courses, Marketing 
 | Social proof | People "reference the behavior of others to guide their own behavior" (NN/g) | Real review counts with the source | Invented "12 people are viewing this" |
 | Anchoring | Relying on "a single piece of information" to decide (NN/g) | A struck price that was really charged | A "regular" price nobody ever paid |
 | Defaults | "People tend to stick to the defaults" (NN/g) | A default that suits most people | A pre-ticked paid add-on |
-| Decoy effect | A dominated option "can increase the probability of choosing the item that dominates it" (Huber, Payne and Puto, 1982) | Three real plans, compared fairly | A plan that exists only to be rejected |
+| Decoy effect | A clearly worse option lifts the one that beats it (Huber, Payne and Puto, 1982) | Three real plans, compared fairly | A plan that exists only to be rejected |
 | Goal gradient | People speed up as they near a reward (Kivetz, Urminsky and Zheng, 2006) | A progress bar counted from real steps | "90% done" when it isn't |
-| Reciprocity | "People are obliged to give back" what they received first (Cialdini) | A trial that is actually useful | A "gift" that hides a subscription |
+| Reciprocity | "People are obliged to give back" what they got first (Cialdini) | A trial that is actually useful | A "gift" that hides a subscription |
 
-The rest of this post goes through them in the places a frontend developer meets them.
+## Where do they show up on this site?
+
+This site sells one thing, a conversation about a job, and it follows the same rules:
+
+<Shots
+  shots={[
+    { image: cvEn, alt: "The CV page on a phone: Hire me in the header, an availability line, and a Download PDF button with the file size printed on it", name: "CV page" },
+    { image: formEn, alt: "The contact form after a failed send: the message still in the box, an error pointing to my email, and the note Used only to reply", name: "Contact form" },
+  ]}
+  caption="On a phone, 8 October 2026. The failed send was forced in a local build to show the error state."
+/>
+
+- **No claim without the fact.** The header says "Hire me" only while a setting says I'm looking for work. Switch it off and the same button reads "Contact".
+- **The whole cost up front.** The PDF button on the CV page shows the file's size, read from the file itself at build time.
+- **No default picked for you.** The topic chips above the contact form are optional, and none starts selected.
+- **Loss aversion, used to reassure.** If a message fails to send, the text stays in the box and the error says so. Below the send button, one line says what your address is for.
+
+How that form works, bug included: [a contact form on a static site](/en/blog/contact-form-on-a-static-site/).
 
 ## How do I show scarcity without lying?
 
-Scarcity works only if it is true, so the component should not be able to render without the truth. Here is a stock note that takes the number from the inventory and shows nothing when it doesn't have one:
+Scarcity works only if it is true, so the component shouldn't render without the truth. This stock note takes the number from the inventory and shows nothing without one:
 
 ```astro
 ---
@@ -112,47 +134,29 @@ const low = stock !== null && stock > 0 && stock <= threshold;
 {low && <p class="stock-note">Only {stock} left in stock</p>}
 ```
 
-One catch on a static site: a number baked in at build time goes stale. Either render the page on request, fetch the count on the client and show when it was checked, or leave the note out. A stale "only 2 left" is a false claim too.
+On a static site, a number baked in at build time goes stale. Render on request, fetch the count and say when it was checked, or leave the note out.
 
-Countdowns follow the same rule. The deadline comes from the same data the checkout uses, and when it passes, the offer ends:
+Countdowns follow the same rule: the deadline comes from the checkout's own data. The dark version is one line, a fresh fifteen minutes on every page load:
 
 ```ts
-// endsAt is the offer's real end date, from the same source as the checkout price.
-export function startCountdown(el: HTMLElement, endsAt: Date) {
-  const tick = () => {
-    const left = endsAt.getTime() - Date.now();
-    if (left <= 0) {
-      el.textContent = "This offer has ended.";
-      return;
-    }
-    const hours = Math.floor(left / 3_600_000);
-    const minutes = Math.floor((left % 3_600_000) / 60_000);
-    el.textContent = `Ends in ${hours} h ${minutes} min`;
-    setTimeout(tick, 30_000);
-  };
-  tick();
-}
+const endsAt = new Date(Date.now() + 15 * 60_000); // a deadline that never comes
 ```
 
-The dark version is one line: `const endsAt = new Date(Date.now() + 15 * 60_000)`, a fresh fifteen minutes on every page load. The UCPD guidance lists "Creating urgency by falsely stating that a product will only be available for a very limited time" among practices banned in all circumstances (Annex I, No 7), and adds: "this includes fake timers and limited stock claims on websites."
+The UCPD guidance bans false "limited time" claims in all circumstances (Annex I, No 7), and "this includes fake timers and limited stock claims on websites". In May 2025 UOKiK fined Azagroup, which runs the born2be.pl and renee.pl shops, nearly PLN 15 million. Its products were on promotion all the time, and its countdown timers were reset. The decision was not final.
 
 ## How do I use social proof honestly?
 
-Show counts that come from your database, and say where they come from. A review summary I would ship reads something like "4.6 from 312 reviews of verified orders" (numbers made up for the example), with a link to how reviews are checked.
+Show counts from your own database and say where they come from: "4.6 from 312 reviews of verified orders" (made-up numbers), with a link to how reviews are checked.
 
-That link is not decoration. Since the Omnibus Directive (2019/2161), a trader who gives access to consumer reviews must say whether and how it ensures they come from real customers (UCPD art. 7(6)). Annex I adds two bans: claiming reviews come from people who used or bought the product without reasonable steps to check it (No 23b), and submitting or commissioning fake reviews, or misrepresenting real ones (No 23c).
+Since the Omnibus Directive, that link is required: a trader who shows reviews must say whether and how it checks they come from real customers (UCPD art. 7(6)). Fake reviews, and claiming reviews are genuine without checking, are banned outright (Annex I, No 23b and 23c).
 
-Nielsen Norman Group points out the honest risk: social proof can backfire when it shows that "too few people approve" of something. That is a reason to wait until the number is worth showing, not a reason to round it up.
-
-The "12 people are viewing this right now" badge is the version to avoid. If the number is generated in the browser, it is a false statement of fact. The guidance lists "Giving inaccurate information on market conditions" with the aim of making someone buy on worse terms as a banned practice (Annex I, No 18). I can't think of a fake viewer counter that falls outside that idea.
+NN/g names the honest risk: social proof can backfire when it shows that "too few people approve". Wait until the number is worth showing; don't round it up. And a "12 people are viewing this" badge made up in the browser is "inaccurate information on market conditions", banned under Annex I, No 18.
 
 ## How should a pricing table use anchors and decoys?
 
-An anchor is the first number someone sees, and it shapes how the next one feels. NN/g gives the classic example: showing the original price next to the discounted one. That is fine when the original price is real.
+An anchor is the first number someone sees, and it shapes how the next one feels, like an original price next to a discounted one. EU law says which original price counts. Article 6a of the Price Indication Directive defines it as "the lowest price applied by the trader during a period of time not shorter than 30 days prior to the application of the price reduction". The Omnibus Directive added it; in Poland it is art. 4 of the act on informing about prices, for goods and services alike.
 
-EU law defines "real". Article 6a of the Price Indication Directive, added by the Omnibus Directive, says any announced price reduction must show the prior price, and "The prior price means the lowest price applied by the trader during a period of time not shorter than 30 days prior to the application of the price reduction." In Poland this is art. 4 of the act on informing about the prices of goods and services, and UOKiK says it covers both goods and services.
-
-So the crossed-out number comes from the price history, not from a "regular price" field someone typed in:
+So the crossed-out number comes from the price history:
 
 ```astro
 ---
@@ -174,31 +178,19 @@ const off = Math.floor((1 - price / lowest30) * 100);
 </p>
 ```
 
-Three details. `Intl.NumberFormat` writes the price the way the reader's locale does, so a Polish page gets a decimal comma without anyone hand-formatting it. `Math.floor` rounds the percentage down, so the label never promises more than the maths. And the hidden text is there because, as MDN notes, most screen readers don't announce `<del>` by default; without it, a screen reader user hears two prices with no hint which one is old.
+`Intl.NumberFormat` gives a Polish page its decimal comma for free. `Math.floor` rounds the discount down, so the label never promises more than the maths. And since most screen readers don't announce `<del>` (MDN), the hidden text says which price is the old one.
 
-This is not theory in Poland. In January 2026 UOKiK fined Zalando nearly PLN 31 million and Whaleco (Temu) nearly PLN 6 million over how they presented price reductions. According to UOKiK, Zalando showed discounts against "initial" or "regular" prices instead of the 30-day lowest, and Temu did not always show the 30-day lowest price, or showed a wrong one. UOKiK said both decisions were not final and could be appealed.
+In January 2026 UOKiK fined Zalando nearly PLN 31 million and Whaleco (Temu) nearly PLN 6 million over this rule. Zalando measured discounts from "regular" prices instead of the 30-day lowest, and Temu's lowest price was sometimes missing or wrong. Neither decision was final.
 
-For a monthly or yearly toggle, the honest anchor is the monthly price you really charge, times twelve:
+On a monthly or yearly toggle, the honest anchor is the monthly price you really charge, times twelve, and the yearly card states the full amount charged once a year. The guidance wants one-off and recurring amounts "clearly provided to the consumer".
 
-```ts
-type Plan = { price: number; months: number };
-
-/** The saving of a long plan against paying monthly for the same period, rounded down. */
-export function savingPercent(monthly: Plan, long: Plan): number {
-  const sameTermMonthly = monthly.price * long.months;
-  return Math.floor(((sameTermMonthly - long.price) / sameTermMonthly) * 100);
-}
-```
-
-Then the yearly card says what is charged and when: the full yearly amount, once, renewing every year, with the per-month figure as a secondary line rather than the headline. The guidance on free trials and subscriptions says recurring costs have to be clear, and that "Both the amount of a one-off payment as well as the amount of recurring payments that may follow should be clearly provided to the consumer."
-
-Decoys are the subtle case. Huber, Payne and Puto showed in 1982 that adding an option which is clearly worse than one plan (but not the other) can push people toward the plan that beats it. A three-tier table does this almost by itself. My test is a question: if someone buys the middle plan, am I happy to deliver it? If the plan is real and fairly priced, the comparison is information. If it exists only to be rejected, the table is built to confuse, and I would cut it.
+Decoys are subtler. Huber, Payne and Puto showed in 1982 that adding an option clearly worse than one plan (but not the other) pushes choices toward the plan that beats it. My test: if someone buys the middle plan, am I happy to deliver it? If it exists only to be rejected, I cut it.
 
 ## Are defaults and pre-ticked boxes allowed?
 
-Defaults are powerful because "people tend to stick to the defaults", as Jakob Nielsen wrote in 2005. He also allowed the sales use: pre-selecting the one-year option in a subscription interface is fine. And he gave the limit: "if you consistently pick the most expensive option as the default, you'll lose credibility."
+Defaults work because "people tend to stick to the defaults", as Jakob Nielsen wrote in 2005. He was fine with pre-selecting the one-year option in a subscription, within a limit: "if you consistently pick the most expensive option as the default, you'll lose credibility."
 
-The law is stricter where money is involved. The UCPD guidance points out that pre-ticked boxes used to charge for additional services are prohibited under Article 22 of the Consumer Rights Directive. I apply the same rule to newsletter and marketing boxes: a box someone has to untick isn't a choice they made.
+Where money is involved, the law is stricter: the UCPD guidance notes that pre-ticked boxes charging for extra services are banned by Article 22 of the Consumer Rights Directive. I apply the same rule to newsletter boxes: a box someone has to untick isn't a choice they made.
 
 ```html
 <label>
@@ -207,13 +199,11 @@ The law is stricter where money is involved. The UCPD guidance points out that p
 </label>
 ```
 
-No `checked`. The label says what happens and how to undo it.
+No `checked`, and the label says how to undo it.
 
 ## How do progress bars use the goal gradient?
 
-People work harder as they get closer to a goal. In the study by Kivetz, Urminsky and Zheng, café customers given a 12-stamp card with 2 "bonus" stamps already filled in completed the 10 purchases they needed faster than customers given a plain 10-stamp card. Same work, but it felt further along.
-
-On a screen, that effect is why progress bars help with long forms and onboarding. The honest version counts real steps:
+People work harder as a goal gets closer. In Kivetz, Urminsky and Zheng's study, café customers whose 12-stamp card came with 2 stamps already filled in finished their 10 purchases faster than those with a plain 10-stamp card. Same work, but it felt further along. On a long form, the honest version counts real steps:
 
 ```ts
 const required = [...form.querySelectorAll<HTMLInputElement>("input[required]")];
@@ -227,53 +217,50 @@ form.addEventListener("input", update);
 update();
 ```
 
-A native `<progress>` with a `<label>` is accessible out of the box, as MDN describes. A head start is fine when it is real, for example a profile that already has the fields someone filled in at sign-up. A bar that jumps to 80% on the first screen, or a "Step 2 of 3" that turns out to have six steps, borrows the effect without paying for it.
+A native `<progress>` with a `<label>` is accessible out of the box (MDN). A head start is fine when it's real, like fields filled in at sign-up. A bar that jumps to 80% on the first screen borrows the effect without paying for it.
 
 ## Where does loss aversion become confirmshaming?
 
-Kahneman and Tversky's finding that losses weigh more than equal gains is why "You'll lose your saved lists" lands harder than "Keep your saved lists". Saying what someone will lose is honest information. The problem starts when the "no" option is written to make people feel bad.
+Losses weigh more than equal gains, so "You'll lose your saved lists" lands harder than "Keep your saved lists". Saying what someone loses is information. Writing the "no" to make them feel bad is not. The guidance says that "('confirmshaming' the consumer into feeling guilty) could amount to an aggressive practice under Article 8 UCPD".
 
-The guidance names it: using emotion to steer users away from a choice, "('confirmshaming' the consumer into feeling guilty) could amount to an aggressive practice under Article 8 UCPD." Its example is a cancellation flow with repeated messages like "We're sorry to see you go" and "Here are the benefits you will lose", together with images that push towards staying.
+A decline button reads "No, thanks", never "No, I don't want to learn faster". Cancelling works like this:
 
-My rules for a cancel or decline screen:
+<Flow
+  label="An honest cancel flow"
+  steps={[
+    {
+      icon: "tb:hand-click",
+      title: "Cancel subscription",
+      text: "The button says what it does and is as easy to find as the one that keeps it.",
+    },
+    {
+      icon: "tb:file-text",
+      title: "One honest screen",
+      text: "What changes and when. No loop, no guilt.",
+    },
+    {
+      icon: "tb:circle-check",
+      title: "Done",
+      text: "No more steps than signing up took.",
+    },
+  ]}
+/>
 
-- The "no" button says what it does: "Cancel subscription", "No, thanks". Not "No, I don't want to learn faster".
-- One honest screen about what changes, then the action. Not a loop.
-- Cancelling takes no more steps than signing up. The guidance puts it as a principle: "unsubscribing from a service should be as easy as subscribing to the service."
-- Both buttons can be read and reached. The guidance mentions "one button very visible, another hidden" as a manipulative practice.
+The guidance puts the last step as a principle: "unsubscribing from a service should be as easy as subscribing to the service". It also lists "one button very visible, another hidden" as manipulative.
 
 ## What about reciprocity and free trials?
 
-Reciprocity is the kindest of these effects when it's real: give something useful first, and people are more willing to give back. A genuinely useful free tier, a good article, a trial that shows the product working.
+Give something useful first, like a trial that shows the product working, and people are more willing to give back. It becomes a trap when the gift hides a contract: the guidance covers "misleading free trials and subscription traps". I hold a screen like Linkoglot's to four things:
 
-It turns into a trap when the gift hides a contract. The UCPD guidance covers "misleading free trials and subscription traps": if a trader doesn't make clear that a free trial turns into a subscription, that can be a misleading omission. For a screen like Linkoglot's (free trial, then monthly or yearly), this is the checklist I hold it to:
-
-- The first screen of the offer says the trial ends and a subscription starts, and when.
-- The price shown is the price charged, per period, in the local currency format (in Polish, a decimal comma).
+- The first screen of the offer says when the trial ends and the paid subscription starts.
+- The price shown is the price charged, per period, in the local format.
 - The order button says it starts a paid subscription.
 - How to cancel is written next to the offer, not only in the terms.
 
-## What do EU and Polish rules say about dark patterns?
-
-- **UCPD and its guidance.** "Dark pattern" has no legal definition in the directive, but the UCPD covers any unfair commercial practice, whatever it is called. Several dark patterns are already banned outright in Annex I: false "limited time" claims (No 7), including fake timers and stock claims, false information on market conditions (No 18), and nagging (No 26).
-- **The Digital Services Act, art. 25.** Providers of online platforms "shall not design, organise or operate their online interfaces in a way that deceives or manipulates" users. Recital 67 lists examples, such as making cancelling "significantly more cumbersome than signing up". Two limits matter for most developers: art. 25(2) says it doesn't apply to practices already covered by the UCPD or GDPR, and art. 19 exempts micro and small platforms that are not very large online platforms. For an ordinary shop, the UCPD is the rule that bites.
-- **The Omnibus price rule.** A reduction shows the lowest price of the previous 30 days (art. 6a of the Price Indication Directive). In Poland: art. 4 of the act on informing about the prices of goods and services.
-- **UOKiK in practice.** On 21 May 2025 the President of UOKiK found that Azagroup, which runs the born2be.pl and renee.pl shops, misled consumers by suggesting promotions were time-limited while the products were on promotion all the time, and fined it PLN 14,910,599. The decision describes countdown timers that showed a different end than the real one and were reset, and discount codes used continuously. The legal basis was art. 5 of the Polish act on unfair market practices. UOKiK said the decision was not final and could be appealed.
-
-## What do I check before I ship a persuasive screen?
-
-1. **Every number has a source.** Stock, reviews, "people who bought", deadlines: each one is read from data, with a fallback that shows nothing.
-2. **Struck-through prices come from the price history.** The lowest price of the previous 30 days, and a percentage that rounds down.
-3. **No pre-ticked boxes** for anything paid or for marketing.
-4. **"No" is a real button** with neutral words, as visible and as short a path as "yes".
-5. **Progress is counted, not drawn.**
-6. **The full price is on the first screen**, including what renews and when.
-7. **Would I be comfortable if the user saw the code?** If a component only works while nobody reads it, I don't ship it.
-
 ## Limits
 
-- I read the regulations, the Commission guidance and UOKiK's own pages for this post. I haven't read court rulings, and the UOKiK decisions I cite were not final when announced.
-- The studies are specific experiments, such as a café reward card and choices between product sets. They show that the effects exist, not how big they will be on your page. Test before you claim a lift.
-- This post doesn't audit any of my own screens against the checklist. It is the list I use when I build them.
+- I read the regulations, the Commission guidance and UOKiK's own pages, not court rulings. The UOKiK decisions I cite were not final when announced.
+- The studies are specific experiments, such as a café reward card. They show that the effects exist, not how big they will be on your page.
+- The examples from this site are four details, not an audit of every screen.
 
-If you build products where the screen has to convince someone, I'd like to hear how you draw these lines. [Here's how to reach me](/en/#contact). For a close look at the subscription app this post mentions, see [how I shipped Linkoglot alone](/en/blog/shipping-a-mobile-app-alone/), and for another EU rule read from the source, [cookieless analytics and Poland's art. 399](/en/blog/cookieless-analytics-in-the-eu/).
+If you build screens that have to convince someone, [write to me](/en/#contact) about where you draw these lines. More on the subscription app in [how I shipped Linkoglot alone](/en/blog/shipping-a-mobile-app-alone/), and another EU rule read from the source in [cookieless analytics and Poland's art. 399](/en/blog/cookieless-analytics-in-the-eu/).

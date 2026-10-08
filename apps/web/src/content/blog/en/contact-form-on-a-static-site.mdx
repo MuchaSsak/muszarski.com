@@ -1,12 +1,13 @@
 ---
 title: "A contact form on a static site: one function, server-side email and the bug that failed every message"
-seoTitle: "A contact form on a static Astro site"
-description: "How this static Astro site sends messages: one Vercel Function, a message-first form, bot checks, EmailJS from the server and a form that works without JS."
+seoTitle: "Contact form on a static Astro site: Vercel + EmailJS"
+description: "One Vercel Function next to a static Astro build: a message-first form, three bot checks, EmailJS from the server, no-JS support and one ESM bug."
 translationKey: "contact-form"
 published: 2026-10-06
+updated: 2026-10-08
 tags: [astro, accessibility, privacy]
 cover: mailbox
-related: [astro-i18n, astro-vs-next, this-site]
+related: [astro-vs-next, cookieless-analytics, this-site]
 sources:
   - title: "Using the Node.js Runtime with Vercel Functions (Vercel Docs)"
     url: "https://vercel.com/docs/functions/runtimes/node-js"
@@ -38,6 +39,9 @@ sources:
   - title: "EmailJS: SDK options (private key)"
     url: "https://www.emailjs.com/docs/sdk/options/"
     accessed: 2026-10-06
+  - title: "EmailJS Node.js SDK, README (GitHub)"
+    url: "https://github.com/emailjs-com/emailjs-nodejs"
+    accessed: 2026-10-08
   - title: "303 See Other (MDN)"
     url: "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status/303"
     accessed: 2026-10-06
@@ -52,16 +56,22 @@ sources:
     accessed: 2026-10-06
 ---
 
-This site is static, so its contact form posts to one Vercel Function, `api/contact.ts`. The function checks for bots, validates with the same module as the page, and sends the message through EmailJS's REST API from the server, where a browser can neither read the private key nor skip the checks. The same form works without JavaScript, and on 6 October 2026 it taught me that an import can pass every test and still crash every request.
+import Flow from "~/components/blog/case/Flow.astro";
+import Shots from "~/components/blog/case/Shots.astro";
+import formEmpty from "~/assets/blog/contact-form/form-empty-en.webp";
+import formFound from "~/assets/blog/contact-form/form-found-en.webp";
+import formError from "~/assets/blog/contact-form/form-error-en.webp";
+
+This site is static, so its contact form posts to one Vercel Function, `api/contact.ts`. The function checks for bots, validates with the same module as the page and sends the message through the EmailJS REST API, so no key reaches the browser and no check can be skipped. The form works without JavaScript too, and on 6 October 2026 one import made it fail every message.
 
 > **TL;DR**
-> - One function next to a static build: no adapter, no database, and one validation module shared by the page and the server.
+> - One function next to a static build: no adapter, no database, one validation module shared by the page and the server.
 > - Message first: one text box, the reply address found inside the message, and three bot checks (honeypot, Turnstile, rate limit).
-> - An extensionless relative import made every live message fail with HTTP 500. The fix was `.js`, and a unit test now reads the import.
+> - An import without `.js` passed every test and crashed every live request with HTTP 500. A unit test now reads that import.
 
 ## Why one function and not a server?
 
-The site builds with `output: "static"`: every page is plain HTML served from Vercel's CDN. Astro's usual answer for one dynamic route is an adapter plus `prerender = false` on that route, as I described in [Astro vs Next.js for a portfolio](/en/blog/astro-vs-nextjs-for-a-portfolio/). I took a smaller step: a plain Vercel Function in `apps/web/api/`, next to the static output. Vercel's Node.js runtime turns a file in `/api` into a function, and it lets you "export each HTTP method as a separate export":
+The site builds with `output: "static"`: every page is plain HTML on Vercel's CDN. Astro's usual answer for one dynamic route is an adapter plus `prerender = false`, as I described in [Astro vs Next.js for a portfolio](/en/blog/astro-vs-nextjs-for-a-portfolio/). I took a smaller step: a plain Vercel Function in `apps/web/api/`. Vercel's Node.js runtime turns a file in `/api` into a function and lets you "export each HTTP method as a separate export":
 
 ```ts
 export async function POST(request: Request): Promise<Response> {
@@ -74,23 +84,68 @@ export function GET(request: Request): Response {
 }
 ```
 
-No adapter means `astro preview` still serves the built site as it is. The function runs in Frankfurt (`fra1`, set in `vercel.json`), answers with `Cache-Control: no-store`, and stores nothing, because there is no database. The rest of the stack is in [the case study of this site](/en/blog/case-study/).
+No adapter means `astro preview` still serves the build as it is, and the function's region (`fra1`) is one setting in `vercel.json`. The rest of the stack is in [the case study of this site](/en/blog/case-study/).
 
-A POST goes through five steps, and the first failure answers:
+## What happens to a message?
 
-| Step | Check | Answer when it fails |
+<Flow
+  label="The path of one message"
+  steps={[
+    {
+      icon: "tb:forms",
+      title: "Form",
+      text: "A plain POST to /api/contact/, or the same request sent in place by the page script.",
+    },
+    {
+      icon: "tb:server",
+      title: "Function",
+      text: "api/contact.ts in Frankfurt, with no database behind it.",
+    },
+    {
+      icon: "tb:shield-lock",
+      title: "Checks",
+      text: "Honeypot, rate limit, shared validation, Turnstile. The first failure answers.",
+    },
+    {
+      icon: "tb:send",
+      title: "EmailJS",
+      text: "Its REST API, called with keys that only the server holds.",
+    },
+    {
+      icon: "tb:mail",
+      title: "Inbox",
+      text: "Reply-To carries the sender's email, if given, so answering takes one click.",
+    },
+  ]}
+/>
+
+Each check has its own answer, so the page can say exactly what went wrong:
+
+| Check | Fails when | Answer |
 | --- | --- | --- |
-| 1 | Honeypot filled | 400, `spam` |
-| 2 | More than 5 messages in 10 minutes from one IP (per instance) | 429, `rate` |
-| 3 | Shared validation: a message of 2-4,000 characters and a usable reply address | 400, the exact problem |
-| 4 | Turnstile token, when its secret is set | 400, `turnstile` |
-| 5 | The EmailJS call | 503 when mail is not configured, 502 when the call fails |
+| Honeypot | the hidden field is filled | 400, `spam` |
+| Rate limit | more than 5 messages in 10 minutes from one IP (per instance) | 429, `rate` |
+| Validation | the message isn't 2 to 4,000 characters, or there's no usable reply address | 400, the exact problem |
+| Turnstile | the token fails `siteverify` (only when its secret is set) | 400, `turnstile` |
+| EmailJS | mail isn't configured, or the call fails | 503, or 502 |
+
+The form's events in the site's statistics carry the topic and the kind of error, never the text ([how those statistics stay cookieless](/en/blog/cookieless-analytics-in-the-eu/)).
 
 ## What does "message first" mean?
 
-The form doesn't start with name, email and subject fields. It opens with one text box and the placeholder "Hi Mateusz, we're hiring for…". Three optional chips (A job, A project, A question) set a topic.
+<Shots
+  shots={[
+    { image: formEmpty, alt: "The contact form: three topic chips, one empty text box and a Send button", tag: "Empty" },
+    {
+      image: formFound,
+      alt: "The same form with a message ending in an email address, which now also fills a reply field, with a note that it was found",
+      tag: "Reply found",
+    },
+  ]}
+  caption="The form on the home page, before and after typing. The reply field appears as soon as you type and fills itself from the message."
+/>
 
-Once you start typing, a second field appears: "Where do I reply?". It takes an email, a phone number or a LinkedIn profile link, and it fills itself when your message already contains one. Write "mail me at anna@example.com" and the field shows the address with a short note, "Found an email in your message", read out politely by screen readers. Once you edit the field yourself, the script stops overwriting it.
+The form skips the usual name, email and subject fields. The reply field takes an email, a phone number or a LinkedIn profile link, and fills itself when the message holds one. Its note is a polite live region, so a screen reader reads it without interrupting. Once you edit the field, the script stops overwriting it.
 
 ```ts
 export function findReply(message: string): { kind: ReplyKind; value: string } | null {
@@ -106,25 +161,26 @@ export function findReply(message: string): { kind: ReplyKind; value: string } |
 }
 ```
 
-An email wins, then LinkedIn, then a phone number of 7 to 15 digits. The server runs the same function when JavaScript is off and the reply field arrives empty. One small touch: when the reply looks like a phone number, the field's `inputmode` switches from `email` to `tel`, which per MDN lets the browser show a telephone keypad.
-
-The rules live in `src/lib/contact.ts`, imported by both the page script and the function, so the browser and the server can't disagree about what a valid message is.
+An email wins, then LinkedIn, then a phone number of 7 to 15 digits. The rules live in `src/lib/contact.ts`, shared by the page script and the function, so the browser and the server can't disagree about a valid message. With JavaScript off, the server runs the same `findReply`. When the reply looks like a phone number, `inputmode` switches to `tel`, which per MDN lets the browser show a telephone keypad.
 
 ## How does it stop bots without annoying people?
 
 Three layers, the cheapest first:
 
-- **Honeypot.** A `website` field sits off-screen with `aria-hidden`, `tabindex="-1"` and `autocomplete="off"`. Nobody sees it, and keyboards and screen readers never reach it. A bot that fills every input does.
-- **Turnstile.** Cloudflare's script loads only after you start typing, and only when its public site key is set, so visitors who never touch the form never download it. It renders explicitly with `appearance: "interaction-only"`, where the widget "becomes visible only when visitor interaction is required". Cloudflare is blunt that "the client-side widget alone does not protect your forms", so the function posts the token to the `siteverify` endpoint. A token is valid for 300 seconds and can be validated once, so the page resets the widget after a failed send.
-- **Rate limit.** The function keeps a small count in memory: 5 messages per 10 minutes per IP. It lives in one instance, so it is best effort. The real limit belongs in a Vercel WAF rate-limit rule, which stops requests before they reach the function, answers 429 by default and counts per region.
+- **Honeypot.** A `website` field sits off-screen inside an `aria-hidden` wrapper, with `tabindex="-1"` and `autocomplete="off"`. People, keyboards and screen readers never reach it; a bot that fills every input does.
+- **Turnstile.** Cloudflare's script loads only after you start typing, and only when its site key is set. With `appearance: "interaction-only"` the widget "becomes visible only when visitor interaction is required". Cloudflare warns that "the client-side widget alone does not protect your forms", so the function checks every token with `siteverify`. A token validates once, so the page resets the widget after a failed send.
+- **Rate limit.** The function counts messages per IP in memory. The count lives in one instance, so it is best effort; a firm limit belongs in a Vercel WAF rule, which stops requests before they reach the function.
+
+A fourth layer didn't survive. A minimum fill time blocked real people who wrote fast, so on 7 October I removed it. A unit test now says it plainly: "rejects a filled honeypot, never a fast sender".
 
 ## Why does the server call EmailJS, not the browser?
 
-EmailJS is designed to be called from client code. Its FAQ says exposing the public key is fine: someone who copies it "will only be able to send your templates with your content". So hiding the public key is not the reason.
+EmailJS is built to be called from the browser, and its FAQ says a copied public key "will only be able to send your templates with your content". Hiding that key isn't the reason. There are two:
 
-There are two reasons. First, bot checks only count if they can't be skipped. If the page called EmailJS itself, any script could call EmailJS the same way, past the honeypot, the timer and Turnstile.
+1. **Checks only count if they can't be skipped.** If the page called EmailJS, any script could call it the same way, past the honeypot and Turnstile.
+2. **The private key stays private.** The function sends the account's private key as `accessToken`, and that key exists only in the host's environment variables.
 
-Second, the function authenticates with the account's private key (`accessToken`), which EmailJS accepts once it is enabled on the account's Security page. That key exists only in the host's environment variables.
+EmailJS blocks this by default: "API requests are disabled for non-browser applications" until you switch them on in the account's Security settings, where the private key is enabled too.
 
 ```ts
 await fetch("https://api.emailjs.com/api/v1.0/email/send", {
@@ -140,40 +196,46 @@ await fetch("https://api.emailjs.com/api/v1.0/email/send", {
 });
 ```
 
-The template in the EmailJS dashboard holds the recipient and the layout; the function only fills in variables. `reply_to` carries the sender's address when it is an email, so pressing reply in my inbox goes straight to them. If one of the three required settings is missing, the function answers 503 and the page says the form can't send right now. Turnstile uses a pair too: `PUBLIC_TURNSTILE_SITE_KEY` in the page and `TURNSTILE_SECRET_KEY` in the function.
+The EmailJS template holds the recipient and the layout; the function only fills in the variables. Without the service ID, the template ID or the public key it answers 503. After live sends answered 502 on 7 October, a refused call now logs EmailJS's status and reason, never the message or the sender.
 
 ## Does it work without JavaScript?
 
-Yes. The form is a plain `<form action="/api/contact/" method="post">`. The path ends in a slash like every URL on this site, so the POST is never redirected. A hidden field carries the page's language.
+Yes. The form is a plain `<form action="/api/contact/" method="post">`, and its path ends in a slash like every URL here, so the POST is never redirected. A hidden field carries the page's language.
 
-The function reads the `Accept` header. The page script asks for `application/json` and gets back `{ "ok": true }` or `{ "ok": false, "error": "reply-missing" }`. A plain form post gets a 303 See Other to a result page in the sender's language, such as `/pl/contact/sent/` or `/pl/contact/error/?e=reply-missing`.
-
-MDN describes 303 as the usual answer to a POST "so the client may retrieve a confirmation", and the browser always fetches it with GET, so reloading the result page doesn't send the message twice. Both result pages are `noindex` and left out of the sitemap.
+The function reads the `Accept` header. The page script asks for JSON and gets `{ "ok": true }` or `{ "ok": false, "error": "reply-missing" }`. A plain form post gets a 303 See Other to a result page in the sender's language, such as `/pl/contact/sent/`. MDN calls 303 the usual answer to a POST "so the client may retrieve a confirmation" with GET, so a reload doesn't send the message twice. Both result pages are `noindex` and out of the sitemap.
 
 ## How are errors shown?
 
-In words, in their own box, with your text kept. WCAG 3.3.1 Error Identification (Level A) asks that "the error is described to the user in text". Each kind of failure has its own sentence:
+<Shots
+  shots={[
+    {
+      image: formError,
+      alt: "The form after a failed send: a dark box under the reply field says the form can't send right now, and the message is still there",
+    },
+  ]}
+  caption="Shot on a local build with no function behind /api/contact/: the 404 isn't the function's answer, so the form falls back to “can't send right now” and keeps everything typed."
+/>
+
+In words, in their own box, with your text kept. WCAG 3.3.1 Error Identification (Level A) asks that "the error is described to the user in text", so each kind of failure has its own sentence:
 
 | Kind | What the page says |
 | --- | --- |
 | `message-empty` | Write a message first. One line is enough. |
 | `reply-invalid` | I can't reply to that. Use an email, a phone number or a LinkedIn profile link. |
-| `unavailable` | The form can't send right now. Copy my email instead; your text is still here. |
+| `rate` | Too many messages from here. Please wait a few minutes, or copy my email. |
 | `network` | No connection. Your text is still here; try again, or copy my email. |
 
-The box is a `role="alert"` paragraph, hidden until something goes wrong. MDN says the role is "for content that is dynamically displayed" and should be used sparingly, which fits: one alert, only after a failed send. The field at fault gets `aria-invalid` and focus. Nothing is cleared, and a "Copy email" button under the form is always the way out.
-
-The sentences are Lingui strings, translated at build time and handed to the script as JSON in a data attribute; [the post on running this site in three languages](/en/blog/multilingual-astro-site-with-lingui/) shows how.
+The box is one `role="alert"` paragraph, hidden until something fails, which fits MDN's advice to keep the role "for content that is dynamically displayed". A field at fault gets `aria-invalid` and focus. The sentences are Lingui strings, translated at build time and handed to the script as JSON in a data attribute ([how this site runs in three languages](/en/blog/multilingual-astro-site-with-lingui/)).
 
 ## What broke on 6 October 2026?
 
 Every message sent through the live form failed with HTTP 500. The function's log named the error: `ERR_MODULE_NOT_FOUND`.
 
-The cause was one line. `api/contact.ts` imported the shared rules as `../src/lib/contact`, with no extension. The app's `package.json` sets `"type": "module"`, which tells Node.js to treat its JavaScript as ES modules, and Node's ES module loader is strict: "A file extension must be provided when using the `import` keyword to resolve relative or absolute specifiers." The function compiled, deployed, and then failed to load on every request.
+The cause was one line. `api/contact.ts` imported the shared rules as `../src/lib/contact`, with no extension. The app's `package.json` sets `"type": "module"`, so Node.js loads the function as an ES module. That loader is strict: "A file extension must be provided when using the `import` keyword to resolve relative or absolute specifiers." The function compiled and deployed, then failed to load on every request.
 
-Nothing caught it locally. Vitest resolves imports the way Vite does, and Vite's `resolve.extensions` is a "list of file extensions to try for imports that omit extensions", with `.ts` in the default list. The unit tests imported the same file and passed. I reproduced the failure by compiling both files to ES modules and importing them in Node: the same error without the extension, a clean import with it.
+Nothing caught it locally. Vitest resolves imports the way Vite does, and Vite's `resolve.extensions` tries `.ts` for "imports that omit extensions", so the unit tests passed. I reproduced the crash by compiling both files to ES modules and importing them in Node: the error without the extension, a clean import with it.
 
-The fix is `../src/lib/contact.js`. A test now reads the function's source and checks every relative import:
+The fix is `../src/lib/contact.js`, and a test now reads the function's source:
 
 ```ts
 it("imports relative files with their .js extension", () => {
@@ -184,6 +246,13 @@ it("imports relative files with their .js extension", () => {
 });
 ```
 
-The same incident exposed a second bug. When the platform answered with its own error, the page script read Vercel's error body as if it held one of my error kinds, found no sentence for it and showed an empty message. Now any answer that isn't the function's own falls back to "The form can't send right now".
+The incident exposed a second bug. When the platform answered with its own error, the page read Vercel's error body as one of my error kinds, found no sentence for it and showed an empty message. Now any answer that isn't the function's own falls back to "can't send right now", as in the shot above.
+
+## Limits
+
+- The function's rate limit is per instance and starts over with each new one. A firm limit needs a WAF rule on the host, outside this repo.
+- Turnstile protects the form only when both its keys are set: the site key loads the widget, the secret makes the function check it. Without them, the honeypot and the rate limit are the only bot checks.
+- A message that mentions another long number, such as an order ID, can fill the reply field with it. The field stays editable, and the note says what was found.
+- Nothing is queued. When EmailJS refuses, the form says so and offers my email address; the message isn't retried later.
 
 If you'd like to try it, [the contact form](/en/#contact) takes one line.

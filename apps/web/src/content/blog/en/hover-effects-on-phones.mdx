@@ -1,16 +1,17 @@
 ---
 title: "Hover effects on phones: every hover gets a tap, focus or scroll twin"
 seoTitle: "Hover effects on phones: tap and focus twins"
-description: "Phones have no cursor. How this site gates hover with (hover: hover) and (pointer: fine) and gives every hover effect a tap, focus or scroll twin."
+description: "Phones have no cursor. How this site gates hover with (hover: hover) and (pointer: fine) and gives every hover a tap, focus or scroll twin."
 translationKey: "hover-tap"
 published: 2026-10-06
+updated: 2026-10-08
 tags: [accessibility, design]
 cover: tap
 related: [reduced-motion, this-site, fitted-type]
 sources:
   - title: ":hover (MDN)"
     url: "https://developer.mozilla.org/en-US/docs/Web/CSS/:hover"
-    accessed: 2026-10-06
+    accessed: 2026-10-08
   - title: "hover media feature (MDN)"
     url: "https://developer.mozilla.org/en-US/docs/Web/CSS/@media/hover"
     accessed: 2026-10-06
@@ -43,36 +44,41 @@ sources:
     accessed: 2026-10-06
 ---
 
-Phones have no cursor, so a hover effect on a phone may never fire, fire for a moment, or stick after a tap. On this site the rule is that hover movement lives behind `@media (hover: hover) and (pointer: fine)`, and every hover effect has a twin for everyone else: a press state, a focus style, a tap that does the same job, or content that is simply visible. Nothing you need is hidden behind a hover.
+import Clips from "~/components/blog/case/Clips.astro";
+import Shots from "~/components/blog/case/Shots.astro";
+import tapRows from "~/assets/blog/hover-tap/tap-rows-en.webp";
+import tapSpace from "~/assets/blog/hover-tap/tap-space-en.webp";
+
+Phones have no cursor, so a hover effect may never fire, flash for a moment, or stick after a tap. On this site, hover movement sits behind `@media (hover: hover) and (pointer: fine)`. Every hover also has a twin for touch and keyboard: a press, a focus style, a tap that does the same job, or content that is simply visible.
 
 > **TL;DR**
 > - Gate hover movement with `(hover: hover) and (pointer: fine)`. Keep `:active` and `:focus-visible` outside the query, so taps and keys get their own feedback.
 > - A hover may decorate or preview. It is never the only way to read a label, open a panel or start a video.
-> - WCAG sets the edges: 1.4.13 for content that appears on hover or focus, 2.5.3 for labels you can see and say, 2.5.8 for targets a thumb can hit.
+> - WCAG sets the edges: 1.4.13 for content shown on hover or focus, 2.5.3 for labels you can see and say, 2.5.8 for targets a thumb can hit.
 
 ## Where did the rule come from?
 
-From my own review of this site's design comps: every hover effect needs a twin for touch screens, because phones don't have a cursor. It is now a line in the project's lessons file and in the design system's do and don't table. The rest of that review is in [the case study of this site](/en/blog/case-study/).
+From my own review of this site's design comps on 5 October: phones don't have cursors, so every hover effect needs a twin. It is now a line in the project's lessons file and in the design system's do and don't table. The rest of that review is in [the case study of this site](/en/blog/case-study/).
 
-A twin is whatever gives the same information or the same feedback without a pointer floating over the element. This site uses four kinds: a press, a focus style, a tap that does the hover's job, and scrolling something into view.
+A twin gives the same information or feedback without a pointer over the element. This site uses four kinds: a press, a focus style, a tap that does the hover's job, and scrolling something into view.
 
 ## What does a phone do with :hover?
 
-MDN is direct about it: `:hover` is problematic on touchscreens. Depending on the browser, it might never match, match only for a moment after a touch, or keep matching after the finger lifts until you touch another element. The last one is the one you notice: a card stays lifted after you tap it and come back.
+MDN is direct: `:hover` "is problematic on touchscreens". Depending on the browser, it might never match, match only for a moment after a touch, or keep matching until you touch something else. The last one is the one you notice: a card stays lifted after you tap it and come back.
 
-CSS has media features that ask about the input instead of guessing from the screen width:
+CSS can ask about the input instead of guessing from the screen width:
 
 | Media feature | What it asks (MDN) | Example values |
 | --- | --- | --- |
-| `hover` | Can the primary input conveniently hover? | `none`: many mobile devices only emulate hover with a long tap |
-| `pointer` | Is there a pointing device, and how accurate is the primary one? | `fine`: a mouse; `coarse`: a finger on a touchscreen |
+| `hover` | Can the primary input conveniently hover? | `none`: many phones only emulate hover with a long tap |
+| `pointer` | Is there a pointing device, and how accurate is the primary one? | `fine`: a mouse; `coarse`: a finger |
 | `any-hover`, `any-pointer` | The same, for any available input | useful when a second input matters |
 
 I use the primary-input features: for decoration, what matters is how the page is most likely being used right now.
 
 ## How is a hover gated on this site?
 
-The buttons show the whole pattern. A primary button rests on a 4 px hard shadow. With a mouse, hover lifts it 3 px and grows the shadow to 7 px. Press it, with a mouse or a finger, and it sinks into its shadow.
+The buttons show the whole pattern. A primary button rests on a 4 px hard shadow. Under a mouse it lifts and the shadow grows to 7 px. Press it, with a mouse or a finger, and it sinks into its shadow.
 
 ```css
 @media (hover: hover) and (pointer: fine) {
@@ -94,35 +100,51 @@ The buttons show the whole pattern. A primary button rests on a 4 px hard shadow
 }
 ```
 
-Three states, three audiences: the hover for the mouse, the press for anyone, the 3 px ring for the keyboard. Under reduced motion all of these transitions finish at once, as described in [the post on motion and the pause button](/en/blog/reduced-motion-and-a-pause-button/).
+Three states, three audiences: the lift for the mouse, the press for anyone, the ring for the keyboard. Under reduced motion all of them finish at once, as [the post on motion and the pause button](/en/blog/reduced-motion-and-a-pause-button/) explains.
 
 ## What counts as a twin?
 
-Here are the hover effects on the home page and what stands in for each:
+The hover effects on the home page and what stands in for each:
 
 | Hover effect | Where | The twin |
 | --- | --- | --- |
-| A button lifts, its shadow grows | every button | the press state on tap; the focus ring |
+| A button lifts, its shadow grows | every button | the press on tap; the focus ring |
 | A row opens its detail panel | Competences | a tap or focus opens it; an accordion on phones |
 | A step of the story lights up | AI section | a tap plays that step; the focus ring |
 | A stop on the ring grows | How I work | a tap shows that stop and holds it for 9 s |
 | Note cards straighten and lift | Writing | the same lift when the card's link has keyboard focus |
-| A flag tilts, its underline draws | language switch | the underline on focus and on the current language; the name as text |
-| The Copy email tile inverts | contact | a tap copies, and a status message confirms it |
+| A flag tilts, its underline draws | language switch | the underline on focus and on the current language |
+| The Copy email tile inverts | contact | a tap copies; a status message confirms it |
 
-The Copy email tile also shows the address at rest, and if the browser refuses the clipboard, the status message shows the address instead.
+The Copy email tile shows the address at rest, and if the browser refuses the clipboard, the status message shows the address instead.
 
-One twin is not about styling at all. My old 3D portfolio has no touch navigation, so its chapter swaps the main button on `(pointer: coarse)`. A mouse gets "Launch on desktop". A finger gets "Desktop only · copy link", which copies the address and suggests opening it on a computer. Same intent, honest about the device.
+Two of the twins on a phone:
 
-And one hover has no twin on purpose. In the tool band, a tool's name turns pink under the mouse. The names are always visible and the band is not a control, so nothing is lost on a phone.
+<Shots
+  phones
+  shots={[
+    { image: tapRows, alt: "The Competences section on a phone: a tapped row, the vocational exams, open as an accordion with its drawn exam sheets", tag: "Tap opens a row" },
+    { image: tapSpace, alt: "The space portfolio chapter on a phone: the main button reads Desktop only, copy link", tag: "Touch gets copy link" },
+  ]}
+  caption="Chromium with touch emulation (pointer: coarse, hover: none), 8 October 2026. A mouse gets a list with a side panel and a Launch on desktop button instead."
+/>
 
-## Where does scrolling come in?
+The second one isn't about styling. My old 3D portfolio has no touch navigation, so its chapter swaps the main button on `(pointer: coarse)`. A mouse gets "Launch on desktop". A finger gets "Desktop only · copy link", which copies the address and suggests opening it on a computer. Same intent, honest about the device.
 
-Scrolling is the fourth twin. Many portfolios play a project preview when the cursor rests on it. Here, a project video plays while it is half visible (after your first interaction with the page), pauses offscreen, and a tap on the frame pauses or resumes it. You get the preview by doing what you do on a phone anyway: scrolling.
+Scrolling is the fourth twin. Many portfolios play a project preview when the cursor rests on it. Here a project video plays while it is half visible (after your first interaction with the page), pauses offscreen, and a tap on the frame pauses it. You get the preview by scrolling, which you do on a phone anyway.
+
+One hover has no twin on purpose. In the tool band, a tool's name turns pink under the mouse. The names are always visible and the band is not a control, so nothing is lost on a phone.
 
 ## How does one row open on hover, focus and tap?
 
-The Competences section is the busiest case. On wide screens it is a list on the left and the open row's details on the right, with one row always open. On phones it becomes an accordion. Each row is a real `<button>` with `aria-expanded`, and without JavaScript every row is simply open, stacked.
+Competences is the busiest case. Above 900 px it is a list with the open row's details beside it, one row always open. Below that it becomes an accordion. Each row is a real `<button>` with `aria-expanded`, and without JavaScript every row is simply open.
+
+<Clips
+  clips={[{ src: "rows-en", dir: "/media/blog/hover-tap/", label: "The Competences list on the home page: as the mouse moves down, each row opens its own drawn scene in the panel", name: "Hover" }]}
+  caption="The mouse moving down the list on a 1200 px window (the cursor isn't recorded). Each row opens as it passes; nothing closes when the pointer leaves."
+/>
+
+The script, trimmed to the part that matters:
 
 ```ts
 const wide = matchMedia("(min-width: 56.3125rem)");
@@ -136,11 +158,11 @@ for (const card of cards) {
 }
 ```
 
-The click handler owns taps, and it is the one path that works everywhere. Focus opens a row on wide screens, so tabbing through the list feels like hovering through it. The `pointerenter` listener checks the same media query in JavaScript, and that check matters: MDN notes that `pointerenter` also fires as a result of a `pointerdown` from a device that can't hover. On a touchscreen, that "hover" is really the start of a tap. The guard keeps hover a mouse thing.
+The click handler owns taps; it is the one path that works everywhere. Focus opens a row on wide screens, so tabbing through the list feels like hovering through it. The `pointerenter` guard matters: MDN notes that `pointerenter` also fires after a `pointerdown` from a device that can't hover. On a touchscreen that "hover" is the start of a tap.
 
 ## Where does keyboard focus fit?
 
-`:focus-visible` matches when the browser decides, by heuristics, that focus should be shown. MDN's example: a button clicked with a mouse generally shows no focus ring, while keyboard focus does.
+`:focus-visible` matches when the browser decides, by heuristics, that focus should show. MDN's example: a button clicked with a mouse usually shows no ring, while keyboard focus does.
 
 For links I put hover and focus in one selector, so the two can't drift apart:
 
@@ -151,9 +173,9 @@ For links I put hover and focus in one selector, so the two can't drift apart:
 }
 ```
 
-The menu links widen on the font's width axis, the same axis the site uses for its [fitted headings](/en/blog/fit-text-to-width-at-build-time/).
+The menu links widen on the font's width axis, the same axis behind the site's [fitted headings](/en/blog/fit-text-to-width-at-build-time/).
 
-Cards need one more step. A note card's title link stretches over the whole card, so focus lands on a small element inside a big one. `:has()` matches an element when a selector matches something inside it, which lets the card react to its own link:
+Cards need one more step. A note card's title link stretches over the whole card, so focus lands on a small element inside a big one. `:has()` lets the card react to its own link:
 
 ```css
 .card.compact:has(.title a:focus-visible) {
@@ -164,24 +186,24 @@ Cards need one more step. A note card's title link stretches over the whole card
 
 ## Which WCAG criteria apply?
 
-**1.4.13 Content on Hover or Focus** (Level AA) covers extra content that appears on hover or focus. It must be dismissible without moving the pointer or focus (unless it covers nothing), hoverable (you can move the pointer onto it without it vanishing) and persistent (it stays until you move away, dismiss it, or it stops being valid). The Competences panel is where it applies here. The panel never closes when the pointer leaves, it stays until you pick another row, and it sits in its own column, so the list stays readable. Whether swapping panels counts as replacing content is a judgment call; I treat the rows like tabs.
+**1.4.13 Content on Hover or Focus** (Level AA) covers extra content that appears on hover or focus. It must be dismissible, hoverable (the pointer can move onto it), and persistent until you move away or dismiss it. Here it applies to the Competences panel. The panel never closes when the pointer leaves and sits in its own column, so the list stays readable. Whether swapping panels counts as replacing content is a judgment call; I treat the rows like tabs.
 
-The criterion exempts the tooltips a browser draws from the `title` attribute. That doesn't make them a good idea: MDN calls `title` highly problematic for people on touch-only devices, keyboard users and screen reader users. The flags in the language switch have a `title`, but nobody depends on it. Each flag link carries its language name as screen reader text, and the menu shows the names next to the flags.
+The criterion exempts the tooltips a browser draws from `title`. That doesn't make them a good idea: MDN calls `title` "highly problematic" for touch-only, keyboard and screen reader users. The flags in the language switch have a `title`, but nothing depends on it. Each flag link carries its language name as screen reader text, and the menu shows the names next to the flags.
 
-**2.5.3 Label in Name** (Level A) asks that a control's accessible name contains the text you see, and the Understanding document calls putting that text at the start a best practice. It exists for speech input: people say the label they see. A label that only appears on hover is one a phone user never sees, so every label here is visible at rest. The CV button reads "CV" and then, for screen readers, "(PDF, then the CV page)". The Copy email tile starts with "Copy email".
+**2.5.3 Label in Name** (Level A) asks that a control's accessible name contains its visible text, ideally at the start. It exists for speech input: people say the label they see. A label that appears only on hover is one a phone user never sees, so every label here is visible at rest. The CV button reads "CV", then, for screen readers only, "(PDF, then the CV page)".
 
 **2.5.8 Target Size (Minimum)** (Level AA) asks for 24 by 24 CSS pixels, or enough spacing. I aim higher: buttons are 46 px tall (40 px in the sticky header), and the flag links 44 px.
 
 ## How do I check it?
 
-Mostly by reading. I search the source for `:hover` and sort the hits. Lifts, shadows and anything that moves belong inside the media query. Plain link styles (an underline, a colour) may stay outside: if one sticks after a tap, you get a coloured link, not a jumped layout.
+Mostly by reading. I search the source for `:hover` and sort the hits. Lifts, shadows and anything that moves belong inside the media query. Plain link styles (an underline, a colour) may stay outside: a sticky one gives you a coloured link, not a jumped layout.
 
-Sorting the hits for this post turned up four small movements that were not gated: the "Also shipped" tickets under the project chapters, the flag tilt, and the speech bubbles and the chips of one toy on the my-life page. All of them had a focus style, so keyboard users got the same feedback, but on a phone a ticket could stay lifted after a tap, which is the sticky behaviour MDN describes. The same day, each one moved behind `(hover: hover)`, with its focus style left on for everyone.
+Sorting the hits on 6 October, while writing the first version of this post, turned up four small movements that weren't gated. They were the "Also shipped" tickets under the project chapters, the flag tilt and two pieces of the My life page. All had a focus style, but on a phone a ticket could stay lifted after a tap. The same day, each movement moved behind `(hover: hover)`, with its focus style kept for everyone.
 
 ## Limits
 
-- No automated test covers hover. The end-to-end suite runs a desktop browser profile, so the twins are checked by reading the code and by hand, not by a touch-emulating run.
-- The press state has not been checked on a real iPhone. My cross-browser runs use WebKit on Windows.
+- No automated test covers hover. The end-to-end suite runs a desktop Chrome profile, so the twins are checked by reading the code and by hand.
+- The phone pictures come from Chromium's touch emulation, and the press state hasn't been checked on a real iPhone (my WebKit runs are on Windows).
 - The Competences panel against 1.4.13 is my reading of the criterion, not an audit.
 
-If you are reading this on a phone, the buttons on [my work page](/en/work/) should press under your thumb, not wait for a cursor.
+If you are on a phone now, [the Competences section on the home page](/en/#credentials) is the quickest test: tap a row and it opens under your thumb, no cursor needed.

@@ -503,13 +503,24 @@
   object-fit: cover;
   transition: transform 0.5s var(--ease-out);
 }
-.ship:hover .ship-shot,
 .ship:focus-visible .ship-shot {
   rotate: 0deg;
 }
-.ship:hover .ship-shot img,
 .ship:focus-visible .ship-shot img {
   transform: scale(1.08);
+}
+/* The same on hover, behind the hover gate: on a phone a tap left the preview straightened and zoomed (found by the
+   hover post's sweep, 2026-10-08). */
+@media (hover: hover) {
+  .ship:hover .ship-shot {
+    rotate: 0deg;
+  }
+  .ship:hover .ship-shot img {
+    transform: scale(1.08);
+  }
+  .ship:hover .nudge {
+    transform: translate(2px, -2px);
+  }
 }
 .ship-text {
   display: grid;
@@ -531,7 +542,6 @@
   height: 1rem;
   transition: transform 0.3s var(--ease-pop);
 }
-.ship:hover .nudge,
 .ship:focus-visible .nudge {
   transform: translate(2px, -2px);
 }

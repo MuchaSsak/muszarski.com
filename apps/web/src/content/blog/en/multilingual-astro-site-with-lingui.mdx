@@ -4,6 +4,7 @@ seoTitle: "Multilingual Astro site with Lingui and hreflang"
 description: "How this site serves English, Polish and Spanish from one static Astro build: locale routes, translated slugs, hreflang and a switch that keeps your page."
 translationKey: "astro-i18n"
 published: 2026-10-06
+updated: 2026-10-08
 tags: [i18n, astro]
 cover: signpost
 related: [lingui-vs-i18next, lingui-translate-ai, this-site]
@@ -22,13 +23,16 @@ sources:
     accessed: 2026-10-06
   - title: "Tell Google about localized versions of your page (Google Search Central)"
     url: "https://developers.google.com/search/docs/specialty/international/localized-versions"
-    accessed: 2026-10-06
+    accessed: 2026-10-08
   - title: "Managing multi-regional and multilingual sites (Google Search Central)"
     url: "https://developers.google.com/search/docs/specialty/international/managing-multi-regional-sites"
-    accessed: 2026-10-06
+    accessed: 2026-10-08
   - title: "Spam policies for Google web search (Google Search Central)"
     url: "https://developers.google.com/search/docs/essentials/spam-policies"
     accessed: 2026-10-06
+  - title: "Static configuration with vercel.json: redirects (Vercel Docs)"
+    url: "https://vercel.com/docs/project-configuration/vercel-json"
+    accessed: 2026-10-08
   - title: "Lingui: Vite plugin"
     url: "https://lingui.dev/ref/vite-plugin"
     accessed: 2026-10-06
@@ -46,37 +50,51 @@ sources:
     accessed: 2026-10-06
 ---
 
-This site serves English, Polish and Spanish from one static Astro build. Every page lives under `/en/`, `/pl/` or `/es/`, interface strings go through Lingui catalogs, and long texts like this post are separate files per language. One 70-line module builds every URL, so the canonical link, the hreflang tags and the language switch can't disagree.
+import Shots from "~/components/blog/case/Shots.astro";
+import Clips from "~/components/blog/case/Clips.astro";
+import Flow from "~/components/blog/case/Flow.astro";
+import phones from "~/assets/blog/astro-i18n/phones.webp";
+
+This site serves English, Polish and Spanish from one static Astro build. Every page lives under `/en/`, `/pl/` or `/es/`, Lingui catalogs hold the interface strings, and long texts like this post are one file per language. One small module builds every URL, so the canonical link, the hreflang tags and the language switch can't disagree.
 
 > **TL;DR**
 > - Every URL starts with its locale, and one path builder (`routes.ts`) makes the canonical, hreflang and switcher links.
-> - Lingui handles the interface: catalogs compile on import, and a production build fails when a Polish or Spanish string is missing.
-> - The switch keeps your page when a translation exists and otherwise lands on a section in your language, never on a silent English page. Spanish is labelled as an unreviewed AI translation.
+> - Lingui handles the interface: `.po` catalogs compile on import, and a production build fails when a Polish or Spanish string is missing.
+> - The switch keeps your page when a translation exists and otherwise lands on a section in your language, never on English under a `/pl/` address.
 
 ## What does the URL scheme look like?
+
+<Shots
+  shots={[{ image: phones, alt: "The home page on three phones in English, Polish and Spanish: the same layout, with the Spanish lines running longest" }]}
+  caption="/en/, /pl/ and /es/: one layout, three catalogs. The layout has to take the longest language, here Spanish."
+/>
 
 | Rule | Value |
 | --- | --- |
 | Locales | `en` (source and default), `pl`, `es` |
-| Prefix | always, the locale id: `/en/`, `/pl/`, `/es/` |
-| Root | `/` answers with a permanent 308 redirect to `/en/` |
+| Prefix | always the locale: `/en/`, `/pl/`, `/es/` |
+| No prefix | `/`, `/cv/`, `/blog/<slug>/` redirect by the browser's language |
 | Trailing slash | always |
 | `<html lang>` and hreflang | bare codes: `en`, `pl`, `es` |
-| Slugs | the same in every locale (`work`, `cv`, `my-life`), except blog posts |
+| Slugs | shared (`work`, `cv`, `my-life`); blog posts may differ |
 
 Google recommends "different URLs for each language version of a page rather than using cookies or browser settings to adjust the content language on the page". A locale prefix is the simplest form of that.
 
+## What happens on an address without a locale?
+
+A printed CV says `muszarski.com/cv`, not `/en/cv/`. So since 8 October 2026 every page also answers without its locale. `vercel.json` then redirects at the edge with a 307 (temporary), picked by the first language in the `Accept-Language` header: Polish goes to `/pl/`, Spanish to `/es/`, anything else to `/en/`. A post's own slug goes to the language it is written in.
+
+Google says its crawler "sends HTTP requests without setting `Accept-Language`", so bots get English. Google also asks sites to "avoid automatically redirecting users from one language version of a site to a different language version". These redirects never do that: they only pick a version for an address that has none. A unit test runs the rules against every page and post, so a new Polish post without its redirect fails.
+
 ## Why a `[locale]` folder and not Astro's i18n config?
 
-Astro has an i18n routing API. You list your locales, pick a default, decide whether the default gets a prefix, and build links with helpers such as `getRelativeLocaleUrl()`. It also has a `manual` mode that disables Astro's i18n middleware "so that you can implement your own custom logic".
+Astro has an i18n routing API: you list your locales, pick a default, decide whether it gets a prefix and build links with helpers such as `getRelativeLocaleUrl()`. Its `manual` mode disables Astro's i18n middleware "so that you can implement your own custom logic".
 
-I didn't turn that config on. The pages sit in `src/pages/[locale]/`, a dynamic route. In a static build "all routes must be determined at build time", so each page exports `getStaticPaths()` with one entry per locale, and the blog returns one entry per post file.
-
-With every locale prefixed and one exception to the shared slugs, the rules fit in one small module. If you'd rather not write that module, the built-in API is the place to start.
+I didn't turn it on. The pages sit in `src/pages/[locale]/`, a dynamic route. In a static build "all routes must be determined at build time", so each page's `getStaticPaths()` returns one entry per locale, and the blog one per post file. With every locale prefixed, the rules fit in one small module. If you'd rather not write it, start with the built-in API.
 
 ## How does one module build every URL?
 
-`src/lib/routes.ts` works with one shape: a locale-free path. A page with the same slug everywhere passes a string (`"work"`). A page whose slug changes per language passes a map with one entry per locale.
+`src/lib/routes.ts` works with one shape: a locale-free path. A page with the same slug everywhere passes a string (`"work"`); a page whose slug changes per language passes a map with one entry per locale.
 
 ```ts
 type LocalizedPath = string | Partial<Record<Locale, string>>;
@@ -93,13 +111,11 @@ export function switchPath(path: LocalizedPath, to: Locale, fallback: LocalizedP
 }
 ```
 
-`pathTo` throws when a page has no version in a locale, so a link to a missing translation fails the build instead of shipping. The canonical tag, the hreflang tags, the navigation and the switcher all go through it, and unit tests pin each case.
+`pathTo` throws when a page has no version in a locale, so **a link to a missing translation fails the build** instead of shipping. The canonical tag, the hreflang tags, the navigation and the switcher all go through it, and unit tests pin each case.
 
 ## How do hreflang and x-default work here?
 
-Google's rules are short. "Each language version must list itself as well as all other language versions." "If two pages don't both point to each other, the tags will be ignored." Alternate URLs "must be fully-qualified". And `x-default` "is used when no other language/region matches the user's browser setting".
-
-`alternates()` turns those rules into code:
+Google's rules are short. Each version "must list itself as well as all other language versions". If two pages don't point to each other, "the tags will be ignored". And the URLs "must be fully-qualified". `alternates()` turns that into code:
 
 ```ts
 export function alternates(site: string, path: LocalizedPath): Alternate[] {
@@ -117,24 +133,29 @@ This is the head of the Polish version of my Lingui post, as built:
 
 ```html
 <link rel="canonical" href="https://muszarski.com/pl/blog/lingui-czy-i18next/">
-<link rel="alternate" hreflang="pl" href="https://muszarski.com/pl/blog/lingui-czy-i18next/">
 <link rel="alternate" hreflang="en" href="https://muszarski.com/en/blog/lingui-vs-i18next/">
+<link rel="alternate" hreflang="pl" href="https://muszarski.com/pl/blog/lingui-czy-i18next/">
 <link rel="alternate" hreflang="x-default" href="https://muszarski.com/en/blog/lingui-vs-i18next/">
 ```
 
-The codes are bare because the pages target languages, not countries; Google's format is an ISO 639-1 language code with an optional region. `x-default` points at English. A page that exists in one language gets no hreflang at all: my Polish-only post about Claude Code has none, because there is nothing to pair it with.
+The codes are bare because the pages target languages, not countries; Google's format is an ISO 639-1 code with an optional region. `x-default` points at English. A page in one language gets no hreflang at all: my Polish-only post about Claude Code has nothing to pair with.
 
-One more detail: Google "uses the visible content of your page to determine its language", not `lang` attributes or the URL. hreflang pairs translations; the text itself has to be in the language its URL claims.
+hreflang only pairs translations. Google "uses the visible content of your page to determine its language", not the `lang` attribute or the URL.
 
 ## How do translated slugs work?
 
-Pages share their slugs: `/en/work/`, `/pl/work/`, `/es/work/`. Blog posts don't. This post is `multilingual-astro-site-with-lingui` in English and `wielojezyczna-strona-astro-z-lingui` in Polish.
+Pages share their slugs: `/en/work/`, `/pl/work/`, `/es/work/`. Blog posts may not: this post is `multilingual-astro-site-with-lingui` in English and `wielojezyczna-strona-astro-z-lingui` in Polish.
 
-Each post file has a `translationKey` in its frontmatter. At build time, `translationsOf(post)` collects the files that share the key into a map from locale to path, and that map is the `LocalizedPath` the layout passes to `alternates()` and to the switcher. A new translation is one new file with the same key. Nothing else changes.
+Each post has a `translationKey` in its frontmatter. At build time, `translationsOf(post)` maps the files that share the key from locale to path, and that map is the `LocalizedPath` the layout passes to `alternates()` and to the switcher. A new translation is one new file with the same key. Nothing else changes.
 
 ## Where does the language switch take you?
 
-`switchPath()` tries three things in order: the same page in the language you picked, then that language's version of a fallback section, then that language's home page. From the built pages:
+<Clips
+  clips={[{ src: "switch-en", dir: "/media/blog/astro-i18n/", label: "This post in English: the three flags in the header tilt under the pointer, the Polish one is clicked, and the Polish version of this post opens", name: "The header switch" }]}
+  caption="One click on the Polish flag: this post's Polish twin, not the Polish home page."
+/>
+
+`switchPath()` tries three things in order: the same page in the language you picked, that language's version of a fallback section, then that language's home page. From the built pages:
 
 | You are on | You pick | You land on |
 | --- | --- | --- |
@@ -143,9 +164,7 @@ Each post file has a `translationKey` in its frontmatter. At build time, `transl
 | `/pl/blog/claude-code-po-polsku/` (Polish only) | English | `/en/blog/` |
 | any blog post | Español | `/es/` (there is no Spanish blog) |
 
-What it never does is put you on an English page while the URL says `/pl/`.
-
-Google asks sites to "avoid automatically redirecting users from one language version of a site to a different language version" and to add links so readers choose. The switch is exactly that: a list of plain links rendered at build time, with no JavaScript.
+Google suggests links to the other versions so "users can click to choose". The switch is exactly that: plain links rendered at build time, with no JavaScript.
 
 ```astro
 <a
@@ -159,15 +178,13 @@ Google asks sites to "avoid automatically redirecting users from one language ve
 </a>
 ```
 
-The flags are CSS gradients and small inline SVGs, not emoji: Emojipedia notes that the Polish flag emoji "may show as the letters PL on some platforms".
-
-The real label is the language's own name (English, Polski, Español). It is screen-reader text and a tooltip in the header and footer, and it shows next to the flag in the mobile menu. `lang="pl"` on "Polski" lets a screen reader pronounce it as Polish, which is what WCAG 3.1.2 Language of Parts (Level AA) asks for. The current language gets `aria-current` and an underline.
+The flags are a CSS gradient and small inline SVGs, not emoji: Emojipedia notes that the Polish flag emoji "may show as the letters PL on some platforms". The real label is the language's own name (English, Polski, Español): screen-reader text and a tooltip in the header, visible next to the flag in the mobile menu. `lang="pl"` on "Polski" lets a screen reader say it in Polish, which is what **WCAG 3.1.2 Language of Parts** (Level AA) asks for.
 
 ## How does Lingui run inside a static Astro build?
 
-Short strings (buttons, headings, error messages) are Lingui messages. In `.astro` files they work through lingui-for-astro, a community integration (version 0.7.1, not made by the Lingui team) that brings Lingui macros to Astro with request-scoped translation. A component writes `` t`Language` `` and gets the string for the page's locale.
+Short strings (buttons, headings, errors) are Lingui messages. In `.astro` files they work through lingui-for-astro, a community integration (0.7.1, not made by the Lingui team) that brings Lingui macros to Astro. A component writes `` t`Language` `` and gets the string for the page's locale.
 
-The locale comes from middleware. Astro runs it "at build time for all prerendered pages", so it works in a static build:
+The locale comes from middleware, which Astro runs "at build time for all prerendered pages":
 
 ```ts
 export const onRequest = defineMiddleware((context, next) => {
@@ -179,43 +196,46 @@ export const onRequest = defineMiddleware((context, next) => {
 });
 ```
 
-`getI18n()` returns one cached Lingui instance per locale. There is no global `activate()`: the build renders all three languages in one process, and one global active locale would be shared by every page being rendered.
+`getI18n()` returns one cached Lingui instance per locale. There is **no global `activate()`**: the build renders all three languages in one process, and a global active locale would be shared by every page being rendered.
 
-The catalogs are `.po` files, one per language. `@lingui/vite-plugin` compiles them on import, so no compiled catalog sits in the repository. Production builds set `failOnMissing: "catalog"`, which fails the build when the Polish or Spanish catalog lacks a message, checked before fallback locales apply. The wider comparison is in [Lingui vs i18next](/en/blog/lingui-vs-i18next/).
+Browser scripts never load Lingui. [The contact form](/en/blog/contact-form-on-a-static-site/), for example, gets its translated error messages as a JSON attribute rendered at build time, so the page ships words, not a catalog. A new string goes through this loop:
 
-Browser scripts never load Lingui. The contact form, for example, gets its translated error messages as a JSON data attribute rendered at build time, so the page ships words, not a catalog. None of this costs the reader anything: the home page scores 99 for performance and 100 for accessibility, best practices and SEO in all three languages (mobile Lighthouse, median of three runs on a local production build), as described in [the case study of this site](/en/blog/case-study/).
+<Flow
+  label="The loop for a new interface string"
+  steps={[
+    { icon: "tb:pencil", title: "Write English", text: "The English text goes in the component, inside a macro." },
+    { icon: "tb:search", title: "Extract", text: "bun run i18n:extract adds new messages to all three catalogs and drops unused ones." },
+    { icon: "tb:language", title: "Translate", text: "Polish and Spanish fill the new entries; Spanish is an AI translation." },
+    { icon: "tb:test-pipe", title: "Test", text: "Fails on a missing or empty string, a changed placeholder, a raw no-break space or a dash." },
+    { icon: "tb:hammer", title: "Build", text: "The Vite plugin compiles each .po on import and fails on a missing message." },
+  ]}
+/>
 
-The loop for a new string:
-
-1. Write the English text in the component.
-2. `bun run i18n:extract` runs `lingui extract --clean`, which adds new messages to all three catalogs and removes obsolete ones.
-3. Fill in Polish and Spanish.
-4. Tests fail on a missing or empty translation, a changed placeholder or tag, a raw no-break space, or an em or en dash.
-5. The build catches anything the tests missed.
+The last gate is `failOnMissing: "catalog"`: the build fails when the Polish or Spanish catalog lacks a message, checked before fallback locales apply. How that compares with i18next is in [Lingui vs i18next](/en/blog/lingui-vs-i18next/).
 
 One Polish detail: a one-letter word such as „w” or „z” shouldn't end a line. The catalogs hold plain spaces, and a `typo(locale, text)` helper swaps in no-break spaces at render time.
 
 ## Where does long text live?
 
-Not in Lingui. A 1,500-word post as a single catalog message would be hard to translate and harder to review. Blog posts and legal texts are content collection files per language, in folders such as `src/content/blog/pl/` and `src/content/legal/es/`.
+Not in Lingui. A 1,500-word post as one catalog message would be hard to translate and harder to review. Blog posts and legal texts are content collection files per language, in folders such as `src/content/blog/pl/` and `src/content/legal/es/`.
 
-Blog posts exist in English and Polish. The privacy policy and terms exist in all three, with a test that checks their numbered sections match; they are drafted in Polish, and the Polish text prevails.
+Posts exist in English and Polish. The privacy policy and terms exist in all three, drafted in Polish (the Polish text prevails), and a test checks that their numbered sections match.
 
 ## How is the Spanish version marked?
 
-Spanish is a machine translation that no fluent speaker has read yet, and the site says so:
+Spanish is a machine translation no fluent speaker has read yet, and the site says so:
 
 - The Spanish catalog's header carries `X-Review-Status: unreviewed (AI translation)`, and a test fails if it disappears.
 - The footer of every Spanish page says, in Spanish, that the text was translated with AI and not yet reviewed by a native speaker.
 - The legal pages repeat it next to the clause on which language prevails.
-- There is no Spanish blog. On Spanish pages, the blog link goes to the English blog and says "(EN)".
+- There is no Spanish blog: on Spanish pages, the blog link goes to the English blog and says "(EN)".
 
-The tool I wrote for machine-translating Lingui catalogs is described in [Translating Lingui catalogs with an LLM](/en/blog/translate-lingui-catalogs-with-an-llm/). Google's spam policies list "automated transformations like synonymizing, translating" used to generate many pages "where little value is provided to users". A portfolio's handful of pages is not that scale. The real risk is quality: a stiff Spanish sentence argues against the care the rest of the site shows.
+The tool behind it is in [Translating Lingui catalogs with an LLM](/en/blog/translate-lingui-catalogs-with-an-llm/). Google's spam policies name "automated transformations like synonymizing, translating" used to mass-produce pages "where little value is provided to users". A portfolio's handful of pages is not that scale. The real risk is quality: a stiff Spanish sentence argues against the care the rest of the site shows.
 
 ## Limits
 
-- **The sitemap only pairs pages with the same path.** In the built sitemap, `/pl/work/` lists its English and Spanish twins; blog posts, whose slugs differ, list none, so their hreflang lives only in the page head. Google accepts any of its three methods (HTML, HTTP headers, sitemap), but I'd rather feed the sitemap from `alternates()` too.
-- **Flags stand for countries, not languages.** English shows a UK flag for a mostly European audience. The language name next to it carries the meaning.
+- **The sitemap only pairs pages with the same path.** `/pl/work/` lists its English and Spanish twins; a post with a different slug per language lists none, so its hreflang lives only in the page head. Google accepts that, but I'd rather feed the sitemap from `alternates()` too.
+- **Flags stand for countries, not languages.** English shows a UK flag for a mostly European audience; the language name carries the meaning.
 - **lingui-for-astro is pre-1.0 and community-maintained.** I keep `.astro` copy thin, so dropping it would cost a few explicit `i18n._()` calls.
 - **The 404 page is English only** for now.
 - **Spanish stays "unreviewed"** until a native speaker reads it.

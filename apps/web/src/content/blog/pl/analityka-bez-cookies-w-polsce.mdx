@@ -4,10 +4,10 @@ seoTitle: "Analityka bez cookies w Polsce: Umami i RODO"
 description: "Brak cookies nie oznacza automatycznie braku zgody. Co mówią RODO i art. 399 Prawa komunikacji elektronicznej oraz trzy stanowiska, których da się bronić."
 translationKey: "cookieless-analytics"
 published: 2026-10-05
-updated: 2026-10-06
+updated: 2026-10-08
 tags: [privacy]
 cover: cookie
-related: [this-site]
+related: [contact-form, this-site, reduced-motion]
 sources:
   - title: "Ustawa z dnia 12 lipca 2024 r. Prawo komunikacji elektronicznej, Dz.U. 2024 poz. 1221 (Sejm ELI API)"
     url: "https://api.sejm.gov.pl/eli/acts/DU/2024/1221/text.html"
@@ -47,21 +47,26 @@ sources:
     accessed: 2026-10-05
 ---
 
-Analityka bez cookies, taka jak Umami, omija ciasteczka, ale nie omija unijnej zasady dotyczącej odczytu informacji z urządzenia odwiedzającego. W Polsce tę zasadę zapisano w art. 399 Prawa komunikacji elektronicznej i nie ma w niej wyjątku dla analityki. Da się bronić trzech stanowisk (zgoda, brak banera przy pełnej informacji i respektowaniu rezygnacji albo brak analityki w przeglądarce), a ta strona wybrała drugie.
+import Flow from "~/components/blog/case/Flow.astro";
+import Shots from "~/components/blog/case/Shots.astro";
+import optoutOn from "~/assets/blog/cookieless-analytics/optout-on-pl.webp";
+import optoutGpc from "~/assets/blog/cookieless-analytics/optout-gpc-pl.webp";
+
+Analityka bez cookies, taka jak Umami, omija ciasteczka, ale nie omija unijnej zasady dotyczącej odczytu informacji z urządzenia odwiedzającego. W Polsce tę zasadę zapisano w art. 399 Prawa komunikacji elektronicznej i nie ma w niej wyjątku dla analityki. Da się bronić trzech stanowisk: zgoda, brak banera przy pełnej informacji i respektowaniu rezygnacji albo brak analityki w przeglądarce. Ta strona wybrała drugie.
 
 > **TL;DR**
 >
 > - **Dwie zasady:** RODO dotyczy danych osobowych, a art. 399, polska wersja zasady z dyrektywy ePrivacy, dotyczy zapisu i odczytu czegokolwiek na urządzeniu, z cookies czy bez.
 > - **Dostęp mimo braku cookies:** EROD uznaje skrypt, który każe przeglądarce wysłać dane, za dostęp, a art. 399 nie ma wyjątku dla pomiaru oglądalności.
-> - **Ta strona:** bez banera, Umami bez cookies, polityka prywatności prostym językiem, możliwość rezygnacji i żadnego skryptu przy Do Not Track albo Global Privacy Control.
+> - **Ta strona:** bez banera, Umami bez cookies, polityka prywatności, która mówi, co skrypt odczytuje, możliwość rezygnacji i żadnego skryptu przy Do Not Track albo Global Privacy Control.
 
 > To nie jest porada prawna. Jestem programistą, który przeczytał źródła dla własnej strony. Jeśli od tej decyzji zależy Twój biznes, zapytaj prawnika.
 
 ## Jakie dwie zasady tu obowiązują?
 
-**RODO** dotyczy danych osobowych. Analityka potrzebuje podstawy prawnej, a dla małej strony zwykle jest nią art. 6 ust. 1 lit. f, czyli prawnie uzasadniony interes: przetwarzanie „niezbędne do celów wynikających z prawnie uzasadnionych interesów realizowanych przez administratora lub przez stronę trzecią, z wyjątkiem sytuacji, w których nadrzędny charakter wobec tych interesów mają interesy lub podstawowe prawa i wolności osoby, której dane dotyczą”. Art. 21 daje każdemu prawo, by w dowolnym momencie, z przyczyn związanych z jego szczególną sytuacją, wnieść sprzeciw wobec przetwarzania opartego na tej podstawie.
+**RODO** dotyczy danych osobowych. Analityka potrzebuje podstawy prawnej. Dla małej strony zwykle jest nią art. 6 ust. 1 lit. f, prawnie uzasadniony interes: przetwarzanie „niezbędne do celów wynikających z prawnie uzasadnionych interesów realizowanych przez administratora”, chyba że przeważają prawa osoby, której dane dotyczą. Art. 21 pozwala w dowolnym momencie wnieść sprzeciw wobec takiego przetwarzania, z przyczyn związanych ze szczególną sytuacją tej osoby.
 
-**Dyrektywa o prywatności i łączności elektronicznej** (2002/58/WE, potocznie ePrivacy) w art. 5 ust. 3 dotyczy zapisywania informacji na urządzeniu użytkownika i odczytywania ich z niego, niezależnie od tego, czy są danymi osobowymi. W Polsce wdraża ją Prawo komunikacji elektronicznej (Dz.U. 2024 poz. 1221), obowiązujące od 10 listopada 2024 r. Zasada dotycząca urządzenia to jego art. 399.
+**Dyrektywa o prywatności i łączności elektronicznej** (2002/58/WE, potocznie ePrivacy) w art. 5 ust. 3 dotyczy zapisywania informacji na urządzeniu użytkownika i odczytywania ich z niego, niezależnie od tego, czy to dane osobowe. W Polsce wdraża ją Prawo komunikacji elektronicznej (Dz.U. 2024 poz. 1221), obowiązujące od 10 listopada 2024 r. Zasada dotycząca urządzenia to jego art. 399.
 
 „Bez cookies” odpowiada na pytanie o ciasteczka. Art. 399 zadaje szersze.
 
@@ -73,17 +78,17 @@ Ustęp 1 w skrócie: „Przechowywanie informacji lub uzyskiwanie dostępu do in
 2. potem „wyrazi na to zgodę”;
 3. sam zapis lub odczyt nie zmienia konfiguracji urządzenia ani oprogramowania.
 
-Ustęp 3 zdejmuje te warunki, gdy zapis lub dostęp jest konieczny do przesłania komunikatu przez publiczną sieć albo do „dostarczania usługi telekomunikacyjnej lub usługi świadczonej drogą elektroniczną, żądanej przez abonenta lub użytkownika końcowego”. Art. 400 dodaje, że do zgody stosuje się odpowiednio przepisy o ochronie danych osobowych.
+Ustęp 3 zdejmuje te warunki, gdy zapis lub dostęp jest konieczny do przesłania komunikatu przez publiczną sieć. Zdejmuje je też przy usłudze „żądanej przez abonenta lub użytkownika końcowego”, czyli takiej, o którą użytkownik sam poprosił. Art. 400 dodaje, że do zgody stosuje się odpowiednio przepisy o ochronie danych osobowych.
 
 Z samego tekstu wynikają trzy rzeczy:
 
 - Przepis wiąże każdego, kto zapisuje albo odczytuje. Nie ma w nim warunku prowadzenia działalności.
 - Obejmuje dostęp, a nie tylko zapis.
-- Wyjątki to transmisja i usługa, o którą użytkownik poprosił. Wyjątku dla pomiaru oglądalności nie ma.
+- Wyjątki to transmisja i usługa, o którą użytkownik poprosił. Pomiar oglądalności do nich nie należy.
 
 ## Czy skrypt bez cookies „uzyskuje dostęp” do urządzenia?
 
-Europejska Rada Ochrony Danych (EROD) odpowiada, że w typowym przypadku tak. W wytycznych 2/2023 (wersja 2.0, przyjęta 7 października 2024 r.), w pkt 33, pisze, że kod JavaScript, którym podmiot każe przeglądarce wysłać asynchroniczne żądania z danymi, „wyraźnie mieści się” w zakresie art. 5 ust. 3 (tłumaczenie moje).
+Europejska Rada Ochrony Danych (EROD) odpowiada, że w typowym przypadku tak. Według jej wytycznych 2/2023 (pkt 33) kod JavaScript, którym podmiot każe przeglądarce wysłać asynchroniczne żądania z danymi, „wyraźnie mieści się” w zakresie art. 5 ust. 3 (tłumaczenie moje).
 
 Tracker Umami ma otwarty kod, więc można sprawdzić, co robi. W obecnej wersji:
 
@@ -92,19 +97,19 @@ Tracker Umami ma otwarty kod, więc można sprawdzić, co robi. W obecnej wersji
 - sprawdza ustawienie Do Not Track, jeśli włączysz tę opcję;
 - domyślnie wysyła żądania bez poświadczeń i nie zapisuje żadnego ciasteczka.
 
-FAQ Umami mówi to samo: „Umami does not use any cookies in the tracking code”. Cookies więc nie ma, ale w rozumieniu EROD dostęp jest.
+FAQ Umami mówi to samo: „Umami does not use any cookies in the tracking code”. Cookies więc nie ma, ale w rozumieniu EROD dostęp jest. Dlatego kod trackera znaczy więcej niż jego strona główna: obietnica dostawcy nie jest źródłem prawa.
 
-Te same wytyczne (pkt 56) dodają, że objęcie przepisem „nie oznacza automatycznie”, że trzeba zbierać zgodę (tłumaczenie moje). Czy działa wyjątek, ocenia się w każdym przypadku osobno, a w Polsce oznacza to art. 399 ust. 3. Analityka słabo się w nim mieści.
+Te same wytyczne (pkt 56) dodają, że objęcie przepisem „nie oznacza automatycznie”, że trzeba zbierać zgodę (tłumaczenie moje). Czy działa wyjątek, ocenia się w każdym przypadku osobno, a w Polsce wyjątki to art. 399 ust. 3. Analityka słabo się w nich mieści.
 
-Grupa Robocza Art. 29 napisała w 2012 r. (opinia WP194), że analityka własna nie jest ściśle niezbędna do funkcji, o którą użytkownik wyraźnie poprosił. W tej samej opinii uznała jednak, że raczej nie stwarza ryzyka dla prywatności, jeśli służy wyłącznie zbiorczym statystykom pierwszej strony, polityka prywatności jasno ją opisuje, jest przyjazny sposób rezygnacji, a dane takie jak adresy IP są anonimizowane. Zasugerowała nawet, że prawodawca mógłby dodać trzecie kryterium wyjątku.
+Grupa Robocza Art. 29 pisała o tym już w 2012 r. (opinia WP194): analityka własna nie jest ściśle niezbędna do funkcji, o którą użytkownik wyraźnie poprosił. Uznała jednak, że raczej nie stwarza ryzyka dla prywatności, jeśli służy tylko zbiorczym statystykom pierwszej strony. Warunki: jasny opis w polityce prywatności, przyjazny sposób rezygnacji i anonimizacja. Zasugerowała nawet, że prawodawca mógłby dodać trzecie kryterium wyjątku.
 
-Polska ustawa go nie ma. WP194 powstała przed RODO i przed obecną ustawą: przydaje się jako profil ryzyka, ale nie wiąże.
+Polska ustawa takiego kryterium nie ma. WP194 powstała przed RODO i przed obecną ustawą: przydaje się jako profil ryzyka, ale nie wiąże.
 
 ## Jak wygląda polska praktyka i jakie są kary?
 
-UODO w swojej polityce prywatności pisze, że korzysta z Plausible Analytics, „które nie wykorzystuje plików cookie i nie zbiera danych osobowych”. Polityka nie opisuje żadnego kroku zgody dla tego narzędzia. UODO nie egzekwuje jednak art. 399. Kary za jego naruszenie nakłada Prezes UKE (art. 444 ust. 1 pkt 82 w związku z art. 446).
+UODO korzysta na swojej stronie z Plausible Analytics. Jego polityka prywatności mówi, że to narzędzie „nie wykorzystuje plików cookie i nie zbiera danych osobowych”, i nie opisuje żadnego kroku zgody. UODO nie egzekwuje jednak art. 399. Kary za jego naruszenie nakłada Prezes UKE (art. 444 ust. 1 pkt 82 w związku z art. 446).
 
-Górne granice, wprost z ustawy: do 3% przychodu z poprzedniego roku kalendarzowego (art. 446 ust. 1). Jeśli podmiot nie miał przychodu w trzech poprzedzających latach albo jego przychód w tym okresie nie przekroczył 500 000 zł, do 15 000 zł (art. 446 ust. 3). To maksima, które regulator może nałożyć, a nie cennik.
+Górne granice, wprost z ustawy: do 3% przychodu z poprzedniego roku kalendarzowego (art. 446 ust. 1). Jeśli podmiot nie miał przychodu w trzech poprzedzających latach albo jego przychód w tym okresie nie przekroczył 500 000 zł, kara wynosi do 15 000 zł (art. 446 ust. 3). To maksima, a nie cennik.
 
 ## Jakich stanowisk da się bronić?
 
@@ -114,28 +119,53 @@ Górne granice, wprost z ustawy: do 3% przychodu z poprzedniego roku kalendarzow
 | (b) Bez banera, z pełną informacją | Opisujesz analitykę w polityce prywatności, dajesz możliwość rezygnacji i nie mierzysz, gdy przeglądarka wysyła Do Not Track albo Global Privacy Control | Ryzyko szczątkowe przy dosłownym czytaniu art. 399 |
 | (c) Bez analityki w przeglądarce | Żadnego skryptu; najwyżej zbiorcze liczby z serwera | Tracisz rozmiary ekranów, języki i kliknięcia |
 
-(a) ma najmniejsze ryzyko prawne przy literalnym czytaniu art. 399. (b) pasuje do profilu ryzyka z WP194 i do opisanej praktyki, ale akceptuje to, że żaden polski przepis wprost nie zwalnia go ze zgody. (c) zawęża pytanie, ale go nie usuwa: serwer i tak dostaje adresy IP, a wytyczne EROD (pkt 55) traktują adres IP pochodzący z urządzenia użytkownika jako objęty przepisem.
+(a) jest najbezpieczniejsze przy dosłownym czytaniu art. 399, a (b) pasuje do profilu ryzyka z WP194 i do opisanej praktyki. (c) zawęża pytanie, ale go nie usuwa. Serwer i tak dostaje adresy IP, a wytyczne EROD (pkt 55) traktują adres IP wysłany z urządzenia użytkownika jako objęty przepisem.
 
 ## Co robi ta strona?
 
-Stanowisko (b):
+Stanowisko (b), rozstrzygane przy każdej wizycie:
 
-- Umami ładowane dopiero po zdarzeniu `load` strony i ograniczone do jej domeny.
-- Bez cookies. Zdarzenia nie niosą danych osobowych: ich właściwości pochodzą ze stałych list, na przykład który przycisk albo który język.
-- Polityka prywatności prostym językiem opisuje, co jest zbierane i po co.
-- Rezygnacja na [stronie prywatności](/pl/privacy/) ustawia udokumentowaną flagę Umami `umami.disabled`. Zapisanie tej flagi to coś, o co odwiedzający sam poprosił, czyli przypadek z ust. 3 pkt 2.
-- Brak pomiaru, gdy przeglądarka wysyła Do Not Track albo Global Privacy Control: skrypt nawet się nie ładuje.
+<Flow
+  label="Co decyduje, czy wizyta zostanie policzona"
+  steps={[
+    {
+      icon: "tb:browser",
+      title: "Strona się ładuje",
+      text: "Działa tylko mały loader w HTML; skrypt Umami nie jest jeszcze pobierany.",
+    },
+    {
+      icon: "tb:eye-off",
+      title: "Sygnały",
+      text: "Do Not Track albo Global Privacy Control włączone? Stop: żadnego skryptu.",
+    },
+    {
+      icon: "tb:lock",
+      title: "Rezygnacja",
+      text: "umami.disabled zapisane w tej przeglądarce? Stop.",
+    },
+    {
+      icon: "tb:chart-line",
+      title: "Umami",
+      text: "Dodawane po zdarzeniu load, liczy tylko własną domenę strony. Bez cookies.",
+    },
+    {
+      icon: "tb:list-check",
+      title: "Zdarzenia",
+      text: "Wartości ze stałych list, na przykład który przycisk albo który język. Nic, co wpisano.",
+    },
+  ]}
+/>
+
+Punkt 7 polityki prywatności, we wszystkich trzech językach strony, mówi, co skrypt odczytuje i jak go wyłączyć. Wprost nazywa siebie informacją, której wymaga art. 399 ust. 1. Przełącznik jest na [stronie prywatności](/pl/privacy/). Zapisanie jego flagi to coś, o co odwiedzający sam poprosił, czyli przypadek z ust. 3 pkt 2. Przycisk pauzy działa według tej samej zasady: zapamiętuje wybór dopiero po kliknięciu ([ruch, który szanuje ludzi](/pl/blog/reduced-motion-i-przycisk-pauzy/)).
 
 ## Jak to podpiąć w Umami?
 
-Do Not Track to jeden atrybut. Dokumentacja Umami: `data-do-not-track` sprawia, że tracker respektuje to ustawienie przeglądarki.
-
-Global Privacy Control nie ma w Umami żadnego ustawienia: nie wspominają o nim ani dokumentacja, ani kod trackera. Możesz anulować każde wysłanie przez hook `data-before-send` (wystarczy zwrócić wartość fałszywą), ale czyściej jest w ogóle nie ładować skryptu. Uproszczona wersja loadera tej strony:
+Do Not Track to jeden atrybut: według dokumentacji Umami `data-do-not-track` sprawia, że tracker respektuje to ustawienie przeglądarki. Global Privacy Control nie ma w Umami żadnego ustawienia; nie wspominają o nim ani dokumentacja, ani kod trackera. Możesz anulować każde wysłanie w hooku `data-before-send` (wystarczy zwrócić wartość fałszywą), ale czyściej jest w ogóle nie ładować skryptu. Uproszczona wersja loadera tej strony:
 
 ```js
 const optedOut = () => {
   try {
-    return localStorage.getItem("umami.disabled") !== null;
+    return !!localStorage.getItem("umami.disabled");
   } catch {
     return false; // storage zablokowany
   }
@@ -153,29 +183,42 @@ if (!navigator.globalPrivacyControl && navigator.doNotTrack !== "1" && !optedOut
 }
 ```
 
-Rezygnacja to klucz ze strony „Exclude my own visits” w dokumentacji Umami, podpięty pod przycisk:
+Rezygnacja to klucz ze strony „Exclude my own visits” w dokumentacji Umami, pod przełącznikiem, który go zapisuje albo usuwa:
 
 ```js
 optOutButton.addEventListener("click", () => {
   try {
-    localStorage.setItem("umami.disabled", "1");
+    if (localStorage.getItem("umami.disabled")) localStorage.removeItem("umami.disabled");
+    else localStorage.setItem("umami.disabled", "1");
   } catch {
-    // storage zablokowany: powiedz odwiedzającemu, że rezygnacji nie udało się zapisać
+    // storage zablokowany: nic się nie zapisze, a loader i tak tego nie odczyta
   }
 });
 ```
 
-Dwa uczciwe zastrzeżenia. MDN oznacza `navigator.doNotTrack` jako przestarzałe i niestandardowe, a specyfikację DNT jako porzuconą. `navigator.globalPrivacyControl` jest eksperymentalne i nie działa w części popularnych przeglądarek.
+<Shots
+  shots={[
+    {
+      image: optoutOn,
+      alt: "Ramka „Statystyki odwiedzin w tej przeglądarce” z jednym zdaniem o celu statystyk i przyciskiem „Statystyki są włączone. Wyłącz je”",
+      tag: "Domyślnie",
+    },
+    {
+      image: optoutGpc,
+      alt: "Ta sama ramka, gdy przeglądarka wysyła sygnał prywatności: jedno zdanie, że statystyki są już wyłączone, i brak przycisku",
+      tag: "Z GPC",
+    },
+  ]}
+  caption="Przełącznik na stronie prywatności tej strony. Przy włączonym Global Privacy Control (tu zasymulowanym w testowej przeglądarce) nie ma czego przełączać: statystyki są już wyłączone."
+/>
 
-Żaden z tych sygnałów nie przychodzi od wszystkich odwiedzających. Oba kosztują niewiele, a oba są wyborem, którego dokonał odwiedzający.
+Liczy się też serwer Umami. W jego otwartym kodzie identyfikator sesji to skrót (hash) z ID strony, adresu IP, user agenta i soli, która domyślnie zmienia się co miesiąc. Ciasteczek tu nie ma, ale adresy IP są, więc traktuj to jako przetwarzanie danych osobowych w rozumieniu RODO: wskaż podstawę, opisz ją w polityce i uwzględniaj sprzeciwy.
 
-Warto też wiedzieć, co dzieje się na serwerze Umami. W otwartym kodzie identyfikator sesji to skrót (hash) z ID strony, adresu IP, user agenta i soli, która domyślnie zmienia się co miesiąc. Ciasteczek tu nie ma, ale adresy IP są, więc traktuj to jako przetwarzanie danych osobowych w rozumieniu RODO: wskaż podstawę, opisz ją w polityce i uwzględniaj sprzeciwy.
+## Ograniczenia
 
-## Zanim to skopiujesz
+- To lektura źródeł przez programistę, nie opinia prawnika. Stanowisko (b) zostawia ryzyko szczątkowe przy dosłownym czytaniu art. 399; jeśli Ci ono nie odpowiada, (a) jest pełnoprawną odpowiedzią.
+- Do Not Track i Global Privacy Control przychodzą tylko od części odwiedzających. MDN oznacza `navigator.doNotTrack` jako przestarzałe, a jego specyfikację jako porzuconą. `navigator.globalPrivacyControl` jest eksperymentalne i nie działa w części popularnych przeglądarek.
+- Rezygnacja żyje w jednej przeglądarce. Wyczyszczenie danych strony albo zmiana urządzenia ją kasuje.
+- Kontekst zmienia odpowiedź: sklep, aplikacja z kontami czy strona firmy to nie to samo co osobiste portfolio.
 
-- **Przeczytaj kod swojego trackera, nie tylko jego stronę główną.** Co odczytuje, co zapisuje, czy obsługuje Do Not Track. Zapewnienie dostawcy, że baner nie jest potrzebny, to jego deklaracja, a nie źródło prawa.
-- **Zdecyduj, jakie ryzyko akceptujesz.** Jeśli ryzyko szczątkowe z (b) Ci nie odpowiada, wybierz (a). To pełnoprawna odpowiedź.
-- **Pisz politykę pod to, co faktycznie zbudowałeś.** Tekst o prywatności musi zgadzać się z wdrożeniem, w każdym języku, w którym publikujesz.
-- **Kontekst zmienia odpowiedź.** Sklep, aplikacja z kontami czy strona firmy to nie to samo co osobiste portfolio.
-
-Resztę tego, jak powstała ta strona, opisałem w [studium przypadku](/pl/blog/case-study/). Przycisk pauzy na tej stronie działa według tej samej zasady zapisu, o który prosi odwiedzający: zapamiętuje wybór w `localStorage` dopiero po kliknięciu ([ruch, który szanuje ludzi](/pl/blog/reduced-motion-i-przycisk-pauzy/)). Jeśli chcesz o tym porozmawiać, [tu znajdziesz kontakt](/pl/#contact).
+Drugie miejsce, w którym dane odwiedzających spotykają tę stronę, to [formularz kontaktowy, który wysyła maile bez klucza w przeglądarce](/pl/blog/formularz-kontaktowy-na-statycznej-stronie/). Całą budowę opisałem w [studium przypadku](/pl/blog/case-study/), a jeśli chcesz o tym porozmawiać, [tu znajdziesz kontakt](/pl/#contact).

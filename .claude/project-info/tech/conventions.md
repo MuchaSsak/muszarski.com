@@ -16,6 +16,10 @@
   theme object, never ad-hoc CSS.
 - **Import aliases:** `~/` → `apps/web/src/`, shared code via `@package/shared/*`; no `@/`, no deep relatives (set at scaffold 2026-10-05).
 - **Line endings:** LF everywhere (`.gitattributes`); no raw invisible characters in source (use escapes or `typo()`).
+- **Prettier** (from lessons, 2026-10-05): run it from the repo root (`bunx prettier --write <paths>`; from `apps/web` it
+  ignores the root config), never on generated files (`og.mjs` parses `icons.gen.ts` as JSON). After formatting an
+  Astro template, diff the rendered HTML (it put a visible space in `All<sup>`); letter-split or emoji-glued markup
+  stays on one line under `<!-- prettier-ignore -->` (it put spaces inside words).
 
 ## Folder rules (inside `apps/web/`; the monorepo: `usage/turborepo.md`)
 

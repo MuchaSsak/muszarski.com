@@ -594,9 +594,10 @@
 .bk-steps li:nth-child(5n + 5) {
   --c: var(--ice);
 }
+/* Smaller and lighter, never faded: at 70 % opacity the number fell under 4.5:1 on the lit pink step (axe). */
 .bk-n {
+  font-weight: 600;
   font-size: 0.6875rem;
-  opacity: 0.7;
 }
 /* Long labels (Polish) wrap at 320 px instead of widening the band. */
 .bk-go {
@@ -714,10 +715,11 @@
   padding: 0 !important;
   list-style: none;
 }
+/* Names wrap between words only: the table grows and its box scrolls, rather than "Temmer-man" (≤ 768 px). */
 .mx-table li {
   margin: 0 !important;
   font-weight: 700;
-  overflow-wrap: anywhere;
+  overflow-wrap: normal;
 }
 .mx-key {
   display: flex;

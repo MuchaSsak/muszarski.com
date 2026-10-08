@@ -1,90 +1,109 @@
 ---
 title: "Lighthouse na 16 portfolio programistów: immersyjne kontra minimalistyczne"
-seoTitle: "Lighthouse na 16 portfolio programistów"
-description: "Mobilny Lighthouse, po 3 pomiary, na 16 znanych portfolio: mediana immersyjnych 35,5, minimalistycznych 74,5. Metoda, wyniki i czego wynik nie widzi."
+seoTitle: "Wyniki Lighthouse 16 portfolio: 3D kontra minimalizm"
+description: "Mobilny Lighthouse, po 3 pomiary, na 16 portfolio programistów: mediana stron 3D 35,5, minimalistycznych 74,5. Metoda, wyniki i czego wynik nie widzi."
 translationKey: "portfolio-lighthouse"
 published: 2026-10-06
+updated: 2026-10-08
 tags: [performance, accessibility]
 cover: gauge
 related: [threejs-mobile, this-site, reduced-motion]
 sources:
   - title: "Lighthouse performance scoring (Chrome for Developers)"
     url: "https://developer.chrome.com/docs/lighthouse/performance/performance-scoring"
-    accessed: 2026-10-06
+    accessed: 2026-10-08
   - title: "Lighthouse throttling (GoogleChrome/lighthouse docs)"
     url: "https://github.com/GoogleChrome/lighthouse/blob/main/docs/throttling.md"
-    accessed: 2026-10-06
+    accessed: 2026-10-08
   - title: "Lighthouse config constants: mobile screen emulation (GoogleChrome/lighthouse)"
     url: "https://github.com/GoogleChrome/lighthouse/blob/main/core/config/constants.js"
     accessed: 2026-10-06
   - title: "Largest Contentful Paint (LCP), web.dev"
     url: "https://web.dev/articles/lcp"
-    accessed: 2026-10-06
+    accessed: 2026-10-08
   - title: "Web Vitals (web.dev)"
     url: "https://web.dev/articles/vitals"
     accessed: 2026-10-06
   - title: "Why lab and field data can be different (web.dev)"
     url: "https://web.dev/articles/lab-and-field-data-differences"
-    accessed: 2026-10-06
+    accessed: 2026-10-08
   - title: "Lighthouse accessibility scoring (Chrome for Developers)"
     url: "https://developer.chrome.com/docs/lighthouse/accessibility/scoring"
     accessed: 2026-10-06
   - title: "meta-viewport: Zooming and scaling must not be disabled (Deque, axe rules)"
     url: "https://dequeuniversity.com/rules/axe/4.10/meta-viewport"
-    accessed: 2026-10-06
+    accessed: 2026-10-08
+  - title: "Solar System Scope, tekstury planet (CC BY 4.0) użyte w starym kosmicznym portfolio"
+    url: "https://www.solarsystemscope.com/textures/"
+    accessed: 2026-10-08
 ---
 
-W mobilnym Lighthouse 10 zmierzonych przeze mnie portfolio immersyjnych (z WebGL) miało medianę wydajności 35,5, a 6 minimalistycznych 74,5. Tylko jedna z 16 stron dostała 90 lub więcej i tylko jedna miała dobre LCP w pomiarze laboratoryjnym. Niżej metoda, wyniki w podziale na grupy i to, czego wynik Lighthouse nie powie Ci o stronie 3D.
+import Clips from "~/components/blog/case/Clips.astro";
+import Flow from "~/components/blog/case/Flow.astro";
+import Shots from "~/components/blog/case/Shots.astro";
+import lighthouse from "~/assets/case/lighthouse.webp";
+
+W mobilnym Lighthouse 10 zmierzonych przeze mnie portfolio immersyjnych (z WebGL) miało medianę wydajności 35,5, a 6 minimalistycznych 74,5. Tylko jedna z 16 stron dostała 90 lub więcej i tylko jedna miała dobre LCP w laboratorium. Niżej metoda, wyniki i to, czego wynik Lighthouse nie powie Ci o stronie 3D.
 
 > **W skrócie**
 >
-> - **Immersyjne kontra minimalistyczne (mediany):** wydajność 35,5 i 74,5, transfer około 11,4 MB i 0,87 MB, całkowity czas blokowania około 2,2 s i 0,23 s.
-> - **Na szczycie prawie pusto:** 1 z 16 stron ma 90+, 1 z 16 ma LCP do 2,5 s, a żadna strona immersyjna nie przekroczyła 64.
-> - **Czytaj ostrożnie:** pomiary laboratoryjne, po trzy na stronę, na desktopowej karcie graficznej, więc strony 3D wypadają tu najpewniej lepiej niż na prawdziwym telefonie. Nie wymieniam z nazwy żadnej strony z niskim wynikiem.
+> - **Skąd ta przepaść:** mediana strony 3D ważyła około 12 MB i blokowała główny wątek przez około 2,2 s; mediana minimalistycznej: 0,9 MB i 0,23 s.
+> - **Na szczycie prawie pusto:** żadna strona immersyjna nie przekroczyła 64, a jedyna minimalistyczna z wynikiem 90+ używała fontów systemowych.
+> - **Czytaj ostrożnie:** pomiary laboratoryjne, po trzy na stronę, z desktopową kartą graficzną, więc strony 3D wypadają tu najpewniej lepiej niż na prawdziwym telefonie. Nie wymieniam z nazwy żadnej strony z niskim wynikiem.
 
 ## Po co mierzyć cudze portfolio?
 
-Moje stare portfolio było lotem przez Układ Słoneczny w three.js i w mobilnym Lighthouse dostawało 34 punkty. Zanim je przebudowałem ([całą historię opisałem w studium przypadku](/pl/blog/case-study/)), chciałem wiedzieć, czy to norma w tym gatunku, czy mój problem. Wybrałem więc 16 znanych portfolio i 5 października 2026 zmierzyłem wszystkie w ten sam sposób.
+Moje stare portfolio było lotem przez Układ Słoneczny w three.js i w mobilnym Lighthouse dostawało 34 punkty.
+
+<Clips
+  clips={[{ src: "flight", dir: "/media/space/", width: 960, height: 540, label: "Stare kosmiczne portfolio: kamera przelatuje obok Marsa do Jowisza", name: "Stara strona" }]}
+  caption="Moje stare portfolio nagrane na komputerze: strona, od której zaczęły się te pomiary. Tekstury planet: Solar System Scope, CC BY 4.0."
+/>
+
+Zanim je przebudowałem ([całą historię opisałem w studium przypadku](/pl/blog/case-study/)), chciałem wiedzieć, czy to norma w tym gatunku, czy mój problem. Dlatego 5 października 2026 zmierzyłem w ten sam sposób 16 znanych portfolio.
 
 Nie podaję nazw stron z niskim wynikiem. Three.js uczyłem się z kursu prowadzonego przez jedną z osób z grupy immersyjnej, a te strony należą do najbardziej pomysłowych rzeczy w sieci. Wynik 30 na emulowanym telefonie mówi coś o ładowaniu. O warsztacie nie mówi nic.
 
 ## Jak mierzyłem?
 
+<Flow
+  label="Jak zmierzyłem 16 portfolio"
+  steps={[
+    { icon: "tb:search", title: "Wybór 16 stron", text: "10 immersyjnych (8 portfolio, 2 studia), 6 minimalistycznych" },
+    { icon: "si:lighthouse", title: "Lighthouse 3 razy", text: "Profil mobilny, symulowane dławienie, pomiar za pomiarem" },
+    { icon: "tb:chart-bar", title: "Mediany", text: "Najpierw dla każdej strony, potem dla każdej grupy" },
+    { icon: "mk:playwright", title: "Test na telefonie", text: "Playwright przy 390 px: bramki, reduced motion, zoom" },
+  ]}
+/>
+
 | Ustawienie | Wartość |
 | --- | --- |
 | Narzędzie | Lighthouse 13.5.0 CLI, Chromium 153 w trybie headless |
-| Urządzenie | domyślny profil mobilny: emulacja Moto G Power, 412 × 823 px przy gęstości pikseli 1,75 |
+| Urządzenie | domyślny profil mobilny: Moto G Power, 412 × 823 px, gęstość pikseli 1,75 |
 | Dławienie | symulowane: 150 ms opóźnienia, 1,6 Mb/s pobierania, procesor spowolniony 4× |
-| Pomiary | 3 pod rząd na stronę; wynikiem strony jest mediana |
-| Grupy | 10 immersyjnych (8 portfolio osobistych, 2 strony studiów), 6 minimalistycznych |
 | Data | 5 października 2026, z Polski |
 
-Grupa immersyjna to znane portfolio w three.js, niedawni zwycięzcy Site of the Day w Awwwards i FWA oraz dwie strony studiów jako sufit warsztatu. Grupa minimalistyczna to znane portfolio inżynierów i design engineerów, część z bardzo dopracowanymi mikrointerakcjami. Każda liczba grupowa niżej to mediana z median poszczególnych stron.
+Grupa immersyjna to znane portfolio w three.js, niedawni zwycięzcy Site of the Day w Awwwards i FWA oraz dwie strony studiów jako sufit warsztatu. Grupa minimalistyczna to znane portfolio inżynierów i design engineerów, część z bardzo dopracowanymi mikrointerakcjami.
 
-Dwa zastrzeżenia, zanim padnie jakakolwiek liczba. Komputer dzielił pracę z innymi zadaniami: benchmark procesora w Lighthouse (`benchmarkIndex`) wahał się w pierwszym pomiarze każdej strony od 841 do 2381. Trzy pomiary to wygładzają, a liczba bajtów od tego nie zależy. Poza tym dokumentacja Lighthouse sama przyznaje, że duża część wahań wyniku nie bierze się z Lighthouse, i radzi traktować wydajność strony jak rozkład wyników, a nie jedną liczbę. Patrz na mediany, nie na miejsca po przecinku.
+Dwa zastrzeżenia, zanim padnie jakakolwiek liczba. Komputer dzielił pracę z innymi zadaniami: benchmark procesora w Lighthouse (`benchmarkIndex`) wahał się w pierwszym pomiarze każdej strony od 841 do 2381. Trzy pomiary to wygładzają, a liczba bajtów od tego nie zależy.
+
+Poza tym dokumentacja Lighthouse sama przyznaje, że duża część wahań wyniku nie bierze się z Lighthouse. Radzi traktować wydajność strony jak rozkład wyników, a nie jedną liczbę. Patrz na mediany, nie na miejsca po przecinku.
 
 ## Jakie były wyniki?
 
 | Telefon, mediana z 3 pomiarów | Immersyjne (10) | Minimalistyczne (6) |
 | --- | --- | --- |
-| Wynik wydajności, mediana grupy | 35,5 | 74,5 |
+| Wynik wydajności | 35,5 | 74,5 |
 | Najwyższy / najniższy wynik | 64 / 26 | 95 / 65 |
-| Transfer łącznie, mediana | około 11,4 MB | około 0,87 MB |
-| Transfer JavaScriptu, mediana | około 734 KB | około 259 KB |
-| Całkowity czas blokowania, mediana | około 2,2 s | około 0,23 s |
-| LCP, mediana | około 20 s | około 4,0 s |
+| Strony na zielono (90+) / pomarańczowo (50-89) / czerwono (poniżej 50) | 0 / 1 / 9 | 1 / 5 / 0 |
+| Waga strony | około 12 MB | około 0,9 MB |
+| JavaScript | około 750 KB | około 265 KB |
+| Całkowity czas blokowania | około 2,2 s | około 0,23 s |
+| Największe malowanie treści (LCP) | około 20 s | około 4,0 s |
 | LCP do 2,5 s | 1 z 10 | 0 z 6 |
-| Przesunięcia układu (CLS) | najwyżej 0,004 na każdej | 0 na każdej |
+| Przesunięcia układu (CLS) | najwyżej 0,004 | 0 |
 
-Lighthouse koloruje wynik wydajności w trzech przedziałach: 0-49 na czerwono („Poor”), 50-89 na pomarańczowo („Needs Improvement”), 90-100 na zielono („Good”). Tak rozkłada się 16 stron:
-
-| Przedział | Immersyjne | Minimalistyczne | Razem |
-| --- | --- | --- | --- |
-| 90-100, dobry | 0 | 1 | 1 |
-| 50-89, do poprawy | 1 | 5 | 6 |
-| 0-49, słaby | 9 | 0 | 9 |
-
-Mediana strony immersyjnej jest około 13 razy cięższa i blokuje główny wątek mniej więcej dziewięć razy dłużej. Na przesunięciach układu nikt nie traci: pełnoekranowy canvas się nie rusza. Resztę tłumaczą wagi. Od Lighthouse 10 całkowity czas blokowania to 30% wyniku wydajności, a LCP 25%, więc strona, która blokuje się na sekundy i maluje późno, nie dostanie dobrego wyniku, niezależnie od tego, jak wygląda.
+Przepaść robią waga i czas blokowania; na przesunięciach układu nikt nie traci, bo pełnoekranowy canvas się nie rusza. Od Lighthouse 10 całkowity czas blokowania to 30% wyniku, a LCP 25%. Strona, która blokuje się na sekundy i maluje późno, nie dostanie dobrego wyniku, niezależnie od tego, jak wygląda.
 
 Na komputerze to inna historia. W pojedynczym pomiarze desktopowym jedna ze stron studiów dostała 90, a na telefonie ta sama strona miała 38. Cały problem siedzi w tej różnicy.
 
@@ -92,7 +111,7 @@ Na komputerze to inna historia. W pojedynczym pomiarze desktopowym jedna ze stro
 
 Wracały trzy wzorce:
 
-1. **Brak wczesnego tekstu do namalowania.** web.dev wymienia kandydatów na LCP: obrazy, `<image>` w SVG, wideo, obrazy tła z CSS i elementy blokowe z tekstem. `<canvas>` na tej liście nie ma. Kiedy strona to canvas plus ekran ładowania, LCP trafia na pierwszy tekst, jaki się pojawi, i na kilku stronach był to napis samego loadera. Dwie strony pokazywały na ekranie telefonu 0 i 1 znak tekstu w DOM.
+1. **Brak wczesnego tekstu do namalowania.** Na liście kandydatów na LCP z web.dev (obrazy, `<image>` w SVG, wideo, obrazy tła z CSS, tekst w elementach blokowych) nie ma `<canvas>`. Kiedy strona to canvas plus ekran ładowania, LCP trafia na pierwszy tekst, jaki się pojawi, często napis samego loadera. Dwie strony pokazywały na telefonie 0 i 1 znak tekstu w DOM.
 2. **Dużo JavaScriptu wykonywanego na starcie.** Z czterech stron immersyjnych, które rozłożyłem na części, trzy miały 10-23 s pracy głównego wątku przy 4-krotnym spowolnieniu procesora, a jedna znacznie więcej. Dwie strony minimalistyczne: 1,4-1,7 s. Większość tego czasu to wykonywanie skryptów.
 3. **Ciężkie media w trakcie ładowania.** Wielomegabajtowe wideo z autoodtwarzaniem i tekstury pobierane, zanim strona skończyła się ładować.
 
@@ -100,42 +119,47 @@ Jedyna strona immersyjna z dobrym LCP (1,1 s) zrobiła jedną rzecz inaczej: jej
 
 ## Czy minimalizm oznacza szybkość?
 
-Nie. Jedyna strona z wynikiem 90+, leerob.com (95), używa fontów systemowych, czyli 0 bajtów fontów webowych, około 234 KB JavaScriptu i żadnych skryptów zewnętrznych. Dwie inne strony minimalistyczne ładowały ponad 1 MB fontów każda, w 9 plikach, i obie przekroczyły próg LCP, głównie przez nie.
+Nie. Jedyna strona z wynikiem 90+, leerob.com (95), używała fontów systemowych, czyli 0 bajtów fontów webowych, około 240 KB JavaScriptu i żadnych skryptów zewnętrznych. Dwie inne strony minimalistyczne ładowały ponad 1 MB fontów każda, w 9 plikach, i obie przekroczyły próg LCP, głównie przez nie.
 
 Fonty to część ładowania, a nie ozdoba. To jeden z powodów, dla których ta strona ma jeden zmienny font o wadze około 50 KB.
 
 ## Czego Lighthouse nie mierzy?
 
-- **Karty graficznej.** Lighthouse dławi sieć i procesor. Jego dokumentacja dławienia nie wspomina o GPU, a w moich pomiarach Chrome w trybie headless korzystał z prawdziwej karty graficznej komputera, desktopowej NVIDIA RTX 2060. Każda strona immersyjna renderowała się więc na desktopowym GPU. Na prawdziwym telefonie spodziewałbym się gorszych wyników, nie lepszych.
-- **Prawdziwych telefonów i prawdziwych ludzi.** web.dev tłumaczy, że dane laboratoryjne pochodzą z jednego urządzenia podłączonego do jednej sieci, a dane terenowe obejmują ogromną różnorodność sieci i urządzeń. Żadna z tych liczb nie pochodzi z terenu. Lighthouse nie zmierzy też INP, bo nie ma interakcji użytkownika; w laboratorium zastępuje je całkowity czas blokowania.
+- **Karty graficznej.** Lighthouse dławi sieć i procesor; jego dokumentacja dławienia w ogóle nie wspomina o GPU. Moje pomiary korzystały z desktopowej karty NVIDIA RTX 2060, więc na prawdziwym telefonie spodziewałbym się po stronach 3D gorszych wyników, nie lepszych.
+- **Prawdziwych telefonów i prawdziwych ludzi.** web.dev tłumaczy, że dane laboratoryjne pochodzą z jednego urządzenia podłączonego do jednej sieci, a dane terenowe obejmują ogromną różnorodność sieci i urządzeń. Żadna z tych liczb nie pochodzi z terenu. Bez interakcji użytkownika Lighthouse nie zmierzy też INP; w laboratorium zastępuje je całkowity czas blokowania.
 - **Tego, co za bramką.** Trzy z dziesięciu stron immersyjnych stawiają przed treścią przycisk startu albo zachętę „tap to explore”. Lighthouse mierzy bramkę, a nie doświadczenie.
-- **Dostępności poza automatem.** Wynik dostępności w Lighthouse to średnia ważona testów typu zaliczony albo niezaliczony. Jedna ze stron studiów rysuje wszystko w WebGL, na telefonie ma 0 znaków tekstu w DOM i dostała 100: testy prawie nie miały czego oblać. Pięć z dziesięciu stron immersyjnych ma tu 100.
+- **Dostępności poza automatem.** Wynik dostępności to średnia ważona testów typu zaliczony albo niezaliczony. Jedna ze stron studiów rysuje wszystko w WebGL, na telefonie ma 0 znaków tekstu w DOM i dostała 100: testy prawie nie miały czego oblać. Pięć z dziesięciu stron immersyjnych ma tu 100.
 - **Warsztatu.** Nie ma testu na „pamiętam tę stronę po tygodniu”.
 
 Osobny test w Playwright na ekranie telefonu o szerokości 390 px (emulacja w Chromium, nie prawdziwy iOS) pokazał trzy rzeczy, których wyniki nie widzą:
 
-- Wszystkie dziesięć stron immersyjnych coś na telefonie wyświetla. Jedna nadal ostrzega, że najlepiej oglądać ją na komputerze.
-- Przy emulowanym ograniczeniu ruchu żadna z dziesięciu się nie zmieniła: każda tworzyła kontekst WebGL i utrzymywała tę samą liczbę klatek animacji. Jak zrobić to porządnie, opisałem w [tekście o reduced motion](/pl/blog/reduced-motion-i-przycisk-pauzy/).
+- Wszystkie dziesięć stron immersyjnych coś na telefonie wyświetla; jedna nadal ostrzega, że najlepiej oglądać ją na komputerze.
+- Przy emulowanym ograniczeniu ruchu żadna z dziesięciu się nie zmieniła: każda tworzyła kontekst WebGL i utrzymywała tę samą liczbę klatek. Jak zrobić to porządnie, opisałem w [tekście o reduced motion i przycisku pauzy](/pl/blog/reduced-motion-i-przycisk-pauzy/).
 - 4 z 16 stron (3 immersyjne, 1 minimalistyczna) wyłączały powiększanie gestem w tagu viewport. To oblewa regułę axe „Zooming and scaling must not be disabled”, która istnieje dla osób słabowidzących, polegających na powiększeniu.
 
 ## Gdzie w tym wszystkim moja stara strona?
 
-Moje stare kosmiczne portfolio dostało 34 punkty na telefonie, w tej samej wersji Lighthouse, tego samego dnia. To tuż poniżej mediany stron immersyjnych (35,5). Nie było wśród tych 16 stron, a jego pomiar szedł na renderowaniu programowym zamiast desktopowego GPU, więc porównanie nie jest idealne. Ale pasowałoby tu bez trudu. Co je spowalniało, opisałem w tekście [Dlaczego moje portfolio w three.js było wolne na telefonie](/pl/blog/dlaczego-moje-portfolio-threejs-bylo-wolne/).
+Moje stare kosmiczne portfolio dostało 34 punkty na telefonie, w tej samej wersji Lighthouse, tego samego dnia: tuż poniżej mediany stron immersyjnych. Z 13,8 MB przed przyciskiem startu było też cięższe niż mediana tej grupy. Nie było wśród tych 16 stron, a jego pomiar szedł bez karty graficznej, więc porównanie nie jest idealne. Ale pasowałoby tu bez trudu. Co je spowalniało, opisałem w tekście [Dlaczego moje portfolio w three.js było wolne na telefonie](/pl/blog/dlaczego-moje-portfolio-threejs-bylo-wolne/).
 
-## Co z tym robi ta strona
+## Co z tym robi ta strona?
 
 - **Najpierw tekst.** H1 to element LCP: renderowany na serwerze, gotowy przy pierwszym malowaniu, nigdy nie wjeżdża animacją.
-- **Budżet przed kodem.** Lighthouse na telefonie co najmniej 90 na każdej podstronie, LCP poniżej 2,5 s, poniżej 150 KB JavaScriptu i poniżej 100 KB fontów.
-- **3D jako opcjonalna warstwa,** nigdy na ścieżce krytycznej.
+- **Budżet przed kodem.** Lighthouse na telefonie co najmniej 90 na każdej podstronie, LCP poniżej 2,5 s, poniżej 150 KB JavaScriptu i 100 KB fontów.
+- **3D jako opcjonalna warstwa,** nigdy na ścieżce krytycznej: w nagłówku nie ma WebGL, a shadery na innych podstronach czekają na pierwszy ruch czytelnika.
 
-Strona główna tej witryny ma 99 punktów za wydajność na telefonie, LCP około 1,95 s i około 8 KB JavaScriptu po kompresji: mediana z 3 pomiarów na lokalnym buildzie produkcyjnym. To nie jest uczciwe porównanie, bo w nagłówku nie ma WebGL. Taki kompromis wybrałem.
+<Shots
+  shots={[{ image: lighthouse, alt: "Lighthouse na telefonie dla strony głównej tej witryny: wydajność 96; dostępność, dobre praktyki i SEO po 100; LCP 2,6 s, blokowanie 40 ms" }]}
+  caption="Strona główna tej witryny w Lighthouse na telefonie, lokalny build produkcyjny z 7 października 2026. Mediana z trzech pomiarów wyniosła 96."
+/>
+
+To nie jest uczciwe porównanie: w moim nagłówku nie ma WebGL. Taki kompromis wybrałem.
 
 ## Ograniczenia
 
 - Tylko laboratorium: jedna maszyna, jeden dzień, współdzielony komputer, trzy pomiary na stronę. Brak danych terenowych dla którejkolwiek z tych stron.
 - 16 stron to próbka, a nie spis, i wybrałem ją sam.
-- Strony 3D działały na desktopowym GPU, więc ich wyniki są optymistyczne.
-- Test telefonu to emulacja w Chromium. Nic tu nie działało na fizycznym iPhonie ani Androidzie, a właśnie tam te strony są naprawdę oceniane.
+- Nic tu nie działało na fizycznym iPhonie ani Androidzie, a właśnie tam te strony są naprawdę oceniane.
 - Desktop to jeden pomiar i tylko dla części stron.
+- Moją stronę główną mierzyłem na lokalnym buildzie. Jej mediana LCP (2,3-2,6 s w trzech językach) krąży wokół mojego budżetu 2,5 s, a wersji produkcyjnej nie mierzyłem ponownie od 7 października.
 
-Jeśli chcesz zobaczyć, jak pilnuję takich budżetów w praktyce, [moje projekty są tutaj](/pl/work/).
+Jeśli chcesz zobaczyć, co buduję w takich budżetach, [przejrzyj moje projekty](/pl/work/).

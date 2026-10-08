@@ -4,55 +4,59 @@ seoTitle: "LLM wiki: project memory for Claude Code"
 description: "How I stop Claude Code from forgetting: a foldered markdown wiki, a routing table, a lessons file and three hooks that reload them after compaction."
 translationKey: "llm-wiki"
 published: 2026-10-05
-updated: 2026-10-06
+updated: 2026-10-08
 tags: [ai, claude-code]
 cover: wiki
 related: [claude-code-building-blocks, this-site]
 sources:
   - title: "How Claude remembers your project (Claude Code docs)"
     url: "https://code.claude.com/docs/en/memory"
-    accessed: 2026-10-05
+    accessed: 2026-10-08
   - title: "Automate actions with hooks (Claude Code docs)"
     url: "https://code.claude.com/docs/en/hooks-guide"
     accessed: 2026-10-05
   - title: "Hooks reference (Claude Code docs)"
     url: "https://code.claude.com/docs/en/hooks"
-    accessed: 2026-10-05
+    accessed: 2026-10-08
   - title: "Explore the context window (Claude Code docs)"
     url: "https://code.claude.com/docs/en/context-window"
     accessed: 2026-10-05
   - title: "llm-wiki, an idea file by Andrej Karpathy (GitHub Gist)"
     url: "https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f"
-    accessed: 2026-10-05
+    accessed: 2026-10-08
 ---
 
-An LLM wiki is a folder of small markdown pages inside your repo that the agent reads instead of asking you again. Mine lives in `.claude/project-info/`: CLAUDE.md routes each task to the right pages, hooks inject those pages per prompt and reload the lessons after every compaction, and a Stop hook won't let a session finish a code change without updating the wiki.
+import Flow from "~/components/blog/case/Flow.astro";
+import Shots from "~/components/blog/case/Shots.astro";
+import aiMemory from "~/assets/blog/llm-wiki/ai-memory-en.webp";
+
+An LLM wiki is a folder of small markdown pages in your repo that the agent reads instead of asking you again. Mine lives in `.claude/project-info/`. CLAUDE.md routes each task to the right pages, hooks bring those pages and the lessons back after every compaction, and a Stop hook won't let a code change finish without a wiki update.
 
 > **TL;DR**
 >
-> - **The problem:** every session starts with an empty context, compaction drops details, and a CLAUDE.md big enough to hold everything costs context on every request.
-> - **The setup:** small pages in `.claude/project-info/`, a 76-line CLAUDE.md that routes words to pages, and three hooks that route per prompt, reload the lessons after compaction and block a finish when code changed but the wiki didn't.
+> - **The problem:** every session starts empty, compaction drops details, and a CLAUDE.md big enough to hold everything costs context on every request.
+> - **The setup:** small pages, a short CLAUDE.md that routes words to pages, and three hooks: route each prompt, reload the lessons after compaction, block a finish when code changed but the wiki didn't.
 > - **The habit:** every correction becomes a dated one-line rule in `lessons.md`, and a rule that keeps coming back becomes a test, a lint rule or a hook.
 
 ## Why a wiki and not a bigger CLAUDE.md?
 
-The memory docs start with the problem: "Each Claude Code session begins with a fresh context window." Long sessions have a second one. Compaction summarizes the conversation to free space, and the hooks guide warns it "can lose important details". Anything you only said in chat goes first: the docs' troubleshooting section says that if an instruction disappeared after compaction, "it was given only in conversation".
+The memory docs start with the problem: "Each Claude Code session begins with a fresh context window." Long sessions add a second one. Compaction summarizes the conversation to free space, and the hooks guide warns it "can lose important details". Chat-only instructions go first: if one disappeared after compaction, the docs say, "it was given only in conversation".
 
-The obvious fix is to write everything into CLAUDE.md. It survives compaction: the context window docs show it reloading next to auto memory, the most recently modified files and the skills you invoked, while the conversation itself becomes a summary. But CLAUDE.md loads in full on every request, and the docs suggest staying under 200 lines because "longer files consume more context and reduce adherence". Imports don't help: imported files also load at launch.
+The obvious fix is CLAUDE.md, which the context window docs list among what survives compaction. But it loads in full on every request, and the docs suggest staying under 200 lines because "longer files consume more context and reduce adherence". Imports don't help: imported files also load at launch.
 
 A portfolio with a brand voice, a design system, three locales, legal pages and a CV has far more than 200 lines of facts. So the facts go into a wiki, and CLAUDE.md becomes its index.
 
 ## Where does the idea come from?
 
-Andrej Karpathy published the pattern in April 2026 as an "idea file" called llm-wiki. In his version the LLM "incrementally builds and maintains a persistent wiki" of markdown files that sits between you and your raw sources. It has three layers (raw sources, the wiki, and a schema document such as CLAUDE.md), three operations (ingest, query, lint), an `index.md` catalogue and an append-only `log.md`.
+Andrej Karpathy published the pattern in April 2026 as an "idea file" called [llm-wiki](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f): the LLM "incrementally builds and maintains a persistent wiki" of markdown files between you and your raw sources. It has three layers (raw sources, the wiki, a schema document such as CLAUDE.md), three operations (ingest, query, lint), an `index.md` catalogue and an append-only `log.md`.
 
-My setup follows the same idea, pointed at one software project instead of a research topic. Three things differ:
+Mine applies the same idea to one software project instead of a research topic. Three things differ:
 
 1. The raw sources are me, the repo and dated research notes.
 2. The wiki steers an agent that writes code, so it holds rules (a working agreement, lessons), not only knowledge.
-3. Hooks deliver the right pages automatically. I don't rely on the agent remembering to read the index.
+3. Hooks deliver the right pages. I don't rely on the agent remembering to read the index.
 
-My log entries use the same `## [date] area | summary` shape the gist suggests, which keeps them greppable.
+My log even keeps the gist's `## [date] area | summary` shape, which stays greppable.
 
 ## How is it laid out?
 
@@ -70,37 +74,46 @@ My log entries use the same `## [date] area | summary` shape the gist suggests, 
 └─ research/  raw dated notes (not routed)
 ```
 
-As I write this, that is 33 pages outside `research/`. The root files stay at the root because the hooks look for them there. Everything else is grouped by the question it answers: why, what, how it's organised, how it looks, how it's built.
+Just over 30 pages live outside `research/`, grouped by the question they answer: why, what, how it's organised, how it looks, how it's built. The root files stay at the root because the hooks look for them there.
 
 ## Which rules keep it honest?
 
 - **One owner per fact.** Each fact lives in one page and the others link to it. Copies drift apart.
-- **Facts carry their source.** `[user]` for my decisions, `[research]` for findings, `[repo: path]` for what the code says, `[assumption]` for a guess. A guess gets revisited, a decision doesn't. When I first wrote this, the wiki held 95 `[user]`, 100 `[research]` and 83 `[assumption]` tags. The last number is the honest one: a lot of the project still runs on defaults I haven't confirmed.
-- **Unknown beats invented.** A missing fact is written as Unknown and goes to `open-questions.md`, a table of question, what it blocks, who answers, the default if nobody does, and status. It has 46 rows.
+- **Facts carry their source.** `[user]` for my decisions, `[research]` for findings, `[repo: path]` for what the code says, `[assumption]` for a guess. A guess gets revisited, a decision doesn't, and a grep for `[assumption]` lists what is still unconfirmed.
+- **Unknown beats invented.** A missing fact is written as Unknown and goes to `open-questions.md`: the question, what it blocks, who answers, the default if nobody does, and the status.
 - **Not-real things are registered.** Every placeholder gets a row in `placeholders.md`, and "go to production" means clearing that list first.
 - **Dense, not long.** Tables and short bullets, roughly 40-150 lines a page. A page you can skim in a minute gets read.
 - **The code wins.** When a page and the code disagree, the page gets fixed.
 
 ## How does the machinery work?
 
+<Flow
+  label="One task through the wiki"
+  steps={[
+    { icon: "tb:route", title: "Route", text: "A hook matches the prompt's words to the routing table and names the pages." },
+    { icon: "tb:book-2", title: "Read", text: "Claude opens those pages, next to the lessons the session card loaded." },
+    { icon: "tb:code", title: "Work", text: "It builds and runs the checks with the facts in front of it." },
+    { icon: "tb:notebook", title: "Log + lesson", text: "The page that changed is updated, log.md gets a line, a correction becomes a rule." },
+  ]}
+  loop="The next prompt routes to the updated pages."
+/>
+
 ### CLAUDE.md as a router
 
-My CLAUDE.md is 76 lines: a routing table, ten invariants and the commands. Each row pairs the words people actually type with the pages to read:
+My CLAUDE.md is 76 lines: the routing table, the invariants and the commands. Each row pairs the words people actually type with the pages to read:
 
 ```markdown
 | Task touches | Read |
 | --- | --- |
-| Locales, translation, Lingui, Polish, Spanish, language switcher, hreflang | `.claude/project-info/site/i18n.md` |
+| Locales, translation, Lingui, Polish, Spanish, language switcher, hreflang, URL prefix, slugs | `.claude/project-info/site/i18n.md` |
 | Code style, folders, git, commits, testing bar, do-not list | `.claude/project-info/tech/conventions.md` |
 ```
 
-The paths are plain text on purpose. An `@import` would load the whole wiki into every session.
-
 ### Routing per prompt
 
-A UserPromptSubmit hook runs before Claude processes each prompt, and the docs say its output is added to Claude's context. Mine scores the prompt's words against each row. An exact match counts 1, a plural 0.9, a shared prefix of five or more letters 0.6. Each score is divided by the square root of how many rows contain that word, so words that appear everywhere count for little.
+A UserPromptSubmit hook runs before Claude sees each prompt, and its output joins Claude's context. Mine scores the prompt's words against each row: an exact match counts 1, a plural 0.9, a shared prefix of five or more letters 0.6. Each score is divided by the square root of how many rows hold that word, so words that appear everywhere count for little.
 
-At most five rows get injected. A small JSON file maps Polish word stems to table words, so Polish prompts route too. The hook's test mode shows the result:
+At most five rows get through. A small JSON file maps Polish word stems to table words, so Polish prompts route too. The hook's test mode:
 
 ```text
 > przetłumacz stopkę na hiszpański
@@ -110,33 +123,38 @@ At most five rows get injected. A small JSON file maps Polish word stems to tabl
   (nothing routed)
 ```
 
+<Shots
+  shots={[{ image: aiMemory, alt: "The Memory step of the home page's AI story: for the task contact form, structure.md and lessons.md are marked READ while the other wiki pages stay grey" }]}
+  caption="The same idea as the Memory step on the home page: the task opens two pages, and the rest of the wiki stays closed."
+/>
+
 ### The session card
 
-SessionStart fires on startup, on resume, after `/clear` and after compaction, and the hook receives which one it was. The hooks guide recommends this for compaction: use a SessionStart hook with a `compact` matcher "to re-inject critical context after every compaction". Mine prints four things:
+SessionStart fires on startup, on resume, after `/clear` and after compaction, and tells the hook which. The hooks guide recommends exactly this, with a `compact` matcher, "to re-inject critical context after every compaction". Mine prints:
 
-- a short note for the occasion (after compaction: "This is not a pause: carry on with the current task", then re-read files before editing and check git);
+- a note for the occasion (after compaction: "This is not a pause: carry on with the current task");
 - a pointer to the working agreement;
 - the git state, as counts only;
 - the `## Rules` section of `lessons.md`, capped at 8,000 characters.
 
 ### The Stop check
 
-When Claude finishes a turn, a Stop hook compares what changed in the session (commits since the session's starting point, plus the working tree) with what changed in the wiki. If code changed and the wiki didn't, it blocks the stop once, with a reason that lists the steps: update the page that describes the change, append to `log.md`, record a lesson, or say in one line that nothing documented changed. If the wiki changed, it runs the lint and blocks on errors.
+When Claude finishes a turn, a Stop hook compares what changed in the session (commits since it started, plus the working tree) with what changed in the wiki. Code changed and the wiki didn't? It blocks the stop once and lists the steps: update the page, append to `log.md`, record a lesson, or say that nothing documented changed. If the wiki changed, it runs the lint and blocks on errors.
 
-The docs give you two loop guards: the `stop_hook_active` input and a cap on consecutive continuations. My script adds a third: it remembers the state it last blocked on, so the same diff never blocks twice.
+The docs give two loop guards: the `stop_hook_active` input and a cap on consecutive continuations. My script adds a third: it remembers the state it last blocked on, so the same diff never blocks twice.
 
 ## How does the lessons loop work?
 
-If I had to drop everything else, I'd keep `lessons.md`. When I correct Claude, or a tool trips it, the fix becomes one imperative line with a date under `## Rules`:
+If I had to drop everything else, I'd keep `lessons.md`. When I correct Claude, or a tool trips it, the fix becomes one dated, imperative line under `## Rules`:
 
 ```markdown
-- Git Bash rewrites URL-path arguments (`/en/` -> `P:/Git/en/`): prefix such
-  commands with `MSYS_NO_PATHCONV=1` - 2026-10-05.
+- Git Bash rewrites URL-path arguments (`/en/` → `P:/Git/en/`): prefix with
+  `MSYS_NO_PATHCONV=1`, also for `bun run lhci` - 2026-10-05.
 ```
 
-The session card injects that section, so every new session and every compaction starts with all the rules. There are more than 40 now, under caps of 60 rules and 8,000 characters. A rule that keeps coming back gets promoted into a check (a test, a lint rule, a hook), because enforced beats remembered.
+The session card injects that section, so every session and every compaction starts with all the rules. Product facts go to their own page instead, measured numbers to `memory/`. The file aims to stay under 60 rules and the card's 8,000 characters, and a rule that keeps coming back becomes a check (a test, a lint rule, a hook), because enforced beats remembered.
 
-Claude Code also has built-in auto memory: notes Claude writes for itself, indexed in a `MEMORY.md` whose first 200 lines or 25 KB load at every session start. The docs describe it as machine-local. The lessons file lives in git instead, so I review its changes in diffs like code.
+Claude Code's built-in auto memory is different: notes Claude writes for itself, with a `MEMORY.md` index whose first 200 lines or 25 KB load at every session start, on one machine only. The lessons file lives in git, so I review its changes in diffs like code.
 
 ## How do you start one?
 
@@ -150,12 +168,12 @@ Claude Code also has built-in auto memory: notes Claude writes for itself, index
 
 I packaged steps 2-6 as a skill, so a new project starts with the same machinery. When I set up this repo, the routing test used 15 prompts, including 4 in Polish and one noise prompt.
 
-## What went wrong, and what are the limits?
+## Limits
 
 - **Drift is real.** The wiki is only as true as its last update. One read-through as a stranger, when the wiki had 26 pages, found about 40 contradictions between pages. The Stop hook proves that something in the wiki changed, not that it's right.
-- **Routing misses.** It is keyword scoring, not meaning. A generic phrase in one row once outscored a project name in another and cut the page that mattered. The fix: put shared task words in every row they apply to, then re-run the test.
-- **It costs tokens and time.** The session card puts up to 8,000 characters of rules into every session, and every task ends with documentation work. I haven't measured the net saving. What I can say is that I stopped repeating myself after compactions.
-- **It's advice, not enforcement.** The docs are clear that CLAUDE.md is context, not configuration, and the wiki is the same. Anything that must hold every time belongs in a hook or a test.
+- **Routing misses.** It scores keywords, not meaning, so a generic phrase can outscore the page that matters. Shared task words go in every row they apply to, and the test runs again.
+- **It costs tokens and time.** The card puts up to 8,000 characters of rules into every session, and every task ends with documentation work. I haven't measured the net saving; I only know I stopped repeating myself after compactions.
+- **It's advice, not enforcement.** Like CLAUDE.md, the wiki is context, not configuration. Anything that must hold every time belongs in a hook or a test.
 - **It can leak.** A wiki in git is a wiki someone might read. Name environment variables, never their values. My lint scans the wiki for key-shaped strings.
 
-How the wiki fits next to skills, MCP servers and subagents is in [Claude Code skills, hooks, MCP servers and subagents](/en/blog/claude-code-skills-hooks-mcp-subagents/), and what it helped build is in the [case study](/en/blog/case-study/). If you want this kind of process on your team, [get in touch](/en/#contact).
+How the wiki fits next to skills, MCP servers and subagents is in [Claude Code skills, hooks, MCP servers and subagents](/en/blog/claude-code-skills-hooks-mcp-subagents/), and the whole build is in the [case study](/en/blog/case-study/). The wiki step plays live in [the AI section on the home page](/en/#ai). If you want this kind of process on your team, [get in touch](/en/#contact).

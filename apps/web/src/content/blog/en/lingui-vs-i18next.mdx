@@ -4,10 +4,10 @@ seoTitle: "Lingui vs i18next in 2026 for React and React Native"
 description: "Lingui and i18next compared from their docs and npm data: message format, macros, compile step, bundle size, plurals, TypeScript and React Native."
 translationKey: "lingui-vs-i18next"
 published: 2026-10-05
-updated: 2026-10-06
+updated: 2026-10-08
 tags: [i18n, react]
 cover: bubbles
-related: [lingui-translate-ai, astro-vs-next]
+related: [lingui-translate-ai, astro-i18n, astro-vs-next]
 sources:
   - title: "Lingui: Introduction"
     url: "https://lingui.dev/introduction"
@@ -83,17 +83,22 @@ sources:
     accessed: 2026-10-05
 ---
 
-Pick i18next if you want the largest ecosystem, keys you name yourself and translations loaded as JSON at runtime. Pick Lingui if you want to write the source text where it renders, keep plurals inside one ICU message and compile catalogs at build time, with a core runtime of about 2 kB gzipped. I use Lingui in Linkoglot (30 languages, Expo) and on this site; the comparison below comes from both projects' docs and public npm data, checked on 2026-10-05.
+import Shots from "~/components/blog/case/Shots.astro";
+import Flow from "~/components/blog/case/Flow.astro";
+import stopEn from "~/assets/blog/lingui-vs-i18next/stop-en.webp";
+import stopPl from "~/assets/blog/lingui-vs-i18next/stop-pl.webp";
+
+Pick i18next if you want the largest ecosystem, keys you name yourself and translations loaded as JSON at runtime. Pick Lingui if you want to write the source text where it renders, keep plurals inside one ICU message and compile catalogs at build time, with a core of about 2 kB gzipped. I use Lingui in Linkoglot (30 languages, Expo) and on this site.
 
 > **TL;DR**
 >
-> - **i18next:** the largest ecosystem (about 27.8 million npm downloads in one week), keys you name yourself, JSON loaded at runtime, typed keys in TypeScript.
-> - **Lingui:** source text written where it renders, plurals inside one ICU message, catalogs compiled at build time, a core of about 2 kB gzipped.
+> - **i18next** has the reach: about 15 times Lingui's weekly npm downloads, a long plugin list and typed keys in TypeScript.
+> - **Lingui** moves the work to build time: macros make the IDs, catalogs compile to JavaScript, and a bundler plugin can fail the build on a missing translation.
 > - **Both** run in React Native on Hermes with `Intl` polyfills. Before you choose, test a plural in your hardest language on a real device.
 
 ## Do you name keys or write source text?
 
-The difference shows up in the first line of code. With i18next you invent a key, put the text in a JSON file and look the key up at runtime:
+The difference shows in the first line of code. With i18next you invent a key, put the text in a JSON file and look the key up at runtime:
 
 ```json
 { "greeting": "Hello {{name}}" }
@@ -114,21 +119,53 @@ t`Hello ${name}`;
 // i18n._({ id: "mVmaLu", message: "Hello {name}", values: { name } })
 ```
 
-Neither model is wrong. Named keys stay stable when the English copy changes, and with TypeScript they autocomplete. Source text means there is nothing to name, and duplicates merge on their own. The flip side: an edited English sentence gets a new ID, so translators see it as a new, untranslated message.
+Neither model is wrong. Named keys stay stable when the English copy changes, and with TypeScript they autocomplete. Source text means there is nothing to name, and identical strings merge into one message. The flip side: an edited English sentence gets a new ID, so translators see it as new.
+
+Merging has a catch too. My catalog has "Stop" twice: once as a button, once as a step on the [How I work loop](/en/#how-i-work), where Polish needs "Etap". A `context` keeps them apart:
+
+```ts
+const stopLabel = t({ message: "Stop", context: "a stop on the product loop, as in a bus stop" });
+```
+
+```po
+msgid "Stop"
+msgstr "Stop"
+
+msgctxt "a stop on the product loop, as in a bus stop"
+msgid "Stop"
+msgstr "Etap"
+```
+
+<Shots
+  shots={[
+    { image: stopEn, alt: "The first step of the How I work loop in English, labelled Stop 01, Client", tag: "en" },
+    { image: stopPl, alt: "The same step in Polish, labelled Etap 01, Klient", tag: "pl", picked: true },
+  ]}
+  caption="The same step on the home page in English and Polish. Without the context, the step and the button would share one Polish word."
+/>
 
 ## Is the message format ICU in both?
 
-Not by default. Lingui uses ICU MessageFormat throughout: placeholders, plurals and selects live inside one message, such as `{count, plural, one {# file} other {# files}}`. i18next has its own syntax: `{{name}}` for interpolation, and each plural form is a separate key with a suffix. Interpolated values are escaped by default to mitigate XSS.
+Not by default. Lingui uses ICU MessageFormat throughout: placeholders, plurals and selects live inside one message, such as `{count, plural, one {# file} other {# files}}`. In i18next, `{{name}}` interpolates and each plural form is a separate key with a suffix. Interpolated values are escaped by default to mitigate XSS.
 
-You can get ICU in i18next through the i18next-icu plugin, which uses formatjs' intl-messageformat. Its README warns that with the plugin only the ICU format is respected, so i18next's `{{name}}` interpolation stops working. Pick one syntax per project and stick to it.
+You can get ICU in i18next through the i18next-icu plugin, built on formatjs' intl-messageformat. Its README warns that with the plugin only the ICU format is respected, so `{{name}}` stops working. Pick one syntax per project.
 
 ## How do macros, extraction and compiling work?
 
-Lingui's loop is: write messages with macros, run `lingui extract` to update the catalogs, translate, compile. Macros run at build time (Babel, SWC, or the native transform in `@lingui/vite-plugin`). Per the docs, they generate the short IDs, keep your components type-checked as ordinary code, and strip translator comments and default messages from production builds. The extractor finds macros, explicit `i18n._()` calls and expressions marked with an `/** i18n */` comment; it cannot extract a message stored in a variable.
+<Flow
+  label="Lingui's loop from source text to shipped messages"
+  steps={[
+    { icon: "tb:pencil", title: "Write", text: "A macro wraps the English text where it renders." },
+    { icon: "tb:search", title: "Extract", text: "lingui extract collects the messages into one .po catalog per language." },
+    { icon: "tb:language", title: "Translate", text: "A person, a script or an LLM fills each catalog, with comments and context." },
+    { icon: "tb:code", title: "Compile", text: "lingui compile, the Vite plugin or the Metro transformer turns .po into JavaScript." },
+    { icon: "tb:rocket", title: "Ship", text: "The bundle gets compiled messages and no message parser." },
+  ]}
+/>
 
-Compilation turns `.po` catalogs into JavaScript, so the runtime ships no message parser. You can run `lingui compile`, or let the bundler do it: the Vite plugin compiles catalogs on import, and `@lingui/metro-transformer` does the same for Metro in React Native.
+Macros run at build time (Babel, SWC, or the native transform in `@lingui/vite-plugin`). Per the docs, they generate the short IDs, keep components type-checked as ordinary code, and strip translator comments and default messages from production builds. The extractor finds macros, explicit `i18n._()` calls and expressions marked with an `/** i18n */` comment; **it cannot extract a message stored in a variable**.
 
-i18next needs no compile step. JSON is bundled inline or loaded through backend plugins, and namespaces let you split translations and load them on demand. Extraction now lives in i18next-cli, a toolchain built on SWC that extracts keys, generates TypeScript definitions, lints for hardcoded strings, syncs locale files and reports translation status. It can migrate an old i18next-parser config.
+i18next skips the compile step. JSON is bundled inline or loaded through backend plugins, and namespaces split translations so they load on demand. Extraction lives in i18next-cli, an SWC-based toolchain that extracts keys, generates TypeScript definitions, lints for hardcoded strings, syncs locale files and reports translation status.
 
 ## How big are they?
 
@@ -141,13 +178,11 @@ From bundlephobia on 2026-10-05, minified and minified plus gzip (1 kB = 1,000 b
 | `@lingui/core` | 6.9.0 | 5.0 kB | 2.1 kB |
 | `@lingui/react` | 6.9.0 | 3.8 kB | 1.8 kB |
 
-The core rows match Lingui's own comparison page: about 2 kB against about 14 kB gzipped. `react-i18next` declares i18next as a peer dependency, so its row does not include i18next.
-
-Read the binding rows with care, because bundlephobia counts dependencies per package. Your catalogs add bytes in both cases and tree-shaking changes the totals, so measure your own build before you quote a number.
+The core rows match Lingui's own comparison page. `react-i18next` declares i18next as a peer dependency, so its row leaves i18next out. Your catalogs add bytes either way and tree-shaking changes the totals, so measure your own build before you quote a number.
 
 ## How do they handle plurals?
 
-Both libraries follow the CLDR plural categories (zero, one, two, few, many, other) and both rely on `Intl.PluralRules`. The shape of the data differs. English needs two forms; Polish needs four. In i18next that is four keys, and the variable must be called `count`:
+Both follow the CLDR plural categories (zero, one, two, few, many, other) and both rely on `Intl.PluralRules`. The shape of the data differs. English needs two forms; Polish needs four. In i18next that is four keys, and the variable must be called `count`:
 
 ```json
 {
@@ -158,38 +193,38 @@ Both libraries follow the CLDR plural categories (zero, one, two, few, many, oth
 }
 ```
 
-In Lingui the developer writes only the English forms with the `plural` macro. The Polish translator fills one message in the catalog:
+In Lingui the developer writes only the English forms with the `plural` macro, and the Polish translator fills one message:
 
 ```po
 msgid "{count, plural, one {# file} other {# files}}"
 msgstr "{count, plural, one {# plik} few {# pliki} many {# plików} other {# pliku}}"
 ```
 
-The code does not change when a language with more forms is added. That is the practical argument for ICU: the grammar of each language stays in that language's file.
+The code does not change when a language with more forms arrives. That is the practical argument for ICU: **each language's grammar stays in that language's file**.
 
 ## What about TypeScript?
 
-i18next offers type-safe keys and return types. You declare your resources in a `CustomTypeOptions` augmentation, and `t` checks and autocompletes keys. The newest versions require TypeScript 5, and the docs warn that type safety can slow compilation on big projects (an optimized selector API exists for that case).
+i18next offers type-safe keys and return types. You declare your resources in a `CustomTypeOptions` augmentation, and `t` checks and autocompletes keys. The newest versions require TypeScript 5, and the docs warn that type safety can slow compilation on big projects (an optimized selector API exists for that).
 
-Lingui has no keys to type. Macros are ordinary template literals and JSX, so TypeScript checks the values you interpolate like any other code. You lose key autocomplete; in exchange there is no key list to keep in sync.
+Lingui has no keys to type. Macros are ordinary template literals and JSX, so TypeScript checks the values you interpolate like any other code. You lose key autocomplete and gain no key list to keep in sync.
 
 ## Do they work in React Native and Expo?
 
-Both work, and both need the same polyfills on Hermes. The i18next plural docs say Hermes still does not implement `Intl.PluralRules`, and since i18next v24 there is no fallback: without a polyfill only English-style `_one` and `_other` forms resolve. Lingui's React Native tutorial (Lingui 5 or newer, React Native 0.76 or Expo 52, Hermes) asks you to polyfill `Intl.Locale` and `Intl.PluralRules` with the formatjs packages.
+Both work, and both need the same polyfills on Hermes. The i18next plural docs say Hermes still does not implement `Intl.PluralRules`. Since i18next v24 there is no fallback: without a polyfill only the English-style `_one` and `_other` forms resolve. Lingui's React Native tutorial (Lingui 5 or newer, React Native 0.76 or Expo 52, Hermes) has you polyfill `Intl.Locale` and `Intl.PluralRules` with the formatjs packages.
 
-react-i18next describes itself as a framework for React and React Native. Lingui uses the same `@lingui/react` package on both, adds a Metro transformer for `.po` files, and a `defaultComponent` option on the provider so translated text renders inside `Text`. Whichever you pick, test a plural on a real device: a Polish plural stuck in the `other` form is easy to miss in English-first QA.
+react-i18next calls itself a framework for React and React Native. Lingui uses the same `@lingui/react` on both, adds a Metro transformer for `.po` files, and a `defaultComponent` option so translated text renders inside `Text`. Whichever you pick, test a plural on a real device: a Polish plural stuck in the `other` form is easy to miss in English-first QA.
 
 ## How big is each ecosystem?
 
-i18next is far bigger. In the week from 2026-09-28 to 2026-10-04, npm counted about 27.8 million downloads of `i18next` and about 1.9 million of `@lingui/core`, roughly 15 times fewer. i18next has integrations for React, Angular and Vue, runs on Node.js and Deno, and has a long list of plugins (backends, language detection, converters from gettext, CSV and RESX). Its maintainers also build Locize, a translation management service made for i18next projects.
+i18next is far bigger. In the week from 2026-09-28 to 2026-10-04, npm counted about 27.8 million downloads of `i18next` and about 1.9 million of `@lingui/core`. Beyond React, i18next has integrations for Angular and Vue, runs on Node.js and Deno, and has a long list of plugins (backends, language detection, converters from gettext, CSV and RESX). Its maintainers also build Locize, a translation management service made for i18next.
 
-Lingui covers React, React Native, Vue, SolidJS, Astro, Svelte and Node.js on top of the framework-agnostic `@lingui/core`. Its catalogs are PO files by default, the gettext format. The docs give the reasons: readable for long messages, comments for translators, contexts, metadata, and support in many localization tools. Macros accept `comment` and `context` fields that land in the catalog, which helps a human translator and an LLM alike.
+Lingui covers React, React Native, Vue, SolidJS, Astro, Svelte and Node.js on top of the framework-agnostic `@lingui/core`. Its catalogs are PO files by default, the gettext format: readable for long messages, with comments, contexts and metadata, and supported by many localization tools. The `comment` and `context` you pass to a macro land in the catalog, which helps a human translator and an LLM alike.
 
 ## How do I use Lingui?
 
-Linkoglot is my language-learning app, built with Expo and React Native and translated into 30 languages. With 30 catalogs, the file format matters as much as the API. PO files with ICU messages keep each language's plural rules in that language's file, and plain text is easy to process with a script. Linkoglot's translation script later became `lingui-translate-ai`, a CLI that fills Lingui catalogs with an LLM; the details are in [Translating Lingui catalogs with an LLM](/en/blog/translate-lingui-catalogs-with-an-llm/).
+Linkoglot is my language-learning app, built with Expo and React Native. With 30 catalogs, the file format matters as much as the API. PO files with ICU messages keep each language's plural rules in its own file, and plain text is easy to process with a script. That script later became `lingui-translate-ai`, a CLI that fills Lingui catalogs with an LLM, described in [Translating Lingui catalogs with an LLM](/en/blog/translate-lingui-catalogs-with-an-llm/).
 
-This site runs on Astro 7 with lingui-for-astro, a community integration (not made by the Lingui team) that transforms macros in `.astro` files and extracts their messages. The Lingui Vite plugin compiles each `.po` file on import, so no compiled catalog is committed. Production builds set `failOnMissing`:
+This site runs on Astro 7 with lingui-for-astro, a community integration (not made by the Lingui team) that transforms macros in `.astro` files and extracts their messages. The Vite plugin compiles each `.po` file on import, so no compiled catalog is committed, and production builds set `failOnMissing`:
 
 ```js
 lingui({
@@ -199,25 +234,25 @@ lingui({
 });
 ```
 
-With `"catalog"`, the build fails if the Polish or Spanish catalog misses a message, checked before fallback locales apply. A missing Polish string cannot reach production as silent English. The rest of the setup is in [how this site was built](/en/blog/case-study/).
+With `"catalog"`, the build fails if the Polish or Spanish catalog misses a message, checked before fallback locales apply. A missing Polish string cannot reach production as silent English. The routes, hreflang and language switch around it are in [a multilingual Astro site with Lingui](/en/blog/multilingual-astro-site-with-lingui/).
 
-## Decision table
+## Which one should you pick?
 
 | If you need | Lean towards |
 | --- | --- |
-| The largest ecosystem and plugin list | i18next |
+| The largest ecosystem, or a hosted service from the same maintainers (Locize) | i18next |
 | Translations loaded from a server at runtime | i18next |
 | Named keys with TypeScript autocomplete | i18next |
-| A hosted translation service from the same maintainers | i18next (Locize) |
 | Source text in the code, no keys to name | Lingui |
 | Plurals and selects inside one ICU message | Lingui (or i18next with i18next-icu) |
-| The smallest core runtime (about 2 kB gzipped) | Lingui |
-| A bundler plugin that fails the build on a missing translation | Lingui |
+| The smallest core runtime | Lingui |
+| A build that fails on a missing translation | Lingui |
 | PO catalogs for translators and scripts | Lingui |
 | React Native on Hermes | Either, with the `Intl` polyfills |
 
-## What this comparison is not
+## Limits
 
-It is not a benchmark. The sizes come from bundlephobia, the download counts from the npm API, and every behaviour from the official docs listed below this post. I did not build the same app twice.
+- **It is not a benchmark.** Every behaviour comes from the official docs; I did not build the same app with both.
+- **The numbers are a snapshot.** Sizes from bundlephobia and downloads from the npm API, read on 5 October 2026; check the current ones before you quote them.
 
-If you are choosing for a team, try both on one real screen that has a plural in it, in the language with the most plural forms you support. If you want to see the projects where I use this setup, they are on my [work page](/en/work/).
+If you are choosing for a team, try both on one real screen with a plural in it, in the language with the most plural forms you support. The projects where I use Lingui are on my [work page](/en/work/).

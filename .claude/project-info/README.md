@@ -82,5 +82,7 @@ memory/:
 - **Basenames are unique across the wiki,** so a bare name in backticks (`requirements.md`) is unambiguous.
   Paths in backticks are relative to `.claude/project-info/`.
 - A new page gets a routing-table row in CLAUDE.md and a line here, in the right folder.
+- Routing words (from lessons, 2026-10-05): a generic phrase in one row outscores a project name, so put shared task
+  words in every row they apply to and re-run `node .claude/hooks/wiki-context.mjs --test "<prompt>"`.
 - Append one line to `log.md` per change. Never put secrets in a page.
 - Source tags on facts: `[user]` `[repo: path]` `[file: name]` `[web: url]` `[research]` `[assumption]`.

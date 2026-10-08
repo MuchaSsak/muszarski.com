@@ -4,10 +4,10 @@ seoTitle: "Cookieless analytics in the EU: Umami and GDPR"
 description: "Cookieless is not automatically consent-free. What GDPR and art. 399 of Poland's electronic communications law say, and three positions you can defend."
 translationKey: "cookieless-analytics"
 published: 2026-10-05
-updated: 2026-10-06
+updated: 2026-10-08
 tags: [privacy]
 cover: cookie
-related: [this-site]
+related: [contact-form, this-site, reduced-motion]
 sources:
   - title: "Ustawa z dnia 12 lipca 2024 r. Prawo komunikacji elektronicznej, Dz.U. 2024 poz. 1221 (Sejm ELI API)"
     url: "https://api.sejm.gov.pl/eli/acts/DU/2024/1221/text.html"
@@ -47,43 +47,48 @@ sources:
     accessed: 2026-10-05
 ---
 
-Cookieless analytics such as Umami avoid cookies, but not the EU rule on reading information from a visitor's device. In Poland that rule is art. 399 of the Prawo komunikacji elektronicznej (the electronic communications law), and it has no exemption for analytics. You can defend three positions (ask for consent, skip the banner but disclose and honour opt-outs, or run no client-side analytics at all), and this site takes the second.
+import Flow from "~/components/blog/case/Flow.astro";
+import Shots from "~/components/blog/case/Shots.astro";
+import optoutOn from "~/assets/blog/cookieless-analytics/optout-on-en.webp";
+import optoutGpc from "~/assets/blog/cookieless-analytics/optout-gpc-en.webp";
+
+Cookieless analytics such as Umami avoid cookies, but not the EU rule on reading information from a visitor's device. In Poland that rule is art. 399 of the Prawo komunikacji elektronicznej (the electronic communications law), and it has no exemption for analytics. Three positions are defensible: ask for consent, skip the banner but disclose and honour opt-outs, or run no analytics in the browser. This site takes the second.
 
 > **TL;DR**
 >
 > - **Two rules:** GDPR covers personal data; art. 399, Poland's version of the ePrivacy device rule, covers storing or reading anything on the device, cookie or not.
 > - **Still access:** the EDPB treats a script that makes the browser send data as access, and art. 399 has no exemption for audience measurement.
-> - **This site:** no banner, Umami without cookies, a plain-language privacy policy, an opt-out, and no script at all under Do Not Track or Global Privacy Control.
+> - **This site:** no banner, Umami without cookies, a privacy policy that says what the script reads, an opt-out, and no script at all under Do Not Track or Global Privacy Control.
 
-> This is not legal advice. I'm a developer who read the primary sources for my own site. If the decision matters to your business, ask a lawyer.
+> Not legal advice: I'm a developer who read the primary sources for my own site. If the decision matters to your business, ask a lawyer.
 
 ## Which two rules apply?
 
-**GDPR** is about personal data. Analytics needs a legal basis, and for a small site the usual candidate is art. 6(1)(f), legitimate interests: processing "necessary for the purposes of the legitimate interests pursued by the controller or by a third party, except where such interests are overridden by the interests or fundamental rights and freedoms of the data subject". Art. 21 gives people the right to object, at any time and on grounds relating to their particular situation, to processing based on that point.
+**GDPR** covers personal data. Analytics needs a legal basis. For a small site that is usually art. 6(1)(f), legitimate interests: processing "necessary for the purposes of the legitimate interests pursued by the controller", unless the visitor's rights override them. Art. 21 lets people object to that processing at any time, on grounds relating to their particular situation.
 
-**The ePrivacy Directive** (2002/58/EC), art. 5(3), is about storing information on, or reading it from, the user's device, whether or not it is personal data. Poland implements that directive in the Prawo komunikacji elektronicznej (Dz.U. 2024 poz. 1221), in force since 10 November 2024. The device rule is its art. 399.
+**The ePrivacy Directive** (2002/58/EC), art. 5(3), covers storing information on the user's device or reading it from there, personal data or not. Poland implements it in the Prawo komunikacji elektronicznej (Dz.U. 2024 poz. 1221), in force since 10 November 2024. The device rule is its art. 399.
 
 "Cookieless" answers a question about cookies. The device rule asks a broader one.
 
 ## What does art. 399 actually say?
 
-In my own abridged translation of ust. 1, storing information, or gaining access to information already stored, in a user's terminal equipment is allowed only if:
+In my own abridged translation of ust. 1, storing information in a user's terminal equipment, or reading what is already stored there, is allowed only if:
 
-1. the user is first told, clearly and simply, the purpose and how to set conditions through their software or service settings;
+1. the user is first told, clearly and simply, the purpose and how to set conditions in their software or service settings;
 2. the user then consents;
 3. the storage or access doesn't change the configuration of the device or its software.
 
-Ust. 3 lifts those conditions when the storage or access is necessary to transmit a message over a public network, or to provide a service "żądanej przez abonenta lub użytkownika końcowego", one the user asked for. Art. 400 adds that consent follows the data protection rules.
+Ust. 3 lifts these conditions when the storage or access is necessary to transmit a message over a public network. It also lifts them for a service "żądanej przez abonenta lub użytkownika końcowego", one the user asked for. Art. 400 adds that consent follows the data protection rules.
 
 Three things follow from the text:
 
-- It binds whoever stores or reads. The article has no "business" condition.
+- It binds whoever stores or reads. There is no "business" condition.
 - It covers access, not only storage.
-- The exemptions are transmission and a service the user requested. There is no audience-measurement exemption.
+- The exemptions are transmission and a service the user asked for. Audience measurement isn't one.
 
 ## Does a cookieless script "access" the device?
 
-The European Data Protection Board says yes, for the common case. Its Guidelines 2/2023 (version 2.0, adopted 7 October 2024), § 33: JavaScript code "where the accessing entity instructs the browser of the user to send asynchronous requests with the targeted information" clearly falls within the scope of art. 5(3).
+The European Data Protection Board says yes, in the common case. In its Guidelines 2/2023 (§ 33), JavaScript code "where the accessing entity instructs the browser of the user to send asynchronous requests with the targeted information" clearly falls within art. 5(3).
 
 Umami's tracker is open source, so you can check what it does. In the current code it:
 
@@ -92,19 +97,19 @@ Umami's tracker is open source, so you can check what it does. In the current co
 - checks the browser's Do Not Track setting when you turn that option on;
 - sends requests without credentials by default and sets no cookie.
 
-The Umami FAQ says the same: "Umami does not use any cookies in the tracking code". No cookies, then, but on the EDPB reading, still access.
+The Umami FAQ agrees: "Umami does not use any cookies in the tracking code". No cookies, then, but on the EDPB reading, still access. That is why the tracker's code matters more than its landing page: a vendor's promise is not a legal source.
 
-The same guidelines (§ 56) add that being in scope "does not systematically mean that consent needs to be collected". Whether an exemption applies is assessed case by case, and in Poland that means art. 399 ust. 3. Analytics is hard to fit there.
+The same guidelines (§ 56) add that being in scope "does not systematically mean that consent needs to be collected". Whether an exemption applies is judged case by case, and in Poland the exemptions are art. 399 ust. 3. Analytics fits them badly.
 
-The Article 29 Working Party wrote in 2012 (WP194) that first-party analytics "are not strictly necessary to provide a functionality explicitly requested by the user". The same opinion found them "not likely to create a privacy risk when they are strictly limited to first party aggregated statistical purposes", given clear information in the privacy policy, "a user friendly mechanism to opt-out" and anonymisation. It even suggested lawmakers "might appropriately add a third exemption criterion".
+The Article 29 Working Party said so in 2012 (WP194): first-party analytics "are not strictly necessary to provide a functionality explicitly requested by the user". It also found them "not likely to create a privacy risk" when limited to first-party aggregate statistics, with clear information, "a user friendly mechanism to opt-out" and anonymisation. It even suggested lawmakers "might appropriately add a third exemption criterion".
 
-The Polish act doesn't have one. WP194 predates both GDPR and the current Polish act: useful as a risk profile, not binding.
+The Polish act has no such criterion. WP194 predates both GDPR and the act: useful as a risk profile, not binding.
 
 ## What do Polish practice and the fines look like?
 
-UODO, the Polish data protection authority, says in its own privacy policy that it uses Plausible Analytics, "które nie wykorzystuje plików cookie i nie zbiera danych osobowych" (which uses no cookies and collects no personal data). The policy describes no consent step for it. UODO doesn't enforce art. 399, though. Fines for breaking it are imposed by the President of UKE, the electronic communications regulator (art. 444 ust. 1 pkt 82 with art. 446).
+UODO, Poland's data protection authority, uses Plausible Analytics on its own site. Its privacy policy says Plausible "nie wykorzystuje plików cookie i nie zbiera danych osobowych" (uses no cookies and collects no personal data) and describes no consent step. UODO doesn't enforce art. 399, though: fines for breaking it come from the President of UKE, the electronic communications regulator (art. 444 ust. 1 pkt 82 with art. 446).
 
-The ceilings, from the statute: up to 3% of the previous year's revenue (art. 446 ust. 1). Where the entity had no revenue in the three preceding calendar years, or its revenue in that period did not exceed 500 000 zł, up to 15 000 zł (art. 446 ust. 3). These are maximums the regulator may impose, not a price list.
+The ceilings in the statute: up to 3% of the previous year's revenue (art. 446 ust. 1). With no revenue in the three preceding calendar years, or no more than 500 000 zł in that period, the cap is 15 000 zł (art. 446 ust. 3). These are maximums, not a price list.
 
 ## Which positions can you defend?
 
@@ -114,28 +119,53 @@ The ceilings, from the statute: up to 3% of the previous year's revenue (art. 44
 | (b) No banner, full disclosure | Explain it in the privacy policy, offer an opt-out, and don't track when the browser sends Do Not Track or Global Privacy Control | A residual risk under a literal reading of art. 399 |
 | (c) No client-side analytics | No tracker script; at most aggregate counts from the server | You lose screen sizes, languages and click events |
 
-(a) has the lowest legal risk on the letter of art. 399. (b) matches the WP194 risk profile and the practice above, and accepts that no Polish rule exempts it. (c) narrows the question rather than removing it: your server still receives IP addresses, and the EDPB guidelines (§ 55) treat an IP address that comes from the user's device as in scope too.
+(a) is the safest on the letter of art. 399, and (b) matches the WP194 risk profile and the practice above. (c) narrows the question without removing it. Your server still receives IP addresses, and the EDPB guidelines (§ 55) treat an IP address sent from the user's device as in scope too.
 
 ## What does this site do?
 
-Position (b):
+Position (b), decided on every visit:
 
-- Umami, loaded only after the page's `load` event and limited to this site's own domain.
-- No cookies. Events carry no personal data: their properties come from fixed lists, such as which button was used or which language was picked.
-- A plain-language section of the privacy policy says what is collected and why.
-- An opt-out on the [privacy page](/en/privacy/) sets Umami's documented `umami.disabled` flag. Storing that flag is something the visitor asked for, which is what ust. 3 pkt 2 describes.
-- No tracking when the browser sends Do Not Track or Global Privacy Control: the script isn't even loaded.
+<Flow
+  label="What decides whether a visit is counted"
+  steps={[
+    {
+      icon: "tb:browser",
+      title: "Page loads",
+      text: "Only a small inline loader runs; the Umami script isn't requested yet.",
+    },
+    {
+      icon: "tb:eye-off",
+      title: "Signals",
+      text: "Do Not Track or Global Privacy Control on? Stop: no script.",
+    },
+    {
+      icon: "tb:lock",
+      title: "Opt-out",
+      text: "umami.disabled stored in this browser? Stop.",
+    },
+    {
+      icon: "tb:chart-line",
+      title: "Umami",
+      text: "Added after the load event, counting this site's own domain only. No cookies.",
+    },
+    {
+      icon: "tb:list-check",
+      title: "Events",
+      text: "Values from fixed lists, such as which button or which language. Nothing typed.",
+    },
+  ]}
+/>
+
+Section 7 of the privacy policy, in all three of the site's languages, says what the script reads and how to switch it off. It names itself as the information art. 399 ust. 1 asks for. The switch sits on the [privacy page](/en/privacy/). Storing its flag is something the visitor asked for, which is what ust. 3 pkt 2 describes. The pause button follows the same rule: it remembers your choice only after you press it ([motion that respects people](/en/blog/reduced-motion-and-a-pause-button/)).
 
 ## How do you wire it with Umami?
 
-Do Not Track is one attribute. Umami's docs: `data-do-not-track` will "Respect user's Do Not Track browser setting".
-
-Global Privacy Control has no Umami setting: neither the docs nor the tracker code mention it. You can cancel each send with Umami's `data-before-send` hook (return a falsy value), but the cleaner option is not to load the script at all. A simplified version of this site's loader:
+Do Not Track is one attribute: Umami's `data-do-not-track` will "Respect user's Do Not Track browser setting". Global Privacy Control has no Umami setting; neither the docs nor the tracker code mention it. You could cancel each send in Umami's `data-before-send` hook (return a falsy value), but it's cleaner not to load the script at all. A simplified version of this site's loader:
 
 ```js
 const optedOut = () => {
   try {
-    return localStorage.getItem("umami.disabled") !== null;
+    return !!localStorage.getItem("umami.disabled");
   } catch {
     return false; // storage blocked
   }
@@ -153,29 +183,42 @@ if (!navigator.globalPrivacyControl && navigator.doNotTrack !== "1" && !optedOut
 }
 ```
 
-The opt-out is the key from Umami's "Exclude my own visits" page, behind a button:
+The opt-out is the key from Umami's "Exclude my own visits" page, behind a switch that sets or clears it:
 
 ```js
 optOutButton.addEventListener("click", () => {
   try {
-    localStorage.setItem("umami.disabled", "1");
+    if (localStorage.getItem("umami.disabled")) localStorage.removeItem("umami.disabled");
+    else localStorage.setItem("umami.disabled", "1");
   } catch {
-    // storage blocked: tell the visitor the opt-out couldn't be saved
+    // storage blocked: nothing is saved, and the loader can't read it either
   }
 });
 ```
 
-Two honest caveats. MDN marks `navigator.doNotTrack` as deprecated and non-standard, and says the DNT specification has been discontinued. `navigator.globalPrivacyControl` is experimental and not available in some widely used browsers.
+<Shots
+  shots={[
+    {
+      image: optoutOn,
+      alt: "A box titled Visit statistics in this browser, one line on what the statistics are for, and a button: Statistics are on. Turn them off",
+      tag: "Default",
+    },
+    {
+      image: optoutGpc,
+      alt: "The same box when the browser sends a privacy signal: one sentence saying statistics are already off, and no button",
+      tag: "With GPC",
+    },
+  ]}
+  caption="The switch on this site's privacy page. With Global Privacy Control on (emulated here in a test browser), there is nothing to switch: statistics are already off."
+/>
 
-Neither signal reaches everyone. Both are cheap to honour, and both are choices the visitor made.
+Umami's server matters too. In its open-source code, a session ID is a hash of the website ID, the IP address, the user agent and a salt that rotates monthly by default. No cookie is involved, but IP addresses are, so treat it as personal data under GDPR: name the basis, explain it in the policy and honour objections.
 
-Also note what happens on Umami's server. In its open-source code, a session ID is a hash of the website ID, the IP address, the user agent and a salt that rotates monthly by default. No cookie is involved, but IP addresses are, so treat it as personal data under GDPR: name the basis, explain it in the policy, and honour objections.
+## Limits
 
-## Before you copy this
+- This is a developer's reading of primary sources, not a lawyer's opinion. Position (b) keeps a residual risk under a literal reading of art. 399; if that isn't acceptable to you, (a) is a legitimate answer.
+- Do Not Track and Global Privacy Control reach only some visitors. MDN marks `navigator.doNotTrack` as deprecated, with a discontinued specification, and `navigator.globalPrivacyControl` as experimental and missing from some widely used browsers.
+- The opt-out lives in one browser. Clearing site data or switching devices forgets it.
+- Your context changes the answer: a shop, an app with accounts or a company site is not a personal portfolio.
 
-- **Read your tracker's code, not only its landing page.** What it reads, what it stores, whether it supports Do Not Track. A vendor saying you don't need a banner is a statement by the vendor, not a legal source.
-- **Decide what risk you accept.** If the residual risk of (b) isn't acceptable to you, choose (a). It is a legitimate answer.
-- **Write the policy for what you actually built.** The privacy text has to match the setup, in every language you publish.
-- **Your context changes the answer.** A shop, an app with accounts or a company site is not a personal portfolio.
-
-For the rest of how this site was built, see [the case study](/en/blog/case-study/). The site's pause button follows the same idea of storage the visitor asked for: it remembers your choice in `localStorage` only after you press it ([motion that respects people](/en/blog/reduced-motion-and-a-pause-button/)). If you want to talk about any of this, [here's how to reach me](/en/#contact).
+The other place where visitor data meets this site is [the contact form, which sends mail without a key in the browser](/en/blog/contact-form-on-a-static-site/). The whole build is in [the case study](/en/blog/case-study/), and if you want to talk about any of this, [here's how to reach me](/en/#contact).

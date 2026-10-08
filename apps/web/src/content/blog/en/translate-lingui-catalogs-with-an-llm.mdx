@@ -3,17 +3,23 @@ title: "Translating Lingui catalogs with an LLM"
 description: "How to machine-translate Lingui .po catalogs with an LLM, what breaks (placeholders, plurals, tone) and the checks to run before a catalog ships."
 translationKey: "lingui-translate-ai"
 published: 2026-10-05
-updated: 2026-10-06
+updated: 2026-10-08
 tags: [i18n, ai]
 cover: catalogs
-related: [lingui-vs-i18next]
+related: [astro-i18n, lingui-vs-i18next, solo-app]
 sources:
   - title: "lingui-translate-ai on npm"
     url: "https://www.npmjs.com/package/lingui-translate-ai"
-    accessed: 2026-10-05
+    accessed: 2026-10-08
   - title: "lingui-translate-ai README (GitHub)"
     url: "https://github.com/MuchaSsak/lingui-translate-ai"
-    accessed: 2026-10-05
+    accessed: 2026-10-08
+  - title: "lingui-translate-ai v1.1.0 release notes (GitHub)"
+    url: "https://github.com/MuchaSsak/lingui-translate-ai/releases/tag/v1.1.0"
+    accessed: 2026-10-08
+  - title: "lingui-translate-ai source: src/commands/translate.ts (GitHub)"
+    url: "https://github.com/MuchaSsak/lingui-translate-ai/blob/main/src/commands/translate.ts"
+    accessed: 2026-10-08
   - title: "Unicode CLDR: Language Plural Rules"
     url: "https://www.unicode.org/cldr/charts/latest/supplemental/language_plural_rules.html"
     accessed: 2026-10-05
@@ -37,26 +43,40 @@ sources:
     accessed: 2026-10-05
 ---
 
-An LLM can draft every missing string in a Lingui `.po` catalog, but the result is a draft. Before it ships, run mechanical checks (every message filled, placeholders and tags identical, every plural category the language needs present), then have someone who reads the language review it. I built a small CLI, lingui-translate-ai, for the drafting part; this post covers the whole loop.
+import Flow from "~/components/blog/case/Flow.astro";
+import Shots from "~/components/blog/case/Shots.astro";
+import homeLocales from "~/assets/blog/lingui-translate-ai/home-three-locales.webp";
+import esFooter from "~/assets/blog/lingui-translate-ai/es-footer-note.webp";
+
+An LLM can draft every missing string in a Lingui `.po` catalog, but the result is a draft. Before it ships, run mechanical checks (every message filled, placeholders and tags identical, every plural form the language needs) and have someone who reads the language review it. I built a small CLI, lingui-translate-ai, for the drafting; this post covers the whole loop.
 
 > **TL;DR**
 >
-> - **Drafting is the easy part:** lingui-translate-ai sends empty `msgstr` values to an LLM, previews the run, writes `.bak` copies and tries to repair dropped placeholders.
-> - **Breakage is silent:** a wrong placeholder or a missing Polish plural category renders wrong text and fails nothing, so tests have to catch it.
-> - **Checks first, then a human:** every message filled, identical placeholders and tags, every plural category the language needs, then a reader for each language you can review.
+> - **Drafting is the easy part:** lingui-translate-ai sends empty `msgstr` values to an LLM, previews the run, keeps `.bak` copies and tries to repair dropped placeholders.
+> - **Breakage is silent:** a wrong placeholder or a missing Polish plural form renders wrong text and fails nothing.
+> - **Checks first, then a human:** tests for tokens and plural forms, a reader for every language you can review, and an honest label on the rest.
 
 ## Why machine-translate catalogs at all?
 
-Linkoglot, my own language-learning app, ships in 30 languages. Every new screen adds strings to 30 catalogs. Linkoglot got an LLM translation script for that, and the script grew into [lingui-translate-ai](https://www.npmjs.com/package/lingui-translate-ai), an MIT-licensed CLI on npm (version 1.1.0 at the time of writing).
+Linkoglot, my own language-learning app, ships in 30 languages, so every new screen means new strings in 30 catalogs. An LLM script in its repo did the drafting, and that script grew into [lingui-translate-ai](https://www.npmjs.com/package/lingui-translate-ai), an MIT-licensed CLI on npm (version 1.1.0 at the time of writing). The app itself is in [how I shipped Linkoglot alone](/en/blog/shipping-a-mobile-app-alone/).
 
-The drafting is the easy part. The hard part is knowing which drafts are broken.
+This site is smaller: three catalogs, English as the source.
+
+<Shots
+  shots={[
+    { image: homeLocales, alt: "The home page on three phones in English, Polish and Spanish: the same layout with the buttons Hire me, Zatrudnij mnie and Contrátame" },
+  ]}
+  caption="One page, three catalogs. Every button and label here is a catalog message; the Spanish ones are an AI translation."
+/>
+
+Drafting those strings is the easy part. The hard part is knowing which drafts are broken.
 
 ## What does a catalog look like to the model?
 
-A Lingui catalog is a gettext PO file. Each entry has the source text in `msgid`, the translation in `msgstr`, and a reference to where the message is used. This entry is from the Polish catalog of this site:
+A Lingui catalog is a gettext PO file. Each entry has the source text in `msgid`, the translation in `msgstr` and a reference to where the message is used. This one is from this site's Polish catalog:
 
 ```po
-#: src/components/layout/SiteHeader.astro:51
+#: src/components/layout/SiteHeader.astro:52
 msgid "{name}, home"
 msgstr "{name}, strona główna"
 ```
@@ -67,34 +87,34 @@ The model sees short strings, mostly without context, full of tokens it must not
 
 ### Placeholders and tags
 
-`{name}` must come back exactly as `{name}`: not translated, not dropped, not respelled. The same goes for the numbered tags Lingui generates for rich text inside `Trans`, such as `<0>` and `</0>`.
+`{name}` must come back exactly as `{name}`, and so must the numbered tags Lingui generates for rich text inside `Trans`, such as `<0>` and `</0>`.
 
-A broken placeholder does not crash anything. With @lingui/core 6.9.0, a Polish string that says `{imie}` instead of `{name}` renders as ", strona główna", and a dropped placeholder simply loses the value. Users see the gap; your build does not.
+A broken placeholder crashes nothing. With @lingui/core 6.9.0, a Polish string that says `{imie}` instead of `{name}` renders as ", strona główna", and a dropped placeholder just loses the value. Users see the gap; the build doesn't.
 
 ### Plurals
 
-English has two plural categories in the Unicode CLDR rules: one and other. Polish has four: one (1), few (2-4, 22-24), many (0, 5-19, 100) and other (fractions such as 1.5). A model that mirrors the English message returns two branches:
+In the Unicode CLDR rules English has two plural categories, one and other. Polish has four: one (1), few (2-4, 22-24), many (0, 5-19, 100) and other (fractions such as 1.5). A model that mirrors the English message returns two:
 
 ```po
 msgid "{count, plural, one {# file} other {# files}}"
 msgstr "{count, plural, one {# plik} other {# plików}}"
 ```
 
-Nothing fails here either. Missing categories fall back to `other`, so with @lingui/core 6.9.0 this message renders "2 plików" and "1,5 plików", where Polish needs "2 pliki" and "1,5 pliku". Lingui's plural guide puts it plainly: developers only need the source language's forms, and the target language's forms are the translator's job. When the translator is a model, you have to check that job.
+Nothing fails here either. Missing categories fall back to `other`, so with @lingui/core 6.9.0 this renders "2 plików" and "1,5 plików", where Polish needs "2 pliki" and "1,5 pliku". Lingui's plural guide is clear that the target language's forms are the translator's job. When the translator is a model, check that job.
 
 ### Tone and context
 
-UI strings are short and ambiguous. "Open" can be a verb or an adjective; "Save" can be a button or a discount. Lingui macros accept a `comment` and a `context`, and both are extracted into the catalog.
+UI strings are short and ambiguous: "Open" is a verb or an adjective, "Save" a button or a discount. Lingui macros accept a `comment` and a `context`, and both are extracted into the catalog. Pass them to the model; they are often the only context it gets.
 
-Pass them to the model, because they are often the only context it gets. The ICU user guide's advice applies as well: write full sentences inside plural and select branches instead of gluing fragments together, since word order and agreement change between languages.
+The ICU user guide adds one more rule: write full sentences inside plural and select branches instead of gluing fragments, because word order and agreement change between languages.
 
 ### Copied English and drifting terms
 
-Models sometimes return the English source unchanged, or translate one product term three different ways across a catalog. Both are easy to miss in a long diff.
+Models sometimes return the English source unchanged, or translate one product term three ways across a catalog. Both hide well in a long diff.
 
 ## How does lingui-translate-ai handle the draft?
 
-Everything in this section comes from the package README. You run the CLI from a Lingui project root. It looks for `package.json`, a Lingui dependency or a `lingui.config.*` file, and locale folders with PO files, and exits if the folder does not look like a Lingui project.
+You run it from a Lingui project root. It looks for `package.json`, a Lingui dependency or a `lingui.config.*` file, and locale folders with PO files, and exits if the folder doesn't look like a Lingui project.
 
 ```sh
 npx lingui-translate-ai init       # creates lingui-translate-ai.json
@@ -102,21 +122,31 @@ npx lingui-translate-ai translate --only-empty --dry-run
 npx lingui-translate-ai translate --only-empty
 ```
 
-- By default it reads an OpenRouter key from `OPENROUTER_API_KEY`, in the shell or in a `.env` file.
-- Before any request it prints a preview (model, provider, source locale, locale files, strings to send, estimated requests, caps, dry-run and backup status) and asks for confirmation, unless you pass `--yes`.
-- With `onlyEmptyTranslations: true` it sends only empty `msgstr` values. With `false` it sends existing translations too, so the model can repair copied English, inconsistent terms, placeholder mistakes and overly literal UI text.
-- Three caps limit the size of a run: `maxTranslationsPerRequest`, `maxRequestsPerRun` and `maxTranslationsPerRun`.
-- It writes a `.bak` copy before changing a file and supports a dry run. In `rawPatchMode`, the default, it patches only the changed `msgstr` blocks, so the diff stays readable.
-- It checks that placeholders and tags from the source survive. If the model forgets one, it tries to repair it; a correction it cannot repair safely is ignored and logged.
-- You can replace the built-in system prompt in the config, as long as the output stays JSON nested by locale.
+<Flow
+  label="What one translate run does"
+  steps={[
+    { icon: "tb:search", title: "Find the gaps", text: "Empty msgstr values in every locale, or all of them in repair mode." },
+    { icon: "tb:eye", title: "Preview", text: "Model, locales, strings and requests, then a yes or no prompt." },
+    { icon: "tb:robot", title: "Draft", text: "Batches go to the model through OpenRouter, inside your caps." },
+    { icon: "tb:checklist", title: "Check tokens", text: "Placeholders and tags must survive; a plural must stay valid ICU." },
+    { icon: "tb:file-text", title: "Patch the file", text: "A .bak copy first, then only the changed msgstr blocks." },
+  ]}
+/>
 
-The README's recommended workflow ends with three steps that matter most: review the changed PO files, run your normal Lingui compile, build and test commands, then commit. The README does not describe special handling for ICU plural categories, so plurals are your job. That is the next section.
+What the diagram leaves out:
+
+- **The key:** `OPENROUTER_API_KEY`, from the shell or a `.env` file.
+- **Repair mode:** with `onlyEmptyTranslations: false` it also sends existing translations, so the model can fix copied English, inconsistent terms, placeholder mistakes and overly literal UI text.
+- **Caps:** `maxTranslationsPerRequest`, `maxRequestsPerRun` and `maxTranslationsPerRun` limit the size of a run.
+- **Repairs:** if the model drops a placeholder, the CLI tries to put it back; a fix it can't repair safely is ignored and logged.
+
+**Plurals got their own handling in 1.1.0.** The prompt tells the model to return every CLDR category the target language needs. The CLI then rejects a plural that comes back broken: a different argument or keyword, unbalanced braces, no `other` branch or a lost `#`. It does not check that `few` and `many` are actually there. That check is yours.
 
 ## Which checks should run before a catalog ships?
 
-On this site a small Vitest file reads each `.po` file and fails when:
+On this site a small Vitest file, `src/locales/catalogs.test.ts`, reads each `.po` file and fails when:
 
-1. a message from the English source is missing from the Polish or Spanish catalog;
+1. the Polish or Spanish catalog lacks a message from the English source;
 2. any `msgstr` is empty;
 3. the `{placeholders}` or numbered tags differ from the source;
 4. a translation contains a raw no-break space or an em or en dash (a house style rule).
@@ -127,12 +157,12 @@ The placeholder check is one regular expression:
 const tokens = (text: string) =>
   [...text.matchAll(/\{\w+\}|<\/?\d+>/g)].map((m) => m[0]).sort();
 
-for (const entry of list) expect(tokens(entry.str)).toEqual(tokens(entry.id));
+for (const entry of list) expect(tokens(entry.str), entry.id).toEqual(tokens(entry.id));
 ```
 
-On top of that, the production build fails if a Polish or Spanish catalog misses a message (`failOnMissing: "catalog"` in the Lingui Vite plugin), so an untranslated string cannot reach production. More on that setup in [Lingui vs i18next](/en/blog/lingui-vs-i18next/).
+The production build is the second net: `failOnMissing: "catalog"` in the Lingui Vite plugin fails it when a Polish or Spanish message is missing. [How Lingui runs inside a static Astro build](/en/blog/multilingual-astro-site-with-lingui/) shows that setup.
 
-This site has one plural message so far (the project count on the work page), and its catalog test doesn't check plural categories yet. If your catalogs have plurals, add that check. `Intl.PluralRules` already knows which categories each locale needs:
+This site has no plural messages right now, so its test doesn't look at categories. If your catalogs have plurals, add the check. `Intl.PluralRules` already knows which categories each locale needs:
 
 ```ts
 const CATEGORY = /\b(zero|one|two|few|many|other)\s*\{/g;
@@ -148,26 +178,33 @@ missingPlurals("pl", "{count, plural, one {# plik} other {# plików}}");
 // ["few", "many"]
 ```
 
-It is deliberately naive: it reads flat messages, not plurals nested in selects. It also flags Spanish, where CLDR defines a `many` category for numbers like 1,000,000. Decide per language whether falling back to `other` is acceptable there.
+It is deliberately naive: it reads flat messages, not plurals nested in selects. It also flags Spanish, where CLDR defines a `many` category for numbers like 1,000,000, so decide per language whether falling back to `other` is fine. How the two big libraries treat plurals is in [Lingui vs i18next](/en/blog/lingui-vs-i18next/).
 
 ## What does one round look like?
 
-Put together, one round of translation looks like this:
-
 1. Run `lingui extract` after the code changes, so new messages appear as empty entries.
-2. Run `lingui-translate-ai translate --only-empty --dry-run` and read the preview: locales, number of strings, requests.
+2. Run `translate --only-empty --dry-run` and read the preview: locales, strings, requests.
 3. Run it for real. The `.bak` files are your undo button.
 4. Run the catalog tests and a production build. Missing messages, changed placeholders and (with the check above) incomplete plurals stop here.
-5. Read the diff for every language you can read. Mark the others as unreviewed, in the catalog header and wherever users choose a language.
+5. Read the diff for every language you can read, and label the rest as unreviewed.
 6. Commit the catalogs and delete the `.bak` files.
 
-Steps 4 and 5 are the ones that make the output trustworthy. Skipping them is how a broken `{name}` reaches users.
+Steps 4 and 5 make the output trustworthy. Skip them and a broken `{name}` reaches users.
 
 ## Why does a human still read it?
 
-Mechanical checks catch broken tokens and missing forms. They do not catch a wrong register, a sentence that is correct but odd, or a term no native speaker would use.
+Mechanical checks catch broken tokens and missing forms. They don't catch a wrong register, a sentence that is correct but odd, or a word no native speaker would use.
 
-On this site only the Spanish catalog is marked unreviewed: its header says `X-Review-Status: unreviewed (AI translation)`, and a test fails if that header disappears. Thirty languages is more than one person can proofread. That is the real limit of this workflow, and the reason to say plainly which languages a human has read.
+On this site nobody has read the Spanish yet, and the site says so twice. The catalog header carries `X-Review-Status: unreviewed (AI translation)`, guarded by a test. Every Spanish page says it next to the language switch.
+
+<Shots
+  shots={[
+    { image: esFooter, alt: "The footer of a Spanish page: three flag buttons for the languages and a line saying the Spanish version was translated with AI and not yet reviewed" },
+  ]}
+  caption="The footer of every Spanish page: the language switch, then the note that a native speaker hasn't reviewed this version yet."
+/>
+
+Thirty languages, as in Linkoglot, is more than one person can proofread. That is the real limit of this workflow, and the reason to say plainly which languages a human has read.
 
 ## Limits
 
@@ -175,4 +212,4 @@ On this site only the Spanish catalog is marked unreviewed: its header says `X-R
 - Cost depends on the model and the size of the catalog. Try one locale with `--max-requests 1` before a full run.
 - Context is thin by nature. Comments and contexts in your macros give the model, and any human reviewer, more to work with.
 
-The whole i18n setup of this site, including the catalog tests, is part of [how this site was built](/en/blog/case-study/). If you want the rest of my background, it is in my [CV](/en/cv/).
+lingui-translate-ai sits on my [work page](/en/work/) next to Linkoglot, the app it grew out of.

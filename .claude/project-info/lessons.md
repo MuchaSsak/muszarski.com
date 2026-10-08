@@ -9,7 +9,9 @@
 > foldered wiki (README.md); 2026-10-08: scope attribute on icons, inline scripts between sections, unscoped
 > `@keyframes` (astro.md); the CV print gotchas (`.claude/skills/new-cv/references/template.md`); class prefixes,
 > grid-stacked labels and child rules hitting `.sr-only` (astro.md), the legal-page style (compliance-and-data.md),
-> PstrykWeb's public-info rule (pstrykweb.md), the AI section's rules (structure.md, home row 4).
+> PstrykWeb's public-info rule (pstrykweb.md), the AI section's rules (structure.md, home row 4); WebP-only pictures (the
+> launch gate), sharp's composite order and touch-emulated phone shots (`.claude/skills/new-blog/scripts/capture.mjs`), prettier
+> (conventions.md), routing words (README.md § Rules).
 
 ## Rules
 
@@ -20,7 +22,6 @@
 - Owner-stated numbers can be off (~6 years was ~4, since 2022): when an owner fact and a public source disagree, show both and ask - 2026-10-05.
 - Visuals ambitious first, then practical (the safe first look was rejected): show bold live directions (`comps/`, desktop + phone) and let the owner pick before freezing a system - 2026-10-05.
 - Less text, more to see: tools as one-colour marks WITH names, products as video ("sometimes less is more"); in chapters a short text description beats icon tiles; How I work tells each stop with a drawn scene, not a headline [2026-10-06] - 2026-10-05.
-- Every picture ships as optimal WebP (`astro:assets`, `public/` too); PNG only for favicons and OG cards; the launch gate fails otherwise - 2026-10-07.
 - Every hover has a tap, focus or scroll twin; phones get the same content and a premium feel ("they dont have cursors") - 2026-10-05.
 - Blog voice = a person writing, not an AI answering a prompt: no "What would I do differently?" / "Takeaways" sections - 2026-10-07.
 - Do exactly the one thing asked ("so overachieving"); copy stays close to the owner's words: no overselling, no counts, never repeat what the picture already shows - 2026-10-07.
@@ -38,8 +39,10 @@
 - Chrome holds first paint for a preloaded font, and HTML bytes compete with it: keep page HTML lean (icons in the cached sprite; first-screen icons `inline`). Keep the preload: without it home LCP fell 0.6 s but the parse landed after first paint (TBT 33 → 775 ms) - 2026-10-06.
 - A focus target taller than the viewport minus the header always sits under the sticky header: cap media by viewport height (`100svh - var(--header-h)`) - 2026-10-06.
 - Reduced motion keeps `animation-delay`: staged entrances stay hidden for their delay. Switch staged scenes off under reduced motion and `.still` - 2026-10-06.
-- Load cost hides in style and layout: animate an HTML wrapper, never an `<svg>` (a layout per frame); no grid around a `container-type` box (~1 s layouts); set `top`, not an inherited custom property, on big subtrees; never toggle a class a `*` rule reads on a big ancestor (`.off *` restyled 1,658 elements: start paused, mark what is near); transition only the revealed state. An inline style per element (`style="--i:N"` on ~160 letters) stops Chrome sharing styles (~120 ms): split letters only in a title or two. Find each with traces and CSS A/B via `page.route` - 2026-10-07.
+- Load cost hides in style and layout (numbers: `run-notes.md` 2026-10-07): animate an HTML wrapper, never an `<svg>`; no grid around a `container-type` box; set `top`, not an inherited custom property, on big subtrees; never toggle a class a `*` rule reads on a big ancestor (start paused, mark what is near); no inline style per letter beyond a title or two. Find each with traces and CSS A/B via `page.route` - 2026-10-07.
 - Offset a grid column with margins, not `translate` (a translated item covered the next row's buttons) - 2026-10-08.
+- Never mute text with `opacity`: on a lit or animated fill it falls under 4.5:1, and the e2e axe pass sees one frame (the breaker's pink step); use weight or size - 2026-10-08.
+- Posts drift with the code they explain (the CV post named a component deleted that day): a change to a feature greps `content/blog` for its files and fixes the posts in the same change; `post-check.mjs` flags named files that are gone - 2026-10-08.
 - A % height inside an auto grid row resolves against the row the item itself grew (the Linkoglot phone overflowed its field): give the grid a definite track, `grid-template: minmax(0, 1fr) / minmax(0, 1fr)` - 2026-10-08.
 
 ### Privacy of inputs
@@ -48,7 +51,6 @@
 
 ### Tools and environment
 - Splicing text by slices or offsets drops or misplaces content: replace named blocks, then `node --check` / build and render-check at once - 2026-10-05.
-- Run prettier from the repo root (`bunx prettier --write <paths>`; from `apps/web` it ignores the root config), never on generated files (`og.mjs` parses `icons.gen.ts` as JSON); after formatting an Astro template, diff the rendered HTML (it put a visible space in `All<sup>`); letter-split or emoji-glued markup stays one line under `<!-- prettier-ignore -->` (it put spaces inside words) - 2026-10-05.
 - Bash heredocs break on quotes and lose backslashes (again 2026-10-07, 2026-10-08), and `cd` persists: write scripts with Write, use absolute paths; Write/Edit decode `\uXXXX`, so emit invisible characters with `chr()` - 2026-10-05.
 - Python on Windows writes CRLF: always `open(..., "w", newline="\n")` (a fixer pass caught 6 files on 2026-10-06) - 2026-10-05.
 - Git Bash rewrites URL-path arguments (`/en/` → `P:/Git/en/`): prefix with `MSYS_NO_PATHCONV=1`, also for `bun run lhci` - 2026-10-05.
@@ -60,6 +62,4 @@
 - One `astro preview` and one `astro dev` per project: e2e, shots and Lighthouse share port 4322; for speed work build to a scratch `--outDir` and serve it on its own port (`E2E_PORT`, `lhci --base`). A busy machine fakes regressions (other sessions' headless Chrome at 100% CPU): check the load, rerun - 2026-10-07.
 - After a Playwright update, run `./node_modules/.bin/playwright install chromium` in `apps/web` (browser version mismatch) - 2026-10-06.
 - The owner works on two PCs and runs parallel sessions (one committed another's WIP, 2026-10-07): `git pull`/`git log` first, stage your own paths only; on a merge take one side's `.po`, re-add the other's msgids, extract; regenerate PDFs - 2026-10-06.
-- sharp runs `resize` before `composite` in one pipeline whatever the call order (a phone strip lost its last tile): composite to a buffer, then resize it in a second pipeline; look at every generated image - 2026-10-08.
 - WebSearch has a budget shared by parallel agents; prefer WebFetch of known URLs, then Playwright - 2026-10-05.
-- Routing: a generic phrase in one row outscores a project name; put shared task words in every row they apply to and re-run `wiki-context.mjs --test` - 2026-10-05.

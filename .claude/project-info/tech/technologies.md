@@ -10,7 +10,7 @@
 | --- | --- | --- | --- | --- |
 | Monorepo | **Turborepo** + bun workspaces: `apps/web` + `packages/shared` (`usage/turborepo.md`) | turbo 2.11.7, bun 1.3.14 | the owner's choice, same shape as his pstryk repo | [user] 2026-10-05 |
 | Framework | Astro, `output: "static"`, `trailingSlash: "always"` | 7.3.5 | 0 KB JS by default; owner's own bench: Astro 100 / LCP 1.66 s vs Next 95 / 2.92 s (measured on an internal project: never quoted on the site) | [user] 2026-10-05, [research] |
-| Components | React TSX via `@astrojs/react` (server-rendered; hydrate only islands) | 7.0.0 + react 19.3.0 | all sections are TSX (a React signal in the repo) | [research] |
+| Components | `.astro` components with plain `<script>` modules for the interactive parts; `@astrojs/react` is installed for future islands but nothing uses it (0 `.tsx` files, 2026-10-08) | 7.0.0 + react 19.3.0 | planned as React TSX; the build went with `.astro` + small scripts (lighter, no hydration). The blog says so | [research], [repo 2026-10-08] |
 | Language | TypeScript strict (+ `@astrojs/check`) | **~6.0.3** (+ 0.9.10) | `@astrojs/check` does not accept TS 7 | [research] |
 | i18n | Lingui: core/react/cli/vite-plugin (`macroTransform: true`), format-po; `lingui-for-astro` for macros in `.astro` files | 6.9.0; 0.7.1 | owner requirement; S0 passed on the real scaffold 2026-10-05; `.po` compiled on import (no committed compiled catalog); details `site/i18n.md`, `usage/lingui.md` | [user], [research: spike] |
 | Content | `@astrojs/mdx` per-locale collections (`src/content.config.ts`); `@astrojs/sitemap`; RSS written by hand (`[locale]/rss.xml.ts`) | 8.0.2; 3.7.4 | posts (incl. case study #0) and legal per locale | [research] |

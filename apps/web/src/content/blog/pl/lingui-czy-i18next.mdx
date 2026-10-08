@@ -4,10 +4,10 @@ seoTitle: "Lingui czy i18next w 2026 dla React i React Native"
 description: "Lingui i i18next porównane na podstawie dokumentacji i danych z npm: format komunikatów, makra, kompilacja, rozmiar, liczba mnoga i React Native."
 translationKey: "lingui-vs-i18next"
 published: 2026-10-05
-updated: 2026-10-06
+updated: 2026-10-08
 tags: [i18n, react]
 cover: bubbles
-related: [lingui-translate-ai, astro-vs-next]
+related: [lingui-translate-ai, astro-i18n, astro-vs-next]
 sources:
   - title: "Lingui: Introduction"
     url: "https://lingui.dev/introduction"
@@ -83,12 +83,17 @@ sources:
     accessed: 2026-10-05
 ---
 
-Wybierz i18next, jeśli zależy Ci na największym ekosystemie, kluczach nazwanych przez siebie i tłumaczeniach ładowanych jako JSON w czasie działania aplikacji. Wybierz Lingui, jeśli wolisz pisać tekst źródłowy tam, gdzie się wyświetla, trzymać liczbę mnogą w jednym komunikacie ICU i kompilować katalogi przy buildzie, a rdzeń biblioteki waży około 2 kB po gzipie. Używam Lingui w Linkoglocie (30 języków, Expo) i na tej stronie; porównanie poniżej opiera się na dokumentacji obu projektów i publicznych danych z npm, sprawdzonych 2026-10-05.
+import Shots from "~/components/blog/case/Shots.astro";
+import Flow from "~/components/blog/case/Flow.astro";
+import stopEn from "~/assets/blog/lingui-vs-i18next/stop-en.webp";
+import stopPl from "~/assets/blog/lingui-vs-i18next/stop-pl.webp";
+
+Wybierz i18next, jeśli zależy Ci na największym ekosystemie, kluczach nazwanych przez siebie i tłumaczeniach ładowanych jako JSON w czasie działania aplikacji. Wybierz Lingui, jeśli wolisz pisać tekst źródłowy tam, gdzie się wyświetla, trzymać liczbę mnogą w jednym komunikacie ICU i kompilować katalogi przy buildzie, z rdzeniem ważącym około 2 kB po gzipie. Używam Lingui w Linkoglocie (30 języków, Expo) i na tej stronie.
 
 > **TL;DR**
 >
-> - **i18next:** największy ekosystem (około 27,8 mln pobrań z npm w tydzień), klucze nazywane przez Ciebie, JSON ładowany w czasie działania, typowane klucze w TypeScripcie.
-> - **Lingui:** tekst źródłowy pisany tam, gdzie się wyświetla, liczba mnoga w jednym komunikacie ICU, katalogi kompilowane przy buildzie, rdzeń około 2 kB po gzipie.
+> - **i18next** ma zasięg: około 15 razy więcej pobrań z npm tygodniowo niż Lingui, długą listę wtyczek i typowane klucze w TypeScripcie.
+> - **Lingui** przenosi pracę na czas builda: makra tworzą ID, katalogi kompilują się do JavaScriptu, a wtyczka bundlera potrafi wywrócić build przy brakującym tłumaczeniu.
 > - **Obie** działają w React Native na Hermesie z polyfillami `Intl`. Zanim wybierzesz, przetestuj liczbę mnogą w najtrudniejszym ze swoich języków na prawdziwym urządzeniu.
 
 ## Nazywasz klucze czy piszesz tekst źródłowy?
@@ -114,21 +119,53 @@ t`Hello ${name}`;
 // i18n._({ id: "mVmaLu", message: "Hello {name}", values: { name } })
 ```
 
-Żaden z tych modeli nie jest błędny. Nazwane klucze nie zmieniają się, gdy poprawiasz angielski tekst, a z TypeScriptem podpowiadają się w edytorze. Tekst źródłowy oznacza, że nie musisz niczego nazywać, a duplikaty łączą się same. Druga strona medalu: poprawione angielskie zdanie dostaje nowe ID, więc tłumacz widzi je jako nowy, nieprzetłumaczony komunikat.
+Żaden z tych modeli nie jest błędny. Nazwane klucze nie zmieniają się, gdy poprawiasz angielski tekst, a z TypeScriptem podpowiadają się w edytorze. Tekst źródłowy oznacza, że nie musisz niczego nazywać, a identyczne teksty łączą się w jeden komunikat. Druga strona medalu: poprawione angielskie zdanie dostaje nowe ID, więc tłumacz widzi je jako nowe.
+
+Łączenie też ma haczyk. W moim katalogu „Stop” występuje dwa razy: raz jako przycisk, raz jako etap pętli z sekcji [Jak pracuję](/pl/#how-i-work), gdzie po polsku potrzebuję słowa „Etap”. Rozdziela je `context`:
+
+```ts
+const stopLabel = t({ message: "Stop", context: "a stop on the product loop, as in a bus stop" });
+```
+
+```po
+msgid "Stop"
+msgstr "Stop"
+
+msgctxt "a stop on the product loop, as in a bus stop"
+msgid "Stop"
+msgstr "Etap"
+```
+
+<Shots
+  shots={[
+    { image: stopEn, alt: "Pierwszy etap pętli z sekcji Jak pracuję po angielsku, z etykietą Stop 01, Client", tag: "en" },
+    { image: stopPl, alt: "Ten sam etap po polsku, z etykietą Etap 01, Klient", tag: "pl", picked: true },
+  ]}
+  caption="Ten sam etap na stronie głównej po angielsku i po polsku. Bez kontekstu etap i przycisk dzieliłyby jedno polskie słowo."
+/>
 
 ## Czy obie biblioteki używają formatu ICU?
 
-Domyślnie nie. Lingui używa ICU MessageFormat wszędzie: zmienne, liczba mnoga i `select` siedzą w jednym komunikacie, na przykład `{count, plural, one {# file} other {# files}}`. i18next ma własną składnię: `{{name}}` do interpolacji, a każda forma liczby mnogiej to osobny klucz z sufiksem. Wstawiane wartości są domyślnie escapowane, żeby ograniczyć ryzyko XSS.
+Domyślnie nie. Lingui używa ICU MessageFormat wszędzie: zmienne, liczba mnoga i `select` siedzą w jednym komunikacie, na przykład `{count, plural, one {# file} other {# files}}`. W i18next `{{name}}` służy do interpolacji, a każda forma liczby mnogiej to osobny klucz z sufiksem. Wstawiane wartości są domyślnie escapowane, żeby ograniczyć ryzyko XSS.
 
-ICU w i18next da się włączyć wtyczką i18next-icu, która korzysta z intl-messageformat od formatjs. Jej README ostrzega, że z wtyczką działa wyłącznie format ICU, więc interpolacja `{{name}}` przestaje działać. Wybierz jedną składnię na projekt i się jej trzymaj.
+ICU w i18next da się włączyć wtyczką i18next-icu, opartą na intl-messageformat od formatjs. Jej README ostrzega, że z wtyczką działa wyłącznie format ICU, więc `{{name}}` przestaje działać. Wybierz jedną składnię na projekt.
 
 ## Jak działają makra, ekstrakcja i kompilacja?
 
-Cykl pracy w Lingui wygląda tak: piszesz komunikaty makrami, uruchamiasz `lingui extract`, który aktualizuje katalogi, tłumaczysz, kompilujesz. Makra działają przy buildzie (Babel, SWC albo natywna transformacja w `@lingui/vite-plugin`). Według dokumentacji generują krótkie ID, pozwalają TypeScriptowi sprawdzać komponenty jak zwykły kod i usuwają z buildu produkcyjnego komentarze dla tłumaczy oraz domyślne teksty. Ekstraktor znajduje makra, jawne wywołania `i18n._()` i wyrażenia oznaczone komentarzem `/** i18n */`; komunikatu zapisanego w zmiennej nie wyciągnie.
+<Flow
+  label="Droga komunikatu w Lingui od tekstu źródłowego do bundla"
+  steps={[
+    { icon: "tb:pencil", title: "Piszesz", text: "Makro obejmuje angielski tekst tam, gdzie się wyświetla." },
+    { icon: "tb:search", title: "Ekstrakcja", text: "lingui extract zbiera komunikaty do jednego katalogu .po na język." },
+    { icon: "tb:language", title: "Tłumaczenie", text: "Człowiek, skrypt albo LLM wypełnia katalog, razem z komentarzami i kontekstem." },
+    { icon: "tb:code", title: "Kompilacja", text: "lingui compile, wtyczka Vite albo transformer Metro zamienia .po na JavaScript." },
+    { icon: "tb:rocket", title: "Wysyłka", text: "Do bundla trafiają skompilowane komunikaty, bez parsera." },
+  ]}
+/>
 
-Kompilacja zamienia katalogi `.po` na JavaScript, więc w przeglądarce nie ma parsera komunikatów. Możesz uruchomić `lingui compile` albo zostawić to bundlerowi: wtyczka Vite kompiluje katalogi przy imporcie, a `@lingui/metro-transformer` robi to samo w Metro dla React Native.
+Makra działają przy buildzie (Babel, SWC albo natywna transformacja w `@lingui/vite-plugin`). Według dokumentacji generują krótkie ID, pozwalają TypeScriptowi sprawdzać komponenty jak zwykły kod i usuwają z buildu produkcyjnego komentarze dla tłumaczy oraz domyślne teksty. Ekstraktor znajduje makra, jawne wywołania `i18n._()` i wyrażenia oznaczone komentarzem `/** i18n */`; **komunikatu zapisanego w zmiennej nie wyciągnie**.
 
-i18next nie potrzebuje kompilacji. JSON trafia do bundla albo jest ładowany przez wtyczki backendowe, a przestrzenie nazw (namespaces) pozwalają dzielić tłumaczenia i doładowywać je na żądanie. Ekstrakcją zajmuje się teraz i18next-cli, zestaw narzędzi oparty na SWC: wyciąga klucze, generuje typy TypeScript, wykrywa zahardkodowane teksty, synchronizuje pliki językowe i raportuje stan tłumaczeń. Potrafi też przenieść starą konfigurację i18next-parser.
+i18next pomija kompilację. JSON trafia do bundla albo jest ładowany przez wtyczki backendowe, a przestrzenie nazw (namespaces) dzielą tłumaczenia, żeby doładowywać je na żądanie. Ekstrakcją zajmuje się i18next-cli, zestaw narzędzi oparty na SWC: wyciąga klucze, generuje typy TypeScript, wykrywa zahardkodowane teksty, synchronizuje pliki językowe i raportuje stan tłumaczeń.
 
 ## Ile ważą paczki?
 
@@ -141,13 +178,11 @@ Dane z bundlephobii z 2026-10-05, po minifikacji oraz po minifikacji i gzipie (1
 | `@lingui/core` | 6.9.0 | 5,0 kB | 2,1 kB |
 | `@lingui/react` | 6.9.0 | 3,8 kB | 1,8 kB |
 
-Wiersze z rdzeniami zgadzają się z porównaniem na stronie Lingui: około 2 kB wobec około 14 kB po gzipie. `react-i18next` deklaruje i18next jako peer dependency, więc jego wiersz nie zawiera samego i18next.
-
-Wiersze z bindingami do Reacta czytaj ostrożnie, bo bundlephobia liczy zależności osobno dla każdej paczki. Twoje katalogi dokładają bajty w obu przypadkach, a tree-shaking zmienia sumy, więc zanim podasz komuś liczbę, zmierz własny build.
+Wiersze z rdzeniami zgadzają się z porównaniem na stronie Lingui. `react-i18next` deklaruje i18next jako peer dependency, więc jego wiersz nie zawiera samego i18next. Twoje katalogi dokładają bajty w obu przypadkach, a tree-shaking zmienia sumy, więc zanim podasz komuś liczbę, zmierz własny build.
 
 ## Jak obie radzą sobie z liczbą mnogą?
 
-Obie biblioteki trzymają się kategorii z CLDR (zero, one, two, few, many, other) i obie opierają się na `Intl.PluralRules`. Różni się kształt danych. Angielski potrzebuje dwóch form, polski czterech. W i18next to cztery klucze, a zmienna musi nazywać się `count`:
+Obie trzymają się kategorii z CLDR (zero, one, two, few, many, other) i obie opierają się na `Intl.PluralRules`. Różni się kształt danych. Angielski potrzebuje dwóch form, polski czterech. W i18next to cztery klucze, a zmienna musi nazywać się `count`:
 
 ```json
 {
@@ -158,38 +193,38 @@ Obie biblioteki trzymają się kategorii z CLDR (zero, one, two, few, many, othe
 }
 ```
 
-W Lingui programista pisze tylko angielskie formy makrem `plural`. Polski tłumacz wypełnia jeden komunikat w katalogu:
+W Lingui programista pisze tylko angielskie formy makrem `plural`, a polski tłumacz wypełnia jeden komunikat:
 
 ```po
 msgid "{count, plural, one {# file} other {# files}}"
 msgstr "{count, plural, one {# plik} few {# pliki} many {# plików} other {# pliku}}"
 ```
 
-Kod się nie zmienia, gdy dochodzi język z większą liczbą form. To praktyczny argument za ICU: gramatyka każdego języka zostaje w jego własnym pliku.
+Kod się nie zmienia, gdy dochodzi język z większą liczbą form. To praktyczny argument za ICU: **gramatyka każdego języka zostaje w jego własnym pliku**.
 
-## A TypeScript?
+## A co z TypeScriptem?
 
 i18next daje typowane klucze i typy zwracanych wartości. Deklarujesz zasoby w rozszerzeniu `CustomTypeOptions`, a `t` sprawdza i podpowiada klucze. Najnowsze wersje wymagają TypeScriptu 5, a dokumentacja uprzedza, że typowanie może wydłużyć kompilację w dużych projektach (na ten przypadek jest zoptymalizowane API selektorów).
 
-W Lingui nie ma kluczy do typowania. Makra to zwykłe template literals i JSX, więc TypeScript sprawdza wstawiane wartości jak każdy inny kod. Tracisz podpowiadanie kluczy; w zamian nie masz listy kluczy, którą trzeba utrzymywać.
+W Lingui nie ma kluczy do typowania. Makra to zwykłe template literals i JSX, więc TypeScript sprawdza wstawiane wartości jak każdy inny kod. Tracisz podpowiadanie kluczy, ale nie masz listy kluczy, którą trzeba utrzymywać.
 
 ## Czy działają w React Native i Expo?
 
-Obie działają i obie potrzebują tych samych polyfilli na Hermesie. Dokumentacja liczby mnogiej i18next mówi, że Hermes wciąż nie implementuje `Intl.PluralRules`, a od wersji 24 nie ma fallbacku: bez polyfilla działają tylko angielskie formy `_one` i `_other`. Samouczek React Native od Lingui (Lingui 5 lub nowsze, React Native 0.76 albo Expo 52, Hermes) każe dodać polyfille `Intl.Locale` i `Intl.PluralRules` z paczek formatjs.
+Obie działają i obie potrzebują tych samych polyfilli na Hermesie. Dokumentacja liczby mnogiej i18next mówi, że Hermes wciąż nie implementuje `Intl.PluralRules`. Od wersji 24 nie ma fallbacku: bez polyfilla działają tylko angielskie formy `_one` i `_other`. Samouczek React Native od Lingui (Lingui 5 lub nowsze, React Native 0.76 albo Expo 52, Hermes) każe dodać polyfille `Intl.Locale` i `Intl.PluralRules` z paczek formatjs.
 
-react-i18next opisuje się jako framework dla React i React Native. Lingui używa tej samej paczki `@lingui/react` w obu środowiskach, dokłada transformer dla Metro, który kompiluje pliki `.po`, oraz opcję `defaultComponent` w providerze, dzięki której przetłumaczony tekst ląduje w `Text`. Niezależnie od wyboru przetestuj liczbę mnogą na prawdziwym urządzeniu: polska forma utknięta w `other` łatwo umyka, gdy testy robi się po angielsku.
+react-i18next opisuje się jako framework dla React i React Native. Lingui używa tej samej paczki `@lingui/react` w obu środowiskach, dokłada transformer Metro dla plików `.po` i opcję `defaultComponent`, dzięki której przetłumaczony tekst ląduje w `Text`. Niezależnie od wyboru przetestuj liczbę mnogą na prawdziwym urządzeniu: polska forma utknięta w `other` łatwo umyka, gdy testy robi się po angielsku.
 
 ## Jak duży jest każdy ekosystem?
 
-i18next jest dużo większy. W tygodniu od 2026-09-28 do 2026-10-04 npm odnotował około 27,8 mln pobrań `i18next` i około 1,9 mln pobrań `@lingui/core`, czyli mniej więcej 15 razy mniej. i18next ma integracje z React, Angularem i Vue, działa w Node.js i Deno i ma długą listę wtyczek (backendy, wykrywanie języka, konwertery z gettext, CSV i RESX). Jego twórcy rozwijają też Locize, serwis do zarządzania tłumaczeniami zrobiony pod i18next.
+i18next jest dużo większy. W tygodniu od 2026-09-28 do 2026-10-04 npm odnotował około 27,8 mln pobrań `i18next` i około 1,9 mln pobrań `@lingui/core`. Poza Reactem i18next ma integracje z Angularem i Vue, działa w Node.js i Deno i ma długą listę wtyczek (backendy, wykrywanie języka, konwertery z gettext, CSV i RESX). Jego twórcy rozwijają też Locize, serwis do zarządzania tłumaczeniami zrobiony pod i18next.
 
-Lingui obsługuje React, React Native, Vue, SolidJS, Astro, Svelte i Node.js, a pod spodem jest niezależny od frameworka `@lingui/core`. Domyślny format katalogów to PO, czyli format gettext. Dokumentacja podaje powody: czytelność długich komunikatów, komentarze dla tłumaczy, konteksty, metadane i obsługa w wielu narzędziach do lokalizacji. Makra przyjmują pola `comment` i `context`, które trafiają do katalogu, a to pomaga zarówno tłumaczowi, jak i modelowi językowemu.
+Lingui obsługuje React, React Native, Vue, SolidJS, Astro, Svelte i Node.js, a pod spodem jest niezależny od frameworka `@lingui/core`. Domyślny format katalogów to PO, czyli gettext: czytelny przy długich komunikatach, z komentarzami, kontekstami i metadanymi, obsługiwany przez wiele narzędzi do lokalizacji. `comment` i `context` podane w makrze trafiają do katalogu, a to pomaga zarówno tłumaczowi, jak i modelowi językowemu.
 
 ## Jak używam Lingui?
 
-Linkoglot to moja aplikacja do nauki języków, zbudowana w Expo i React Native, przetłumaczona na 30 języków. Przy 30 katalogach format pliku liczy się tak samo jak API. Pliki PO z komunikatami ICU trzymają reguły liczby mnogiej każdego języka w jego pliku, a zwykły tekst łatwo przetworzyć skryptem. Skrypt tłumaczący z Linkoglota stał się później `lingui-translate-ai`, narzędziem CLI, które wypełnia katalogi Lingui przy pomocy LLM; szczegóły opisuję w tekście [Tłumaczenie katalogów Lingui przez LLM](/pl/blog/tlumaczenie-katalogow-lingui-przez-llm/).
+Linkoglot to moja aplikacja do nauki języków, zbudowana w Expo i React Native. Przy 30 katalogach format pliku liczy się tak samo jak API. Pliki PO z komunikatami ICU trzymają reguły liczby mnogiej każdego języka w jego pliku, a zwykły tekst łatwo przetworzyć skryptem. Ten skrypt stał się później `lingui-translate-ai`, narzędziem CLI, które wypełnia katalogi Lingui przy pomocy LLM; opisuję je w tekście [Tłumaczenie katalogów Lingui przez LLM](/pl/blog/tlumaczenie-katalogow-lingui-przez-llm/).
 
-Ta strona działa na Astro 7 z lingui-for-astro, integracją społecznościową (nie od zespołu Lingui), która przetwarza makra w plikach `.astro` i wyciąga z nich komunikaty. Wtyczka Vite od Lingui kompiluje każdy plik `.po` przy imporcie, więc w repozytorium nie ma skompilowanych katalogów. Build produkcyjny ustawia `failOnMissing`:
+Ta strona działa na Astro 7 z lingui-for-astro, integracją społecznościową (nie od zespołu Lingui), która przetwarza makra w plikach `.astro` i wyciąga z nich komunikaty. Wtyczka Vite kompiluje każdy plik `.po` przy imporcie, więc w repozytorium nie ma skompilowanych katalogów, a build produkcyjny ustawia `failOnMissing`:
 
 ```js
 lingui({
@@ -199,25 +234,25 @@ lingui({
 });
 ```
 
-Przy wartości `"catalog"` build się wywraca, jeśli w polskim albo hiszpańskim katalogu brakuje komunikatu, i sprawdza to, zanim zadziałają języki zapasowe. Brakujący polski tekst nie trafi na produkcję jako ciche angielskie zdanie. Resztę konfiguracji opisuję w tekście [jak powstała ta strona](/pl/blog/case-study/).
+Przy wartości `"catalog"` build się wywraca, jeśli w polskim albo hiszpańskim katalogu brakuje komunikatu, i sprawdza to, zanim zadziałają języki zapasowe. Brakujący polski tekst nie trafi na produkcję jako ciche angielskie zdanie. Adresy, hreflang i przełącznik języka wokół tego opisuję w tekście [wielojęzyczna strona w Astro z Lingui](/pl/blog/wielojezyczna-strona-astro-z-lingui/).
 
-## Tabela decyzji
+## Którą bibliotekę wybrać?
 
 | Jeśli potrzebujesz | Skłaniaj się ku |
 | --- | --- |
-| Największego ekosystemu i listy wtyczek | i18next |
+| Największego ekosystemu albo serwisu do tłumaczeń od tych samych twórców (Locize) | i18next |
 | Tłumaczeń ładowanych z serwera w czasie działania | i18next |
 | Nazwanych kluczy z podpowiedziami w TypeScripcie | i18next |
-| Serwisu do tłumaczeń od tych samych twórców | i18next (Locize) |
 | Tekstu źródłowego w kodzie, bez nazywania kluczy | Lingui |
 | Liczby mnogiej i `select` w jednym komunikacie ICU | Lingui (albo i18next z i18next-icu) |
-| Najmniejszego rdzenia (około 2 kB po gzipie) | Lingui |
-| Wtyczki bundlera, która wywraca build przy brakującym tłumaczeniu | Lingui |
+| Najmniejszego rdzenia | Lingui |
+| Buildu, który pada przy brakującym tłumaczeniu | Lingui |
 | Katalogów PO dla tłumaczy i skryptów | Lingui |
 | React Native na Hermesie | Obie, z polyfillami `Intl` |
 
-## Czym to porównanie nie jest
+## Ograniczenia
 
-To nie jest benchmark. Rozmiary pochodzą z bundlephobii, liczby pobrań z API npm, a każde zachowanie z oficjalnej dokumentacji, której linki są pod tekstem. Nie budowałem tej samej aplikacji dwa razy.
+- **To nie jest benchmark.** Każde zachowanie pochodzi z oficjalnej dokumentacji; nie budowałem tej samej aplikacji w obu bibliotekach.
+- **Liczby to migawka.** Rozmiary z bundlephobii i pobrania z API npm sprawdziłem 5 października 2026; zanim je zacytujesz, sprawdź aktualne.
 
-Jeśli wybierasz dla zespołu, sprawdź obie biblioteki na jednym prawdziwym ekranie z liczbą mnogą, w tym języku spośród obsługiwanych przez Ciebie, który ma najwięcej form. Projekty, w których używam tego zestawu, znajdziesz na stronie [z moimi pracami](/pl/work/).
+Jeśli wybierasz dla zespołu, sprawdź obie biblioteki na jednym prawdziwym ekranie z liczbą mnogą, w tym ze swoich języków, który ma najwięcej form. Projekty, w których używam Lingui, znajdziesz na stronie [z moimi pracami](/pl/work/).

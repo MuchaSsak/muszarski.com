@@ -3,10 +3,10 @@ title: "Astro czy Next.js na portfolio albo landing page"
 description: "Kiedy Astro pasuje do portfolio i landing page'a, a kiedy lepszy jest Next.js: dane Core Web Vitals z HTTP Archive i pomiary tej strony."
 translationKey: "astro-vs-next"
 published: 2026-10-05
-updated: 2026-10-06
+updated: 2026-10-08
 tags: [astro, performance, react]
 cover: scale
-related: [this-site, lingui-vs-i18next]
+related: [this-site, portfolio-lighthouse, contact-form]
 sources:
   - title: "Astro docs: Why Astro?"
     url: "https://docs.astro.build/en/concepts/why-astro/"
@@ -43,7 +43,11 @@ sources:
     accessed: 2026-10-05
 ---
 
-Na portfolio albo landing page lepszym punktem wyjścia jest Astro: renderuje każdą stronę do HTML z wyprzedzeniem i nie wysyła JavaScriptu, dopóki komponent sam o to nie poprosi. Next.js wygrywa wtedy, gdy strona jest w praktyce aplikacją, z logowaniem, danymi per użytkownik i zapisem po stronie serwera. Ta strona stoi na Astro i ma 99-100 w mobilnym Lighthouse przy około 8 KB JavaScriptu na stronie głównej, a Clockful, tracker czasu pracy zbudowany przeze mnie na stażu w Neoteric, powstał w Next.js.
+import Flow from "~/components/blog/case/Flow.astro";
+import Shots from "~/components/blog/case/Shots.astro";
+import lighthouse from "~/assets/case/lighthouse.webp";
+
+Na portfolio albo landing page lepszym punktem wyjścia jest Astro: renderuje każdą stronę do HTML z wyprzedzeniem i nie wysyła JavaScriptu, dopóki komponent sam o to nie poprosi. Next.js wygrywa wtedy, gdy strona jest w praktyce aplikacją, z logowaniem, danymi per użytkownik i zapisem po stronie serwera. Ta strona stoi na Astro, a Clockful, tracker czasu pracy zbudowany przeze mnie na stażu w Neoteric, na Next.js.
 
 > **TL;DR**
 >
@@ -53,7 +57,7 @@ Na portfolio albo landing page lepszym punktem wyjścia jest Astro: renderuje ka
 
 ## Do czego służy każdy z frameworków?
 
-Dokumentacja Astro mówi wprost, że to framework do budowania stron opartych na treści, takich jak blogi, strony marketingowe i sklepy. Sam siebie opisuje jako server-first, z zerem JavaScriptu domyślnie. Na tej samej stronie przyznaje, że inne frameworki lepiej radzą sobie z bardziej złożonymi interfejsami przypominającymi aplikacje: panelami administracyjnymi po zalogowaniu, skrzynkami pocztowymi, sieciami społecznościowymi i listami zadań.
+Dokumentacja Astro mówi wprost, że to framework do stron opartych na treści, takich jak blogi, strony marketingowe i sklepy. Sam siebie nazywa server-first, z zerem JavaScriptu domyślnie. Na tej samej stronie przyznaje, że inne frameworki lepiej radzą sobie z interfejsami przypominającymi aplikacje: panelami po zalogowaniu, skrzynkami pocztowymi, sieciami społecznościowymi i listami zadań.
 
 Next.js przedstawia się jako framework Reacta do budowania aplikacji full-stack. W App Routerze layouty i strony są domyślnie komponentami serwerowymi (React Server Components), a kod kliencki włączasz dyrektywą `"use client"`.
 
@@ -61,68 +65,79 @@ Te dwa opisy rozstrzygają większość sprawy. Portfolio to strona z treścią 
 
 ## Ile JavaScriptu trafia do przeglądarki?
 
-W Astro każdy komponent UI, także reactowy, jest renderowany do HTML i CSS, a jego kliencki JavaScript zostaje wycięty. Interaktywność włączasz świadomie, komponent po komponencie, przez wyspy: `client:load` hydratuje od razu, `client:idle`, gdy przeglądarka nie ma nic do roboty, `client:visible`, gdy komponent wjedzie w widok. Strona bez wysp nie ładuje żadnego runtime'u frameworka.
+W Astro każdy komponent UI, także reactowy, renderuje się do HTML i CSS, a jego kliencki JavaScript zostaje wycięty. Interaktywność włączasz świadomie, komponent po komponencie, przez wyspy: `client:load` hydratuje od razu, `client:idle`, gdy przeglądarka nie ma nic do roboty, `client:visible`, gdy komponent wjedzie w widok. Strona bez wysp nie ładuje żadnego runtime'u frameworka.
 
-Next.js też renderuje na serwerze, a komponenty serwerowe nie trafiają do bundla. Mimo to w przeglądarce działa React. Dokumentacja opisuje, jak przeglądarka używa RSC payloadu do uzgodnienia drzewa serwerowego z klienckim, hydratuje komponenty klienckie i pobiera z wyprzedzeniem payloady do nawigacji po stronie klienta. Wszystko, co importuje plik z `"use client"`, ląduje w bundlu klienta.
+Next.js też renderuje na serwerze, a komponenty serwerowe nie trafiają do bundla. Mimo to w przeglądarce działa React, który hydratuje komponenty klienckie i obsługuje nawigację, a wszystko, co importuje plik z `"use client"`, ląduje w bundlu. W aplikacji z wieloma ekranami i wspólnym stanem to się opłaca; na portfolio z pięcioma podstronami to narzut, którym trzeba zarządzać.
 
-Ten model się opłaca w aplikacji z wieloma ekranami i wspólnym stanem. Na portfolio z pięcioma podstronami to narzut, którym trzeba zarządzać.
+Tak wygląda droga Astro na tej stronie:
+
+<Flow
+  label="Jak podstrona tej witryny dociera do czytelnika"
+  steps={[
+    { icon: "si:astro", title: "Build", text: "Każda strona staje się plikiem HTML, z CSS wpisanym w nagłówek." },
+    { icon: "si:vercel", title: "CDN", text: "Vercel serwuje pliki; formularz kontaktowy to jedyna funkcja." },
+    { icon: "tb:file-text", title: "Najpierw tekst", text: "H1 to największy element na ekranie i nie czeka na żaden skrypt." },
+    { icon: "tb:code", title: "Małe skrypty", text: "Skrypty komponentów to małe moduły, bez runtime'u frameworka." },
+    { icon: "tb:sparkles", title: "Efekty na końcu", text: "Pętle i klipy czekają na pierwszą interakcję, shadery rysują tylko w widoku." },
+  ]}
+/>
+
+Wysp frameworka nie ma tu wcale. Każdy komponent to plik `.astro`, a interaktywne części (przycisk pauzy, przegląd certyfikatów, pasek z wpisami) to zwykłe skrypty, które Astro pakuje w małe moduły. Na stronie głównej razem mają mniej niż 10 KB po gzipie.
 
 ## Czy oba dają statyczną stronę?
 
-Tak, ale za inną cenę. W Astro domyślnie wszystko jest statyczne: cała strona jest renderowana przy buildzie. Jeśli jedna trasa potrzebuje serwera, na przykład endpoint formularza kontaktowego, dodajesz adapter i oznaczasz tę stronę przez `export const prerender = false`. Reszta zostaje statyczna.
+Tak, ale za inną cenę. W Astro domyślnie cała strona jest renderowana przy buildzie. Jeśli jedna trasa potrzebuje serwera, na przykład endpoint formularza kontaktowego, dodajesz adapter i oznaczasz tę stronę przez `export const prerender = false`. Reszta zostaje statyczna.
 
-Next.js też potrafi wygenerować statyczną stronę. Z `output: 'export'` polecenie `next build` zapisuje po jednym pliku HTML na trasę w folderze `out`. Dokumentacja wylicza, co wtedy tracisz: cookies, rewrites, redirects, nagłówki, Proxy, Incremental Static Regeneration, optymalizację obrazów z domyślnym loaderem, draft mode, Server Actions i dynamiczne trasy bez `generateStaticParams()`. Wiele z tych rzeczy to właśnie powód, dla którego wybiera się Next.js.
+Ta strona obeszła się nawet bez tego: nie ma adaptera, a formularz kontaktowy wysyła dane do zwykłej funkcji Vercel obok statycznych plików ([jak działa formularz kontaktowy](/pl/blog/formularz-kontaktowy-na-statycznej-stronie/)).
+
+Next.js też potrafi wygenerować statyczną stronę: z `output: 'export'` polecenie `next build` zapisuje po jednym pliku HTML na trasę w folderze `out`. Dokumentacja wylicza, co wtedy tracisz, między innymi cookies, przekierowania, Proxy, Incremental Static Regeneration, Server Actions i dynamiczne trasy bez `generateStaticParams()`. Wiele z tych rzeczy to właśnie powód, dla którego wybiera się Next.js.
 
 ## A treść, tłumaczenia i przejścia między stronami?
 
-Portfolio to głównie tekst: case studies, blog, CV. Kolekcje treści w Astro wczytują Markdown i MDX z folderów, walidują frontmatter schematem Zod i generują z niego typy TypeScript. Ten wpis to plik MDX w takiej kolekcji; jego tytuł, opis i lista źródeł są sprawdzane, zanim strona się zbuduje.
+Portfolio to głównie tekst. Kolekcje treści w Astro wczytują Markdown i MDX z folderów, walidują frontmatter schematem Zod i generują z niego typy TypeScript. Ten wpis to jeden z takich plików: jego tytuł, opis i źródła są sprawdzane, zanim strona się zbuduje. Trzy języki strony obsługuje Lingui, w całości statycznie ([jak działa wielojęzyczność tej strony](/pl/blog/wielojezyczna-strona-astro-z-lingui/)).
 
-Strona działa w trzech językach dzięki Lingui. Dlaczego ta biblioteka, piszę w porównaniu [Lingui czy i18next](/pl/blog/lingui-czy-i18next/).
-
-Jeśli chodzi o przejścia między stronami, Astro obsługuje natywne view transitions między dokumentami przez CSS `@view-transition`. Gdy chcesz mieć nad nimi większą kontrolę, komponent `<ClientRouter />` zamienia nawigację na przejścia w stylu SPA, z konfigurowalnym zachowaniem w przeglądarkach bez wsparcia. Ruch między stronami nie wymaga więc robienia z witryny aplikacji jednostronicowej.
+Przy przejściach między stronami Astro obsługuje natywne view transitions między dokumentami (reguła CSS `@view-transition`), a komponent `<ClientRouter />` daje przejścia w stylu SPA, gdy chcesz mieć nad nimi większą kontrolę. Ta strona używa tylko reguły CSS: podstrony przenikają się bez JavaScriptu, a kto prosi o ograniczony ruch, przechodzi od razu.
 
 ## Co mówią publiczne dane?
 
-HTTP Archive Tech Report bierze Core Web Vitals od prawdziwych użytkowników z Chrome UX Report na poziomie originów, a technologie wykrywa na stronie głównej i jednej podstronie każdej witryny. Oto Astro i Next.js w danych z sierpnia 2026, mobile, wszystkie originy:
+HTTP Archive Tech Report bierze Core Web Vitals od prawdziwych użytkowników z Chrome UX Report na poziomie originów, a technologie wykrywa na stronie głównej i jednej podstronie każdej witryny. Astro i Next.js w danych z sierpnia 2026, mobile, wszystkie originy:
 
 | Mobile, sierpień 2026 | Astro | Next.js |
 | --- | --- | --- |
 | Zbadane originy | 43 850 | 374 612 |
 | Dobre Core Web Vitals (LCP, INP, CLS) | 71,0% | 35,1% |
 | Dobre LCP | 80,6% | 53,1% |
-| Dobre INP | 85,7% | 59,8% |
-| Dobre CLS | 93,5% | 72,4% |
 | Mediana JavaScriptu na stronę | 405 KB | 853 KB |
-| Mediana Lighthouse performance | 70 | 52 |
 
-Traktuj to jako obraz dwóch populacji, a nie wyrok na dwa frameworki. Według ich własnej dokumentacji Next.js celuje w aplikacje, a Astro w strony z treścią, więc część różnicy wynika z tego, co ludzie na nich budują. Raport nie oddzieli frameworka od strony, która na nim stoi. Pokazuje za to jedno: typowa strona na Astro wysyła mniej niż połowę JavaScriptu typowej strony na Next.js i mniej więcej dwa razy częściej przechodzi Core Web Vitals.
+Traktuj to jako obraz dwóch populacji, a nie wyrok na dwa frameworki. Według ich własnej dokumentacji Next.js celuje w aplikacje, a Astro w strony z treścią, więc część różnicy wynika z tego, co ludzie na nich budują. Raport nie oddzieli frameworka od strony, która na nim stoi.
 
 ## Co zmierzyłem na tej stronie?
 
-Ta strona to Astro 7 z komponentami Reacta pisanymi w TSX i renderowanymi na serwerze, Tailwind 4 i jeden font zmienny, wdrożona jako statyczne pliki na Vercelu. Dalej piszę w React, tylko że wynik to HTML wygenerowany przy buildzie.
+Ta strona to Astro 7, Tailwind 4 i jeden font zmienny, wdrożona jako statyczne pliki na Vercelu.
 
-Strona główna w mobilnym Lighthouse, mediana z 3 pomiarów: 99 w performance i 100 w accessibility, best practices i SEO, LCP około 1,95 s, CLS 0 i około 8 KB JavaScriptu strony po gzipie. Pozostałe podstrony mają 100 we wszystkich czterech.
+<Shots
+  shots={[{ image: lighthouse, alt: "Raport Lighthouse dla strony głównej na telefonie: cztery zielone wskaźniki dla Performance, Accessibility, Best Practices i SEO obok podglądu nagłówka" }]}
+  caption="Strona główna w mobilnym Lighthouse, lokalny build produkcyjny z 7 października 2026. CV, blog i strona z projektami mają w tych samych warunkach od 96 do 100."
+/>
 
 Dwie uczciwe uwagi:
 
 - **Nie zbudowałem tej samej strony w Next.js,** więc nie powiem Ci, ile by dostała. Dlatego porównanie wyżej opiera się na publicznych danych.
-- **Sam framework tych wyników nie wypracował.** H1 jest elementem LCP z założenia, jest jeden plik fontu, a każdy efekt wizualny ładuje się po tekście. Astro to ułatwiło, bo zaczyna od zera JavaScriptu, zamiast kazać mi go wycinać.
+- **Sam framework tego wyniku nie wypracował.** Po południu 7 października strona główna spadła do 67-74, choć żaden kod frameworka nie był w to zamieszany: pętle animacji działające w trakcie ładowania, klasa, która przeliczała style każdego elementu w sekcjach poza ekranem, i skrypty wymuszające układ. Naprawa tych trzech rzeczy przywróciła wynik. Astro dało mi punkt startu: zero JavaScriptu, więc nie było czego wycinać.
 
-Całą historię budowy opisuję w tekście [jak powstała ta strona](/pl/blog/case-study/).
+Ten sam wzór widać w [pomiarach Lighthouse 16 portfolio programistów](/pl/blog/lighthouse-16-portfolio-programistow/): immersyjne strony 3D wypadły dużo gorzej od minimalistycznych. Całą historię budowy opisuję w tekście [jak powstała ta strona](/pl/blog/case-study/).
 
 ## Kiedy wybrać Next.js?
 
-Wybierz Next.js, gdy większość ekranów zależy od tego, kto na nie patrzy. Clockful, tracker czasu pracy z rolami, który zbudowałem na stażu w Neoteric, jest właśnie takim projektem: logowanie, role, dane per użytkownik i row-level security w Postgresie na wszystkich 5 tabelach.
+Wybierz Next.js, gdy większość ekranów zależy od tego, kto na nie patrzy. Clockful, tracker czasu pracy z rolami, który zbudowałem na stażu w Neoteric, jest właśnie takim projektem: logowanie, role, dane per użytkownik i row-level security w Postgresie na każdej tabeli.
 
-Dokumentacja Next.js opisuje ten obszar w jednym przewodniku: uwierzytelnianie, sesje w cookies, autoryzację w warstwie dostępu do danych, wstępne sprawdzanie w Proxy i Server Actions do zapisu. Astro też umie renderować na żądanie, ale jego własna dokumentacja przy panelach po zalogowaniu wskazuje inne frameworki.
-
-Next.js ma sens także wtedy, gdy landing page należy do istniejącego produktu na Next.js. Jedno repozytorium, jedno wdrożenie i jeden zestaw komponentów są lepsze niż dwa stacki dla jednej strony marketingowej.
+Dokumentacja Next.js opisuje ten obszar w jednym przewodniku: uwierzytelnianie, sesje w cookies, autoryzację w warstwie dostępu do danych i Server Actions do zapisu. Astro też umie renderować na żądanie, ale jego własna dokumentacja przy panelach po zalogowaniu wskazuje inne frameworki. Next.js wygrywa też wtedy, gdy landing page należy do istniejącego produktu na Next.js: jedno repozytorium jest lepsze niż dwa stacki dla jednej strony marketingowej.
 
 ## Kiedy wybrać Astro?
 
-Wybierz Astro, gdy treść jest najważniejsza: portfolio, landing page, dokumentacja, blog, strona małej firmy. Tam, gdzie potrzebujesz interakcji, dalej piszesz w React, Preact, Svelte, Vue albo SolidJS, a kod wysyłają tylko te wyspy. Statyczny wynik oznacza, że hosting to CDN plus build, a funkcję serwerową dodajesz tylko tam, gdzie jest potrzebna, na przykład do formularza kontaktowego.
+Gdy treść jest najważniejsza: portfolio, landing page, dokumentacja, blog, strona małej firmy. Tam, gdzie potrzebujesz interakcji, możesz pisać w React, Preact, Svelte, Vue albo SolidJS, a kod wysyłają tylko te wyspy. Hosting to CDN plus build, a funkcję serwerową dodajesz tylko tam, gdzie jest potrzebna.
 
-## Tabela decyzji
+## Który pasuje do Twojej strony?
 
 | Twoja strona | Wybierz | Dlaczego |
 | --- | --- | --- |
@@ -135,6 +150,6 @@ Wybierz Astro, gdy treść jest najważniejsza: portfolio, landing page, dokumen
 
 ## Jak zdecydować u siebie?
 
-Spisz, co strona ma robić w pierwszym roku. Jeśli na liście jest „logowanie”, „dashboard” albo „dane użytkownika”, zacznij od Next.js.
+Spisz, co strona ma robić w pierwszym roku. Jeśli na liście jest „logowanie”, „dashboard” albo „dane użytkownika”, zacznij od Next.js. Jeśli lista brzmi „podstrony, wpisy, formularz kontaktowy”, zacznij od Astro i mierz na telefonie ze średniej półki.
 
-Jeśli lista brzmi „podstrony, wpisy, formularz kontaktowy”, zacznij od Astro i mierz: Lighthouse na mobile, ilość wysyłanego JavaScriptu, LCP na telefonie ze średniej półki. Oba rodzaje projektów, statyczną stronę i aplikację z rolami, znajdziesz na stronie [z moimi pracami](/pl/work/).
+Resztę tego, co zbudowałem, znajdziesz na stronie [z moimi projektami](/pl/work/), a Clockful, aplikację z rolami, w moim [CV](/pl/cv/).

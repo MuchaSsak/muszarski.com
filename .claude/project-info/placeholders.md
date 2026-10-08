@@ -23,11 +23,11 @@
 | P1 | ~~Site domain~~ **resolved** [owner] 2026-10-08: `https://muszarski.com` (was `matmuszarski.space`, `seo.md` § Domain); `apps/web/scripts/launch.mjs` | — | — | attach the domain to the new Vercel project only at launch; Search Console | 5 |
 | P2 | Seniority line: "since 2022" is real; years of paid work and student status are not yet | hero, CV, LinkedIn copy | owner | fill + same words on LinkedIn/GitHub | 25 |
 | P3 | City line "Pomorskie, Poland" | hero, CV, `Person.address` | owner | replace | 27 |
-| P4 | Availability line (role, B2B/UoP, remote/hybrid, start date) | hero sticker ("Open to work · Poland, CET · Remote"), contact, CV | owner | replace | 3 |
+| P4 | Availability line (role, B2B/UoP, remote/hybrid, start date) | hero sticker ("Open to work · Poland, CET · Remote"), contact, CV; the blog figure `assets/blog/ux-psychology/cv-phone-{en,pl}.webp` (re-shoot) | owner | replace | 3 |
 | P5 | Contact facts (public email `hi@muszarski.com` [owner 2026-10-08, was `hi@matmuszarski.space`]; Discord, Messenger, Telegram real since 2026-10-06): LinkedIn = the profile the SEO research found (`mateusz-muszarski-b1168a28a`), owner to confirm | `src/data/site.ts`, footer, `sameAs` | owner | replace / confirm; test every link | 11 |
 | P6 | Positioning copy drafts: the hero line "Code is the tool. I build products that solve real business problems, at a cost that makes sense." (2026-10-06: Claude's positive rewrite of the owner's draft, waiting for his OK; `brand.md` § Positioning), the proof line, section copy, the footer line "Let's talk about what you're building." | `home/Hero.astro`, `layout/SiteFooter.astro` (`PLACEHOLDER` comments), `brand.md` drafts → catalogs | owner OKs the hero line; rewrites the rest in his voice | owner approves the final copy | — |
 | P7 | PstrykWeb temporary captures (show the OLD landing, stock people, 3rd-party thumbnails) | `assets/projects/pstrykweb/` | owner recordings | delete; never publish | 1, 21 |
-| P8 | Linkoglot store screenshots + 332×720 preview as interim media | `assets/projects/linkoglot/` | owner recordings | replace with real loops (own app, OK as interim) | 1 |
+| P8 | Linkoglot store screenshots + 332×720 preview as interim media | `assets/projects/linkoglot/`; the blog figure `assets/blog/solo-app/chapter-{en,pl}.webp` (re-shoot) | owner recordings | replace with real loops (own app, OK as interim) | 1 |
 | P9 | Space portfolio + Clockful temporary captures (the space capture shows an unverified lens-dirt texture: licence check or re-record) | `assets/projects/space-portfolio/`, `.../neoteric-clockful/` | owner recordings | replace | 1 |
 | P10 | Rights statuses `check` (PstrykWeb, Clockful; yws.lu, named and linked on the live CV since 2026-10-08: the PDF can't follow the rights gate, so confirm or cut it before launch) | project dossiers | Cetuspro + Neoteric emails | set `ok` or remove the project | 21, 32 |
 | P11 | Credentials: INF.02/.03/.04 exam dates and results (courses, Erasmus+, hackathon and short courses filled from the owner's certificates 2026-10-06); the years of the Georgia project (a Visegrad project on alternative youth participation in Bakuriani [user 2026-10-08]) and the two months of ESC in Demre: the international card shows 2025 (`PLACEHOLDER` in `cv.ts`) [user 2026-10-07] | credentials data, CV | owner | replace | 10 |
@@ -49,7 +49,7 @@
 
 1. **owner** Replace or accept every row above; `IS_FULL_PRODUCTION=true bun run build` (apps/web) lists what still blocks.
 2. **owner** Lawyer review of `/privacy/` + `/terms/` (P13); the gap values go in `astro.config.mjs` `legalTokens` (P22).
-3. **owner** Services: Resend (verify the sending domain's DNS, SPF + DKIM), Turnstile widget for the domain, Umami Cloud
+3. **owner** Services: EmailJS (service, template, keys; "API requests for non-browser applications" switched on in its Security settings, since the function calls it from the server), Turnstile widget for the domain, Umami Cloud
    website. Names of the values: `apps/web/.env.example`.
 4. **owner** Vercel (Pro): Root Directory `apps/web`; env vars in Production (+ Preview without `IS_FULL_PRODUCTION`);
    `IS_FULL_PRODUCTION=true` in Production only; WAF rate-limit rule on `/api/contact/` (e.g. 5 per 10 min per IP, the

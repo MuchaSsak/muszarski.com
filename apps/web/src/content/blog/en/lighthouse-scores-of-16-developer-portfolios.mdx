@@ -1,141 +1,165 @@
 ---
 title: "Lighthouse scores of 16 developer portfolios: immersive vs minimal"
-seoTitle: "Lighthouse on 16 developer portfolios"
-description: "Mobile Lighthouse, 3 runs each, on 16 well-known portfolios: immersive median 35.5, minimal 74.5. The method, the results and what the score misses."
+seoTitle: "Lighthouse scores of 16 portfolios: 3D vs minimal"
+description: "Mobile Lighthouse, 3 runs each, on 16 well-known developer portfolios: 3D median 35.5, minimal 74.5. The method, the results and what the score misses."
 translationKey: "portfolio-lighthouse"
 published: 2026-10-06
+updated: 2026-10-08
 tags: [performance, accessibility]
 cover: gauge
 related: [threejs-mobile, this-site, reduced-motion]
 sources:
   - title: "Lighthouse performance scoring (Chrome for Developers)"
     url: "https://developer.chrome.com/docs/lighthouse/performance/performance-scoring"
-    accessed: 2026-10-06
+    accessed: 2026-10-08
   - title: "Lighthouse throttling (GoogleChrome/lighthouse docs)"
     url: "https://github.com/GoogleChrome/lighthouse/blob/main/docs/throttling.md"
-    accessed: 2026-10-06
+    accessed: 2026-10-08
   - title: "Lighthouse config constants: mobile screen emulation (GoogleChrome/lighthouse)"
     url: "https://github.com/GoogleChrome/lighthouse/blob/main/core/config/constants.js"
     accessed: 2026-10-06
   - title: "Largest Contentful Paint (LCP), web.dev"
     url: "https://web.dev/articles/lcp"
-    accessed: 2026-10-06
+    accessed: 2026-10-08
   - title: "Web Vitals (web.dev)"
     url: "https://web.dev/articles/vitals"
     accessed: 2026-10-06
   - title: "Why lab and field data can be different (web.dev)"
     url: "https://web.dev/articles/lab-and-field-data-differences"
-    accessed: 2026-10-06
+    accessed: 2026-10-08
   - title: "Lighthouse accessibility scoring (Chrome for Developers)"
     url: "https://developer.chrome.com/docs/lighthouse/accessibility/scoring"
     accessed: 2026-10-06
   - title: "meta-viewport: Zooming and scaling must not be disabled (Deque, axe rules)"
     url: "https://dequeuniversity.com/rules/axe/4.10/meta-viewport"
-    accessed: 2026-10-06
+    accessed: 2026-10-08
+  - title: "Solar System Scope, planet textures (CC BY 4.0), used in the old space portfolio"
+    url: "https://www.solarsystemscope.com/textures/"
+    accessed: 2026-10-08
 ---
 
-On mobile Lighthouse, the 10 immersive (WebGL) portfolios I measured had a median performance score of 35.5, and the 6 minimal ones 74.5. Only one of the 16 sites scored 90 or more, and only one had a good lab LCP. Below are the method, the results by group, and what a Lighthouse score can't tell you about a 3D site.
+import Clips from "~/components/blog/case/Clips.astro";
+import Flow from "~/components/blog/case/Flow.astro";
+import Shots from "~/components/blog/case/Shots.astro";
+import lighthouse from "~/assets/case/lighthouse.webp";
+
+On mobile Lighthouse, the 10 immersive (WebGL) portfolios I measured had a median performance score of 35.5; the 6 minimal ones had 74.5. Only one of the 16 scored 90 or more, and only one had a good lab LCP. Below: the method, the results, and what a Lighthouse score can't tell you about a 3D site.
 
 > **TL;DR**
 >
-> - **Immersive vs minimal (medians):** performance 35.5 vs 74.5, total transfer about 11.4 MB vs 0.87 MB, total blocking time about 2.2 s vs 0.23 s.
-> - **The top is nearly empty:** 1 of 16 scored 90+, 1 of 16 had an LCP of 2.5 s or less, and no immersive site scored above 64.
-> - **Read with care:** lab numbers, three runs each, on a desktop GPU, so the 3D sites most likely look better here than they would on a real phone. No site is named for a low score.
+> - **Why the gap:** the median 3D site weighed about 12 MB and blocked the main thread for about 2.2 s; the median minimal site, 0.9 MB and 0.23 s.
+> - **The top is nearly empty:** no immersive site scored above 64, and the one minimal site at 90+ used system fonts.
+> - **Read with care:** lab numbers, three runs each, with a desktop GPU, so the 3D sites likely look better here than on a real phone. No site is named for a low score.
 
 ## Why measure other people's portfolios?
 
-My old portfolio was a three.js flight through the solar system, and it scored 34 on mobile Lighthouse. Before I rebuilt it ([the full story is in the case study](/en/blog/case-study/)), I wanted to know whether that was normal for the genre or just me. So I picked 16 well-known portfolios and measured all of them the same way, on 5 October 2026.
+My old portfolio was a three.js flight through the solar system, and it scored 34 on mobile Lighthouse.
 
-I don't name any site with a low score. I learned three.js from a course taught by one of the people in the immersive group, and these sites are some of the most inventive work on the web. A score of 30 on an emulated phone says something about loading. It says nothing about craft.
+<Clips
+  clips={[{ src: "flight", dir: "/media/space/", width: 960, height: 540, label: "The old space portfolio: the camera flies past Mars to Jupiter", name: "The old site" }]}
+  caption="My old portfolio, recorded on a desktop: the site that started this study. Planet textures: Solar System Scope, CC BY 4.0."
+/>
+
+Before rebuilding it ([the whole story is in the case study](/en/blog/case-study/)), I wanted to know: is that normal for the genre, or just me? So on 5 October 2026, I measured 16 well-known portfolios the same way.
+
+I name no site for a low score. I learned three.js from a course taught by one of the people in the immersive group, and these sites are some of the most inventive work on the web. A 30 on an emulated phone says something about loading. It says nothing about craft.
 
 ## How did I measure?
 
+<Flow
+  label="How the 16 portfolios were measured"
+  steps={[
+    { icon: "tb:search", title: "Pick 16 sites", text: "10 immersive (8 portfolios, 2 studios), 6 minimal" },
+    { icon: "si:lighthouse", title: "Run Lighthouse 3 times", text: "Mobile profile, simulated throttling, back to back" },
+    { icon: "tb:chart-bar", title: "Take medians", text: "Each site's median, then the median of each group" },
+    { icon: "mk:playwright", title: "Check on a phone", text: "Playwright at 390 px: gates, reduced motion, zoom" },
+  ]}
+/>
+
 | Setting | Value |
 | --- | --- |
-| Tool | Lighthouse 13.5.0 CLI, Chromium 153, headless |
-| Device | the default mobile profile: Moto G Power emulation, 412 × 823 px at a device pixel ratio of 1.75 |
+| Tool | Lighthouse 13.5.0 CLI, headless Chromium 153 |
+| Device | the default mobile profile: Moto G Power, 412 × 823 px, device pixel ratio 1.75 |
 | Throttling | simulated: 150 ms round trip, 1.6 Mbps down, 4× CPU slowdown |
-| Runs | 3 in a row per site; the site's number is the median |
-| Groups | 10 immersive (8 personal portfolios, 2 studio sites), 6 minimal |
 | Date | 5 October 2026, from Poland |
 
-The immersive group is famous three.js portfolios, recent Awwwards and FWA Site of the Day winners, and two studio sites as a ceiling for craft. The minimal group is well-known engineer and design-engineer portfolios, some with a lot of micro-interaction polish. Every group number below is the median of the per-site medians.
+Immersive means famous three.js portfolios, recent Awwwards and FWA Site of the Day winners, and two studio sites as a ceiling for craft. Minimal means well-known engineer and design-engineer portfolios, some with a lot of micro-interaction polish.
 
-Two caveats before any number. The machine was shared with other jobs: Lighthouse's CPU benchmark (`benchmarkIndex`) ranged from 841 to 2,381 on the first run of each site. Three runs damp that, and byte counts don't depend on it. And Lighthouse's own docs say that "a lot of the variability" in a score "is not due to Lighthouse", and suggest thinking of performance "as a distribution of scores, rather than a single number". Read the medians, not the decimals.
+Two caveats before any number. The machine was shared with other jobs: Lighthouse's CPU benchmark (`benchmarkIndex`) ranged from 841 to 2,381 on each site's first run. Three runs damp that, and byte counts don't depend on it.
+
+And Lighthouse's own docs say "a lot of the variability" in a score "is not due to Lighthouse". They suggest thinking of performance "as a distribution of scores, rather than a single number". Read the medians, not the decimals.
 
 ## What were the results?
 
 | Mobile, median of 3 runs | Immersive (10) | Minimal (6) |
 | --- | --- | --- |
-| Performance score, group median | 35.5 | 74.5 |
+| Performance score | 35.5 | 74.5 |
 | Highest / lowest score | 64 / 26 | 95 / 65 |
-| Total transfer, median | about 11.4 MB | about 0.87 MB |
-| JavaScript transfer, median | about 734 KB | about 259 KB |
-| Total blocking time, median | about 2.2 s | about 0.23 s |
-| LCP, median | about 20 s | about 4.0 s |
+| Sites in green (90+) / orange (50-89) / red (under 50) | 0 / 1 / 9 | 1 / 5 / 0 |
+| Page weight | about 12 MB | about 0.9 MB |
+| JavaScript | about 750 KB | about 265 KB |
+| Total blocking time | about 2.2 s | about 0.23 s |
+| Largest contentful paint (LCP) | about 20 s | about 4.0 s |
 | LCP of 2.5 s or less | 1 of 10 | 0 of 6 |
-| Cumulative layout shift | 0.004 or less on all | 0 on all |
+| Cumulative layout shift | 0.004 or less | 0 |
 
-Lighthouse colours the performance score in three bands: 0-49 is red ("Poor"), 50-89 orange ("Needs Improvement"), 90-100 green ("Good"). Here is how the 16 sites fall:
+Weight and blocking time make the gap; layout shift costs nobody anything, because a full-screen canvas doesn't move. Since Lighthouse 10, total blocking time is 30% of the score and LCP is 25%. A page that blocks for seconds and paints late can't score well, whatever it looks like.
 
-| Band | Immersive | Minimal | All 16 |
-| --- | --- | --- | --- |
-| 90-100, good | 0 | 1 | 1 |
-| 50-89, needs improvement | 1 | 5 | 6 |
-| 0-49, poor | 9 | 0 | 9 |
-
-The immersive median site is about 13 times heavier and blocks the main thread about nine times longer. Layout shift is not where anyone loses: a full-screen canvas doesn't move. The scoring weights explain the rest. Since Lighthouse 10, total blocking time is 30% of the performance score and LCP is 25%, so a page that blocks for seconds and paints late can't score well, whatever it looks like.
-
-Desktop is a different story. In a single desktop run, one studio site scored 90; on mobile, the same site scored 38. The gap between the two is the whole problem.
+Desktop is a different story. In a single desktop run, one studio site scored 90; on mobile, the same site scored 38. That gap is the whole problem.
 
 ## Why were the immersive sites slow?
 
 Three patterns came up again and again:
 
-1. **No early text to paint.** web.dev lists the LCP candidates: images, `<image>` inside SVG, video, CSS background images, and block-level elements with text. A `<canvas>` is not on the list. When a page is a canvas plus a loader, the LCP lands on whatever text appears, and on several sites that was the loader's own label. Two sites exposed 0 and 1 characters of DOM text on a phone-sized viewport.
-2. **A lot of JavaScript, evaluated up front.** Of the four immersive sites I broke down, three did 10-23 s of main-thread work under the 4× CPU slowdown, and one did far more. Two minimal sites did 1.4-1.7 s. Most of it was script evaluation.
+1. **No early text to paint.** web.dev's list of LCP candidates (images, `<image>` in SVG, video, CSS background images, block-level text) has no `<canvas>`. When a page is a canvas plus a loader, the LCP lands on whatever text appears, often the loader's own label. Two sites showed 0 and 1 characters of DOM text on a phone.
+2. **A lot of JavaScript, run up front.** Of the four immersive sites I broke down, three did 10-23 s of main-thread work under the 4× CPU slowdown, and one did far more. Two minimal sites did 1.4-1.7 s. Most of it was script evaluation.
 3. **Big media during load.** Multi-megabyte autoplay video and textures, fetched while the page was still loading.
 
 The one immersive site with a good LCP (1.1 s) did one thing differently: its bio text was in the server-rendered HTML, with WebGL layered on top. It still lost points to 15.3 MB of video loaded eagerly and to 2.2 s of blocking time. Text first fixed the paint. It didn't fix the weight.
 
 ## Is "minimal" automatically fast?
 
-No. The one site at 90+, leerob.com (95), used system fonts, so 0 bytes of web fonts, about 234 KB of JavaScript and no third-party scripts. Two other minimal sites shipped more than 1 MB of web fonts each, in 9 files, and both missed the LCP threshold, mainly because of them.
+No. The one site at 90+, leerob.com (95), used system fonts, so 0 bytes of web fonts, about 240 KB of JavaScript and no third-party scripts. Two other minimal sites shipped more than 1 MB of web fonts each, in 9 files, and both missed the LCP threshold mainly because of them.
 
 Fonts are part of loading, not decoration. It's one reason this site ships a single variable font of about 50 KB.
 
 ## What doesn't Lighthouse measure?
 
-- **The GPU.** Lighthouse throttles the network and the CPU. Its throttling docs don't mention the GPU, and in my runs the headless Chrome used the host's real graphics card, a desktop NVIDIA RTX 2060. Every immersive site rendered on a desktop GPU. On a real phone, I'd expect their numbers to be worse, not better.
-- **Real phones and real people.** web.dev explains that lab data comes from "a single device… connected to a single network", while field data covers "a wide variety of network and device conditions". None of these are field numbers. Lighthouse also can't measure INP, since there is no user input; total blocking time is the lab proxy.
-- **What's behind the gate.** Three of the ten immersive sites put a start button or a "tap to explore" prompt in front of the content. Lighthouse measures the gate, not the experience.
-- **Accessibility beyond automation.** The Lighthouse accessibility score is a weighted average of pass/fail audits. One studio site draws everything in WebGL, exposes 0 characters of DOM text on a phone, and scored 100: there was almost nothing for the audits to fail. Five of the ten immersive sites scored 100.
+- **The GPU.** Lighthouse throttles the network and the CPU; its throttling docs never mention the GPU. My runs drew on the host's desktop NVIDIA RTX 2060, so on a real phone I'd expect the 3D sites to do worse, not better.
+- **Real phones and real people.** web.dev says lab data comes from "a single device… connected to a single network", while field data covers "a wide variety of network and device conditions". None of these are field numbers. And with no user input, Lighthouse can't measure INP; total blocking time is the lab stand-in.
+- **What's behind the gate.** Three of the ten immersive sites put a start button or a "tap to explore" prompt before the content. Lighthouse measures the gate, not the experience.
+- **Accessibility beyond automation.** The accessibility score is a weighted average of pass/fail audits. One studio site draws everything in WebGL, shows 0 characters of DOM text on a phone, and scored 100: there was almost nothing to fail. Five of the ten immersive sites scored 100.
 - **Craft.** There is no audit for "I remembered this site a week later".
 
-A separate check in Playwright at a 390 px phone viewport (Chromium emulation, not real iOS) found three things the scores don't show:
+A separate Playwright check at a 390 px phone viewport (Chromium emulation, not real iOS) found three things the scores don't show:
 
-- All ten immersive sites render something on a phone. One still shows a "best viewed on desktop" warning.
-- With reduced motion emulated, none of the ten changed: each still created a WebGL context and kept the same animation frame rate. I wrote about doing this properly in [the reduced-motion post](/en/blog/reduced-motion-and-a-pause-button/).
-- 4 of the 16 sites (3 immersive, 1 minimal) disabled pinch zoom in their viewport tag. That fails the axe rule "Zooming and scaling must not be disabled", which exists for people with low vision who rely on magnification.
+- All ten immersive sites render something on a phone; one still warns it's "best viewed on a desktop".
+- With reduced motion emulated, none of the ten changed: each still created a WebGL context and kept its frame rate. How to do it properly is in [the post on reduced motion and a pause button](/en/blog/reduced-motion-and-a-pause-button/).
+- 4 of the 16 (3 immersive, 1 minimal) disabled pinch zoom in their viewport tag. That fails the axe rule "Zooming and scaling must not be disabled", which exists for people with low vision who rely on magnification.
 
 ## Where does my old site fit?
 
-My old space portfolio scored 34 on mobile with the same Lighthouse version, on the same day. That's just under the immersive median of 35.5. It wasn't one of the 16, and its run used software rendering instead of the desktop GPU, so it's not a perfect match. But it would have fit right in. What made it slow is in [Why my three.js portfolio was slow on mobile](/en/blog/why-my-threejs-portfolio-was-slow-on-mobile/).
+My old space portfolio scored 34 on mobile, with the same Lighthouse version on the same day: just under the immersive median. With 13.8 MB before its start button, it was heavier than the median immersive site too. It wasn't one of the 16, and its run had no GPU, so it's not a perfect match. But it would have fit right in. What made it slow is in [Why my three.js portfolio was slow on mobile](/en/blog/why-my-threejs-portfolio-was-slow-on-mobile/).
 
-## What this site does about it
+## What does this site do about it?
 
 - **Text first.** The H1 is the LCP: rendered on the server, final in the first paint, never animated in.
-- **A budget before code.** Lighthouse mobile at least 90 on every page, LCP under 2.5 s, under 150 KB of JavaScript and under 100 KB of fonts.
-- **3D as an optional layer,** never on the critical path.
+- **A budget before code.** Lighthouse mobile 90+ on every page, LCP under 2.5 s, under 150 KB of JavaScript and 100 KB of fonts.
+- **3D as an optional layer,** never on the critical path: no WebGL in the hero, and the shaders on other pages wait for the reader's first move.
 
-On this site, the home page scores 99 for mobile performance, with an LCP of about 1.95 s and about 8 KB of page JavaScript (gzip): median of 3 runs on a local production build. It's not a fair fight, because there is no WebGL in the hero. That's the trade I chose.
+<Shots
+  shots={[{ image: lighthouse, alt: "Lighthouse on mobile for this site's home page: Performance 96; Accessibility, Best Practices and SEO 100; LCP 2.6 s, blocking time 40 ms" }]}
+  caption="This site's home page in Lighthouse on mobile, from a local production build on 7 October 2026. The median of three runs was 96."
+/>
+
+It's not a fair fight: there's no WebGL in my hero. That's the trade I chose.
 
 ## Limits
 
 - Lab only: one machine, one day, a shared host, three runs per site. No field data for any of these sites.
 - 16 sites is a sample, not a census, and I chose it.
-- The 3D sites ran on a desktop GPU, so their numbers are optimistic.
-- The phone check was Chromium emulation. Nothing here ran on a physical iPhone or Android phone, which is where these sites are actually judged.
+- Nothing ran on a physical iPhone or Android phone, where these sites are actually judged.
 - Desktop was one run, for a subset only.
+- My home page was measured on a local build. Its median LCP (2.3-2.6 s across the three languages) sits around my own 2.5 s budget, and the live site hasn't been re-measured since 7 October.
 
-If you want to see how I hold a site to budgets like these, [my work is here](/en/work/).
+To see what I build under budgets like these, [browse my work](/en/work/).

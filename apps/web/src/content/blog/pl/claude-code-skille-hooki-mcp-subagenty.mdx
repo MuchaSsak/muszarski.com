@@ -1,10 +1,10 @@
 ---
 title: "Skille, hooki, serwery MCP i subagenty w Claude Code: co wybrać i kiedy"
 seoTitle: "Claude Code: skille, hooki, MCP czy subagenty?"
-description: "Praktyczny przewodnik po elementach Claude Code na podstawie oficjalnej dokumentacji, z prawdziwymi hookami, skillami i MCP, na których powstała ta strona."
+description: "Kiedy w Claude Code sięgnąć po CLAUDE.md, skill, hook, serwer MCP albo subagenta: oficjalna dokumentacja i prawdziwy zestaw, na którym powstała ta strona."
 translationKey: "claude-code-building-blocks"
 published: 2026-10-05
-updated: 2026-10-06
+updated: 2026-10-08
 tags: [ai, claude-code]
 cover: terminal
 related: [llm-wiki, claude-code-po-polsku, this-site]
@@ -14,10 +14,10 @@ sources:
     accessed: 2026-10-05
   - title: "Extend Claude with skills (dokumentacja Claude Code)"
     url: "https://code.claude.com/docs/en/skills"
-    accessed: 2026-10-05
+    accessed: 2026-10-08
   - title: "Hooks reference (dokumentacja Claude Code)"
     url: "https://code.claude.com/docs/en/hooks"
-    accessed: 2026-10-05
+    accessed: 2026-10-08
   - title: "Automate actions with hooks (dokumentacja Claude Code)"
     url: "https://code.claude.com/docs/en/hooks-guide"
     accessed: 2026-10-05
@@ -29,7 +29,7 @@ sources:
     accessed: 2026-10-05
   - title: "How Claude remembers your project (dokumentacja Claude Code)"
     url: "https://code.claude.com/docs/en/memory"
-    accessed: 2026-10-05
+    accessed: 2026-10-08
   - title: "Use Claude Code with Chrome (dokumentacja Claude Code)"
     url: "https://code.claude.com/docs/en/chrome"
     accessed: 2026-10-05
@@ -44,7 +44,12 @@ sources:
     accessed: 2026-10-05
 ---
 
-CLAUDE.md trzyma to, co Claude ma wiedzieć w każdej sesji, skill to procedura albo materiał referencyjny potrzebny tylko czasem, a hook to coś, co musi się wydarzyć za każdym razem. Serwer MCP sięga po dane i akcje spoza repozytorium, a subagent bierze na siebie poboczną robotę, której wynik zaśmieciłby główny kontekst. Niżej rozkładam każdy element na części według oficjalnej dokumentacji Claude Code i pokazuję, jak połączyłem je przy budowie tej strony.
+import Breaker from "~/components/blog/case/Breaker.astro";
+import Flow from "~/components/blog/case/Flow.astro";
+import Shots from "~/components/blog/case/Shots.astro";
+import aiTools from "~/assets/blog/claude-code-building-blocks/ai-tools-pl.webp";
+
+CLAUDE.md trzyma to, co Claude ma wiedzieć w każdej sesji, skill to procedura potrzebna tylko czasem, a hook to coś, co musi się wydarzyć za każdym razem. Serwer MCP sięga po dane spoza repozytorium, a subagent bierze poboczną robotę, która zalałaby Ci kontekst. Niżej: każdy element według oficjalnej dokumentacji, a potem zestaw, na którym powstała ta strona.
 
 > **TL;DR**
 >
@@ -54,19 +59,24 @@ CLAUDE.md trzyma to, co Claude ma wiedzieć w każdej sesji, skill to procedura 
 
 ## Czym jest każdy z pięciu elementów?
 
-Strona dokumentacji „Extend Claude Code” opisuje całą warstwę rozszerzeń. W skrócie:
+<Flow
+  label="Pięć elementów Claude Code"
+  steps={[
+    { icon: "tb:file-text", title: "CLAUDE.md", text: "Wczytywany w każdej sesji: komendy, konwencje, stałe zasady." },
+    { icon: "tb:puzzle", title: "Skille", text: "Playbook, który wczytuje się, gdy pasuje do zadania albo gdy wpiszesz /nazwa." },
+    { icon: "tb:shield-lock", title: "Hooki", text: "Twój skrypt, który Claude Code uruchamia przy zdarzeniu, za każdym razem." },
+    { icon: "tb:plug", title: "Serwery MCP", text: "Narzędzia i dane spoza repozytorium, przez otwarty standard." },
+    { icon: "tb:users-group", title: "Subagenty", text: "Poboczna robota we własnym kontekście. Wraca tylko podsumowanie." },
+  ]}
+/>
 
-- **CLAUDE.md** to plik markdown wczytywany na starcie każdej sesji: komendy, konwencje, zasady typu „zawsze rób X”. Dokumentacja radzi trzymać każdy taki plik poniżej 200 linii.
-- **Skill** to plik `SKILL.md` w `.claude/skills/<nazwa>/` z instrukcjami, wiedzą albo workflowem. Uruchamiasz go przez `/nazwa` albo Claude sam go wczytuje, gdy opis pasuje do zadania. Własne komendy slash zostały scalone ze skillami.
-- **Hook** to coś, co Claude Code uruchamia przy zdarzeniu z cyklu życia sesji: start, wysłanie promptu, przed użyciem narzędzia, zakończenie odpowiedzi i wiele innych. Może to być komenda powłoki, zapytanie HTTP, wywołanie narzędzia MCP, prompt albo subagent.
-- **Serwer MCP** łączy Claude Code z zewnętrznymi narzędziami i danymi przez Model Context Protocol, otwarty standard.
-- **Subagent** pracuje we własnym oknie kontekstu, z własnym promptem systemowym i dostępem do narzędzi. Robi swoje i oddaje tylko podsumowanie.
+Z dokumentacji warto wyciągnąć kilka szczegółów. Dokumentacja pamięci radzi trzymać każdy CLAUDE.md poniżej 200 linii. Własne komendy slash zostały scalone ze skillami. Hook może uruchomić komendę powłoki, zapytanie HTTP, narzędzie MCP, prompt albo subagenta.
 
-Są jeszcze pluginy, które pakują to wszystko w jedną instalowalną całość do użycia w wielu repozytoriach. Tutaj ich nie używam, więc je pomijam.
+Są jeszcze pluginy, które pakują to wszystko w jedną instalowalną całość do wielu repozytoriów. To repozytorium żadnego nie ma, więc je pomijam.
 
 ## Jakie dwa pytania rozstrzygają prawie wszystko?
 
-**Kto decyduje, że coś się uruchomi?** Dokumentacja mówi wprost: hook zawsze odpala się na swoim zdarzeniu, a skill to instrukcje, które Claude interpretuje, więc wynik może się różnić. CLAUDE.md należy do tej drugiej grupy: według dokumentacji pamięci Claude traktuje go jako kontekst, a nie wymuszoną konfigurację. Stąd najważniejsza zasada z tej strony: „nigdy nie edytuj `.env`” w CLAUDE.md to prośba, a hook `PreToolUse`, który blokuje edycję, to egzekwowanie.
+**Kto decyduje, że coś się uruchomi?** Dokumentacja mówi wprost: hook zawsze odpala się na swoim zdarzeniu, a skill to instrukcje, które Claude interpretuje, więc wynik może się różnić. CLAUDE.md należy do tej drugiej grupy: według dokumentacji pamięci Claude traktuje go jako kontekst, a nie wymuszoną konfigurację. „Nigdy nie edytuj `.env`” w CLAUDE.md to więc prośba, a hook `PreToolUse`, który blokuje edycję, to egzekwowanie.
 
 **Ile to kosztuje w kontekście?** Według tabeli kosztów z dokumentacji:
 
@@ -78,7 +88,7 @@ Są jeszcze pluginy, które pakują to wszystko w jedną instalowalną całość
 | Subagent | przy uruchomieniu, we własnym oknie | odizolowany od głównej sesji |
 | Hook | przy zdarzeniu, poza modelem | zero, chyba że zwraca kontekst |
 
-Dlatego długi CLAUDE.md to złe miejsce na dokumentację referencyjną: płacisz za nią przy każdym zapytaniu, potrzebna czy nie. Treść skilla prawie nic nie kosztuje, dopóki ktoś po nią nie sięgnie.
+Dlatego długi CLAUDE.md to złe miejsce na dokumentację referencyjną: płacisz za nią przy każdym zapytaniu, potrzebna czy nie.
 
 ## Który element do jakiej potrzeby?
 
@@ -103,11 +113,11 @@ Dokumentacja radzi też dokładać elementy dopiero wtedy, gdy pojawi się konkr
 
 ## Jak wygląda mój zestaw?
 
-Ta strona powstała w Claude Code sterowanym przez wiki projektu w `.claude/project-info/`. Oto co robi każdy element w tym repozytorium.
+Ta strona powstała w Claude Code z wiki projektu w `.claude/project-info/`. Oto każdy element w tym repozytorium.
 
 ### CLAUDE.md: rozdzielnik, a nie encyklopedia
 
-Mój CLAUDE.md ma 76 linii. Większość to tabela routingu: 31 wierszy, które łączą słowa, jakich używam w poleceniach („locales, translation, hreflang”), ze stronami wiki. Do tego dziesięć niezmienników, na przykład budżety wydajności, licencje i „żadnych zmyślonych faktów”.
+Mój CLAUDE.md ma 76 linii. Większość to tabela routingu, która łączy słowa z moich poleceń („locales, translation, hreflang”) ze stronami wiki. Reszta to niezmienniki (budżety wydajności, licencje, „żadnych zmyślonych faktów”) i komendy.
 
 Ścieżki są celowo zwykłym tekstem. `@import` wczytałby każdą stronę do każdej sesji, a dokumentacja potwierdza, że importy nie zmniejszają kosztu kontekstu. Samo wiki opisuję w osobnym wpisie: [LLM wiki, czyli pamięć projektu dla Claude Code](/pl/blog/llm-wiki-pamiec-projektu-dla-claude-code/).
 
@@ -128,39 +138,58 @@ Mój CLAUDE.md ma 76 linii. Większość to tabela routingu: 31 wierszy, które 
 
 To wersja skrócona: w prawdziwym `.claude/settings.json` każda ścieżka zaczyna się od `${CLAUDE_PROJECT_DIR:-.}`, a komendy idą przez bash.
 
-- **SessionStart** wypisuje „kartę sesji”: odnośnik do zasad współpracy, stan gita (same liczby) i reguły z `lessons.md`. To zdarzenie odpala się na starcie, przy wznowieniu, po `/clear` i po kompaktowaniu, a Claude Code dokleja wynik hooka do kontekstu. Po każdym kompaktowaniu reguły wracają więc słowo w słowo, cokolwiek zgubiło podsumowanie.
-- **UserPromptSubmit** ocenia każdy prompt względem tabeli routingu i podaje do pięciu stron do przeczytania. Prompty krótsze niż 25 znaków niczego nie dostają.
-- **Stop** sprawdza, czy w tej sesji zmienił się kod bez zmiany w wiki. Jeśli tak, zwraca `decision: "block"` z powodem, raz na dany stan, więc Claude aktualizuje stronę opisującą zmianę, zanim skończy. Gdy `stop_hook_active` ma wartość true, hook od razu się kończy: to pole dokumentacja daje właśnie po to, żeby hook Stop nie blokował w nieskończoność.
+- **SessionStart** wypisuje „kartę sesji”: odnośnik do zasad współpracy, stan gita (same liczby) i reguły z `lessons.md`. Odpala się na starcie, przy wznowieniu, po `/clear` i po kompaktowaniu. Po każdym kompaktowaniu reguły wracają więc słowo w słowo, cokolwiek zgubiło streszczenie.
+- **UserPromptSubmit** ocenia każdy prompt względem tabeli routingu i wskazuje do pięciu stron do przeczytania. Prompty krótsze niż 25 znaków niczego nie dostają.
+- **Stop** sprawdza, czy w tej sesji zmienił się kod bez zmiany w wiki. Jeśli tak, zwraca `decision: "block"` z powodem, raz na dany stan, więc Claude aktualizuje stronę, zanim skończy. Gdy `stop_hook_active` ma wartość true, hook od razu się kończy: to pole dokumentacja daje właśnie przeciw blokowaniu w kółko.
 
 Wszystkie trzy to zwykłe skrypty Node, które przy własnym błędzie kończą się bez szkody dla sesji. Strażnik, który psuje sesję, jest gorszy niż brak strażnika.
 
-### Siedem skilli
+### Dziewięć skilli
 
 | Skill | Kto uruchamia | Co robi |
 | --- | --- | --- |
 | `code` | ja albo Claude | pętla kodowania: przeczytaj wskazane strony, dopasuj się do kodu, sprawdź przed ogłoszeniem „gotowe” |
 | `commit` | ja albo Claude | jeden Conventional Commit, przypięty do małego modelu Haiku, żeby szło szybko |
-| `lighthouse-qa` | ja albo Claude | puszcza Lighthouse na zbudowanej stronie i poprawia w pętli, aż każda strona zmieści się w budżecie |
+| `new-blog` | ja albo Claude | planuje, pisze i sprawdza wpis taki jak ten, z lintem czytelności i skryptem do zrzutów ekranu |
+| `new-cv` | ja albo Claude | aktualizuje stronę CV i jej PDF-y z jednego pliku danych |
+| `lighthouse-qa` | ja albo Claude | puszcza Lighthouse na zbudowanej stronie i poprawia w pętli |
 | `wiki-lint` | ja albo Claude | uruchamia mechaniczny lint wiki, a potem czyta strony pod kątem sprzeczności |
 | `awwwards` | tylko Claude | ogląda nagradzane strony w prawdziwej przeglądarce, żeby podnieść jedną płaską sekcję |
-| `search-registry-items` | tylko Claude | szuka komponentu w publicznych rejestrach shadcn przez serwer MCP i go instaluje |
+| `search-registry-items` | tylko Claude | szuka komponentu w publicznych rejestrach shadcn przez serwer MCP |
 | `start-project-info` | tylko ja | zakłada wiki, tabelę routingu, lekcje i hooki w nowym projekcie |
 
-„Tylko Claude” to `user-invocable: false`: wiedza w tle, która nie ma sensu jako komenda. „Tylko ja” to `disable-model-invocation: true`: ten skill zapisuje sporo plików, więc wolę go odpalać sam, a do tego czasu jego opis nie kosztuje nic w kontekście.
-
-Strona główna ma dziś w mobilnym Lighthouse 99 za wydajność i 100 za dostępność, dobre praktyki i SEO (mediana z 3 pomiarów), a `lighthouse-qa` to pętla, która tego pilnuje.
+Skill „tylko Claude” ma `user-invocable: false`: to wiedza w tle, która nie ma sensu jako komenda. Skill „tylko ja” ma `disable-model-invocation: true`: zapisuje sporo plików, więc odpalam go sam, a do tego czasu jego opis nic nie kosztuje. Jak `new-cv` trzyma stronę i PDF w zgodzie, opisuję we wpisie [CV jako strona i PDF z jednego źródła](/pl/blog/cv-strona-i-pdf-z-jednego-zrodla/).
 
 ### Trzy serwery MCP
 
-- **Mobbin**, biblioteka referencji UI i UX z aplikacji mobilnych i stron. Jej serwer MCP pozwala agentowi przeszukiwać bibliotekę językiem naturalnym i dostawać zrzuty ekranów. Korzystałem z niego przy researchu sekcji, zanim je projektowałem.
-- **Shoogle**, wyszukiwarka bloków shadcn/ui w wielu rejestrach. Skill `search-registry-items` mówi Claude'owi, kiedy po nią sięgnąć.
-- **Prawdziwa przeglądarka.** Playwright MCP steruje przeglądarką przez snapshoty drzewa dostępności, a Claude in Chrome łączy Claude Code z samym Chrome i korzysta z jego stanu logowania.
+Żaden nie jest skonfigurowany w tym repozytorium. Siedzą na poziomie użytkownika, więc każdy projekt może z nich korzystać.
 
-Dokumentacja MCP ma ostrzeżenie, które warto powtórzyć: upewnij się, że ufasz każdemu serwerowi, bo te, które pobierają treści z zewnątrz, narażają Cię na prompt injection.
+- **Mobbin**, biblioteka prawdziwych ekranów aplikacji i stron. Jej serwer MCP pozwala agentowi szukać w niej zwykłymi słowami i dostawać ekrany. Korzystałem z niego przy researchu sekcji, zanim je projektowałem.
+- **Shoogle**, wyszukiwarka bloków shadcn/ui w wielu rejestrach. Skill `search-registry-items` mówi Claude'owi, kiedy po nią sięgnąć.
+- **Prawdziwa przeglądarka.** Playwright MCP steruje przeglądarką przez snapshoty drzewa dostępności, a Claude in Chrome łączy Claude Code z samym Chrome, razem z jego stanem logowania.
+
+<Shots
+  shots={[{ image: aiTools, alt: "Krok Narzędzia z historii AI na stronie głównej: karty Mobbin, shadcn i Playwright połączone przez wtyczkę MCP z Claude Code" }]}
+  caption="Te same narzędzia co w kroku Narzędzia na stronie głównej: ekrany aplikacji, komponenty i przeglądarka, wszystko przez MCP."
+/>
+
+Dokumentacja MCP ma ostrzeżenie, które warto powtórzyć: ufaj każdemu serwerowi, który dodajesz, bo te, które pobierają treści z zewnątrz, narażają Cię na prompt injection.
 
 ### Subagenty
 
-Nie mam własnych definicji subagentów, wbudowane wystarczyły. Używałem ich do researchu na etapie planowania: log wiki odnotowuje jedną partię 8 agentów badawczych i jedną 3, każdy z osobnym tematem. Zapisywały surowe notatki, a ja przenosiłem wnioski do stron, do których prowadzi routing. Wyszła z tego jedna lekcja: równoległe agenty dzielą jeden budżet wyszukiwania w sieci i potrafią go wyczerpać, więc lepiej pobierać adresy, które już znasz.
+Nie mam własnych definicji subagentów, wbudowane wystarczyły. Z etapu planowania log wiki odnotowuje jedną partię 8 agentów badawczych i jedną 3, każdy z osobnym tematem. Zapisywały surowe notatki, a ja przenosiłem wnioski do stron, do których prowadzi routing.
+
+Wyszła z tego jedna lekcja: równoległe agenty dzielą jeden budżet wyszukiwania w sieci i potrafią go wyczerpać. Lepiej pobierać adresy, które już znasz.
+
+<Breaker
+  id="bk-blocks"
+  kicker="Na stronie głównej"
+  title="Zobacz, jak te elementy pracują razem"
+  text="Jedna zmiana krok po kroku: kto pracuje przy każdym kroku, od mojego briefu do mojego review."
+  steps={["Brief", "Pamięć", "Research", "Narzędzia", "Budowa", "Kontrola", "Review"]}
+  href="/pl/#ai"
+  cta="Zobacz siedem kroków"
+/>
 
 ## Jak te elementy się łączą?
 
@@ -169,16 +198,16 @@ Elementy robią się naprawdę przydatne, kiedy łatają nawzajem swoje słabe s
 - **Skill + MCP.** Serwer daje Claude'owi narzędzie, a skill mówi, kiedy warto po nie sięgnąć i co zrobić z wynikiem. Dokumentacja opisuje dokładnie ten wzorzec.
 - **CLAUDE.md + hook.** Tabela routingu to zwykły markdown, który sam czytam i edytuję. Hook promptu parsuje tę samą tabelę, więc nowy wiersz wystarczy, żeby nowa strona trafiała do właściwych zadań.
 - **Hook + skill.** `wiki-check.mjs` to część mechaniczna: ścieżki istnieją, każda strona jest w spisie, wpisy w logu mają właściwy format. Skill `wiki-lint` to część wymagająca osądu: czy dwie strony sobie przeczą? Skrypt nie oceni sensu, a na modelu nie można polegać, że uruchomi się za każdym razem.
-- **Skill + subagent.** Skill może działać w osobnym kontekście subagenta (`context: fork`), a subagent może mieć wczytane skille z góry. Na razie nie potrzebowałem ani jednego, ani drugiego.
+- **Skill + subagent.** Skill może działać w osobnym subagencie (`context: fork`), a subagent może mieć wczytane skille z góry. Nie używam ani jednego, ani drugiego, ale `new-blog` robi prostszą wersję: w ostatnim kroku daje gotowy wpis świeżemu subagentowi do przeczytania na zimno.
 
-## Błędy i ograniczenia
+## Ograniczenia
 
-- **Hooki działają z pełnymi uprawnieniami Twojego użytkownika.** Dokumentacja hooków mówi to otwarcie. Przeczytaj każdy hook, zanim go dodasz, zwłaszcza skopiowany z cudzego repozytorium.
-- **Opisy skilli nie są darmowe.** Każdy skill, który Claude może sam wywołać, trzyma opis w kontekście, a lista ma swój budżet. Gdy się przepełni, Claude Code wycina opisy skilli używanych najrzadziej. Mętne albo nakładające się opisy sprawiają też, że Claude wybiera nie ten skill.
+- **Hooki z komendami działają z pełnymi uprawnieniami Twojego użytkownika.** Dokumentacja hooków mówi to otwarcie. Przeczytaj każdy hook, zanim go dodasz, zwłaszcza skopiowany z cudzego repozytorium.
+- **Opisy skilli nie są darmowe.** Każdy skill, który Claude może sam wywołać, trzyma opis w kontekście, a lista ma swój budżet. Gdy się przepełni, Claude Code wycina opisy skilli wywoływanych najrzadziej. Mętne albo nakładające się opisy sprawiają też, że Claude wybiera nie ten skill.
 - **Routing po słowach kluczowych się myli.** Mój hook liczy słowa, a nie znaczenie. Na początku ogólna fraza w jednym wierszu przebiła nazwę projektu w innym i wycięła stronę, która była potrzebna. Poprawka była nudna: wspólne słowa zadań wpisać do każdego wiersza, którego dotyczą, i ponownie uruchomić tryb `--test`.
-- **Subagent zaczyna od zera.** Nie widzi Twojej rozmowy, tylko wiadomość z poleceniem, więc mętne zlecenie wraca mętnym podsumowaniem. Jego zapytania liczą się też do tych samych limitów użycia co główna sesja.
+- **Subagent zaczyna od zera.** Widzi tylko wiadomość z poleceniem, a nie Twoją rozmowę, więc mętne zlecenie wraca mętnym podsumowaniem. Jego zapytania też liczą się do Twojego limitu.
 - **Nie zmierzyłem oszczędności.** Nie podam liczby tokenów ani minut, które dają te hooki. Mogę powiedzieć tyle: po kompaktowaniu kolejna tura zaczyna się od reguł, a nie od tego, że powtarzam je od nowa.
 
 ## Od czego zacząć?
 
-Najpierw krótki CLAUDE.md. Kolejny element dokładaj dopiero wtedy, gdy pojawi się jego sygnał: powtarzana poprawka, wklejany playbook, kopiowana karta przeglądarki, zalany kontekst, zasada, która musi działać zawsze. Jeśli dopiero zaczynasz, zajrzyj do przewodnika [Claude Code po polsku](/pl/blog/claude-code-po-polsku/). Jak te elementy zbudowały całą stronę, opisuję w [studium przypadku](/pl/blog/case-study/), a same projekty znajdziesz na [stronie z pracami](/pl/work/).
+Najpierw krótki CLAUDE.md, a każdy kolejny element dopiero wtedy, gdy pojawi się jego sygnał. Jeśli dopiero zaczynasz, zajrzyj do przewodnika [Claude Code po polsku](/pl/blog/claude-code-po-polsku/). Cały proces, na którym powstała ta strona, opisuję w [studium przypadku](/pl/blog/case-study/), a projekty znajdziesz na [stronie z pracami](/pl/work/).

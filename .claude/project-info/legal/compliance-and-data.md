@@ -18,7 +18,7 @@
 
 | Surface | Data | Stored | Purpose | Basis (sources support) |
 | --- | --- | --- | --- | --- |
-| Contact form → EmailJS → mailbox | email, message, optional name, time; IP at the function | EmailJS Pte. Ltd. (Singapore; AWS servers in the US; up to 30 days); his Gmail (Google Ireland Limited) | answer the message | art. 6(1)(f); 6(1)(b) for pre-contract requests. No consent needed |
+| Contact form → EmailJS → mailbox | the message, the reply contact (an email, or another contact the sender types), the topic chip, the language, time; IP at the function (no name field) | EmailJS Pte. Ltd. (Singapore; AWS servers in the US; up to 30 days); his Gmail (Google Ireland Limited) | answer the message | art. 6(1)(f); 6(1)(b) for pre-contract requests. No consent needed |
 | Hosting logs (Vercel Pro) | IP, time, path, referrer, UA | Vercel (Pro: 1 day runtime logs) | security | art. 6(1)(f), recital 49 |
 | Analytics (Umami Cloud, EU region) | path, referrer, screen, language, browser/OS/device, transient location, a monthly visitor hash, events | Umami (Hobby: 6 months) | visit statistics | art. 6(1)(f) (+ PKE art. 399 below) |
 | Anti-spam (Turnstile, **form only**) | IP, TLS fingerprint, UA, sitekey/origin | Cloudflare | protect the requested form | art. 6(1)(f); Cloudflare is also its own controller for bot-detection improvement |
