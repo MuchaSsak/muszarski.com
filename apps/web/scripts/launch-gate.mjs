@@ -99,7 +99,7 @@ if (existsSync(dist)) {
     const html = readFileSync(page, "utf8");
     const name = relative(dist, page).replace(/\\/g, "/");
     const stub = name === "index.html";
-    const print = /cv\/print\//.test(name);
+    const print = /cv\/print(-v2)?\//.test(name);
     robotsOf.set(name, /<meta name="robots" content="([^"]+)"/.exec(html)?.[1] ?? "");
     if (!/<title>[^<]+<\/title>/.test(html)) seo.push(`${name}: no <title>`);
     if (!stub && !/<meta name="description" content="[^"]{20,}"/.test(html)) seo.push(`${name}: no description`);
@@ -181,7 +181,7 @@ if (launch) {
   if (noindex) problems.push("dist/en/index.html is noindex in a launch build");
   // Legal pages, the print route and the contact results stay out of the index; everything else is indexable.
   for (const [name, robots] of robotsOf) {
-    const hidden = /(privacy|terms|cv\/print|contact\/(sent|error))\//.test(name) || name === "index.html";
+    const hidden = /(privacy|terms|cv\/print(-v2)?|contact\/(sent|error))\//.test(name) || name === "index.html";
     if (!hidden && !robots.startsWith("index")) problems.push(`${name}: robots "${robots}" in a launch build`);
     if (hidden && name !== "index.html" && !robots.startsWith("noindex")) problems.push(`${name}: should be noindex`);
   }
