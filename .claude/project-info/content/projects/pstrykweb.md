@@ -48,9 +48,9 @@ Public info only (see the rule above):
 - **Outcome** (recommended first):
   1. "Bespoke websites for local businesses, ordered through one online form." (in use; the badge and the text say "for Cetuspro")
   2. "Built PstrykWeb for Cetuspro: bespoke websites for local businesses, ordered through one online form." (/work/, CV)
-- **Badge:** "Commercial · Cetuspro · 2026" (in use).
+- **Badge:** "Internship · Cetuspro · 2026" (in use; was "Commercial" until [user 2026-10-08]: call it an internship, not client work).
 - **Stack chips:** Next.js · TypeScript · Vercel.
-- **Context tag:** "Client work · Cetuspro" (pending OK).
+- **Context tag:** "Internship" (`context: "internship"` in `data/projects.ts`) [user 2026-10-08].
 - **Links:** "Visit pstrykweb.pl" only [user 2026-10-06] (it currently shows Cetuspro's older landing, see the caveat in Facts).
 - **Held back (internal):** the pipeline, AI, internal tools, "13 sites live", the v2 benchmarks.
 

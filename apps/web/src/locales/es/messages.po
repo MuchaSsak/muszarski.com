@@ -413,8 +413,8 @@ msgid "Commercial"
 msgstr "Comercial"
 
 #: src/components/home/chapters/ChapterPstrykWeb.astro:28
-msgid "Commercial · Cetuspro · 2026"
-msgstr "Comercial · Cetuspro · 2026"
+msgid "Internship · Cetuspro · 2026"
+msgstr "Prácticas · Cetuspro · 2026"
 
 #: src/components/home/Credentials.astro:71
 #: src/components/home/Credentials.astro:75

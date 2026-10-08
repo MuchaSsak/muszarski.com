@@ -54,3 +54,4 @@
 ## [2026-10-08] design | Space folio chapter: the CSS orrery (orbit rings, sun, planets) removed, stars only [owner]. ChapterSpace.astro, design.md § Space stage, space-portfolio.md Theme.
 ## [2026-10-08] design | Phones: project chapters reveal earlier (rootMargin +15% bottom) and faster (0.4 s, 40 ms stagger) so a fast scroll never hits empty space [owner]. motion.ts, global.css, design.md § Motion.
 ## [2026-10-08] design | Competences accordion (≤ 900 px): opening a row scrolls it to the top under the sticky header (smooth, instant under paused motion) [owner]. Credentials.astro, design.md.
+## [2026-10-08] content | PstrykWeb relabelled as an internship, not client work [owner]: chapter badge "Internship · Cetuspro · 2026" (school icon, pl/es catalogs), context "internship" on /work/. ChapterPstrykWeb.astro, projects.ts, messages.po, pstrykweb.md.

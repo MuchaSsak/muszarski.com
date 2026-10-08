@@ -33,7 +33,7 @@ export const PROJECTS: Project[] = [
   {
     slug: "pstrykweb",
     name: "PstrykWeb",
-    context: "client",
+    context: "internship",
     year: 2026,
     rights: "check",
     flagship: 1,
