@@ -38,15 +38,17 @@
 - A visible label must start the accessible name (WCAG 2.5.3): visually hidden text after the visible text, not a replacing `aria-label` - 2026-10-05.
 - Run `bun run i18n:extract` before a production build: a missing message renders as its id and fitted titles (`a|b`) crash - 2026-10-05.
 - `.still` pauses every animation, freezing delayed entrances on their hidden frame: mark entrances `.rise`/`.enter` and test a stored pause - 2026-10-05.
-- Scroll-driven CSS goes in longhands (`animation-name`, `-timing-function`, `-fill-mode`, `-timeline`, `-range`): the build folds `animation` + `animation-timeline` into one shorthand Chrome rejects whole, and the effect silently never runs; check `getComputedStyle(el).animationName` in a browser, not the source - 2026-10-08.
+- Scroll-driven CSS goes in longhands (`animation-name`, `-timing-function`, `-fill-mode`, `-timeline`, `-range`): the build folds `animation` + `animation-timeline` into one shorthand Chrome rejects whole, and the effect silently never runs; check `getComputedStyle(el).animationName` in a browser, not the source. Three rules slipped back by 2026-10-09: `styles/scroll-driven.test.ts` now fails on it - 2026-10-08.
 - Keep page HTML lean (icons in the cached sprite, first-screen icons `inline`) and keep the font preload: Chrome holds first paint for it, and dropping it cost TBT 33 → 775 ms - 2026-10-06.
-- A focus target taller than the viewport minus the header always sits under the sticky header: cap media by viewport height (`100svh - var(--header-h)`) - 2026-10-06.
+- A focus target taller than the viewport minus the header always sits under the sticky header: cap media by viewport height (`100svh - var(--header-h)`). A scroll-driven transform moves a focus target after the focus scroll placed it (the Linkoglot phone slid under the header): drop the animation under `:has(:focus-visible)` - 2026-10-06.
 - Reduced motion keeps `animation-delay`: staged entrances stay hidden for their delay. Switch staged scenes off under reduced motion and `.still` - 2026-10-06.
 - Load cost hides in style and layout (`run-notes.md` 2026-10-07): animate an HTML wrapper, never an `<svg>`; no grid around a `container-type` box; no inherited custom property or `*`-read class toggled on big subtrees; no inline style per letter beyond a title. Find each with traces and CSS A/B - 2026-10-07.
 - Offset a grid column with margins, not `translate` (a translated item covered the next row's buttons) - 2026-10-08.
 - Never mute text with `opacity`: on a lit or animated fill it falls under 4.5:1, and the e2e axe pass sees one frame (the breaker's pink step); use weight or size - 2026-10-08.
 - Posts drift with the code they explain: a feature change greps `content/blog` for its files and fixes the posts too (`post-check.mjs` flags gone files) - 2026-10-08.
 - A % height inside an auto grid row resolves against the row the item itself grew (the Linkoglot phone overflowed its field): give the grid a definite track, `grid-template: minmax(0, 1fr) / minmax(0, 1fr)` - 2026-10-08.
+- Reading a WebGL program's link status blocks until it compiles: one shader with ten scenes froze every browser for ~1 s on Windows (D3D). Keep programs small (one scene each), compile through `makeProgram` in `life-gl.ts` (`KHR_parallel_shader_compile`, polled per frame) and measure the longest frame gap cold - 2026-10-09.
+- WebKit shows a WebGL frame drawn on demand one draw late (a pick showed the previous print): still and paused paths draw twice, on two frames in a row - 2026-10-09.
 
 ### Privacy of inputs
 - Images pasted in chat never reach the disk: ask the owner to drop the files in the repo, and build the slot so it switches on when they land - 2026-10-06.
@@ -65,4 +67,5 @@
 - One `astro preview` per project, and a running one may serve another session's `--outDir` (a whole audit ran on a peer's build, 2026-10-08): build to your own `--outDir`, serve it on your own port (`E2E_PORT`, `lhci --base`). A busy machine fakes regressions: check the load, rerun - 2026-10-07.
 - After a Playwright update, run `./node_modules/.bin/playwright install chromium` in `apps/web` (browser version mismatch) - 2026-10-06.
 - The owner works on two PCs and runs parallel sessions (one committed another's WIP, 2026-10-07): `git pull`/`git log` first, stage your own paths only; on a merge take one side's `.po`, re-add the other's msgids, extract; regenerate PDFs - 2026-10-06.
+- Playwright WebKit on Windows is not Safari: half of its WebKit-only findings were artifacts (fonts at the default instance, AV1 that fails to decode, the screenshot style tripping the CSP, a double font fetch under `astro preview`). Check against the live site first (`visual-qa.md` § Gotchas) - 2026-10-09.
 - WebSearch has a budget shared by parallel agents; prefer WebFetch of known URLs, then Playwright - 2026-10-05.

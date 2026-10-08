@@ -12,8 +12,8 @@
 | `bun run build` (64 pages + launch gate with link check) | 10.4 s | 2026-10-07 |
 | `bun run test` (vitest, 152 tests in 10 files) | 1.2 s | 2026-10-06 |
 | `bun run typecheck` (astro check, ~105 files) | 16 s | 2026-10-06 |
-| `bun run e2e` (236 tests, 4 workers; the two tour tests wait ~8 s each) | 52 s | 2026-10-07 |
-| `bun run e2e:xb` (Firefox + WebKit, 164 tests) | 1.9 min | 2026-10-07 |
+| `bun run e2e` (437 tests, 4 workers) | 2.0 min | 2026-10-09 |
+| `bun run e2e:xb` (Firefox 7 specs + WebKit 5 + the 404s, 677 tests) | 8.6 min | 2026-10-09 |
 | `bun run cv:sheet --png` (build + 3 PDFs, 219-222 KB, 2 pages each, fit + checks + previews) | ~4 min; `--locales pl,es` ~3 min | 2026-10-08 |
 | `astro build --outDir .cache/<x>` while a local server serves that folder | 400 s+ (Windows file locks); 11.6 s with the server stopped | 2026-10-08 |
 | `bun run og` (47 share images + 4 icons) | 3.7 s | 2026-10-07 |
@@ -124,3 +124,16 @@
   in shots. QA shaders with `--use-angle=d3d11 --enable-gpu --ignore-gpu-blocklist` (the real GPU).
 - Checks on that build: `bun run check` 193 tests; e2e 233 + 2 artifacts of a plain static server (its own 404 page) + 1
   flaky that passed on rerun; Firefox + WebKit 163/164 (the same 404 artifact); no overflow at 320-2560 px.
+
+## Cross-browser pass (2026-10-09, local build, Playwright Chromium 153 / Firefox 155 / WebKit 26.6 on Windows)
+
+- Hobby prints, one program with all ten scenes: reading its link status blocked the main thread 914 ms (Chromium,
+  D3D11 on an RTX 2060), 1218 ms (Firefox), 918 ms (WebKit), cold. A single-scene variant: 60-180 ms. Firefox has no
+  `KHR_parallel_shader_compile`; Chromium and WebKit do.
+- After the split (a grid program per scene + the print program): longest frame gap while the prints start, cold,
+  Chromium 950 → 33 ms, Firefox 1000 → 160-253 ms (each program's link 24-99 ms, the rest compiled one at a time when
+  idle), WebKit 1177 → 231 ms (headless WebKit runs rAF at ~13 fps, so ~75 ms gaps are its floor; no GL call over
+  8 ms). Still frames of all ten prints vs before: mean difference 0.04-0.40 of 255, ≤ 0.02 % of pixels over 24.
+- `bun run e2e` 437/437 in 2.0 min; `bun run e2e:xb` 672/677 in 8.6 min (4 on the /work rewrite then in progress in a
+  parallel session, 1 WebKit "element is not stable" click in How I work on a busy machine; chrome + pages specs then
+  132/132).

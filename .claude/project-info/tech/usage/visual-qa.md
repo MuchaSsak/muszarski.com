@@ -7,8 +7,9 @@
 
 | Gate | Command | Fails on |
 | --- | --- | --- |
-| static | `bun run typecheck && bun run lint && bun run test` | type errors, lint, unit tests (routes, field tokens defined + AA, catalogs, typography) |
+| static | `bun run typecheck && bun run lint && bun run test` | type errors, lint, unit tests (routes, field tokens defined + AA, catalogs, typography, scroll-driven animations written in longhands) |
 | browser | `bun run e2e` | axe WCAG 2.2 AA on every route (one theme, Cobalt), skip link, overflow 320–2560, 1920 cap, header fit per control, menu, footer, focus not under the header, motion (pause, reduced, fitted name flush), head/hreflang/switcher, console + CSP errors, page flows (the CV button's download + `/cv/` confirmation, contact, credentials, work filters) |
+| cross-browser | `bun run e2e:xb` | Firefox: the browser gate's functional specs + axe + text fit; WebKit (Safari's engine): the functional specs + layout. Not WebKit text fit: its Windows build paints variable fonts at the default instance (§ Gotchas). The 404 routes run in all three |
 | Lighthouse | `MSYS_NO_PATHCONV=1 node scripts/lighthouse.mjs --runs 3 --desktop /en/ /pl/ /es/` | mobile perf < 95, a11y/bp/seo < 100, LCP > 2000 ms, CLS > 0.05, TBT > 100 ms |
 | text fit | `bun run e2e text-fit` (part of `bun run e2e`) | in any locale, at any gate width, in the first paint and in every switchable state (menu, How I work stops, AI beats, credentials, contact topics, hobby prints, case-study tabs): text spilling out of the box that draws it, clipped text, text past the screen edge, a word split across lines, text on text, a box drawn over text (§ Locales) |
 | launch | part of `bun run build` | a launch build with any `PLACEHOLDER` marker or a noindex home |
@@ -59,8 +60,14 @@ parked away from its label, a Spanish footer row breaking into a ragged block).
 - Git Bash rewrites `/en/` into `P:/Git/en/`: prefix commands that take URL paths with `MSYS_NO_PATHCONV=1`.
 - One `astro preview` per project (port 4322): the scripts reuse a running one; stop it before a rebuild only if files are locked.
 - The 0.01 ms reduced-motion transition means a colour read right after a change is the old value: poll in tests.
-- Playwright WebKit on Windows paints variable fonts at the default instance (layout is right): judge Safari by measured
-  widths, never by those screenshots (2026-10-06).
+- Playwright WebKit on Windows is Safari's engine, not Safari (2026-10-06, 2026-10-09). Its artifacts, none of them a
+  site bug: variable fonts painted at the default instance (judge Safari by measured widths, never by those shots);
+  `canPlayType` says yes to AV1, then the file fails to decode (real Safari only claims AV1 with a hardware decoder);
+  every `page.screenshot()` logs "Refused to apply a stylesheet" (Playwright's injected style meets the page's meta CSP);
+  `requestAnimationFrame` at ~13 fps headless; Tab skips links (Safari's default); and under `astro preview`
+  (`Cache-Control: no-cache`) the preloaded font is fetched twice, once on Vercel. Check a WebKit-only finding against
+  the live site before fixing it. What only a real iPhone or Mac shows: Apple font rendering, Metal shader compile
+  times, Low Power Mode autoplay, the iOS download sheet.
 - Full-page screenshots at device scale 2 go solid black past 16,384 device px (8,192 CSS px): shoot long pages at
   scale 1 or block by block (2026-10-08).
 - Another session may already run `astro preview` (one per project): it can be serving its own `--outDir`, not your
