@@ -109,6 +109,6 @@ three `2026-10-08-cv-*` notes), change one thing, then evaluate:
 `bun run cv:sheet --png` for all locales, `--stress more` (must fail cleanly with the overflow message), `--stress less`
 (must still compose: the slip under the content, no big empty gap) and `--no-photo` (the band without the photo), a
 greyscale look at page 1, `pdftotext -enc UTF-8 <pdf> -` reading like
-a CV (name first, dates next to their titles, no split words), and an independent review by a fresh subagent with the
+a CV (name first, no split words; for dates beside their titles use PyMuPDF, see `template.md` § 8), and an independent review by a fresh subagent with the
 renders and the extracted text (7-second skim, ATS field extraction, design score against `design-quality.md`). Keep the
 old look in `comps/cv/` and a row in `comps/HISTORY.md`, as for every other version of the site.

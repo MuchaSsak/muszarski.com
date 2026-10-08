@@ -166,7 +166,10 @@ function linksOf(doc) {
   return links;
 }
 
-/** The text layer per page, in content order, and how far down the last line of each page sits (0-1). */
+/**
+ * The text layer per page, in content order; its runs with their baseline (pt from the page top); and how far down
+ * the last line of each page sits (0-1).
+ */
 async function textOf(pdf) {
   const task = getDocument({ data: new Uint8Array(pdf), disableFontFace: true, verbosity: 0 });
   const doc = await task.promise;
@@ -181,7 +184,8 @@ async function textOf(pdf) {
     const mm = (pt) => (pt / 72) * 25.4;
     const body = items.filter((item) => mm(height - item.transform[5]) > 18 && mm(height - item.transform[5]) < 275);
     const lowest = Math.max(0, ...body.map((item) => mm(height - item.transform[5])));
-    pages.push({ text, lowest, fill: Math.min(1, Math.max(0, (lowest - 14) / (275 - 14))) });
+    const runs = items.map((item) => ({ str: item.str.replace(/\s+/g, " ").trim(), y: height - item.transform[5] }));
+    pages.push({ text, runs, lowest, fill: Math.min(1, Math.max(0, (lowest - 14) / (275 - 14))) });
   }
   await task.destroy();
   return pages;
@@ -264,6 +268,11 @@ for (const locale of LOCALES) {
       placeholders: [
         ...new Set([...document.querySelectorAll("[data-cv-placeholder]")].map((el) => el.getAttribute("data-cv-placeholder"))),
       ],
+      // Each entry's title and date starts: the PDF must set them on one baseline.
+      dated: [...document.querySelectorAll("[data-cv-entry]")].map((el) => ({
+        title: (el.querySelector("h3")?.textContent ?? "").replace(/\s+/g, " ").trim().slice(0, 10),
+        when: (el.querySelector(".cs-when")?.textContent ?? "").trim().split(/\s+/)[0] ?? "",
+      })),
       // Every text block in DOM order (its first characters, spaces dropped): the PDF must say them in this order.
       order: [...document.querySelectorAll("body :is(h1, h2, h3, p, li)")]
         .filter((el) => !el.closest("[aria-hidden='true']") && !el.querySelector("p, li"))
@@ -346,6 +355,23 @@ for (const locale of LOCALES) {
   for (const must of meta.must)
     if (!upper.includes(must.toLocaleUpperCase(locale))) problems.push(`"${must}" missing from the text layer`);
   for (const href of meta.links) if (!links.includes(href)) problems.push(`link ${href} is not clickable`);
+  // Each date on its title's baseline: extractors (pdftotext -layout, ATS parsers) pair a date with the title on its
+  // row. The title's run is found in content order; the date's run follows within a few runs (after the org line).
+  const runs = text.flatMap((p, n) => p.runs.map((run) => ({ ...run, page: n })));
+  let from = 0;
+  let paired = 0;
+  for (const entry of meta.dated) {
+    const t = runs.findIndex((run, i) => i >= from && run.str.startsWith(entry.title));
+    if (t < 0 || !entry.when) continue;
+    from = t + 1;
+    paired += 1;
+    const w = runs.findIndex((run, i) => i > t && i <= t + 6 && run.str.startsWith(entry.when));
+    if (w < 0 || runs[w].page !== runs[t].page || Math.abs(runs[w].y - runs[t].y) > 0.5)
+      problems.push(`the date "${entry.when}…" is not on the baseline of "${entry.title}…"`);
+  }
+  // A check that finds no titles proves nothing: say so.
+  if (meta.dated.length && paired < meta.dated.length / 2)
+    problems.push(`the date check found only ${paired} of ${meta.dated.length} titles`);
   if (/PLACEHOLDER|undefined|\[object/i.test(all)) problems.push("placeholder or broken text in the PDF");
   const fill = contentFill;
   const warnings = [];

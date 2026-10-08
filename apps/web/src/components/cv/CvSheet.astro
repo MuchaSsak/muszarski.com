@@ -206,7 +206,7 @@ const webCv = new URL(pathTo(locale, "cv/"), siteUrl);
         <ul class="cs-langs">
           {CV.languages.map((language) => (
             <li>
-              <strong>{l(language.name)}</strong> {l(language.level)}
+              <strong>{l(language.name)}:</strong> {l(language.level)}
             </li>
           ))}
         </ul>
@@ -248,7 +248,7 @@ const webCv = new URL(pathTo(locale, "cv/"), siteUrl);
     --fs: calc(10pt + 0.8pt * var(--d));
     --t-title: calc(var(--fs) * 1.2);
     --t-meta: calc(var(--fs) * 0.9);
-    --t-label: 7.6pt;
+    --t-label: 8.2pt;
     --t-band: 8.2pt;
     --lh: calc(1.3 + 0.1 * var(--d));
     --sec: calc(4.2mm + 3.4mm * var(--d));
@@ -356,7 +356,7 @@ const webCv = new URL(pathTo(locale, "cv/"), siteUrl);
   }
   .cs-avail {
     margin-top: 1mm;
-    font: 700 var(--t-band) / 1.35 "CV Strong";
+    font: 700 var(--t-meta) / 1.35 "CV Strong";
   }
 
   /* The contact bar: the site's navy bar field, one line, links spelled out. */
@@ -457,9 +457,19 @@ const webCv = new URL(pathTo(locale, "cv/"), siteUrl);
     color: var(--slate);
   }
   .cs-when {
-    padding-top: 0.2em;
     font-variant-numeric: tabular-nums;
     color: var(--cobalt);
+  }
+  /* The date shares the title's baseline: extractors (pdftotext -layout, ATS parsers) pair a date with the title on
+     its row. scripts/cv-sheet.mjs checks it. */
+  .cs-entry > h3,
+  .cs-entry > .cs-when {
+    align-self: baseline;
+  }
+  /* No one-word last lines ("school."). */
+  .cs p,
+  .cs li {
+    text-wrap: pretty;
   }
   .cs-bullets {
     margin-top: calc(0.7mm + 0.5mm * var(--d));
@@ -501,6 +511,11 @@ const webCv = new URL(pathTo(locale, "cv/"), siteUrl);
   .cs-certs {
     padding: 0;
     list-style: none;
+  }
+  .cs-certs li,
+  .cs-cred h3 {
+    padding-left: 3mm;
+    text-indent: -3mm;
   }
   .cs-meta {
     font-size: var(--t-meta);

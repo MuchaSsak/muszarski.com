@@ -1,11 +1,11 @@
 {
   "en": {
     "file": "..\\..\\comps\\cv\\mateusz-muszarski-cv-en.pdf",
-    "kb": 203.3,
+    "kb": 203.5,
     "pages": 2,
-    "d": 0.34,
+    "d": 0.33,
     "lastPageFill": 0.98,
-    "endGapMm": 4.8,
+    "endGapMm": 5.8,
     "digest": "6eeb2a82e077df69",
     "fonts": [
       "Type0/CIDFontType2 AAAAAA+AnybodyCV-BlackName1",
@@ -49,10 +49,10 @@
   },
   "pl": {
     "file": "..\\..\\comps\\cv\\mateusz-muszarski-cv-pl.pdf",
-    "kb": 206.2,
+    "kb": 206.3,
     "pages": 2,
-    "d": 0.08,
-    "lastPageFill": 0.96,
+    "d": 0.05,
+    "lastPageFill": 1,
     "endGapMm": 6.9,
     "digest": "98dd36ac063ad1fd",
     "fonts": [
@@ -97,11 +97,11 @@
   },
   "es": {
     "file": "..\\..\\comps\\cv\\mateusz-muszarski-cv-es.pdf",
-    "kb": 204.7,
+    "kb": 204.5,
     "pages": 2,
-    "d": 0.17,
-    "lastPageFill": 1,
-    "endGapMm": 5.8,
+    "d": 0.14,
+    "lastPageFill": 0.99,
+    "endGapMm": 7.9,
     "digest": "5ea68974c3634749",
     "fonts": [
       "Type0/CIDFontType2 AAAAAA+AnybodyCV-BlackName1",

@@ -79,7 +79,9 @@ global reset, `--d` default, metadata, digest), `styles/cv-fonts.css` + `lib/cv-
   (850/78 condensed, job and project h3, role, slip email), CV Label (800/125 expanded, h2 labels; the running head
   and page number are its outlines), CV Name 1/2 (900, fitted). Six steps of size: label 7.6 pt, band 8.2 pt, meta
   0.9·fs, body fs (also the credential head lines, in CV Strong), title 1.2·fs, slip email 2.1·fs (+ the role's 12 pt
-  and the fitted name). Adding a seventh needs a reason.
+  and the fitted name). Labels, the contact bar and the band's role line are chrome: labels and bar 8.2 pt (the bar's
+  one line holds the LinkedIn address only up to 8.2 pt; the email repeats large in the slip), the availability line
+  at the meta size. Adding a step needs a reason.
 - Geometry: edge 14 mm (padding, see § 8), rail 27 mm, gutter 5 mm, photo 28 mm, sticker 26 mm, hard shadows 1.8 mm.
 
 ## 4. Invariants and why
@@ -93,6 +95,7 @@ global reset, `--d` default, metadata, digest), `styles/cv-fonts.css` + `lib/cv-
 | Letter-spacing ≤ 0.05 em on text | wider tracking splits words in extractors (`E D U C A T I O N`) |
 | Every link is visible text, underlined; email is `mailto:` | paper readers type it; parsers read text, not annotations; colour alone fails greyscale |
 | Real text in DOM = reading order: title, org, date, bullets | the check compares every block's start in DOM order with the text layer |
+| A date shares its title's baseline (`align-self: baseline`, no padding on `.cs-when`) | extractors and ATS parsers pair a date with the title on its row; 1-2 pt off and the date landed beside the wrong entry (v5, en) |
 | `@page` side margins 0, the 14 mm edge as `.cs` padding | Chrome clips anything painted into a page margin: the bands couldn't bleed |
 | Page 1 has no top margin and no margin boxes | the band opens the paper and the text layer must start with the name |
 | Body never below 10 pt (`d = 0`); 9 pt only for meta lines | print guidance (UT Austin, Tech Interview Handbook: never under 10 pt); overflow is a content problem, not a type problem |
@@ -114,6 +117,8 @@ Each `FAIL` line from `cv:sheet`, and the fix:
 | `reading order: "…" is missing` | text clipped, hidden, or drawn as outlines inside an `h1-3/p/li` | keep outlines in `aria-hidden` elements; check overflow |
 | `"…" missing from the text layer` (`data-cv-must`) | the role, place or a contact item didn't print | as above |
 | `link … is not clickable` | a `data-cv-link` href has no annotation | the element is hidden or covered; links must be real `<a href>` |
+| `the date "…" is not on the baseline of "…"` | a date and its title sit on different baselines (padding, a different alignment, a wrapped title) | keep `align-self: baseline` on `h3` and `.cs-when`; no padding or margin on either |
+| `the date check found only N of M titles` | the check couldn't find the titles in the text layer, so it proved nothing | a title is split into runs differently (a link, a span): match on its first 10 characters |
 | `placeholder or broken text` | `PLACEHOLDER`, `undefined`, `[object …]` in the PDF | fix the data; placeholders never reach a sent PDF |
 
 The checks prove the text layer; they don't see the page. Always look at the PNGs too (SKILL.md step 6).
@@ -166,3 +171,6 @@ Run it when a role's axes, the name (`SITE.name`), the sticker words or the char
   shows, margin boxes included.
 - Greyscale check: the cobalt band stays dark enough for ice text; pink markers read as mid-grey squares. Re-check after
   any colour change.
+- The `pdftotext` here is xpdf 4.00, not poppler: its `-layout` mode guesses column blocks and can file a rail date
+  under the wrong entry even when the baselines are identical (2026-10-08). For row pairing trust the built-in check
+  or PyMuPDF (`page.get_text("text", sort=True)`); use plain `pdftotext` for the reading order.
