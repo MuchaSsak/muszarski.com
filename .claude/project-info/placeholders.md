@@ -60,3 +60,12 @@
 7. **owner** Search Console: Domain property (DNS TXT), submit `/sitemap-index.xml`, URL Inspection on home, the case
    study, one post and `/en/cv/`; Bing Webmaster: import from GSC.
 8. **owner** Same day: the site URL on LinkedIn, GitHub and the CV sources (`sameAs` must match).
+9. **owner** Launch-day checklist [owner 2026-10-08: "to do once i fully deploy to prod"]; tick each one off here:
+   - [ ] Vercel: `IS_FULL_PRODUCTION=true` set in Production (and `IS_AVAILABLE_FOR_HIRE` as wanted), then redeploy.
+   - [ ] Google Search Console for `muszarski.com` (step 7).
+   - [ ] Website field → `https://muszarski.com/` on GitHub, LinkedIn, Instagram; the domain in the Discord profile.
+   - [ ] yws.lu: run `/link-portfolio-author-to-website` in its repo (a client site: the client's OK first, and its
+     rights row in `content/projects.md`).
+   - [ ] pstrykweb.pl (Cetuspro's product): no credit without Cetuspro's written OK. Options to ask them for: an author
+     box on the blog posts he wrote, linking `https://muszarski.com/` (the "pstrykweb.pl author page" of `seo.md`
+     § Entity strategy); a team/credits page naming him. Never "built by" or "solo" (lessons).
