@@ -49,7 +49,7 @@ export const GALLERY: GalleryPhoto[] = [
       pl: "Mateusz Muszarski w słomkowym kapeluszu i okularach przeciwsłonecznych, za nim morze i skaliste wybrzeże",
       es: "Mateusz Muszarski con sombrero de paja y gafas de sol, con el mar y una costa rocosa detrás",
     },
-    caption: { en: "me, probably smiling", pl: "ja, chyba uśmiechnięty", es: "yo, probablemente sonriendo" },
+    caption: { en: "me, probably smiling", pl: "ja, pewnie uśmiechnięty", es: "yo, seguramente sonriendo" },
     hero: true,
     board: false,
   },
@@ -133,10 +133,10 @@ export const GALLERY: GalleryPhoto[] = [
       pl: "Mateusz Muszarski w ciemnym garniturze i czerwonym krawacie obok dyrektora szkoły, pod banerem uroczystości zakończenia roku szkolnego",
       es: "Mateusz Muszarski con traje oscuro y corbata roja junto al director de su escuela, bajo una pancarta de fin de curso",
     },
-    caption: { en: "me, in a full suit", pl: "ja, w pełnym garniturze", es: "yo, de traje completo" },
+    caption: { en: "me, in a full suit", pl: "ja, w garniturze", es: "yo, de traje" },
     description: {
       en: "My school's principal gave me a money award and a commendation for building a real project: an app for a local youth space.",
-      pl: "Dyrektor mojej szkoły wręczył mi nagrodę pieniężną i pochwałę za zbudowanie prawdziwego projektu: aplikacji dla lokalnej przestrzeni dla młodzieży.",
+      pl: "Dyrektor mojej szkoły wręczył mi nagrodę pieniężną i pochwałę za zbudowanie prawdziwego projektu: aplikacji dla lokalnej przestrzeni młodzieżowej.",
       es: "El director de mi escuela me dio un premio en metálico y una mención por crear un proyecto real: una aplicación para un espacio juvenil local.",
     },
     place: {

@@ -41,7 +41,7 @@ export const PROJECTS: Project[] = [
     // Public info only (content/projects/pstrykweb.md § Public disclosure).
     line: {
       en: "Bespoke websites for local businesses, ordered through one online form. Built for Cetuspro.",
-      pl: "Strony na zamówienie dla lokalnych firm, zamawiane przez jeden formularz online. Zbudowane dla Cetuspro.",
+      pl: "Strony na miarę dla lokalnych firm, zamawiane przez jeden formularz online. Zbudowane dla Cetuspro.",
       es: "Webs a medida para negocios locales, encargadas con un solo formulario online. Hecho para Cetuspro.",
     },
     stack: ["Next.js", "TypeScript", "Vercel"],
@@ -57,8 +57,8 @@ export const PROJECTS: Project[] = [
     anchor: "linkoglot",
     line: {
       en: "Snap a photo, get flashcards. A subscription language app in 30 languages, shipped solo to both stores.",
-      pl: "Zrób zdjęcie, dostań fiszki. Aplikacja do nauki języków w 30 językach, z subskrypcją, wydana samodzielnie w obu sklepach.",
-      es: "Haz una foto y obtén tarjetas. Una app de idiomas por suscripción en 30 idiomas, publicada en solitario en las dos tiendas.",
+      pl: "Robisz zdjęcie, dostajesz fiszki. Aplikacja do nauki języków w 30 językach, z subskrypcją, wydana samodzielnie w obu sklepach.",
+      es: "Haz una foto y ya tienes tarjetas. Una app de idiomas por suscripción en 30 idiomas, publicada en solitario en las dos tiendas.",
     },
     stack: ["Expo", "React Native", "Supabase", "RevenueCat", "Lingui"],
     links: {
@@ -76,8 +76,8 @@ export const PROJECTS: Project[] = [
     anchor: "clockful",
     line: {
       en: "A role-based time tracker built with AI agents in about 9 days, with 118 automated tests. Code private.",
-      pl: "Aplikacja do mierzenia czasu pracy z rolami, zbudowana z agentami AI w około 9 dni, ze 118 testami automatycznymi. Kod prywatny.",
-      es: "Un control de horas con roles, hecho con agentes de IA en unos 9 días, con 118 tests automáticos. Código privado.",
+      pl: "Aplikacja do ewidencji czasu pracy z rolami, zbudowana z agentami AI w około 9 dni, ze 118 testami automatycznymi. Kod prywatny.",
+      es: "Una app de control horario con roles, hecha con agentes de IA en unos 9 días, con 118 tests automatizados. Código privado.",
     },
     stack: ["Next.js", "Supabase", "PostgreSQL", "TanStack Query", "Playwright"],
     links: {},
@@ -106,8 +106,8 @@ export const PROJECTS: Project[] = [
     rights: "ok",
     line: {
       en: "This site: Astro, Lingui in three languages, 99+ on mobile Lighthouse, built with a Claude Code setup I can show.",
-      pl: "Ta strona: Astro, Lingui w trzech językach, 99+ w mobilnym Lighthouse, zbudowana z Claude Code w sposób, który mogę pokazać.",
-      es: "Este sitio: Astro, Lingui en tres idiomas, 99+ en Lighthouse móvil, hecho con una configuración de Claude Code que puedo enseñar.",
+      pl: "Ta strona: Astro, Lingui w trzech językach, 99+ w mobilnym Lighthouse, zbudowana z Claude Code; cały setup mogę pokazać.",
+      es: "Esta web: Astro, Lingui en tres idiomas, 99+ en Lighthouse móvil, hecho con una configuración de Claude Code que puedo enseñar.",
     },
     stack: ["Astro", "TypeScript", "Lingui", "Tailwind CSS", "Claude Code"],
     links: { caseStudy: true },
@@ -134,7 +134,7 @@ export const PROJECTS: Project[] = [
     rights: "ok",
     line: {
       en: "An npx CLI that translates Lingui catalogs with an LLM. It grew out of Linkoglot.",
-      pl: "CLI uruchamiane przez npx, które tłumaczy katalogi Lingui przez LLM. Wyrosło z Linkoglota.",
+      pl: "CLI uruchamiane przez npx, które tłumaczy katalogi Lingui za pomocą LLM-a. Wyrosło z Linkoglota.",
       es: "Una CLI para npx que traduce catálogos de Lingui con un LLM. Nació de Linkoglot.",
     },
     stack: ["TypeScript", "Node.js", "Lingui"],
@@ -149,7 +149,7 @@ export const PROJECTS: Project[] = [
     line: {
       en: "A Balatro-style card game where every card is a real Polish matura maths task. Built with AI.",
       pl: "Gra karciana w stylu Balatro, w której każda karta to prawdziwe zadanie maturalne z matematyki. Zbudowana z AI.",
-      es: "Un juego de cartas al estilo Balatro donde cada carta es un ejercicio real de matemáticas de la matura polaca. Hecho con IA.",
+      es: "Un juego de cartas al estilo Balatro donde cada carta es un ejercicio real del examen de matemáticas de la selectividad polaca. Hecho con IA.",
     },
     stack: ["React", "WebGL", "OGL"],
     links: { live: "https://malatro.vercel.app", code: gh("malatro") },
@@ -163,7 +163,7 @@ export const PROJECTS: Project[] = [
     line: {
       en: "A vocabulary trainer: learn words by typing them. A team project with Fabian Dróżkowski.",
       pl: "Trener słówek: uczysz się, wpisując je. Projekt zespołowy z Fabianem Dróżkowskim.",
-      es: "Un entrenador de vocabulario: aprendes palabras escribiéndolas. Un proyecto en equipo con Fabian Dróżkowski.",
+      es: "Una app para practicar vocabulario: aprendes palabras escribiéndolas. Un proyecto en equipo con Fabian Dróżkowski.",
     },
     stack: ["TypeScript", "Drizzle", "Neon", "Better Auth"],
     links: { live: "https://lingotype.vercel.app", code: gh("lingotype") },
@@ -188,7 +188,9 @@ const visible = (project: Project) => project.rights === "ok" || (!IS_FULL_PRODU
 
 /** Every project the build may show, flagships first (in chapter order), then the archive by year. */
 export const visibleProjects = () =>
-  PROJECTS.filter(visible).sort((a, b) => (a.flagship ?? 99) - (b.flagship ?? 99) || b.year - a.year || a.name.localeCompare(b.name));
+  PROJECTS.filter(visible).sort(
+    (a, b) => (a.flagship ?? 99) - (b.flagship ?? 99) || b.year - a.year || a.name.localeCompare(b.name),
+  );
 
 /** The flagship chapters the build may show, in order. */
 export const visibleFlagships = () => visibleProjects().filter((project) => project.flagship);

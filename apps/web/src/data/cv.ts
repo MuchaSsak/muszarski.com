@@ -106,27 +106,27 @@ export const CV = {
   title: {
     en: "Full-stack product engineer",
     pl: "Full-stack product engineer",
-    es: "Ingeniero de producto full stack",
+    es: "Full-stack product engineer",
   } satisfies Text,
   // PLACEHOLDER (P4, Q3): role type, contract and mode wait for the owner.
   availability: {
     en: "Open to full-time and contract roles · remote or hybrid",
     pl: "Otwarty na etat i kontrakt B2B · zdalnie lub hybrydowo",
-    es: "Disponible para empleo o contrato · en remoto o híbrido",
+    es: "Disponible para contrato indefinido o freelance · en remoto o híbrido",
   } satisfies Text,
   // PLACEHOLDER (P3, Q27): region line.
   location: { en: "Pomorskie, Poland", pl: "Pomorskie, Polska", es: "Pomerania, Polonia" } satisfies Text,
   summary: {
     en: "Full-stack product engineer who builds web and mobile products end to end, from the business problem to the shipped app, since 2022. I work in TypeScript, React, Next.js, Astro, React Native (Expo), Node.js and Supabase/Postgres. I use AI agents (Claude Code) as leverage and keep the decisions and the verification: tests, accessibility and performance checks on every change.",
-    pl: "Full-stack product engineer: od 2022 roku buduję produkty webowe i mobilne od początku do końca, od problemu biznesowego do wdrożonej aplikacji. Pracuję w TypeScript, React, Next.js, Astro, React Native (Expo), Node.js i Supabase/Postgres. Agentów AI (Claude Code) używam jako dźwigni, a decyzje i weryfikację zostawiam sobie: testy, dostępność i wydajność sprawdzane przy każdej zmianie.",
-    es: "Ingeniero de producto full stack que construye productos web y móviles de principio a fin, desde el problema de negocio hasta la app publicada, desde 2022. Trabajo con TypeScript, React, Next.js, Astro, React Native (Expo), Node.js y Supabase/Postgres. Uso agentes de IA (Claude Code) como palanca y me quedo con las decisiones y la verificación: tests, accesibilidad y rendimiento en cada cambio.",
+    pl: "Full-stack product engineer: od 2022 roku buduję produkty webowe i mobilne od początku do końca, od problemu biznesowego do wdrożonej aplikacji. Pracuję w TypeScript, React, Next.js, Astro, React Native (Expo), Node.js i Supabase/Postgres. Agentów AI (Claude Code) używam, żeby zrobić więcej, a decyzje i weryfikację zostawiam sobie: testy, dostępność i wydajność sprawdzane przy każdej zmianie.",
+    es: "Full-stack product engineer. Desde 2022 desarrollo productos web y móviles de principio a fin, del problema de negocio a la app publicada. Trabajo con TypeScript, React, Next.js, Astro, React Native (Expo), Node.js y Supabase/Postgres. Uso agentes de IA (Claude Code) para hacer más y me quedo con las decisiones y la verificación: tests, accesibilidad y rendimiento en cada cambio.",
   } satisfies Text,
 
   experience: [
     {
       id: "pstrykweb",
       title: { en: "Intern, Cetuspro", pl: "Praktykant, Cetuspro", es: "Becario, Cetuspro" },
-      org: { en: "Software house, remote", pl: "Software house, zdalnie", es: "Software house, en remoto" },
+      org: { en: "Software house, remote", pl: "Software house, zdalnie", es: "Empresa de software, en remoto" },
       // [user 2026-10-06] "june to currently".
       when: { en: "June 2026 – now", pl: "czerwiec 2026 – obecnie", es: "junio de 2026 – actualidad" },
       current: true,
@@ -143,14 +143,14 @@ export const CV = {
         {
           en: "Real commercial projects; built the public configurator of PstrykWeb, the online order form (Next.js, TypeScript, Vercel).",
           pl: "Prawdziwe projekty komercyjne; zbudowałem publiczny konfigurator PstrykWeb, czyli formularz zamówienia online (Next.js, TypeScript, Vercel).",
-          es: "Proyectos comerciales reales; construí el configurador público de PstrykWeb, el formulario de pedido online (Next.js, TypeScript, Vercel).",
+          es: "Proyectos comerciales reales; desarrollé el configurador público de PstrykWeb, el formulario de pedido online (Next.js, TypeScript, Vercel).",
         },
       ],
     },
     {
       id: "neoteric",
       title: { en: "Intern, Neoteric", pl: "Stażysta, Neoteric", es: "Becario, Neoteric" },
-      org: { en: "Software house, Poland", pl: "Software house, Polska", es: "Software house, Polonia" },
+      org: { en: "Software house, Poland", pl: "Software house, Polska", es: "Empresa de software, Polonia" },
       // [user 2026-10-06] six weeks, working with AI.
       when: { en: "2026 · 6 weeks", pl: "2026 · 6 tygodni", es: "2026 · 6 semanas" },
       short: {
@@ -158,7 +158,7 @@ export const CV = {
         note: {
           en: "6 weeks, building with AI agents",
           pl: "6 tygodni, budowanie z agentami AI",
-          es: "6 semanas, construir con agentes de IA",
+          es: "6 semanas, desarrollo con agentes de IA",
         },
       },
       // "15-requirement" broke at its hyphen and extractors joined it into "15requirement". The test and security
@@ -167,7 +167,7 @@ export const CV = {
         {
           en: "Built Clockful, a role-based time tracker, with AI agents only, from a spec of 15 requirements in about 9 days (an estimate from the repo dates).",
           pl: "Zbudowałem Clockful, aplikację do ewidencji czasu pracy z rolami, wyłącznie z agentami AI, ze specyfikacji 15 wymagań w około 9 dni (szacunek z dat w repozytorium).",
-          es: "Construí Clockful, un control de horas con roles, solo con agentes de IA, a partir de 15 requisitos en unos 9 días (estimación según las fechas del repositorio).",
+          es: "Desarrollé Clockful, una app de control horario con roles, solo con agentes de IA, a partir de 15 requisitos en unos 9 días (estimación según las fechas del repositorio).",
         },
       ],
     },
@@ -183,7 +183,7 @@ export const CV = {
         note: {
           en: "soft skills and social projects",
           pl: "umiejętności miękkie i projekty społeczne",
-          es: "habilidades sociales y proyectos sociales",
+          es: "habilidades blandas y proyectos sociales",
         },
       },
       bullets: [
@@ -212,7 +212,7 @@ export const CV = {
         },
         {
           en: "A mobile app for a local youth space; the principal of my technical secondary school gave me an award for it.",
-          pl: "Aplikacja mobilna dla lokalnej przestrzeni dla młodzieży; dyrektor mojego technikum nagrodził mnie za nią.",
+          pl: "Aplikacja mobilna dla lokalnej przestrzeni młodzieżowej; dyrektor mojego technikum nagrodził mnie za nią.",
           es: "Una app móvil para un espacio juvenil local; el director de mi escuela técnica me dio un premio por ella.",
         },
       ],
@@ -266,7 +266,7 @@ export const CV = {
       bullets: [
         {
           en: "Bespoke websites for local businesses, ordered through one online form.",
-          pl: "Strony na zamówienie dla lokalnych firm, zamawiane przez jeden formularz online.",
+          pl: "Strony na miarę dla lokalnych firm, zamawiane przez jeden formularz online.",
           es: "Webs a medida para negocios locales, encargadas con un solo formulario online.",
         },
       ],
@@ -288,7 +288,7 @@ export const CV = {
         {
           en: "Designed, built and shipped an AI language-learning app to the App Store and Google Play, solo: snap a photo to get flashcards, quizzes and voice practice.",
           pl: "Sam zaprojektowałem, zbudowałem i wydałem w App Store i Google Play aplikację do nauki języków z AI: zdjęcie zamienia się w fiszki, quizy i ćwiczenia mówienia.",
-          es: "Diseñé, construí y publiqué en solitario en App Store y Google Play una app de idiomas con IA: una foto se convierte en tarjetas, tests y práctica oral.",
+          es: "Diseñé, desarrollé y publiqué en solitario en App Store y Google Play una app de idiomas con IA: una foto se convierte en tarjetas, tests y práctica oral.",
         },
         {
           en: "Free trial, then monthly or yearly plans through RevenueCat; 30 languages with Lingui (Expo, React Native, Supabase).",
@@ -321,7 +321,7 @@ export const CV = {
       line: {
         en: "Software houses, hackathon teams",
         pl: "Software house'y i hackathony",
-        es: "Software houses, equipos de hackathon",
+        es: "Empresas de software, equipos de hackathon",
       },
     },
     {
@@ -338,7 +338,7 @@ export const CV = {
       name: { en: "Business thinking", pl: "Myślenie biznesowe", es: "Visión de negocio" },
       line: {
         en: "Solutions measured by business results",
-        pl: "Rozwiązania mierzone wynikami biznesu",
+        pl: "Rozwiązania mierzone wynikami firmy",
         es: "Soluciones medidas por resultados",
       },
     },
@@ -365,7 +365,7 @@ export const CV = {
       name: { en: "Analytical thinking", pl: "Myślenie analityczne", es: "Pensamiento analítico" },
       line: {
         en: "Marketing planned around goals and data",
-        pl: "Marketing planowany wokół celów i danych",
+        pl: "Marketing oparty na celach i danych",
         es: "Marketing con objetivos y datos",
       },
     },
@@ -457,7 +457,7 @@ export const CV = {
       kind: "course",
       icon: "si:threedotjs",
       title: same("Three.js Journey"),
-      issuer: { en: "Course by Bruno Simon", pl: "Kurs Bruno Simona", es: "Curso de Bruno Simon" },
+      issuer: { en: "Course by Bruno Simon", pl: "Kurs Bruna Simona", es: "Curso de Bruno Simon" },
       summary: {
         // [user 2026-10-07] 90+ hours; WebGL, shaders, Blender; Bruno Simon as the teacher; link the course too.
         en: "90+ hours of WebGL, shaders and Blender: bringing 3D worlds to the web, taught by Bruno Simon, one of the best-known creative developers out there.",
@@ -607,7 +607,7 @@ export const CV = {
       id: "hackathons",
       kind: "hackathon",
       icon: "tb:clock-hour-4",
-      title: { en: "Hackathons", pl: "Hackathony", es: "Hackathones" },
+      title: { en: "Hackathons", pl: "Hackathony", es: "Hackathons" },
       issuer: { en: "Team events", pl: "Wydarzenia zespołowe", es: "Eventos en equipo" },
       summary: {
         en: "A hard problem, a team and a clock. They teach me to decide fast, split the work and ship something that works under pressure.",
