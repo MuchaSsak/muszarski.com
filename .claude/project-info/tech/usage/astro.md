@@ -48,7 +48,10 @@
 
 ## Head, CSP, SEO
 
-- Astro's CSP is on (`astro.config.mjs` `security.csp`): inline scripts and styles get hashes automatically. A new third-party
+- Astro's CSP is on (`astro.config.mjs` `security.csp`): the scripts and styles Astro processes get hashes automatically,
+  `is:inline` scripts do NOT. The head's inline scripts (theme, Umami loader) run only because they come before the CSP
+  `<meta>`; an `is:inline` script in the body is blocked in every browser unless its hash is added (the 404's swap
+  script: `scripts/not-found.mjs`) (2026-10-08). A new third-party
   origin goes into the directives AND `legal/compliance-and-data.md`. React `style={{}}` attributes are allowed (`style-src-attr`).
 - `robots.txt` is generated (`src/pages/robots.txt.ts`): review builds disallow all; the launch allows all + sitemap.
 - Sitemap: `@astrojs/sitemap` with i18n alternates; only `/<locale>/` pages, never `/specimen/`.

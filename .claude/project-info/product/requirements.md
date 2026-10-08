@@ -38,7 +38,7 @@
 | F18 | Themes | — | ~~Cobalt (default) / Paper / Ink, cycled by one switch~~ | **cut by the owner 2026-10-06** (clutter): one theme, Cobalt (`design.md` § Themes and fields) |
 | F19 | Motion safety | must | `prefers-reduced-motion` honoured everywhere; pause control for any motion > 5 s (WCAG 2.2.2) | built 2026-10-05 |
 | F20 | Signature moment | must | Poster: the fitted name, final from the server (LCP), letter accordion after load; no WebGL in the hero (`design.md`) | done 2026-10-05 |
-| F21 | 404 page | should | Helpful links (work, contact, home) + a small drawing | built 2026-10-05 |
+| F21 | 404 page | should | Helpful links (work, contact, home) + a small drawing | built 2026-10-05; per-locale copy + home / all projects / contact 2026-10-08 (no drawing: type-led, like the rest) |
 | F22 | ⌘K palette | could | Accelerator only; every action also reachable by normal UI | todo |
 | F23 | Case study #0 "how this site was built" | should | Budgets, tiers, a11y, Lighthouse CI, AI workflow, Astro choice | built 2026-10-05 (blog post, en + pl) |
 | F24 | `/explore` immersive hub | later | Opt-in; links to the same `/work/<slug>/` URLs | — |
