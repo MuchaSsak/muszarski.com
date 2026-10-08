@@ -216,6 +216,11 @@ const two = (n: number) => String(n).padStart(2, "0");
     text-transform: uppercase;
     font-stretch: 62%;
   }
+  /* Polish and Spanish capitals carry marks (Ę, Ż, Í) that the tight poster leading let touch the next line
+     (2026-10-08). */
+  .pr-title:is(:lang(pl), :lang(es)) {
+    line-height: 0.96;
+  }
   .pr-hint {
     display: flex;
     align-items: center;

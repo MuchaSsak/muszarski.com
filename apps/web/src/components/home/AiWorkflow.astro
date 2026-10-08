@@ -1711,11 +1711,12 @@ const lesson = t`Test focus in Safari too`;
       --ps: 1.4;
     }
     /* Brief: the agent steps under the brief and answers from the side, so the bubble stays inside the frame. */
+    /* Sized for the Polish brief, whose values wrap to two lines (at 1.45 the agent fell off the frame, 2026-10-08). */
     .sc-brief {
-      --ps: 1.45;
+      --ps: 1.32;
     }
     .sc-brief > * {
-      translate: 0 6.5cqw;
+      translate: 0 3.5cqw;
     }
     .sc-brief .row {
       display: grid;
@@ -1749,8 +1750,9 @@ const lesson = t`Test focus in Safari too`;
     .sc-checks {
       --ps: 1.5;
     }
+    /* The Spanish and Polish search pills are longer; at 1.4 the findings sheet met the frame edge (2026-10-08). */
     .sc-research {
-      --ps: 1.4;
+      --ps: 1.25;
     }
     .sc-research .row > .av,
     .sc-build .row > .av,

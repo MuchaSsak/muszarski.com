@@ -19,7 +19,8 @@ const em = lineEm(ring, 115) + 0.18 * [...ring].length;
 const fontSize = Math.min(19, circumference / em);
 ---
 
-<div class="sticker enter" aria-hidden="true">
+{/* Slapped over the name's last letter on purpose (design.md § Components; text-fit probe: data-textfit). */}
+<div class="sticker enter" aria-hidden="true" data-textfit="stack">
   <div class="st-spin">
     <svg viewBox="0 0 200 200">
       <circle cx="100" cy="100" r="96"></circle>

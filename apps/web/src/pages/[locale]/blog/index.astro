@@ -306,11 +306,37 @@ const showing = t`Showing`;
         inset 0 0 0 3px currentColor,
         5px 5px 0 currentColor;
     }
+    /* Two selects share a row only when "Wszystkie tematy" still fits beside its chevron (it read "Wszystkie te" at
+       390 px, 2026-10-08); the kind switch stays one row of three, a long label wrapping inside its own segment. */
     .pick {
-      flex: 1 1 9rem;
+      flex: 1 1 12rem;
     }
     .pick select {
       width: 100%;
+    }
+    .seg {
+      flex-wrap: nowrap;
+    }
+    .seg button {
+      flex: 1 1 auto;
+      justify-content: center;
+      min-width: 0;
+      padding: 0.375rem 0.625rem;
+      font-stretch: 100%;
+      letter-spacing: 0.02em;
+      text-align: center;
+    }
+  }
+  /* The smallest phones can't hold three Polish segments in a row: they wrap, and each row still fills the width. */
+  @media (max-width: 24rem) {
+    .seg {
+      flex-wrap: wrap;
+    }
+    .seg button {
+      flex-basis: 40%;
+    }
+    .seg button + button {
+      margin-left: 0;
     }
   }
 </style>

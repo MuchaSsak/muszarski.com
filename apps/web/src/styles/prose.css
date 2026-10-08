@@ -32,6 +32,11 @@
   line-height: 1.15;
   font-stretch: 90%;
 }
+/* Underlined: the reset leaves links looking like body text (posts and the legal pages, 2026-10-08). A link a component
+   styles (a button, a card) carries a class and keeps its own look. */
+.prose a:not([class]) {
+  text-decoration-line: underline;
+}
 .prose a {
   text-decoration-thickness: 2px;
   text-underline-offset: 0.18em;
@@ -45,6 +50,17 @@
 .prose ul,
 .prose ol {
   padding-left: 1.3em;
+}
+/* Markdown lists get their markers back (Tailwind's reset removes them): the terms cite "§ 3(1)" and "point 2)", and a
+   post's list read as loose paragraphs without them (2026-10-08). Lists a component styles itself carry a class. */
+.prose ul:not([class]) {
+  list-style: disc;
+}
+.prose ol:not([class]) {
+  list-style: decimal;
+}
+.prose ol:not([class]) ol:not([class]) > li::marker {
+  content: counter(list-item) ") ";
 }
 .prose li {
   margin: 0.35em 0;

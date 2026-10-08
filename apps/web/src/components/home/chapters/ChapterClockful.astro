@@ -191,10 +191,12 @@ const start = t`Start`;
     min-width: 0;
     padding: 3cqw 3.4cqw;
   }
+  /* Wraps on a narrow phone: the Spanish labels ("En marcha", "Detener", "Empleado | Admin") ran past the frame at 320 px. */
   .d-head {
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
-    gap: 1.6cqw;
+    gap: 1.2cqw 1.6cqw;
     font-weight: 800;
     font-size: max(0.625rem, 1.7cqw);
     letter-spacing: 0.05em;

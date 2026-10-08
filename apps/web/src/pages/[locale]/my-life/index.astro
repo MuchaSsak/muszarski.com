@@ -158,9 +158,11 @@ const SOCIAL_ICONS: Record<string, IconName> = { discord: "si:discord", messenge
     max-width: 100%;
     white-space: normal;
   }
+  /* Narrower than the column, so the tilt and the hard shadow stay inside the gutters on a phone (they touched both
+     screen edges at 390 px, 2026-10-08). */
   .win {
     justify-self: center;
-    width: min(100%, 27rem);
+    width: min(100% - 1.5rem, 27rem);
     background: var(--ice);
     color: var(--navy);
     box-shadow:

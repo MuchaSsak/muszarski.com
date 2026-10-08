@@ -27,11 +27,19 @@ const { as: Tag = "p", lines, base = [66, 96], motion = "wave", decorative = fal
 const locale = Astro.locals.locale;
 const narrow = fitLines(lines, base[0], locale);
 const wide = fitLines(lines, base[1], locale);
+// Accented capitals need room the 0.8 leading doesn't leave (Polish "Ż" sat on the rule above "INŻYNIER", "Ę" hooked
+// into the next line, Spanish "Í" hit "HABLAMOS", 2026-10-08): more leading where a mark meets another line, and top
+// room when the first line carries one. English titles keep the tight poster leading.
+const caps = lines.map((line) => line.toLocaleUpperCase(locale));
+const ABOVE = /[ĆŃÓŚŹŻÁÉÍÚÑÜ]/;
+const BELOW = /[ĄĘÇ]/;
+const marks = caps.some((line, i) => (i > 0 && ABOVE.test(line)) || (i < caps.length - 1 && BELOW.test(line)));
+const top = ABOVE.test(caps[0] ?? "");
 ---
 
 <div class:list={["fit-host", className]}>
   <Tag
-    class="fit"
+    class:list={["fit", { marks, top }]}
     id={id}
     data-fit={motion === "still" ? undefined : motion}
     aria-hidden={decorative ? "true" : undefined}
@@ -58,6 +66,12 @@ const wide = fitLines(lines, base[1], locale);
     line-height: 0.8;
     text-transform: uppercase;
     font-size: calc(var(--fs-n) * 1cqi);
+  }
+  .fit.marks {
+    line-height: 0.94;
+  }
+  .fit.top {
+    padding-top: 0.14em;
   }
   .line {
     display: block;

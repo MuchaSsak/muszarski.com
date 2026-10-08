@@ -644,10 +644,11 @@
 .mx-scroll {
   overflow-x: auto;
 }
+/* Wide enough that the longest surname ("Temmerman") fits its cell; narrower screens scroll the table (2026-10-08). */
 .mx .mx-table {
   display: table;
   width: 100%;
-  min-width: 34rem;
+  min-width: 38rem;
   max-width: none;
   margin: 0;
   overflow: visible;

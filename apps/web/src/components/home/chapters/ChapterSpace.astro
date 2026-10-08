@@ -64,14 +64,10 @@ const labelPlay = t`Play video`;
       <figcaption class="credit">
         {t`Desktop · WebGL2 · ~14 MB.`}
         {t`Planet textures:`}{" "}
-        <a href="https://www.solarsystemscope.com/textures/" rel="noopener" target="_blank">
-          Solar System Scope<span class="sr-only"> {t`(opens in a new tab)`}</span>
-        </a>
-        ,{" "}
-        <a href="https://creativecommons.org/licenses/by/4.0/" rel="license noopener" target="_blank">
-          CC BY 4.0<span class="sr-only"> {t`(opens in a new tab)`}</span>
-        </a>
-        .
+        {/* Punctuation glued to the links, in one ignored node: prettier's line breaks rendered "Scope , CC BY 4.0 ."
+            (2026-10-08). */}
+        <!-- prettier-ignore -->
+        <span><a href="https://www.solarsystemscope.com/textures/" rel="noopener" target="_blank">Solar System Scope<span class="sr-only"> {t`(opens in a new tab)`}</span></a>, <a href="https://creativecommons.org/licenses/by/4.0/" rel="license noopener" target="_blank">CC BY 4.0<span class="sr-only"> {t`(opens in a new tab)`}</span></a>.</span>
       </figcaption>
     </figure>
 

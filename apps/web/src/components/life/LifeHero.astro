@@ -47,7 +47,8 @@ const prints = GALLERY.filter((entry) => entry.hero)
       </div>
       {prints.length ? (
         <div class="stack enter" data-stack>
-          <div class="deck">
+          {/* The photos lie on top of each other on purpose (text-fit probe: data-textfit). */}
+          <div class="deck" data-textfit="stack">
             {prints.map((print, i) => (
               <figure class="photo" data-print data-pos={i}>
                 <Image
@@ -187,10 +188,12 @@ const prints = GALLERY.filter((entry) => entry.hero)
     transform: translateX(-50%) rotate(-3deg);
   }
   /* The prints share one cell; --pos 0 is on top, the rest fan out behind it. */
+  /* The fanned prints hang ~40 px below the deck's cell (a 9deg turn plus the 4% drop), so the button sits clear of them
+     and above them (their corners covered the top of "ZDJĘCIE" / "FOTO", 2026-10-08). */
   .stack {
     display: grid;
     justify-items: center;
-    gap: 1.25rem;
+    gap: 3rem;
     justify-self: center;
     width: min(100%, 20rem);
     pointer-events: auto;
@@ -222,6 +225,8 @@ const prints = GALLERY.filter((entry) => entry.hero)
     display: none;
   }
   .deal {
+    position: relative;
+    z-index: 4;
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;

@@ -372,7 +372,9 @@ const graph = {
     font-size: 1.0625rem;
     font-stretch: 115%;
   }
-  @media (max-width: 47.99rem) {
+  /* Below 1600 px the row doesn't hold all five (the LinkedIn address is long), so the tile follows the row instead of
+     sitting alone at the far right of a second line (2026-10-08). */
+  @media (max-width: 99.99rem) {
     .cw-web {
       margin-left: 0;
     }

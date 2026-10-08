@@ -243,8 +243,10 @@ const homeLabel = t`${name}, home`;
     }
   }
 
-  /* Phones: condensed button type keeps mark + CV + Contact + Menu on one row at 320 px. */
-  @media (max-width: 29.9375rem) {
+  /* Phones: condensed button type keeps mark + CV + Contact + Menu on one row at 320 px. Up to 640 px: the one-line
+     name and full buttons need ~590 px in Polish, so between 480 and 590 the Menu button sat past the screen edge
+     (2026-10-08). */
+  @media (max-width: 39.9375rem) {
     .site-header {
       gap: 0.5rem;
     }

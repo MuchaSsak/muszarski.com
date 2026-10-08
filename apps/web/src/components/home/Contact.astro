@@ -168,10 +168,9 @@ const found = {
           <Icon name="tb:copy" />
           <span>
             {t`Copy email`}
-            <small>
-              {emailUser}@<wbr />
-              {emailDomain}
-            </small>
+            {/* One line: a line break in the markup rendered as a space after the @ ("hi@ muszarski.com"). */}
+            <!-- prettier-ignore -->
+            <small>{emailUser}@<wbr />{emailDomain}</small>
           </span>
         </button>
         <a

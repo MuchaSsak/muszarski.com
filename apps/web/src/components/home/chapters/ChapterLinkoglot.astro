@@ -42,7 +42,8 @@ const labelPlay = t`Play video`;
     <div class="stage">
       <figure class="reel" data-reel>
         <div class="frame">
-          <div class="phone enter">
+          {/* The phone breaks into the fitted title on purpose (text-fit probe: data-textfit). */}
+          <div class="phone enter" data-textfit="stack">
             <video
               tabindex="-1"
               muted
@@ -252,6 +253,13 @@ const labelPlay = t`Play video`;
     }
   }
 
+  /* Mid widths: the gap to the text column is narrow, so the card pokes out less (at -24% it covered "Zbudowane w" and
+     the tools between ~900 and ~1400 px, 2026-10-08). */
+  @media (min-width: 56.3rem) and (max-width: 87.5rem) {
+    .flash {
+      right: -6%;
+    }
+  }
   @media (max-width: 56.25rem) {
     .board {
       grid-template-columns: minmax(0, 1fr);
@@ -271,13 +279,17 @@ const labelPlay = t`Play video`;
         0 0 0 7px var(--navy),
         12px 14px 0 7px rgb(10 13 51 / 0.9);
     }
+    /* Sized for the longest word on either face ("flowerpot" ran out of an 8.25rem card, 2026-10-08). */
     .flash {
       right: -18%;
       top: 56%;
-      width: 8.25rem;
+      width: 9.5rem;
+    }
+    .flash .face {
+      padding: 0.75rem 0.875rem;
     }
     .flash b {
-      font-size: 1.5rem;
+      font-size: 1.375rem;
     }
   }
 </style>

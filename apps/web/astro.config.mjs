@@ -72,7 +72,9 @@ function legalTokens(context) {
           const token = /^\[\[([A-Z_]+)\]\]$/.exec(part)?.[1];
           if (!token) return { type: "text", value: part };
           if (token in known) return { type: "text", value: known[token] };
-          if (token in gaps) return { raw: `<mark class="tbd" data-placeholder>[${gaps[token]}]</mark>` };
+          // An inline html node: a `{ raw }` string re-parses as a block and wrapped the mark in its own <p>, splitting the
+          // sentence around it (2026-10-08).
+          if (token in gaps) return { type: "html", value: `<mark class="tbd" data-placeholder>[${gaps[token]}]</mark>` };
           throw new Error(`Unknown legal token [[${token}]] in ${path}`);
         });
       ctx.replaceNode(node, parts);

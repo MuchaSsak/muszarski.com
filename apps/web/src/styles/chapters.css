@@ -554,11 +554,12 @@
   flex: none;
   margin-left: auto;
 }
-/* Wide screens: the label sits on two lines before the tickets, so the whole strip is one row. */
+/* Wide screens: the label sits on two lines before the tickets, so the whole strip is one row. The box hugs its
+   longest word in every locale (an English-sized 6.5em cap let "Wypuściłem" spill out, 2026-10-08). */
 @media (min-width: 70rem) {
   .more-label {
     flex-basis: auto;
-    max-width: 6.5em;
+    width: min-content;
     line-height: 1.2;
   }
 }
@@ -582,8 +583,11 @@
   }
 }
 @media (max-width: 40rem) {
+  /* Narrower letters on phones, so the longer Polish and Spanish badges stay on one line ("· 2026" wrapped alone). */
   .tag-chip {
     font-size: 0.75rem;
+    font-stretch: 100%;
+    letter-spacing: 0.02em;
   }
   .mstats {
     grid-template-columns: repeat(2, minmax(0, 1fr));

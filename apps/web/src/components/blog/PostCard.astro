@@ -27,7 +27,9 @@ interface Props {
 
 const { post, wide = false, compact = false, headingLevel: H = "h3" } = Astro.props;
 const locale = postLocale(post);
-const date = new Intl.DateTimeFormat(locale, {
+// The meta row is the page's chrome, so it reads in the page's language; only the title and description keep the
+// post's (an English post on the Spanish home showed "OCT 5, 2026" beside "MIN DE LECTURA", 2026-10-08).
+const date = new Intl.DateTimeFormat(Astro.locals.locale, {
   day: "numeric",
   month: "short",
   year: "numeric",
@@ -44,7 +46,6 @@ const search = [post.data.title, post.data.description, ...post.data.tags].join(
   data-kind={caseStudy ? "case-study" : "article"}
   data-minutes={minutes}
   data-search={search}
-  lang={locale}
 >
   {caseStudy && !compact && <span class="cs-stamp" aria-hidden="true">{t`Case study`}</span>}
   {/* A featured post on the home rail gets a sticker [user 2026-10-08: "add a featured badge to this on notes from work"]. */}
@@ -63,10 +64,14 @@ const search = [post.data.title, post.data.description, ...post.data.tags].join(
       <time datetime={post.data.published.toISOString()}>{date}</time>
       <span>{t`${minutes} min read`}</span>
     </p>
-    <H class="title">
+    <H class="title" lang={locale}>
       <a href={postPath(post)}>{post.data.title}</a>
     </H>
-    {!compact && <p class="desc">{typo(locale, post.data.description)}</p>}
+    {!compact && (
+      <p class="desc" lang={locale}>
+        {typo(locale, post.data.description)}
+      </p>
+    )}
   </div>
 </article>
 
@@ -266,6 +271,16 @@ const search = [post.data.title, post.data.description, ...post.data.tags].join(
   @media (max-width: 48rem) {
     .card.wide {
       grid-template-columns: minmax(0, 1fr);
+    }
+  }
+  /* Phones: the picture over the text, so a long Polish title gets the card's full width (beside an 8.5rem picture
+     "brutalistyczne" ran out of a 320 px card, 2026-10-08). */
+  @media (max-width: 30rem) {
+    .card.compact {
+      grid-template-columns: minmax(0, 1fr);
+      align-items: start;
+      gap: 0.75rem;
+      padding: 0.625rem 0.625rem 1rem;
     }
   }
 </style>

@@ -256,7 +256,8 @@ const tocLabel = t`On this page`;
     margin: 0;
     font-weight: 900;
     font-size: clamp(2.25rem, 1.4rem + 3.6vw, 5.25rem);
-    line-height: 0.96;
+    /* Mixed case: descenders and Polish marks need the room ("Próbuję" hit "brutalistyczne" at 0.96, 2026-10-08). */
+    line-height: 1.04;
     letter-spacing: -0.01em;
     font-stretch: 72%;
   }

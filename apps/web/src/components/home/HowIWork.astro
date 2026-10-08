@@ -233,7 +233,7 @@ const VITALS = [t`speed`, t`accessibility`, "SEO"];
                     {BRIEF.map((item, k) => (
                       <span class="c-row" style={`--k:${k}`}>
                         <Icon name={item.icon} />
-                        {item.label}
+                        <span class="c-l">{item.label}</span>
                         <b>
                           <Icon name="tb:check" />
                         </b>
@@ -597,6 +597,11 @@ const VITALS = [t`speed`, t`accessibility`, "SEO"];
     line-height: 0.85;
     font-stretch: 58%;
     text-transform: uppercase;
+  }
+  /* Polish and Spanish capitals carry marks (Ę, Ż, Í) that the tight poster leading let touch the next line
+     (2026-10-08). */
+  .core .nm:is(:lang(pl), :lang(es)) {
+    line-height: 0.96;
   }
   .stops {
     margin: 0;
@@ -1048,7 +1053,8 @@ const VITALS = [t`speed`, t`accessibility`, "SEO"];
     font-size: 2.6cqw;
     letter-spacing: 0.04em;
     text-transform: uppercase;
-    clip-path: inset(0);
+    /* The typing reveal ends a little outside the row, so the check's ring isn't cut flat on the right. */
+    clip-path: inset(-1cqw);
     animation: hw-line 0.45s steps(10, end) both;
     animation-delay: calc(3.3s + var(--k) * 0.5s);
   }
@@ -1057,7 +1063,12 @@ const VITALS = [t`speed`, t`accessibility`, "SEO"];
     width: 3.6cqw;
     height: 3.6cqw;
   }
+  /* A long label ("presupuesto") keeps clear of its check. */
+  .c-l {
+    margin-right: 1.6cqw;
+  }
   .c-row b {
+    flex: none;
     display: grid;
     margin-left: auto;
     width: 3.8cqw;
@@ -1353,8 +1364,10 @@ const VITALS = [t`speed`, t`accessibility`, "SEO"];
     }
   }
   /* Where they gave up: tagged, then struck through once fixed. */
+  /* Clear of the check on its right, whatever the locale's word ("porzucenia" nearly touched it, 2026-10-08). */
   .f-tag {
     position: relative;
+    margin-right: 1.6cqw;
     margin-left: 1cqw;
     padding: 0.2cqw 1cqw;
     background: var(--pink);
@@ -1394,11 +1407,12 @@ const VITALS = [t`speed`, t`accessibility`, "SEO"];
     height: 0.6cqw;
     background: repeating-linear-gradient(90deg, var(--navy) 0 1.6cqw, transparent 1.6cqw 3cqw);
   }
+  /* The label clears the tile's hard shadow (1.7cqw), so accents ("interés", "acción") don't merge into its edge. */
   .p-node {
     position: relative;
     display: grid;
     justify-items: center;
-    gap: 1.6cqw;
+    gap: 2.8cqw;
     width: 14cqw;
   }
   .p-ico {
@@ -2041,16 +2055,22 @@ const VITALS = [t`speed`, t`accessibility`, "SEO"];
   .d-card {
     animation: hw-pop 0.45s var(--ease-pop) both;
   }
+  /* The rows share one label column as wide as the longest label ("Rejestracje", "Registros" ran under their bars in a
+     fixed 15cqw column, 2026-10-08). */
   .d-fun {
     display: grid;
+    grid-template-columns: max-content minmax(8cqw, 1fr);
     gap: 1.4cqw;
     padding: 2.2cqw 2.6cqw;
   }
   .fun {
     display: grid;
-    grid-template-columns: 15cqw minmax(0, 1fr);
+    grid-column: 1 / -1;
+    grid-template-columns: subgrid;
     align-items: center;
-    gap: 1.4cqw;
+  }
+  .fun small {
+    white-space: nowrap;
   }
   .fun i {
     display: block;

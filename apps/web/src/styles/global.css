@@ -210,6 +210,17 @@
       color var(--dur-fast);
     -webkit-tap-highlight-color: transparent;
   }
+  /* Phones: a long Polish or Spanish label wraps at a word gap instead of pushing the button past the screen ("Read:
+     psychology in UX" made a 280 px card 312 px wide, 2026-10-08). One-line buttons look the same. */
+  @media (max-width: 40rem) {
+    .btn {
+      max-width: 100%;
+      padding-block: 0.625rem;
+      line-height: 1.15;
+      text-align: center;
+      white-space: normal;
+    }
+  }
   .btn .ico {
     width: 1.25rem;
     height: 1.25rem;
@@ -332,10 +343,13 @@
   .sbar.in::after {
     transition: transform 1s var(--ease-out);
   }
+  /* Phones: the left label keeps up to half and the type narrows (a long right label squeezed "Flujo de trabajo con IA"
+     to one word per line, and "configuración" was wider than its column, 2026-10-08). */
   @media (max-width: 40rem) {
     .sbar {
-      grid-template-columns: 1fr auto;
+      grid-template-columns: fit-content(50%) minmax(0, 1fr);
       font-size: 0.75rem;
+      font-stretch: 105%;
     }
     .sbar > :nth-child(2) {
       display: none;
