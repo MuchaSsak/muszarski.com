@@ -364,7 +364,7 @@ msgstr "Klient"
 msgid "Client work"
 msgstr "Praca dla klienta"
 
-#: src/components/work/WorkHero.astro:60
+#: src/components/work/WorkHero.astro:63
 msgid "Client work, my own products, open source and experiments. Pick one, or scroll through all of them."
 msgstr "Praca dla klientów, moje własne produkty, open source i eksperymenty. Wybierz projekt albo przewiń, żeby zobaczyć wszystkie."
 
@@ -1103,7 +1103,7 @@ msgstr "Po godzinach"
 msgid "On it. Briefing the team."
 msgstr "Działam. Zbieram zespół."
 
-#: src/components/work/WorkHero.astro:63
+#: src/components/work/WorkHero.astro:66
 #: src/pages/[locale]/blog/[slug].astro:54
 msgid "On this page"
 msgstr "Na tej stronie"
@@ -1289,7 +1289,7 @@ msgstr "Prywatność"
 msgid "Privacy policy"
 msgstr "Polityka prywatności"
 
-#: src/components/work/PrivateRepos.astro:22
+#: src/components/work/PrivateRepos.astro:25
 msgid "Private"
 msgstr "Prywatne"
 
@@ -1338,7 +1338,7 @@ msgstr "Czytaj: psychologia w UX"
 msgid "real app references"
 msgstr "prawdziwe aplikacje jako wzór"
 
-#: src/components/work/WorkHero.astro:41
+#: src/components/work/WorkHero.astro:43
 #: src/pages/[locale]/work/index.astro:178
 msgid "Recording soon"
 msgstr "Nagranie wkrótce"
@@ -1722,7 +1722,7 @@ msgstr "Zespół"
 msgid "Then the code: web, mobile and backend, end to end, tested."
 msgstr "Potem kod: web, mobile i backend, od początku do końca, z testami."
 
-#: src/components/work/PrivateRepos.astro:20
+#: src/components/work/PrivateRepos.astro:23
 msgid "There are actually a lot more projects I've built that I won't show here: they live in private repositories. I mean, I could show you, but then I'd have to neutralize you, you know?"
 msgstr "Projektów, które zbudowałem, jest tak naprawdę dużo więcej, ale tu ich nie pokażę: siedzą w prywatnych repozytoriach. No dobra, mógłbym Ci je pokazać, ale wtedy musiałbym Cię zneutralizować, rozumiesz?"
 
@@ -1730,11 +1730,11 @@ msgstr "Projektów, które zbudowałem, jest tak naprawdę dużo więcej, ale tu
 msgid "There was no address to reply to."
 msgstr "Nie podano adresu do odpowiedzi."
 
-#: src/components/work/PrivateRepos.astro:36
+#: src/components/work/PrivateRepos.astro:40
 msgid "There's more."
 msgstr "To nie wszystko."
 
-#: src/components/work/WorkHero.astro:40
+#: src/components/work/WorkHero.astro:42
 msgid "Things I’ve built"
 msgstr "Rzeczy, które zbudowałem"
 
@@ -1886,7 +1886,7 @@ msgstr "Wiki"
 
 #: src/components/layout/SiteFooter.astro:53
 #: src/components/layout/SiteHeader.astro:41
-#: src/components/work/WorkHero.astro:55
+#: src/components/work/WorkHero.astro:58
 msgid "Work"
 msgstr "Projekty"
 

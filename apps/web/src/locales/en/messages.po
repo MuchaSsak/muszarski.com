@@ -364,7 +364,7 @@ msgstr "Client"
 msgid "Client work"
 msgstr "Client work"
 
-#: src/components/work/WorkHero.astro:60
+#: src/components/work/WorkHero.astro:63
 msgid "Client work, my own products, open source and experiments. Pick one, or scroll through all of them."
 msgstr "Client work, my own products, open source and experiments. Pick one, or scroll through all of them."
 
@@ -1103,7 +1103,7 @@ msgstr "Off the clock"
 msgid "On it. Briefing the team."
 msgstr "On it. Briefing the team."
 
-#: src/components/work/WorkHero.astro:63
+#: src/components/work/WorkHero.astro:66
 #: src/pages/[locale]/blog/[slug].astro:54
 msgid "On this page"
 msgstr "On this page"
@@ -1289,7 +1289,7 @@ msgstr "Privacy"
 msgid "Privacy policy"
 msgstr "Privacy policy"
 
-#: src/components/work/PrivateRepos.astro:22
+#: src/components/work/PrivateRepos.astro:25
 msgid "Private"
 msgstr "Private"
 
@@ -1338,7 +1338,7 @@ msgstr "Read: psychology in UX"
 msgid "real app references"
 msgstr "real app references"
 
-#: src/components/work/WorkHero.astro:41
+#: src/components/work/WorkHero.astro:43
 #: src/pages/[locale]/work/index.astro:178
 msgid "Recording soon"
 msgstr "Recording soon"
@@ -1722,7 +1722,7 @@ msgstr "The team"
 msgid "Then the code: web, mobile and backend, end to end, tested."
 msgstr "Then the code: web, mobile and backend, end to end, tested."
 
-#: src/components/work/PrivateRepos.astro:20
+#: src/components/work/PrivateRepos.astro:23
 msgid "There are actually a lot more projects I've built that I won't show here: they live in private repositories. I mean, I could show you, but then I'd have to neutralize you, you know?"
 msgstr "There are actually a lot more projects I've built that I won't show here: they live in private repositories. I mean, I could show you, but then I'd have to neutralize you, you know?"
 
@@ -1730,11 +1730,11 @@ msgstr "There are actually a lot more projects I've built that I won't show here
 msgid "There was no address to reply to."
 msgstr "There was no address to reply to."
 
-#: src/components/work/PrivateRepos.astro:36
+#: src/components/work/PrivateRepos.astro:40
 msgid "There's more."
 msgstr "There's more."
 
-#: src/components/work/WorkHero.astro:40
+#: src/components/work/WorkHero.astro:42
 msgid "Things I’ve built"
 msgstr "Things I’ve built"
 
@@ -1886,7 +1886,7 @@ msgstr "Wiki"
 
 #: src/components/layout/SiteFooter.astro:53
 #: src/components/layout/SiteHeader.astro:41
-#: src/components/work/WorkHero.astro:55
+#: src/components/work/WorkHero.astro:58
 msgid "Work"
 msgstr "Work"
 

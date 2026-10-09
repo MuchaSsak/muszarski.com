@@ -7,8 +7,10 @@
  * - A wall of every project: a tile per project with its real picture (a capture of the live site, the app's poster)
  *   or its real text (the test run, the CLI), and its name on a tab in its colour. One click jumps to the project.
  *   On wide screens the wall leans back in 3D, its columns drift at different speeds with the scroll and the whole
- *   wall leans a degree toward the mouse; a hovered or focused tile steps forward and the others dim. On tablets and
- *   phones it is a flat two-row strip you swipe.
+ *   wall leans a degree toward the mouse; a hovered or focused tile steps forward and everything else goes dark (the
+ *   other tiles, the title, the field and the bar) [user 2026-10-09: "darken all things, including heading nad navbar
+ *   so only thing lighten up is the card we hover", a trial]. On tablets and phones it is a flat two-row strip you
+ *   swipe.
  * - Behind it a dithered colour field (`scripts/work-field.ts`, one fragment shader, no library) that gathers behind
  *   the wall and takes the colour of the project in play. It starts at the first interaction or a pointer over the
  *   head, only while in view; until then (or for good without WebGL) a CSS glow stands in. Paused or reduced motion:
@@ -50,6 +52,7 @@ const DRIFT = cols === 3 ? ["-3rem", "-7rem", "-1.5rem"] : ["-2.5rem", "-6rem"];
 
 <section class="sec wh near" aria-labelledby="t-work" data-field-host>
   <canvas class="wh-field" aria-hidden="true" data-field></canvas>
+  <span class="wh-dim" aria-hidden="true"></span>
   <div class="wh-in">
     <div class="wh-head">
       <p class="kick wh-kick rise">{t`Work`}</p>
@@ -132,6 +135,20 @@ const DRIFT = cols === 3 ? ["-3rem", "-7rem", "-1.5rem"] : ["-2.5rem", "-6rem"];
   .wh-field:global(.on) {
     opacity: 1;
   }
+  /* The dark over the field and the title while a tile is in play (the tiles dim their own way, below). */
+  .wh-dim,
+  .wt-a::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: rgb(7 8 28 / 0.74);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.45s var(--ease-out);
+  }
+  .wh-dim {
+    z-index: 1;
+  }
   .wh-in {
     position: relative;
     display: grid;
@@ -179,6 +196,8 @@ const DRIFT = cols === 3 ? ["-3rem", "-7rem", "-1.5rem"] : ["-2.5rem", "-6rem"];
      follows the mouse by a degree or two (`--lx`, `--ly`, set on the wrapper by scripts/work-field). */
   /* The mask box reaches past the wall on the left: the near side of the wall grows toward the title. */
   .wh-wall {
+    position: relative;
+    z-index: 2;
     margin: 0 calc(-1 * var(--pad-x)) 0 -5rem;
     padding: 2rem 0 7rem 5rem;
     mask-image: linear-gradient(to bottom, transparent, #000 10%, #000 82%, transparent);
@@ -235,7 +254,6 @@ const DRIFT = cols === 3 ? ["-3rem", "-7rem", "-1.5rem"] : ["-2.5rem", "-6rem"];
     inset: 0;
     display: grid;
     place-items: center;
-    transition: filter 0.45s var(--ease-out);
   }
   .wt-pic img {
     display: block;
@@ -308,15 +326,38 @@ const DRIFT = cols === 3 ? ["-3rem", "-7rem", "-1.5rem"] : ["-2.5rem", "-6rem"];
     text-overflow: ellipsis;
     box-shadow: 0 0 0 1px rgb(10 13 51 / 0.25);
   }
-  /* A tile in play steps forward; the others' pictures dim (pictures only: the names keep their contrast). */
+  /* A tile in play steps forward and is the one lit thing: the other tiles, the field, the title and the bar go dark
+     (a mouse, or the keyboard; not a tap, whose hover sticks after the jump). */
+  .wt-a::after {
+    border-radius: inherit;
+  }
   .wt-a:is(:hover, :focus-visible) {
     transform: translateZ(48px);
     box-shadow:
       0 0 0 2px var(--c),
       0 34px 60px -24px rgb(0 0 0 / 0.8);
   }
-  .ww:has(.wt-a:is(:hover, :focus-visible)) .wt-a:not(:hover, :focus-visible) .wt-pic {
-    filter: brightness(0.5) saturate(0.6);
+  .ww:has(.wt-a:focus-visible) .wt-a:not(:focus-visible)::after,
+  .wh:has(.wt-a:focus-visible) .wh-dim,
+  :global(html:has(.wt-a:focus-visible) .site-header)::after {
+    opacity: 1;
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .ww:has(.wt-a:hover) .wt-a:not(:hover)::after,
+    .wh:has(.wt-a:hover) .wh-dim,
+    :global(html:has(.wt-a:hover) .site-header)::after {
+      opacity: 1;
+    }
+  }
+  /* The bar's own dark (the page's bar is a sibling of this section). */
+  :global(.site-header)::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: rgb(7 8 28 / 0.74);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.45s var(--ease-out);
   }
 
   /* The columns drift apart with the scroll (wide screens, motion on). Longhands: the build folds a shorthand with
@@ -340,7 +381,9 @@ const DRIFT = cols === 3 ? ["-3rem", "-7rem", "-1.5rem"] : ["-2.5rem", "-6rem"];
   @media (prefers-reduced-motion: reduce) {
     .ww,
     .wt-a,
-    .wt-pic {
+    .wt-a::after,
+    .wh-dim,
+    :global(.site-header)::after {
       transition: none;
     }
   }

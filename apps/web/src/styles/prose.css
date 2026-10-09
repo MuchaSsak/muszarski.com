@@ -3,12 +3,19 @@
  * headings, tables that scroll inside themselves, code on the bar field in every theme (Shiki css-variables theme:
  * token colours come from here, each pair checked against the navy ground for AA).
  */
+/* The text grows with wide screens (17 px on a phone, 21 px at 1920) and the column a little with it [user 2026-10-09:
+   "a bit wider, and maybe even font slightly larger ... so i dont have to squint", "dont overexaggreate"]. */
 .prose {
   max-width: 68ch;
   min-width: 0;
-  font-size: clamp(1.0625rem, 1.01rem + 0.25vw, 1.1875rem);
+  font-size: clamp(1.0625rem, 1rem + 0.26vw, 1.3125rem);
   line-height: 1.65;
   overflow-wrap: break-word;
+}
+@media (width >= 80rem) {
+  .prose {
+    max-width: 74ch;
+  }
 }
 .prose > :first-child {
   margin-top: 0;

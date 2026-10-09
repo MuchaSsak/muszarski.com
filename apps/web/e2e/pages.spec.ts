@@ -39,7 +39,7 @@ test("work: the wall jumps to a card, a resting mouse never flickers the title, 
   const title = page.getByRole("heading", { level: 1, name: "Things I’ve built" });
   await expect(title).toBeVisible();
   // A mouse parked on the edge between two letters keeps one letter thin: the letter is picked from the letters'
-  // places at rest, so its own change of width can't hand the pointer to its neighbour (owner, 2026-10-09).
+  // slots, which hold their width, so its own change of weight can't hand the pointer to its neighbour (owner, 2026-10-09).
   const letter = page.locator("#t-work .ht i").nth(1);
   const box = (await letter.boundingBox())!;
   await page.mouse.move(box.x - 30, box.y + box.height / 2);
@@ -58,6 +58,33 @@ test("work: the wall jumps to a card, a resting mouse never flickers the title, 
   await expect(page.getByRole("heading", { name: "There's more." })).toBeVisible();
   await expect(page.locator(".pr-line")).toContainText("😉");
   await expect(page.getByText("Wink wink")).toHaveCount(0);
+});
+
+test("work: the lit letter of a title is the one under the mouse, and the title keeps its width", async ({ page }) => {
+  await page.goto("/en/work/");
+  const letters = page.locator("#t-more .ht i");
+  // The page above grows after the title was first hovered (late media): the letters are found relative to the title.
+  await letters.first().scrollIntoViewIfNeeded();
+  const first = (await letters.first().boundingBox())!;
+  await page.mouse.move(first.x + 4, first.y + 4);
+  await page.mouse.move(0, 0);
+  await page.evaluate(() => {
+    const block = document.createElement("div");
+    block.style.height = "137px";
+    document.querySelector("main")?.prepend(block);
+  });
+  await letters.first().scrollIntoViewIfNeeded();
+  const rest = (await page.locator("#t-more .ht").boundingBox())!;
+  for (const k of [0, 3, 7]) {
+    const box = (await letters.nth(k).boundingBox())!;
+    await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2, { steps: 3 });
+    await expect(letters.nth(k)).toHaveClass(/ht-on/);
+    // A thinner letter gets its lost width back as margins (owner, 2026-10-09: it shrank away from the pointer).
+    await page.waitForTimeout(400);
+    const now = (await page.locator("#t-more .ht").boundingBox())!;
+    expect(Math.abs(now.width - rest.width)).toBeLessThan(4);
+    expect(Math.abs(now.height - rest.height)).toBeLessThan(1);
+  }
 });
 
 test("contact: the reply address fills itself from the message, and a sent message shows the thanks", async ({ page }) => {

@@ -6,6 +6,9 @@
  * catalogue and the night footer: the title whose letters answer the pointer (a tap sends a wave), the line ending in a
  * winking emoji, and a fanned stack of repository cards marked Private with every name and line blacked out. The stack
  * opens as it comes into view; a mouse over it spreads it further and lifts a card, whose bars catch a light sweep.
+ * Behind it, private code nobody can read [user 2026-10-09: "could have a more interesting background"]: line numbers
+ * and syntax-coloured bars with no text (`public/media/work/private-code.svg`, one seeded tile, own work) drifting up
+ * like a file being scrolled, faded out behind the words; it runs only near the viewport, never paused or reduced.
  * No links, no names and no counts: the cards are a picture of "private", not a list.
  */
 import { t } from "lingui-for-astro/macro";
@@ -30,6 +33,7 @@ const CARDS = [
 ---
 
 <section class="sec field-hero pr" aria-labelledby="t-more">
+  <div class="pr-code" aria-hidden="true"></div>
   <div class="pr-in">
     <div class="pr-text">
       <h2 class="pr-title" id="t-more" data-ht-tap>
@@ -69,7 +73,29 @@ const CARDS = [
     padding-block: clamp(4.5rem, 9vw, 9rem);
     border-bottom: 3px solid var(--navy);
   }
+  /* The code: one 600 × 760 tile repeated, its layer one tile taller than the section, sliding up a tile and over. */
+  .pr-code {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+    mask-image: linear-gradient(90deg, transparent 40%, #000 64%);
+  }
+  .pr-code::before {
+    content: "";
+    position: absolute;
+    inset: 0 0 auto;
+    height: calc(100% + 760px);
+    background: url("/media/work/private-code.svg") 0 0 / 600px 760px;
+    animation: pr-scroll 60s linear infinite;
+  }
+  @keyframes pr-scroll {
+    to {
+      translate: 0 -760px;
+    }
+  }
   .pr-in {
+    position: relative;
     display: grid;
     grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
     gap: clamp(3rem, 6vw, 7rem);
@@ -228,10 +254,17 @@ const CARDS = [
     .pr-emoji {
       transition: none !important;
     }
+    .pr-code::before {
+      animation: none;
+    }
   }
   @media (max-width: 48rem) {
     .pr-in {
       grid-template-columns: minmax(0, 1fr);
+    }
+    /* One column: the code comes up under the words, behind the stack. */
+    .pr-code {
+      mask-image: linear-gradient(to bottom, transparent 52%, #000 80%);
     }
     .pr-stack {
       min-height: 13rem;

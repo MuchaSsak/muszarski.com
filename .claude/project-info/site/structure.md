@@ -88,7 +88,10 @@ interesting" and apart from the footer]. The night catalogue: `comps/HISTORY.md`
   (the home chapter, the case study, or the live site / npm / code) + small links, level across a row.
 - **"There's more."** on its own cobalt field between the cards and the footer: the title, the private-repositories line
   ending in a winking emoji [user 2026-10-08: no "wink wink" text], and a fanned stack of repository cards marked
-  Private with their names blacked out (no names, no counts).
+  Private with their names blacked out (no names, no counts), over redacted code drifting up behind it (line numbers
+  and coloured bars, no text) [user 2026-10-09: "a more interesting background"].
+- A tile in play on the wall is the one lit thing on the screen: the rest of the head and the bar go dark (a trial,
+  [user 2026-10-09]).
 - Tablets and phones: the wall is a two-row strip to swipe; cards two to a row on tablets, one on phones; captures pan
   with the page instead of on hover.
 

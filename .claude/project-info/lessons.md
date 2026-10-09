@@ -49,7 +49,7 @@
 - A % height inside an auto grid row resolves against the row the item itself grew (the Linkoglot phone overflowed its field): give the grid a definite track, `grid-template: minmax(0, 1fr) / minmax(0, 1fr)` - 2026-10-08.
 - Reading a WebGL program's link status blocks until it compiles: one shader with ten scenes froze every browser for ~1 s on Windows (D3D). Keep programs small (one scene each), compile through `makeProgram` in `life-gl.ts` (`KHR_parallel_shader_compile`, polled per frame) and measure the longest frame gap cold - 2026-10-09.
 - WebKit shows a WebGL frame drawn on demand one draw late (a pick showed the previous print): still and paused paths draw twice, on two frames in a row - 2026-10-09.
-- A hover that changes the hovered box's size picks its target from rest geometry measured once, never from `:hover` on that box: the thinning title letters swapped back and forth under a resting pointer [user 2026-10-09]. An inline-block per letter holds the width but draws hairline seams where heavy letters touch - 2026-10-09.
+- A hover that changes a box's size keeps the box's slot (give the lost width back as margins on the same transition) and picks its target from geometry relative to its container, re-tested on scroll; never `:hover` on that box (letters swapped in a loop), rest geometry alone (the lit letter shrank away from the pointer) or page coordinates (the page above grew) [user 2026-10-09, twice]. An inline-block per letter holds the width but draws hairline seams where heavy letters touch - 2026-10-09.
 
 ### Privacy of inputs
 - Images pasted in chat never reach the disk: ask the owner to drop the files in the repo, and build the slot so it switches on when they land - 2026-10-06.
