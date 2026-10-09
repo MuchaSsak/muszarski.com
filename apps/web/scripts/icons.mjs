@@ -175,7 +175,7 @@ const UI = [
 ];
 
 /** Tabler filled icons (solid glyphs read better than outlines at small sizes on media controls). */
-const UI_FILLED = ["player-pause", "player-play", "star"];
+const UI_FILLED = ["apps", "player-pause", "player-play", "star"];
 
 /**
  * Vendored marks: the file, its source and licence, and a square crop around the drawing.
