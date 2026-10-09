@@ -29,7 +29,7 @@
 | P7 | PstrykWeb temporary captures (show the OLD landing, stock people, 3rd-party thumbnails) | `assets/projects/pstrykweb/` | owner recordings | delete; never publish | 1, 21 |
 | P8 | Linkoglot store screenshots + 332×720 preview as interim media | `assets/projects/linkoglot/`; the blog figure `assets/blog/solo-app/chapter-{en,pl}.webp` (re-shoot) | owner recordings | replace with real loops (own app, OK as interim) | 1 |
 | P9 | Space portfolio + Clockful temporary captures (the space capture shows an unverified lens-dirt texture: licence check or re-record) | `assets/projects/space-portfolio/`, `.../neoteric-clockful/` | owner recordings | replace | 1 |
-| P10 | Rights statuses `check` (PstrykWeb, Clockful; yws.lu, named and linked on the live CV since 2026-10-08: the PDF can't follow the rights gate, so confirm or cut it before launch) | project dossiers | Cetuspro + Neoteric emails | set `ok` or remove the project | 21, 32 |
+| P10 | Rights statuses `check` (PstrykWeb, Clockful; yws.lu cleared `ok` [user 2026-10-09]) | project dossiers | Cetuspro + Neoteric emails | set `ok` or remove the project | 21, 32 |
 | P11 | Credentials: INF.02/.03/.04 exam dates and results (courses, Erasmus+, hackathon and short courses filled from the owner's certificates 2026-10-06); the years of the Georgia project (a Visegrad Fund project on alternative youth participation in Bakuriani [user 2026-10-08]) and the two months of ESC in Demre: the international card shows 2025 (`PLACEHOLDER` in `cv.ts`) [user 2026-10-07] | credentials data, CV | owner | replace | 10 |
 | P12 | Spanish (es) copy: AI-translated, unreviewed | catalogs + es content files | a fluent reviewer | review, or keep the visible "Translated with AI" line by explicit owner choice | 19 |
 | P13 | Legal pages: drafts, not lawyer-reviewed; postal address; mailbox provider; Umami plan confirmation (Q17) | `/privacy/`, `/terms/` | owner + lawyer | review; fill Unknowns | 15, 16, 17, 36 |
@@ -64,8 +64,8 @@
    - [ ] Vercel: `IS_FULL_PRODUCTION=true` set in Production (and `IS_AVAILABLE_FOR_HIRE` as wanted), then redeploy.
    - [ ] Google Search Console for `muszarski.com` (step 7).
    - [ ] Website field → `https://muszarski.com/` on GitHub, LinkedIn, Instagram; the domain in the Discord profile.
-   - [ ] yws.lu: run `/link-portfolio-author-to-website` in its repo (a client site: the client's OK first, and its
-     rights row in `content/projects.md`).
+   - [ ] yws.lu: run `/link-portfolio-author-to-website` in its repo (client site, rights `ok` since
+     2026-10-09).
    - [ ] pstrykweb.pl (Cetuspro's product): no credit without Cetuspro's written OK. Options to ask them for: an author
      box on the blog posts he wrote, linking `https://muszarski.com/` (the "pstrykweb.pl author page" of `seo.md`
      § Entity strategy); a team/credits page naming him. Never "built by" or "solo" (lessons).

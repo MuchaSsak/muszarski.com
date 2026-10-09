@@ -203,7 +203,7 @@ export const CV = {
       // [user 2026-10-08] described generally, with two examples: the yws.lu landing (Youth Work Synergy, a nonprofit
       // that houses young people in Luxembourg: yws.lu, checked 2026-10-08) and the youth-space app his school's
       // principal gave him an award for (gallery.ts). lingui-translate-ai is off the CV. yws.lu is client work: rights
-      // `check` (projects.ts, placeholders.md P10) until the client's OK.
+      // `ok` since 2026-10-09 (projects.ts).
       bullets: [
         {
           en: "Landing pages for businesses and organisations, such as a 3D site for Youth Work Synergy, a youth housing nonprofit in Luxembourg (React, React Three Fiber, GSAP).",

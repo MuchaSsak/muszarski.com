@@ -117,7 +117,8 @@ export const PROJECTS: Project[] = [
     name: "yws.lu",
     context: "client",
     year: 2025,
-    rights: "check",
+    // [user 2026-10-09] cleared to show, case study included.
+    rights: "ok",
     line: {
       en: "A 3D landing page for Youth Work Synergy, an organisation in Luxembourg.",
       pl: "Landing 3D dla Youth Work Synergy, organizacji z Luksemburga.",

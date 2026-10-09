@@ -26,7 +26,7 @@ which to show and which private ones to add (Enrollo, others: Q41) [user].
 
 | Show (suggested) | Tag | Why |
 | --- | --- | --- |
-| yws.lu | client | live 3D (R3F + GSAP) landing for Youth Work Synergy, Luxembourg; 113 commits. Needs a permission row |
+| yws.lu | client | live 3D (R3F + GSAP) landing for Youth Work Synergy, Luxembourg; 113 commits. Rights `ok` [user 2026-10-09]; the 2026-10 revamp gets a case study |
 | lingui-translate-ai | oss | real npm CLI (v1.1.0), born from Linkoglot. Never quote download counts |
 | malatro | side | Balatro × matura maths; openly AI-built (fits the AI story) |
 | lingotype | side | **team project** (co-author Fabian Dróżkowski, RocketPLN). Credit him; counters "solo" |
