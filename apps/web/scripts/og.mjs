@@ -40,9 +40,13 @@ const decode = (value) =>
     .replace(/&#x27;/g, "'");
 const escape = (value) => value.replace(/&/g, "&amp;").replace(/</g, "&lt;");
 const meta = (html, key) => decode(new RegExp(`<meta (?:property|name)="${key}" content="([^"]*)"`).exec(html)?.[1] ?? "");
+/** The logo as a data URI: the `this-site` cover links /favicon.svg, which a page set from a string can't reach. */
+const faviconUri = `data:image/svg+xml;base64,${readFileSync(join(PUBLIC, "favicon.svg")).toString("base64")}`;
 /** The code-drawn covers a page renders (PostCover.astro), without Astro's scope attribute. */
 const covers = (html) =>
-  [...html.matchAll(/<svg class="cover"[\s\S]*?<\/svg>/g)].map((m) => m[0].replace(/ data-astro-cid-[\w-]+/g, ""));
+  [...html.matchAll(/<svg class="cover"[\s\S]*?<\/svg>/g)].map((m) =>
+    m[0].replace(/ data-astro-cid-[\w-]+/g, "").replace(/href="\/favicon\.svg"/g, `href="${faviconUri}"`),
+  );
 
 const jobs = new Map();
 for (const file of pages(DIST)) {

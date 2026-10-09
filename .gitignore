@@ -51,6 +51,10 @@ lighthouse/
 /screenshots/*
 !/screenshots/VISUAL-QA.md
 
+# Case-study inputs copied from another repo (the yws.lu capture, 2026-10-09): read in place, only the converted
+# figures the post uses are committed.
+/.case-study/
+
 # env files (names live in .env.example and tech/technologies.md)
 .env
 .env*.local

@@ -102,6 +102,10 @@ quality articles so either case studies or blog articles similar to how we appro
 
 `{ title, description (≤ 155 chars), slug (per locale), translationKey, published, updated?, tags[],
 cover (code-drawn or real), coverAlt, author: "mateusz", draft, canonical? }`.
+- Covers (`PostCover.astro`): one code-drawn motif per topic, no words; a case study's cover draws the site it is
+  about [user 2026-10-09: "make the thumbnails for case studies be more like the websites"]: `this-site` = the home
+  share card as on /work/ (names only, logo from `/favicon.svg`), `yws` = the yws.lu hero (headline as bars, an own
+  house, not the credited Sketchfab model). No nested `<svg>` in a cover: `scripts/og.mjs` cuts at the first `</svg>`.
 - `translationKey` links translations for hreflang. A post that exists in one locale has no
   alternates.
 - The author is the single Person entity (`seo.md`).

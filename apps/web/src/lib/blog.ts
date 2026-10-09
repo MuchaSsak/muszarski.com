@@ -17,8 +17,13 @@ export const BLOG_TAGS = [
 ] as const;
 export type BlogTag = (typeof BLOG_TAGS)[number];
 
-/** Code-drawn covers (PostCover.astro), one motif per topic. */
+/**
+ * Code-drawn covers (PostCover.astro), one motif per topic. A case study's cover draws the site it is about
+ * [user 2026-10-09: "make the thumbnails for case studies be more like the websites"]: `this-site`, `yws`.
+ */
 export const BLOG_COVERS = [
+  "this-site",
+  "yws",
   "blueprint",
   "terminal",
   "wiki",
@@ -38,6 +43,10 @@ export const BLOG_COVERS = [
   "anchor",
 ] as const;
 export type BlogCover = (typeof BLOG_COVERS)[number];
+
+let coverSerial = 0;
+/** A page-unique id prefix for a cover's gradients and patterns (one page can show the same cover twice). */
+export const coverId = (cover: BlogCover): string => `cv-${cover}-${++coverSerial}`;
 
 /** Words per minute for technical prose on a screen (code and tables read slower; this is conservative). */
 const WORDS_PER_MINUTE = 220;
