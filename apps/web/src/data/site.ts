@@ -22,8 +22,8 @@ export const SITE = {
 /** Work profiles: the CV, the contact links, and the first of ELSEWHERE. Order = display order. */
 export const PROFILES = [
   { id: "github", label: "GitHub", handle: "MuchaSsak", href: "https://github.com/MuchaSsak" },
-  // PLACEHOLDER: found by the SEO research (his profile, research/2026-10-05-seo-entity-discoverability.md); owner to confirm (P5).
-  { id: "linkedin", label: "LinkedIn", handle: "mateusz-muszarski", href: "https://www.linkedin.com/in/mateusz-muszarski-b1168a28a" },
+  // Confirmed by the owner 2026-10-09.
+  { id: "linkedin", label: "LinkedIn", handle: "mateusz-muszarski", href: "https://www.linkedin.com/in/mateusz-muszarski-b1168a28a/" },
   // Verified 2026-10-05: npm maintainer of lingui-translate-ai.
   { id: "npm", label: "npm", handle: "muchassakkk", href: "https://www.npmjs.com/~muchassakkk" },
 ] as const;
@@ -49,10 +49,19 @@ export const PERSONAL = [
 ] as const;
 
 /**
+ * Store developer pages (every app he published, not one listing) [owner 2026-10-09]: tie the Linkoglot listings, which
+ * rank for his name, to this site (seo.md § Entity). Both show the developer name "Mateusz Muszarski" (checked 2026-10-09).
+ */
+export const STORES = [
+  { id: "google-play", label: "Google Play", handle: undefined, href: "https://play.google.com/store/apps/dev?id=7961731162261862815" },
+  { id: "app-store", label: "App Store", handle: undefined, href: "https://apps.apple.com/developer/mateusz-muszarski/id1896558654" },
+] as const;
+
+/**
  * Every public profile: the footer "Elsewhere" column, `sameAs` (rel="me") and llms.txt, so search engines tie them to
  * one person (seo.md § Entity). Messenger is left out: Facebook already names that profile.
  */
-export const ELSEWHERE = [...PROFILES, ...PERSONAL, ...SOCIAL.filter((social) => social.id !== "messenger")];
+export const ELSEWHERE = [...PROFILES, ...STORES, ...PERSONAL, ...SOCIAL.filter((social) => social.id !== "messenger")];
 
 /** Public links of the work shown on the site (content/projects/*.md § Facts). */
 export const WORK_LINKS = {

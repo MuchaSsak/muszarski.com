@@ -52,7 +52,7 @@ Success signal: Google autocomplete starts completing "mateusz muszarski" to "â€
    checked Wikidata ids: TypeScript Q978185, React Q19399674, three.js Q3525922, Next.js Q56062435, Tailwind Q102173844;
    look up each new id), `knowsLanguage`, `hasCredential` (INF.0x, `recognizedBy` CKE; wording from the certificate),
    `sameAs` (every profile in `ELSEWHERE`: GitHub, LinkedIn, npm, Instagram, Facebook, Telegram, Discord [owner
-   2026-10-07]; add the Play developer page), `worksFor` only for a real employer or his own business.
+   2026-10-07]; the Google Play and App Store developer pages, `STORES` in `data/site.ts` [owner 2026-10-09]), `worksFor` only for a real employer or his own business.
    The markup must match the visible text.
 4. **Bidirectional links:** each profile links to the site and the site links to each profile (`rel="me"`). Owner
    to-do: put muszarski.com in the LinkedIn website field, the Instagram bio, the Facebook intro and the GitHub
