@@ -51,7 +51,7 @@ Unit (vitest) for data and gates (CV PDF content test, sitemap, slugs). Playwrig
 
 ## Git
 
-- **Branch:** `main` + short-lived feature branches when useful.
+- **Branch:** `main` only; no feature branches [user 2026-10-09: "are you always committing to main please"].
 - **Commits:** Conventional Commits (`feat(home): …`, `fix(cv): …`, `docs(wiki): …`, `chore: …`); WIP at a pause
   is `chore(wip): <where>`. Author and push rules: `CLAUDE.local.md`. Never skip hooks.
 - **Never commit:** `context/`, `.env*`, research screenshots, large raw media (keep the encoded outputs only).
