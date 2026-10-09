@@ -3,7 +3,7 @@ title: "Astro vs Next.js for a portfolio or a landing page"
 description: "When Astro fits a portfolio or landing page and when Next.js is the right call, with HTTP Archive Core Web Vitals data and this site's measurements."
 translationKey: "astro-vs-next"
 published: 2026-10-05
-updated: 2026-10-08
+updated: 2026-10-09
 tags: [astro, performance, react]
 cover: scale
 related: [this-site, portfolio-lighthouse, contact-form]
@@ -126,6 +126,8 @@ Two honest notes:
 - **The framework didn't earn the score alone.** On the afternoon of 7 October the home page fell to 67-74 with no framework code involved: animation loops running during load, a class that restyled every element in the offscreen sections, and scripts forcing layouts. Fixing those brought it back. What Astro gave me is the starting point: zero JavaScript, so there was nothing to remove.
 
 The same pattern shows up in [Lighthouse runs on 16 developer portfolios](/en/blog/lighthouse-scores-of-16-developer-portfolios/): the immersive 3D sites scored far below the minimal ones. The whole build story is in [how this site was built](/en/blog/case-study/).
+
+Since then I have measured one real move: yws.lu, a client site I built in Next.js in 2025. It scored 23-45 on Lighthouse performance, and 94-100 after the rebuild in Astro (Lighthouse 13.5, local, the median of 3 runs). The details are in [the yws.lu case study](/en/blog/yws-lu-case-study/).
 
 ## When is Next.js the right call?
 

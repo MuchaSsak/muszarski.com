@@ -1,0 +1,237 @@
+---
+title: "yws.lu: w jeden dzień przeniosłem stronę luksemburskiej organizacji non-profit z Next.js na Astro"
+seoTitle: "Migracja z Next.js na Astro w jeden dzień: case study"
+description: "Case study: migracja strony w Next.js z 3D na statyczne Astro w jeden dzień z Claude Code. Lighthouse na telefonie w laboratorium: z 23-28 na 99-100."
+translationKey: yws-lu
+published: 2026-10-09
+tags: [case-study, astro, performance, ai]
+cover: yws
+related: [this-site, astro-vs-next, astro-i18n]
+sources:
+  - title: "Total Blocking Time (Chrome for Developers)"
+    url: "https://developer.chrome.com/docs/lighthouse/performance/lighthouse-total-blocking-time"
+    accessed: 2026-10-09
+  - title: "Lighthouse network and CPU throttling (dokumentacja GoogleChrome/lighthouse)"
+    url: "https://github.com/GoogleChrome/lighthouse/blob/main/docs/throttling.md"
+    accessed: 2026-10-09
+  - title: "OffscreenCanvas (MDN)"
+    url: "https://developer.mozilla.org/en-US/docs/Web/API/OffscreenCanvas"
+    accessed: 2026-10-09
+  - title: "content-visibility (MDN)"
+    url: "https://developer.mozilla.org/en-US/docs/Web/CSS/content-visibility"
+    accessed: 2026-10-09
+  - title: "contain-intrinsic-size (MDN)"
+    url: "https://developer.mozilla.org/en-US/docs/Web/CSS/contain-intrinsic-size"
+    accessed: 2026-10-09
+  - title: "Tell Google about localized versions of your page (Google Search Central)"
+    url: "https://developers.google.com/search/docs/specialty/international/localized-versions"
+    accessed: 2026-10-09
+---
+
+import Flow from "~/components/blog/case/Flow.astro";
+import Shots from "~/components/blog/case/Shots.astro";
+import load2025a from "~/assets/blog/yws-lu/load-2025-2726.webp";
+import load2025b from "~/assets/blog/yws-lu/load-2025-5452.webp";
+import load2025c from "~/assets/blog/yws-lu/load-2025-10904.webp";
+import load2026 from "~/assets/blog/yws-lu/load-2026-1357.webp";
+import projects2025 from "~/assets/blog/yws-lu/projects-2025.webp";
+import projects2026 from "~/assets/blog/yws-lu/projects-2026.webp";
+import homePhone2025 from "~/assets/blog/yws-lu/home-phone-2025.webp";
+import homePhone2026 from "~/assets/blog/yws-lu/home-phone-2026.webp";
+import ownersPhone2025 from "~/assets/blog/yws-lu/owners-phone-2025.webp";
+import ownersPhone2026 from "~/assets/blog/yws-lu/owners-phone-2026.webp";
+
+yws.lu to strona Youth Work Synergy, luksemburskiej organizacji non-profit, która wynajmuje młodym ludziom pokoje. Zbudowałem ją w Next.js w 2025 roku, a 9 października 2026 przebudowałem ją w Astro w jeden dzień: Claude Code pracował jako inżynier, a ja prowadziłem projekt. Wygląd został, główna treść pojawia się teraz w mobilnym teście Lighthouse w niecałe 2 sekundy, a nowa wersja jeszcze nie działa publicznie.
+
+> **W skrócie**
+>
+> - **Przed:** wydajność w Lighthouse 23-45; symulowany telefon czekał na główną treść od 11,7 do 49,9 s.
+> - **Po:** 94-100, na telefonach 99-100; główna treść po 1,28-1,95 s; dostępność i SEO na 100 na każdej stronie. Lighthouse 13.5, lokalnie, mediana z 3 pomiarów, strony angielskie. To 94 ma strona TEC na desktopie, gdzie test rysuje WebGL programowo.
+> - **Jak:** statyczne Astro z 0-4 KB JavaScriptu na stronę, efekty 3D i canvas w Web Workerach i Claude Code według spisanego planu.
+> - **Waga:** folder `public/` z 2025 roku (277,7 MB) wobec całego nowego builda (9,2 MB).
+
+## Czym jest yws.lu i dla kogo jest?
+
+Youth Work Synergy ASBL wynajmuje domy od prywatnych właścicieli i podnajmuje umeblowane pokoje we wspólnych domach młodym ludziom w wieku od 18 do 34 lat. Prowadzi też projekty młodzieżowe, takie jak projekty Erasmus+ i konferencja TEC. Strona ma więc dwóch odbiorców: młodą osobę, która szuka pokoju, i właściciela, który mógłby wynająć dom.
+
+To praca dla klienta. Zbudowałem stronę z 2025 roku (pierwszy commit 13 sierpnia 2025) i prowadziłem tę przebudowę; wynik ocenia Mehdi, osoba kontaktowa po stronie klienta i właściciel strony. Nowa wersja jest gotowa na osobnej gałęzi i czeka na teksty prawne od klienta, więc [yws.lu](https://yws.lu/) pokazuje jeszcze tę z 2025 roku.
+
+## Co było nie tak ze stroną z 2025 roku?
+
+Wyglądała dobrze, a ładowała się źle. W mobilnym teście Lighthouse główna treść pojawiała się po 11,7 do 49,9 sekundy. Dlaczego, widać na klatkach, które zapisuje sam Lighthouse:
+
+<Shots
+  phones
+  shots={[
+    { image: load2025a, alt: "Strona główna z 2025 roku na telefonie po 2,7 sekundy: czarny ekran", tag: "2025 · 2,7 s" },
+    { image: load2025b, alt: "Strona główna z 2025 roku po 5,5 sekundy: pomarańczowe prostokąty zasłaniają nagłówek i tekst", tag: "2025 · 5,5 s" },
+    { image: load2025c, alt: "Strona główna z 2025 roku po 10,9 sekundy: nagłówek i tekst wreszcie da się przeczytać", tag: "2025 · 10,9 s" },
+    { image: load2026, alt: "Strona główna z 2026 roku po 1,4 sekundy: ten sam nagłówek i tekst, już czytelne", tag: "2026 · 1,4 s", picked: true },
+  ]}
+  caption="Strona główna w filmstripie Lighthouse, test mobilny, mediana z 3 pomiarów, 9 października 2026. Czasy klatek pochodzą z prawdziwego, niespowolnionego ładowania na laptopie testowym; liczby dla telefonu Lighthouse symuluje na ich podstawie."
+/>
+
+Pomarańczowe prostokąty to animacja odsłaniania, a tekst czeka pod nimi. Pozostałe problemy:
+
+- **Waga:** od 3,5 do 9,2 MB i od 533 do 1070 KB JavaScriptu na stronę, a w `public/` leżały pojedyncze zdjęcia po 25-30 MB.
+- **Wyszukiwarki:** żadna strona nie miała `<title>` ani opisu w HTML-u z serwera. Francuski i angielski dzieliły jeden adres, a język brał się z przeglądarki, więc Google widział tylko angielski.
+- **Klawiatura:** główne przyciski były linkami z przyciskiem w środku i `tabIndex={-1}`, więc klawiaturą nie dało się do nich dotrzeć.
+- **Utrzymanie:** Next.js 15.3.8 miał 31 niezałatanych podatności (2 krytyczne), a wsparcie dla 15.x kończy się około 21 października 2026.
+
+## Dlaczego Astro, a nie aktualizacja Next.js?
+
+Zanim cokolwiek przeniosłem, zbudowałem szybki prototyp (spike): stronę o mieszkaniach i hero strony głównej z domkiem 3D, w Astro i Lingui. Zmierzyłem go tym samym skryptem co stronę z 2025 roku.
+
+| Strona | Wydajność | LCP | JavaScript strony |
+| --- | --- | --- | --- |
+| Główna, telefon | 26 → 98 | 49,9 s → 1,6 s | 974 → 2 KB |
+| Główna, desktop | 23 → 67 | 9,1 s → 0,75 s | 1070 → 279 KB |
+| Mieszkania, telefon | 26 → 87 | 11,8 s → 1,5 s | 539 → 0 KB |
+| Mieszkania, desktop | 45 → 99 | 2,5 s → 0,34 s | 637 → 0 KB |
+
+Wszystko, co zależy od frameworka, zmieściło się w budżecie, a wariant zapasowy, Next.js 16 z Lingui, nie mógł wypaść lepiej niż zero kilobajtów JavaScriptu frameworka. Dwa wyniki poniżej budżetu, główna na desktopie (domek 3D) i mieszkania na telefonie (pole przepływu), to efekty, które kosztowałyby tyle samo w każdym frameworku. Prototyp rozstrzygnął wybór frameworka, a za nim poszły dwie kolejne decyzje:
+
+| Decyzja | Wybór | Odrzucone | Dlaczego |
+| --- | --- | --- | --- |
+| Framework | Astro 7, statycznie, z Lingui 6.9 | Next.js 16 z Lingui | zero JavaScriptu frameworka w prototypie; żadnego serwera do łatania |
+| Dane | pliki z typami i zdjęcia w repo | zostawić Supabase | trzymał jeden wiersz statystyk i 7 zdjęć: jedna płatna usługa i jedno zapytanie z przeglądarki mniej |
+| 3D | czysty three.js w Web Workerze | React Three Fiber na stronie | React budował scenę z domkiem w jednym zadaniu na głównym wątku, trwającym 2,6 s |
+
+Astro i Lingui to też stack tego portfolio, więc najpierw sprawdziłem je na własnej pracy ([Astro czy Next.js na portfolio](/pl/blog/astro-czy-nextjs-na-portfolio/)).
+
+## Gdzie uciekał czas?
+
+[Total Blocking Time](https://developer.chrome.com/docs/lighthouse/performance/lighthouse-total-blocking-time) liczy tylko pracę na głównym wątku. Zasada była więc prosta: najpierw rysuje się nagłówek, a wszystko, co ciężkie, działa poza głównym wątkiem, ładuje się dopiero przy ekranie i działa tylko wtedy, gdy je widać.
+
+| Gdzie | Przyczyna | Poprawka | TBT po |
+| --- | --- | --- | --- |
+| Domek 3D (desktop) | React budował scenę w jednym zadaniu trwającym 2639 ms | three.js w workerze, na [OffscreenCanvas](https://developer.mozilla.org/en-US/docs/Web/API/OffscreenCanvas) | 0-19 ms |
+| Glob TEC (desktop) | cobe kompilował shader na głównym wątku | cobe w workerze | 1-15 ms |
+| Pole przepływu na stronie o mieszkaniach (telefony) | 400-700 pociągnięć i dwa rozmycia na klatkę | pętla rysowania w workerze | 10 ms |
+| Długie strony (telefony) | animowane SVG, połysk przemalowywany co klatkę, układ każdej sekcji | transformacje, pętle zatrzymane poza ekranem, `content-visibility: auto` | 23-73 ms |
+
+Jeden worker obsługuje wszystkie trzy sceny na stronie głównej (domek, szafę i rakietę), a poniżej 1280 px zamiast niej pokazuje się plakat prawdziwej sceny. Przyczyny w CSS wyszły z nagrań wydajności w DevTools dla każdego długiego zadania, a potem z buildów A/B w Lighthouse: samo `content-visibility` na kartach projektów obniżyło TBT z 215 do 148 ms.
+
+### Dlaczego linki do kotwic chybiały o 552 px?
+
+[`content-visibility: auto`](https://developer.mozilla.org/en-US/docs/Web/CSS/content-visibility) pozwala przeglądarce pominąć układ sekcji poza ekranem. Dało to duży zysk na TBT i zepsuło linki do kotwic. Dopóki sekcja nie zostanie narysowana, ma szacowaną wysokość. Skok do `/en/#contact` lądował więc 552 px za swoją sekcją, gdy sekcje nad nią przyjmowały prawdziwy rozmiar. W WebKicie `scrollIntoView` do pominiętej sekcji w ogóle nie przewijał strony. Poprawka na chwilę rysuje wszystko, przez regułę `html[data-jump] * { content-visibility: visible !important; }`:
+
+```ts
+// targetOf(hash): the element a #hash points to, or null
+const root = document.documentElement;
+let timer = 0;
+const drawEverything = () => {
+  root.dataset.jump = "";
+  clearTimeout(timer);
+  timer = window.setTimeout(() => delete root.dataset.jump, 1500);
+};
+
+document.addEventListener("click", (event) => {
+  const link = event.target instanceof Element ? event.target.closest<HTMLAnchorElement>("a[href*='#']") : null;
+  if (!link || link.origin !== location.origin || link.pathname !== location.pathname || !targetOf(link.hash)) return;
+  drawEverything();
+});
+```
+
+[`contain-intrinsic-height: auto`](https://developer.mozilla.org/en-US/docs/Web/CSS/contain-intrinsic-size) zapamiętuje prawdziwą wysokość każdej sekcji, więc gdy sekcje znów są pomijane, nic się nie przesuwa. Test e2e sprawdza skok w Chromium, Firefoksie i WebKicie; cały plik jest [na GitHubie](https://github.com/MuchaSsak/yws.lu/blob/revamp/2026-10/web/src/scripts/anchor-jumps.ts).
+
+## Co zmieniło się na ekranie?
+
+Założenie: ma zostać zabawnie, kolorowo, w 3D i ciepło, bo to Mehdi ocenia gotowy efekt. Słaby element szedł do wymiany tylko wtedy, gdy klimat zostawał, więc hero prawie się nie zmieniło. Strona projektów dostała nowy układ:
+
+<Shots
+  shots={[
+    { image: projects2025, alt: "2025: strona We Spark Projects na desktopie, jedna szeroka karta z długim akapitem", tag: "2025" },
+    { image: projects2026, alt: "2026: ta sama strona z siedmioma numerowanymi kafelkami, każdy w kolorze swojego projektu", tag: "2026", picked: true },
+  ]}
+  caption="We Spark Projects przy 1440 px. Kafelki pokazują każdy projekt w skrócie; pod nimi każdy projekt ma własny rozdział na całą szerokość."
+/>
+
+Dwie zmiany na telefonach:
+
+<Shots
+  phones
+  shots={[
+    { image: homePhone2025, alt: "Strona główna z 2025 roku na telefonie: ciemnoszary nagłówek z przyciskiem z flagą i hamburgerem", tag: "2025" },
+    { image: homePhone2026, alt: "Strona główna z 2026 roku na telefonie: jasny nagłówek z pomarańczowym przyciskiem Apply i przyciskiem Menu", tag: "2026", picked: true },
+    { image: ownersPhone2025, alt: "Rent your property z 2025 roku na telefonie: wyróżnione słowa rozpadają się na trzy osobne pomarańczowe prostokąty", tag: "2025" },
+    { image: ownersPhone2026, alt: "Rent your property z 2026 roku: tytuł łamie się równo, a wyróżnione słowa tworzą jeden pas na dwóch wierszach", tag: "2026", picked: true },
+  ]}
+  caption="Telefony przy 390 px: Apply jest zawsze pod ręką w nagłówku, a tytuł strony dla właścicieli już się nie rozpada."
+/>
+
+| 2025 | 2026 | Dlaczego |
+| --- | --- | --- |
+| karty z odblaskiem w sztywnym pudełku 17:21 | własna karta dopasowana do tekstu, z połyskiem przy wejściu | jedna trzecia każdej karty była pusta; odblask nie miał odpowiednika dla dotyku ani klawiatury |
+| ciemny nagłówek z flagami emoji | jasny nagłówek, Apply jako pomarańczowa pigułka, flagi w SVG | na Windowsie flagi emoji wyświetlają się jako litery |
+| kursor z rozbryzgiem i lupa | usunięte | ciężkie, tylko dla myszy, nic nie wnoszą do treści |
+
+Efekty z Aceternity, GSAP i React Bits powstały od nowa, z samego pomysłu, a nie przez przenoszenie kodu linijka po linijce, bo wierny port zachowuje licencję oryginału.
+
+## Jak Google widzi ją teraz?
+
+| W HTML-u z serwera | 2025 (16 adresów) | 2026 (14 adresów) |
+| --- | --- | --- |
+| `<title>` | 2, oba ze strony 404 | 14 z 14 |
+| meta description | 0 | 14 z 14 |
+| canonical i hreflang | 0 | 12 z 12 stron do indeksowania |
+| dokładnie jeden `<h1>` | 4 z 16 | 14 z 14 |
+| JSON-LD | 0 | 12 z 12 (NGO, WebSite, WebPage) |
+| robots.txt, sitemap | 404, 404 | 200, 200 |
+
+Każda strona ma teraz [osobny adres dla każdego języka](https://developers.google.com/search/docs/specialty/international/localized-versions), na przykład `/en/youth-housing/` i `/fr/logement-jeunes/`, a każdy adres z 2025 roku przekierowuje pod nowy. Francuskie teksty klienta zostały słowo w słowo; poprawki objęły tylko literówki, gramatykę i kalki, a każda trafiła na listę dla klienta. Jak działają tłumaczenia, opisuję w tekście [wielojęzyczna strona w Astro z Lingui](/pl/blog/wielojezyczna-strona-astro-z-lingui/).
+
+## Jak działała praca z AI?
+
+Claude Code (Opus) wykonał pracę inżynierską w jednej długiej sesji, według spisanego planu, od audytu o 10:42 do przekazania o 21:53. Ja prowadziłem projekt.
+
+<Flow
+  label="Plan, od audytu do przekazania"
+  steps={[
+    { icon: "tb:gauge", title: "Audyt", text: "Strona z 2025 roku zmierzona i oznaczona przed jakąkolwiek zmianą." },
+    { icon: "tb:notebook", title: "Fundamenty", text: "Wiki, hooki i bramki dla projektu." },
+    { icon: "tb:palette", title: "Design system", text: "Wygląd z 2025 roku jako tokeny i wspólne komponenty." },
+    { icon: "tb:test-pipe", title: "Prototyp", text: "Strona o mieszkaniach i hero strony głównej w Astro, zmierzone jak w audycie." },
+    { icon: "tb:stack-2", title: "Etapy", text: "Strona po stronie: zbudowana, sprawdzona, przejrzana przeze mnie." },
+    { icon: "tb:chart-bar", title: "Po", text: "Te same skrypty pomiarowe, uruchomione jeszcze raz." },
+  ]}
+/>
+
+| Claude Code | Ja |
+| --- | --- |
+| najpierw zmierzył starą stronę | ustaliłem twarde zasady: zachować wygląd i klimat, nigdy nie wymyślać faktów, zostawić francuski klienta, żadnych formularzy |
+| przebudował każdą stronę | przejrzałem zrzuty ekranu każdej strony |
+| uruchamiał testy po każdej zmianie | podjąłem decyzje: wycofać stronę Jobs, jasny nagłówek, mapa bez kliknięcia, nowa strona projektów; poprawiałem tempo i szacunki |
+
+Liczby pochodzą z tych samych skryptów i ustawień przed i po, na tym samym laptopie. Na ostatnim commicie bramki to typy, lint, testy jednostkowe, build z bramką przed premierą, 390 testów e2e w Chromium, 516 w Firefoksie i WebKicie oraz progi Lighthouse na 36 wierszach.
+
+Przy pierwszym pełnym uruchomieniu e2e nie przeszło 122 z 374 testów. Wśród poprawek były prawdziwe błędy stron, na przykład francuskie hero strony głównej miało 949 px szerokości przy ekranie 768 px, oraz poprawki samej sondy, które zachowały jej surowość. Żadnej bramki nie osłabiliśmy, żeby przejść. Każdy błąd, który raz nas kosztował, stał się jednolinijkową zasadą w pliku z lekcjami ([LLM wiki dla Claude Code](/pl/blog/llm-wiki-pamiec-projektu-dla-claude-code/)).
+
+## Co z tego wyszło?
+
+Strony angielskie, ten sam laptop i skrypty przed i po: Lighthouse 13.5, lokalnie, mediana z 3 pomiarów. „Telefon” to symulowana przez Lighthouse Motorola Moto G Power na wolnym 4G. Nowy build na czas pomiaru dopuszczono do indeksowania (buildy do przeglądu mają noindex). To liczby laboratoryjne, nie dane od prawdziwych użytkowników.
+
+| Strona | Wydajność, telefon | Wydajność, desktop | LCP, telefon | TBT, telefon |
+| --- | --- | --- | --- | --- |
+| Główna | 26 → **99** | 23 → **100** | 49,9 s → **1,65 s** | 4,85 s → **10 ms** |
+| Mieszkania | 26 → **99** | 45 → **100** | 11,8 s → **1,50 s** | 17,4 s → **10 ms** |
+| Rent your property | 28 → **100** | 36 → **100** | 11,7 s → **1,28 s** | 7,77 s → **23 ms** |
+| About us | 27 → **99** | 35 → **100** | 26,0 s → **1,88 s** | 11,9 s → **66 ms** |
+| Projekty | 26 → **100** | 32 → **100** | 25,1 s → **1,73 s** | 26,7 s → **58 ms** |
+| TEC | 23 → **99** | 34 → **94** | 11,7 s → **1,95 s** | 24,8 s → **73 ms** |
+
+- **Wszędzie:** dostępność, dobre praktyki i SEO mają 100 (2025: 78-84, 100 i 82), a przesunięcia układu wynoszą 0.
+- **TEC na desktopie ma 94**, z pomiarów 100, 94 i 90. Lighthouse rysuje WebGL programowo (SwiftShader), a tam kompilacja shadera globu wstrzymuje klatki na około 2 sekundy. LCP zostaje na 441 ms; prawdziwa karta graficzna kompiluje ten shader w milisekundy.
+- **Strony francuskie** przechodzą własną bramkę Lighthouse projektu: 36 wierszy, po angielsku i po francusku, wszystkie w granicach progów (wydajność 90, LCP 2,5 s, TBT 200 ms).
+- **axe:** 7 niespełnionych reguł WCAG w 2025 roku (16 widoków); 0 w 28 widokach nowej strony.
+- **Rozmiar:** folder `public/` z 2025 roku (277,7 MB) wobec całego nowego builda (9,2 MB).
+
+## Ograniczenia
+
+- **Jeszcze nie działa publicznie.** Klient musi jeszcze zatwierdzić nowe teksty po francusku, a 22 miejsca w tekstach prawnych czekają na klienta albo prawnika; build nie wypuści ich niewypełnionych.
+- **Tylko liczby laboratoryjne.** Dane od prawdziwych użytkowników, PageSpeed Insights i Rich Results Test wymagają publicznej strony.
+- **Nie ma jeszcze nagrania nowej strony**, więc klatki z ładowaniem pochodzą z filmstripu Lighthouse dla obu lat.
+- **Jedna otwarta podatność** siedzi w narzędziach deweloperskich (`braces`, przez CLI Lingui) i nie trafia do odwiedzających; 9 października 2026 nie było wersji z poprawką.
+- **Nieużywany kod** policzyłem tylko na stronie z 2025 roku (knip: 51 plików, 8 zależności), na nowej już nie.
+
+Tak samo powstała ta strona: [jak powstało to portfolio](/pl/blog/case-study/) i [wszystkie moje projekty](/pl/work/). Jeśli chcesz porozmawiać o podobnym projekcie albo o pracy, [mój formularz kontaktowy to jedna wiadomość](/pl/#contact).

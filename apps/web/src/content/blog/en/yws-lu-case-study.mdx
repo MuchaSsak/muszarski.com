@@ -1,0 +1,237 @@
+---
+title: "yws.lu: rebuilding a Luxembourg non-profit's site from Next.js to Astro in one day"
+seoTitle: "Next.js to Astro migration: a one-day case study"
+description: "Case study: migrating a Next.js site with 3D to static Astro in one day with Claude Code. Lab Lighthouse on phones: 23-28 to 99-100."
+translationKey: yws-lu
+published: 2026-10-09
+tags: [case-study, astro, performance, ai]
+cover: yws
+related: [this-site, astro-vs-next, astro-i18n]
+sources:
+  - title: "Total Blocking Time (Chrome for Developers)"
+    url: "https://developer.chrome.com/docs/lighthouse/performance/lighthouse-total-blocking-time"
+    accessed: 2026-10-09
+  - title: "Lighthouse network and CPU throttling (GoogleChrome/lighthouse docs)"
+    url: "https://github.com/GoogleChrome/lighthouse/blob/main/docs/throttling.md"
+    accessed: 2026-10-09
+  - title: "OffscreenCanvas (MDN)"
+    url: "https://developer.mozilla.org/en-US/docs/Web/API/OffscreenCanvas"
+    accessed: 2026-10-09
+  - title: "content-visibility (MDN)"
+    url: "https://developer.mozilla.org/en-US/docs/Web/CSS/content-visibility"
+    accessed: 2026-10-09
+  - title: "contain-intrinsic-size (MDN)"
+    url: "https://developer.mozilla.org/en-US/docs/Web/CSS/contain-intrinsic-size"
+    accessed: 2026-10-09
+  - title: "Tell Google about localized versions of your page (Google Search Central)"
+    url: "https://developers.google.com/search/docs/specialty/international/localized-versions"
+    accessed: 2026-10-09
+---
+
+import Flow from "~/components/blog/case/Flow.astro";
+import Shots from "~/components/blog/case/Shots.astro";
+import load2025a from "~/assets/blog/yws-lu/load-2025-2726.webp";
+import load2025b from "~/assets/blog/yws-lu/load-2025-5452.webp";
+import load2025c from "~/assets/blog/yws-lu/load-2025-10904.webp";
+import load2026 from "~/assets/blog/yws-lu/load-2026-1357.webp";
+import projects2025 from "~/assets/blog/yws-lu/projects-2025.webp";
+import projects2026 from "~/assets/blog/yws-lu/projects-2026.webp";
+import homePhone2025 from "~/assets/blog/yws-lu/home-phone-2025.webp";
+import homePhone2026 from "~/assets/blog/yws-lu/home-phone-2026.webp";
+import ownersPhone2025 from "~/assets/blog/yws-lu/owners-phone-2025.webp";
+import ownersPhone2026 from "~/assets/blog/yws-lu/owners-phone-2026.webp";
+
+yws.lu is the site of Youth Work Synergy, a Luxembourg non-profit that rents rooms to young people. I built it on Next.js in 2025, and on 9 October 2026 I rebuilt it in Astro in one day, with Claude Code as the engineer and me leading. The look stayed, the main text now shows in under 2 seconds in Lighthouse's phone test, and the new version isn't live yet.
+
+> **TL;DR**
+>
+> - **Before:** Lighthouse performance 23-45; the simulated phone waited 11.7 to 49.9 s for the main text.
+> - **After:** 94-100, and 99-100 on phones; the main text in 1.28 to 1.95 s; accessibility and SEO 100 on every page. Lighthouse 13.5, local, median of 3 runs, English pages. The 94 is the TEC page on desktop, where the test draws WebGL in software.
+> - **How:** static Astro with 0-4 KB of JavaScript per page, the 3D and canvas effects in Web Workers, and Claude Code on a written plan.
+> - **Weight:** the 2025 `public/` folder (277.7 MB) against the whole new build (9.2 MB).
+
+## What is yws.lu, and who is it for?
+
+Youth Work Synergy ASBL rents homes from private owners and sublets furnished rooms in shared houses to young people aged 18 to 34. It also runs youth projects, such as Erasmus+ projects and the TEC conference. So the site has two audiences: young people looking for a room, and owners who might rent out a house.
+
+This is client work. I built the 2025 site (first commit on 13 August 2025) and led this revamp; Mehdi, the client contact and the site's owner, judges the result. The new version is finished on a branch and waits for the client's legal texts, so [yws.lu](https://yws.lu/) still shows the 2025 one.
+
+## What was wrong with the 2025 site?
+
+It looked good and loaded badly. In Lighthouse's phone test, the main text appeared 11.7 to 49.9 seconds after the start. Lighthouse's own filmstrip shows why:
+
+<Shots
+  phones
+  shots={[
+    { image: load2025a, alt: "The 2025 home page on a phone at 2.7 seconds: a black screen", tag: "2025 · 2.7 s" },
+    { image: load2025b, alt: "The 2025 home page at 5.5 seconds: orange boxes cover the headline and the text", tag: "2025 · 5.5 s" },
+    { image: load2025c, alt: "The 2025 home page at 10.9 seconds: the headline and the text are finally readable", tag: "2025 · 10.9 s" },
+    { image: load2026, alt: "The 2026 home page at 1.4 seconds: the same headline and text, already readable", tag: "2026 · 1.4 s", picked: true },
+  ]}
+  caption="The home page in Lighthouse's filmstrip, mobile, the median of 3 runs, 9 October 2026. Frame times come from the real, unthrottled load on the test laptop; Lighthouse simulates the phone numbers from that load."
+/>
+
+The orange boxes are a reveal animation, and the text waits behind them. The other problems:
+
+- **Weight:** 3.5 to 9.2 MB and 533 to 1,070 KB of JavaScript per page, and `public/` held single photos of 25 to 30 MB.
+- **Search:** no page had a server-rendered `<title>` or description. French and English shared one URL and the language came from the browser, so Google only ever saw English.
+- **Keyboard:** the call-to-action buttons were links wrapped around buttons with `tabIndex={-1}`, so a keyboard couldn't reach them.
+- **Upkeep:** Next.js 15.3.8 had 31 open security advisories (2 critical), and support for 15.x ends around 21 October 2026.
+
+## Why Astro and not a Next.js upgrade?
+
+Before migrating anything, I built a spike: the housing page and the home hero with its 3D house, in Astro and Lingui, measured with the same script as the 2025 site.
+
+| Page | Performance | LCP | Page JavaScript |
+| --- | --- | --- | --- |
+| Home, phone | 26 → 98 | 49.9 s → 1.6 s | 974 → 2 KB |
+| Home, desktop | 23 → 67 | 9.1 s → 0.75 s | 1,070 → 279 KB |
+| Housing, phone | 26 → 87 | 11.8 s → 1.5 s | 539 → 0 KB |
+| Housing, desktop | 45 → 99 | 2.5 s → 0.34 s | 637 → 0 KB |
+
+Everything the framework controls met the budget, and the fallback, Next.js 16 with Lingui, could not beat zero framework JavaScript. The two misses, home on desktop (the 3D house) and housing on a phone (the flow field), were effects that would cost the same on any framework. The spike settled the framework, and two more decisions followed:
+
+| Decision | Picked | Rejected | Why |
+| --- | --- | --- | --- |
+| Framework | Astro 7, static, with Lingui 6.9 | Next.js 16 with Lingui | zero framework JavaScript in the spike; no server runtime to patch |
+| Data | typed files and photos in the repo | keep Supabase | it held one row of statistics and 7 photos: one paid service and one browser fetch fewer |
+| 3D | plain three.js in a Web Worker | React Three Fiber on the page | React built the house scene in one 2.6 s main-thread task |
+
+Astro and Lingui are also this portfolio's stack, so it was proven on my own work first ([Astro or Next.js for a portfolio](/en/blog/astro-vs-nextjs-for-a-portfolio/)).
+
+## Where did the time go?
+
+[Total Blocking Time](https://developer.chrome.com/docs/lighthouse/performance/lighthouse-total-blocking-time) counts only work on the main thread. So the rule was: the headline is drawn first, and anything heavy runs off the main thread, loads near the screen and plays only while it's visible.
+
+| Where | Cause | Fix | TBT after |
+| --- | --- | --- | --- |
+| 3D house (desktop) | React built the scene in one 2,639 ms task | three.js in a worker, on an [OffscreenCanvas](https://developer.mozilla.org/en-US/docs/Web/API/OffscreenCanvas) | 0-19 ms |
+| TEC globe (desktop) | cobe compiled its shader on the main thread | cobe in a worker | 1-15 ms |
+| Housing flow field (phones) | 400-700 strokes and two blurs per frame | the draw loop in a worker | 10 ms |
+| Long pages (phones) | animated SVG, a repainting shine, layout of every section | transforms, loops paused off screen, `content-visibility: auto` | 23-73 ms |
+
+One worker runs all three home-page scenes (the house, a wardrobe and a rocket), and below 1280 px a poster of the real scene stands in. The CSS causes came from a DevTools trace per long task, then A/B builds under Lighthouse: `content-visibility` on the project cards alone took TBT from 215 to 148 ms.
+
+### Why did anchor links miss by 552 px?
+
+[`content-visibility: auto`](https://developer.mozilla.org/en-US/docs/Web/CSS/content-visibility) lets the browser skip the layout of sections that are off screen. It was a big TBT win, and it broke anchor links. Until a section is drawn, it stands at an estimated height, so a jump to `/en/#contact` landed 552 px past its section once the sections above took their real size. In WebKit, `scrollIntoView` into a skipped section didn't move at all. The fix draws everything for a moment, through `html[data-jump] * { content-visibility: visible !important; }`:
+
+```ts
+// targetOf(hash): the element a #hash points to, or null
+const root = document.documentElement;
+let timer = 0;
+const drawEverything = () => {
+  root.dataset.jump = "";
+  clearTimeout(timer);
+  timer = window.setTimeout(() => delete root.dataset.jump, 1500);
+};
+
+document.addEventListener("click", (event) => {
+  const link = event.target instanceof Element ? event.target.closest<HTMLAnchorElement>("a[href*='#']") : null;
+  if (!link || link.origin !== location.origin || link.pathname !== location.pathname || !targetOf(link.hash)) return;
+  drawEverything();
+});
+```
+
+[`contain-intrinsic-height: auto`](https://developer.mozilla.org/en-US/docs/Web/CSS/contain-intrinsic-size) remembers each section's real height, so when the sections skip again, nothing moves. An e2e test checks the jump in Chromium, Firefox and WebKit; the whole file is [on GitHub](https://github.com/MuchaSsak/yws.lu/blob/revamp/2026-10/web/src/scripts/anchor-jumps.ts).
+
+## What changed on screen?
+
+The brief: keep it playful, colourful, 3D and warm, because Mehdi judges the finished look. A weak part was replaced only if the feel stayed, so the hero barely moved. The projects page was redesigned:
+
+<Shots
+  shots={[
+    { image: projects2025, alt: "2025: the We Spark Projects page at desktop width, one wide card with a long paragraph", tag: "2025" },
+    { image: projects2026, alt: "2026: the same page with seven numbered tiles, each in its project's colour", tag: "2026", picked: true },
+  ]}
+  caption="We Spark Projects at 1440 px. The tiles give each project at a glance; below them, each project is a full-width chapter."
+/>
+
+Two changes on phones:
+
+<Shots
+  phones
+  shots={[
+    { image: homePhone2025, alt: "2025 home page on a phone: a dark grey header with a flag button and a burger", tag: "2025" },
+    { image: homePhone2026, alt: "2026 home page on a phone: a light header with an orange Apply button and a Menu button", tag: "2026", picked: true },
+    { image: ownersPhone2025, alt: "2025 Rent your property on a phone: the highlighted words break into three separate orange boxes", tag: "2025" },
+    { image: ownersPhone2026, alt: "2026 Rent your property: the headline wraps cleanly, the highlighted words one band over two lines", tag: "2026", picked: true },
+  ]}
+  caption="Phones at 390 px: Apply is one tap away in the header, and the owners' headline no longer breaks apart."
+/>
+
+| 2025 | 2026 | Why |
+| --- | --- | --- |
+| glare cards in a fixed 17:21 box | an own card that hugs its text, with a sheen as it enters | a third of each card was empty; the glare had no touch or keyboard twin |
+| dark header with flag emoji | light header, Apply as an orange pill, SVG flags | flag emoji render as letters on Windows |
+| a splash cursor and a lens | dropped | heavy, mouse-only, no content value |
+
+Effects from Aceternity, GSAP and React Bits were rewritten from the idea, never ported line by line, because a faithful port keeps its licence.
+
+## How does Google see it now?
+
+| In the server HTML | 2025 (16 URLs) | 2026 (14 URLs) |
+| --- | --- | --- |
+| `<title>` | 2, both the 404's | 14 of 14 |
+| meta description | 0 | 14 of 14 |
+| canonical and hreflang | 0 | 12 of 12 indexable pages |
+| exactly one `<h1>` | 4 of 16 | 14 of 14 |
+| JSON-LD | 0 | 12 of 12 (NGO, WebSite, WebPage) |
+| robots.txt, sitemap | 404, 404 | 200, 200 |
+
+Each page now has [one URL per language](https://developers.google.com/search/docs/specialty/international/localized-versions), such as `/en/youth-housing/` and `/fr/logement-jeunes/`, and every 2025 address redirects to its new home. The client's French stayed word for word: only typos, grammar and calques were fixed, and each fix was logged for the client. How the translations work is in [a multilingual Astro site with Lingui](/en/blog/multilingual-astro-site-with-lingui/).
+
+## How did the AI workflow run?
+
+Claude Code (Opus) did the engineering in one long session on a written plan, from the audit at 10:42 to the handover at 21:53. I led it.
+
+<Flow
+  label="The plan, from the audit to the handover"
+  steps={[
+    { icon: "tb:gauge", title: "Audit", text: "The 2025 site measured and tagged before any change." },
+    { icon: "tb:notebook", title: "Framework", text: "A wiki, hooks and gates for the project." },
+    { icon: "tb:palette", title: "Design system", text: "The 2025 look as tokens and shared components." },
+    { icon: "tb:test-pipe", title: "Spike", text: "The housing page and the home hero in Astro, measured like the audit." },
+    { icon: "tb:stack-2", title: "Slices", text: "Page by page: built, checked, reviewed by me." },
+    { icon: "tb:chart-bar", title: "After", text: "The same capture scripts, run again." },
+  ]}
+/>
+
+| Claude Code | Me |
+| --- | --- |
+| measured the old site first | set the rules: keep the look and the feel, never invent a fact, keep the client's French, no forms |
+| rebuilt each page | reviewed the screenshots of every page |
+| ran the checks after every change | made the calls: retire the Jobs page, a light header, the map without a click, a new projects page; corrected the pace and the estimates |
+
+The numbers came from the same capture scripts and settings before and after, on the same laptop. On the final commit, the gates were types, lint, unit tests, a build with a launch gate, 390 e2e tests in Chromium, 516 in Firefox and WebKit, and Lighthouse floors on 36 rows.
+
+The first full e2e run failed 122 of 374 tests. The fixes included real page bugs, such as the French home hero running 949 px wide at 768 px, plus probe fixes that kept the same strictness; no gate was weakened to pass. Each mistake became a one-line rule in a lessons file ([an LLM wiki for Claude Code](/en/blog/llm-wiki-project-memory-for-claude-code/)).
+
+## What came of it?
+
+English pages, the same laptop and scripts before and after: Lighthouse 13.5, local, the median of 3 runs. "Phone" is Lighthouse's simulated Moto G Power on slow 4G. The new build was made indexable for the capture (review builds are noindex). These are lab numbers, not real-user data.
+
+| Page | Performance, phone | Performance, desktop | LCP, phone | TBT, phone |
+| --- | --- | --- | --- | --- |
+| Home | 26 → **99** | 23 → **100** | 49.9 s → **1.65 s** | 4.85 s → **10 ms** |
+| Housing | 26 → **99** | 45 → **100** | 11.8 s → **1.50 s** | 17.4 s → **10 ms** |
+| Rent your property | 28 → **100** | 36 → **100** | 11.7 s → **1.28 s** | 7.77 s → **23 ms** |
+| About us | 27 → **99** | 35 → **100** | 26.0 s → **1.88 s** | 11.9 s → **66 ms** |
+| Projects | 26 → **100** | 32 → **100** | 25.1 s → **1.73 s** | 26.7 s → **58 ms** |
+| TEC | 23 → **99** | 34 → **94** | 11.7 s → **1.95 s** | 24.8 s → **73 ms** |
+
+- **Everywhere:** accessibility, best practices and SEO are 100 (2025: 78-84, 100 and 82), and layout shift is 0.
+- **TEC on desktop is 94**, from runs of 100, 94 and 90. Lighthouse draws WebGL in software (SwiftShader), where compiling the globe's shader stalls frames for about 2 seconds. Its LCP stays at 441 ms; a real GPU compiles the shader in milliseconds.
+- **French pages** pass the project's own Lighthouse gate: 36 rows, English and French, all within the floors (performance 90, LCP 2.5 s, TBT 200 ms).
+- **axe:** 7 WCAG rules failing in 2025 (16 views); 0 in 28 views of the new site.
+- **Size:** the 2025 `public/` folder (277.7 MB) against the whole new build (9.2 MB).
+
+## Limits
+
+- **Not live.** The client still approves the new French texts, and 22 legal placeholders wait for the client or a lawyer; the build refuses to ship them.
+- **Lab numbers only.** Real-user data, PageSpeed Insights and the Rich Results Test all need the public site.
+- **No recording of the new site yet**, so the loading figure uses Lighthouse's filmstrip for both years.
+- **One open advisory** sits in dev tooling (`braces`, via the Lingui CLI), not shipped to visitors; no fixed release existed on 9 October 2026.
+- **Unused code** was counted only on the 2025 site (knip: 51 files, 8 dependencies), not re-run on the new one.
+
+The same workflow built this site: [how this portfolio was built](/en/blog/case-study/), and [all my projects](/en/work/). If you'd like to talk about work like this, or about a role, [my contact form is one message long](/en/#contact).

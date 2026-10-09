@@ -144,6 +144,10 @@ Launch set, in priority order:
 5. PL: "Claude Code po polsku".
 6. Astro vs Next.js for a portfolio (benchmark re-run on a public demo; the internal PstrykWeb numbers are never published).
 
+Published after the launch set: the yws.lu case study (2026-10-09, `/blog/yws-lu-case-study/` in en + pl, query
+"Next.js to Astro migration"), a client site with rights `ok`; its facts come only from the yws.lu handover
+(`portfolio-case-study.md`, `REPORT.md`), kept outside the repo in the gitignored `.case-study/`.
+
 Pillars:
 - AI-assisted dev with Claude Code
 - Lingui i18n (+ his npm package)

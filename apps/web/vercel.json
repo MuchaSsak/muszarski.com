@@ -223,7 +223,7 @@
       "permanent": true
     },
     {
-      "source": "/blog/:slug(case-study)/",
+      "source": "/blog/:slug(case-study|yws-lu-case-study)/",
       "has": [
         {
           "type": "header",
@@ -237,7 +237,7 @@
       "permanent": false
     },
     {
-      "source": "/blog/:slug(case-study)/",
+      "source": "/blog/:slug(case-study|yws-lu-case-study)/",
       "has": [
         {
           "type": "header",

@@ -90,8 +90,11 @@
   border: 0;
   background: currentColor;
 }
-/* Tables scroll inside themselves; the page never scrolls sideways. */
+/* Tables scroll inside themselves; the page never scrolls sideways. `position: relative` makes the table the containing
+   block of an external link's absolute ".sr-only" note, which otherwise escaped the scroll box (98 px of sideways
+   scroll at 320 px on the yws.lu case study, 2026-10-09). */
 .prose table {
+  position: relative;
   display: block;
   max-width: 100%;
   overflow-x: auto;
