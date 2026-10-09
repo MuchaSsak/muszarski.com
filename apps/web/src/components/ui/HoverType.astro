@@ -44,6 +44,10 @@ const words = text.split(" ").map((word) => [...word].map((char) => ({ char, i: 
   .ht-w {
     white-space: nowrap;
   }
+  /* The crosshair of the goo on My life: the letters are something to poke [user 2026-10-09]. */
+  .ht-hover {
+    cursor: crosshair;
+  }
   /* `ht-on` and `ht-nb` (the letter under the mouse and its neighbours in the word) come from the script below, and
      so do `--ht-d1` / `--ht-d2`: half the width each letter loses at the thin and the middle weight. The margins move
      with the weight, on the same clock, so the letter's slot holds. */
