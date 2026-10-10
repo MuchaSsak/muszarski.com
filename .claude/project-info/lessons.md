@@ -27,6 +27,7 @@
 - Do exactly the one thing asked ("so overachieving"); copy stays close to the owner's words: no overselling, no counts, never repeat what the picture already shows - 2026-10-07.
 - Heavy media loads near visibility, plays only when visible and after a first interaction (a load-time loop cost 270–480 ms TBT) - 2026-10-05.
 - Shared review pages show nothing the site couldn't (internal PstrykWeb stack, client names); ask those in chat - 2026-10-05.
+- Posts never name a client's people: "the site's owner", not a first name (a first name was in the yws.lu case study) [user 2026-10-10] - 2026-10-10.
 - Keep every version for the build story: tag `history/*`, archive old shots, index in `comps/HISTORY.md`; never delete a superseded look - 2026-10-05.
 - Fun, not overly fun: a drawn prop in every section read as "too vibe coded"; lead with real media, type and one interesting component; a wink is an emoji, not a gag - 2026-10-08.
 - Logos only where the brand's own guideline allows it, checked per brand (CC0 artwork is not permission); propose a mark, don't assume it stays (`assets.md` § CV marks) - 2026-10-08.
