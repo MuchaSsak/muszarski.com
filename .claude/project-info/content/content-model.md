@@ -114,8 +114,10 @@ cover (code-drawn or real), coverAlt, author: "mateusz", draft, canonical? }`.
   screenshot, what the owner said, why it changed) and `Shots` (framed screenshots with tags such as "Claude's pick";
   `phones` puts phone screens in one row), `Flow` (a process as tickets), `Matrix` (two scores as a table), `Clips`
   (muted loops of the site in motion, `public/media/case/<src>.{av1.mp4,mp4}` + `-poster.webp`, played by
-  `scripts/reel.ts`: sources only after the first interaction and near, play while half visible) and `Breaker` (a dark
-  band that links to a live showcase, e.g. the home AI story; its steps light up in turn, off under reduced motion).
+  `scripts/reel.ts`: sources only after the first interaction and near, play while half visible), `Film` (one featured
+  film with sound: a poster card with a big play button opens a modal dialog that grows out of the card,
+  `scripts/film.ts`; the file loads only on that click) and `Breaker` (a dark band that links to a live showcase, e.g.
+  the home AI story; its steps light up in turn, off under reduced motion).
   All text is passed from the per-locale MDX; their CSS lives in `styles/case.css` (see `tech/usage/astro.md` § Gotchas: MDX component styles
   and the CSP). Images live in `src/assets/case/` (1200 px webp, made from `comps/` and fresh shots of the site).
   Shots of the site come from a launch-mode build (`IS_FULL_PRODUCTION=true astro build --outDir <scratch>`) so

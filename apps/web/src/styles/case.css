@@ -1,7 +1,7 @@
 /*
- * Case-study pieces used inside posts (components/blog/case/*): Timeline, Versions, Shots, Flow, Breaker, Matrix. Kept
+ * Case-study pieces used inside posts (components/blog/case/*): Timeline, Versions, Shots, Flow, Breaker, Matrix, Film. Kept
  * here, imported by the post page, because styles of components rendered inside MDX are inlined without a CSP hash and
- * get blocked. Class names carry their component's prefix (cs-, v-, tl-, fl-, bk-, mx-): this is global CSS.
+ * get blocked. Class names carry their component's prefix (cs-, v-, tl-, fl-, bk-, mx-, fm-): this is global CSS.
  */
 
 /* Timeline */
@@ -409,6 +409,257 @@
 .cs-clip .cs-name {
   z-index: 3;
   pointer-events: none;
+}
+
+/* Film: a featured film with sound. The card is a poster of its own frame; a click opens a modal dialog that grows out
+   of the frame and shrinks back into it (scripts/film.ts sets --fx/--fy, the frame's centre from the viewport's, and
+   --fs, its width over the dialog's). `display` + `overlay` stay discrete so the close plays before the dialog leaves
+   the top layer; browsers without @starting-style just snap. */
+figure.fm {
+  margin: 2em 0 2.75em;
+}
+.fm-card {
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background: var(--navy);
+  color: var(--ice);
+  text-align: left;
+  cursor: pointer;
+  box-shadow:
+    0 0 0 3px var(--navy),
+    10px 10px 0 3px var(--accent);
+  transition:
+    translate var(--dur-base) var(--ease-out),
+    box-shadow var(--dur-base) var(--ease-out);
+}
+.fm-card:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 8px;
+}
+.fm-frame {
+  position: relative;
+  display: block;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+}
+.fm-frame img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: scale 0.7s var(--ease-out);
+}
+.fm-play {
+  position: absolute;
+  top: 0;
+  right: clamp(1rem, 3vw, 2rem);
+  display: grid;
+  place-items: center;
+  width: clamp(4.5rem, 10vw, 7.5rem);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: var(--accent);
+  color: var(--on-accent);
+  box-shadow:
+    0 0 0 4px var(--navy),
+    6px 6px 0 4px var(--navy);
+  translate: 0 -50%;
+  transition: scale 0.4s var(--ease-pop);
+}
+/* A ring that keeps calling, frozen by the pause button and reduced motion. */
+.fm-play::before {
+  content: "";
+  position: absolute;
+  inset: -4px;
+  border: 3px solid var(--accent);
+  border-radius: 50%;
+  animation: fm-ring 2.4s var(--ease-out) infinite;
+}
+@keyframes fm-ring {
+  from {
+    opacity: 0.9;
+    scale: 1;
+  }
+  to {
+    opacity: 0;
+    scale: 1.6;
+  }
+}
+.fm-play .ico {
+  width: 42%;
+  height: 42%;
+  /* The triangle's optical centre. */
+  margin-left: 8%;
+}
+.fm-bar {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 0.875rem;
+  min-height: clamp(3rem, 5vw, 4.25rem);
+  padding: 0.875rem calc(clamp(4.5rem, 10vw, 7.5rem) + clamp(2rem, 5vw, 3.5rem)) 1rem 1.125rem;
+  border-top: 3px solid var(--accent);
+}
+.fm-label {
+  font-weight: 900;
+  font-size: clamp(1.25rem, 1rem + 1vw, 1.875rem);
+  line-height: 1;
+  text-transform: uppercase;
+  font-stretch: 80%;
+}
+.fm-len {
+  padding: 0.25rem 0.5rem;
+  background: var(--accent);
+  color: var(--on-accent);
+  font-weight: 850;
+  font-size: 0.875rem;
+  font-variant-numeric: tabular-nums;
+  rotate: -3deg;
+}
+.fm-sound {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  font-weight: 800;
+  font-size: 0.8125rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+.fm-sound .ico {
+  width: 1.125rem;
+  height: 1.125rem;
+}
+.fm figcaption {
+  margin-top: 1.25rem;
+  font-size: 0.9375rem;
+  line-height: 1.5;
+}
+.fm-card:active .fm-play {
+  scale: 0.94;
+}
+@media (hover: hover) {
+  .fm-card:hover {
+    translate: -3px -3px;
+    box-shadow:
+      0 0 0 3px var(--navy),
+      14px 14px 0 3px var(--accent);
+  }
+  .fm-card:hover .fm-frame img {
+    scale: 1.03;
+  }
+  .fm-card:hover .fm-play {
+    scale: 1.08;
+  }
+}
+.fm-dialog {
+  --fx: 0px;
+  --fy: 0px;
+  --fs: 0.5;
+  width: min(100rem, 100vw - 2rem, (100dvh - 10rem) * 16 / 9);
+  max-width: none;
+  max-height: none;
+  margin: auto;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--ice);
+  overflow: visible;
+  opacity: 0;
+  translate: var(--fx) var(--fy);
+  scale: var(--fs);
+  transition:
+    opacity 0.3s ease,
+    translate 0.55s var(--ease-out),
+    scale 0.55s var(--ease-out),
+    overlay 0.55s allow-discrete,
+    display 0.55s allow-discrete;
+}
+.fm-dialog[open] {
+  opacity: 1;
+  translate: 0 0;
+  scale: 1;
+}
+@starting-style {
+  .fm-dialog[open] {
+    opacity: 0;
+    translate: var(--fx) var(--fy);
+    scale: var(--fs);
+  }
+}
+.fm-dialog::backdrop {
+  background: rgb(10 13 51 / 0);
+  transition:
+    background-color 0.4s ease,
+    overlay 0.55s allow-discrete,
+    display 0.55s allow-discrete;
+}
+.fm-dialog[open]::backdrop {
+  background: rgb(10 13 51 / 0.92);
+}
+@starting-style {
+  .fm-dialog[open]::backdrop {
+    background: rgb(10 13 51 / 0);
+  }
+}
+.fm-box {
+  position: relative;
+  background: var(--navy);
+  box-shadow:
+    0 0 0 3px var(--ice),
+    12px 12px 0 3px var(--accent);
+}
+.fm-box video {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 16 / 9;
+}
+.fm-close {
+  position: absolute;
+  right: -3px;
+  bottom: calc(100% + 0.875rem);
+  display: grid;
+  place-items: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  padding: 0;
+  border: 0;
+  background: var(--accent);
+  color: var(--on-accent);
+  cursor: pointer;
+  box-shadow: 4px 4px 0 var(--ice);
+  transition: rotate 0.35s var(--ease-pop);
+}
+.fm-close .ico {
+  width: 1.5rem;
+  height: 1.5rem;
+}
+.fm-close:hover {
+  rotate: 90deg;
+}
+.fm-close:focus-visible {
+  outline: 3px solid var(--ice);
+  outline-offset: 4px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .fm-dialog,
+  .fm-dialog[open] {
+    translate: none;
+    scale: none;
+  }
+  .fm-play::before {
+    animation: none;
+    opacity: 0;
+  }
+}
+:root.still .fm-dialog,
+:root.still .fm-dialog[open] {
+  translate: none;
+  scale: none;
 }
 
 /* Flow: a process as a chain of tickets; wide screens run it across, phones down. Arrows are drawn between steps. */

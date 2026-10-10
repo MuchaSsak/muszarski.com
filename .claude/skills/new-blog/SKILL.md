@@ -20,7 +20,7 @@ informational, with accurate research and quick explanations of my thought proce
 | Schema + tags + covers | `apps/web/src/content.config.ts`, `src/lib/blog.ts` (`BLOG_TAGS`, `BLOG_COVERS`) | title 20-110, seoTitle 15-60, description 80-160, ≤ 4 tags, ≤ 3 related, sources with `accessed` |
 | Hard rules (tests) | `src/content/content.test.ts`, `src/lib/locale-free.test.ts` | translations pair up, related keys and internal links exist, no em/en dashes or raw no-break spaces, nothing about PstrykWeb, every slug has a locale-free redirect |
 | Post page | `src/pages/[locale]/blog/[slug].astro` | prints the H1, dates, reading time (220 wpm), TOC (H2 + H3), sources, author box, related; JSON-LD, hreflang, RSS, sitemap and share card come for free (`references/seo.md`) |
-| Figures | `src/components/blog/case/` (`Shots`, `Clips`, `Flow`, `Matrix`, `Timeline`, `Versions`, `Breaker`), CSS in `src/styles/case.css` | what each is for: `references/visuals.md` |
+| Figures | `src/components/blog/case/` (`Shots`, `Clips`, `Film`, `Flow`, `Matrix`, `Timeline`, `Versions`, `Breaker`), CSS in `src/styles/case.css` | what each is for: `references/visuals.md` |
 | Covers | `src/components/blog/PostCover.astro` | code-drawn, one motif per topic; a new motif = a `BLOG_COVERS` entry + a palette + the drawing |
 | Pictures | `src/assets/blog/<translationKey>/` (articles), `src/assets/case/` (case study #0); clips in `public/media/blog/<translationKey>/` | WebP stills, AV1 + H.264 clips with a WebP poster |
 | Tools | `scripts/post-check.mjs` (reading + SEO lint), `scripts/capture.mjs` (screenshots, phone strips, clips, overflow) | both in this skill's folder |

@@ -4,6 +4,7 @@ seoTitle: "Next.js to Astro migration: a one-day case study"
 description: "Case study: migrating a Next.js site with 3D to static Astro in one day with Claude Code. Lab Lighthouse on phones: 23-28 to 99-100."
 translationKey: yws-lu
 published: 2026-10-09
+updated: 2026-10-10
 tags: [case-study, astro, performance, ai]
 cover: yws
 related: [this-site, astro-vs-next, astro-i18n]
@@ -28,6 +29,7 @@ sources:
     accessed: 2026-10-09
 ---
 
+import Film from "~/components/blog/case/Film.astro";
 import Flow from "~/components/blog/case/Flow.astro";
 import Shots from "~/components/blog/case/Shots.astro";
 import load2025a from "~/assets/blog/yws-lu/load-2025-2726.webp";
@@ -40,8 +42,19 @@ import homePhone2025 from "~/assets/blog/yws-lu/home-phone-2025.webp";
 import homePhone2026 from "~/assets/blog/yws-lu/home-phone-2026.webp";
 import ownersPhone2025 from "~/assets/blog/yws-lu/owners-phone-2025.webp";
 import ownersPhone2026 from "~/assets/blog/yws-lu/owners-phone-2026.webp";
+import filmPoster from "~/assets/blog/yws-lu/film-poster.webp";
 
 yws.lu is the site of Youth Work Synergy, a Luxembourg non-profit that rents rooms to young people. I built it on Next.js in 2025, and on 9 October 2026 I rebuilt it in Astro in one day, with Claude Code as the engineer and me leading. The look stayed, the main text now shows in under 2 seconds in Lighthouse's phone test, and the new version isn't live yet.
+
+<Film
+  dir="/media/blog/yws-lu/"
+  src="film"
+  poster={filmPoster}
+  seconds={111}
+  label="Watch the film"
+  title="The new yws.lu: a film of what changed"
+  caption="The film I made for Mehdi with Claude Motion: what changed on the site, in under two minutes. It has music."
+/>
 
 > **TL;DR**
 >

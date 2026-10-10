@@ -8,6 +8,8 @@ export const PAGES = [
   "/en/blog/case-study/",
   "/pl/blog/case-study/",
   "/en/blog/lingui-vs-i18next/",
+  "/en/blog/yws-lu-case-study/",
+  "/pl/blog/yws-lu-case-study/",
 ] as const;
 /** The 404 in each language (one 404.html, swapped by the first segment: components/NotFound.astro). */
 export const ROUTES = [...PAGES, "/does-not-exist/", "/pl/does-not-exist/", "/es/does-not-exist/"] as const;

@@ -1,0 +1,69 @@
+---
+/**
+ * A featured film with sound (the yws.lu case study's film for the client) [user 2026-10-10: "make it really
+ * featured", a fullscreen dialog like pstrykweb.pl's "Obejrzyj z lektorem"]. The card is the film's own frame, a big
+ * play button stuck over its bottom edge (the frame's middle stays clear), the label and the length; a click opens a
+ * native modal dialog that grows out of the card and shrinks back into it on close (scripts/film.ts sets where from;
+ * styles/case.css § Film). Nothing loads before that click but
+ * the lazy poster: the sources wait in a `<template>` (scripts/video-sources.ts, AV1 first, H.264 fallback).
+ * Files: `public/media/blog/<dir>/<src>.{av1.mp4,mp4}`, 1920×1080, AAC audio. Text comes from the post.
+ */
+import type { ImageMetadata } from "astro";
+import { getImage, Image } from "astro:assets";
+import { t } from "lingui-for-astro/macro";
+
+import Icon from "~/components/ui/Icon.astro";
+
+interface Props {
+  /** The folder in public/ (e.g. /media/blog/yws-lu/). */
+  dir: string;
+  /** The file stem in `dir`. */
+  src: string;
+  poster: ImageMetadata;
+  /** The film's length in seconds. */
+  seconds: number;
+  /** The visible label on the card ("Watch the film"); it starts the button's accessible name. */
+  label: string;
+  /** The dialog's accessible name (what the film is). */
+  title: string;
+  caption: string;
+}
+
+const { dir, src, poster, seconds, label, title, caption } = Astro.props;
+const length = `${Math.floor(seconds / 60)}:${String(Math.floor(seconds % 60)).padStart(2, "0")}`;
+const still = await getImage({ src: poster, width: 1280, format: "webp" });
+const closeLabel = t`Close video`;
+const soundLabel = t`With sound`;
+---
+
+<figure class="fm">
+  <button class="fm-card" type="button" data-film-open aria-haspopup="dialog">
+    <span class="fm-frame">
+      <Image src={poster} alt="" widths={[640, 960, 1280, 1600]} sizes="(min-width: 64rem) 52rem, 94vw" loading="lazy" />
+    </span>
+    <span class="fm-bar">
+      <span class="fm-play" aria-hidden="true"><Icon name="tbf:player-play" /></span>
+      <span class="fm-label">{label}</span>
+      <span class="fm-len">{length}</span>
+      <span class="fm-sound"><Icon name="tb:music" />{soundLabel}</span>
+    </span>
+  </button>
+  <figcaption>{caption}</figcaption>
+</figure>
+<dialog class="fm-dialog" data-film aria-label={title}>
+  <div class="fm-box">
+    <video controls playsinline preload="none" poster={still.src} width="1920" height="1080">
+      <template>
+        <source src={`${dir}${src}.av1.mp4`} type='video/mp4; codecs="av01.0.09M.08, mp4a.40.2"' />
+        <source src={`${dir}${src}.mp4`} type="video/mp4" />
+      </template>
+    </video>
+    <button class="fm-close" type="button" data-film-close aria-label={closeLabel}>
+      <Icon name="tb:x" />
+    </button>
+  </div>
+</dialog>
+
+<script>
+  import "~/scripts/film";
+</script>

@@ -22,7 +22,7 @@ msgstr ""
 #: src/components/home/Credentials.astro:260
 #: src/components/home/Credentials.astro:289
 #: src/components/home/Credentials.astro:302
-#: src/components/layout/SiteFooter.astro:48
+#: src/components/layout/SiteFooter.astro:51
 #: src/pages/[locale]/blog/[slug].astro:161
 #: src/pages/[locale]/cv/index.astro:50
 #: src/pages/[locale]/my-life/index.astro:111
@@ -152,7 +152,7 @@ msgid "All posts"
 msgstr "Todos los artículos"
 
 #: src/components/home/Chapters.astro:96
-#: src/components/layout/SiteFooter.astro:57
+#: src/components/layout/SiteFooter.astro:60
 #: src/components/NotFound.astro:47
 #: src/pages/[locale]/contact/sent/index.astro:25
 #: src/pages/[locale]/work/index.astro:181
@@ -175,7 +175,7 @@ msgstr "Un encargo de prácticas de Neoteric, una empresa polaca de desarrollo d
 msgid "analytics"
 msgstr "analítica"
 
-#: src/components/layout/SiteFooter.astro:163
+#: src/components/layout/SiteFooter.astro:166
 msgid "and love"
 msgstr "y amor"
 
@@ -243,7 +243,7 @@ msgstr "Webs a medida para negocios locales, encargadas con un solo formulario o
 msgid "blocked by a hook"
 msgstr "hook: bloqueado"
 
-#: src/components/layout/SiteFooter.astro:64
+#: src/components/layout/SiteFooter.astro:67
 #: src/components/layout/SiteHeader.astro:47
 #: src/pages/[locale]/blog/[slug].astro:53
 #: src/pages/[locale]/blog/index.astro:36
@@ -292,7 +292,7 @@ msgstr "Desarrollo"
 msgid "builds"
 msgstr "desarrolla"
 
-#: src/components/layout/SiteFooter.astro:159
+#: src/components/layout/SiteFooter.astro:162
 #: src/components/ui/StackList.astro:22
 msgid "Built with"
 msgstr "Hecho con"
@@ -373,6 +373,10 @@ msgstr "Trabajo para clientes, productos propios, código abierto y experimentos
 msgid "Close menu"
 msgstr "Cerrar menú"
 
+#: src/components/blog/case/Film.astro:34
+msgid "Close video"
+msgstr "Cerrar vídeo"
+
 #: src/components/home/chapters/ChapterSpace.astro:117
 #: src/components/home/HowIWork.astro:69
 #: src/pages/[locale]/work/index.astro:215
@@ -421,7 +425,7 @@ msgstr "confirmar correo"
 #: src/components/cv/CvSheet.astro:75
 #: src/components/cv/CvWeb.astro:50
 #: src/components/home/Contact.astro:46
-#: src/components/layout/SiteFooter.astro:100
+#: src/components/layout/SiteFooter.astro:103
 #: src/components/layout/SiteHeader.astro:94
 #: src/components/layout/SiteHeader.astro:121
 #: src/components/NotFound.astro:48
@@ -463,7 +467,7 @@ msgid "Curriculum vitae"
 msgstr "Currículum vítae"
 
 #: src/components/layout/CvLink.astro:36
-#: src/components/layout/SiteFooter.astro:65
+#: src/components/layout/SiteFooter.astro:68
 #: src/pages/[locale]/cv/index.astro:43
 #: src/pages/[locale]/cv/print/index.astro:24
 msgid "CV"
@@ -543,7 +547,7 @@ msgstr "puntos de abandono"
 msgid "Education"
 msgstr "Formación académica"
 
-#: src/components/layout/SiteFooter.astro:73
+#: src/components/layout/SiteFooter.astro:76
 msgid "Elsewhere"
 msgstr "En la red"
 
@@ -607,7 +611,7 @@ msgstr "Cine"
 msgid "Findings"
 msgstr "Hallazgos"
 
-#: src/components/layout/SiteFooter.astro:104
+#: src/components/layout/SiteFooter.astro:107
 msgid "Footer"
 msgstr "Pie de página"
 
@@ -718,7 +722,7 @@ msgid "How it earns is designed in from day one."
 msgstr "La forma de generar ingresos se diseña desde el primer día."
 
 #: src/components/home/AiWorkflow.astro:470
-#: src/components/layout/SiteFooter.astro:67
+#: src/components/layout/SiteFooter.astro:70
 msgid "How this site was built"
 msgstr "Cómo se hizo esta web"
 
@@ -865,7 +869,7 @@ msgstr "Abrir en el ordenador"
 msgid "lead"
 msgstr "dirijo"
 
-#: src/components/layout/SiteFooter.astro:78
+#: src/components/layout/SiteFooter.astro:81
 msgid "Legal"
 msgstr "Legal"
 
@@ -882,7 +886,7 @@ msgstr "Legal · términos del servicio"
 msgid "lessons"
 msgstr "lecciones"
 
-#: src/components/layout/SiteFooter.astro:92
+#: src/components/layout/SiteFooter.astro:95
 msgid "Let's talk about what you're building."
 msgstr "Hablemos de lo que estás creando."
 
@@ -950,7 +954,7 @@ msgstr "Principal"
 msgid "map"
 msgstr "mapa"
 
-#: src/components/layout/SiteFooter.astro:157
+#: src/components/layout/SiteFooter.astro:160
 msgid "Marks: Simple Icons (CC0), Playwright (Apache 2.0). Icons: Tabler (MIT). Font: Anybody (SIL OFL)."
 msgstr "Logotipos: Simple Icons (CC0), Playwright (Apache 2.0). Iconos: Tabler (MIT). Fuente: Anybody (SIL OFL)."
 
@@ -1019,7 +1023,7 @@ msgstr "Música"
 msgid "My favourite"
 msgstr "Mi favorito"
 
-#: src/components/layout/SiteFooter.astro:66
+#: src/components/layout/SiteFooter.astro:69
 #: src/components/layout/SiteHeader.astro:120
 #: src/components/life/LifeHero.astro:33
 #: src/pages/[locale]/my-life/index.astro:39
@@ -1286,7 +1290,7 @@ msgid "Privacy"
 msgstr "Privacidad"
 
 #: src/components/home/Contact.astro:147
-#: src/components/layout/SiteFooter.astro:80
+#: src/components/layout/SiteFooter.astro:83
 msgid "Privacy policy"
 msgstr "Política de privacidad"
 
@@ -1384,7 +1388,7 @@ msgstr "Revisión"
 msgid "routing hook"
 msgstr "hook de enrutado"
 
-#: src/components/layout/SiteFooter.astro:68
+#: src/components/layout/SiteFooter.astro:71
 msgid "RSS"
 msgstr "RSS"
 
@@ -1485,7 +1489,7 @@ msgstr "registros"
 msgid "Since"
 msgstr "Desde"
 
-#: src/components/layout/SiteFooter.astro:62
+#: src/components/layout/SiteFooter.astro:65
 msgid "Site"
 msgstr "Sitio"
 
@@ -1613,7 +1617,7 @@ msgstr "Trabajo en equipo"
 msgid "Technologies"
 msgstr "Tecnologías"
 
-#: src/components/layout/SiteFooter.astro:81
+#: src/components/layout/SiteFooter.astro:84
 msgid "Terms"
 msgstr "Términos"
 
@@ -1751,7 +1755,7 @@ msgstr "La portada de esta web como tarjeta para compartir"
 msgid "This Spanish text is a machine-assisted translation pending review."
 msgstr "Este texto en español es una traducción automática pendiente de revisión."
 
-#: src/components/layout/SiteFooter.astro:175
+#: src/components/layout/SiteFooter.astro:178
 msgid "This Spanish version was translated with AI and has not been reviewed by a native speaker yet."
 msgstr "Esta versión en español se ha traducido con IA y aún no la ha revisado un hablante nativo."
 
@@ -1885,7 +1889,11 @@ msgstr "Quién lo usa, qué quiere resolver y dónde abandona."
 msgid "Wiki"
 msgstr "Wiki"
 
-#: src/components/layout/SiteFooter.astro:53
+#: src/components/blog/case/Film.astro:35
+msgid "With sound"
+msgstr "Con sonido"
+
+#: src/components/layout/SiteFooter.astro:56
 #: src/components/layout/SiteHeader.astro:41
 #: src/components/work/WorkHero.astro:58
 msgid "Work"

@@ -10,6 +10,7 @@ and the prose points at it instead of repeating it.
 | --- | --- | --- |
 | Show a page, a component, a before and after | `Shots` | 1 = big; 2-4 = a grid; `phones` puts phone screens in one row; `tag` ("Before", "Now"), `picked` highlights one |
 | Show motion (hover, a shader, an animation, a flow through the UI) | `Clips` | ≤ 6 s, muted loop, 960×600; `dir="/media/blog/<key>/"` for articles |
+| A whole film with sound (a walkthrough, a film made for the client) | `Film` | one per post, near the top; 1920×1080 AV1 + H.264 with AAC in `public/media/blog/<key>/`, a WebP poster in `src/assets/blog/<key>/`; plays in a dialog only on click |
 | Explain a process or a pipeline | `Flow` | 3-7 steps: icon, short title, one line; `loop` for a cycle. Icons are `IconName`s from `src/lib/icons.gen.ts` (new ones: `scripts/icons.mjs`, then `bun run icons`) |
 | Compare options | a Markdown table | the rejected option in the table is half the story |
 | Two scores across many items | `Matrix` | a real table (screen readers), the sweet spot hatched, not colour alone |
@@ -67,6 +68,8 @@ re-create an old version from memory.
   `alt=""`, which is rare in a post.
 - **caption** carries the point, the date or the credit ("The home page in Lighthouse on mobile, 7 October 2026").
 - **Clips** get a `label` (their accessible name) and keep the pause button; they never autoplay before an interaction.
+- **Film** gets a visible `label` ("Watch the film"), a `title` (the dialog's name) and its length in `seconds`; the
+  caption says what it is and that it has sound.
 - **Tables** have a header row; a `Matrix` has its caption.
 
 ## Rights
