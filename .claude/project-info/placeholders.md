@@ -61,8 +61,8 @@
    study, one post and `/en/cv/`; Bing Webmaster: import from GSC.
 8. **owner** Same day: the site URL on LinkedIn, GitHub and the CV sources (`sameAs` must match).
 9. **owner** Launch-day checklist [owner 2026-10-08: "to do once i fully deploy to prod"]; tick each one off here:
-   - [ ] Vercel: `IS_FULL_PRODUCTION=true` set in Production (and `IS_AVAILABLE_FOR_HIRE` as wanted), then redeploy.
-   - [ ] Google Search Console for `muszarski.com` (step 7).
+   - [x] Vercel: `IS_FULL_PRODUCTION=true` set in Production (and `IS_AVAILABLE_FOR_HIRE` as wanted), then redeploy.
+   - [x] Google Search Console for `muszarski.com` (step 7) [2026-10-11]: Domain property, sitemap submitted (first status "Couldn't fetch", a known day-one lag; the files serve 200 to Googlebot), 8 key URLs requested, Rich Results valid on the case study. Vercel Domains: apex primary, www → apex (it was apex → www, against the canonicals; set it to 308).
    - [ ] Website field → `https://muszarski.com/` on GitHub, LinkedIn, Instagram; the domain in the Discord profile.
    - [ ] yws.lu: run `/link-portfolio-author-to-website` in its repo (client site, rights `ok` since
      2026-10-09).
