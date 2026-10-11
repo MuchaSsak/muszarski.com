@@ -2,8 +2,8 @@
 /**
  * Chapter 01, PstrykWeb (content/projects/pstrykweb.md). PUBLIC INFO ONLY [user 2026-10-05]: the product as its public
  * pages describe it, that he built it for Cetuspro (never "solo" or "team"), tech visible from outside. Never the pipeline, AI generation,
- * internal tools or counts. The stage is a drawn order loop (fill the form, order, the site goes live) until the
- * owner records the product (placeholders.md P18). Rights status `check` (P10): hidden at launch until OK.
+ * internal tools or counts. The stage is the owner's recording, cut to the public landing page and the order form
+ * (design/assets.md; the team panel and client sites stay out). Rights status `check` (P10): hidden at launch until OK.
  */
 import { t } from "lingui-for-astro/macro";
 
@@ -17,7 +17,8 @@ import { typo } from "~/lib/typography";
 
 const locale = Astro.locals.locale;
 const ring = [t`Latest`, t`My favourite`, t`Commercial`].map((part) => part.toLocaleUpperCase(locale)).join(" • ") + " • ";
-const orderLabel = t`Order website`;
+const labelPause = t`Pause video`;
+const labelPlay = t`Play video`;
 const RADIUS = 62;
 const circumference = 2 * Math.PI * RADIUS;
 const fontSize = Math.min(14, circumference / (lineEm(ring, 120) + 0.16 * [...ring].length));
@@ -63,7 +64,7 @@ const fontSize = Math.min(14, circumference / (lineEm(ring, 120) + 0.16 * [...ri
       />
     </div>
 
-    <figure class="reel pw-stage stage-first">
+    <figure class="reel pw-stage stage-first" data-reel>
       <div class="frame">
         <div class="award" aria-hidden="true">
           <div class="pw-spin">
@@ -95,51 +96,51 @@ const fontSize = Math.min(14, circumference / (lineEm(ring, 120) + 0.16 * [...ri
             <i></i>
             <span class="b-url"></span>
           </div>
-          <div class="b-site" aria-hidden="true">
-            <div class="w w-nav" style="--i:0"></div>
-            <div class="w w-h1" style="--i:1"></div>
-            <div class="w w-h2" style="--i:2"></div>
-            <div class="w w-btn" style="--i:3"></div>
-            <div class="w w-img" style="--i:2"></div>
-            <div class="w-cards">
-              <div class="w" style="--i:4"></div>
-              <div class="w" style="--i:5"></div>
-              <div class="w" style="--i:6"></div>
-            </div>
+          <div class="b-view">
+            <img
+              class="r-poster"
+              src="/media/work/pstrykweb-poster.webp"
+              alt=""
+              width="1280"
+              height="628"
+              loading="lazy"
+              decoding="async"
+            />
+            <video
+              tabindex="-1"
+              muted
+              loop
+              playsinline
+              preload="none"
+              width="1280"
+              height="628"
+              aria-label={t`PstrykWeb: the landing page, then a business owner filling in the order form`}
+            >
+              <template>
+                <source src="/media/work/pstrykweb.av1.mp4" type='video/mp4; codecs="av01.0.05M.08"' />
+                <source src="/media/work/pstrykweb.mp4" type="video/mp4" />
+              </template>
+            </video>
+            <span class="bigplay" aria-hidden="true">
+              <Icon name="tbf:player-play" />
+            </span>
+            <button
+              class="r-hit"
+              type="button"
+              data-toggle
+              aria-pressed="true"
+              aria-label={labelPlay}
+              data-label-pause={labelPause}
+              data-label-play={labelPlay}
+            ></button>
           </div>
-          <span class="live-stamp" aria-hidden="true" data-t="• LIVE"></span>
-          <span class="soon">{t`Video soon`}</span>
-        </div>
-        <div class="order" aria-hidden="true">
-          <!-- Drawn text: set as generated content, so a mid-fade frame isn't read as page text. -->
-          <p class="o-k" data-t={t`Order a website`}></p>
-          <span class="o-l" data-t={t`Business name`}></span>
-          <span class="o-f" style="--fw:52%"></span>
-          <span class="o-l" data-t={t`What you do`}></span>
-          <span class="o-f f2" style="--fw:74%"></span>
-          <span class="o-l" data-t={t`Style`}></span>
-          <div class="o-chips">
-            <span class="on" data-t={t`Bold`}></span>
-            <span data-t={t`Calm`}></span>
-            <span data-t={t`Classic`}></span>
-          </div>
-          <span class="o-btn" data-t={`${orderLabel} →`}></span>
-          <svg class="pointer" viewBox="0 0 24 24">
-            <path d="M5 3l14 7-6 2-2 6z" fill="#fff" stroke="#0a0d33" stroke-width="1.6" stroke-linejoin="round"></path>
-          </svg>
         </div>
       </div>
-      <figcaption class="sr-only">
-        {t`Illustration of the order flow: fill in the form, press order, the website goes live. A screen recording will replace it.`}
-      </figcaption>
     </figure>
   </div>
 </section>
 
 <style>
-  .c-pw {
-    --loop: 10s;
-  }
   .pw-grid {
     display: grid;
     grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
@@ -202,385 +203,11 @@ const fontSize = Math.min(14, circumference / (lineEm(ring, 120) + 0.16 * [...ri
     text-transform: uppercase;
   }
 
-  /* The drawn site the order builds. */
-  .b-site {
-    display: grid;
-    grid-template-columns: 1.15fr 1fr;
-    grid-template-areas: "nav nav" "h1 img" "h2 img" "btn img" "cards cards";
-    gap: 2.2cqw 3.4cqw;
-    padding: 3cqw 4cqw 4cqw;
-  }
-  .w {
-    background: var(--navy);
-    transform-origin: left;
-  }
-  .w-nav {
-    grid-area: nav;
-    height: 2.6cqw;
-    background: linear-gradient(
-      90deg,
-      var(--navy) 0 14%,
-      transparent 14% 52%,
-      #c9cbe6 52% 60%,
-      transparent 60% 64%,
-      #c9cbe6 64% 72%,
-      transparent 72% 76%,
-      #c9cbe6 76% 84%,
-      transparent 84% 88%,
-      var(--cobalt) 88%
-    );
-  }
-  .w-h1 {
-    grid-area: h1;
-    height: 5cqw;
-    align-self: end;
-    margin-top: 3cqw;
-  }
-  .w-h2 {
-    grid-area: h2;
-    height: 5cqw;
-    width: 78%;
-  }
-  .w-btn {
-    grid-area: btn;
-    height: 4.6cqw;
-    width: 36%;
-    background: var(--cobalt);
-  }
-  .w-img {
-    grid-area: img;
-    position: relative;
-    aspect-ratio: 4 / 3.2;
-    overflow: hidden;
-    background: var(--cobalt);
-  }
-  .w-img::before {
-    content: "";
-    position: absolute;
-    width: 22%;
-    aspect-ratio: 1;
-    right: 16%;
-    top: 16%;
-    border-radius: 50%;
-    background: var(--yellow);
-  }
-  .w-img::after {
-    content: "";
-    position: absolute;
-    inset: 45% -10% 0 -10%;
-    background: var(--navy);
-    clip-path: polygon(0 100%, 30% 20%, 52% 70%, 72% 35%, 100% 100%);
-  }
-  .w-cards {
-    grid-area: cards;
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 2.4cqw;
-    margin-top: 1.6cqw;
-  }
-  .w-cards .w {
-    height: 12cqw;
-    background: #e3e5f7;
-    box-shadow: inset 0 -3cqw 0 #c9cbe6;
-  }
-  .live-stamp {
-    position: absolute;
-    z-index: 2;
-    right: 5cqw;
-    bottom: 22cqw;
-    padding: 1.2cqw 2.2cqw;
-    background: rgb(255 255 255 / 0.92);
-    color: #0f7a3c;
-    box-shadow: inset 0 0 0 0.5cqw currentColor;
-    font-weight: 900;
-    font-size: max(0.75rem, 3.4cqw);
-    letter-spacing: 0.06em;
-    transform: rotate(-9deg);
-  }
-
-  /* The order card. */
-  .order {
-    position: absolute;
-    z-index: 3;
-    left: -4%;
-    bottom: -1.5rem;
-    width: clamp(12.5rem, 20vw, 17.5rem);
-    padding: 1rem 1rem 1.125rem;
-    background: var(--navy);
-    color: var(--ice);
-    box-shadow: 10px 10px 0 var(--cobalt);
-    transform: rotate(-4deg);
-    font-size: 0.8125rem;
-  }
-  .o-k {
-    margin: 0 0 0.625rem;
-    color: var(--yellow);
-    font-weight: 800;
-    font-size: 0.75rem;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    font-stretch: 125%;
-  }
-  .o-l {
-    display: block;
-    font-weight: 700;
-    font-size: 0.6875rem;
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
-  }
-  .o-f {
-    position: relative;
-    display: block;
-    height: 2.125rem;
-    margin: 0.25rem 0 0.625rem;
-    box-shadow: inset 0 0 0 2px rgb(238 240 255 / 0.4);
-  }
-  .o-f::after {
-    content: "";
-    position: absolute;
-    left: 0.625rem;
-    top: 50%;
-    width: var(--fw, 60%);
-    height: 0.5rem;
-    margin-top: -0.25rem;
-    background: rgb(238 240 255 / 0.75);
-    transform-origin: left;
-  }
-  .o-chips {
-    display: flex;
-    gap: 0.375rem;
-    margin: 0.25rem 0 0.875rem;
-  }
-  .o-chips span {
-    padding: 0.3125rem 0.5625rem;
-    box-shadow: inset 0 0 0 2px rgb(238 240 255 / 0.4);
-    font-size: 0.6875rem;
-    font-weight: 700;
-    text-transform: uppercase;
-  }
-  .o-chips .on {
-    background: var(--yellow);
-    color: var(--navy);
-    box-shadow: none;
-  }
-  .o-btn {
-    display: block;
-    padding: 0.6875rem 0.75rem;
-    background: var(--pink);
-    color: var(--navy);
-    box-shadow: 4px 4px 0 var(--ice);
-    white-space: nowrap;
-    font-weight: 900;
-    font-size: 0.8125rem;
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
-    font-stretch: 115%;
-  }
-  .order [data-t]::before,
-  .live-stamp::before {
-    content: attr(data-t);
-  }
-  .pointer {
-    position: absolute;
-    z-index: 4;
-    width: 1.875rem;
-    left: 30%;
-    bottom: 0.375rem;
-    opacity: 0;
-    filter: drop-shadow(2px 3px 0 rgb(10 13 51 / 0.5));
-  }
-
-  @media (prefers-reduced-motion: no-preference) {
-    .c-pw .order {
-      animation: o-card var(--loop) var(--ease-out) infinite;
-    }
-    .c-pw .o-f::after {
-      animation: o-type var(--loop) linear infinite;
-    }
-    .c-pw .o-f.f2::after {
-      animation-name: o-type2;
-    }
-    .c-pw .o-chips .on {
-      animation: o-pick var(--loop) steps(1) infinite;
-    }
-    .c-pw .o-btn {
-      animation: o-press var(--loop) linear infinite;
-    }
-    .c-pw .pointer {
-      animation: o-cur var(--loop) var(--ease-out) infinite;
-    }
-    .c-pw .b-site .w {
-      animation: o-build var(--loop) var(--ease-out) infinite;
-      animation-delay: calc(var(--i, 0) * 0.12s);
-    }
-    .c-pw .live-stamp {
-      animation: o-live var(--loop) var(--ease-pop) infinite;
-    }
-  }
-  @keyframes o-card {
-    0% {
-      transform: translateY(40px) rotate(-4deg);
-      opacity: 0;
-    }
-    5%,
-    31% {
-      transform: rotate(-4deg);
-      opacity: 1;
-    }
-    40%,
-    100% {
-      transform: translate(-60px, 90px) rotate(-18deg) scale(0.86);
-      opacity: 0;
-    }
-  }
-  @keyframes o-type {
-    0%,
-    7% {
-      transform: scaleX(0);
-    }
-    15%,
-    100% {
-      transform: scaleX(1);
-    }
-  }
-  @keyframes o-type2 {
-    0%,
-    14% {
-      transform: scaleX(0);
-    }
-    22%,
-    100% {
-      transform: scaleX(1);
-    }
-  }
-  @keyframes o-pick {
-    0% {
-      background: transparent;
-      color: inherit;
-      box-shadow: inset 0 0 0 2px rgb(238 240 255 / 0.4);
-    }
-    24%,
-    100% {
-      background: var(--yellow);
-      color: var(--navy);
-      box-shadow: none;
-    }
-  }
-  @keyframes o-press {
-    0%,
-    29% {
-      transform: none;
-      box-shadow: 4px 4px 0 var(--ice);
-    }
-    30.5% {
-      transform: translate(4px, 4px);
-      box-shadow: 0 0 0 var(--ice);
-    }
-    33%,
-    100% {
-      transform: none;
-      box-shadow: 4px 4px 0 var(--ice);
-    }
-  }
-  @keyframes o-cur {
-    0%,
-    18% {
-      transform: translate(140px, 80px);
-      opacity: 0;
-    }
-    22% {
-      opacity: 1;
-    }
-    28% {
-      transform: none;
-    }
-    30.5% {
-      transform: scale(0.8);
-    }
-    32% {
-      transform: none;
-      opacity: 1;
-    }
-    38%,
-    100% {
-      transform: translate(-20px, 60px);
-      opacity: 0;
-    }
-  }
-  @keyframes o-build {
-    0%,
-    37% {
-      transform: scaleX(0.4);
-      opacity: 0.12;
-    }
-    46%,
-    93% {
-      transform: none;
-      opacity: 1;
-    }
-    100% {
-      transform: scaleX(0.4);
-      opacity: 0.12;
-    }
-  }
-  @keyframes o-live {
-    0%,
-    56% {
-      transform: rotate(-9deg) scale(2.4);
-      opacity: 0;
-    }
-    60%,
-    93% {
-      transform: rotate(-9deg);
-      opacity: 1;
-    }
-    100% {
-      opacity: 0;
-    }
-  }
-
   @media (max-width: 40rem) {
     .award {
       width: 5.75rem;
       left: -0.625rem;
       top: -2.75rem;
-    }
-    .order {
-      left: auto;
-      right: -0.375rem;
-      bottom: -0.375rem;
-      width: 10.5rem;
-      padding: 0.625rem 0.625rem 0.75rem;
-      font-size: 0.6875rem;
-      box-shadow: 7px 7px 0 var(--cobalt);
-      transform: rotate(3deg);
-    }
-    .o-k {
-      font-size: 0.625rem;
-      margin-bottom: 0.375rem;
-    }
-    .o-l {
-      font-size: 0.5625rem;
-    }
-    .o-f {
-      height: 1.5rem;
-      margin: 0.1875rem 0 0.375rem;
-    }
-    .o-chips {
-      margin-bottom: 0.625rem;
-    }
-    .o-chips span {
-      padding: 0.25rem 0.375rem;
-      font-size: 0.5625rem;
-    }
-    .o-btn {
-      padding: 0.5rem 0.5625rem;
-      font-size: 0.6875rem;
-    }
-    .c-pw .soon {
-      right: auto;
-      left: 3.25rem;
-      top: 0.25rem;
     }
   }
 </style>

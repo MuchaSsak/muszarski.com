@@ -23,7 +23,7 @@ import Icon from "~/components/ui/Icon.astro";
 import { typo } from "~/lib/typography";
 
 /** What a tile shows: a picture (`phone` for an app's portrait poster), or real text where there's nothing to film. */
-export type Thumb = { src: string; phone?: boolean } | { text: "tests" | "cli" | "soon" };
+export type Thumb = { src: string; phone?: boolean } | { text: "tests" | "cli" };
 
 export interface IndexItem {
   slug: string;
@@ -40,7 +40,6 @@ interface Props {
 const { items } = Astro.props;
 const locale = Astro.locals.locale;
 const title = t`Things I’ve built`;
-const soon = t`Recording soon`;
 /**
  * Three columns, or two when there are few projects (the launch build shows only the ones cleared for it), so the
  * tiles stay big. The second column of the three (the second of two) sits half a tile lower, and each column drifts
@@ -92,12 +91,6 @@ const DRIFT = cols === 3 ? ["-3rem", "-7rem", "-1.5rem"] : ["-2.5rem", "-6rem"];
                 {"text" in item.thumb && item.thumb.text === "cli" && (
                   <span class="wt-txt">
                     <b>$</b> npx lingui-translate-ai
-                  </span>
-                )}
-                {"text" in item.thumb && item.thumb.text === "soon" && (
-                  <span class="wt-txt">
-                    <Icon name="tb:movie" />
-                    {soon}
                   </span>
                 )}
               </span>
@@ -295,17 +288,6 @@ const DRIFT = cols === 3 ? ["-3rem", "-7rem", "-1.5rem"] : ["-2.5rem", "-6rem"];
   }
   .t-cli b {
     color: var(--lime);
-  }
-  .t-soon {
-    color: var(--navy);
-  }
-  .t-soon .wt-txt {
-    font-family: inherit;
-    font-weight: 800;
-    font-size: 0.75rem;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    font-stretch: 115%;
   }
   /* The name on a tab in the project's colour (navy text reads on every project colour). */
   .wt-name {

@@ -37,9 +37,8 @@ const links = chromeLinks(locale);
  * Flagships first (chapter order), then the archive in an order that alternates the kinds of plate (a capture, text,
  * a capture...), so neighbours never look alike; a project missing here goes last.
  */
-const ARCHIVE = ["this-site", "lingui-translate-ai", "malatro", "yws", "lingotype", "club-screensaver"];
+const ARCHIVE = ["this-site", "lingui-translate-ai", "malatro", "yws", "lingotype"];
 const rank = (project: Project) => (project.flagship ? project.flagship - 10 : ARCHIVE.indexOf(project.slug) + 1 || 99);
-const projects = visibleProjects().sort((a, b) => rank(a) - rank(b));
 const CONTEXT: Record<Context, string> = {
   client: t`Client work`,
   internship: t`Internship`,
@@ -52,7 +51,7 @@ const CONTEXT: Record<Context, string> = {
 /**
  * What each plate shows. `shot`: a capture of the owner's live site (public/media/work, temporary captures:
  * design/assets.md), `tall` when it is a long page that scrolls in the window. `reel`: a product loop. `poster`:
- * this site's share card. `tests` / `cli`: real text (Clockful's test run, the CLI's run). `soon`: nothing to show yet.
+ * this site's share card. `tests` / `cli`: real text (Clockful's test run, the CLI's run).
  */
 type Media =
   | { kind: "shot"; src: string; url: string; height: number; tall?: boolean }
@@ -67,22 +66,28 @@ type Media =
       height: number;
       label: string;
     }
-  | { kind: "poster" | "tests" | "cli" | "soon" };
+  | { kind: "poster" | "tests" | "cli" };
 /**
  * A screen recording waiting for its files [user 2026-10-08: Clockful and the club screensaver get videos]: the reel
  * shows once `public/media/work/<slug>.mp4` and `<slug>-poster.webp` are there (`<slug>.av1.mp4` too, optional), and
- * the stand-in shows until then (design/assets.md).
+ * the stand-in shows until then (design/assets.md). The owner's recordings are a 1920 × 942 browser view, cut to
+ * 1280 × 628.
  */
 const recording = (slug: string, url: string, label: string): Media | undefined => {
   const at = (file: string) => (inPublic(`media/work/${file}`) ? `/media/work/${file}` : undefined);
   const mp4 = at(`${slug}.mp4`);
   const poster = at(`${slug}-poster.webp`);
   return mp4 && poster
-    ? { kind: "reel", frame: "browser", url, poster, av1: at(`${slug}.av1.mp4`), mp4, width: 1280, height: 720, label }
+    ? { kind: "reel", frame: "browser", url, poster, av1: at(`${slug}.av1.mp4`), mp4, width: 1280, height: 628, label }
     : undefined;
 };
 const MEDIA: Record<string, Media> = {
-  pstrykweb: { kind: "shot", src: "/media/work/pstrykweb.webp", url: "pstrykweb.pl", height: 1800, tall: true },
+  // The owner's recording, cut to the public landing page and the order form (design/assets.md).
+  pstrykweb: recording(
+    "pstrykweb",
+    "pstrykweb.pl",
+    t`PstrykWeb: the landing page, then a business owner filling in the order form`,
+  ) ?? { kind: "shot", src: "/media/work/pstrykweb.webp", url: "pstrykweb.pl", height: 1800, tall: true },
   linkoglot: {
     kind: "reel",
     frame: "phone",
@@ -103,26 +108,27 @@ const MEDIA: Record<string, Media> = {
     kind: "reel",
     frame: "browser",
     url: "3d-space-folio.vercel.app",
-    // The cockpit's start screen (a capture of the live site) says more than the flight's first, mostly black frame.
-    poster: "/media/work/space-portfolio.webp",
-    av1: "/media/space/flight.av1.mp4",
-    mp4: "/media/space/flight.mp4",
-    width: 960,
-    height: 540,
-    label: t`The space portfolio: the camera flies past Mars to Jupiter`,
+    poster: "/media/space/folio-poster.webp",
+    av1: "/media/space/folio.av1.mp4",
+    mp4: "/media/space/folio.mp4",
+    width: 1280,
+    height: 628,
+    label: t`The space portfolio: the camera flies from Earth past Mars and Jupiter to Neptune`,
   },
   "this-site": { kind: "poster" },
   yws: { kind: "shot", src: "/media/work/yws.webp", url: "yws.lu", height: 1800, tall: true },
   "lingui-translate-ai": { kind: "cli" },
   malatro: { kind: "shot", src: "/media/work/malatro.webp", url: "malatro.vercel.app", height: 450 },
   lingotype: { kind: "shot", src: "/media/work/lingotype.webp", url: "lingotype.vercel.app", height: 450 },
-  // PLACEHOLDER (placeholders.md P24): "Recording soon" until the screensaver's recording lands in its video slot.
-  "club-screensaver": recording(
-    "club-screensaver",
-    "beniaminek03-screensaver.vercel.app",
-    t`The club screensaver: the particles in motion`,
-  ) ?? { kind: "soon" },
 };
+/**
+ * Only projects with something to show: no "soon" stand-in on any build [owner 2026-10-11]. The club screensaver is
+ * off this page for now and comes back with its recording (placeholders.md P24).
+ */
+const projects = visibleProjects()
+  .filter((project) => MEDIA[project.slug])
+  .sort((a, b) => rank(a) - rank(b));
+const mediaOf = (project: Project) => MEDIA[project.slug] as Media;
 /**
  * Each project's colour, light enough for navy text: its tab on the wall, its number chip, the head's accent while it
  * is in play, the primary button's shadow.
@@ -137,19 +143,17 @@ const COLOR: Record<string, string> = {
   malatro: "#ff5b1f",
   yws: "#ffd23f",
   lingotype: "#c9f24a",
-  "club-screensaver": "#8c94ff",
 };
 const color = (project: Project) => COLOR[project.slug] ?? "#8c94ff";
 /** The plate's field, where it differs from the colour: this site on its own cobalt, the screensaver on the night. */
 const PLATE: Record<string, string> = {
   "this-site": "#2433ff",
   "lingui-translate-ai": "#8c94ff",
-  "club-screensaver": "#07081c",
 };
 const plate = (project: Project) => PLATE[project.slug] ?? color(project);
 /** The wall's tile for each project: a small capture (public/media/work/thumb), the app's poster, or real text. */
 const thumb = (project: Project): Thumb => {
-  const media = MEDIA[project.slug] ?? { kind: "soon" as const };
+  const media = mediaOf(project);
   if (media.kind === "reel") {
     return media.frame === "phone" ? { src: media.poster, phone: true } : { src: `/media/work/thumb/${project.slug}.webp` };
   }
@@ -175,7 +179,6 @@ const shotAlt = (project: Project) => t`The ${project.name} website, the start o
 const labelPause = t`Pause video`;
 const labelPlay = t`Play video`;
 const newTab = t`(opens in a new tab)`;
-const soon = t`Recording soon`;
 
 const site = Astro.site ?? new URL("http://localhost:4321");
 const title = t`All projects`;
@@ -202,7 +205,7 @@ const index: IndexItem[] = projects.map((project) => ({
   <section class="sec field-alt pj-sec" aria-label={t`Projects`}>
     <ol class="pj-list" role="list">
       {projects.map((project, k) => {
-        const media = MEDIA[project.slug] ?? { kind: "soon" as const };
+        const media = mediaOf(project);
         const primary = project.anchor
           ? { href: links.project(project.anchor), label: t`Chapter`, external: false }
           : project.links.caseStudy
@@ -253,7 +256,7 @@ const index: IndexItem[] = projects.map((project) => ({
                 </div>
               )}
               {media.kind === "reel" && (
-                <figure class="pj-reel" data-reel>
+                <figure class="pj-reel" data-reel style={`--ar:${media.width} / ${media.height}`}>
                   <div class={media.frame === "phone" ? "w-phone" : "pj-win"}>
                     {media.frame === "browser" && (
                       <span class="w-bar" aria-hidden="true">
@@ -264,13 +267,21 @@ const index: IndexItem[] = projects.map((project) => ({
                       </span>
                     )}
                     <span class="w-view">
+                      <img
+                        class="r-poster"
+                        src={media.poster}
+                        alt=""
+                        width={media.width}
+                        height={media.height}
+                        loading="lazy"
+                        decoding="async"
+                      />
                       <video
                         tabindex="-1"
                         muted
                         loop
                         playsinline
                         preload="none"
-                        poster={media.poster}
                         width={media.width}
                         height={media.height}
                         aria-label={media.label}
@@ -342,12 +353,6 @@ const index: IndexItem[] = projects.map((project) => ({
                     ))}
                     <span class="x-caret" />
                   </span>
-                </div>
-              )}
-              {media.kind === "soon" && (
-                <div class="pj-soon">
-                  <Icon name="tb:movie" />
-                  <span>{soon}</span>
                 </div>
               )}
             </div>
@@ -457,6 +462,13 @@ const index: IndexItem[] = projects.map((project) => ({
                   </a>
                 )}
                 {project.slug === "neoteric-clockful" && <span class="pj-note">{t`Code private · walkthrough on request`}</span>}
+                {/* The reel shows Solar System Scope's planet textures: their CC BY credit goes where they are seen. */}
+                {project.slug === "space-portfolio" && (
+                  <span class="pj-note">
+                    {t`Planet textures:`} <!-- prettier-ignore -->
+                    <span><a href="https://www.solarsystemscope.com/textures/" rel="noopener" target="_blank">Solar System Scope<span class="sr-only"> {newTab}</span></a>, <a href="https://creativecommons.org/licenses/by/4.0/" rel="license noopener" target="_blank">CC BY 4.0<span class="sr-only"> {newTab}</span></a></span>
+                  </span>
+                )}
               </div>
             </div>
           </li>
@@ -642,8 +654,25 @@ const index: IndexItem[] = projects.map((project) => ({
     height: 100%;
     border-radius: max(1rem, calc(3.6 * var(--u)));
   }
-  .pj-reel .pj-win .w-view video {
+  /* A recording keeps its own shape (the owner's are 1280 × 628, wider than the plate's window): the window sits on the
+     plate's foot and grows only as tall as the video, so nothing is cropped (Clockful's sidebar was cut off). */
+  .pj-reel .pj-win {
+    top: auto;
+  }
+  .pj-reel .pj-win .w-view {
+    flex: none;
+    aspect-ratio: var(--ar);
+  }
+  .pj-reel .pj-win .w-view :is(img, video) {
     object-position: center;
+  }
+  /* The poster is a lazy image under the video (styles/chapters.css § r-poster): see-through video, poster below. */
+  .r-poster {
+    position: absolute;
+    inset: 0;
+  }
+  .r-poster + video {
+    position: relative;
   }
   .bigplay {
     position: absolute;
@@ -742,27 +771,6 @@ const index: IndexItem[] = projects.map((project) => ({
     }
   }
 
-  /* Nothing to show yet: a quiet label, centred. */
-  .pj-soon {
-    position: absolute;
-    inset: 0;
-    display: grid;
-    place-content: center;
-    justify-items: center;
-    gap: 0.75rem;
-    font-weight: 800;
-    font-size: 0.8125rem;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    font-stretch: 115%;
-    color: var(--ice);
-  }
-  .pj-soon :global(.ico) {
-    width: 2rem;
-    height: 2rem;
-    color: var(--c);
-  }
-
   /* The caption: number chip, kind, year; the name, one line, the tools; the actions at the foot of the card, so they
      sit level across a row. */
   .pj-cap {
@@ -855,6 +863,11 @@ const index: IndexItem[] = projects.map((project) => ({
     font-weight: 700;
     font-size: 0.8125rem;
     color: var(--mute);
+  }
+  .pj-note a {
+    color: inherit;
+    text-decoration: underline;
+    text-underline-offset: 2px;
   }
 
   /* Paused, offscreen (a section without .near) or reduced motion: the caret rests. */

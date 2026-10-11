@@ -1,8 +1,7 @@
 ---
 /**
  * Chapter 03, Neoteric Clockful (content/projects/neoteric-clockful.md): internship work, rights `check` (P10), code
- * private. The stage is a drawn dashboard with a demo timer that really runs (CSS only: an animated integer
- * custom property printed through counters) until the owner's walkthrough recording lands (P18, needs Neoteric's OK).
+ * private. The stage is the owner's walkthrough recording (mock data): clients, projects, the timer, the reports.
  */
 import { t } from "lingui-for-astro/macro";
 
@@ -15,10 +14,8 @@ import { typo } from "~/lib/typography";
 
 const locale = Astro.locals.locale;
 const links = chromeLinks(Astro.locals.locale);
-const running = t`Running`;
-const paused = t`Paused`;
-const stop = t`Stop`;
-const start = t`Start`;
+const labelPause = t`Pause video`;
+const labelPlay = t`Play video`;
 ---
 
 <section class="sec chapter c-cf" id="clockful" aria-labelledby="t-cf">
@@ -26,7 +23,7 @@ const start = t`Start`;
   <ChapterBadge icon="tb:school" label={t`Internship · Neoteric · 2026`} />
   <Fit as="h2" id="t-cf" lines={["Clockful"]} />
   <div class="cf-grid grid-2">
-    <figure class="reel stage-first">
+    <figure class="reel stage-first" data-reel>
       <div class="frame">
         <div class="browser">
           <div class="b-top" aria-hidden="true">
@@ -35,52 +32,46 @@ const start = t`Start`;
             <i></i>
             <span class="b-url"></span>
           </div>
-          <div class="dash" data-clock>
-            <div class="d-side" aria-hidden="true">
-              <i></i>
-              <i class="on"></i>
-              <i></i>
-              <i></i>
-              <i></i>
-              <i></i>
-            </div>
-            <div class="d-main">
-              <div class="d-head">
-                <span class="rec" data-rec data-running={running} data-paused={paused}>
-                  {running}
-                </span>
-                <button class="d-stop" type="button" data-clock-toggle aria-pressed="false" data-stop={stop} data-start={start}>
-                  {stop}
-                </button>
-                <span class="d-role" aria-hidden="true">
-                  <b>{t`Employee`}</b>
-                  <b>Admin</b>
-                </span>
-              </div>
-              <p class="timer tabular" aria-hidden="true"></p>
-              <span class="sr-only">{t`A demo timer that counts up.`}</span>
-              <div class="d-low" aria-hidden="true">
-                <div class="bars">
-                  <i style="--h:40%;--i:0"></i>
-                  <i style="--h:72%;--i:1"></i>
-                  <i style="--h:55%;--i:2"></i>
-                  <i style="--h:90%;--i:3"></i>
-                  <i style="--h:64%;--i:4"></i>
-                  <i style="--h:30%;--i:5"></i>
-                  <i style="--h:48%;--i:6"></i>
-                </div>
-                <div class="rows">
-                  <i style="--i:0"></i>
-                  <i style="--i:1;width:84%"></i>
-                  <i style="--i:2;width:66%"></i>
-                </div>
-              </div>
-            </div>
+          <div class="b-view">
+            <img
+              class="r-poster"
+              src="/media/work/neoteric-clockful-poster.webp"
+              alt=""
+              width="1280"
+              height="628"
+              loading="lazy"
+              decoding="async"
+            />
+            <video
+              tabindex="-1"
+              muted
+              loop
+              playsinline
+              preload="none"
+              width="1280"
+              height="628"
+              aria-label={t`Neoteric Clockful: a screen recording of the dashboard`}
+            >
+              <template>
+                <source src="/media/work/neoteric-clockful.av1.mp4" type='video/mp4; codecs="av01.0.05M.08"' />
+                <source src="/media/work/neoteric-clockful.mp4" type="video/mp4" />
+              </template>
+            </video>
+            <span class="bigplay" aria-hidden="true">
+              <Icon name="tbf:player-play" />
+            </span>
+            <button
+              class="r-hit"
+              type="button"
+              data-toggle
+              aria-pressed="true"
+              aria-label={labelPlay}
+              data-label-pause={labelPause}
+              data-label-play={labelPlay}
+            ></button>
           </div>
-          <span class="soon">{t`Video soon`}</span>
         </div>
       </div>
-      <figcaption class="sr-only">{t`Drawn stand-in for the dashboard, with a working demo timer. A walkthrough recording will replace it.`}</figcaption>
       <ul class="mstats rv">
         <li>
           <span class="top">
@@ -157,232 +148,4 @@ const start = t`Start`;
     margin-top: clamp(1.375rem, 2.6vw, 2.5rem);
     align-items: start;
   }
-  .dash {
-    display: grid;
-    grid-template-columns: 19% minmax(0, 1fr);
-    min-height: 46cqw;
-  }
-  .d-side {
-    display: grid;
-    align-content: start;
-    gap: 2cqw;
-    padding: 3cqw 2.4cqw;
-    background: var(--navy);
-  }
-  .d-side i {
-    display: block;
-    height: 2cqw;
-    background: rgb(238 240 255 / 0.25);
-  }
-  .d-side i:first-child {
-    width: 4.4cqw;
-    height: 4.4cqw;
-    margin-bottom: 1.6cqw;
-    border-radius: 50%;
-    background: var(--lime);
-  }
-  .d-side i.on {
-    background: var(--lime);
-  }
-  .d-main {
-    display: grid;
-    align-content: start;
-    gap: 2.2cqw;
-    min-width: 0;
-    padding: 3cqw 3.4cqw;
-  }
-  /* Wraps on a narrow phone: the Spanish labels ("En marcha", "Detener", "Empleado | Admin") ran past the frame at 320 px. */
-  .d-head {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 1.2cqw 1.6cqw;
-    font-weight: 800;
-    font-size: max(0.625rem, 1.7cqw);
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
-  }
-  .rec {
-    display: inline-flex;
-    align-items: center;
-    gap: 1cqw;
-  }
-  .rec::before {
-    content: "";
-    width: 1.6cqw;
-    height: 1.6cqw;
-    border-radius: 50%;
-    background: var(--pink);
-    animation: pulse 1s steps(2, jump-none) infinite;
-  }
-  .stopped .rec::before {
-    animation: none;
-    background: transparent;
-    box-shadow: inset 0 0 0 2px var(--pink);
-  }
-  .d-stop {
-    min-height: 1.75rem;
-    padding: 0.8cqw 1.6cqw;
-    border: 0;
-    background: var(--navy);
-    color: var(--ice);
-    font: inherit;
-    font-weight: 800;
-    font-size: max(0.625rem, 1.6cqw);
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
-    cursor: pointer;
-  }
-  .d-role {
-    display: inline-flex;
-    margin-left: auto;
-    box-shadow: inset 0 0 0 2px var(--navy);
-  }
-  .d-role b {
-    padding: 0.8cqw 1.4cqw;
-    font-weight: 800;
-    animation: role-a 6s steps(1) infinite;
-  }
-  .d-role b:nth-child(2) {
-    animation-name: role-b;
-  }
-  @keyframes role-a {
-    0% {
-      background: var(--navy);
-      color: var(--ice);
-    }
-    50% {
-      background: transparent;
-      color: var(--navy);
-    }
-  }
-  @keyframes role-b {
-    0% {
-      background: transparent;
-      color: var(--navy);
-    }
-    50% {
-      background: var(--navy);
-      color: var(--ice);
-    }
-  }
-
-  /* The demo timer: --t (seconds) climbs one step a second; counters print it as hh:mm:ss. WebKit animates the
-     `<integer>` as a fraction, so every part rounds down first (else the seconds read :60 for half a second). */
-  @property --t {
-    syntax: "<integer>";
-    inherits: false;
-    initial-value: 2467;
-  }
-  .timer {
-    margin: 0;
-    color: var(--navy);
-    font-size: 13cqw;
-    line-height: 0.9;
-    font-weight: 400;
-    font-stretch: 100%;
-    white-space: nowrap;
-  }
-  .timer::before {
-    content: "00:41:07";
-  }
-  @supports (width: round(down, 1px, 1px)) {
-    .timer {
-      counter-reset: h round(down, var(--t) / 3600, 1) m mod(round(down, var(--t) / 60, 1), 60) s
-        mod(round(down, var(--t), 1), 60);
-      animation: tick 86400s linear infinite;
-    }
-    .timer::before {
-      content: counter(h, decimal-leading-zero) ":" counter(m, decimal-leading-zero) ":" counter(s, decimal-leading-zero);
-    }
-  }
-  @keyframes tick {
-    from {
-      --t: 2467;
-    }
-    to {
-      --t: 88867;
-    }
-  }
-  .stopped .timer {
-    animation-play-state: paused;
-  }
-
-  .d-low {
-    display: grid;
-    grid-template-columns: 1.4fr 1fr;
-    gap: 3cqw;
-    align-items: end;
-  }
-  .bars {
-    display: flex;
-    align-items: end;
-    gap: 1.4cqw;
-    height: 13cqw;
-    padding-bottom: 0.6cqw;
-    box-shadow: inset 0 -2px 0 rgb(10 13 51 / 0.3);
-  }
-  .bars i {
-    flex: 1;
-    height: var(--h);
-    background: var(--cobalt);
-    transform-origin: bottom;
-    animation: grow 6s var(--ease-out) infinite;
-    animation-delay: calc(var(--i) * 0.1s);
-  }
-  .bars i:nth-child(odd) {
-    background: var(--navy);
-  }
-  @keyframes grow {
-    0% {
-      transform: scaleY(0);
-    }
-    14%,
-    88% {
-      transform: scaleY(1);
-    }
-    100% {
-      transform: scaleY(0);
-    }
-  }
-  .rows {
-    display: grid;
-    gap: 1.2cqw;
-  }
-  .rows i {
-    display: block;
-    height: 2.6cqw;
-    background: #e3e5f7;
-    box-shadow: inset 1.2cqw 0 0 var(--lime);
-    animation: slide-in 6s var(--ease-out) infinite;
-    animation-delay: calc(var(--i) * 0.25s);
-  }
-  @keyframes slide-in {
-    0% {
-      transform: translateX(30%);
-      opacity: 0;
-    }
-    12%,
-    88% {
-      transform: none;
-      opacity: 1;
-    }
-    100% {
-      opacity: 0;
-    }
-  }
 </style>
-
-<script>
-  // Start / stop the demo timer (the CSS animation does the counting).
-  for (const toggle of document.querySelectorAll<HTMLButtonElement>("[data-clock-toggle]")) {
-    const dash = toggle.closest<HTMLElement>("[data-clock]")!;
-    const rec = dash.querySelector<HTMLElement>("[data-rec]")!;
-    toggle.addEventListener("click", () => {
-      const stopped = dash.classList.toggle("stopped");
-      toggle.setAttribute("aria-pressed", String(stopped));
-      toggle.textContent = (stopped ? toggle.dataset.start : toggle.dataset.stop) ?? "";
-      rec.textContent = (stopped ? rec.dataset.paused : rec.dataset.running) ?? "";
-    });
-  }
-</script>

@@ -1,9 +1,9 @@
 ---
 /**
  * Chapter 04, the old 3D space portfolio (content/projects/space-portfolio.md): the honest "before" of this site.
- * The loop is cut from the owner's capture: only the Mars and Jupiter stops (planet textures by Solar System Scope,
- * CC BY 4.0, credited); the stops with third-party logos and the uncredited lens-dirt texture are left out
- * (design/assets.md, licences rule). No WebGL on this page: the site itself opens in a new tab, on desktop. Its
+ * The loop is cut from the owner's recording: Earth, Mars, Jupiter and Neptune (planet textures by Solar System Scope,
+ * CC BY 4.0, credited); the start console, the logo asteroids, the lens-flare stops (an uncredited lens-dirt texture)
+ * and the Saturn project cards are left out (design/assets.md, licences and rights rules). No WebGL on this page: the site itself opens in a new tab, on desktop. Its
  * measured flaws (the Lighthouse numbers) live in the "how this site was built" post, not here [user 2026-10-06].
  */
 import { t } from "lingui-for-astro/macro";
@@ -31,20 +31,28 @@ const labelPlay = t`Play video`;
       <div class="frame">
         <div class="monitor">
           <div class="screen">
+            <img
+              class="r-poster"
+              src="/media/space/folio-poster.webp"
+              alt=""
+              width="1280"
+              height="628"
+              loading="lazy"
+              decoding="async"
+            />
             <video
               tabindex="-1"
               muted
               loop
               playsinline
               preload="none"
-              poster="/media/space/flight-poster.webp"
-              width="960"
-              height="540"
-              aria-label={t`The space portfolio: the camera flies past Mars to Jupiter`}
+              width="1280"
+              height="628"
+              aria-label={t`The space portfolio: the camera flies from Earth past Mars and Jupiter to Neptune`}
             >
               <template>
-                <source src="/media/space/flight.av1.mp4" type='video/mp4; codecs="av01.0.05M.08"' />
-                <source src="/media/space/flight.mp4" type="video/mp4" />
+                <source src="/media/space/folio.av1.mp4" type='video/mp4; codecs="av01.0.05M.08"' />
+                <source src="/media/space/folio.mp4" type="video/mp4" />
               </template>
             </video>
             <span class="bigplay" aria-hidden="true">
@@ -195,7 +203,7 @@ const labelPlay = t`Play video`;
   }
   .screen {
     position: relative;
-    aspect-ratio: 16 / 9;
+    aspect-ratio: 1280 / 628;
     overflow: hidden;
     border-radius: 0.375rem;
     background: #000;

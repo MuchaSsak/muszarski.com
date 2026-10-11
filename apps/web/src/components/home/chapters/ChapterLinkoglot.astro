@@ -44,13 +44,21 @@ const labelPlay = t`Play video`;
         <div class="frame">
           {/* The phone breaks into the fitted title on purpose (text-fit probe: data-textfit). */}
           <div class="phone enter" data-textfit="stack">
+            <img
+              class="r-poster"
+              src="/media/linkoglot/camera-poster.webp"
+              alt=""
+              width="320"
+              height="694"
+              loading="lazy"
+              decoding="async"
+            />
             <video
               tabindex="-1"
               muted
               loop
               playsinline
               preload="none"
-              poster="/media/linkoglot/camera-poster.webp"
               width="320"
               height="694"
               aria-label={t`Linkoglot camera mode: point the phone at a street, a room, breakfast, a book and a park to learn the words`}
