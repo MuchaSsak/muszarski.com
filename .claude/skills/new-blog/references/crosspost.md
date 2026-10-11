@@ -81,7 +81,10 @@ new one) and re-verifies. Medium copies are edited by hand: tell the owner exact
   to 1000 × 420: look at the top screenshot).
 - Sources list at the end, as on the site.
 - **Full AI disclosure** [owner 2026-10-11]: dev.to's label set by the API (`ai_disclosure_level: some_ai`, shown as
-  "AI-assisted") and the same in words at the end of every copy (`AI_NOTE`), Medium included (it has no label).
+  "AI-assisted") and the same in words at the end of the copy (`AI_NOTE`, before Sources). Medium has no label, so
+  its paste page ends with the owner's own note as the very last line, after Sources (`MEDIUM_AI_NOTE`, his words
+  [owner 2026-10-12], never reworded): "How this post was made: I wrote it with Claude Code. It drafted the text
+  from my project's wiki, code and notes. Just a quick disclaimer for y'all out there :)"
 - **dev.to series** "Building my portfolio" for the posts about building this site (`SERIES` in the script; it
   shows once two of them are out). A new post about the site goes in it.
 - Medium paste page: pictures as JPEG (Medium refuses WebP), quotes one paragraph each (a quote holding a list, like

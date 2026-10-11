@@ -157,6 +157,10 @@ const AI_LEVEL = "some_ai";
 const AI_NOTE =
   "How this post was made: I wrote it with Claude Code. It drafted the text from my project's wiki, code and notes; " +
   "I set the direction, and reviewed and approved it before it went out.";
+/** Medium's version, the very last line of every Medium story, in the owner's words [owner 2026-10-12]. */
+const MEDIUM_AI_NOTE =
+  "How this post was made: I wrote it with Claude Code. It drafted the text from my project's wiki, code and notes. " +
+  "Just a quick disclaimer for y'all out there :)";
 
 /** Words that only make sense on the site itself (a tab you can tap, "the site you are on"). */
 const OFF_SITE = [
@@ -646,6 +650,10 @@ async function mediumPage() {
     .split(/(<pre[\s\S]*?<\/pre>)/)
     .map((part) => (part.startsWith("<pre") ? part : part.replace(/>\s+</g, "><")))
     .join("");
+  // Medium gets its own AI note, as the very last line (after Sources)
+  const before = article;
+  article = `${article.replace(/<hr>(?:<p>)?<em>How this post was made[\s\S]*?<\/em>(?:<\/p>)?/, "")}<hr><p><em>${MEDIUM_AI_NOTE}</em></p>`;
+  if (article.length >= before.length + MEDIUM_AI_NOTE.length) fail("the dev.to AI note was not found to replace: check AI_NOTE's markup");
   const dir = join(tmpdir(), "crosspost-shots", slug);
   mkdirSync(dir, { recursive: true });
   const file = join(dir, "medium.html");
