@@ -25,6 +25,8 @@ files, titles and descriptions:
    competing with the post), not made for kids, title and description from the plan. He sends the links.
    The film: the sharper master if there is one (`assets.md`), and a proper title, not the file name.
 3. **dev.to:** nothing; Claude does it.
+   Then **share the dev.to post on LinkedIn and Facebook** [owner 2026-10-11]: a line or two in his words + the link.
+   Remind him every time a post goes out on dev.to.
 4. **Medium** (a few days after dev.to): open the paste page Claude made, Ctrl+A, Ctrl+C → Medium → Write → paste;
    press Enter at the end of each YouTube link; ··· → More settings → Advanced settings → "originally published
    elsewhere" → the post's URL (the SEO step); Publish with the plan's tags; send Claude the link.
@@ -67,3 +69,5 @@ new one) and re-verifies. Medium copies are edited by hand: tell the owner exact
 - dev.to tags: max 4, lowercase alphanumeric (`case-study` → `showdev`); cover = the post's OG image (dev.to crops it
   to 1000 × 420: look at the top screenshot).
 - Sources list at the end, as on the site.
+- Medium paste page: pictures as JPEG (Medium refuses WebP), quotes one paragraph each (a quote holding a list, like
+  the TL;DR, loses the quote: Medium splits it into empty quote bars), tables as lists, no blank paragraphs.

@@ -346,6 +346,7 @@ if (mode.devto) {
   saveState();
   console.log(`✓ dev.to ${known ? "updated" : "created"} (${published ? "published" : "draft"}): ${res.url}`);
   if (published) await verify();
+  if (published && !known?.published) console.log(`  Remind the owner: share ${res.url} on LinkedIn and Facebook.`);
   else console.log("  Drafts need a login to view: look at it on dev.to (Dashboard → the draft), then --devto --publish.");
 }
 
@@ -469,6 +470,7 @@ function printPlan() {
     lines.push(`   Claude records each with: crosspost.mjs ${slug} --youtube <src>=<link>`);
   }
   lines.push(`${step++}. dev.to: Claude runs --devto (draft), you glance at it in Dashboard if you like, then Claude runs --devto --publish.`);
+  lines.push(`${step++}. Share the dev.to post on LinkedIn and Facebook (a line or two in your own words + the dev.to link).`);
   lines.push(
     `${step++}. Medium, a few days after dev.to (one new post at a time). Its URL import drops every figure, so paste instead:`,
     `   a. Claude runs: crosspost.mjs ${slug} --medium-page, and gives you the file. Open it in Chrome, Ctrl+A, Ctrl+C.`,
@@ -524,7 +526,19 @@ async function mediumPage() {
         .map((cells) => `<li><strong>${text(cells[0]) || "—"}</strong>: ${cells.slice(1).map((c, i) => `${text(head[i + 1])} ${c.trim()}`.trim()).join("; ")}</li>`)
         .join("")}</ul>`;
     })
+    // Medium's quotes hold one paragraph: a quote with a list (the TL;DR) splits into empty quote bars around every
+    // bullet, so it loses the quote; a quote of several paragraphs becomes one, lines kept.
+    .replace(/<blockquote>([\s\S]*?)<\/blockquote>/g, (_, inner) =>
+      /<(ul|ol)\b/.test(inner)
+        ? inner
+        : `<blockquote><p>${[...inner.matchAll(/<p>([\s\S]*?)<\/p>/g)].map((m) => m[1].trim()).join("<br>")}</p></blockquote>`,
+    )
     .replace(/<p>\s*<\/p>/g, "");
+  // whitespace between tags pastes as empty paragraphs; code keeps its line breaks
+  article = article
+    .split(/(<pre[\s\S]*?<\/pre>)/)
+    .map((part) => (part.startsWith("<pre") ? part : part.replace(/>\s+</g, "><")))
+    .join("");
   const dir = join(tmpdir(), "crosspost-shots", slug);
   mkdirSync(dir, { recursive: true });
   const file = join(dir, "medium.html");

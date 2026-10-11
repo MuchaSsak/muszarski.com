@@ -174,6 +174,8 @@ Posts are republished on dev.to and Medium for reach. The rules, in the owner's 
   the canonical is set by hand in the story's Advanced settings.
 - **Look before it's done:** checks on the published copy plus screenshots someone actually opens [owner 2026-10-11].
 - **New posts:** the `new-blog` skill suggests cross-posting at the end of every new post; the owner says yes per post.
+- **Share it:** every post that goes out on dev.to gets a reminder to share the dev.to link on LinkedIn and Facebook
+  [owner 2026-10-11].
 - How: `.claude/skills/new-blog/references/crosspost.md` (the owner's steps, Claude's steps, the quality bar);
   what went where: `.claude/skills/new-blog/crosspost.json`.
 
