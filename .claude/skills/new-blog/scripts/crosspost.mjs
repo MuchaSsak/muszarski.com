@@ -512,6 +512,9 @@ async function mediumPage() {
     .replace(/<a[^>]+name="[^"]*"[^>]*>\s*<\/a>/g, "")
     .replace(/(src|href)="([^"]+)"/g, (_, attr, value) => `${attr}="${original(value)}"`)
     .replace(/<a[^>]+class="article-body-image-wrapper"[^>]*>(<img[^>]*>)<\/a>/g, "$1")
+    // Medium's upload refuses WebP (every picture failed, 2026-10-11) and dev.to only serves WebP: a JPEG through
+    // wsrv.nl, the open image proxy. Medium copies each picture on paste, so the proxy only matters for that moment.
+    .replace(/(<img[^>]+src=")([^"]+)"/g, (_, head, src) => `${head}https://wsrv.nl/?url=${encodeURIComponent(src)}&amp;output=jpg&amp;q=88"`)
     .replace(/<iframe[^>]+youtube(?:-nocookie)?\.com\/embed\/([\w-]{11})[\s\S]*?<\/iframe>/g, (_, id) => `</p><p>https://youtu.be/${id}</p><p>`)
     .replace(/<div class="table-wrapper[^"]*">|<\/table>\s*<\/div>/g, (m) => (m.startsWith("</table>") ? "</table>" : ""))
     .replace(/<table>([\s\S]*?)<\/table>/g, (_, table) => {
@@ -531,6 +534,13 @@ async function mediumPage() {
       `<style>body{max-width:720px;margin:40px auto;padding:0 16px;font:18px/1.6 Georgia,serif}img{max-width:100%}</style></head>` +
       `<body><h1>${meta.title}</h1>\n${article}\n</body></html>`,
   );
+  const jpegs = [...article.matchAll(/<img[^>]+src="([^"]+)"/g)].map((m) => m[1].replace(/&amp;/g, "&"));
+  const bad = [];
+  for (const src of jpegs) {
+    const res = await fetch(src);
+    if (!res.ok || res.headers.get("content-type") !== "image/jpeg") bad.push(`${res.status} ${src}`);
+  }
+  if (bad.length) fail(`pictures that would not paste:\n  ${bad.join("\n  ")}`);
   const links = (article.match(/https:\/\/youtu\.be\/[\w-]{11}/g) ?? []).length;
   console.log(`✓ Medium page: ${file.replace(/\\/g, "/")}`);
   console.log(`  ${(article.match(/<img/g) ?? []).length} images, ${links} YouTube links to embed, tables turned into lists.`);

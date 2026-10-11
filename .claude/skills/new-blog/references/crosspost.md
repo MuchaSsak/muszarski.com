@@ -28,7 +28,9 @@ files, titles and descriptions:
 4. **Medium** (a few days after dev.to): open the paste page Claude made, Ctrl+A, Ctrl+C → Medium → Write → paste;
    press Enter at the end of each YouTube link; ··· → More settings → Advanced settings → "originally published
    elsewhere" → the post's URL (the SEO step); Publish with the plan's tags; send Claude the link.
-   Not the URL import: it drops every figure and leaves empty boxes [owner 2026-10-11].
+   Not the URL import: it drops every figure and leaves empty boxes [owner 2026-10-11]. Root cause: Medium's upload
+   refuses WebP, and both the site and dev.to serve WebP, so the paste page points every picture at a JPEG made by
+   wsrv.nl (checked by `--medium-page`). Importing the dev.to URL fails the same way.
 5. **Settings, once:** none needed. dev.to "RSS Import Feeds" stays empty (it would pull every post as a draft,
    twice for the ones already posted).
 
