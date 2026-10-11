@@ -137,3 +137,11 @@
 - `bun run e2e` 437/437 in 2.0 min; `bun run e2e:xb` 672/677 in 8.6 min (4 on the /work rewrite then in progress in a
   parallel session, 1 WebKit "element is not stable" click in How I work on a busy machine; chrome + pages specs then
   132/132).
+
+## Project recordings in the reels (2026-10-11, local review build, mobile Lighthouse, median of 3)
+
+- Eager `poster` attributes on the five home reels (138 KB, three of them new) loaded before the H1: `/en/` LCP
+  2254 → 2480 ms (perf 98 → 97). Lazy `<img>` posters under the videos + 960 px posters: `/en/` 98, LCP 2330 ms,
+  237 KB (was 305); `/pl/` 98, 2258 ms; `/en/work/` 98, 2333 ms. Chrome's lazy-load distance still fetches the two
+  nearest posters before the LCP. The script's 2000 ms LCP budget was already missed before (2254 ms).
+- `bun run e2e` 426/426 in 2.0-2.1 min (twice); `bun run check` green (206 unit tests).

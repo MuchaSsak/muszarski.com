@@ -80,9 +80,11 @@ Public info only (see the rule above):
   konfigurator flow). No pipeline drawing, no internal tools.
 - **Theme:** paper `#F5F1EA`, ink `#13201F`, accent teal `#2D7D78` (`#28726E` for small text). Dark: paper `#0E2B29`,
   accent mint `#9FD8CB`. Contrast checked [research]. Motif: a drafted "pstryk" toggle switch. Motion: snappy.
-- **Temporary media** (`assets/projects/pstrykweb/`, raw scrolls in `raw/`): show the OLD landing, stock people and
-  third-party thumbnails. **Never publish.** The owner records finals: the public konfigurator flow (+ one
-  consented client site, if Cetuspro OKs it). Internal tools are not recorded for the site.
+- **Media (2026-10-11):** the owner's recording (`assets/projects/pstrykweb/raw/recording-2026-10-11.mp4`, gitignored),
+  cut to the public landing and the order form for the chapter and `/work/` (`assets.md` § Inventory). From 1:12 it
+  shows the internal team panel (sign-ups, queue, "Build now") and a client's generated site with the client's name:
+  **never published** (internal tools; client consent unknown). The old temporary captures in `assets/projects/pstrykweb/`
+  (the OLD landing, stock people) stay local, never published.
 
 ## Open (project-specific)
 

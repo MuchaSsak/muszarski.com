@@ -47,8 +47,10 @@
   - Fine pointer: "Launch on desktop ↗". Coarse pointer: "Desktop-only experience" + Copy link.
   - **No WebGL on the home page.**
 - **Theme:** a dark sheet with a twinkling star field only (the orrery of orbit ellipses was removed [user 2026-10-08]).
-- **Temporary media** (`assets/projects/space-portfolio/`): 15 `tmp-` screenshots (13 desktop journey stops, 2 phone) +
-  raw 100 s journey and two 20 s clips. `placeholders.md` P9.
+- **Media (2026-10-11):** the owner's 67 s recording (`assets/projects/space-portfolio/raw/recording-2026-10-11.mp4`,
+  gitignored), cut to Earth, Mars, Jupiter and Neptune for the chapter and `/work/`; left out: the start console (two
+  CC BY models), the logo asteroids, the lens-flare stops (uncredited lens-dirt texture), the Saturn project cards. The
+  older `tmp-` captures stay local; the 2026-10-05 Mars → Jupiter flight still plays in three posts and Credentials.
 - **Credits:** third-party textures/models are credited in the site's credits dialog. Carry those credits into the case study
   (research § A5).
 

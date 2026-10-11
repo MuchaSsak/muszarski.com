@@ -49,8 +49,9 @@
 - **Media kind:** `desktop`. A drawn browser frame with numbered balloon callouts ①②③ (timer · reports · RLS roles) and a parts list.
   Title-block cell: `DEPLOYMENT: none (internship)`.
 - **Theme:** a timesheet / clock-face drawing; the motif is an isometric clock face with gear teeth.
-- **Temporary media** (`assets/projects/neoteric-clockful/`): 18 `tmp-mock-data-` screenshots (9 views × desktop 1440 / phone 390,
-  admin + employee) + a raw 13 s walkthrough. Mock data only. `placeholders.md` P9.
+- **Media (2026-10-11):** the owner's 15 s walkthrough (`assets/projects/neoteric-clockful/raw/recording-2026-10-11.mp4`,
+  gitignored; mock data: clients, projects, users, the timer, reports) plays whole in the chapter and on `/work/`. The
+  older `tmp-mock-data-` screenshots stay local.
 
 ## Open (project-specific)
 
