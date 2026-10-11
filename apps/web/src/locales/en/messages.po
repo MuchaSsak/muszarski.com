@@ -372,7 +372,7 @@ msgstr "Client work, my own products, open source and experiments. Pick one, or 
 msgid "Close menu"
 msgstr "Close menu"
 
-#: src/components/blog/case/Film.astro:34
+#: src/components/blog/case/Film.astro:35
 msgid "Close video"
 msgstr "Close video"
 
@@ -1888,7 +1888,7 @@ msgstr "Who uses it, what they want done, and where they give up."
 msgid "Wiki"
 msgstr "Wiki"
 
-#: src/components/blog/case/Film.astro:35
+#: src/components/blog/case/Film.astro:36
 msgid "With sound"
 msgstr "With sound"
 
