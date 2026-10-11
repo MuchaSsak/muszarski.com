@@ -22,7 +22,7 @@ msgstr ""
 #: src/components/home/Credentials.astro:287
 #: src/components/home/Credentials.astro:300
 #: src/components/layout/SiteFooter.astro:51
-#: src/pages/[locale]/blog/[slug].astro:161
+#: src/pages/[locale]/blog/[slug].astro:178
 #: src/pages/[locale]/cv/index.astro:50
 #: src/pages/[locale]/my-life/index.astro:111
 #: src/pages/[locale]/work/index.astro:181
@@ -39,7 +39,7 @@ msgstr "(PDF, potem strona CV)"
 
 #: src/components/blog/PostCard.astro:66
 #: src/components/blog/PostCard.astro:80
-#: src/pages/[locale]/blog/[slug].astro:121
+#: src/pages/[locale]/blog/[slug].astro:123
 msgid "{minutes} min read"
 msgstr "{minutes} min czytania"
 
@@ -99,11 +99,11 @@ msgstr "Od A do Z"
 msgid "About"
 msgstr "Temat"
 
-#: src/pages/[locale]/blog/[slug].astro:173
+#: src/pages/[locale]/blog/[slug].astro:190
 msgid "About the author"
 msgstr "O autorze"
 
-#: src/pages/[locale]/blog/[slug].astro:165
+#: src/pages/[locale]/blog/[slug].astro:182
 msgid "accessed"
 msgstr "dostęp:"
 
@@ -142,7 +142,7 @@ msgid "All"
 msgstr "Wszystkie"
 
 #: src/components/home/LatestWriting.astro:65
-#: src/pages/[locale]/blog/[slug].astro:204
+#: src/pages/[locale]/blog/[slug].astro:221
 msgid "All posts"
 msgstr "Wszystkie wpisy"
 
@@ -157,6 +157,10 @@ msgstr "Wszystkie projekty"
 #: src/pages/[locale]/blog/index.astro:90
 msgid "All topics"
 msgstr "Wszystkie tematy"
+
+#: src/pages/[locale]/blog/[slug].astro:132
+msgid "Also on"
+msgstr "Też na"
 
 #: src/components/home/Chapters.astro:61
 msgid "Also shipped"
@@ -236,7 +240,7 @@ msgstr "hook zablokował"
 
 #: src/components/layout/SiteFooter.astro:67
 #: src/components/layout/SiteHeader.astro:47
-#: src/pages/[locale]/blog/[slug].astro:53
+#: src/pages/[locale]/blog/[slug].astro:54
 #: src/pages/[locale]/blog/index.astro:36
 #: src/pages/[locale]/blog/index.astro:52
 msgid "Blog"
@@ -246,7 +250,7 @@ msgstr "Blog"
 msgid "Both app stores"
 msgstr "Oba sklepy z aplikacjami"
 
-#: src/pages/[locale]/blog/[slug].astro:93
+#: src/pages/[locale]/blog/[slug].astro:95
 msgid "Breadcrumb"
 msgstr "Ścieżka nawigacyjna"
 
@@ -284,7 +288,7 @@ msgstr "buduje"
 msgid "Built with"
 msgstr "Zbudowane w"
 
-#: src/pages/[locale]/blog/[slug].astro:113
+#: src/pages/[locale]/blog/[slug].astro:115
 msgid "By"
 msgstr "Autor:"
 
@@ -307,7 +311,7 @@ msgstr "Case studies"
 #: src/components/blog/PostCard.astro:51
 #: src/components/blog/PostCard.astro:64
 #: src/components/blog/TagLabel.astro:15
-#: src/pages/[locale]/blog/[slug].astro:96
+#: src/pages/[locale]/blog/[slug].astro:98
 #: src/pages/[locale]/work/index.astro:212
 msgid "Case study"
 msgstr "Case study"
@@ -348,7 +352,7 @@ msgstr "Praca dla klientów, moje własne produkty, open source i eksperymenty. 
 msgid "Close menu"
 msgstr "Zamknij menu"
 
-#: src/components/blog/case/Film.astro:35
+#: src/components/blog/case/Film.astro:37
 msgid "Close video"
 msgstr "Zamknij wideo"
 
@@ -404,7 +408,7 @@ msgstr "potwierdź e-mail"
 #: src/components/layout/SiteHeader.astro:94
 #: src/components/layout/SiteHeader.astro:121
 #: src/components/NotFound.astro:48
-#: src/pages/[locale]/blog/[slug].astro:189
+#: src/pages/[locale]/blog/[slug].astro:206
 #: src/pages/[locale]/cv/index.astro:53
 #: src/pages/[locale]/my-life/index.astro:79
 msgid "Contact"
@@ -610,7 +614,7 @@ msgstr "Programista full stack · TypeScript, React, three.js"
 msgid "Full-stack product engineer"
 msgstr "Full-stack product engineer"
 
-#: src/pages/[locale]/blog/[slug].astro:179
+#: src/pages/[locale]/blog/[slug].astro:196
 msgid "Full-stack product engineer from Poland. I always think about the users, the business, conversions and the psychology behind my visuals. I measure my work by the results it brings."
 msgstr "Full-stack product engineer z Polski. Zawsze myślę o użytkownikach, biznesie, konwersjach i psychologii stojącej za tym, co widać na ekranie. Swoją pracę mierzę efektami, które przynosi."
 
@@ -966,7 +970,7 @@ msgstr "Nie wysłano wiadomości"
 msgid "Message sent"
 msgstr "Wiadomość wysłana"
 
-#: src/pages/[locale]/blog/[slug].astro:182
+#: src/pages/[locale]/blog/[slug].astro:199
 msgid "More about me"
 msgstr "Więcej o mnie"
 
@@ -1069,7 +1073,7 @@ msgid "On it. Briefing the team."
 msgstr "Działam. Zbieram zespół."
 
 #: src/components/work/WorkHero.astro:65
-#: src/pages/[locale]/blog/[slug].astro:54
+#: src/pages/[locale]/blog/[slug].astro:55
 msgid "On this page"
 msgstr "Na tej stronie"
 
@@ -1289,7 +1293,7 @@ msgstr "Kwalifikacje i kursy"
 msgid "read"
 msgstr "przeczytane"
 
-#: src/pages/[locale]/blog/[slug].astro:200
+#: src/pages/[locale]/blog/[slug].astro:217
 msgid "Read next"
 msgstr "Przeczytaj też"
 
@@ -1480,11 +1484,11 @@ msgstr "Solo, od A do Z"
 msgid "Sort"
 msgstr "Sortuj"
 
-#: src/components/blog/case/Film.astro:38
+#: src/components/blog/case/Film.astro:40
 msgid "Sound on"
 msgstr "Włącz dźwięk"
 
-#: src/pages/[locale]/blog/[slug].astro:155
+#: src/pages/[locale]/blog/[slug].astro:172
 msgid "Sources"
 msgstr "Źródła"
 
@@ -1745,7 +1749,7 @@ msgstr "Testy jednostkowe"
 msgid "Up for a game or a chat? Find me here."
 msgstr "Masz ochotę pograć albo pogadać? Znajdziesz mnie tutaj."
 
-#: src/pages/[locale]/blog/[slug].astro:118
+#: src/pages/[locale]/blog/[slug].astro:120
 msgid "Updated"
 msgstr "Zaktualizowano"
 
@@ -1809,7 +1813,7 @@ msgstr "Kto z tego korzysta, co chce załatwić i gdzie rezygnuje."
 msgid "Wiki"
 msgstr "Wiki"
 
-#: src/components/blog/case/Film.astro:36
+#: src/components/blog/case/Film.astro:38
 msgid "With sound"
 msgstr "Z dźwiękiem"
 

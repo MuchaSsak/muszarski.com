@@ -22,7 +22,7 @@ import Icon from "~/components/ui/Icon.astro";
 import { SITE } from "~/data/site";
 import { proseWords, tocOf } from "~/lib/blog";
 import { chromeLinks } from "~/lib/nav";
-import { allPosts, type Post, postLocale, postMinutes, postPath, postSlug, relatedTo, translationsOf } from "~/lib/posts";
+import { allPosts, copiesOf, type Post, postLocale, postMinutes, postPath, postSlug, relatedTo, translationsOf } from "~/lib/posts";
 import { pathTo } from "~/lib/routes";
 import { postGraph } from "~/lib/schema";
 
@@ -44,6 +44,7 @@ const otherLocale = locale === "en" ? "pl" : "en";
 const otherPath = translations[otherLocale];
 const related = await relatedTo(post);
 const minutes = postMinutes(post);
+const copies = await copiesOf(post);
 const site = Astro.site ?? new URL("http://localhost:4321");
 const url = new URL(postPath(post), site).href;
 const fmt = (date: Date) =>
@@ -79,6 +80,7 @@ const tocLabel = t`On this page`;
         tags: post.data.tags,
         words: proseWords(post.body ?? ""),
         aboutUrl: new URL(links.myLife, site).href,
+        copies: [copies.devto, copies.medium].filter((href): href is string => !!href),
       },
       [
         { name: SITE.name, url: new URL(links.home, site).href },
@@ -125,6 +127,21 @@ const tocLabel = t`On this page`;
               </a>
             )}
           </p>
+          {(copies.devto || copies.medium) && (
+            <p class="also rise" style="--d:3">
+              <span>{t`Also on`}</span>
+              {copies.devto && (
+                <a href={copies.devto} rel="syndication" hreflang="en">
+                  dev.to
+                </a>
+              )}
+              {copies.medium && (
+                <a href={copies.medium} rel="syndication" hreflang="en">
+                  Medium
+                </a>
+              )}
+            </p>
+          )}
         </div>
         <div class="cover-wrap rise" style="--d:1">
           <PostCover cover={post.data.cover} />
@@ -276,6 +293,30 @@ const tocLabel = t`On this page`;
     border-top: 3px solid currentColor;
     font-weight: 700;
     font-size: 0.875rem;
+  }
+  .also {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.375rem;
+    margin: 0.75rem 0 0;
+    font-weight: 700;
+    font-size: 0.75rem;
+  }
+  /* small, but still a 24 px target (WCAG 2.5.8) */
+  .also a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 1.5rem;
+    padding: 0 0.4375rem;
+    border: 2px solid currentColor;
+    font-weight: 800;
+    text-decoration: none;
+  }
+  .also a:hover,
+  .also a:focus-visible {
+    background: var(--sfg);
+    color: var(--sbg);
   }
   .cover-wrap {
     box-shadow: 10px 10px 0 0 var(--accent);

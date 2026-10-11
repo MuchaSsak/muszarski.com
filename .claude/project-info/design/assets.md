@@ -92,6 +92,13 @@ or "written consent" for the logomark); React and React Native (LF Projects), Gi
 Lighthouse (Google) and Claude (Anthropic) **no** without permission. So the CV shows no tool logos: the tools are
 names in groups under outline icons. The site's tool marks (`si:`) face the same rules: Q50.
 
+Cross-post badges (2026-10-11, the post header's "Also on"): **text only**. DEV: its brand page hands out the
+badge, but its Terms (§ 9) allow logo use "only with express permission", and the old "add the DEV badge to your
+site" page was withdrawn in 2021; write "DEV" or "dev.to", never "Dev.to". Medium: its logo guidelines
+(medium.design, updated 2024-10-30) allow the icon for links on a personal site, unmodified, black or white, clear
+space equal to its height, from its own files (a Google Drive folder linked there). Adding it = downloading those
+files first (owner's OK), then both badges get a mark or neither does.
+
 ## Missing / needed (→ `open-questions.md`, `placeholders.md`)
 
 - **Owner recordings per flagship:** shot lists in the research files (PstrykWeb, Linkoglot 11 shots, space, Clockful).

@@ -181,8 +181,14 @@ Posts are republished on dev.to and Medium for reach. The rules, in the owner's 
 - How: `.claude/skills/new-blog/references/crosspost.md` (the owner's steps, Claude's steps, the quality bar);
   what went where: `.claude/skills/new-blog/crosspost.json`.
 
-Done: the case study on dev.to with the film embedded (2026-10-11, Medium pending,
-https://dev.to/muchassak/trying-to-build-an-awwwards-winning-brutalist-portfolio-the-process-the-mindset-and-the-tools-4njg).
+- **Link the copies from the post** [owner 2026-10-11]: "Also on dev.to · Medium" badges in the post header and
+  `sameAs` in its BlogPosting JSON-LD (`content-model.md` § Blog post), written by the script, live after a deploy.
+- **Nothing gets forgotten:** what a post still needs (a Medium copy, the owner's canonical check, open todos) shows
+  on every new chat's session card from `crosspost.json` until cleared (`crosspost.mjs <slug> --done <text>`).
+
+Done: the case study on dev.to with the film embedded and on Medium (2026-10-11):
+https://dev.to/muchassak/trying-to-build-an-awwwards-winning-brutalist-portfolio-the-process-the-mindset-and-the-tools-4njg,
+https://medium.com/@mateusz_muszarski/trying-to-build-an-awwwards-winning-brutalist-portfolio-the-process-the-mindset-and-the-tools-d8089487d366.
 
 ## Domain (open-questions Q5)
 

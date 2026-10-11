@@ -9,6 +9,15 @@
     },
     "youtube": {
       "film": "bUbHtUvuzpI"
-    }
+    },
+    "medium": {
+      "url": "https://medium.com/@mateusz_muszarski/trying-to-build-an-awwwards-winning-brutalist-portfolio-the-process-the-mindset-and-the-tools-d8089487d366",
+      "published": "2026-10-11",
+      "canonical": "unchecked"
+    },
+    "todo": [
+      "owner to add the AI note at the end of the Medium story (the line under the divider on dev.to)",
+      "push main so Vercel deploys the \"Also on\" badges (committed, not pushed)"
+    ]
   }
 }

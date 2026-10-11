@@ -41,6 +41,13 @@ export async function translationsOf(post: Post): Promise<Partial<Record<BlogLoc
   return map;
 }
 
+/** The post's published copies on dev.to and Medium: set on the English post, shared by its translation. */
+export async function copiesOf(post: Post): Promise<{ devto?: string | undefined; medium?: string | undefined }> {
+  if (post.data.syndication) return post.data.syndication;
+  const en = (await allPosts()).find((p) => p.data.translationKey === post.data.translationKey && postLocale(p) === "en");
+  return en?.data.syndication ?? {};
+}
+
 /** Related posts in the same locale: the listed keys first, then the newest sharing a tag. */
 export async function relatedTo(post: Post, limit = 3): Promise<Post[]> {
   const same = (await postsIn(postLocale(post))).filter((other) => other.id !== post.id);

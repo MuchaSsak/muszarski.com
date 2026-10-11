@@ -101,6 +101,29 @@ rememberStart();
 const agreement = first(`${WIKI}/conventions/working-with-claude.md`, `${WIKI}/working-agreement.md`);
 const lessons = first(`${WIKI}/memory/lessons.md`, `${WIKI}/lessons.md`);
 const state = inFlight();
+
+/**
+ * What a cross-posted blog post still needs [owner 2026-10-11: "in case i forget then it comes up later in other
+ * chats"]: a Medium copy after dev.to, the owner's canonical check on Medium, and any open `todo` the script or Claude
+ * left on the post. Read from the new-blog skill's crosspost.json.
+ */
+function pendingCrossposts() {
+  const file = ".claude/skills/new-blog/crosspost.json";
+  if (!existsSync(join(ROOT, file))) return [];
+  let posts;
+  try {
+    posts = JSON.parse(read(file));
+  } catch {
+    return [`${file} does not parse`];
+  }
+  const items = [];
+  for (const [slug, post] of Object.entries(posts)) {
+    if (post.devto?.published && !post.medium) items.push(`${slug}: on dev.to, not on Medium yet (paste page: crosspost.mjs ${slug} --medium-page)`);
+    if (post.medium && post.medium.canonical === "unchecked") items.push(`${slug}: owner to confirm the Medium canonical (story → Ctrl+U → "canonical")`);
+    for (const todo of post.todo ?? []) items.push(`${slug}: ${todo}`);
+  }
+  return items;
+}
 if (!agreement && !lessons && !state) process.exit(0);
 
 const lines = [`[session card | ${source}] ${NOTE[source] ?? NOTE.startup}`];
@@ -110,6 +133,13 @@ if (agreement) {
   );
 }
 if (state) lines.push(`In flight: ${state}.`);
+const crossposts = pendingCrossposts();
+if (crossposts.length) {
+  lines.push(
+    `Cross-posts waiting (.claude/skills/new-blog/crosspost.json; tell the owner, then clear each when done, references/crosspost.md):`,
+    ...crossposts.map((item) => `- ${item}`),
+  );
+}
 if (lessons) {
   lines.push(
     `Lessons (${lessons}, "Rules"): mistakes already paid for. Apply them; add one when the user corrects you or a tool trips you.`,

@@ -35,7 +35,7 @@ const GAP_DAYS = 3; // seo.md § Syndication: one new post at a time, never a bu
 
 const argv = process.argv.slice(2);
 const option = (name) => (argv.includes(name) ? argv[argv.indexOf(name) + 1] : null);
-const VALUED = ["--out", "--youtube", "--medium"];
+const VALUED = ["--out", "--youtube", "--medium", "--todo", "--done"];
 const slug = argv.find((arg, i) => !arg.startsWith("--") && !VALUED.includes(argv[i - 1]));
 const mode = {
   plan: argv.includes("--plan"),
@@ -66,6 +66,23 @@ const fail = (message) => {
 
 // ---- recording what the owner did ----------------------------------------------------------------------------------
 
+// Open items show on every new chat's session card (.claude/hooks/session-start.mjs) until cleared.
+if (option("--todo")) {
+  entry.todo = [...(entry.todo ?? []), option("--todo")];
+  saveState();
+  console.log(`✓ ${slug}: todo added (${entry.todo.length} open)`);
+  process.exit(0);
+}
+if (option("--done")) {
+  const what = option("--done").toLowerCase();
+  if (what === "canonical" && entry.medium) entry.medium.canonical = `confirmed by the owner ${today()}`;
+  else entry.todo = (entry.todo ?? []).filter((item) => !item.toLowerCase().includes(what));
+  if (!entry.todo?.length) delete entry.todo;
+  saveState();
+  console.log(`✓ ${slug}: "${what}" cleared; open: ${entry.todo?.length ?? 0} todo(s)${entry.medium?.canonical === "unchecked" ? ", Medium canonical unchecked" : ""}`);
+  process.exit(0);
+}
+
 if (mode.youtube) {
   const [src, value] = mode.youtube.split("=");
   const id = value?.match(/(?:youtu\.be\/|v=|shorts\/|embed\/)?([\w-]{11})(?:[?&#]|$)/)?.[1];
@@ -78,18 +95,6 @@ if (mode.youtube) {
   process.exit(0);
 }
 
-if (mode.medium) {
-  const url = mode.medium.split("?")[0];
-  const res = await fetch(url, { headers: { "user-agent": "Mozilla/5.0 (crosspost check)" } });
-  const canonical = res.ok ? (await res.text()).match(/<link[^>]+rel="canonical"[^>]+href="([^"]+)"/)?.[1] : null;
-  entry.medium = { url, published: today(), canonical: canonical ?? "unchecked" };
-  saveState();
-  if (canonical === pageUrl) console.log(`✓ Medium copy recorded, canonical → ${canonical}`);
-  if (canonical !== null || res.ok) await shoot(url, "medium");
-  else if (canonical) fail(`Medium canonical is ${canonical}, expected ${pageUrl}: fix it in the story's settings (Advanced → canonical link)`);
-  else console.log(`! Medium copy recorded, but the page answered ${res.status}: check the canonical by hand (view source, "canonical").`);
-  process.exit(0);
-}
 
 // ---- the post ------------------------------------------------------------------------------------------------------
 
@@ -178,6 +183,39 @@ for (const [, tag, attrs] of rest.matchAll(/^\s*<(Film|Clips)\b([\s\S]*?)\/>/gm)
       });
     }
   }
+}
+
+if (mode.medium) {
+  const url = mode.medium.split("?")[0];
+  const res = await fetch(url, { headers: { "user-agent": "Mozilla/5.0 (crosspost check)" } });
+  const canonical = res.ok ? (await res.text()).match(/<link[^>]+rel="canonical"[^>]+href="([^"]+)"/)?.[1] : null;
+  entry.medium = { url, published: today(), canonical: canonical ?? "unchecked" };
+  saveState();
+  writeCopy("medium", url);
+  if (canonical && canonical !== pageUrl)
+    fail(`Medium canonical is ${canonical}, expected ${pageUrl}: fix it in the story's settings (Advanced → canonical link)`);
+  if (canonical) {
+    console.log(`✓ Medium copy recorded, canonical → ${canonical}`);
+    await shoot(url, "medium");
+    process.exit(0);
+  }
+  // Medium answers bots with a Cloudflare block (403, 2026-10-11); never work around it. Its RSS feed is meant for
+  // programs: read the story there, and ask the owner for the one check only a browser can do, the canonical.
+  console.log(`! Medium blocks automated visits (${res.status}): checked through the author's RSS feed instead.`);
+  const user = url.match(/medium\.com\/(@[\w.-]+)/)?.[1];
+  const feed = user ? await (await fetch(`https://medium.com/feed/${user}`)).text() : "";
+  const item = feed.split("<item>").slice(1).find((it) => it.includes(meta.title)) ?? "";
+  const content = item.match(/<content:encoded><!\[CDATA\[([\s\S]*?)\]\]>/)?.[1] ?? "";
+  const postImages = (rest.match(/^import \w+ from "~\/assets\//gm) ?? []).length; // a floor: a poster may become a video
+  const checks = [
+    [Boolean(content), "the story is in the feed"],
+    [(content.match(/<img/g) ?? []).length >= postImages, `${(content.match(/<img/g) ?? []).length} pictures (the post imports ${postImages})`],
+    [videos.every((v) => !youtube(v.src) || content.includes(youtube(v.src))), "every YouTube video embedded"],
+    [content.includes("How this post was made"), "the AI note at the end"],
+  ];
+  for (const [ok, label] of checks) console.log(`${ok ? "✓" : "✗"} ${label}`);
+  console.log(`  The owner checks the canonical: open the story → Ctrl+U → Ctrl+F "canonical" → must be ${pageUrl}`);
+  process.exit(checks.every(([ok]) => ok) ? 0 : 1);
 }
 
 if (mode.plan) {
@@ -392,6 +430,7 @@ if (mode.devto) {
     updated: today(),
   };
   saveState();
+  if (published) writeCopy("devto", res.url);
   console.log(`✓ dev.to ${known ? "updated" : "created"} (${published ? "published" : "draft"}): ${res.url}`);
   if (published && !known?.published) console.log(`  Remind the owner: share ${res.url} on LinkedIn and Facebook.`);
   if (published) await verify();
@@ -399,6 +438,25 @@ if (mode.devto) {
 }
 
 // ---- helpers -------------------------------------------------------------------------------------------------------
+
+/**
+ * The copy's link in the English post's frontmatter (`syndication`), which the post header shows as "Also on" badges
+ * and the BlogPosting JSON-LD lists as `sameAs`. The site only shows it after a commit and deploy.
+ */
+function writeCopy(platform, url) {
+  const file = join(BLOG, `${slug}.mdx`);
+  const text = readFileSync(file, "utf8").replace(/\r\n/g, "\n");
+  const [, head, body] = text.match(/^---\n([\s\S]*?)\n---\n([\s\S]*)$/);
+  const block = head.match(/^syndication:\n((?: {2}.*\n?)*)/m);
+  const links = Object.fromEntries([...(block?.[1] ?? "").matchAll(/^ {2}(\w+): "?([^"\n]+)"?$/gm)].map((m) => [m[1], m[2]]));
+  if (links[platform] === url) return;
+  links[platform] = url;
+  const yaml = `syndication:\n${["devto", "medium"].filter((k) => links[k]).map((k) => `  ${k}: "${links[k]}"`).join("\n")}`;
+  const next = block ? head.replace(block[0].replace(/\n$/, ""), yaml) : head.replace(/^(related: .*)$/m, `$1\n${yaml}`);
+  if (next === head) fail(`could not write the ${platform} link into ${file}: add "syndication:" by hand`);
+  writeFileSync(file, `---\n${next}\n---\n${body}`);
+  console.log(`✓ ${platform} link written to apps/web/src/content/blog/en/${slug}.mdx: commit and deploy so the post shows it.`);
+}
 
 /** Playwright from apps/web (the repo's e2e dependency). */
 async function playwright() {

@@ -56,7 +56,14 @@ files, titles and descriptions:
    topics) [owner 2026-10-11: "i always should get that"]. The words come from the frontmatter, cut at a sentence,
    never rewritten; a title over 100 falls back to `seoTitle`. When he sends the story link: `--medium <url>` checks the canonical, takes
    screenshots, records it. Look at those too.
-6. **Record and close:** `crosspost.json` is updated by the script; commit it with the wiki line (`seo.md`
+   Medium blocks automated visits (Cloudflare 403; never work around it or solve its checks), so `--medium` reads
+   the story from the author's RSS feed (pictures, videos, the AI note) and asks the owner for the canonical check
+   (story → Ctrl+U → "canonical"); when he confirms: `--done canonical`.
+6. **Link the copies from the post:** publishing on dev.to and `--medium` write the link into the en post's
+   `syndication` frontmatter (the "Also on" badges + `sameAs`). Commit it; the badges go live with the next deploy.
+7. **Nothing forgotten:** anything still open goes on the post with `--todo "<text>"` and shows on every new chat's
+   session card until `--done "<text>"`. Ask the owner for a missing Medium link or check, every session it shows.
+8. **Record and close:** `crosspost.json` is updated by the script; commit it with the wiki line (`seo.md`
    § Syndication "Done", `log.md`). Report: the URLs, the check results, what you looked at, what wasn't verified.
 
 ## Updating a post that is already out

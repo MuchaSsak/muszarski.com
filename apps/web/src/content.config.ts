@@ -29,6 +29,14 @@ const blog = defineCollection({
       draft: z.boolean().default(false),
       related: z.array(z.string()).max(3).default([]),
       sources: z.array(z.object({ title: z.string().min(3), url: z.url(), accessed: z.coerce.date() })).default([]),
+      /** Published copies elsewhere (English only, so set on the en post; the pl page shows them too). Written by
+       * `.claude/skills/new-blog/scripts/crosspost.mjs` once a copy is out (seo.md § Syndication). */
+      syndication: z
+        .object({
+          devto: z.url().regex(/^https:\/\/dev\.to\//).optional(),
+          medium: z.url().regex(/^https:\/\/([\w-]+\.)?medium\.com\//).optional(),
+        })
+        .optional(),
     })
     .refine((post) => !post.updated || post.updated >= post.published, { message: "updated is before published", path: ["updated"] }),
 });

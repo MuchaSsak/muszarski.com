@@ -101,7 +101,11 @@ search, case studies, plus `post-check.mjs` and `capture.mjs`) [user 2026-10-08:
 quality articles so either case studies or blog articles similar to how we approached it today"].
 
 `{ title, description (≤ 155 chars), slug (per locale), translationKey, published, updated?, tags[],
-cover (code-drawn or real), coverAlt, author: "mateusz", draft, canonical? }`.
+cover (code-drawn or real), coverAlt, author: "mateusz", draft, canonical?, syndication?: { devto?, medium? } }`.
+- `syndication` (en post only; the pl translation shows it too): the published copies, written by `crosspost.mjs`
+  once a copy is out. The header shows small "Also on dev.to · Medium" text badges under the meta row, and the
+  BlogPosting JSON-LD lists them as `sameAs` [owner 2026-10-11]. No platform logos: DEV's terms want express
+  permission; Medium allows its icon but only from its own files (`assets.md`).
 - Covers (`PostCover.astro`): one code-drawn motif per topic, no words; a case study's cover draws the site it is
   about [user 2026-10-09: "make the thumbnails for case studies be more like the websites"]: `this-site` = the home
   share card as on /work/ (names only, logo from `/favicon.svg`), `yws` = the yws.lu hero (headline as bars, an own

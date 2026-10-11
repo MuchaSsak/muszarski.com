@@ -191,6 +191,8 @@ export interface PostFacts {
   tags: readonly string[];
   words: number;
   aboutUrl: string;
+  /** Published copies of the post elsewhere (dev.to, Medium). */
+  copies?: string[];
 }
 
 export function postGraph(site: URL, post: PostFacts, crumbs: { name: string; url: string }[]): Node {
@@ -210,6 +212,7 @@ export function postGraph(site: URL, post: PostFacts, crumbs: { name: string; ur
         image: post.image,
         keywords: post.tags.join(", "),
         wordCount: post.words,
+        ...(post.copies?.length ? { sameAs: post.copies } : {}),
         author: { "@type": "Person", "@id": personId(site), name: SITE.name, url: post.aboutUrl },
         publisher: { "@id": personId(site) },
         isPartOf: { "@id": websiteId(site) },
