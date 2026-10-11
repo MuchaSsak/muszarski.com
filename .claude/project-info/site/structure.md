@@ -18,7 +18,6 @@
 /<locale>/cv/                    web CV, same data as the PDF (F11)
 /<locale>/my-life/               personal page (F13)
 /<locale>/privacy/               privacy policy, noindex,follow (F14)
-/<locale>/terms/                 regulamin, conservative draft (compliance-and-data.md; Q16)
 /<locale>/contact/sent|error/     results of a no-JS form post (noindex)
 /<locale>/cv/print/              the CV sheet, the PDF's source (noindex, out of the sitemap)
 /404                             per-locale copy (F21)

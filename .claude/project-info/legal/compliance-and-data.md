@@ -52,7 +52,8 @@
 
 ## Drafts published in the site (2026-10-05)
 
-- `src/content/legal/{pl,en,es}/{privacy,terms}.md`: privacy policy (17 sections) and regulamin (14 §), Polish prevails,
+- `src/content/legal/{pl,en,es}/privacy.md`: privacy policy (17 sections), Polish prevails (the regulamin was removed
+  2026-10-11 [owner]: a hiring portfolio, no e-service, no postal address published),
   drafted from this page and the legal research by an agent and not lawyer-reviewed (Q15, P13). Gaps (postal address,
   mailbox provider and location) render as marked tokens (P22).
 - Facts corrected while drafting [web, 2026-10-05]: UODO moved to ul. Stanisława Moniuszki 1A, 00-014 Warszawa (July
