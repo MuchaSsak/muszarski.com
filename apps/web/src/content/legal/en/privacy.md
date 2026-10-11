@@ -17,7 +17,7 @@ updated: 2026-10-05
 
 ## 2. Controller
 
-1. The controller of personal data is Mateusz Muszarski, a natural person (Poland), correspondence address: [[POSTAL_ADDRESS]], e-mail: [[EMAIL]] (the "Controller").
+1. The controller of personal data is Mateusz Muszarski, a natural person (Poland), e-mail: [[EMAIL]] (the "Controller").
 2. The Controller has not designated a data protection officer, as he is not required to do so under Article 37(1) GDPR. In all matters concerning personal data, the Controller may be contacted at the addresses given in paragraph 1.
 
 ## 3. Purposes, legal bases and retention periods
@@ -135,4 +135,4 @@ updated: 2026-10-05
 ## 17. Changes to this Policy and language versions
 
 1. Current version of this Policy: 1.0 of 5 October 2026. Each change to this Policy is marked with a new version number and date, shown at the top of the document.
-2. This Policy is drawn up in Polish. The English and Spanish versions are translations; in the event of any discrepancy, the Polish version prevails. The Spanish version was prepared with the assistance of machine translation and is pending review.
+2. This Policy is drawn up in Polish. The English and Spanish versions are translations; in the event of any discrepancy, the Polish version prevails.

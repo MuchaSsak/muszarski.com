@@ -9,7 +9,7 @@ import { type IconName } from "~/lib/icons.gen";
  * from older data.
  *
  * Text is per locale (long-form content, not UI strings: i18n.md). Facts come from the wiki; every value that is not
- * real yet is marked `placeholder: true` (or PLACEHOLDER) and logged in placeholders.md (P2, P3, P4, P11, P16).
+ * real yet is marked `placeholder: true` and logged in placeholders.md (none at launch, 2026-10-11).
  * Spanish is machine-assisted and unreviewed (P12). The content was approved in English first [user 2026-10-08], then
  * localized.
  */
@@ -108,13 +108,13 @@ export const CV = {
     pl: "Full-stack product engineer",
     es: "Full-stack product engineer",
   } satisfies Text,
-  // PLACEHOLDER (P4, Q3): role type, contract and mode wait for the owner.
+  // [owner 2026-10-11] B2B or UoP, remote or hybrid, available now.
   availability: {
     en: "Open to full-time and contract roles · remote or hybrid",
     pl: "Otwarty na etat i kontrakt B2B · zdalnie lub hybrydowo",
     es: "Disponible para contrato indefinido o freelance · en remoto o híbrido",
   } satisfies Text,
-  // PLACEHOLDER (P3, Q27): region line.
+  // [owner 2026-10-11] region line.
   location: { en: "Pomorskie, Poland", pl: "Pomorskie, Polska", es: "Pomerania, Polonia" } satisfies Text,
   summary: {
     en: "Full-stack product engineer who builds web and mobile products end to end, from the business problem to the shipped app, since 2022. I work in TypeScript, React, Next.js, Astro, React Native (Expo), Node.js and Supabase/Postgres. I use AI agents (Claude Code) as leverage and keep the decisions and the verification: tests, accessibility and performance checks on every change.",
@@ -197,9 +197,8 @@ export const CV = {
     {
       id: "freelance",
       title: { en: "Freelance and own projects", pl: "Freelance i własne projekty", es: "Freelance y proyectos propios" },
-      // PLACEHOLDER (P2, P16): years of paid work, owner confirms.
+      // [owner 2026-10-11] building and paid client work, on and off, since 2022.
       when: { en: "Since 2022", pl: "Od 2022", es: "Desde 2022" },
-      placeholder: true,
       // [user 2026-10-08] described generally, with two examples: the yws.lu landing (Youth Work Synergy, a nonprofit
       // that houses young people in Luxembourg: yws.lu, checked 2026-10-08) and the youth-space app his school's
       // principal gave him an award for (gallery.ts). lingui-translate-ai is off the CV. yws.lu is client work: rights
@@ -434,23 +433,22 @@ export const CV = {
       id: "inf",
       kind: "qualification",
       icon: "tb:certificate",
-      title: same("INF.02 · INF.03 · INF.04"),
-      // [user 2026-10-07] all three state exams passed; dates and results still wait (P11).
+      title: same("INF.03"),
+      // [owner 2026-10-11] INF.03 passed in 2024. INF.02 and INF.04 are taken in a few months: add them then
+      // (open-questions Q10), not before.
       issuer: {
         en: "Polish state vocational exams (CKE / OKE)",
         pl: "Egzaminy zawodowe (CKE / OKE)",
         es: "Exámenes profesionales estatales de Polonia (CKE / OKE)",
       },
       summary: {
-        en: "Computer systems and networks; websites, web applications and databases; designing, programming and testing applications.",
-        pl: "Systemy komputerowe i sieci; strony i aplikacje internetowe oraz bazy danych; projektowanie, programowanie i testowanie aplikacji.",
-        es: "Sistemas informáticos y redes; webs, aplicaciones web y bases de datos; diseño, programación y pruebas de aplicaciones.",
+        en: "Websites, web applications and databases.",
+        pl: "Strony i aplikacje internetowe oraz bazy danych.",
+        es: "Webs, aplicaciones web y bases de datos.",
       },
-      // PLACEHOLDER (P11, Q10): exam dates and whether each certificate is issued.
-      when: { en: "Secondary school", pl: "Technikum", es: "Secundaria" },
+      when: same("2024"),
       // [user 2026-10-08] "instead of Secondary school in inf, you can say State exams".
-      cv: { when: { en: "State exams", pl: "Egzaminy zawodowe", es: "Exámenes estatales" } },
-      placeholder: true,
+      cv: { when: same("2024") },
     },
     {
       id: "threejs-journey",
@@ -537,8 +535,8 @@ export const CV = {
         pl: "Wymiany młodzieżowe, szkolenia i wolontariat na Łotwie, Litwie, w Gruzji i Turcji, z ludźmi z innych krajów, po angielsku. W Demre spędziłem dwa miesiące jako wolontariusz Europejskiego Korpusu Solidarności, pomagając żółwiom Caretta caretta.",
         es: "Intercambios juveniles, formaciones y voluntariado en Letonia, Lituania, Georgia y Turquía, con gente de otros países, en inglés. En Demre pasé dos meses de voluntariado del Cuerpo Europeo de Solidaridad con las tortugas Caretta caretta.",
       },
-      // PLACEHOLDER (P11): the years of the Georgia and Demre projects, owner to confirm (the Youthpass ones are 2025).
-      when: same("2025"),
+      // [owner 2026-10-11] Bakuriani spring 2024, Demre (ESC) summer 2024; Latvia and Lithuania 2025 (Youthpass).
+      when: same("2024–2025"),
       // One line instead of a line per certificate [user 2026-10-08: "whatever with those certs for hackathons or
       // european projects"]. [user 2026-10-08] "visegrad project in georgia bakuriani for alternative youth
       // participation"; "it helped me achieve fluency in communication with people, especially in English".

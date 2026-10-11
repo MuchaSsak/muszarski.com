@@ -1,7 +1,7 @@
 /**
  * Site facts (wiki: content/content-model.md § Site facts). Facts live here, never inline in
- * components; translatable copy goes through Lingui. Every value that is not real yet is marked
- * PLACEHOLDER and has a row in .claude/project-info/placeholders.md.
+ * components; translatable copy goes through Lingui. A value that is not real yet gets a marker and a row in
+ * .claude/project-info/placeholders.md (the launch gate fails on it).
  */
 export const SITE = {
   name: "Mateusz Muszarski",
@@ -12,7 +12,7 @@ export const SITE = {
   since: 2022,
   /** Public contact address [owner, 2026-10-07]. */
   email: "hi@muszarski.com",
-  // PLACEHOLDER (P3): the public city line (open-questions Q27); region + country only, never a street.
+  /** The public region line [owner 2026-10-11]; region + country only, never a street. */
   region: "Pomorskie",
   countryCode: "PL",
   /** IANA zone for "local time" (i18n.md § Formatting). */

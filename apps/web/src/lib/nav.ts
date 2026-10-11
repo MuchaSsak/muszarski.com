@@ -27,7 +27,6 @@ export function chromeLinks(locale: Locale) {
     myLife: pathTo(locale, "my-life"),
     thisSite: pathTo(blogLocale, "blog/case-study"),
     privacy: pathTo(locale, "privacy"),
-    terms: pathTo(locale, "terms"),
     /** A flagship's chapter on the home page (case studies live in the blog: open-questions Q43). */
     project: (anchor: string) => `${pathTo(locale)}#${anchor}`,
   };

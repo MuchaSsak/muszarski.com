@@ -10,8 +10,8 @@ import { SITE } from "~/data/site";
 import { lineEm } from "~/lib/fit";
 
 const locale = Astro.locals.locale;
-// PLACEHOLDER: availability words (remote / hybrid, contract) wait for the owner (placeholders.md P4, Q3).
-const ring = [t`Open to work`, t`Poland, CET`, t`Remote`].map((part) => part.toLocaleUpperCase(locale)).join(" • ") + " • ";
+// [owner 2026-10-11] remote or hybrid, available now.
+const ring = [t`Open to work`, t`Poland, CET`, t`Remote or hybrid`].map((part) => part.toLocaleUpperCase(locale)).join(" • ") + " • ";
 const RADIUS = 74;
 const circumference = 2 * Math.PI * RADIUS;
 // Letter spacing 0.18 em per character + the glyphs at wdth 115 fill the circle.

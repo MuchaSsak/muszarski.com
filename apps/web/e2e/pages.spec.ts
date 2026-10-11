@@ -299,10 +299,10 @@ test("privacy: the statistics switch is remembered in this browser", async ({ pa
 });
 
 test("legal: noindex, numbered sections, the Polish version prevails", async ({ page }) => {
-  await page.goto("/en/terms/");
+  await page.goto("/en/privacy/");
   await expect(page.locator('meta[name="robots"]')).toHaveAttribute("content", /noindex/);
   expect(await page.locator(".legal-text h2").count()).toBeGreaterThan(5);
-  await expect(page.getByRole("link", { name: "Wersja polska" })).toHaveAttribute("href", "/pl/terms/");
+  await expect(page.getByRole("link", { name: "Wersja polska" })).toHaveAttribute("href", "/pl/privacy/");
 });
 
 test("404: a missing address answers 404 in its locale's language, and the menu still works", async ({ page }) => {

@@ -17,7 +17,7 @@ updated: 2026-10-05
 
 ## 2. Responsable del tratamiento
 
-1. El responsable del tratamiento de los datos personales es Mateusz Muszarski, persona física (Polonia), dirección postal: [[POSTAL_ADDRESS]], correo electrónico: [[EMAIL]] (en adelante, el «Responsable»).
+1. El responsable del tratamiento de los datos personales es Mateusz Muszarski, persona física (Polonia), correo electrónico: [[EMAIL]] (en adelante, el «Responsable»).
 2. El Responsable no ha designado un delegado de protección de datos, al no estar obligado a ello conforme al artículo 37, apartado 1, del RGPD. Para cualquier cuestión relativa a los datos personales puede dirigirse al Responsable en las direcciones indicadas en el punto 1.
 
 ## 3. Finalidades, bases jurídicas y plazos de conservación
@@ -135,4 +135,4 @@ updated: 2026-10-05
 ## 17. Modificaciones de la Política y versiones lingüísticas
 
 1. Versión vigente de la Política: 1.0, de 5 de octubre de 2026. Cada modificación de la Política se identifica con un nuevo número de versión y una nueva fecha, indicados al inicio del documento.
-2. La Política se ha redactado en polaco. Las versiones inglesa y española son traducciones; en caso de discrepancia, prevalece la versión polaca. La versión española se ha elaborado con ayuda de traducción automática y está pendiente de revisión.
+2. La Política se ha redactado en polaco. Las versiones inglesa y española son traducciones; en caso de discrepancia, prevalece la versión polaca.

@@ -17,7 +17,7 @@ updated: 2026-10-05
 
 ## 2. Administrator danych
 
-1. Administratorem danych osobowych jest Mateusz Muszarski, osoba fizyczna (Polska), adres do korespondencji: [[POSTAL_ADDRESS]], adres e-mail: [[EMAIL]] (dalej: „Administrator”).
+1. Administratorem danych osobowych jest Mateusz Muszarski, osoba fizyczna (Polska), adres e-mail: [[EMAIL]] (dalej: „Administrator”).
 2. Administrator nie wyznaczył inspektora ochrony danych, ponieważ nie jest do tego zobowiązany na podstawie art. 37 ust. 1 RODO. We wszystkich sprawach dotyczących danych osobowych należy kontaktować się z Administratorem na adresy wskazane w ust. 1.
 
 ## 3. Cele, podstawy prawne i okresy przechowywania
@@ -135,4 +135,4 @@ updated: 2026-10-05
 ## 17. Zmiany Polityki i wersje językowe
 
 1. Niniejsza wersja Polityki: 1.0 z dnia 5 października 2026 r. Każda zmiana Polityki jest oznaczana nowym numerem wersji i datą, wskazanymi na początku dokumentu.
-2. Polityka jest sporządzona w języku polskim. Wersje angielska i hiszpańska są tłumaczeniami; w razie rozbieżności rozstrzyga wersja polska. Wersja hiszpańska została przygotowana z wykorzystaniem tłumaczenia maszynowego i oczekuje na weryfikację.
+2. Polityka jest sporządzona w języku polskim. Wersje angielska i hiszpańska są tłumaczeniami; w razie rozbieżności rozstrzyga wersja polska.

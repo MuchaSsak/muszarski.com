@@ -181,7 +181,7 @@ if (launch) {
   if (noindex) problems.push("dist/en/index.html is noindex in a launch build");
   // Legal pages, the print route and the contact results stay out of the index; everything else is indexable.
   for (const [name, robots] of robotsOf) {
-    const hidden = /(privacy|terms|cv\/print|contact\/(sent|error))\//.test(name) || name === "index.html";
+    const hidden = /(privacy|cv\/print|contact\/(sent|error))\//.test(name) || name === "index.html";
     if (!hidden && !robots.startsWith("index")) problems.push(`${name}: robots "${robots}" in a launch build`);
     if (hidden && name !== "index.html" && !robots.startsWith("noindex")) problems.push(`${name}: should be noindex`);
   }

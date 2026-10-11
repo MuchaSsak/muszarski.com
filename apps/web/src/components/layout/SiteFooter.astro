@@ -81,7 +81,6 @@ const columns = [
     title: t`Legal`,
     items: [
       { label: t`Privacy policy`, href: links.privacy },
-      { label: t`Terms`, href: links.terms },
     ],
   },
 ] as const;
@@ -91,7 +90,6 @@ const columns = [
   <canvas class="f-field" aria-hidden="true" data-contour-canvas></canvas>
   <div class="cols">
     <div class="say-col">
-      <!-- PLACEHOLDER: draft line; the owner rewrites it in his voice (placeholders.md P6). -->
       <p class="say">{typo(locale, t`Let's talk about what you're building.`)}</p>
       <a
         href={links.contact}

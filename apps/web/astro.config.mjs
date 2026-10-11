@@ -31,35 +31,36 @@ const UMAMI_COLLECT = process.env.PUBLIC_UMAMI_COLLECT_ORIGIN ?? "https://gatewa
 const TURNSTILE = "https://challenges.cloudflare.com";
 
 /**
- * Legal texts carry tokens for facts that live in one place (`[[EMAIL]]` → site.ts) or are not known yet (the postal
- * address, the mailbox provider: placeholders.md P13). Known tokens become the value; unknown ones a visible, marked
- * gap, so a draft never pretends to be complete. A Sätteri mdast plugin that only runs on files under content/legal.
+ * Legal texts carry tokens for facts that live in one place (`[[EMAIL]]` → site.ts, the mailbox below). Known tokens
+ * become the value; a token listed in LEGAL_GAPS becomes a visible, marked gap, so a draft never pretends to be
+ * complete. A Sätteri mdast plugin that only runs on files under content/legal.
  */
+/** The mailbox [owner 2026-10-11]: hi@ is an ImprovMX catch-all forwarding to Gmail (ImprovMX's imprint and privacy
+ * notice, checked 2026-10-11: ImprovMX Incorporated, Delaware; processing in the United States and Europe). */
 /** @type {Record<string, Record<string, string>>} */
-const LEGAL_GAPS = {
+const LEGAL_FACTS = {
   en: {
-    POSTAL_ADDRESS: "postal address to be completed",
-    MAILBOX_PROVIDER: "Google Ireland Limited (Gmail)",
-    MAILBOX_LOCATION: "Google data centres, also outside the European Economic Area",
+    MAILBOX_PROVIDER: "ImprovMX Incorporated (United States, e-mail forwarding) and Google Ireland Limited (Gmail)",
+    MAILBOX_LOCATION: "ImprovMX: United States and Europe; Google: Google data centres, also outside the European Economic Area",
   },
   pl: {
-    POSTAL_ADDRESS: "adres do korespondencji do uzupełnienia",
-    MAILBOX_PROVIDER: "Google Ireland Limited (Gmail)",
-    MAILBOX_LOCATION: "centra danych Google, także poza Europejskim Obszarem Gospodarczym",
+    MAILBOX_PROVIDER: "ImprovMX Incorporated (Stany Zjednoczone, przekierowanie poczty) oraz Google Ireland Limited (Gmail)",
+    MAILBOX_LOCATION: "ImprovMX: Stany Zjednoczone i Europa; Google: centra danych Google, także poza Europejskim Obszarem Gospodarczym",
   },
   es: {
-    POSTAL_ADDRESS: "dirección postal pendiente",
-    MAILBOX_PROVIDER: "Google Ireland Limited (Gmail)",
-    MAILBOX_LOCATION: "centros de datos de Google, también fuera del Espacio Económico Europeo",
+    MAILBOX_PROVIDER: "ImprovMX Incorporated (Estados Unidos, reenvío de correo) y Google Ireland Limited (Gmail)",
+    MAILBOX_LOCATION: "ImprovMX: Estados Unidos y Europa; Google: centros de datos de Google, también fuera del Espacio Económico Europeo",
   },
 };
+/** Facts still unknown, per locale (none at launch). @type {Record<string, Record<string, string>>} */
+const LEGAL_GAPS = {};
 /** @param {{ fileURL?: URL }} context */
 function legalTokens(context) {
   const path = context.fileURL ? decodeURIComponent(context.fileURL.pathname) : "";
   const locale = /\/content\/legal\/(en|pl|es)\//.exec(path)?.[1];
   if (!locale) return null;
   /** @type {Record<string, string>} */
-  const known = { EMAIL: SITE.email, SITE_URL };
+  const known = { EMAIL: SITE.email, SITE_URL, ...LEGAL_FACTS[locale] };
   const gaps = LEGAL_GAPS[locale] ?? {};
   return {
     name: "legal-tokens",
@@ -139,7 +140,7 @@ export default defineConfig({
     sitemap({
       // Only real, indexable pages: never the root redirect, 404 (and its folded pl/es copies), legal pages (noindex),
       // the CV print route or the contact result pages (seo.md § Robots).
-      filter: (page) => /\/(en|pl|es)\//.test(page) && !/\/(privacy|terms|cv\/print|contact|404)\//.test(page),
+      filter: (page) => /\/(en|pl|es)\//.test(page) && !/\/(privacy|cv\/print|contact|404)\//.test(page),
       i18n: { defaultLocale: "en", locales: { en: "en", pl: "pl", es: "es" } },
     }),
     sitemapImages(),

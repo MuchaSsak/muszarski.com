@@ -42,7 +42,7 @@ const TURKIYE: Text = { en: "Türkiye", pl: "Turcja", es: "Turquía" };
 export const GALLERY: GalleryPhoto[] = [
   {
     // [user 2026-10-08] The first print in the hero, off the board ("the one that's not on the pinboard, me in a hat").
-    // PLACEHOLDER (P15): where it was taken, owner to say (the coast looks Turkish; not guessed).
+    // [owner 2026-10-11] Antalya, Türkiye.
     file: "mateusz-muszarski-coast",
     alt: {
       en: "Mateusz Muszarski in a straw hat and sunglasses, the sea and a rocky coast behind him",
@@ -50,6 +50,7 @@ export const GALLERY: GalleryPhoto[] = [
       es: "Mateusz Muszarski con sombrero de paja y gafas de sol, con el mar y una costa rocosa detrás",
     },
     caption: { en: "me, probably smiling", pl: "ja, pewnie uśmiechnięty", es: "yo, seguramente sonriendo" },
+    place: { name: { en: "Antalya", pl: "Antalya", es: "Antalya" }, country: TURKIYE, countryCode: "TR" },
     hero: true,
     board: false,
   },
@@ -144,5 +145,7 @@ export const GALLERY: GalleryPhoto[] = [
       country: POLAND,
       countryCode: "PL",
     },
+    // [owner 2026-10-11] June 2026.
+    when: "2026-06",
   },
 ];

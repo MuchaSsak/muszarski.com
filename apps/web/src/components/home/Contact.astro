@@ -51,7 +51,6 @@ const found = {
     <div class="intro">
       <Fit as="h2" id="t-ct" lines={[line1, line2]} base={[100, 140]} />
       <p class="lede rv">{typo(locale, t`A role, a project or a question. One line is fine.`)}</p>
-      <!-- PLACEHOLDER: availability facts wait for the owner (placeholders.md P4, Q3). -->
       <ul class="ifacts rv" style="--d:1" role="list">
         {IS_AVAILABLE_FOR_HIRE && (
           <li>
@@ -61,7 +60,7 @@ const found = {
         )}
         <li>
           <Icon name="tb:map-pin" />
-          {t`Remote · Poland, CET`}
+          {t`Remote or hybrid · Poland, CET`}
         </li>
         <li>
           <Icon name="tb:language" />

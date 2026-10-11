@@ -35,7 +35,8 @@ export const PROJECTS: Project[] = [
     name: "PstrykWeb",
     context: "internship",
     year: 2026,
-    rights: "check",
+    // Cetuspro's OK [owner 2026-10-11].
+    rights: "ok",
     flagship: 1,
     anchor: "pstrykweb",
     // Public info only (content/projects/pstrykweb.md § Public disclosure).
@@ -71,7 +72,8 @@ export const PROJECTS: Project[] = [
     name: "Neoteric Clockful",
     context: "internship",
     year: 2026,
-    rights: "check",
+    // Neoteric's OK [owner 2026-10-11].
+    rights: "ok",
     flagship: 3,
     anchor: "clockful",
     line: {

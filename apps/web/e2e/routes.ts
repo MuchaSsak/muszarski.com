@@ -1,6 +1,6 @@
 /** Every built page the gates sweep. Grows with each slice (working-agreement.md § 9). */
 export const LOCALIZED = ["/en/", "/pl/", "/es/"] as const;
-const PER_LOCALE = ["", "work/", "cv/", "my-life/", "privacy/", "terms/"] as const;
+const PER_LOCALE = ["", "work/", "cv/", "my-life/", "privacy/"] as const;
 export const PAGES = [
   ...(["en", "pl", "es"] as const).flatMap((locale) => PER_LOCALE.map((path) => `/${locale}/${path}`)),
   "/en/blog/",

@@ -3,7 +3,7 @@
  * - blog: MDX per locale in src/content/blog/<en|pl>/<slug>.mdx, served at /<locale>/blog/<slug>/. `translationKey`
  *   links the translations for hreflang; a post in one locale has no alternates. The case study #0 lives here too
  *   (`tags: [case-study]`, open-questions Q43).
- * - legal: Markdown per locale in src/content/legal/<en|pl|es>/<privacy|terms>.md, served at /<locale>/<privacy|terms>/
+ * - legal: Markdown per locale in src/content/legal/<en|pl|es>/privacy.md, served at /<locale>/privacy/
  *   (noindex,follow). Polish prevails. `legal.test.ts` checks the three versions have the same numbered sections.
  */
 import { defineCollection } from "astro:content";

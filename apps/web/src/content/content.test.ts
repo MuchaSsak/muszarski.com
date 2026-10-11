@@ -56,7 +56,7 @@ describe("blog posts", () => {
   });
 
   it("link only to blog posts and pages that exist", () => {
-    const pages = /^\/(en|pl|es)\/(|#[\w-]+|work\/|cv\/|my-life\/|blog\/|privacy\/|terms\/)$/;
+    const pages = /^\/(en|pl|es)\/(|#[\w-]+|work\/|cv\/|my-life\/|blog\/|privacy\/)$/;
     for (const post of posts) {
       for (const [, href] of body(post.source).matchAll(/\]\((\/[^)\s]*)\)/g)) {
         const blog = /^\/(en|pl)\/blog\/([\w-]+)\/(#[\w-]+)?$/.exec(href!);
@@ -76,7 +76,7 @@ describe("blog posts", () => {
 });
 
 describe("legal texts", () => {
-  for (const doc of ["privacy", "terms"]) {
+  for (const doc of ["privacy"]) {
     it(`${doc}: the same numbered sections in pl, en and es`, () => {
       const numbers = (locale: string) => [...read(`legal/${locale}/${doc}.md`).matchAll(/^## (§ )?(\d+)\./gm)].map((m) => m[2]);
       const pl = numbers("pl");
