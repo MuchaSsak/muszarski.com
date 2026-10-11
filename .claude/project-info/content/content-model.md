@@ -116,7 +116,7 @@ cover (code-drawn or real), coverAlt, author: "mateusz", draft, canonical? }`.
   (muted loops of the site in motion, `public/media/case/<src>.{av1.mp4,mp4}` + `-poster.webp`, played by
   `scripts/reel.ts`: sources only after the first interaction and near, play while half visible), `Film` (one featured
   film with sound, in the yws.lu and this site's case studies: a poster card with a big play button opens a modal dialog that grows out of the card,
-  `scripts/film.ts`; the file loads only on that click) and `Breaker` (a dark band that links to a live showcase, e.g.
+  `scripts/film.ts`; the file loads only on that click; `?film` in the URL opens it on arrival, muted with a "Sound on" button when the browser refuses sound, and closing drops the parameter: the GitHub profile README links `/en/blog/case-study/?film`) and `Breaker` (a dark band that links to a live showcase, e.g.
   the home AI story; its steps light up in turn, off under reduced motion).
   All text is passed from the per-locale MDX; their CSS lives in `styles/case.css` (see `tech/usage/astro.md` § Gotchas: MDX component styles
   and the CSP). Images live in `src/assets/case/` (1200 px webp, made from `comps/` and fresh shots of the site).
