@@ -58,7 +58,7 @@
 
 ### Tools and environment
 - Splicing text by slices or offsets drops or misplaces content: replace named blocks, then `node --check` / build and render-check at once - 2026-10-05.
-- Bash heredocs break on quotes and lose backslashes (again 2026-10-07, twice 2026-10-08), and `cd` persists: write scripts with Write, use absolute paths; Write/Edit decode `\uXXXX`, so emit invisible characters with `chr()` - 2026-10-05.
+- Bash heredocs break on quotes and lose backslashes (again 2026-10-07, twice 2026-10-08), and `cd` persists: write scripts with Write, use absolute paths; Write/Edit decode `\uXXXX`, so emit invisible characters with `chr()`; a `` in a plain Python string is a backspace byte, so regexes go in raw strings (a tag regex broke silently, 2026-10-11) - 2026-10-05.
 - Python on Windows writes CRLF: always `open(..., "w", newline="\n")` (a fixer pass caught 6 files on 2026-10-06) - 2026-10-05.
 - Git Bash rewrites URL-path arguments (`/en/` → `P:/Git/en/`): prefix with `MSYS_NO_PATHCONV=1`, also for `bun run lhci` - 2026-10-05.
 - Node on Windows reads a Git Bash path `/c/Users/...` as `C:\c\Users\...` (shots landed in a stray `C:\c`): give node scripts `C:/...` paths - 2026-10-09.

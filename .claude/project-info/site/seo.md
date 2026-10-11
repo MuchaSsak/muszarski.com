@@ -167,17 +167,17 @@ Posts are republished on dev.to and Medium for reach. The rules, in the owner's 
   (the case study, 2026-10-11), then a few days apart at most; never the whole archive in a burst.
 - **Languages:** en and pl only where a platform has language versions of a post; never es. Neither dev.to nor
   Medium has them, so both get English only.
-- **dev.to:** by API, `node .claude/skills/new-blog/scripts/crosspost.mjs <en-slug> --devto` (a draft), checked, then
-  `--publish`. Needs `DEV_TO_API_KEY` in the repo-root `.env` (`technologies.md`). The script turns the MDX figures
-  into markdown (clips as their poster linking back, the Matrix as a table), checks every own URL, and keeps the
-  article id in `.claude/skills/new-blog/crosspost.json`, so a re-run updates the same article.
-- **Medium:** no API for new accounts (no new integration tokens). Its "Import a story" tool takes the live URL, sets
-  the canonical itself and keeps the date; review the draft (embeds drop out) before publishing. Record the URL in
-  `crosspost.json`.
-- **Check before it's done:** look at the published copy (images load, tables render, the canonical points here).
+- **Videos go to YouTube, Unlisted** [owner 2026-10-11]: embeddable on both platforms, not cluttering the channel.
+  The owner uploads; a video without a link shows as its poster linking back.
+- **dev.to by API** (`DEV_TO_API_KEY`, repo-root `.env`, `technologies.md`); **Medium by paste**: no API for new
+  accounts, and its URL import drops every figure [owner 2026-10-11: "importing to medium from the link is bad"];
+  the canonical is set by hand in the story's Advanced settings.
+- **Look before it's done:** checks on the published copy plus screenshots someone actually opens [owner 2026-10-11].
 - **New posts:** the `new-blog` skill suggests cross-posting at the end of every new post; the owner says yes per post.
+- How: `.claude/skills/new-blog/references/crosspost.md` (the owner's steps, Claude's steps, the quality bar);
+  what went where: `.claude/skills/new-blog/crosspost.json`.
 
-Done: the case study on dev.to (2026-10-11,
+Done: the case study on dev.to with the film embedded (2026-10-11, Medium pending,
 https://dev.to/muchassak/trying-to-build-an-awwwards-winning-brutalist-portfolio-the-process-the-mindset-and-the-tools-4njg).
 
 ## Domain (open-questions Q5)

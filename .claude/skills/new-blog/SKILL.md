@@ -1,6 +1,6 @@
 ---
 name: new-blog
-description: "Plan, write, update or review a blog post or case study on Mateusz's site (MDX in apps/web/src/content/blog, English + Polish): research, outline, real pictures and clips of the site, native Polish, SEO for Google and the checks. Use whenever the owner wants a new article, post, write-up, case study, wpis or artykuł; wants a post updated, shortened, made easier to read, more visual, more fun or better for search; asks to audit or polish the blog; or types /new-blog. Use it too when a change to the site makes a post or the case study out of date."
+description: "Plan, write, update or review a blog post or case study on Mateusz's site (MDX in apps/web/src/content/blog, English + Polish): research, outline, real pictures and clips of the site, native Polish, SEO for Google and the checks. Use whenever the owner wants a new article, post, write-up, case study, wpis or artykuł; wants a post updated, shortened, made easier to read, more visual, more fun or better for search; asks to audit or polish the blog; or types /new-blog. Use it too when a change to the site makes a post or the case study out of date, and whenever a post goes to dev.to or Medium: cross-post, syndicate, republish, share the post on dev.to / Medium, upload its videos to YouTube, fix or check a copy there."
 argument-hint: "[topic, project, or the post to update]"
 ---
 
@@ -64,18 +64,18 @@ informational, with accurate research and quick explanations of my thought proce
 10. **Close.** Wiki: `seo.md` § Content plan (the post exists), `content-model.md` for a new figure type or rule,
     `log.md` line. Commit your own paths (Conventional Commit, `docs(blog):` or `feat(blog):`). Report: the URLs,
     minutes to read, figures, what post-check still warns and why, what wasn't verified.
-11. **Suggest cross-posting.** Once the post is deployed, offer to republish it on dev.to and Medium (`seo.md`
-    § Syndication: English only, one post at a time, never in a burst). Only on the owner's yes:
-    `node .claude/skills/new-blog/scripts/crosspost.mjs <en-slug> --devto` (a draft), look at it, then
-    `--devto --publish`; Medium through its "Import a story" tool. Look at the published copies before calling it done.
+11. **Suggest cross-posting.** Once the post is deployed, offer to republish it on dev.to and Medium; post only on
+    the owner's yes. Follow `references/crosspost.md`: the owner's short steps come from `crosspost.mjs <en-slug>
+    --plan` (Search Console, YouTube uploads set to Unlisted, the Medium paste), Claude does dev.to and the checks,
+    and nothing is done until the published copies' screenshots have been looked at.
 
 ## Updating or polishing a post
 
 Update in place: keep the slug, the `translationKey` and `published`. Bump `updated` (both locales) when the content
 changes for a reader (a new section, a corrected fact, new figures), not for a typo. Re-run step 8. A slug that has to
 change gets a permanent redirect in `vercel.json` and a line in `locale-free.test.ts`, like the case study's move.
-A post already on dev.to (`crosspost.json`) gets the same update there: re-run `crosspost.mjs <en-slug> --devto
---publish` after the deploy; Medium copies are edited by hand.
+A post already on dev.to or Medium (`crosspost.json`) gets the same update there (`references/crosspost.md`
+§ Updating).
 A post that names code (`scripts/x.mjs`, a component) is checked against the code: post-check flags files that no
 longer exist, and the prose around them usually drifted too.
 
