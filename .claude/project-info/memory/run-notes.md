@@ -145,3 +145,7 @@
   237 KB (was 305); `/pl/` 98, 2258 ms; `/en/work/` 98, 2333 ms. Chrome's lazy-load distance still fetches the two
   nearest posters before the LCP. The script's 2000 ms LCP budget was already missed before (2254 ms).
 - `bun run e2e` 426/426 in 2.0-2.1 min (twice); `bun run check` green (206 unit tests).
+- Case study with the film (2026-10-11, local preview, mobile median of 3): `/en/blog/case-study/` 98, LCP 2257 ms;
+  `/pl/` 97, 2482 ms; TBT 0, CLS 0; LCP element is the H1. A/B on the same build with the film markup removed (median
+  of 5): 2256 ms with the film vs 2332 ms without, so the film adds nothing to LCP (its lazy poster still loads, +109 KB).
+  en SEO was 89 from an old "more" link text (Lighthouse `link-text`); now "how that works".
