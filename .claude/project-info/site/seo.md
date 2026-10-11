@@ -17,6 +17,10 @@
   - hosts: matmuszarski.space (the new site until 2026-10-08, now muszarski.com), plus muszarski.space (lapsed; the GitHub profile README linked it until its 2026-10-11 rewrite, which links muszarski.com, the CV PDF, LinkedIn and six posts)
   - seniority: now consistent: "since 2022" (owner confirmed 2026-10-05; the brief's "~6 years" was wrong)
 - **Fixing consistency is lever #1 and costs nothing** (owner actions: open-questions Q25–Q28).
+- **Before/after study [owner 2026-10-11]:** real-Google baseline the day after launch in
+  `research/2026-10-11-serp-baseline.md` (LinkedIn "student" #1, register scrapers next, an AI Overview built from
+  LinkedIn + registers, no panel, other people in Images). Re-run `research/tools/serp-capture.mjs` a few weeks
+  after launch; a knowledge panel or a #1 with sitelinks becomes a case study.
 
 ## Target queries
 

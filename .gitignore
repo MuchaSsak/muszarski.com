@@ -62,3 +62,6 @@ lighthouse/
 
 # OS
 .DS_Store
+
+# Search-result screenshots for the before/after name-search study stay local (third-party pages)
+/.claude/project-info/research/serp/img/
