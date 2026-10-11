@@ -99,10 +99,32 @@ const [, front, rest] = source.match(/^---\n([\s\S]*?)\n---\n([\s\S]*)$/);
 const field = (name) => front.match(new RegExp(`^${name}: "?(.*?)"?$`, "m"))?.[1];
 const meta = {
   title: field("title"),
+  seoTitle: field("seoTitle"),
   description: field("description"),
   tags: (field("tags") ?? "").replace(/^\[|\]$/g, "").split(",").map((tag) => tag.trim()).filter(Boolean),
   sources: [...front.matchAll(/- title: "(.*)"\n\s+url: "(.*)"/g)].map(([, title, url]) => ({ title, url })),
 };
+
+/**
+ * What Medium's publish screen asks for, always handed to the owner with the paste page [owner 2026-10-11]: the
+ * preview title (max 100), the preview subtitle (max 140), the preview image and up to 5 topics. Words come from the
+ * post's own frontmatter, cut at a sentence, never rewritten.
+ */
+const MEDIUM_TOPIC = { "case-study": "Case Study", ai: "Claude", performance: "Web Performance", i18n: "Internationalization", a11y: "Accessibility" };
+function mediumPublish() {
+  const title = [meta.title, meta.seoTitle].find((t) => t && t.length <= 100);
+  let subtitle = meta.description ?? "";
+  if (subtitle.length > 140) subtitle = subtitle.replace(/^Case study:\s*(\w)/i, (_, c) => c.toUpperCase());
+  if (subtitle.length > 140) subtitle = subtitle.slice(0, 141).match(/^.*[.!?](?=\s|$)/)?.[0] ?? `${subtitle.slice(0, 139).replace(/\s+\S*$/, "")}…`;
+  const topics = [
+    ...new Set([
+      ...meta.tags.map((t) => MEDIUM_TOPIC[t] ?? t.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase())),
+      "Web Development",
+    ]),
+  ].slice(0, 5);
+  if (!title) fail("no title or seoTitle fits Medium's 100 characters: add a shorter seoTitle");
+  return { title, subtitle, topics };
+}
 
 /** dev.to tags: lowercase letters and digits, at most 4. `showdev` is its tag for "I built this". */
 const DEVTO_TAG = { "case-study": "showdev" };
@@ -504,7 +526,8 @@ function printPlan() {
     `   c. Each YouTube link sits alone on a line: click at its end and press Enter, it turns into the video.`,
     `   d. ··· (top right) → More settings → Advanced settings → "This story was originally published elsewhere"`,
     `      → paste ${pageUrl} → Save. This is the SEO step: never skip it.`,
-    `   e. Publish → tags (up to 5): ${[...new Set([...meta.tags.map((t) => t.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase()).replace(/^Ai$/, "AI")), "Web Development"])].slice(0, 5).join(", ")} → Publish now.`,
+    `   e. Publish opens "Story preview": fill it exactly like this, then Publish (skip "Submit to a publication"):`,
+    ...mediumPublishLines("      "),
     `   f. Send Claude the story's link: it checks the canonical, takes screenshots and records it (--medium <url>).`,
   );
   console.log(lines.join("\n"));
@@ -572,7 +595,8 @@ async function mediumPage() {
     file,
     `<!doctype html><html lang="en"><head><meta charset="utf-8"><title>${meta.title}</title>` +
       `<style>body{max-width:720px;margin:40px auto;padding:0 16px;font:18px/1.6 Georgia,serif}img{max-width:100%}</style></head>` +
-      `<body><h1>${meta.title}</h1>\n${article}\n</body></html>`,
+      // the post's share card first: Medium's preview image and lead picture (a PNG, which Medium takes)
+      `<body><h1>${meta.title}</h1>\n<p><img src="${SITE}/og/en/blog-${slug}.png" alt="${meta.title}"></p>\n${article}\n</body></html>`,
   );
   const jpegs = [...article.matchAll(/<img[^>]+src="([^"]+)"/g)].map((m) => m[1].replace(/&amp;/g, "&"));
   const bad = [];
@@ -584,5 +608,16 @@ async function mediumPage() {
   const links = (article.match(/https:\/\/youtu\.be\/[\w-]{11}/g) ?? []).length;
   console.log(`✓ Medium page: ${file.replace(/\\/g, "/")}`);
   console.log(`  ${(article.match(/<img/g) ?? []).length} images, ${links} YouTube links to embed, tables turned into lists.`);
-  console.log(`  The owner's steps: crosspost.mjs ${slug} --plan (Medium).`);
+  console.log(`  The owner's steps: crosspost.mjs ${slug} --plan (Medium). Always hand him these with the file:`);
+  console.log(mediumPublishLines("  ").join("\n"));
+}
+
+function mediumPublishLines(indent) {
+  const { title, subtitle, topics } = mediumPublish();
+  return [
+    `${indent}Preview title (${title.length}/100): ${title}`,
+    `${indent}Preview subtitle (${subtitle.length}/140): ${subtitle}`,
+    `${indent}Preview image: the share card with the title (the first picture; "Change preview image" if Medium picked another)`,
+    `${indent}Topics (${topics.length}/5): ${topics.join(", ")}`,
+  ];
 }

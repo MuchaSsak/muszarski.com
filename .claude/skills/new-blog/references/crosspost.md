@@ -29,7 +29,8 @@ files, titles and descriptions:
    Remind him every time a post goes out on dev.to.
 4. **Medium** (a few days after dev.to): open the paste page Claude made, Ctrl+A, Ctrl+C → Medium → Write → paste;
    press Enter at the end of each YouTube link; ··· → More settings → Advanced settings → "originally published
-   elsewhere" → the post's URL (the SEO step); Publish with the plan's tags; send Claude the link.
+   elsewhere" → the post's URL (the SEO step); Publish → "Story preview": the preview title, preview subtitle,
+   preview image and topics exactly as Claude gave them (skip "Submit to a publication"); send Claude the link.
    Not the URL import: it drops every figure and leaves empty boxes [owner 2026-10-11]. Root cause: Medium's upload
    refuses WebP, and both the site and dev.to serve WebP, so the paste page points every picture at a JPEG made by
    wsrv.nl (checked by `--medium-page`). Importing the dev.to URL fails the same way.
@@ -49,8 +50,11 @@ files, titles and descriptions:
 4. **Look at it.** Open every screenshot `--verify` lists (desktop slices + phone). A check passing is not the same
    as reading well: look for empty boxes, broken order, a caption without its picture, a table squeezed on the
    phone. Headless desktop Chrome leaves YouTube boxes blank; the phone shot and the embed check cover them.
-5. **Medium:** `--medium-page` builds the paste page from dev.to's published render (so dev.to goes first). Give the
-   owner the file path and his steps. When he sends the story link: `--medium <url>` checks the canonical, takes
+5. **Medium:** `--medium-page` builds the paste page from dev.to's published render (so dev.to goes first), with the
+   post's share card as the first picture. Give the owner, in one message: the file path, his steps, and the four
+   "Story preview" fields the script prints (preview title ≤ 100, preview subtitle ≤ 140, preview image, up to 5
+   topics) [owner 2026-10-11: "i always should get that"]. The words come from the frontmatter, cut at a sentence,
+   never rewritten; a title over 100 falls back to `seoTitle`. When he sends the story link: `--medium <url>` checks the canonical, takes
    screenshots, records it. Look at those too.
 6. **Record and close:** `crosspost.json` is updated by the script; commit it with the wiki line (`seo.md`
    § Syndication "Done", `log.md`). Report: the URLs, the check results, what you looked at, what wasn't verified.
