@@ -53,6 +53,20 @@ if (existsSync(dist)) {
       missing.push(`${relative(ROOT, page)}: no ${new URL(image).pathname}`);
   }
 }
+// No "soon" stand-in reaches a launch [owner 2026-10-11: "i dont want coming soon on the production website"]: the
+// visible text of every built page, in all three locales (blog posts may say "soon" in prose, so only the stand-in words).
+const SOON = /\b(?:recording|video|photo|image|coming) soon\b|\bwkrótce\b|\bpróximamente\b/i;
+if (existsSync(dist)) {
+  for (const page of pages(dist)) {
+    if (/[\\/]blog[\\/]/.test(page)) continue;
+    const text = readFileSync(page, "utf8")
+      .replace(/<(script|style)[\s\S]*?<\/\1>/g, "")
+      .replace(/<[^>]+>/g, " ");
+    const found = SOON.exec(text)?.[0];
+    if (found) hits.push(`${relative(ROOT, page)}: shows "${found}"`);
+  }
+}
+
 for (const locale of ["en", "pl", "es"]) {
   const pdf = join(ROOT, "public", "files", `mateusz-muszarski-cv-${locale}.pdf`);
   if (!existsSync(pdf)) missing.push(`no ${relative(ROOT, pdf)}`);

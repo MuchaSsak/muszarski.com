@@ -4,7 +4,7 @@
 > Each one is (1) disclosed briefly in chat when introduced, (2) marked in code or data, and (3) logged here. When
 > the owner says **"finish" / "wrap up" / "go to prod"**, this register is worked through until it is empty, or
 > each remaining row is explicitly accepted by the owner. The launch gate fails the production build while any
-> marker is left in the code.
+> marker is left in the code, or while a built page shows a "soon" stand-in ("Recording soon", "Photo soon", pl/es too) [owner 2026-10-11].
 > Questions that a row waits on live in `open-questions.md` (the Q column links them).
 
 ## How to mark one

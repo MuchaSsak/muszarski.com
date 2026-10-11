@@ -97,3 +97,4 @@
 - 2026-10-11: go-to-prod started; owner answers recorded in placeholders.md § Go-to-prod answers.
 - 2026-10-11: launch facts applied (rights ok, hero line, availability, INF.03 only, legal mailbox); `/terms/` removed; placeholders P2-P4, P6, P10-P13, P15, P20-P23 resolved.
 - 2026-10-11: club screensaver off /work/ for launch [owner], to return later (open-questions Q51).
+- 2026-10-11: launch gate also fails on a visible "soon" stand-in in the built pages [owner].
