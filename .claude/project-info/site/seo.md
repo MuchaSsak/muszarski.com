@@ -14,7 +14,7 @@
 - **The identity is split:**
   - names: "Mateusz" / "Matt" / "Matthew"
   - handles: MuchaSsak / muchassakkk / mat.muszarski
-  - hosts: matmuszarski.space (the new site until 2026-10-08, now muszarski.com), plus muszarski.space (lapsed, still linked from the GitHub README)
+  - hosts: matmuszarski.space (the new site until 2026-10-08, now muszarski.com), plus muszarski.space (lapsed; the GitHub profile README linked it until its 2026-10-11 rewrite, which links muszarski.com, the CV PDF, LinkedIn and six posts)
   - seniority: now consistent: "since 2022" (owner confirmed 2026-10-05; the brief's "~6 years" was wrong)
 - **Fixing consistency is lever #1 and costs nothing** (owner actions: open-questions Q25–Q28).
 
