@@ -10,13 +10,13 @@ msgstr ""
 
 #: src/components/cv/CvWeb.astro:36
 #: src/components/home/Chapters.astro:84
-#: src/components/home/chapters/ChapterLinkoglot.astro:104
-#: src/components/home/chapters/ChapterLinkoglot.astro:116
+#: src/components/home/chapters/ChapterLinkoglot.astro:112
+#: src/components/home/chapters/ChapterLinkoglot.astro:124
 #: src/components/home/chapters/ChapterPstrykWeb.astro:52
-#: src/components/home/chapters/ChapterSpace.astro:72
-#: src/components/home/chapters/ChapterSpace.astro:72
-#: src/components/home/chapters/ChapterSpace.astro:96
-#: src/components/home/chapters/ChapterSpace.astro:118
+#: src/components/home/chapters/ChapterSpace.astro:80
+#: src/components/home/chapters/ChapterSpace.astro:80
+#: src/components/home/chapters/ChapterSpace.astro:104
+#: src/components/home/chapters/ChapterSpace.astro:126
 #: src/components/home/Contact.astro:187
 #: src/components/home/Contact.astro:201
 #: src/components/home/Credentials.astro:258
@@ -72,7 +72,7 @@ msgstr "El dueño de un negocio local responde unas preguntas en un único formu
 msgid "A one-step contact form"
 msgstr "Un formulario de contacto en un paso"
 
-#: src/components/home/chapters/ChapterSpace.astro:77
+#: src/components/home/chapters/ChapterSpace.astro:85
 msgid "A portfolio you fly through: Earth to Neptune in 12 camera stops."
 msgstr "Un portfolio que recorres volando: de la Tierra a Neptuno en 12 paradas de cámara."
 
@@ -84,7 +84,7 @@ msgstr "Un proyecto"
 msgid "A question"
 msgstr "Una pregunta"
 
-#: src/components/home/chapters/ChapterClockful.astro:100
+#: src/components/home/chapters/ChapterClockful.astro:108
 msgid "A role-based time tracker, built with AI agents under a deadline."
 msgstr "Una app de control horario con roles, hecha con agentes de IA y contrarreloj."
 
@@ -163,7 +163,7 @@ msgstr "Todos los temas"
 msgid "Also shipped"
 msgstr "También publiqué"
 
-#: src/components/home/chapters/ChapterClockful.astro:104
+#: src/components/home/chapters/ChapterClockful.astro:112
 msgid "An internship brief from Neoteric, a Polish software house: a time tracker where employees log their hours and admins see the reports. The rule was to build it only with AI agents, against a deadline. I directed them and verified what they built, from the database rules to the tests."
 msgstr "Un encargo de prácticas de Neoteric, una empresa polaca de desarrollo de software: una app de control horario donde los empleados registran su tiempo y los administradores ven los informes. La regla era construirlo solo con agentes de IA y con plazo. Los dirigí y verifiqué lo que construyeron, desde las reglas de la base de datos hasta los tests."
 
@@ -195,7 +195,7 @@ msgstr "Artículo"
 msgid "Articles"
 msgstr "Artículos"
 
-#: src/components/home/chapters/ChapterClockful.astro:115
+#: src/components/home/chapters/ChapterClockful.astro:123
 msgid "Ask for a walkthrough"
 msgstr "Pide una demo guiada"
 
@@ -207,7 +207,7 @@ msgstr "auditorías"
 msgid "automated tests"
 msgstr "tests automatizados"
 
-#: src/components/home/chapters/ChapterClockful.astro:73
+#: src/components/home/chapters/ChapterClockful.astro:81
 msgid "automated tests: 49 Vitest, 69 Playwright"
 msgstr "tests automatizados: 49 Vitest, 69 Playwright"
 
@@ -353,10 +353,10 @@ msgstr "Cerrar menú"
 msgid "Close video"
 msgstr "Cerrar vídeo"
 
-#: src/components/home/chapters/ChapterSpace.astro:117
+#: src/components/home/chapters/ChapterSpace.astro:125
 #: src/components/home/HowIWork.astro:69
 #: src/pages/[locale]/work/index.astro:218
-#: src/pages/[locale]/work/index.astro:452
+#: src/pages/[locale]/work/index.astro:460
 msgid "Code"
 msgstr "Código"
 
@@ -368,11 +368,11 @@ msgstr "El código es una de siete paradas"
 msgid "Code is only the tool. I build products that solve real problems and bring results."
 msgstr "El código es solo la herramienta. Creo productos que resuelven problemas reales y dan resultados."
 
-#: src/components/home/chapters/ChapterClockful.astro:119
+#: src/components/home/chapters/ChapterClockful.astro:127
 msgid "Code private · no public deployment"
 msgstr "Código privado · sin despliegue público"
 
-#: src/pages/[locale]/work/index.astro:456
+#: src/pages/[locale]/work/index.astro:464
 msgid "Code private · walkthrough on request"
 msgstr "Código privado · demo guiada a petición"
 
@@ -449,7 +449,7 @@ msgstr "Currículum vítae"
 msgid "CV"
 msgstr "CV"
 
-#: src/components/home/chapters/ChapterClockful.astro:94
+#: src/components/home/chapters/ChapterClockful.astro:102
 msgid "days from spec to hand-in (an estimate)"
 msgstr "días de la especificación a la entrega (estimación)"
 
@@ -474,11 +474,11 @@ msgstr "deploy"
 msgid "Design"
 msgstr "Diseño"
 
-#: src/components/home/chapters/ChapterSpace.astro:67
+#: src/components/home/chapters/ChapterSpace.astro:75
 msgid "Desktop · WebGL2 · ~14 MB."
 msgstr "Para ordenador · WebGL2 · ~14 MB."
 
-#: src/components/home/chapters/ChapterSpace.astro:105
+#: src/components/home/chapters/ChapterSpace.astro:113
 msgid "Desktop only · copy link"
 msgstr "Solo en ordenador · copiar enlace"
 
@@ -804,7 +804,7 @@ msgstr "Tipo"
 msgid "Knowledge"
 msgstr "Conocimiento"
 
-#: src/components/home/chapters/ChapterLinkoglot.astro:80
+#: src/components/home/chapters/ChapterLinkoglot.astro:88
 msgid "la maceta"
 msgstr "the flowerpot"
 
@@ -825,7 +825,7 @@ msgstr "Idiomas"
 msgid "Latest"
 msgstr "Novedad"
 
-#: src/components/home/chapters/ChapterSpace.astro:94
+#: src/components/home/chapters/ChapterSpace.astro:102
 msgid "Launch on desktop"
 msgstr "Abrir en el ordenador"
 
@@ -870,11 +870,11 @@ msgstr "Lingui, Claude Code, Lighthouse"
 msgid "Link copied"
 msgstr "Enlace copiado"
 
-#: src/components/home/chapters/ChapterSpace.astro:102
+#: src/components/home/chapters/ChapterSpace.astro:110
 msgid "Link copied. Open it on a computer."
 msgstr "Enlace copiado. Ábrelo en un ordenador."
 
-#: src/components/home/chapters/ChapterLinkoglot.astro:56
+#: src/components/home/chapters/ChapterLinkoglot.astro:64
 #: src/pages/[locale]/work/index.astro:99
 msgid "Linkoglot camera mode: point the phone at a street, a room, breakfast, a book and a park to learn the words"
 msgstr "Modo cámara de Linkoglot: apunta el móvil a una calle, una habitación, un desayuno, un libro y un parque para aprender las palabras"
@@ -885,11 +885,11 @@ msgstr "Lint"
 
 #: src/components/home/chapters/ChapterPstrykWeb.astro:55
 #: src/components/home/HowIWork.astro:431
-#: src/pages/[locale]/work/index.astro:391
+#: src/pages/[locale]/work/index.astro:399
 msgid "Live"
 msgstr "En línea"
 
-#: src/components/home/chapters/ChapterLinkoglot.astro:119
+#: src/components/home/chapters/ChapterLinkoglot.astro:127
 msgid "Live · pre-traction"
 msgstr "Publicada · aún sin tracción"
 
@@ -990,7 +990,7 @@ msgstr "Mi favorito"
 msgid "My life"
 msgstr "Mi vida"
 
-#: src/components/home/chapters/ChapterSpace.astro:81
+#: src/components/home/chapters/ChapterSpace.astro:89
 msgid "My previous portfolio: a scroll-driven flight through the solar system, where each planet holds one section. 13 shaders written by hand in GLSL. Best on a computer."
 msgstr "Mi portfolio anterior: un vuelo por el sistema solar guiado por el scroll, donde cada planeta guarda una sección. 13 shaders escritos a mano en GLSL. Mejor en un ordenador."
 
@@ -1002,7 +1002,7 @@ msgstr "Mi portfolio espacial, hecho con lo que enseñó el curso"
 msgid "My|life"
 msgstr "Mi|vida"
 
-#: src/components/home/chapters/ChapterClockful.astro:45
+#: src/components/home/chapters/ChapterClockful.astro:53
 #: src/pages/[locale]/work/index.astro:105
 msgid "Neoteric Clockful: a screen recording of the dashboard"
 msgstr "Neoteric Clockful: una grabación de pantalla del panel"
@@ -1181,8 +1181,8 @@ msgstr "Tablón"
 msgid "Places I've been, pinned."
 msgstr "Los sitios donde he estado, en el tablón."
 
-#: src/components/home/chapters/ChapterSpace.astro:68
-#: src/pages/[locale]/work/index.astro:460
+#: src/components/home/chapters/ChapterSpace.astro:76
+#: src/pages/[locale]/work/index.astro:468
 msgid "Planet textures:"
 msgstr "Texturas de planetas:"
 
@@ -1269,7 +1269,7 @@ msgstr "Perfil"
 msgid "Projects"
 msgstr "Proyectos"
 
-#: src/components/home/chapters/ChapterPstrykWeb.astro:109
+#: src/components/home/chapters/ChapterPstrykWeb.astro:117
 #: src/pages/[locale]/work/index.astro:89
 msgid "PstrykWeb: the landing page, then a business owner filling in the order form"
 msgstr "PstrykWeb: la página de inicio y, después, el dueño de un negocio rellena el formulario de pedido"
@@ -1318,7 +1318,7 @@ msgstr "En remoto o híbrido"
 msgid "Remote or hybrid · Poland, CET"
 msgstr "En remoto o híbrido · Polonia, CET"
 
-#: src/components/home/chapters/ChapterClockful.astro:87
+#: src/components/home/chapters/ChapterClockful.astro:95
 msgid "requirements in the spec"
 msgstr "requisitos en la especificación"
 
@@ -1464,7 +1464,7 @@ msgstr "Saltar al contenido"
 msgid "Snap a photo, get flashcards. A subscription language app, shipped solo to both stores."
 msgstr "Haz una foto y ya tienes tarjetas. Una app de idiomas por suscripción, publicada en solitario en ambas tiendas."
 
-#: src/components/home/chapters/ChapterLinkoglot.astro:79
+#: src/components/home/chapters/ChapterLinkoglot.astro:87
 msgid "Snapped → card"
 msgstr "Foto → tarjeta"
 
@@ -1481,11 +1481,15 @@ msgstr "Yo solo, de principio a fin"
 msgid "Sort"
 msgstr "Ordenar"
 
+#: src/components/blog/case/Film.astro:38
+msgid "Sound on"
+msgstr "Activar sonido"
+
 #: src/pages/[locale]/blog/[slug].astro:155
 msgid "Sources"
 msgstr "Fuentes"
 
-#: src/components/home/chapters/ChapterLinkoglot.astro:83
+#: src/components/home/chapters/ChapterLinkoglot.astro:91
 msgid "Spanish → English"
 msgstr "Inglés → español"
 
@@ -1534,7 +1538,7 @@ msgstr "Subagentes"
 msgid "Subagents research in parallel and bring back conclusions."
 msgstr "Los subagentes investigan en paralelo y vuelven con conclusiones."
 
-#: src/components/home/chapters/ChapterClockful.astro:80
+#: src/components/home/chapters/ChapterClockful.astro:88
 msgid "tables behind row-level security"
 msgstr "tablas con seguridad a nivel de fila"
 
@@ -1596,7 +1600,7 @@ msgstr "El CV de Mateusz Muszarski, full-stack product engineer: experiencia, pr
 msgid "The decision"
 msgstr "La decisión"
 
-#: src/components/home/chapters/ChapterLinkoglot.astro:84
+#: src/components/home/chapters/ChapterLinkoglot.astro:92
 msgid "the flowerpot"
 msgstr "la maceta"
 
@@ -1636,7 +1640,7 @@ msgstr "La dirección de respuesta no era un correo, un teléfono ni un enlace d
 msgid "The same loop on every project"
 msgstr "El mismo ciclo en cada proyecto"
 
-#: src/components/home/chapters/ChapterSpace.astro:43
+#: src/components/home/chapters/ChapterSpace.astro:51
 #: src/pages/[locale]/work/index.astro:116
 msgid "The space portfolio: the camera flies from Earth past Mars and Jupiter to Neptune"
 msgstr "El portfolio espacial: la cámara vuela de la Tierra, pasando por Marte y Júpiter, hasta Neptuno"
@@ -1694,7 +1698,7 @@ msgid "Too many messages were sent from your connection. Please wait a few minut
 msgstr "Se han enviado demasiados mensajes desde tu conexión. Espera unos minutos."
 
 #: src/components/home/AiWorkflow.astro:79
-#: src/pages/[locale]/work/index.astro:363
+#: src/pages/[locale]/work/index.astro:371
 msgid "Tools"
 msgstr "Herramientas"
 

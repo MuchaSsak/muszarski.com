@@ -638,6 +638,38 @@ figure.fm {
   width: 1.5rem;
   height: 1.5rem;
 }
+/* Above the film on the left, across from the close button: a `?film` arrival that started muted. */
+.fm-unmute {
+  position: absolute;
+  left: -3px;
+  bottom: calc(100% + 0.875rem);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 2.75rem;
+  padding: 0 1rem;
+  border: 0;
+  background: var(--ice);
+  color: var(--navy);
+  font: inherit;
+  font-weight: 850;
+  font-size: 0.875rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  cursor: pointer;
+  box-shadow: 4px 4px 0 var(--accent);
+}
+.fm-unmute[hidden] {
+  display: none;
+}
+.fm-unmute .ico {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+.fm-unmute:focus-visible {
+  outline: 3px solid var(--ice);
+  outline-offset: 4px;
+}
 .fm-close:hover {
   rotate: 90deg;
 }

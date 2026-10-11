@@ -332,3 +332,31 @@ test("404: a missing address answers 404 in its locale's language, and the menu 
   await expect(page.locator("#site-menu").getByRole("link", { name: "Projekty", exact: true })).toBeVisible();
   expect(errors).toEqual([]);
 });
+
+test("case study: a ?film link opens the film, asks for sound when refused, and closing drops the parameter", async ({
+  page,
+}) => {
+  // Arriving from another site is not a gesture on the page: refuse sound the way a browser may.
+  await page.addInitScript(() => {
+    const real = HTMLMediaElement.prototype.play;
+    HTMLMediaElement.prototype.play = function (this: HTMLMediaElement) {
+      return this.muted ? real.call(this) : Promise.reject(new DOMException("No gesture", "NotAllowedError"));
+    };
+  });
+  await page.goto("/en/blog/case-study/?film");
+  const dialog = page.getByRole("dialog", { name: /47-second film/ });
+  await expect(dialog).toBeVisible();
+  await expect(dialog.locator("video")).toHaveJSProperty("muted", true);
+  const unmute = dialog.getByRole("button", { name: "Sound on", exact: true });
+  await expect(unmute).toBeVisible();
+  await unmute.click();
+  await expect(unmute).toBeHidden();
+  await expect(dialog.locator("video")).toHaveJSProperty("muted", false);
+  await dialog.getByRole("button", { name: "Close video" }).click();
+  await expect(dialog).toBeHidden();
+  await expect(page).toHaveURL(/\/en\/blog\/case-study\/$/);
+  // The card opens it with sound, no button.
+  await page.getByRole("button", { name: /Watch the film/ }).click();
+  await expect(dialog).toBeVisible();
+  await expect(unmute).toBeHidden();
+});

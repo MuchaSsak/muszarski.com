@@ -6,6 +6,8 @@
  * native modal dialog that grows out of the card and shrinks back into it on close (scripts/film.ts sets where from;
  * styles/case.css § Film). Nothing loads before that click but
  * the lazy poster: the sources wait in a `<template>` (scripts/video-sources.ts, AV1 first, H.264 fallback).
+ * `?film` in the page's URL opens the dialog on arrival (the GitHub profile README's link), muted with a "Sound on"
+ * button when the browser refuses sound.
  * Files: `public/media/blog/<dir>/<src>.{av1.mp4,mp4}`, 1920×1080, AAC audio. Text comes from the post.
  */
 import type { ImageMetadata } from "astro";
@@ -34,6 +36,8 @@ const length = `${Math.floor(seconds / 60)}:${String(Math.floor(seconds % 60)).p
 const still = await getImage({ src: poster, width: 1280, format: "webp" });
 const closeLabel = t`Close video`;
 const soundLabel = t`With sound`;
+// Shown only when a `?film` link opened the film and the browser refused sound (scripts/film.ts).
+const unmuteLabel = t`Sound on`;
 ---
 
 <figure class="fm">
@@ -60,6 +64,9 @@ const soundLabel = t`With sound`;
     </video>
     <button class="fm-close" type="button" data-film-close aria-label={closeLabel}>
       <Icon name="tb:x" />
+    </button>
+    <button class="fm-unmute" type="button" data-film-unmute hidden>
+      <Icon name="tb:music" />{unmuteLabel}
     </button>
   </div>
 </dialog>
