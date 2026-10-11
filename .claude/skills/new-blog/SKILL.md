@@ -64,12 +64,18 @@ informational, with accurate research and quick explanations of my thought proce
 10. **Close.** Wiki: `seo.md` § Content plan (the post exists), `content-model.md` for a new figure type or rule,
     `log.md` line. Commit your own paths (Conventional Commit, `docs(blog):` or `feat(blog):`). Report: the URLs,
     minutes to read, figures, what post-check still warns and why, what wasn't verified.
+11. **Suggest cross-posting.** Once the post is deployed, offer to republish it on dev.to and Medium (`seo.md`
+    § Syndication: English only, one post at a time, never in a burst). Only on the owner's yes:
+    `node .claude/skills/new-blog/scripts/crosspost.mjs <en-slug> --devto` (a draft), look at it, then
+    `--devto --publish`; Medium through its "Import a story" tool. Look at the published copies before calling it done.
 
 ## Updating or polishing a post
 
 Update in place: keep the slug, the `translationKey` and `published`. Bump `updated` (both locales) when the content
 changes for a reader (a new section, a corrected fact, new figures), not for a typo. Re-run step 8. A slug that has to
 change gets a permanent redirect in `vercel.json` and a line in `locale-free.test.ts`, like the case study's move.
+A post already on dev.to (`crosspost.json`) gets the same update there: re-run `crosspost.mjs <en-slug> --devto
+--publish` after the deploy; Medium copies are edited by hand.
 A post that names code (`scripts/x.mjs`, a component) is checked against the code: post-check flags files that no
 longer exist, and the prose around them usually drifted too.
 

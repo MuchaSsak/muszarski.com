@@ -157,6 +157,29 @@ Pillars:
 
 Every post links one case study and one pillar.
 
+## Syndication (dev.to, Medium) [owner 2026-10-11]
+
+Posts are republished on dev.to and Medium for reach. The rules, in the owner's words where quoted:
+
+- **The canonical stays here.** Every copy points its canonical link at the post on muszarski.com; the copy says it
+  first appeared here, where the clips and tabs work.
+- **No spam** ("not spam with posts so that we dont get shadowbanned or blocked"): one post at a time, the best first
+  (the case study, 2026-10-11), then a few days apart at most; never the whole archive in a burst.
+- **Languages:** en and pl only where a platform has language versions of a post; never es. Neither dev.to nor
+  Medium has them, so both get English only.
+- **dev.to:** by API, `node .claude/skills/new-blog/scripts/crosspost.mjs <en-slug> --devto` (a draft), checked, then
+  `--publish`. Needs `DEV_TO_API_KEY` in the repo-root `.env` (`technologies.md`). The script turns the MDX figures
+  into markdown (clips as their poster linking back, the Matrix as a table), checks every own URL, and keeps the
+  article id in `.claude/skills/new-blog/crosspost.json`, so a re-run updates the same article.
+- **Medium:** no API for new accounts (no new integration tokens). Its "Import a story" tool takes the live URL, sets
+  the canonical itself and keeps the date; review the draft (embeds drop out) before publishing. Record the URL in
+  `crosspost.json`.
+- **Check before it's done:** look at the published copy (images load, tables render, the canonical points here).
+- **New posts:** the `new-blog` skill suggests cross-posting at the end of every new post; the owner says yes per post.
+
+Done: the case study on dev.to (2026-10-11,
+https://dev.to/muchassak/trying-to-build-an-awwwards-winning-brutalist-portfolio-the-process-the-mindset-and-the-tools-4njg).
+
 ## Domain (open-questions Q5)
 
 - **Decided [owner] 2026-10-08: `https://muszarski.com`** is the site's domain. Every live reference moved (canonical

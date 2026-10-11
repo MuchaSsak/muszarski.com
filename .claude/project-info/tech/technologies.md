@@ -79,6 +79,7 @@ Template with every name: `apps/web/.env.example`. Values live in the Vercel pro
 | `PUBLIC_GOOGLE_SITE_VERIFICATION` | only if not verified by DNS | host env | no |
 | `INDEXNOW_KEY` | IndexNow pings after deploy (not wired yet: post-launch, `seo.md`) | host env | no |
 | `IS_FULL_PRODUCTION` | true only when the owner calls the launch [owner 2026-10-06: "full prod when i say it is, regardless of whether deployed to domain"]; every other build, a production deploy on the domain included, is noindex. Renamed from `LAUNCH_BUILD` [owner 2026-10-08] | host env | yes |
+| `DEV_TO_API_KEY` | cross-posting to dev.to (`seo.md` § Syndication); read by `crosspost.mjs` from the repo-root `.env`, never on Vercel | local `.env` | no |
 | `IS_AVAILABLE_FOR_HIRE` | default true; `false` while he is not looking for work [owner 2026-10-08]: the header CTA reads "Contact" instead of "Hire me" and the contact section drops "Full-time or contract". Nothing else changes | host env | no |
 
 ## External services and limits
