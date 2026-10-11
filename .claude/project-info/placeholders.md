@@ -69,3 +69,15 @@
    - [ ] pstrykweb.pl (Cetuspro's product): no credit without Cetuspro's written OK. Options to ask them for: an author
      box on the blog posts he wrote, linking `https://muszarski.com/` (the "pstrykweb.pl author page" of `seo.md`
      § Entity strategy); a team/credits page naming him. Never "built by" or "solo" (lessons).
+
+## Go-to-prod answers [owner 2026-10-11] (applied to the code in the launch pass)
+
+- P10: Cetuspro and Neoteric OK given: PstrykWeb + Clockful rights → `ok`.
+- P6: hero line = "Code is only the tool. I build products that solve real problems and bring results." (owner's words).
+- P4: "Full-stack developer · B2B or UoP · remote or hybrid · available now".
+- P3: "Pomorskie, Poland" stays.
+- P20: all posts shipped as accepted by the owner.
+- P12: es stays live; drop the visible "Translated with AI" line (owner's choice).
+- P7/P9/P18/P24: owner recordings landed at the repo root (`pstrykweb.mp4` 114 s, `neoteric-clockful.mp4` 15 s, `3d-space-folio.mp4` 67 s, 1920×942); to cut into loops, never commit the raw files.
+- P13/P22: proposed: no postal address (a hiring portfolio, not an e-service), drop `/terms/`, ship un-reviewed drafts as the owner's risk; waits on the owner's OK + mailbox provider.
+- Still owed by the owner: mailbox provider, INF dates, Georgia/Demre years, coast photo place, award photo month, years of paid work, footer line, four My-life lines. GSC + social links done by the owner.
