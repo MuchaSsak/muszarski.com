@@ -4,7 +4,7 @@ seoTitle: "How I built this portfolio (case study)"
 description: "Case study: why I swapped my 3D portfolio for a poster. The research, the sites I learned from, every version, and shaders that never get in the way."
 translationKey: this-site
 published: 2026-10-05
-updated: 2026-10-09
+updated: 2026-10-11
 tags: [case-study, ai, astro, performance]
 cover: this-site
 featured: true
@@ -41,6 +41,7 @@ sources:
 
 import Breaker from "~/components/blog/case/Breaker.astro";
 import Clips from "~/components/blog/case/Clips.astro";
+import Film from "~/components/blog/case/Film.astro";
 import Flow from "~/components/blog/case/Flow.astro";
 import Matrix from "~/components/blog/case/Matrix.astro";
 import Shots from "~/components/blog/case/Shots.astro";
@@ -85,8 +86,19 @@ import refAntoine from "~/assets/case/ref-antoine-wodniack.webp";
 import refStefan from "~/assets/case/ref-stefan-vitasovic.webp";
 import seoAuthor from "~/assets/case/seo-author-en.webp";
 import seoFooter from "~/assets/case/seo-footer-en.webp";
+import filmPoster from "~/assets/case/film-poster.webp";
 
 My old portfolio was a WebGL flight from Earth to Neptune. It looked great on my desktop. On a phone it showed an “Oops!” screen. This is the story of swapping it for a poster: the versions, the research, the sites I learned from and the reasons behind each call, mostly in pictures.
+
+<Film
+  dir="/media/case/"
+  src="film"
+  poster={filmPoster}
+  seconds={47}
+  label="Watch the film"
+  title="How this site got built: a 47-second film"
+  caption="How this site got built, in 47 seconds. Made in code with Claude Code: the real site filmed frame by frame, and music written in code."
+/>
 
 > **TL;DR**
 >

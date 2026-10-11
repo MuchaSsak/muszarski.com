@@ -4,7 +4,7 @@ seoTitle: "Jak zbudowałem to portfolio (case study)"
 description: "Case study: dlaczego zamieniłem portfolio 3D na plakat. Research, strony, od których się uczyłem, każda wersja i shadery, które nie przeszkadzają."
 translationKey: this-site
 published: 2026-10-05
-updated: 2026-10-09
+updated: 2026-10-11
 tags: [case-study, ai, astro, performance]
 cover: this-site
 featured: true
@@ -41,6 +41,7 @@ sources:
 
 import Breaker from "~/components/blog/case/Breaker.astro";
 import Clips from "~/components/blog/case/Clips.astro";
+import Film from "~/components/blog/case/Film.astro";
 import Flow from "~/components/blog/case/Flow.astro";
 import Matrix from "~/components/blog/case/Matrix.astro";
 import Shots from "~/components/blog/case/Shots.astro";
@@ -85,8 +86,19 @@ import refAntoine from "~/assets/case/ref-antoine-wodniack.webp";
 import refStefan from "~/assets/case/ref-stefan-vitasovic.webp";
 import seoAuthor from "~/assets/case/seo-author-pl.webp";
 import seoFooter from "~/assets/case/seo-footer-pl.webp";
+import filmPoster from "~/assets/case/film-poster.webp";
 
 Moje stare portfolio było lotem WebGL od Ziemi do Neptuna. Na moim komputerze wyglądało świetnie. Na telefonie pokazywało ekran „Oops!”. To historia zamiany go na plakat: wersje, research, strony, od których się uczyłem, i powody każdej decyzji, głównie w obrazkach.
+
+<Film
+  dir="/media/case/"
+  src="film"
+  poster={filmPoster}
+  seconds={47}
+  label="Obejrzyj film"
+  title="Jak powstała ta strona: film w 47 sekund"
+  caption="Jak powstała ta strona, w 47 sekund. Zrobiłem ten film w kodzie z Claude Code: prawdziwa strona nagrana klatka po klatce i muzyka też napisana w kodzie. Napisy są po angielsku."
+/>
 
 > **W skrócie**
 >
