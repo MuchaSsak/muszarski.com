@@ -9,7 +9,7 @@ import { type IconName } from "~/lib/icons.gen";
  * from older data.
  *
  * Text is per locale (long-form content, not UI strings: i18n.md). Facts come from the wiki; every value that is not
- * real yet is marked `placeholder: true` and logged in placeholders.md (none at launch, 2026-10-11).
+ * real yet gets the placeholder flag and a row in placeholders.md (none at launch, 2026-10-11).
  * Spanish is machine-assisted and unreviewed (P12). The content was approved in English first [user 2026-10-08], then
  * localized.
  */
