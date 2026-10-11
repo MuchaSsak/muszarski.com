@@ -69,5 +69,9 @@ new one) and re-verifies. Medium copies are edited by hand: tell the owner exact
 - dev.to tags: max 4, lowercase alphanumeric (`case-study` → `showdev`); cover = the post's OG image (dev.to crops it
   to 1000 × 420: look at the top screenshot).
 - Sources list at the end, as on the site.
+- **Full AI disclosure** [owner 2026-10-11]: dev.to's label set by the API (`ai_disclosure_level: some_ai`, shown as
+  "AI-assisted") and the same in words at the end of every copy (`AI_NOTE`), Medium included (it has no label).
+- **dev.to series** "Building my portfolio" for the posts about building this site (`SERIES` in the script; it
+  shows once two of them are out). A new post about the site goes in it.
 - Medium paste page: pictures as JPEG (Medium refuses WebP), quotes one paragraph each (a quote holding a list, like
   the TL;DR, loses the quote: Medium splits it into empty quote bars), tables as lists, no blank paragraphs.

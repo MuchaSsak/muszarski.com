@@ -108,6 +108,29 @@ const meta = {
 const DEVTO_TAG = { "case-study": "showdev" };
 const devtoTags = [...new Set(meta.tags.map((tag) => DEVTO_TAG[tag] ?? tag.replace(/[^a-z0-9]/g, "")))].filter(Boolean).slice(0, 4);
 
+/**
+ * dev.to series: posts about building this site read as one story there [owner 2026-10-11]. A series shows once it
+ * has two posts. Comparisons, the legal post, the app and client stories stand alone.
+ */
+const SERIES = {
+  "Building my portfolio": [
+    "case-study", "fit-text-to-width-at-build-time", "hover-effects-on-phones", "reduced-motion-and-a-pause-button",
+    "contact-form-on-a-static-site", "multilingual-astro-site-with-lingui", "web-cv-and-pdf-from-one-source",
+    "llm-wiki-project-memory-for-claude-code", "claude-code-skills-hooks-mcp-subagents", "astro-vs-nextjs-for-a-portfolio",
+    "why-my-threejs-portfolio-was-slow-on-mobile",
+  ],
+};
+const series = Object.entries(SERIES).find(([, slugs]) => slugs.includes(slug))?.[0] ?? null;
+
+/**
+ * Full AI disclosure [owner 2026-10-11]: dev.to's own label (API `ai_disclosure_level`, "AI-Assisted": he directs and
+ * approves every post, Claude Code drafts it) plus the same in words at the end, as DEV's guidelines ask.
+ */
+const AI_LEVEL = "some_ai";
+const AI_NOTE =
+  "How this post was made: I wrote it with Claude Code. It drafted the text from my project's wiki, code and notes; " +
+  "I set the direction, and reviewed and approved it before it went out.";
+
 /** Words that only make sense on the site itself (a tab you can tap, "the site you are on"). */
 const OFF_SITE = [
   [/ Tap through them\./g, ""],
@@ -283,6 +306,7 @@ for (let at = 0; at < body.length; ) {
 markdown = [
   em(`This post first appeared on [my site](${pageUrl}), where the clips play and the version tabs work.`),
   markdown.replace(/\]\(\//g, `](${SITE}/`).replace(/\n{3,}/g, "\n\n").trim(),
+  `---\n\n${em(AI_NOTE)}`,
   meta.sources.length ? `## Sources\n\n${meta.sources.map((s) => `- [${s.title}](${s.url})`).join("\n")}` : "",
 ]
   .filter(Boolean)
@@ -333,6 +357,8 @@ if (mode.devto) {
       description: meta.description,
       tags: devtoTags,
       main_image: cover,
+      series,
+      ai_disclosure_level: AI_LEVEL,
     },
   });
   const published = Boolean(res.published ?? (mode.publish || known?.published));
@@ -345,8 +371,8 @@ if (mode.devto) {
   };
   saveState();
   console.log(`✓ dev.to ${known ? "updated" : "created"} (${published ? "published" : "draft"}): ${res.url}`);
-  if (published) await verify();
   if (published && !known?.published) console.log(`  Remind the owner: share ${res.url} on LinkedIn and Facebook.`);
+  if (published) await verify();
   else console.log("  Drafts need a login to view: look at it on dev.to (Dashboard → the draft), then --devto --publish.");
 }
 
@@ -434,7 +460,7 @@ async function shoot(url, platform) {
       });
       // page coordinates (a bounding box is relative to the scrolled viewport)
       const box = await page.evaluate((fallback) => {
-        const rect = document.querySelector("#article-body, article")?.getBoundingClientRect();
+        const rect = (document.querySelector("#article-body") ?? document.querySelector("article"))?.getBoundingClientRect();
         return rect ? { y: rect.top + scrollY, height: rect.height } : { y: 0, height: fallback };
       }, total);
       const step = device === "desktop" ? 2400 : height;
