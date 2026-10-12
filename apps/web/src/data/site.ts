@@ -45,7 +45,8 @@ export const SOCIAL = [
  */
 export const PERSONAL = [
   { id: "instagram", label: "Instagram", handle: "mat.muszarski", href: "https://www.instagram.com/mat.muszarski/" },
-  { id: "facebook", label: "Facebook", handle: undefined, href: "https://www.facebook.com/profile.php?id=100072259775217" },
+  // Username set 2026-10-12 [owner]; the old profile.php?id=100072259775217 URL still opens the same profile.
+  { id: "facebook", label: "Facebook", handle: "muszarski", href: "https://www.facebook.com/muszarski" },
 ] as const;
 
 /**

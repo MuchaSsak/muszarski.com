@@ -58,9 +58,9 @@ Success signal: Google autocomplete starts completing "mateusz muszarski" to "�
    `sameAs` (every profile in `ELSEWHERE`: GitHub, LinkedIn, npm, Instagram, Facebook, Telegram, Discord [owner
    2026-10-07]; the Google Play and App Store developer pages, `STORES` in `data/site.ts` [owner 2026-10-09]), `worksFor` only for a real employer or his own business.
    The markup must match the visible text.
-4. **Bidirectional links:** each profile links to the site and the site links to each profile (`rel="me"`). Owner
-   to-do: put muszarski.com in the LinkedIn website field, the Instagram bio, the Facebook intro and the GitHub
-   profile. Search Console can't verify social profiles; once a knowledge panel shows, claim it with Google.
+4. **Bidirectional links:** each profile links to the site and the site links to each profile (`rel="me"`). Done on
+   LinkedIn (contact info) and Facebook (intro and Links; username `facebook.com/muszarski`) on 2026-10-12. Owner to-do:
+   the Instagram bio and the GitHub profile. Search Console can't verify social profiles; once a knowledge panel shows, claim it with Google.
 5. **Earned mentions (P1):** 3–5 independent links (client credits, npm READMEs, a Tricity meetup write-up, a guest post).
    Credits on his other projects come from the user-level skill `/link-portfolio-author-to-website` (outside this
    repo, 2026-10-08): JSON-LD `creator` → the live `#person` id, `meta creator`, `humans.txt`, one visible footer link;

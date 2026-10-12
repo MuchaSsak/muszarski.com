@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<!-- The Facebook cover: the LinkedIn banner's space remix (../linkedin-banner/, variant b) re-laid for Facebook's 2.7:1 box. -->
+<style>
+  @font-face {
+    font-family: "Anybody";
+    src: url("../../../../../apps/web/public/fonts/anybody.856d252e.woff2") format("woff2");
+    font-weight: 100 900;
+    font-stretch: 50% 150%;
+  }
+  :root { --cobalt: #2433ff; --ice: #eef0ff; --navy: #0a0d33; --space: #07081c; --pink: #ff4fb8; }
+  * { margin: 0; box-sizing: border-box; }
+  html, body { width: 1638px; height: 606px; overflow: hidden; }
+  body { position: relative; font-family: "Anybody", sans-serif; color: var(--ice); background: var(--space); }
+  canvas { position: absolute; inset: 0; width: 1638px; height: 606px; image-rendering: pixelated; }
+  .name {
+    position: absolute; left: 160px; top: 88px; white-space: nowrap; font-weight: 900; font-stretch: 130%;
+    font-size: 150px; line-height: .9; letter-spacing: -.01em; text-transform: uppercase;
+    background: linear-gradient(180deg, #ffffff 0%, var(--ice) 45%, #9aa4ff 100%); -webkit-background-clip: text; color: transparent;
+    filter: drop-shadow(0 0 26px rgba(36, 51, 255, .55));
+  }
+  .role {
+    position: absolute; left: 167px; top: 236px; font-weight: 800; font-stretch: 72%; font-size: 68px; letter-spacing: .07em;
+    text-transform: uppercase; color: var(--pink);
+  }
+  .tag {
+    position: absolute; left: 470px; top: 372px; display: inline-flex; white-space: nowrap; align-items: center; gap: 20px;
+    background: var(--ice); color: var(--navy); box-shadow: 10px 10px 0 var(--pink);
+    font-weight: 800; font-stretch: 120%; font-size: 36px; letter-spacing: .04em; text-transform: uppercase; padding: 18px 30px;
+  }
+  .tag i { font-style: normal; color: var(--cobalt); }
+</style>
+</head>
+<body>
+<canvas width="546" height="202"></canvas>
+<p class="name">Muszarski</p>
+<p class="role">Full-stack product engineer</p>
+<span class="tag">New portfolio is out <i>✦</i> muszarski.com</span>
+
+<script>
+// Same shader as the LinkedIn banner's variant b, with the planet and the sun moved for the taller box.
+const FRAG = `precision highp float;
+vec2 g(vec2 p){p=vec2(dot(p,vec2(127.1,311.7)),dot(p,vec2(269.5,183.3)));return fract(sin(p)*43758.5453)*2.-1.;}
+float n(vec2 p){vec2 i=floor(p),f=fract(p),u=f*f*(3.-2.*f);
+  return mix(mix(dot(g(i),f),dot(g(i+vec2(1,0)),f-vec2(1,0)),u.x),mix(dot(g(i+vec2(0,1)),f-vec2(0,1)),dot(g(i+vec2(1,1)),f-vec2(1,1)),u.x),u.y);}
+float fbm(vec2 p){float s=0.,a=.5;for(int k=0;k<5;k++){s+=a*n(p);p=mat2(1.6,1.2,-1.2,1.6)*p;a*=.5;}return s;}
+float b2(vec2 a){a=floor(a);return fract(a.x*.5+a.y*a.y*.75);}
+float b8(vec2 a){return (b2(.25*a)*.25+b2(.5*a))*.25+b2(a);}
+float h1(vec2 p){return fract(sin(dot(p,vec2(12.9898,78.233)))*43758.5453);}
+void main(){
+  vec2 c=gl_FragCoord.xy;
+  vec2 ctr=vec2(560.,-300.);
+  float R=420.;
+  vec2 d=c-ctr;
+  float r=length(d);
+  float v=0.;
+  float s=h1(floor(c));
+  if(s>.992) v=.42+.5*step(.998,s);
+  vec2 sun=vec2(488.,122.);
+  vec2 sd=c-sun;
+  float sr=length(sd);
+  if(r<R){
+    vec3 nrm=vec3(d/R,sqrt(max(0.,1.-dot(d,d)/(R*R))));
+    vec3 L=normalize(vec3(-.62,.55,.32));
+    float lam=dot(nrm,L);
+    vec2 uv=nrm.xy/(nrm.z+.6)*2.4;
+    float land=fbm(uv*1.3+vec2(3.1,1.7));
+    float isLand=step(.06,land);
+    float day=smoothstep(-.05,.35,lam);
+    float base=mix(.17,.36,isLand);
+    v=base*day+.02;
+    float city=step(.86,h1(floor(c/2.)))*isLand*(1.-smoothstep(-.1,.05,lam));
+    v=max(v,city*.62);
+    float rim=pow(1.-nrm.z,3.)*smoothstep(-.2,.6,lam);
+    v=max(v,.3+rim*.45*step(.2,rim));
+  } else {
+    float a=exp(-(r-R)/11.);
+    float toward=smoothstep(.0,1.,dot(normalize(d),normalize(sun-ctr)));
+    v=max(v,a*(.36+.32*toward));
+  }
+  float core=exp(-sr*sr/40.);
+  float halo=exp(-sr/32.);
+  float ang=atan(sd.y,sd.x);
+  float rays=pow(abs(sin(ang*7.+.4)),18.)*exp(-sr/85.)+pow(abs(sin(ang*3.-.8)),30.)*exp(-sr/150.);
+  v=max(v,clamp(core*1.2+halo*.72+rays*.6,0.,1.));
+  v=max(v,exp(-abs(sd.y)/1.6)*exp(-abs(sd.x)/110.)*.62);
+  v=clamp(v,0.,1.);
+  float x=v*5.+b8(c)-.5;
+  float l=clamp(floor(x+.5),0.,5.);
+  vec3 col=l<.5?vec3(.027,.031,.11):l<1.5?vec3(.078,.098,.33):l<2.5?vec3(.141,.2,1.):l<3.5?vec3(1.,.31,.722):l<4.5?vec3(1.,.357,.122):vec3(.933,.941,1.);
+  gl_FragColor=vec4(col,1.);
+}`;
+
+function draw() {
+  const canvas = document.querySelector("canvas");
+  const gl = canvas.getContext("webgl", { preserveDrawingBuffer: true });
+  if (!gl) { document.title = "nogl"; return; }
+  const sh = (type, src) => { const s = gl.createShader(type); gl.shaderSource(s, src); gl.compileShader(s);
+    if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) throw new Error(gl.getShaderInfoLog(s)); return s; };
+  const prog = gl.createProgram();
+  gl.attachShader(prog, sh(gl.VERTEX_SHADER, "attribute vec2 a;void main(){gl_Position=vec4(a,0.,1.);}"));
+  gl.attachShader(prog, sh(gl.FRAGMENT_SHADER, FRAG));
+  gl.linkProgram(prog);
+  if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) throw new Error(gl.getProgramInfoLog(prog));
+  gl.useProgram(prog);
+  gl.bindBuffer(gl.ARRAY_BUFFER, gl.createBuffer());
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 3, -1, -1, 3]), gl.STATIC_DRAW);
+  const loc = gl.getAttribLocation(prog, "a");
+  gl.enableVertexAttribArray(loc);
+  gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
+  gl.viewport(0, 0, canvas.width, canvas.height);
+  gl.drawArrays(gl.TRIANGLES, 0, 3);
+}
+
+document.fonts.ready.then(() => { draw(); document.body.dataset.ready = "1"; });
+</script>
+</body>
+</html>
