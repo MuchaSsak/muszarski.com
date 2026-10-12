@@ -24,8 +24,12 @@
     "devto": {
       "id": 4836706,
       "url": "https://dev.to/muchassak/astro-vs-nextjs-for-a-portfolio-or-a-landing-page-4jpf",
-      "published": false,
-      "updated": "2026-10-12"
-    }
+      "published": true,
+      "updated": "2026-10-12",
+      "publishedOn": "2026-10-12"
+    },
+    "todo": [
+      "owner: paste on Medium, then send the story link (--medium <url>)"
+    ]
   }
 }

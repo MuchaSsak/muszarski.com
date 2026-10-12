@@ -18,6 +18,7 @@
  * match what dev.to fetches. What went where is kept in ../crosspost.json; a re-run updates the same dev.to article.
  * dev.to needs DEV_TO_API_KEY (repo-root .env). English only: neither platform has language versions of a post.
  */
+import { execFileSync } from "node:child_process";
 import { existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { createRequire } from "node:module";
 import { tmpdir } from "node:os";
@@ -615,9 +616,15 @@ async function mediumPage() {
   try {
     const page = await browser.newPage();
     await page.goto(url, { waitUntil: "domcontentloaded", timeout: 60000 });
-    article = await page.$eval("#article-body", (el) => el.innerHTML);
+    article = await page.$eval("#article-body", (el) => el.innerHTML).catch(() => null);
   } finally {
     await browser.close();
+  }
+  // a post published by hand can 404 on its page for a while (a cached 404); the API has the same render. Node's fetch
+  // got the same stale 404 from the API while curl got the post (2026-10-12), so curl reads it.
+  if (!article) {
+    const api = execFileSync("curl", ["-s", `https://dev.to/api/articles/${entry.devto.id}`], { encoding: "utf8" });
+    article = JSON.parse(api).body_html;
   }
   if (!article) fail("could not read the dev.to article body");
   const original = (src) => {
