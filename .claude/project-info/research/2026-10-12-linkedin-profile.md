@@ -192,8 +192,14 @@ Every saved text was compared with its source in the page (JS `includes`), not b
   Frontend Developer, Javascript Developer, Software Engineer, Mobile Application Developer: LinkedIn maps "Full Stack
   Developer" and "React Developer" onto these), Hybrid + Remote, Poland + Pomorskie, Full-time + Contract, no job alerts;
   Featured: muszarski.com, the yws.lu case study, the build case study (`?ref=linkedin`, thumbnail uploaded from the share card
-  after LinkedIn's fetch failed), the Linkoglot post, the CV page; the site-style banner (the old space banner is kept only
-  as a screenshot in the session scratchpad).
+  after LinkedIn's fetch failed), the Linkoglot post, the CV page.
+- **Banner** [owner picked "space remix" from three drafts]: the old space banner's idea (MUSZARSKI over a planet and a
+  sunburst) printed in the site's inks through the work page's 8×8 dither, with "New portfolio is out ✦ muszarski.com".
+  Source: `tools/linkedin-banner/`. Rules from the banner research (same day): Recruiter search never shows the banner, only
+  the profile visit does, and no study measures its effect; the desktop photo covers x 48–368, y 204–396 of 1584 × 396;
+  the phone app's crop is unmeasured, so content stays in the centre ~1200 × 300; text ≥ 48 px (the banner shows at ~0.25×
+  on a phone); LinkedIn re-serves it as JPEG at 800 and 1400 px wide, so big high-contrast type survives and thin coloured
+  text doesn't. The owner removed the courier role and the Ukrainian entry himself; the primary school is his to delete.
 - **The owner's own steps:** delete the courier role and the primary school, a clear headshot, recommendations, connection
   growth, following target companies, the months for Neoteric and Freelance.
 

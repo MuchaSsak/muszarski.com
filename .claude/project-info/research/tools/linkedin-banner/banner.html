@@ -1,0 +1,266 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<style>
+  @font-face {
+    font-family: "Anybody";
+    src: url("../../../../../apps/web/public/fonts/anybody.856d252e.woff2") format("woff2");
+    font-weight: 100 900;
+    font-stretch: 50% 150%;
+  }
+  :root {
+    --cobalt: #2433ff; --ice: #eef0ff; --navy: #0a0d33; --space: #07081c; --indigo: #141954;
+    --pink: #ff4fb8; --orange: #ff5b1f; --lime: #c9f24a; --yellow: #ffd23f;
+  }
+  * { margin: 0; box-sizing: border-box; }
+  html, body { width: 1584px; height: 396px; overflow: hidden; }
+  body { position: relative; font-family: "Anybody", sans-serif; color: var(--ice); background: var(--space); }
+  canvas.field { position: absolute; inset: 0; width: 1584px; height: 396px; image-rendering: pixelated; }
+  .v { display: none; position: absolute; inset: 0; }
+  body[data-v="a"] .va, body[data-v="b"] .vb, body[data-v="c"] .vc { display: block; }
+  .tag {
+    display: inline-flex; align-items: center; gap: 12px;
+    background: var(--pink); color: var(--navy);
+    font-weight: 800; font-stretch: 120%; font-size: 22px; letter-spacing: .04em; text-transform: uppercase;
+    padding: 12px 20px; box-shadow: 6px 6px 0 var(--navy);
+  }
+  .tag svg { width: 20px; height: 20px; }
+
+  /* A: the wall of real work on the dither field */
+  .va .copy { position: absolute; left: 430px; top: 40px; width: 520px; }
+  .va .kicker {
+    display: inline-block; background: var(--lime); color: var(--navy); font-weight: 800; font-stretch: 125%;
+    font-size: 16px; letter-spacing: .08em; text-transform: uppercase; padding: 6px 12px; transform: rotate(-2deg);
+  }
+  .va .role {
+    margin-top: 14px; font-weight: 850; font-stretch: 58%; font-size: 80px; line-height: .86; text-transform: uppercase;
+    text-shadow: 0 4px 0 var(--navy);
+  }
+  .va .tag { position: absolute; left: 430px; top: 314px; }
+  .wall-wrap { position: absolute; left: 905px; top: -6px; width: 700px; height: 520px; perspective: 1100px; }
+  .wall {
+    position: absolute; inset: 0; display: grid; grid-template-columns: repeat(3, 196px); gap: 22px;
+    align-content: start; padding: 54px 0 0 20px;
+    transform: rotateX(14deg) rotateY(-24deg) rotateZ(-6deg); transform-style: preserve-3d;
+  }
+  .wall > :nth-child(3n+2) { margin-top: 64px; }
+  .wall > :nth-child(3n+3) { margin-top: 18px; }
+  .tile { position: relative; background: var(--ice); border: 3px solid var(--navy); box-shadow: 8px 8px 0 var(--navy); }
+  .tile img { display: block; width: 100%; aspect-ratio: 16 / 10; object-fit: cover; }
+  .tile b {
+    position: absolute; left: -3px; top: -26px; padding: 4px 10px; font-size: 13px; font-weight: 800; font-stretch: 120%;
+    letter-spacing: .05em; text-transform: uppercase; color: var(--navy); border: 3px solid var(--navy); border-bottom: 0;
+  }
+  .tile.phone { background: var(--orange); }
+  .tile.phone img { object-fit: contain; padding: 6px 0; }
+
+  /* B: space remix of the old banner, printed in the site's inks */
+  .vb .name {
+    position: absolute; left: 236px; top: 24px; white-space: nowrap; font-weight: 900; font-stretch: 130%;
+    font-size: 116px; line-height: .9; letter-spacing: -.01em; text-transform: uppercase;
+    background: linear-gradient(180deg, #ffffff 0%, var(--ice) 45%, #9aa4ff 100%); -webkit-background-clip: text; color: transparent;
+    filter: drop-shadow(0 0 18px rgba(36, 51, 255, .55));
+  }
+  .vb .role {
+    position: absolute; left: 242px; top: 136px; font-weight: 800; font-stretch: 72%; font-size: 50px; letter-spacing: .07em;
+    text-transform: uppercase; color: var(--pink);
+  }
+  .vb .tag { position: absolute; left: 440px; top: 240px; background: var(--ice); box-shadow: 8px 8px 0 var(--pink); font-size: 30px; padding: 15px 24px; gap: 16px; }
+  .vb .tag i { font-style: normal; color: var(--cobalt); }
+
+  /* C: the fitted name, frozen mid-wave */
+  .vc { background: var(--cobalt); }
+  .vc::before {
+    content: ""; position: absolute; inset: 0;
+    background: repeating-linear-gradient(135deg, rgba(255,255,255,.06) 0 2px, transparent 2px 10px);
+  }
+  .vc .fit {
+    position: absolute; left: 40px; top: 14px; white-space: nowrap; font-weight: 900; line-height: .8;
+    text-transform: uppercase; color: var(--ice); text-shadow: 7px 7px 0 var(--navy);
+  }
+  .vc .fit span { display: inline-block; }
+  .vc .row { position: absolute; left: 430px; right: 48px; top: 268px; display: flex; align-items: center; gap: 26px; }
+  .vc .role { font-weight: 850; font-stretch: 62%; font-size: 52px; line-height: .9; text-transform: uppercase; }
+  .vc .tools { margin-left: auto; text-align: right; font-weight: 800; font-stretch: 120%; font-size: 15px; letter-spacing: .08em; text-transform: uppercase; line-height: 1.55; }
+  .vc .tools i { font-style: normal; color: var(--pink); }
+  .vc .sticker {
+    position: absolute; right: 44px; top: 214px; width: 132px; height: 132px; border-radius: 50%;
+    background: var(--pink); color: var(--navy); display: grid; place-content: center; text-align: center;
+    transform: rotate(-10deg); font-weight: 800; text-transform: uppercase; box-shadow: 5px 5px 0 var(--navy);
+  }
+  .vc .sticker small { font-size: 13px; font-stretch: 120%; letter-spacing: .06em; line-height: 1.1; }
+  .vc .sticker b { font-size: 40px; line-height: 1; }
+</style>
+</head>
+<body>
+<canvas class="field" width="528" height="132"></canvas>
+
+<div class="v va">
+  <div class="copy">
+    <span class="kicker">Web · Mobile · AI</span>
+    <p class="role">Full-stack<br>product<br>engineer</p>
+  </div>
+  <span class="tag">muszarski.com <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M7 17 17 7M8 7h9v9"/></svg></span>
+  <div class="wall-wrap"><div class="wall">
+    <div class="tile"><b style="background:#2433ff;color:#eef0ff">This site</b><img src="../../../../../apps/web/public/media/work/thumb/this-site-en.webp"></div>
+    <div class="tile phone"><b style="background:#ff5b1f">Linkoglot</b><img src="../../../../../apps/web/public/media/linkoglot/camera-poster.webp"></div>
+    <div class="tile"><b style="background:#ffd23f">yws.lu</b><img src="../../../../../apps/web/public/media/work/thumb/yws.webp"></div>
+    <div class="tile"><b style="background:#c9f24a">Malatro</b><img src="../../../../../apps/web/public/media/work/thumb/malatro.webp"></div>
+    <div class="tile"><b style="background:#eef0ff">Space folio</b><img src="../../../../../apps/web/public/media/work/thumb/space-portfolio.webp"></div>
+  </div></div>
+</div>
+
+<div class="v vb">
+  <p class="name">Muszarski</p>
+  <p class="role">Full-stack product engineer</p>
+  <span class="tag">New portfolio is out <i>✦</i> muszarski.com</span>
+</div>
+
+<div class="v vc">
+  <p class="fit" data-fit>Muszarski</p>
+  <div class="row">
+    <p class="role">Full-stack<br>product engineer</p>
+    <span class="tag">muszarski.com <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M7 17 17 7M8 7h9v9"/></svg></span>
+  </div>
+  <div class="sticker"><small>Shipping<br>since</small><b>2022</b></div>
+</div>
+
+<script>
+const v = new URLSearchParams(location.search).get("v") || "a";
+document.body.dataset.v = v;
+
+const COMMON = `precision highp float;
+uniform vec2 u_res;
+vec2 g(vec2 p){p=vec2(dot(p,vec2(127.1,311.7)),dot(p,vec2(269.5,183.3)));return fract(sin(p)*43758.5453)*2.-1.;}
+float n(vec2 p){vec2 i=floor(p),f=fract(p),u=f*f*(3.-2.*f);
+  return mix(mix(dot(g(i),f),dot(g(i+vec2(1,0)),f-vec2(1,0)),u.x),mix(dot(g(i+vec2(0,1)),f-vec2(0,1)),dot(g(i+vec2(1,1)),f-vec2(1,1)),u.x),u.y);}
+float fbm(vec2 p){float s=0.,a=.5;for(int k=0;k<5;k++){s+=a*n(p);p=mat2(1.6,1.2,-1.2,1.6)*p;a*=.5;}return s;}
+float b2(vec2 a){a=floor(a);return fract(a.x*.5+a.y*a.y*.75);}
+float b8(vec2 a){return (b2(.25*a)*.25+b2(.5*a))*.25+b2(a);}
+float h1(vec2 p){return fract(sin(dot(p,vec2(12.9898,78.233)))*43758.5453);}
+`;
+
+// A: the All projects dither field, gathered behind the wall (right) and dark behind the words.
+const FRAG_A = COMMON + `void main(){
+  vec2 c=gl_FragCoord.xy;
+  vec2 p=c/90.;
+  float t=41.;
+  vec2 q=vec2(fbm(p+vec2(t*.06,0.)),fbm(p+vec2(5.2,1.3)-t*.05));
+  float f=fbm(p+1.7*q+vec2(0.,t*.03))*1.7+.5;
+  vec2 d=(c-vec2(400.,70.))/vec2(190.,120.);
+  float focus=exp(-dot(d,d)*1.4);
+  float v=clamp(f*(.12+1.1*focus)-.04,0.,1.);
+  float warm=smoothstep(.35,.65,fbm(p*.6-q+vec2(3.,7.))+.5);
+  vec3 ink=mix(vec3(1.,.31,.722),vec3(1.,.357,.122),warm*.8);
+  float x=v*3.+b8(c)-.5;
+  float l=clamp(floor(x+.5),0.,3.);
+  vec3 col=l<.5?vec3(.027,.031,.11):l<1.5?vec3(.078,.098,.33):l<2.5?vec3(.141,.2,1.):ink;
+  gl_FragColor=vec4(col,1.);
+}`;
+
+// B: a planet rising under a sunburst, as in the old banner, printed through the same 8x8 dither in six inks.
+const FRAG_B = COMMON + `void main(){
+  vec2 c=gl_FragCoord.xy;
+  vec2 ctr=vec2(500.,-200.);
+  float R=300.;
+  vec2 d=c-ctr;
+  float r=length(d);
+  float v=0.;
+  // stars
+  float s=h1(floor(c));
+  if(s>.992) v=.42+.5*step(.998,s);
+  vec2 sun=vec2(428.,97.);
+  vec2 sd=c-sun;
+  float sr=length(sd);
+  if(r<R){
+    vec3 nrm=vec3(d/R,sqrt(max(0.,1.-dot(d,d)/(R*R))));
+    vec3 L=normalize(vec3(-.62,.55,.32));
+    float lam=dot(nrm,L);
+    vec2 uv=nrm.xy/(nrm.z+.6)*2.4;
+    float land=fbm(uv*1.3+vec2(3.1,1.7));
+    float isLand=step(.06,land);
+    float day=smoothstep(-.05,.35,lam);
+    float base=mix(.17,.36,isLand);
+    v=base*day+.02;
+    // city lights on the night side
+    float city=step(.86,h1(floor(c/2.)))*isLand*(1.-smoothstep(-.1,.05,lam));
+    v=max(v,city*.62);
+    // lit rim
+    float rim=pow(1.-nrm.z,3.)*smoothstep(-.2,.6,lam);
+    v=max(v,.3+rim*.45*step(.2,rim));
+  } else {
+    // atmosphere outside the limb, hotter toward the sun
+    float a=exp(-(r-R)/9.);
+    float toward=smoothstep(.0,1.,dot(normalize(d),normalize(sun-ctr)));
+    v=max(v,a*(.36+.32*toward));
+  }
+  // sunburst: core, halo, rays
+  float core=exp(-sr*sr/30.);
+  float halo=exp(-sr/26.);
+  float ang=atan(sd.y,sd.x);
+  float rays=pow(abs(sin(ang*7.+.4)),18.)*exp(-sr/70.)+pow(abs(sin(ang*3.-.8)),30.)*exp(-sr/120.);
+  v=max(v,clamp(core*1.2+halo*.72+rays*.6,0.,1.));
+  // a long flare streak
+  v=max(v,exp(-abs(sd.y)/1.4)*exp(-abs(sd.x)/90.)*.62);
+  v=clamp(v,0.,1.);
+  float x=v*5.+b8(c)-.5;
+  float l=clamp(floor(x+.5),0.,5.);
+  vec3 col=l<.5?vec3(.027,.031,.11):l<1.5?vec3(.078,.098,.33):l<2.5?vec3(.141,.2,1.):l<3.5?vec3(1.,.31,.722):l<4.5?vec3(1.,.357,.122):vec3(.933,.941,1.);
+  gl_FragColor=vec4(col,1.);
+}`;
+
+function draw(frag) {
+  const canvas = document.querySelector("canvas.field");
+  const gl = canvas.getContext("webgl", { preserveDrawingBuffer: true });
+  if (!gl) { document.title = "nogl"; return; }
+  const sh = (type, src) => { const s = gl.createShader(type); gl.shaderSource(s, src); gl.compileShader(s);
+    if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) throw new Error(gl.getShaderInfoLog(s)); return s; };
+  const prog = gl.createProgram();
+  gl.attachShader(prog, sh(gl.VERTEX_SHADER, "attribute vec2 a;void main(){gl_Position=vec4(a,0.,1.);}"));
+  gl.attachShader(prog, sh(gl.FRAGMENT_SHADER, frag));
+  gl.linkProgram(prog);
+  if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) throw new Error(gl.getProgramInfoLog(prog));
+  gl.useProgram(prog);
+  const buf = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 3, -1, -1, 3]), gl.STATIC_DRAW);
+  const loc = gl.getAttribLocation(prog, "a");
+  gl.enableVertexAttribArray(loc);
+  gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
+  gl.uniform2f(gl.getUniformLocation(prog, "u_res"), canvas.width, canvas.height);
+  gl.viewport(0, 0, canvas.width, canvas.height);
+  gl.drawArrays(gl.TRIANGLES, 0, 3);
+}
+
+// C: the hero's fitted name, frozen mid-wave: each letter a different width, the line fitted to the banner.
+function fitName() {
+  const el = document.querySelector("[data-fit]");
+  const text = el.textContent.trim();
+  el.textContent = "";
+  [...text].forEach((ch, i) => {
+    const s = document.createElement("span");
+    s.textContent = ch;
+    const w = 100 + 36 * Math.sin(i * 0.75 + 0.3);
+    s.style.fontStretch = `${Math.max(50, Math.min(150, w)).toFixed(0)}%`;
+    el.append(s);
+  });
+  const target = 1584 - 80 - 0;
+  let size = 200;
+  el.style.fontSize = size + "px";
+  for (let k = 0; k < 30; k++) {
+    const w = el.getBoundingClientRect().width;
+    size *= target / w;
+    el.style.fontSize = size.toFixed(2) + "px";
+  }
+}
+
+document.fonts.ready.then(() => {
+  if (v === "a") draw(FRAG_A);
+  if (v === "b") draw(FRAG_B);
+  if (v === "c") { document.querySelector("canvas.field").style.display = "none"; fitName(); }
+  document.body.dataset.ready = "1";
+});
+</script>
+</body>
+</html>
