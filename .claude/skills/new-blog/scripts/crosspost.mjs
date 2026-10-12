@@ -133,9 +133,15 @@ function mediumPublish() {
   return { title, subtitle, topics };
 }
 
-/** dev.to tags: lowercase letters and digits, at most 4. `showdev` is its tag for "I built this". */
+/**
+ * dev.to tags: lowercase letters and digits, its maximum of 4, always all used [owner 2026-10-12]: the post's tags
+ * first, then broad ones. `showdev` is its tag for "I built this".
+ */
 const DEVTO_TAG = { "case-study": "showdev" };
-const devtoTags = [...new Set(meta.tags.map((tag) => DEVTO_TAG[tag] ?? tag.replace(/[^a-z0-9]/g, "")))].filter(Boolean).slice(0, 4);
+const DEVTO_TAG_FILL = ["webdev", "frontend", "programming", "javascript"];
+const devtoTags = [...new Set([...meta.tags.map((tag) => DEVTO_TAG[tag] ?? tag.replace(/[^a-z0-9]/g, "")), ...DEVTO_TAG_FILL])]
+  .filter(Boolean)
+  .slice(0, 4);
 
 /**
  * dev.to series: posts about building this site read as one story there [owner 2026-10-11]. A series shows once it

@@ -77,7 +77,8 @@ new one) and re-verifies. Medium copies are edited by hand: tell the owner exact
   them", "the site you are on").
 - Opens with "This post first appeared on my site…"; every internal link absolute to muszarski.com.
 - Every picture keeps its alt text and caption; every clip is either its YouTube embed or its poster linking home.
-- dev.to tags: max 4, lowercase alphanumeric (`case-study` → `showdev`); cover = the post's OG image (dev.to crops it
+- dev.to tags: its max of 4, always all used (the post's tags, then broad ones like `webdev`) [owner 2026-10-12],
+  lowercase alphanumeric (`case-study` → `showdev`); cover = the post's OG image (dev.to crops it
   to 1000 × 420: look at the top screenshot).
 - Sources list at the end, as on the site.
 - **Full AI disclosure** [owner 2026-10-11]: dev.to's label set by the API (`ai_disclosure_level: some_ai`, shown as
