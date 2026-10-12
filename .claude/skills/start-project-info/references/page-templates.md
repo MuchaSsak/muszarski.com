@@ -10,7 +10,7 @@ sessions know where to look, and replace every `<…>` with real content or `Unk
 - README.md · project-brief.md · requirements.md · technologies.md · conventions.md
 - working-agreement.md · lessons.md · open-questions.md · log.md
 - audience.md · brand.md · competitors.md
-- design-references.md · design.md · research/inspirations/<slug>.md
+- design-references.md · design.md · research/inspirations/<slug>.md (comps and the review page: `look-first.md`)
 - assets.md · structure.md · api.md · data-model.md · compliance-and-data.md
 - monetization.md · analytics.md · seo.md · i18n.md · operations.md
 
@@ -196,6 +196,8 @@ A later explicit instruction in the chat wins.
 - Nothing fake presented as real: placeholders and sample data are tracked in `open-questions.md`
   (or the page that owns them) and block any "done" / "ready for production" claim.
 - Research before design; a source behind every number shown to users.
+- A new look or a big visual change is shown as live comps (desktop + phone) for the owner to pick
+  before it is built; every version is kept (`comps/HISTORY.md`).
 - Ask only when blocked on a decision that is genuinely the owner's; otherwise take the default and say so.
 
 ## 3. Long tasks and compaction
@@ -315,6 +317,7 @@ Studied: <date> · Category: <same-category | same-feel> · Platform: <web/iOS/A
 
 ```markdown
 # Design system
+## Direction   (picked by <owner> on <YYYY-MM-DD> from comps round <N>: `comps/<file>.html`; the floor it beats; history: `comps/HISTORY.md`)
 ## Art direction   (mood, signature element — the one memorable thing)
 ## Color tokens   (| token | value | use | contrast notes |)  light + dark if both
 ## Typography   (families + licences, scale, weights, line heights)
