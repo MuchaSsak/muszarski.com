@@ -180,9 +180,9 @@ Posts are republished on dev.to and Medium for reach. The rules, in the owner's 
 - **New posts:** the `new-blog` skill suggests cross-posting at the end of every new post; the owner says yes per post.
 - **Full AI disclosure** on every copy: dev.to's AI-assisted label (API) plus a line at the end saying how the post
   was made; dev.to series "Building my portfolio" for posts about building this site [owner 2026-10-11]. On
-  Medium the last line of every story is the owner's own note [owner 2026-10-12]: "How this post was made: I wrote
-  it with Claude Code. It drafted the text from my project's wiki, code and notes. Just a quick disclaimer for y'all
-  out there :)"
+  dev.to and Medium alike the last line, after Sources, is the owner's own note [owner 2026-10-12]: "How this post
+  was made: I wrote it with Claude Code. It drafted the text from my project's wiki, code and notes. Just a quick
+  disclaimer for y'all out there :)". Medium always gets all 5 topics [owner 2026-10-12].
 - **Share it:** every post that goes out on dev.to gets a reminder to share the dev.to link on LinkedIn and Facebook
   [owner 2026-10-11].
 - How: `.claude/skills/new-blog/references/crosspost.md` (the owner's steps, Claude's steps, the quality bar);

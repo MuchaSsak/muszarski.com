@@ -16,7 +16,8 @@
       "canonical": "unchecked"
     },
     "todo": [
-      "push main so Vercel deploys the \"Also on\" badges (committed, not pushed)"
+      "push main so Vercel deploys the \"Also on\" badges (committed, not pushed)",
+      "re-publish on dev.to (--devto --publish) so its footer is the owner's AI note after Sources"
     ]
   },
   "astro-vs-nextjs-for-a-portfolio": {

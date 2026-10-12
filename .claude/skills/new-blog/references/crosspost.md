@@ -52,8 +52,8 @@ files, titles and descriptions:
    phone. Headless desktop Chrome leaves YouTube boxes blank; the phone shot and the embed check cover them.
 5. **Medium:** `--medium-page` builds the paste page from dev.to's published render (so dev.to goes first), with the
    post's share card as the first picture. Give the owner, in one message: the file path, his steps, and the four
-   "Story preview" fields the script prints (preview title ≤ 100, preview subtitle ≤ 140, preview image, up to 5
-   topics) [owner 2026-10-11: "i always should get that"]. The words come from the frontmatter, cut at a sentence,
+   "Story preview" fields the script prints (preview title ≤ 100, preview subtitle ≤ 140, preview image, always all
+   5 topics: the post's tags, then broad ones) [owner 2026-10-11: "i always should get that"; 5 topics 2026-10-12]. The words come from the frontmatter, cut at a sentence,
    never rewritten; a title over 100 falls back to `seoTitle`. When he sends the story link: `--medium <url>` checks the canonical, takes
    screenshots, records it. Look at those too.
    Medium blocks automated visits (Cloudflare 403; never work around it or solve its checks), so `--medium` reads
@@ -81,9 +81,8 @@ new one) and re-verifies. Medium copies are edited by hand: tell the owner exact
   to 1000 × 420: look at the top screenshot).
 - Sources list at the end, as on the site.
 - **Full AI disclosure** [owner 2026-10-11]: dev.to's label set by the API (`ai_disclosure_level: some_ai`, shown as
-  "AI-assisted") and the same in words at the end of the copy (`AI_NOTE`, before Sources). Medium has no label, so
-  its paste page ends with the owner's own note as the very last line, after Sources (`MEDIUM_AI_NOTE`, his words
-  [owner 2026-10-12], never reworded): "How this post was made: I wrote it with Claude Code. It drafted the text
+  "AI-assisted"), and on both platforms the same note in words as the very last line, after Sources (`AI_NOTE`, his
+  words, never reworded; one footer for dev.to and Medium [owner 2026-10-12]): "How this post was made: I wrote it with Claude Code. It drafted the text
   from my project's wiki, code and notes. Just a quick disclaimer for y'all out there :)"
 - **dev.to series** "Building my portfolio" for the posts about building this site (`SERIES` in the script; it
   shows once two of them are out). A new post about the site goes in it.

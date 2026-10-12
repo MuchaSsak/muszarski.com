@@ -112,10 +112,12 @@ const meta = {
 
 /**
  * What Medium's publish screen asks for, always handed to the owner with the paste page [owner 2026-10-11]: the
- * preview title (max 100), the preview subtitle (max 140), the preview image and up to 5 topics. Words come from the
- * post's own frontmatter, cut at a sentence, never rewritten.
+ * preview title (max 100), the preview subtitle (max 140), the preview image and always all 5 topics [owner
+ * 2026-10-12]: the post's tags first, then broad ones. Words come from the post's own frontmatter, cut at a sentence,
+ * never rewritten.
  */
 const MEDIUM_TOPIC = { "case-study": "Case Study", ai: "Claude", performance: "Web Performance", i18n: "Internationalization", a11y: "Accessibility" };
+const MEDIUM_TOPIC_FILL = ["Web Development", "Frontend Development", "Software Development", "Programming", "JavaScript"];
 function mediumPublish() {
   const title = [meta.title, meta.seoTitle].find((t) => t && t.length <= 100);
   let subtitle = meta.description ?? "";
@@ -124,7 +126,7 @@ function mediumPublish() {
   const topics = [
     ...new Set([
       ...meta.tags.map((t) => MEDIUM_TOPIC[t] ?? t.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase())),
-      "Web Development",
+      ...MEDIUM_TOPIC_FILL,
     ]),
   ].slice(0, 5);
   if (!title) fail("no title or seoTitle fits Medium's 100 characters: add a shorter seoTitle");
@@ -151,14 +153,11 @@ const series = Object.entries(SERIES).find(([, slugs]) => slugs.includes(slug))?
 
 /**
  * Full AI disclosure [owner 2026-10-11]: dev.to's own label (API `ai_disclosure_level`, "AI-Assisted": he directs and
- * approves every post, Claude Code drafts it) plus the same in words at the end, as DEV's guidelines ask.
+ * approves every post, Claude Code drafts it) plus the note in words, as DEV's guidelines ask. One note, the very last
+ * line of every copy (after Sources) on dev.to and Medium alike, in the owner's words, never reworded [owner 2026-10-12].
  */
 const AI_LEVEL = "some_ai";
 const AI_NOTE =
-  "How this post was made: I wrote it with Claude Code. It drafted the text from my project's wiki, code and notes; " +
-  "I set the direction, and reviewed and approved it before it went out.";
-/** Medium's version, the very last line of every Medium story, in the owner's words [owner 2026-10-12]. */
-const MEDIUM_AI_NOTE =
   "How this post was made: I wrote it with Claude Code. It drafted the text from my project's wiki, code and notes. " +
   "Just a quick disclaimer for y'all out there :)";
 
@@ -370,8 +369,8 @@ for (let at = 0; at < body.length; ) {
 markdown = [
   em(`This post first appeared on [my site](${pageUrl}), where the clips play and the version tabs work.`),
   markdown.replace(/\]\(\//g, `](${SITE}/`).replace(/\n{3,}/g, "\n\n").trim(),
-  `---\n\n${em(AI_NOTE)}`,
   meta.sources.length ? `## Sources\n\n${meta.sources.map((s) => `- [${s.title}](${s.url})`).join("\n")}` : "",
+  `---\n\n${em(AI_NOTE)}`,
 ]
   .filter(Boolean)
   .join("\n\n");
@@ -650,10 +649,10 @@ async function mediumPage() {
     .split(/(<pre[\s\S]*?<\/pre>)/)
     .map((part) => (part.startsWith("<pre") ? part : part.replace(/>\s+</g, "><")))
     .join("");
-  // Medium gets its own AI note, as the very last line (after Sources)
+  // the AI note, re-set as the very last line (after Sources) in Medium-friendly markup
   const before = article;
-  article = `${article.replace(/<hr>(?:<p>)?<em>How this post was made[\s\S]*?<\/em>(?:<\/p>)?/, "")}<hr><p><em>${MEDIUM_AI_NOTE}</em></p>`;
-  if (article.length >= before.length + MEDIUM_AI_NOTE.length) fail("the dev.to AI note was not found to replace: check AI_NOTE's markup");
+  article = `${article.replace(/<hr>(?:<p>)?<em>How this post was made[\s\S]*?<\/em>(?:<\/p>)?/, "")}<hr><p><em>${AI_NOTE}</em></p>`;
+  if (article.length >= before.length + AI_NOTE.length) fail("the dev.to AI note was not found to replace: check AI_NOTE's markup");
   const dir = join(tmpdir(), "crosspost-shots", slug);
   mkdirSync(dir, { recursive: true });
   const file = join(dir, "medium.html");
