@@ -185,8 +185,15 @@ Every saved text was compared with its source in the page (JS `includes`), not b
   (Cetuspro, Freelance since 2022, Neoteric with year only); Education (degree, field, activities, description); English
   (full professional); 6 certifications with working credential links; Projects (Linkoglot, PstrykWeb with Cetuspro, the
   portfolio, yws.lu with its case study link); contact info (muszarski.com as Portfolio, GitHub).
-- **Not done yet:** the remaining skills (Tailwind CSS, Astro, Expo, Playwright, Vitest, TanStack Query, Git, REST APIs,
-  WebGL, GSAP), removing the courier skills, Featured, Open to Work (recruiters only), Polish proficiency, the banner.
+- **Done in the second pass:** 11 skills added under LinkedIn's own names, each tied to the project that proves it (Tailwind
+  CSS, Astro, Expo.io, Playwright Test, Vitest, GreenSock Animation Platform (GSAP), React Three Fiber, Claude Code,
+  TanStack Query, Git, REST APIs; plain "Expo" and "Playwright" are not in the list); the 6 courier skills removed (36 left);
+  English set to Full professional (`cv.ts`: fluent); Open to Work for recruiters only with 5 titles (Full Stack Engineer,
+  Frontend Developer, Javascript Developer, Software Engineer, Mobile Application Developer: LinkedIn maps "Full Stack
+  Developer" and "React Developer" onto these), Hybrid + Remote, Poland + Pomorskie, Full-time + Contract, no job alerts;
+  Featured: muszarski.com, the yws.lu case study, the build case study (`?ref=linkedin`, thumbnail uploaded from the share card
+  after LinkedIn's fetch failed), the Linkoglot post, the CV page; the site-style banner (the old space banner is kept only
+  as a screenshot in the session scratchpad).
 - **The owner's own steps:** delete the courier role and the primary school, a clear headshot, recommendations, connection
   growth, following target companies, the months for Neoteric and Freelance.
 
@@ -200,6 +207,9 @@ Every saved text was compared with its source in the page (JS `includes`), not b
   timers until forms stop loading. Open forms by URL (`/in/<slug>/edit/forms/project/new/`,
   `/in/<slug>/skills/edit/forms/new/`, `/in/<slug>/edit/forms/contact-info/new/`) and keep the tab in front.
 - Company pages share names (three "Neoteric" pages); check the logo and the URL before saving.
+- Skills, job titles and Featured links come from LinkedIn's lists and fetches: search the term first and take the exact
+  match. A Featured link preview often fails once ("Try again" works); a saved item can still lose its image, and the
+  thumbnail pencil takes an upload.
 - Always Skip the "share this", "connect with people" and recommendation prompts.
 
 ## Not verified / gaps
