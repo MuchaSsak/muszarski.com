@@ -276,10 +276,17 @@ reload.
     `data/site.ts` (`sameAs`, the footer, llms.txt) now points to `facebook.com/muszarski`. The old `profile.php?id=` URL and
     the `m.me/<id>` Messenger link still work.
   - **Links, Public:** Portfolio `https://muszarski.com/` (was `http://`), GitHub, LinkedIn.
+  - **Current city** Starogard Gdański [owner], Public.
+  - **Work, Public:** Self-Employed, Freelance Full-Stack Developer, 2022 to now (`cv.ts` "Freelance and own projects");
+    cetuspro.com - Software & Technology, Full-Stack Developer Intern, June 2026 to now; Neoteric (the neoteric.eu page,
+    Gdańsk; four other "Neoteric" pages exist), Full-Stack Developer Intern, "In 2026". Facebook rejects the same start and
+    end year, and `cv.ts` has no months, so Neoteric has a start year only. Descriptions from `cv.ts`. Facebook lists current
+    jobs by start date, so the intro features Self-Employed, with its own "4 years, 9 months" count from January 2022.
+  - **Education:** Zespół Szkół Ekonomicznych w Starogardzie Gdańskim (high school), no years (`cv.ts`: in progress). The
+    high-school form has no field for the programmer technician track.
   - **Kept:** the owner's own bio (role, open to work, muszarski.com); pro mode off; contact details on Only me.
-- **Pending (needs the tab in front):** current city Starogard Gdański [owner]; Work: Cetuspro and Neoteric as Full-Stack
-  Developer Intern, Freelance since 2022; Education: Technikum nr 1 im. Noblistów Polskich, Starogard Gdański, programmer
-  technician (the LinkedIn wording).
+  - Every "Share on Feed now?" after an About save was answered No. The public view (`?viewas=100000686899395`) shows the
+    cover, bio, city, work, school and the three links.
 - **The owner's own steps:** Limit Past Posts (one-way), tag and timeline review, the audience of old profile and cover
   photos, a look at the public view, 3-5 groups from rule 15, the same clear headshot as LinkedIn.
 
@@ -288,7 +295,11 @@ reload.
 - The About page lives at `?sk=directory_intro`, `directory_personal_details`, `directory_work`, `directory_education`,
   `directory_links`, `directory_contact_info` and `directory_names`. `m.facebook.com` redirects to `www`.
 - In a hidden tab, inline About edits, the cover's file input and Accounts Center forms work. Typeahead suggestions (city,
-  employer, school) do not select: neither a JS click, synthetic pointer events, a CDP click nor the arrow keys pick one.
+  employer, position, school, year) select only with the full sequence on the option's inner `span`: pointerover,
+  pointerenter, mouseover, mouseenter, pointermove, mousemove, then pointerdown, mousedown, pointerup, mouseup, click. A
+  plain `.click()` on the `li`, a CDP click and the arrow keys do nothing. Saves are slow in a hidden tab (seconds to
+  half a minute); a failed save shows its reason in a `[role=dialog]` outside the form.
+- Each About save asks "Share on Feed now?" inside the section; answer No.
 - Fill text with `document.execCommand('insertText')` on the focused field, as on LinkedIn.
 - Post text is scrambled in `innerText` (letters split with joiners); read posts by `aria-posinset` and their buttons.
 
