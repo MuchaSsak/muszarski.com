@@ -287,8 +287,24 @@ reload.
   - **Kept:** the owner's own bio (role, open to work, muszarski.com); pro mode off; contact details on Only me.
   - Every "Share on Feed now?" after an About save was answered No. The public view (`?viewas=100000686899395`) shows the
     cover, bio, city, work, school and the three links.
-- **The owner's own steps:** Limit Past Posts (one-way), tag and timeline review, the audience of old profile and cover
-  photos, a look at the public view, 3-5 groups from rule 15, the same clear headshot as LinkedIn.
+- **Third pass, same day [owner: "the posts should be for public and for tech people to see", "just keep the posts of me
+  sharing blogs"]:**
+  - Privacy: default audience for new posts Friends → Public; posts he's tagged in, on his profile, Friends of friends →
+    Friends; timeline review on (tag review was already on); search engines stay on, friends list stays Only me.
+  - Limit Past Posts not used: it would turn the Public blog shares to Friends.
+  - Both blog shares (astro-vs-nextjs and the brutalist-portfolio case study, both dev.to links) are Public.
+  - The ZSE school life event (auto-posted Public, no prompt) is hidden from the profile; the cover post was already hidden.
+    The "Started new job" cards (Neoteric, Self-Employed) showed in the public view once but are in neither the Activity
+    log nor Manage posts, so they were not changed.
+  - Pinned details: Neoteric unpinned (a finished internship); Cetuspro is not offered there.
+  - Groups joined (10, about a minute apart): Praca IT TRÓJMIASTO / Jobs in IT Tricity; Praca w IT dla Stażystów i Juniorów
+    (approved); Front-end: pierwsza praca (allows job-seeking posts); Praca / Staż w IT; PRACA ZDALNA IT (answered "accept
+    the rules", declined the it-leaders.pl sign-up); Claude Code - Polska Społeczność (its posting request wants an email
+    and marketing consent to a company, so left for the owner); Claude Code (214K); React Native Community Q&A (posting
+    needs the rules tick, which would not submit in a hidden tab); Freelancerzy Polska; Programiści Polska / Developers
+    Poland. React Polska was skipped: 1 post in the last month.
+- **The owner's own steps:** answer the two participation prompts if he wants to post there, the audience of old profile
+  photos, the same clear headshot as LinkedIn, one "looking for work" post where a group allows it.
 
 ### Editing Facebook through Claude in Chrome
 
@@ -299,7 +315,13 @@ reload.
   pointerenter, mouseover, mouseenter, pointermove, mousemove, then pointerdown, mousedown, pointerup, mouseup, click. A
   plain `.click()` on the `li`, a CDP click and the arrow keys do nothing. Saves are slow in a hidden tab (seconds to
   half a minute); a failed save shows its reason in a `[role=dialog]` outside the form.
-- Each About save asks "Share on Feed now?" inside the section; answer No.
+- Each About save asks "Share on Feed now?" inside the section; answer No. Education saves post a life event anyway.
+- Audience dialogs in a hidden tab often stay open after Save and stay in the DOM. A later `find` then picked a stale
+  dialog, and one save landed on the wrong post (two blog shares changed audience; both restored). Reload before every
+  audience edit, assert exactly one "Select audience" dialog after opening it, find the post by its text (`aria-posinset`
+  changes between loads), and verify after a reload.
+- The profile feed loads one or two posts in a hidden tab; the Activity log (`/<id>/allactivity`) lists every post with
+  its audience and a "Hide from profile" item.
 - Fill text with `document.execCommand('insertText')` on the focused field, as on LinkedIn.
 - Post text is scrambled in `innerText` (letters split with joiners); read posts by `aria-posinset` and their buttons.
 
