@@ -18,5 +18,13 @@
     "todo": [
       "push main so Vercel deploys the \"Also on\" badges (committed, not pushed)"
     ]
+  },
+  "astro-vs-nextjs-for-a-portfolio": {
+    "devto": {
+      "id": 4836706,
+      "url": "https://dev.to/muchassak/astro-vs-nextjs-for-a-portfolio-or-a-landing-page-22jh-temp-slug-3910919",
+      "published": false,
+      "updated": "2026-10-12"
+    }
   }
 }
