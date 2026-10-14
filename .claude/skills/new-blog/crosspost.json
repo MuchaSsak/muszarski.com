@@ -42,6 +42,11 @@
     },
     "todo": [
       "owner: paste on Medium, then send the story link (--medium <url>)"
-    ]
+    ],
+    "medium": {
+      "url": "https://medium.com/@mateusz_muszarski/expo-in-2026-whats-new-and-how-it-compares-to-xcode-and-android-studio-4471122bee4c",
+      "published": "2026-10-14",
+      "canonical": "unchecked"
+    }
   }
 }

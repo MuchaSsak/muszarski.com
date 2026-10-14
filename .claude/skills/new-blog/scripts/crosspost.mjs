@@ -229,7 +229,14 @@ if (mode.medium) {
   console.log(`! Medium blocks automated visits (${res.status}): checked through the author's RSS feed instead.`);
   const user = url.match(/medium\.com\/(@[\w.-]+)/)?.[1];
   const feed = user ? await (await fetch(`https://medium.com/feed/${user}`)).text() : "";
-  const item = feed.split("<item>").slice(1).find((it) => it.includes(meta.title)) ?? "";
+  // Find the story by the id at the end of its URL; Medium curls the title's quotes ("what's" → "what’s", 2026-10-14).
+  const storyId = url.match(/-([0-9a-f]{8,16})(?:[?#/]|$)/)?.[1];
+  const plain = (s) => s.replace(/[‘’]/g, "'").replace(/[“”]/g, '"');
+  const item =
+    feed
+      .split("<item>")
+      .slice(1)
+      .find((it) => (storyId && it.includes(storyId)) || plain(it).includes(plain(meta.title))) ?? "";
   const content = item.match(/<content:encoded><!\[CDATA\[([\s\S]*?)\]\]>/)?.[1] ?? "";
   const postImages = (rest.match(/^import \w+ from "~\/assets\//gm) ?? []).length; // a floor: a poster may become a video
   const checks = [
@@ -679,10 +686,11 @@ async function mediumPage() {
         : `<blockquote><p>${[...inner.matchAll(/<p>([\s\S]*?)<\/p>/g)].map((m) => m[1].trim()).join("<br>")}</p></blockquote>`,
     )
     .replace(/<p>\s*<\/p>/g, "");
-  // whitespace between tags pastes as empty paragraphs; code keeps its line breaks
+  // whitespace between tags pastes as empty paragraphs; code keeps its line breaks but not its blank lines, which
+  // Medium splits into separate code blocks (the Expo post's example came out as two, 2026-10-14)
   article = article
     .split(/(<pre[\s\S]*?<\/pre>)/)
-    .map((part) => (part.startsWith("<pre") ? part : part.replace(/>\s+</g, "><")))
+    .map((part) => (part.startsWith("<pre") ? part.replace(/\n[ \t]*(?=\n)/g, "") : part.replace(/>\s+</g, "><")))
     .join("");
   // the AI note, re-set as the very last line (after Sources) in Medium-friendly markup
   const before = article;
