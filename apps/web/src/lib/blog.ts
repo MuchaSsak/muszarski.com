@@ -41,6 +41,7 @@ export const BLOG_COVERS = [
   "rocket",
   "tap",
   "anchor",
+  "twins",
 ] as const;
 export type BlogCover = (typeof BLOG_COVERS)[number];
 

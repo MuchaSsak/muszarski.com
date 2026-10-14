@@ -151,6 +151,10 @@ Launch set, in priority order:
 Published after the launch set: the yws.lu case study (2026-10-09, `/blog/yws-lu-case-study/` in en + pl, query
 "Next.js to Astro migration"), a client site with rights `ok`; its facts come only from the yws.lu handover
 (`portfolio-case-study.md`, `REPORT.md`), kept outside the repo in the gitignored `.case-study/`.
+Then "Expo in 2026" (2026-10-14, `/blog/expo-react-native-vs-native/`, pl `expo-react-native-czy-natywnie`, queries
+"Expo vs native", "React Native vs Xcode / Android Studio" [owner: "a good blog about expo in 2026/2027"]): what changed
+SDK 54 → 58 beta, Expo UI, EAS, and the native trade-offs, told through Linkoglot (built on Windows, no Xcode). Pillar:
+building products solo. Its year is in the title, not the slug, so a 2027 refresh updates it in place.
 
 Pillars:
 - AI-assisted dev with Claude Code

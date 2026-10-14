@@ -12,7 +12,7 @@ and the prose points at it instead of repeating it.
 | Show motion (hover, a shader, an animation, a flow through the UI) | `Clips` | ≤ 6 s, muted loop, 960×600; `dir="/media/blog/<key>/"` for articles |
 | A whole film with sound (a walkthrough, a film made for the client) | `Film` | one per post, near the top; 1920×1080 AV1 + H.264 with AAC in `public/media/blog/<key>/`, a WebP poster in `src/assets/blog/<key>/`; plays in a dialog only on click |
 | Explain a process or a pipeline | `Flow` | 3-7 steps: icon, short title, one line; `loop` for a cycle. Icons are `IconName`s from `src/lib/icons.gen.ts` (new ones: `scripts/icons.mjs`, then `bun run icons`) |
-| Compare options | a Markdown table | the rejected option in the table is half the story |
+| Compare options | a Markdown table | the rejected option in the table is half the story. Every cell is at least 8rem wide (`prose.css`), so on a phone 3+ columns scroll and a long last column squeezes into tall rows: long text gets 2 columns (fold the short facts into the first, as in the Expo post's SDK table), short cells can take 4 |
 | Two scores across many items | `Matrix` | a real table (screen readers), the sweet spot hatched, not colour alone |
 | Versions over time | `Timeline` | date, verdict stamp (`tone`: yes / no / plain), one line; a screenshot or a cover motif |
 | One part through its rounds | `Versions` | tabs: screenshot, the decision, why it changed |

@@ -20,6 +20,8 @@
 | Code | private. The stripped public snapshot `MuchaSsak/language-ai` (AI keys client-side via `EXPO_PUBLIC_*`) was **made private by the owner on 2026-10-05**; key rotation and the shipped app's keys are still open (Q37) | [research], [user] |
 | Spin-off | its `scripts/translate-llm.js` grew into the npm package **`lingui-translate-ai`** (v1.1.0) | [research] |
 | Style note | the pstryk coding guidelines call Linkoglot "the matured style" | [repo: context/pstryk-turborepo] |
+| Why Expo (Q-L6) | he knew React + TypeScript; one codebase for two stores; tooling speed (dev builds, EAS); Expo-ready libraries | [user 2026-10-14] |
+| Machine | built and shipped from a **Windows PC**; never opened Xcode or Android Studio (iOS builds on EAS). Bought an iPhone to test next to his Android phone: "expo go sucks and you need those dev builds" | [user 2026-10-14] |
 
 ## Card candidates
 

@@ -31,5 +31,10 @@
     "todo": [
       "owner: paste on Medium, then send the story link (--medium <url>)"
     ]
+  },
+  "expo-react-native-vs-native": {
+    "todo": [
+      "owner: push main so the post deploys; then dev.to (not before 2026-10-15, 3 days after the last) and the LinkedIn post"
+    ]
   }
 }

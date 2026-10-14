@@ -49,6 +49,7 @@ const PALETTE: Record<BlogCover, readonly [string, string, string]> = {
   rocket: [PINK, NAVY, LIME],
   tap: [COBALT, ICE, YELLOW],
   anchor: [PINK, NAVY, ICE],
+  twins: [NAVY, ICE, PINK],
 };
 const [bg, fg, pop] = PALETTE[cover];
 
@@ -539,6 +540,29 @@ const HOUSE = {
         <path d="M346 69V196M324 92h44" stroke-width="7" />
         <path d="M308 168q38 52 76 0" stroke-width="7" />
         <path d="M300 178l8-12 12 6M392 178l-8-12-12 6" stroke-width="6" />
+      </g>
+    )
+  }
+  {
+    /* Expo in 2026: one code file, two phones (an island and a punch hole) showing the same card. */
+    cover === "twins" && (
+      <g fill="none" stroke="var(--fg)" stroke-width="5" stroke-linejoin="round" stroke-linecap="round">
+        <path d={page(34, 70, 100, 116, 22)} fill="var(--bg)" />
+        <path d={fold(34, 70, 100, 22)} />
+        <path d="M66 108l-14 14 14 14M102 108l14 14-14 14M92 102l-16 40" />
+        <path d="M54 162h58M54 174h36" stroke-width="4" />
+        <path d="M142 104q14-38 46-42" stroke-dasharray="7 6" stroke-width="4" />
+        <path d="M180 54l9 8-9 8" stroke-width="4" />
+        <path d="M142 152q64 62 140 44" stroke-dasharray="7 6" stroke-width="4" />
+        <path d="M272 186l11 9-9 11" stroke-width="4" />
+        <rect x="198" y="26" width="80" height="154" rx="16" fill="var(--pop)" />
+        <rect x="222" y="36" width="32" height="9" rx="4.5" fill="var(--fg)" stroke="none" />
+        <rect x="212" y="70" width="52" height="66" fill="var(--bg)" stroke-width="4" />
+        <path d="M224 96h28M224 110h18" stroke-width="4" />
+        <rect x="296" y="66" width="80" height="154" rx="10" fill="var(--bg)" />
+        <circle cx="336" cy="80" r="4.5" fill="var(--fg)" stroke="none" />
+        <rect x="310" y="110" width="52" height="66" fill="var(--pop)" stroke-width="4" />
+        <path d="M322 136h28M322 150h18" stroke-width="4" />
       </g>
     )
   }

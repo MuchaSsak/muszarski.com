@@ -7,7 +7,7 @@ published: 2026-10-06
 updated: 2026-10-08
 tags: [react, i18n, ai]
 cover: rocket
-related: [lingui-translate-ai, lingui-vs-i18next, this-site]
+related: [expo-native, lingui-translate-ai, this-site]
 sources:
   - title: "Continuous Native Generation (Expo docs)"
     url: "https://docs.expo.dev/workflow/continuous-native-generation/"
@@ -111,7 +111,7 @@ The UI is NativeWind with React Native Reusables.
 
 Expo calls its approach Continuous Native Generation: "short-lived native projects are generated only when needed". Hand edits to those folders can be lost on the next `npx expo prebuild --clean`, so changes belong in config plugins. Even Linkoglot's one native extra, an iOS Notification Service Extension for push notifications, is generated: `@bacons/apple-targets` builds it during prebuild from a `targets/` folder.
 
-The development build (the app compiled with `expo-dev-client`) matters for payments too. RevenueCat's Expo guide warns that in Expo Go the SDK swaps native calls for mock APIs, and "real purchases will not function in this mode".
+The development build (the app compiled with `expo-dev-client`) matters for payments too. RevenueCat's Expo guide warns that in Expo Go the SDK swaps native calls for mock APIs, and "real purchases will not function in this mode". Why I picked Expo over Xcode and Android Studio, and what changed in it since, is in [Expo in 2026](/en/blog/expo-react-native-vs-native/).
 
 ## What should the database decide, not the phone?
 

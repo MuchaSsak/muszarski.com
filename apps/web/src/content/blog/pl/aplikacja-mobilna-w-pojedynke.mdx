@@ -7,7 +7,7 @@ published: 2026-10-06
 updated: 2026-10-08
 tags: [react, i18n, ai]
 cover: rocket
-related: [lingui-translate-ai, lingui-vs-i18next, this-site]
+related: [expo-native, lingui-translate-ai, this-site]
 sources:
   - title: "Continuous Native Generation (Expo docs)"
     url: "https://docs.expo.dev/workflow/continuous-native-generation/"
@@ -111,7 +111,7 @@ Interfejs to NativeWind z React Native Reusables.
 
 Expo nazywa to podejście Continuous Native Generation: krótko żyjące projekty natywne powstają tylko wtedy, gdy są potrzebne. Ręczne zmiany w tych folderach mogą przepaść przy następnym `npx expo prebuild --clean`, więc zmiany wpisuje się w config pluginy. Nawet jedyny natywny dodatek Linkoglota, rozszerzenie iOS Notification Service Extension do powiadomień push, jest generowany: `@bacons/apple-targets` tworzy go podczas prebuildu z folderu `targets/`.
 
-Development build (aplikacja skompilowana z `expo-dev-client`) ma znaczenie także dla płatności. Poradnik RevenueCat dla Expo ostrzega, że w Expo Go SDK podmienia wywołania natywne na atrapy (mock API), a prawdziwe zakupy w tym trybie nie działają.
+Development build (aplikacja skompilowana z `expo-dev-client`) ma znaczenie także dla płatności. Poradnik RevenueCat dla Expo ostrzega, że w Expo Go SDK podmienia wywołania natywne na atrapy (mock API), a prawdziwe zakupy w tym trybie nie działają. Dlaczego wybrałem Expo zamiast Xcode i Android Studio i co zmieniło się w nim od tamtej pory, piszę w [Expo w 2026](/pl/blog/expo-react-native-czy-natywnie/).
 
 ## O czym ma decydować baza, a nie telefon?
 

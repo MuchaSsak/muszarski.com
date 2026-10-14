@@ -1,0 +1,268 @@
+---
+title: "Expo in 2026: what's new, and how it compares to Xcode and Android Studio"
+seoTitle: "Expo vs native in 2026: React Native, Xcode, Android Studio"
+description: "I shipped an app to both stores from Windows, without Xcode. What changed in Expo up to the SDK 58 beta, what Expo UI does, and when native still wins."
+translationKey: "expo-native"
+published: 2026-10-14
+tags: [react, performance]
+cover: twins
+related: [solo-app, astro-vs-next, claude-code-building-blocks]
+sources:
+  - title: "Get Started with React Native (React Native docs)"
+    url: "https://reactnative.dev/docs/environment-setup"
+    accessed: 2026-10-14
+  - title: "State of React Native 2025: architecture and frameworks"
+    url: "https://results.stateofreactnative.com/en-US/react-native-architecture/"
+    accessed: 2026-10-14
+  - title: "State of React Native 2025: build and publish"
+    url: "https://results.stateofreactnative.com/en-US/build-and-publish/"
+    accessed: 2026-10-14
+  - title: "Expo pricing"
+    url: "https://expo.dev/pricing"
+    accessed: 2026-10-14
+  - title: "EAS Build (Expo docs)"
+    url: "https://docs.expo.dev/build/introduction/"
+    accessed: 2026-10-14
+  - title: "You don't need a Mac to develop iOS apps (Expo blog)"
+    url: "https://expo.dev/blog/build-ios-apps-on-windows-with-cloud-simulators"
+    accessed: 2026-10-14
+  - title: "Development builds FAQ (Expo docs)"
+    url: "https://docs.expo.dev/develop/development-builds/faq/"
+    accessed: 2026-10-14
+  - title: "Notifications (Expo docs)"
+    url: "https://docs.expo.dev/versions/latest/sdk/notifications/"
+    accessed: 2026-10-14
+  - title: "Using RevenueCat with Expo (RevenueCat docs)"
+    url: "https://www.revenuecat.com/docs/getting-started/installation/expo"
+    accessed: 2026-10-14
+  - title: "Expo SDK 54 (Expo changelog)"
+    url: "https://expo.dev/changelog/sdk-54"
+    accessed: 2026-10-14
+  - title: "Expo SDK 55 (Expo changelog)"
+    url: "https://expo.dev/changelog/sdk-55"
+    accessed: 2026-10-14
+  - title: "Expo SDK 56 (Expo changelog)"
+    url: "https://expo.dev/changelog/sdk-56"
+    accessed: 2026-10-14
+  - title: "Expo SDK 57 (Expo changelog)"
+    url: "https://expo.dev/changelog/sdk-57"
+    accessed: 2026-10-14
+  - title: "Expo SDK 58 beta (Expo changelog)"
+    url: "https://expo.dev/changelog/sdk-58-beta"
+    accessed: 2026-10-14
+  - title: "React Native 0.82: A New Era (React Native blog)"
+    url: "https://reactnative.dev/blog/2025/10/08/react-native-0.82"
+    accessed: 2026-10-14
+  - title: "React Native 0.84 (React Native blog)"
+    url: "https://reactnative.dev/blog/2026/02/11/react-native-0.84"
+    accessed: 2026-10-14
+  - title: "React Compiler (React docs)"
+    url: "https://react.dev/learn/react-compiler"
+    accessed: 2026-10-14
+  - title: "Expo UI (Expo docs)"
+    url: "https://docs.expo.dev/versions/latest/sdk/ui/"
+    accessed: 2026-10-14
+  - title: "Expo UI: SwiftUI (Expo docs)"
+    url: "https://docs.expo.dev/versions/latest/sdk/ui/swift-ui/"
+    accessed: 2026-10-14
+  - title: "GlassEffect (Expo docs)"
+    url: "https://docs.expo.dev/versions/latest/sdk/glass-effect/"
+    accessed: 2026-10-14
+  - title: "Expo UI is stable (Expo blog)"
+    url: "https://expo.dev/blog/expo-ui-stable-sdk-56"
+    accessed: 2026-10-14
+  - title: "Liquid Glass (Apple Developer Documentation)"
+    url: "https://developer.apple.com/documentation/technologyoverviews/liquid-glass"
+    accessed: 2026-10-14
+  - title: "UIDesignRequiresCompatibility (Apple Developer Documentation)"
+    url: "https://developer.apple.com/documentation/bundleresources/information-property-list/uidesignrequirescompatibility"
+    accessed: 2026-10-14
+  - title: "Expo Modules API: overview (Expo docs)"
+    url: "https://docs.expo.dev/modules/overview/"
+    accessed: 2026-10-14
+  - title: "Config plugins: introduction (Expo docs)"
+    url: "https://docs.expo.dev/config-plugins/introduction/"
+    accessed: 2026-10-14
+  - title: "Native tabs (Expo Router docs)"
+    url: "https://docs.expo.dev/router/advanced/native-tabs/"
+    accessed: 2026-10-14
+  - title: "EAS Submit (Expo docs)"
+    url: "https://docs.expo.dev/submit/introduction/"
+    accessed: 2026-10-14
+  - title: "EAS Update (Expo docs)"
+    url: "https://docs.expo.dev/eas-update/introduction/"
+    accessed: 2026-10-14
+  - title: "EAS Observe is now generally available (Expo changelog)"
+    url: "https://expo.dev/changelog/eas-observe-is-now-generally-available"
+    accessed: 2026-10-14
+  - title: "EAS Observe: introduction (Expo docs)"
+    url: "https://docs.expo.dev/eas/observe/introduction/"
+    accessed: 2026-10-14
+  - title: "Expo MCP Server (Expo docs)"
+    url: "https://docs.expo.dev/eas/ai/mcp/"
+    accessed: 2026-10-14
+  - title: "The Expo MCP server is now available on the free plan (Expo changelog)"
+    url: "https://expo.dev/changelog/the-expo-mcp-server-is-now-available-on-the-free-plan"
+    accessed: 2026-10-14
+  - title: "Xcode 26 Release Notes (Apple Developer)"
+    url: "https://developer.apple.com/documentation/xcode-release-notes/xcode-26-release-notes"
+    accessed: 2026-10-14
+  - title: "Xcode 27 Release Notes (Apple Developer)"
+    url: "https://developer.apple.com/documentation/xcode-release-notes/xcode-27-release-notes"
+    accessed: 2026-10-14
+  - title: "Download Android Studio (Android Developers)"
+    url: "https://developer.android.com/studio"
+    accessed: 2026-10-14
+  - title: "Gemini in Android Studio features (Android Developers)"
+    url: "https://developer.android.com/studio/gemini/features"
+    accessed: 2026-10-14
+  - title: "Use a remote model in Android Studio (Android Developers)"
+    url: "https://developer.android.com/studio/gemini/use-a-remote-model"
+    accessed: 2026-10-14
+  - title: "Compose Multiplatform 1.8.0: iOS is stable (JetBrains blog)"
+    url: "https://blog.jetbrains.com/kotlin/2025/05/compose-multiplatform-1-8-0-released-compose-multiplatform-for-ios-is-stable-and-production-ready/"
+    accessed: 2026-10-14
+---
+
+import Flow from "~/components/blog/case/Flow.astro";
+import Shots from "~/components/blog/case/Shots.astro";
+import camera from "~/assets/blog/expo-native/camera.webp";
+import flashcards from "~/assets/blog/expo-native/flashcards.webp";
+import voice from "~/assets/blog/expo-native/voice.webp";
+
+In 2026, Expo is the usual way to start a React Native app, and React Native's own docs recommend it. In the last year it dropped the old architecture, made Hermes V1 its default engine and made Expo UI stable: real SwiftUI and Jetpack Compose controls, written in React. I shipped my app Linkoglot to both app stores with it from a Windows PC, and never opened Xcode or Android Studio.
+
+> **TL;DR**
+>
+> - **Expo is the default way to build with React Native:** the React Native docs recommend a framework and name Expo, and 86% of State of React Native 2025 respondents used Expo CLI.
+> - **What changed since SDK 54:** precompiled iOS builds, React Compiler in the template, the old architecture removed, Hermes V1 by default, smaller over-the-air updates and a stable Expo UI.
+> - **Native still wins** when one platform is the product, when the app lives in OS features like widgets, or when your team already writes Swift or Kotlin.
+> - **My pick:** an app for both stores, built by someone who knows React and TypeScript, starts in Expo.
+
+## What is Expo, and why does React Native recommend it?
+
+React Native gives you native iOS and Android apps written in React. Expo is a framework on top of it. It brings a CLI, an SDK of native modules (camera, notifications, audio and more) and file-based routing with Expo Router. EAS, its set of cloud services, has a free tier. The framework itself costs nothing: "Expo and the Expo SDK are free and open source (MIT license)."
+
+React Native's setup page is direct: "if you're building a new app with React Native, we recommend using a Framework". It names one: "Expo is a production-grade React Native Framework." You can still go without one, and the same page says so.
+
+In the State of React Native 2025 survey, 86.18% of the 926 people who answered had used Expo CLI in the last year, against 47.73% for the React Native Community CLI.
+
+## How did I ship an iPhone app without opening Xcode?
+
+[Linkoglot](/en/blog/shipping-a-mobile-app-alone/) is my AI language-learning app, built alone and live on Google Play and the App Store since July 2026. I built it on a Windows PC. Xcode needs a Mac (Xcode 27 "will only install and run on Apple silicon Macs"), and I never opened it, or Android Studio.
+
+<Shots
+  phones
+  shots={[
+    { image: camera, alt: "Linkoglot's camera pointed at a living room, with word labels in three languages on a chair, a plant pot and a book" },
+    { image: flashcards, alt: "A French flashcard reading la plaquette, with an example sentence and score counters around it" },
+    { image: voice, alt: "A voice conversation about Japanese literary terms, the tutor's reply in Japanese under three glowing lights" },
+  ]}
+  caption="Three of Linkoglot's App Store screenshots: the camera, a flashcard and a voice conversation. The Android app runs the same TypeScript screens."
+/>
+
+The whole path ran through Expo's tools:
+
+<Flow
+  label="From a Windows PC to both app stores"
+  steps={[
+    { icon: "tb:device-laptop", title: "Write", text: "TypeScript and React on Windows, with Fast Refresh on both phones." },
+    { icon: "tb:stack-2", title: "Generate", text: "Prebuild writes the ios and android folders from the app config and plugins." },
+    { icon: "si:expo", title: "Build", text: "EAS Build compiles in the cloud; iOS builds run on Expo's Macs." },
+    { icon: "tb:device-mobile", title: "Test", text: "Development builds on real phones, not Expo Go." },
+    { icon: "tb:building-store", title: "Ship", text: "Google Play and the App Store, each through its own review." },
+  ]}
+/>
+
+On EAS Build, "iOS builds run on macOS runners hosted in Expo's macOS cloud". In September 2026 Expo wrote a whole post about this path, "You don't need a Mac to develop iOS apps", and added a cloud iOS Simulator, still a "limited-access preview".
+
+**Testing was the part a PC couldn't do alone, and Expo Go wasn't enough**. Expo Go is the store app that runs your project with only the native code it already ships: "There is no way to get the native code into the Expo Go app". Payments, push notifications on Android and Linkoglot's iOS notification extension all need a development build, your own app with Expo's dev tools inside.
+
+So I bought an iPhone to test on, next to my Android phone. Expo Go isn't even in the stores for every SDK now: "Expo Go for SDK 56 is not available on the Apple App Store or Google Play Store."
+
+## What changed in Expo since SDK 54?
+
+Expo ships a new SDK every few months, each one tied to a React Native version:
+
+| Release | What changed |
+| --- | --- |
+| **SDK 54**, 10 Sep 2025, React Native 0.81 | Precompiled React Native for iOS, React Compiler on in the template, native tabs with Liquid Glass (beta), the last SDK with the old architecture |
+| **SDK 55**, 25 Feb 2026, React Native 0.83 | Old architecture removed, native tabs in the default template, Expo UI for Jetpack Compose in beta, diffed updates as an option |
+| **SDK 56**, 21 May 2026, React Native 0.85 | Hermes V1 by default, Expo UI stable, diffed updates on by default, Expo Router without React Navigation, agent files in new projects |
+| **SDK 57**, 30 Jun 2026, React Native 0.86 | A small release on React Native 0.86, which "is intended to have no breaking changes"; a later patch fixes a Hermes V1 memory regression from SDK 56 |
+| **SDK 58 beta**, 15 Sep 2026, React Native 0.88 RC | Built for iOS 27, Expo Modules 2.0 in beta |
+
+A few terms. The "old architecture" is React Native's original bridge between JavaScript and native code. Native tabs use each platform's own tab bar, and diffed updates send only what changed in the JavaScript. React Native 0.82 was "the first React Native that runs entirely on the New Architecture", and in the 2025 survey 733 of 932 respondents had already migrated.
+
+### What got faster?
+
+- **iOS builds.** Since SDK 54, React Native for iOS comes precompiled. Expo saw clean builds of React Native's test app drop "from about 120 seconds to 10 seconds" on an M4 Max. It also warned: "you're unlikely to see a ~10x build time improvement in your app". SDK 56 did the same for Expo's own modules: "around 1 minute (~16%)" off the median clean iOS build.
+- **Startup.** Hermes V1 became React Native's default engine in 0.84 and Expo's in SDK 56, "bringing faster startup times". The public numbers come from one real app, Expensify, in the 0.82 post: time to interactive 2.5% faster on iOS and 7.6% faster on a low-end Android phone.
+- **Updates.** EAS Update now sends only what changed between two JavaScript bundles. In the 24 hours before the SDK 56 post, diffed bundles were "on average 58% smaller than the full bundle they replaced".
+- **Re-renders.** React Compiler memoizes components and values at build time, so you write fewer `useMemo` and `useCallback` calls by hand. Every new project has it on.
+
+## What is Expo UI?
+
+Expo UI is "a set of components that allow you to build UIs directly with Jetpack Compose and SwiftUI from React". Since SDK 56 the SwiftUI and Compose parts are stable; the web part is still experimental. Expo's own summary: "It just exposes the primitives iOS and Android already ship, as React components."
+
+The official example, a SwiftUI button inside a React component:
+
+```tsx
+import { Host, Button } from '@expo/ui/swift-ui';
+
+export function SaveButton() {
+  return (
+    <Host style={{ flex: 1 }}>
+      <Button label="Save changes" />
+    </Host>
+  );
+}
+```
+
+`Host` is the boundary: everything inside it is laid out by SwiftUI or Compose, not by React Native's flexbox. Modifiers come from `@expo/ui/swift-ui/modifiers` as an array, like SwiftUI's own modifier chain.
+
+**Why it matters now is Liquid Glass.** Apple's docs say standard SwiftUI and UIKit components "pick up the appearance and behavior of this material automatically". Apps built with the iOS 27 SDK can no longer opt out of the new look. A control from Expo UI is the real SwiftUI control, so it changes with the OS.
+
+To add glass yourself, give an Expo UI view the `glassEffect({ glass: { variant: 'clear' } })` modifier (Xcode 26 and iOS 26 or later). Your own React Native views can sit in a `GlassView` from `expo-glass-effect`, also on iOS 26 and up.
+
+Expo's guidance on when to use it: Expo UI where users expect the screen to look like the OS (settings, modals, pickers, sheets), and regular React Native views for your own design. Linkoglot is the second kind: its screens are NativeWind with React Native Reusables.
+
+## What else comes with Expo now?
+
+- **Expo Router:** file-based routes for the app, much like a web framework's. Since SDK 56 it no longer depends on React Navigation, and its native tabs get Liquid Glass on iOS 26.
+- **Native code when you need it:** the Expo Modules API "allows you to write Swift and Kotlin to add new capabilities to your app", and config plugins edit the generated native projects at prebuild. Linkoglot's iOS notification extension is generated that way.
+- **EAS Submit and EAS Update:** Submit uploads builds to both stores and "works from any OS (including Windows and Linux for iOS)". Update ships JavaScript, styles and images over the air; native changes still go through store review.
+- **EAS Observe:** generally available since 20 August 2026. It measures launch times, time to first render and time to interactive in production, on real devices.
+- **AI tooling:** Expo runs an MCP server for coding agents, on the free plan (with a monthly usage cap) since May 2026, and new SDK 56 projects start with `AGENTS.md` and `CLAUDE.md`. It's the same kind of setup I use [with Claude Code](/en/blog/claude-code-skills-hooks-mcp-subagents/).
+
+The free EAS plan includes 15 Android and 15 iOS builds and 1,000 monthly active users for updates; the Starter plan is $19 a month plus usage.
+
+## Expo or Xcode and Android Studio: what do you trade?
+
+| | Expo (React Native) | Xcode (Swift, SwiftUI) | Android Studio (Kotlin, Compose) |
+| --- | --- | --- | --- |
+| One codebase reaches | iOS, Android and web | Apple platforms | Android |
+| Your computer | Any OS; iOS builds in EAS's cloud | A Mac; Xcode 27 needs Apple silicon | Windows, macOS, Linux or ChromeOS |
+| Language | TypeScript and React | Swift | Kotlin |
+| UI | React Native views, or SwiftUI and Compose through Expo UI | SwiftUI or UIKit | Jetpack Compose or Views |
+| A new OS feature | After an Expo SDK or library update, or in your own module | On release day | On release day |
+| Shipping a fix | JavaScript over the air, within store rules; native code through review | Through review | Through review |
+| AI in the tools | Expo's MCP server, agent files in new projects | Claude, ChatGPT and Gemini in the coding assistant | Gemini agent mode, other models through a remote endpoint |
+
+One thing the table hides: React Native developers still open the native tools. In the State of React Native 2025 survey, 68.2% built their apps with EAS Build, and 60.3% built by hand in Xcode and 55.9% in Android Studio. Expo moves those IDEs from your daily tools to the tools you open when a native build breaks. For Linkoglot, that day never came.
+
+## When are Xcode or Android Studio the better call?
+
+- **One platform is the product.** An iOS-only app gets every new API in Xcode on release day. Expo's SDK built for iOS 27 was still a beta on 14 October 2026.
+- **The app lives in OS features.** Widgets, watch apps and extensions are native targets written in Swift or Kotlin, Expo or not. Expo can generate them from config, but if they are most of the app, React Native is overhead.
+- **The team already writes Swift and Kotlin.** A Kotlin team that needs both platforms has its own route: JetBrains declared "Compose Multiplatform for iOS is Stable" in May 2025.
+
+For a new app on both stores, built by someone who knows React and TypeScript, I'd pick Expo again. My reasons for Linkoglot still hold: one codebase for two stores, fast tooling, libraries ready for the hard parts, and a language I already knew. The web skills carry over too: Linkoglot uses TanStack Query, Supabase's JavaScript client and Lingui, the same libraries I use on websites.
+
+## Limits
+
+- I've shipped one app with Expo and none in Swift or Kotlin, so the native side comes from Apple's and Google's docs, not from my own hands.
+- The speed numbers are Expo's and the React Native team's benchmarks (the Hermes figures are Expensify's app). I didn't measure them on Linkoglot.
+- What I write about Expo UI, EAS Observe and SDK 58 comes from Expo's docs and posts. SDK 58 is a beta, and prices are as read on 14 October 2026.
+
+How Linkoglot was built, from the database to both stores' rules, is in [shipping a mobile app alone](/en/blog/shipping-a-mobile-app-alone/), and the app has its own chapter [on my home page](/en/#linkoglot).
