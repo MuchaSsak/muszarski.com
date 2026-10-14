@@ -26,7 +26,10 @@ files, titles and descriptions:
    The film: the sharper master if there is one (`assets.md`), and a proper title, not the file name.
 3. **dev.to:** nothing; Claude does it.
    Then **share the dev.to post on LinkedIn and Facebook** [owner 2026-10-11]: a line or two in his words + the link.
-   Remind him every time a post goes out on dev.to.
+   Remind him every time a post goes out on dev.to, and hand him one ready share text that he posts on both, same
+   text on each [owner 2026-10-14]: a first-person hook from the post's real story, 3-4 short lines on what's in it,
+   the dev.to link, 2-3 hashtags. He pastes the link, waits for the preview card, then deletes the URL line (the card
+   stays and carries the click).
 4. **Medium** (a few days after dev.to): open the paste page Claude made, Ctrl+A, Ctrl+C → Medium → Write → paste;
    press Enter at the end of each YouTube link; ··· → More settings → Advanced settings → "originally published
    elsewhere" → the post's URL (the SEO step); Publish → "Story preview": the preview title, preview subtitle,

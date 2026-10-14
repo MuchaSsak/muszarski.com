@@ -41,8 +41,7 @@
       "updated": "2026-10-14"
     },
     "todo": [
-      "owner: paste on Medium, then send the story link (--medium <url>)",
-      "owner: share the dev.to link on LinkedIn and Facebook"
+      "owner: paste on Medium, then send the story link (--medium <url>)"
     ]
   }
 }

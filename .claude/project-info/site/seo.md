@@ -188,7 +188,7 @@ Posts are republished on dev.to and Medium for reach. The rules, in the owner's 
   was made: I wrote it with Claude Code. It drafted the text from my project's wiki, code and notes. Just a quick
   disclaimer for y'all out there :)". Medium always gets all 5 topics [owner 2026-10-12].
 - **Share it:** every post that goes out on dev.to gets a reminder to share the dev.to link on LinkedIn and Facebook
-  [owner 2026-10-11].
+  [owner 2026-10-11], with one ready share text he posts on both [owner 2026-10-14] (`crosspost.md` step 3).
 - How: `.claude/skills/new-blog/references/crosspost.md` (the owner's steps, Claude's steps, the quality bar);
   what went where: `.claude/skills/new-blog/crosspost.json`.
 
