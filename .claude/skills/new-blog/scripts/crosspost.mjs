@@ -359,6 +359,8 @@ function readElement(text, start) {
 }
 
 let markdown = "";
+/** The figure components the post uses, so the intro only promises what the original really has. */
+const used = new Set();
 for (let at = 0; at < body.length; ) {
   const next = body.slice(at).search(/^\s*<[A-Z]\w*/m);
   if (next === -1) {
@@ -369,12 +371,17 @@ for (let at = 0; at < body.length; ) {
   markdown += body.slice(at, open);
   const element = readElement(body, open);
   if (!FIGURES[element.name]) fail(`no markdown form for <${element.name}>: add one to FIGURES`);
+  used.add(element.name);
   markdown += FIGURES[element.name](element.props);
   at = element.end;
 }
 
+const onSite = [
+  (used.has("Clips") || used.has("Film")) && "the clips play",
+  used.has("Versions") && "the version tabs work",
+].filter(Boolean);
 markdown = [
-  em(`This post first appeared on [my site](${pageUrl}), where the clips play and the version tabs work.`),
+  em(`This post first appeared on [my site](${pageUrl})${onSite.length ? `, where ${onSite.join(" and ")}` : ""}.`),
   markdown.replace(/\]\(\//g, `](${SITE}/`).replace(/\n{3,}/g, "\n\n").trim(),
   meta.sources.length ? `## Sources\n\n${meta.sources.map((s) => `- [${s.title}](${s.url})`).join("\n")}` : "",
   `---\n\n${em(AI_NOTE)}`,
