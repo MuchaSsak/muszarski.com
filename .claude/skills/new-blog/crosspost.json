@@ -33,8 +33,16 @@
     ]
   },
   "expo-react-native-vs-native": {
+    "devto": {
+      "id": 4849093,
+      "url": "https://dev.to/muchassak/expo-in-2026-whats-new-and-how-it-compares-to-xcode-and-android-studio-8be",
+      "published": true,
+      "publishedOn": "2026-10-14",
+      "updated": "2026-10-14"
+    },
     "todo": [
-      "owner: Search Console URL Inspection (en post on Google?); then Claude: dev.to --devto --publish (not before 2026-10-15); then owner: LinkedIn post with the dev.to link"
+      "owner: paste on Medium, then send the story link (--medium <url>)",
+      "owner: share the dev.to link on LinkedIn and Facebook"
     ]
   }
 }

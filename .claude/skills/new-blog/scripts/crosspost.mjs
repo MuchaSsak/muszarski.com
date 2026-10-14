@@ -119,6 +119,11 @@ const meta = {
  */
 const MEDIUM_TOPIC = { "case-study": "Case Study", ai: "Claude", performance: "Web Performance", i18n: "Internationalization", a11y: "Accessibility" };
 const MEDIUM_TOPIC_FILL = ["Web Development", "Frontend Development", "Software Development", "Programming", "JavaScript"];
+/** Posts about the mobile app: React Native leads and the fill is mobile, not web (`webdev` on an Expo post misleads). */
+const MOBILE_POSTS = ["expo-react-native-vs-native", "shipping-a-mobile-app-alone"];
+const mobile = MOBILE_POSTS.includes(slug);
+const MOBILE_TOPIC = { performance: "Mobile App Development" };
+const MOBILE_TOPIC_FILL = ["Mobile App Development", "iOS App Development", "Android App Development", "Software Development"];
 function mediumPublish() {
   const title = [meta.title, meta.seoTitle].find((t) => t && t.length <= 100);
   let subtitle = meta.description ?? "";
@@ -126,8 +131,11 @@ function mediumPublish() {
   if (subtitle.length > 140) subtitle = subtitle.slice(0, 141).match(/^.*[.!?](?=\s|$)/)?.[0] ?? `${subtitle.slice(0, 139).replace(/\s+\S*$/, "")}…`;
   const topics = [
     ...new Set([
-      ...meta.tags.map((t) => MEDIUM_TOPIC[t] ?? t.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase())),
-      ...MEDIUM_TOPIC_FILL,
+      ...(mobile ? ["React Native"] : []),
+      ...meta.tags.map(
+        (t) => (mobile && MOBILE_TOPIC[t]) || MEDIUM_TOPIC[t] || t.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase()),
+      ),
+      ...(mobile ? MOBILE_TOPIC_FILL : MEDIUM_TOPIC_FILL),
     ]),
   ].slice(0, 5);
   if (!title) fail("no title or seoTitle fits Medium's 100 characters: add a shorter seoTitle");
@@ -140,7 +148,14 @@ function mediumPublish() {
  */
 const DEVTO_TAG = { "case-study": "showdev" };
 const DEVTO_TAG_FILL = ["webdev", "frontend", "programming", "javascript"];
-const devtoTags = [...new Set([...meta.tags.map((tag) => DEVTO_TAG[tag] ?? tag.replace(/[^a-z0-9]/g, "")), ...DEVTO_TAG_FILL])]
+const DEVTO_MOBILE_FILL = ["mobile", "ios", "android"];
+const devtoTags = [
+  ...new Set([
+    ...(mobile ? ["reactnative"] : []),
+    ...meta.tags.map((tag) => DEVTO_TAG[tag] ?? tag.replace(/[^a-z0-9]/g, "")),
+    ...(mobile ? DEVTO_MOBILE_FILL : DEVTO_TAG_FILL),
+  ]),
+]
   .filter(Boolean)
   .slice(0, 4);
 

@@ -77,7 +77,9 @@ new one) and re-verifies. Medium copies are edited by hand: tell the owner exact
   them", "the site you are on").
 - Opens with "This post first appeared on my site…"; every internal link absolute to muszarski.com.
 - Every picture keeps its alt text and caption; every clip is either its YouTube embed or its poster linking home.
-- dev.to tags: its max of 4, always all used (the post's tags, then broad ones like `webdev`) [owner 2026-10-12],
+- dev.to tags: its max of 4, always all used (the post's tags, then broad ones like `webdev`) [owner 2026-10-12];
+  posts about the mobile app (`MOBILE_POSTS`) lead with `reactnative` / "React Native" and fill with mobile tags and
+  topics instead of web ones (2026-10-14),
   lowercase alphanumeric (`case-study` → `showdev`); cover = the post's OG image (dev.to crops it
   to 1000 × 420: look at the top screenshot).
 - Sources list at the end, as on the site.
