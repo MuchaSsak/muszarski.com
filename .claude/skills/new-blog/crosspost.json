@@ -54,8 +54,10 @@
       "publishedOn": "2026-10-17",
       "updated": "2026-10-17"
     },
-    "todo": [
-      "owner: paste on Medium, then send the story link (--medium <url>)"
-    ]
+    "medium": {
+      "url": "https://medium.com/@mateusz_muszarski/cookieless-analytics-in-the-eu-umami-gdpr-and-polands-art-399-0e46847011b1",
+      "published": "2026-10-17",
+      "canonical": "unchecked"
+    }
   }
 }
