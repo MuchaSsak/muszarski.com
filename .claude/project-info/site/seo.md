@@ -200,6 +200,8 @@ Posts are republished on dev.to and Medium for reach. The rules, in the owner's 
 Done: the case study on dev.to with the film embedded and on Medium (2026-10-11):
 https://dev.to/muchassak/trying-to-build-an-awwwards-winning-brutalist-portfolio-the-process-the-mindset-and-the-tools-4njg,
 https://medium.com/@mateusz_muszarski/trying-to-build-an-awwwards-winning-brutalist-portfolio-the-process-the-mindset-and-the-tools-d8089487d366.
+The cookieless analytics post on dev.to (2026-10-17):
+https://dev.to/muchassak/cookieless-analytics-in-the-eu-umami-gdpr-and-polands-art-399-45d1; Medium waits for the owner's paste.
 
 ## Domain (open-questions Q5)
 

@@ -128,7 +128,7 @@ function mediumPublish() {
   const title = [meta.title, meta.seoTitle].find((t) => t && t.length <= 100);
   let subtitle = meta.description ?? "";
   if (subtitle.length > 140) subtitle = subtitle.replace(/^Case study:\s*(\w)/i, (_, c) => c.toUpperCase());
-  if (subtitle.length > 140) subtitle = subtitle.slice(0, 141).match(/^.*[.!?](?=\s|$)/)?.[0] ?? `${subtitle.slice(0, 139).replace(/\s+\S*$/, "")}…`;
+  if (subtitle.length > 140) subtitle = subtitle.slice(0, 141).match(/^.*[.!?](?=\s+[^\s\da-z]|$)/)?.[0] ?? `${subtitle.slice(0, 139).replace(/\s+\S*$/, "")}…`;
   const topics = [
     ...new Set([
       ...(mobile ? ["React Native"] : []),

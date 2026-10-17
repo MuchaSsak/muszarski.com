@@ -45,5 +45,17 @@
       "published": "2026-10-14",
       "canonical": "unchecked"
     }
+  },
+  "cookieless-analytics-in-the-eu": {
+    "devto": {
+      "id": 4866814,
+      "url": "https://dev.to/muchassak/cookieless-analytics-in-the-eu-umami-gdpr-and-polands-art-399-45d1",
+      "published": true,
+      "publishedOn": "2026-10-17",
+      "updated": "2026-10-17"
+    },
+    "todo": [
+      "owner: paste on Medium, then send the story link (--medium <url>)"
+    ]
   }
 }
