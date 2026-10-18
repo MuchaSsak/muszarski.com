@@ -61,15 +61,15 @@
     }
   },
   "how-i-work-with-claude-code": {
-    "todo": [
-      "dev.to from 2026-10-20 (cookieless post went out 2026-10-17), after Search Console shows the original on Google; Medium a few days after dev.to"
-    ],
     "devto": {
       "id": 4873568,
       "url": "https://dev.to/muchassak/how-i-work-with-claude-code-memory-gates-and-the-mistakes-that-built-them-1n8l",
       "published": true,
       "publishedOn": "2026-10-18",
       "updated": "2026-10-18"
-    }
+    },
+    "todo": [
+      "owner: paste on Medium, then send the story link (--medium <url>)"
+    ]
   }
 }
