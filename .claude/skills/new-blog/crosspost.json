@@ -68,8 +68,13 @@
       "publishedOn": "2026-10-18",
       "updated": "2026-10-18"
     },
+    "medium": {
+      "url": "https://medium.com/@mateusz_muszarski/how-i-work-with-claude-code-memory-gates-and-the-mistakes-that-built-them-09fd979eca61",
+      "published": "2026-10-18",
+      "canonical": "unchecked"
+    },
     "todo": [
-      "owner: paste on Medium, then send the story link (--medium <url>)"
+      "owner to confirm the Medium canonical (story → Ctrl+U → \"canonical\")"
     ]
   }
 }
