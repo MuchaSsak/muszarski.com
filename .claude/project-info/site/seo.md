@@ -121,7 +121,7 @@ Success signal: Google autocomplete starts completing "mateusz muszarski" to "â€
   fails on a missing one. Favicons: SVG + 48 px PNG + apple-touch 180 + manifest 192/512.
 - `/llms.txt` from the CV + projects + posts; RSS per blog locale; the sitemap leaves out legal, CV print and contact
   result pages.
-- Blog: 11 posts at launch (Q20): case study #0, Claude Code building blocks, LLM wiki, Claude Code po polsku (pl only),
+- Blog: 11 posts at launch (Q20): case study #0, Claude Code building blocks, LLM wiki, Claude Code po polsku (pl only; en twin "Getting started with Claude Code" since 2026-10-18, for dev.to and Medium),
   Lingui vs i18next, Astro vs Next.js, translating Lingui catalogs with an LLM, fitted type, reduced motion, cookieless
   analytics. Every external fact has a dated source in the frontmatter; `content.test.ts` checks links and PstrykWeb.
 
