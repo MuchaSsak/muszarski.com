@@ -67,6 +67,7 @@
 - A pipe hides the exit code: `astro build ... | tail` exited 0 on "Build failed" and the preview served 404s; grep the log for the failure or `set -o pipefail` - 2026-10-18.
 - `bun run check` stops at the first failing task: a red test hid a typecheck error that got committed. Read every task's result, re-run `astro check` after fixing a test - 2026-10-06.
 - e2e role queries match substrings ("Pull-up" hit "Pull-ups"): pass `exact: true` for short names - 2026-10-06.
+- Never poll the live site in a loop: ~90 curls in 15 min put this machine behind the Vercel Security Checkpoint (403 for every request, the crosspost checks too) for 20+ minutes; check a deploy once after a few minutes - 2026-10-18.
 - Stop a server by its port's PID (`netstat -ano | grep :<port>` → `taskkill //F //PID`), never by image name: `taskkill /IM python.exe` ends every Python on the machine, other sessions' too - 2026-10-08.
 - A git worktree under the long temp path builds pages with no CSS ("Filename too long") and won't delete: put A/B worktrees at a short path (`C:/Users/<you>/wtb`), remove them with `git worktree remove` - 2026-10-08.
 - Headless Chromium draws WebGL with SwiftShader (software): shaders starve the page and states look broken. Shoot and QA shaders with `--use-angle=d3d11 --enable-gpu --ignore-gpu-blocklist` - 2026-10-08.
