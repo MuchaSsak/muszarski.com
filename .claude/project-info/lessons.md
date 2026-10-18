@@ -46,6 +46,7 @@
 - Reduced motion keeps `animation-delay`: staged entrances stay hidden for their delay. Switch staged scenes off under reduced motion and `.still` - 2026-10-06.
 - Load cost hides in style and layout (`run-notes.md` 2026-10-07): animate an HTML wrapper, never an `<svg>`; no grid around a `container-type` box; no inherited custom property or `*`-read class toggled on big subtrees; no inline style per letter beyond a title. Find each with traces and CSS A/B - 2026-10-07.
 - Offset a grid column with margins, not `translate` (a translated item covered the next row's buttons) - 2026-10-08.
+- `Flow`'s `loop` is the return arrow's label, not a flag: a bare `loop` printed "true" on the site and on dev.to (MDX props are not type-checked) - 2026-10-18.
 - Never mute text with `opacity`: on a lit or animated fill it falls under 4.5:1, and the e2e axe pass sees one frame (the breaker's pink step); use weight or size - 2026-10-08.
 - Posts drift with the code they explain: a feature change greps `content/blog` for its files and fixes the posts too (`post-check.mjs` flags gone files) - 2026-10-08.
 - A % height inside an auto grid row resolves against the row the item itself grew (the Linkoglot phone overflowed its field): give the grid a definite track, `grid-template: minmax(0, 1fr) / minmax(0, 1fr)` - 2026-10-08.
