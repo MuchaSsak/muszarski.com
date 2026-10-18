@@ -1,0 +1,179 @@
+---
+title: "Jak pracuję z Claude Code: pamięć, bramki i błędy, z których powstały"
+seoTitle: "Mój workflow w Claude Code: pamięć, hooki i bramki"
+description: "Mój setup Claude Code w prawdziwym projekcie: wiki i hooki, które przetrwają kompaktowanie, lekcje zamieniane w testy, bramki i zrzuty przed „gotowe”."
+translationKey: "claude-code-workflow"
+published: 2026-10-18
+tags: [ai, claude-code]
+cover: blueprint
+related: [llm-wiki, claude-code-building-blocks, this-site]
+sources:
+  - title: "Hooks reference (dokumentacja Claude Code)"
+    url: "https://code.claude.com/docs/en/hooks"
+    accessed: 2026-10-18
+  - title: "How Claude remembers your project (dokumentacja Claude Code)"
+    url: "https://code.claude.com/docs/en/memory"
+    accessed: 2026-10-18
+  - title: "Best practices for Claude Code (dokumentacja Claude Code)"
+    url: "https://code.claude.com/docs/en/best-practices"
+    accessed: 2026-10-18
+  - title: "Create custom subagents (dokumentacja Claude Code)"
+    url: "https://code.claude.com/docs/en/sub-agents"
+    accessed: 2026-10-18
+  - title: "Common workflows (dokumentacja Claude Code)"
+    url: "https://code.claude.com/docs/en/common-workflows"
+    accessed: 2026-10-18
+  - title: "Configure permissions (dokumentacja Claude Code)"
+    url: "https://code.claude.com/docs/en/permissions"
+    accessed: 2026-10-18
+  - title: "Choose a permission mode (dokumentacja Claude Code)"
+    url: "https://code.claude.com/docs/en/permission-modes"
+    accessed: 2026-10-18
+  - title: "Quickstart (dokumentacja Claude Code)"
+    url: "https://code.claude.com/docs/en/quickstart"
+    accessed: 2026-10-18
+---
+
+import Flow from "~/components/blog/case/Flow.astro";
+import Shots from "~/components/blog/case/Shots.astro";
+import aiBrief from "~/assets/blog/claude-code-workflow/ai-brief-pl.webp";
+
+Claude Code ma dwa nawyki, które bolą w długim projekcie: po kompaktowaniu kontekstu zapomina, co ustaliliście, i kończy, kiedy praca wygląda na skończoną. Dlatego mój setup robi dwie rzeczy. Pamięta za Claude'a (wiki, plik z lekcjami, trzy hooki) i nie przyjmuje „gotowe”, dopóki nie zgodzą się testy, bramki i zrzuty ekranu. Oto ten setup i błędy, z których powstał każdy element.
+
+> **TL;DR**
+>
+> - **Pamięć:** CLAUDE.md to 76-liniowy router do wiki; hooki podają Claude'owi właściwe strony przy każdym prompcie i przywracają zasady po każdym kompaktowaniu.
+> - **Poprawki się kumulują:** każda poprawka staje się jednoliniową zasadą, a zasada, która wraca, staje się testem.
+> - **Gotowe znaczy udowodnione:** typecheck, testy, e2e, Lighthouse i zrzuty ekranu, które Claude musi otworzyć i obejrzeć, w każdym języku.
+> - **Skala:** subagenty do researchu i sprawdzania faktów, buildy w tle i kilka twardych zasad dla równoległych sesji w jednym repo.
+
+Zakładam, że znasz podstawy (CLAUDE.md, tryb planu, `/clear`); jeśli nie, [quickstart](https://code.claude.com/docs/en/quickstart) omawia je w dziesięć minut. Oba nawyki z akapitu wyżej opisuje dokumentacja: jakość spada, gdy okno kontekstu się zapełnia, pełne okno zostaje skompaktowane do podsumowania, a bez sprawdzenia, które Claude może uruchomić, „pętlą weryfikacji stajesz się Ty”.
+
+## Jak pamięta to, co powiedziałem tydzień temu?
+
+Nie dzięki samemu CLAUDE.md. Mój jest routerem: tabelą, która przypisuje zadanie („copy, wording, CTA labels”) do strony wiki z wiedzą, plus zasadami, których nie wolno złamać. Resztę trzyma wiki: 33 strony plus folder z notatkami z researchu. Pamiętaniem zajmują się trzy hooki skonfigurowane w `.claude/settings.json`:
+
+| Hook | Kiedy działa | Co robi |
+| --- | --- | --- |
+| `SessionStart` | nowy czat, wznowienie, `/clear`, **każde kompaktowanie** | wstrzykuje kartę: jak pracujemy, co jest w toku w gicie, lekcje |
+| `UserPromptSubmit` | każdy prompt | porównuje prompt z tabelą routingu i wstrzykuje do 5 najlepiej pasujących stron |
+| `Stop` | gdy Claude próbuje skończyć | blokuje raz, jeśli zmienił się kod, a wiki nie |
+
+Tak wyglądało to, co Claude zobaczył, zanim przeczytał mój prompt „have it consistent over languages”, gdy pisałem ten wpis:
+
+```text
+[project wiki] Before acting, read the pages that match this task:
+- Locales, translation, Lingui, Polish, Spanish, language switcher,
+  hreflang, URL prefix, slugs: .claude/project-info/site/i18n.md
+Change behaviour a page describes -> update that page + append a line to
+.claude/project-info/log.md in the same change.
+```
+
+Kluczowy jest moment kompaktowania. Claude Code po nim ponownie czyta główny CLAUDE.md, ale nie strony, które czytał po drodze, ani tego, co powiedziałem w czacie. Karta przywraca zasady, bo skrypt drukuje ją od nowa z plików w gicie. Jak zbudowane jest wiki i jak router ocenia prompt, opisuję we wpisie [LLM wiki: pamięć projektu dla Claude Code](/pl/blog/llm-wiki-pamiec-projektu-dla-claude-code/).
+
+## Jak poprawka zamienia się w test?
+
+<Flow
+  label="Życie jednej poprawki"
+  loop
+  steps={[
+    { icon: "tb:message", title: "Poprawka", text: "Mówię Claude'owi, że coś zrobił źle, albo Claude potyka się o narzędzie." },
+    { icon: "tb:pencil", title: "Zasada", text: "Jedna linia z datą w lessons.md, w trybie rozkazującym." },
+    { icon: "tb:refresh", title: "Każda sesja", text: "Hook SessionStart wstrzykuje zasady, także po kompaktowaniu." },
+    { icon: "tb:test-pipe", title: "Sprawdzenie", text: "Zasada, która wraca, staje się testem, regułą lintera albo hookiem." },
+  ]}
+/>
+
+Najlepszy przykład to błąd, który nigdy nie rzucił wyjątku. Animacje sterowane scrollem są na tej stronie napisane w CSS. Build sklejał `animation` i `animation-timeline` w jeden skrót, który Chrome odrzuca w całości, więc efekt po cichu nigdy nie działał. Nic nie padało: kod wyglądał dobrze, a Claude zgłosił gotowe. 8 października 2026 roku powstała zasada: pisz je w pełnych właściwościach. Następnego dnia trzy reguły i tak wróciły do skrótu, więc teraz test jednostkowy czyta każdy arkusz stylów:
+
+```ts
+it("never use the animation shorthand next to animation-timeline", () => {
+  const shorthand = rules
+    .filter(({ rule }) => /(^|[\s;])animation\s*:/.test(rule))
+    .map(({ where }) => where);
+  expect(shorthand).toEqual([]);
+});
+```
+
+Zasada wpływa na to, co Claude próbuje zrobić. Test rozstrzyga, czy to trafi na produkcję. Dzisiejsza zasada wzięła się z tego wpisu: poprosiłem o przepisanie, a dostałem szkic tylko po angielsku, więc w pliku z lekcjami jest teraz „wpisy en i pl to jedna historia”.
+
+## Jak daję mu duże zadanie?
+
+W kawałkach. Strona powstawała po jednej sekcji, a każdy kawałek przechodził tę samą pętlę: research sekcji, budowa z prawdziwą treścią, sprawdzenie (zrzuty, bramki, wszystkie trzy języki), poprawka najsłabszego miejsca. Pętla się powtarza, dopóki kolejne przejście nie znajdzie niczego wartego poprawy. Nie zaczynam kolejnego kawałka, dopóki poprzedni ma choć jedną czerwoną bramkę.
+
+Dwie zasady sprawiają, że długa praca bez nadzoru jest bezpieczna:
+
+- **Żadnych zmyślonych faktów.** Gdy brakuje faktu, Claude wstawia zaślepkę, oznacza ją w kodzie znacznikiem, który łatwo wyszukać, i wpisuje do jednego rejestru. Build produkcyjny pada, dopóki zostaje choć jeden znacznik. Dzięki temu mogłem pewnego wieczoru poprosić o wszystkie pozostałe sekcje naraz, bez pytań, i rano oglądać prawdziwe strony, a nie zmyślone liczby.
+- **Najpierw ambitnie, potem praktycznie.** Pierwszy wygląd strony był bezpieczny i nazwałem go brzydkim. Od tamtej pory pytanie o design dostaje trzy albo cztery wyrenderowane kierunki, na desktop i telefon, a ja wybieram. Claude szybko generuje warianty, decyzja należy do mnie.
+
+## Co znaczy „gotowe”, gdy mówi to agent?
+
+W tym projekcie „gotowe” to lista komend z kodami wyjścia, a nie zdanie:
+
+| Bramka | Pada na |
+| --- | --- |
+| typecheck, lint, testy jednostkowe | typy, styl, zasady treści (jak test powyżej) |
+| e2e w Playwright | axe WCAG 2.2 AA na każdej stronie, poziomy scroll od 320 do 2560 px, tekst wychodzący z ramki w dowolnym języku |
+| Lighthouse, mobile | wydajność poniżej 95, każda inna kategoria poniżej 100 |
+| bramka startowa w buildzie | zaślepka zostawiona w buildzie produkcyjnym, brak obrazka do udostępniania |
+
+Dwa błędy nauczyły mnie czytać wynik, a nie podsumowanie:
+
+- **Pierwsze czerwone zadanie ukrywa resztę.** `bun run check` staje na pierwszym padającym zadaniu, więc padający test ukrył kiedyś błąd typów, który trafił do commita. Teraz czytam wynik każdego zadania, a po poprawce testu typecheck idzie jeszcze raz.
+- **Pipe ukrywa kod wyjścia.** Przy pisaniu tego wpisu build w tle skończył się kodem 0, choć w logu było `Build failed`: komenda przepuszczała wynik przez `tail`, więc powłoka zgłosiła kod `tail`, a podgląd serwował same 404. Teraz to lekcja: szukaj błędu w logu albo użyj `set -o pipefail`.
+
+## Jak sprawić, żeby oglądał własną pracę?
+
+Testy nie widzą krzywego łamania linii ani etykiety wychodzącej z przycisku. Dlatego Claude robi zrzuty w Playwright od telefonu po desktop (390 do 1920 px), po angielsku, polsku i hiszpańsku, a potem otwiera każdy plik. Claude Code czyta obrazy, więc „sprawdziłem stronę” może znaczyć, że naprawdę na nią patrzył.
+
+<Shots
+  shots={[{ image: aiBrief, alt: "Krok Brief z historii AI na stronie głównej: karta z celem, ograniczeniami i definicją ukończenia, obok odpowiedź agenta „Działam. Zbieram zespół.”" }]}
+  caption="Historia na stronie gra sama, więc zrzut bez ograniczonego ruchu łapie przypadkowy krok. Z ograniczonym ruchem stoi na briefie."
+/>
+
+Reszta to znajomość pułapek, przez które zrzut kłamie. Headless Chromium rysuje WebGL programowo, więc shadery wyglądają na zepsute, dopóki nie uruchomi się go z `--use-angle=d3d11 --enable-gpu`. Telefony emuluję z włączonym dotykiem, inaczej elementy zależne od hovera pokazują wersję dla myszy. A strona z animacjami potrzebuje ograniczonego ruchu albo zatrzymanego zegara, inaczej zrzut pokazuje przypadkową klatkę.
+
+## Kiedy subagenty się opłacają?
+
+Gdy praca polega na czytaniu, a nie pisaniu. Subagent działa we własnym kontekście i oddaje tylko odpowiedź, więc sto stron dokumentacji nigdy nie trafia do głównej sesji.
+
+- **Research równolegle.** Planując tę stronę, wysłałem naraz 8 agentów badawczych, każdego z jednym tematem. Wyszła z tego jedna lekcja: równoległe agenty dzielą jeden budżet wyszukiwania w sieci, więc lepiej pobierać adresy, które już znasz.
+- **Sprawdzanie faktów.** Do tego wpisu subagent sprawdził 12 twierdzeń z dokumentacją w niecałą minutę. Wszystkie się utrzymały, a znalazł jeden szczegół wart dodania: tryb auto jest trybem startowym dopiero od wersji 2.1.283.
+- **Świeże oko.** Nowy agent, który nie widział szkicu, recenzuje gotowy wpis: co mówią same nagłówki, którym faktom brakuje źródła.
+
+## Gdzie pasują skille?
+
+Skill zamienia proces, który inaczej tłumaczyłbym za każdym razem, w komendę. Ten wpis powstał przez `/new-blog`: 11 kroków od researchu do publikacji na innych platformach, z własnymi skryptami. `post-check.mjs` sprawdza trudność czytania i SEO, `capture.mjs` robi zrzuty, `crosspost.mjs` publikuje na dev.to i sprawdza opublikowaną kopię. W skillu siedzi osąd („nagłówki to pytania czytelnika”), a w skryptach wszystko, co da się sprawdzić automatycznie.
+
+Skille rosną tak jak plik z lekcjami. Gdy poprawiam wynik skilla, poprawka trafia do niego, z datą i moimi słowami. Zasada o liczbach w `/new-blog` wzięła się z rundy, w której napisałem, że wpis „talks too many times about lighthouse and numbers”. Inna przyszła z Medium: import z adresu gubił każdy obrazek, bo Medium nie przyjmuje WebP. Teraz skill buduje stronę do wklejenia z kopiami w JPEG i sprawdza, czy każdy obrazek się ładuje.
+
+## Jak prowadzić kilka sesji w jednym repo?
+
+Często mam otwarte dwa albo trzy czaty w tym repo, na dwóch komputerach. Każda z tych pułapek się wydarzyła:
+
+- **Jedna sesja zacommitowała niedokończoną pracę innej.** Teraz każda sesja dodaje tylko własne ścieżki, nigdy `git add -A`.
+- **Audyt poszedł na buildzie innej sesji**, bo uruchomiony serwer podglądu serwował cudzy folder wyjściowy. Teraz każdy build ma własny folder i port.
+- **`taskkill /IM python.exe` zamknął każdego Pythona na komputerze**, także serwery innych sesji. Serwer zatrzymuj po PID-zie jego portu.
+- **Dziś git odrzucił push**, bo inna sesja w międzyczasie wypchnęła swoje zmiany. `git pull --rebase`, potem push.
+
+Długie buildy i serwery działają w tle, a w moich sesjach Claude dostaje informację, gdy się skończą, więc w tym czasie pisze dalej. Do naprawdę osobnej pracy dokumentacja proponuje osobny git worktree na sesję (`claude --worktree <nazwa>`). Na Windowsie trzymaj go pod krótką ścieżką: w folderze tymczasowym build trafił na „Filename too long” i wygenerował strony bez CSS.
+
+## Czego nigdy mu nie wolno?
+
+Tryb auto oszczędza mi pytań o zgodę: osobny klasyfikator sprawdza każdą akcję w tle. Hooki to druga strona tego zaufania: działają jako komendy powłoki z pełnymi uprawnieniami Twojego użytkownika, więc przeczytaj każdy, zanim go dodasz. Nad nim są twarde zasady: nigdy nie czytaj prawdziwych plików `.env`, nigdy nie commituj prywatnego folderu `context/`, commituj tylko do `main`, pushuj tylko na moje polecenie.
+
+Trzeba jednak uczciwie powiedzieć, gdzie te zasady są zapisane. Moje są w CLAUDE.md, a dokumentacja mówi jasno, że CLAUDE.md wpływa na to, co Claude próbuje zrobić, ale niczego nie blokuje. Odczyt zatrzymuje dopiero reguła `deny` w ustawieniach. To następna rzecz, którą dodaję.
+
+## Ograniczenia
+
+- **Jedna osoba, jeden projekt.** To portfolio zbudowane przeze mnie i Claude Code w niecałe dwa tygodnie, a nie zespół dwudziestu osób. Hooki i bramki zwracają się szybciej, im więcej osób dotyka repo.
+- **Windows.** Kilka pułapek powyżej (ścieżki w Git Bash, `taskkill`, długie ścieżki) dotyczy tylko Windowsa.
+- **Karta przekracza swój budżet.** Drukuje lekcje do 8000 znaków, a plik już urósł ponad to, więc zasady z końca pliku są ucinane, dopóki ich nie scalę i nie przytnę.
+- **Bez liczb o kosztach.** Mam subskrypcję i nie liczyłem tokenów na funkcję.
+- **To wymaga przygotowania.** Wiki i hooki powstały w fazie planowania, zanim powstał kod produktu. Przy dwudniowym skrypcie napisałbym krótki CLAUDE.md i na tym skończył.
+
+## Od czego bym zaczął?
+
+Nie od hooków. Załóż dziś `lessons.md` i dopisuj jedną linię za każdym razem, gdy poprawiasz Claude'a. Dodaj jedną bramkę, którą Claude musi uruchomić, zanim powie „gotowe”. Gdy zasada wróci drugi raz, zamień ją w test. Po hooki sięgniesz, gdy zauważysz, że po każdym kompaktowaniu powtarzasz to samo.
+
+Po który element sięgać i kiedy, opisuję we wpisie [Skille, hooki, serwery MCP i subagenty w Claude Code](/pl/blog/claude-code-skille-hooki-mcp-subagenty/). Całą budowę pokazuje [studium przypadku](/pl/blog/case-study/), a ten sam proces krok po kroku gra w [sekcji o AI na mojej stronie głównej](/pl/#ai). Jeśli Twój zespół tak pracuje albo chce, oto moje [CV](/pl/cv/).

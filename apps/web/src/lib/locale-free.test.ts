@@ -128,7 +128,8 @@ describe("locale-free addresses", () => {
   });
 
   it("stay temporary (307): the target depends on the reader; only moved addresses are permanent (308)", () => {
-    const moved = ["/en/blog/how-this-site-was-built/", "/pl/blog/jak-powstala-ta-strona/", "/blog/jak-powstala-ta-strona/"];
+    const moved = ["/en/blog/how-this-site-was-built/", "/pl/blog/jak-powstala-ta-strona/", "/blog/jak-powstala-ta-strona/",
+      "/en/blog/getting-started-with-claude-code/", "/pl/blog/claude-code-po-polsku/", "/blog/claude-code-po-polsku/"];
     for (const rule of rules) expect(rule.permanent, rule.source).toBe(moved.includes(rule.source));
   });
 });

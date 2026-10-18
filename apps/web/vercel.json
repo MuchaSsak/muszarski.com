@@ -223,6 +223,21 @@
       "permanent": true
     },
     {
+      "source": "/en/blog/getting-started-with-claude-code/",
+      "destination": "/en/blog/how-i-work-with-claude-code/",
+      "permanent": true
+    },
+    {
+      "source": "/pl/blog/claude-code-po-polsku/",
+      "destination": "/pl/blog/jak-pracuje-z-claude-code/",
+      "permanent": true
+    },
+    {
+      "source": "/blog/claude-code-po-polsku/",
+      "destination": "/pl/blog/jak-pracuje-z-claude-code/",
+      "permanent": true
+    },
+    {
       "source": "/blog/:slug(case-study|yws-lu-case-study)/",
       "has": [
         {
@@ -253,7 +268,7 @@
       "permanent": false
     },
     {
-      "source": "/blog/:slug(analityka-bez-cookies-w-polsce|aplikacja-mobilna-w-pojedynke|astro-czy-nextjs-na-portfolio|claude-code-po-polsku|claude-code-skille-hooki-mcp-subagenty|cv-strona-i-pdf-z-jednego-zrodla|dlaczego-moje-portfolio-threejs-bylo-wolne|dopasowanie-tekstu-do-szerokosci|efekty-hover-na-telefonach|expo-react-native-czy-natywnie|formularz-kontaktowy-na-statycznej-stronie|lighthouse-16-portfolio-programistow|lingui-czy-i18next|llm-wiki-pamiec-projektu-dla-claude-code|psychologia-w-ux-i-frontendzie|reduced-motion-i-przycisk-pauzy|tlumaczenie-katalogow-lingui-przez-llm|wielojezyczna-strona-astro-z-lingui)/",
+      "source": "/blog/:slug(analityka-bez-cookies-w-polsce|aplikacja-mobilna-w-pojedynke|astro-czy-nextjs-na-portfolio|claude-code-skille-hooki-mcp-subagenty|cv-strona-i-pdf-z-jednego-zrodla|dlaczego-moje-portfolio-threejs-bylo-wolne|dopasowanie-tekstu-do-szerokosci|efekty-hover-na-telefonach|expo-react-native-czy-natywnie|formularz-kontaktowy-na-statycznej-stronie|jak-pracuje-z-claude-code|lighthouse-16-portfolio-programistow|lingui-czy-i18next|llm-wiki-pamiec-projektu-dla-claude-code|psychologia-w-ux-i-frontendzie|reduced-motion-i-przycisk-pauzy|tlumaczenie-katalogow-lingui-przez-llm|wielojezyczna-strona-astro-z-lingui)/",
       "destination": "/pl/blog/:slug/",
       "permanent": false
     },

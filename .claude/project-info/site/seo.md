@@ -29,7 +29,7 @@
 | Name (primary) | "Mateusz Muszarski" (+ "developer", "programista", "github") | home (entity home), `/cv/` |
 | Name + occupation + place | "Mateusz Muszarski programista <city>" | home, `/cv/` |
 | Projects | "Linkoglot", "PstrykWeb developer", "lingui-translate-ai" | case studies |
-| Topics (blog) | Claude Code skills/hooks/MCP, Lingui vs i18next, three.js portfolio performance, Astro vs Next, "Claude Code po polsku" | posts |
+| Topics (blog) | Claude Code skills/hooks/MCP, Lingui vs i18next, three.js portfolio performance, Astro vs Next, "How I work with Claude Code" | posts |
 | NOT a target | "full stack developer Gdańsk" (10/10 job boards; searchers are candidates) | — |
 
 Success signal: Google autocomplete starts completing "mateusz muszarski" to "… developer / programista".
@@ -121,7 +121,7 @@ Success signal: Google autocomplete starts completing "mateusz muszarski" to "�
   fails on a missing one. Favicons: SVG + 48 px PNG + apple-touch 180 + manifest 192/512.
 - `/llms.txt` from the CV + projects + posts; RSS per blog locale; the sitemap leaves out legal, CV print and contact
   result pages.
-- Blog: 11 posts at launch (Q20): case study #0, Claude Code building blocks, LLM wiki, Claude Code po polsku (pl only; en twin "Getting started with Claude Code" since 2026-10-18, for dev.to and Medium),
+- Blog: 11 posts at launch (Q20): case study #0, Claude Code building blocks, LLM wiki, Claude Code po polsku (pl only; rewritten 2026-10-18 as the en + pl advanced workflow post "How I work with Claude Code", `claude-code-workflow`, old slugs 308),
   Lingui vs i18next, Astro vs Next.js, translating Lingui catalogs with an LLM, fitted type, reduced motion, cookieless
   analytics. Every external fact has a dated source in the frontmatter; `content.test.ts` checks links and PstrykWeb.
 
@@ -145,7 +145,7 @@ Launch set, in priority order:
 2. Lighthouse on award-winning portfolios (original data from `research/`).
 3. Lingui vs i18next (2026).
 4. Claude Code skills vs hooks vs MCP.
-5. PL: "Claude Code po polsku".
+5. PL: "Claude Code po polsku" (since 2026-10-18 "Jak pracuję z Claude Code", en + pl).
 6. Astro vs Next.js for a portfolio (benchmark re-run on a public demo; the internal PstrykWeb numbers are never published).
 
 Published after the launch set: the yws.lu case study (2026-10-09, `/blog/yws-lu-case-study/` in en + pl, query

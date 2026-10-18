@@ -33,6 +33,7 @@
 - Logos only where the brand's own guideline allows it, checked per brand (CC0 artwork is not permission); propose a mark, don't assume it stays (`assets.md` § CV marks) - 2026-10-08.
 - Every section built or edited is checked in en, pl and es at phone, laptop and desktop before done (`bun run e2e text-fit` + the three locales' shots side by side); boxes are sized for the longest locale, never the English word (`visual-qa.md` § Locales) - 2026-10-08.
 - Commit only what the site ships: QA screenshots and scratch stay local or gitignored ("why waste repo space") - 2026-10-08.
+- en and pl posts are one story: a rewrite or new angle in one locale is done in the other in the same change, never asked about ("have it consistent over languages, obviously") [user 2026-10-18] - 2026-10-18.
 - Job terms follow job-board usage, not a literal translation ("inżynier produktu" is a factory role and implies a degree): `i18n.md` § Terminology - 2026-10-08.
 
 ### Code and quality
@@ -62,6 +63,7 @@
 - Python on Windows writes CRLF: always `open(..., "w", newline="\n")` (a fixer pass caught 6 files on 2026-10-06) - 2026-10-05.
 - Git Bash rewrites URL-path arguments (`/en/` → `P:/Git/en/`): prefix with `MSYS_NO_PATHCONV=1`, also for `bun run lhci` - 2026-10-05.
 - Node on Windows reads a Git Bash path `/c/Users/...` as `C:\c\Users\...` (shots landed in a stray `C:\c`): give node scripts `C:/...` paths - 2026-10-09.
+- A pipe hides the exit code: `astro build ... | tail` exited 0 on "Build failed" and the preview served 404s; grep the log for the failure or `set -o pipefail` - 2026-10-18.
 - `bun run check` stops at the first failing task: a red test hid a typecheck error that got committed. Read every task's result, re-run `astro check` after fixing a test - 2026-10-06.
 - e2e role queries match substrings ("Pull-up" hit "Pull-ups"): pass `exact: true` for short names - 2026-10-06.
 - Stop a server by its port's PID (`netstat -ano | grep :<port>` → `taskkill //F //PID`), never by image name: `taskkill /IM python.exe` ends every Python on the machine, other sessions' too - 2026-10-08.
