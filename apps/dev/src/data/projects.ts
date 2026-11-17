@@ -26,7 +26,7 @@ export const projects: SideProject[] = [
       pl: "Szybki chrześcijański quiz, który pokaże, do którego wyznania pasujesz najbardziej.",
       es: "Un test cristiano rápido para descubrir con qué denominación encajas más.",
     },
-    url: "https://denom-compass.vercel.app/",
+    url: "https://denoms.muszarski.com/",
     locales: ["en", "pl"],
   },
 ];
