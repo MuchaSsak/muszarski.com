@@ -5,7 +5,8 @@ import type { Lang } from "./i18n";
  * site in a scaled-down iframe, so the site must allow framing (no `X-Frame-Options: DENY` / `frame-ancestors`).
  */
 export interface SideProject {
-  name: string;
+  /** Per language (en source; es unreviewed). */
+  name: Record<Lang, string>;
   /** One short line per language, in the owner's words (en source; es unreviewed). */
   description: Record<Lang, string>;
   url: string;
@@ -19,7 +20,7 @@ export const projectUrl = (p: SideProject, lang: Lang) =>
 
 export const projects: SideProject[] = [
   {
-    name: "Denominations Compass",
+    name: { en: "Denominations Compass", pl: "Kompas wyznań", es: "Brújula de denominaciones" },
     description: {
       en: "A quick Christian quiz to find which denomination you fit into most.",
       pl: "Szybki chrześcijański quiz, który pokaże, do którego wyznania pasujesz najbardziej.",

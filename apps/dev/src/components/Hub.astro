@@ -113,7 +113,7 @@ const langs = SWITCHER.map((code) => ({ code, label: LANG_NAMES[code], href: hub
               <div class="thumb">
                 <iframe
                   src={projectUrl(p, lang)}
-                  title={`${p.name}, ${t.preview}`}
+                  title={`${p.name[lang]}, ${t.preview}`}
                   loading="lazy"
                   tabindex="-1"
                   aria-hidden="true"
@@ -121,7 +121,7 @@ const langs = SWITCHER.map((code) => ({ code, label: LANG_NAMES[code], href: hub
                   referrerpolicy="no-referrer"
                 />
               </div>
-              <h2>{p.name}</h2>
+              <h2>{p.name[lang]}</h2>
               <p>{p.description[lang]}</p>
               <span class="go" aria-hidden="true">
                 <svg viewBox="0 0 24 24" width="20" height="20"><path d="M5 12h14M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="square" /></svg>
