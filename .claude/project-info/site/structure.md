@@ -23,6 +23,8 @@
 /404                             per-locale copy (F21)
 /files/mateusz-muszarski-cv-<locale>.pdf
 /en/rss.xml · /pl/rss.xml · /sitemap.xml (index) · /robots.txt · /llms.txt
+
+dev.muszarski.com/               hidden side-projects hub (apps/dev; noindex but with OG tags for link previews, en only, linked from nowhere) [owner 2026-11-17]
 ```
 - **Slugs:** `work`, `blog`, `cv`, `my-life`, `privacy` and `terms` stay English in every locale; only blog post
   slugs are per locale [assumption; seo research may change it].

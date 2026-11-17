@@ -8,6 +8,7 @@
 | Path | Package | Holds |
 | --- | --- | --- |
 | `apps/web/` | `@package/web` | the site (Astro 7, `usage/astro.md`) |
+| `apps/dev/` | `@package/dev` | `dev.muszarski.com`: a hidden, noindex hub of side-project cards (one Astro page; add a project in `src/data/projects.ts`) [owner 2026-11-17] |
 | `packages/shared/` | `@package/shared` | code more than one app or script needs; today only `@package/shared/locales` (the one locale list) |
 | root | `muszarski-portfolio` | `turbo.json`, `tsconfig.base.json`, `eslint.config.js` (one flat config), `prettier.config.js`, `bun.lock`, `.gitattributes` |
 
@@ -32,6 +33,9 @@
 ## Vercel
 
 - Project **Root Directory = `apps/web`**; framework Astro; install and build on auto (bun is detected from `bun.lock`).
+- A second project serves `apps/dev` (Root Directory = `apps/dev`, domain `dev.muszarski.com`; DNS at Cloudflare: `CNAME dev` → the
+  target Vercel shows, proxy off). Separate on purpose: a host rewrite in the main project can't take `/`, because Vercel serves the
+  file `dist/index.html` before `rewrites`. Thumbnails are the live sites in scaled iframes, so a listed site must allow framing.
 - The quick deploy check before a push: a clean clone (only committed files), `bun install --frozen-lockfile`, `bun run build`.
   Passed 2026-10-05 (install 5.3 s, build 1/1). `bun.lock` carries the Linux Lingui native binary.
 - A production build on the domain (`muszarski.com`) is not the launch: only `IS_FULL_PRODUCTION=true` is, and the launch gate fails it

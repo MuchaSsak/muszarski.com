@@ -1,0 +1,194 @@
+---
+import { projects } from "../data/projects";
+
+/**
+ * The whole hub: one page of cards. Hidden on purpose: noindex (meta + X-Robots-Tag in vercel.json), no sitemap,
+ * nothing on muszarski.com links here. Colours and face are the portfolio's Cobalt poster palette, toned down.
+ */
+const title = "Side projects · Mateusz Muszarski";
+const description = "Miscellaneous things by Mateusz Muszarski.";
+// Link previews (Discord, Slack, Messenger) still work: their bots read OG tags and ignore noindex.
+const url = new URL("/", Astro.site).href;
+const image = new URL("/og.png", Astro.site).href;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta name="theme-color" content="#2433ff" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Mateusz Muszarski" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={url} />
+    <meta property="og:image" content={image} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Side projects, dev.muszarski.com" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="preload" href="/fonts/anybody.woff2" as="font" type="font/woff2" crossorigin />
+    <style is:global>
+      @font-face {
+        font-family: "Anybody";
+        src: url("/fonts/anybody.woff2") format("woff2");
+        font-weight: 400 900;
+        font-stretch: 50% 150%;
+        font-display: swap;
+      }
+      :root {
+        color-scheme: dark;
+        --cobalt: #2433ff;
+        --ice: #eef0ff;
+        --navy: #0a0d33;
+        --pink: #ff4fb8;
+        --gutter: clamp(1rem, 3.9vw, 3.5rem);
+      }
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        min-height: 100svh;
+        background: var(--cobalt);
+        color: var(--ice);
+        font-family: "Anybody", "Arial Narrow", Arial, sans-serif;
+        line-height: 1.5;
+      }
+      a {
+        color: inherit;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <header>
+        <h1>Side projects</h1>
+        <p>
+          Miscellaneous things by <a href="https://muszarski.com/">Mateusz Muszarski</a>.
+        </p>
+      </header>
+
+      <ul class="grid" role="list">
+        {projects.map((p) => (
+          <li>
+            <a class="card" href={p.url}>
+              <div class="thumb">
+                <iframe
+                  src={p.url}
+                  title={`${p.name} preview`}
+                  loading="lazy"
+                  tabindex="-1"
+                  aria-hidden="true"
+                  sandbox="allow-scripts allow-same-origin"
+                  referrerpolicy="no-referrer"
+                />
+              </div>
+              <h2>{p.name}</h2>
+              <p>{p.description}</p>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </main>
+  </body>
+</html>
+
+<style>
+  main {
+    max-width: 75rem;
+    margin-inline: auto;
+    padding: 0 var(--gutter) clamp(3rem, 8vw, 5rem);
+  }
+  header {
+    padding-block: clamp(2.5rem, 8vw, 5rem) clamp(1.5rem, 4vw, 2.5rem);
+  }
+  h1 {
+    margin: 0;
+    font-size: clamp(2.5rem, 7vw, 4.5rem);
+    font-weight: 900;
+    font-stretch: 75%;
+    line-height: 0.95;
+    text-transform: uppercase;
+  }
+  header p {
+    margin: 0.75rem 0 0;
+    font-size: 1.0625rem;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 20rem), 1fr));
+    gap: 1.5rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .card {
+    display: block;
+    height: 100%;
+    padding: 0.75rem 0.75rem 1.25rem;
+    background: var(--ice);
+    color: var(--navy);
+    text-decoration: none;
+    box-shadow: 6px 6px 0 var(--navy);
+    transition:
+      transform 200ms cubic-bezier(0.2, 0.75, 0.1, 1),
+      box-shadow 200ms cubic-bezier(0.2, 0.75, 0.1, 1);
+  }
+  /* Hover, keyboard focus and a tap share one look. */
+  .card:hover,
+  .card:focus-visible,
+  .card:active {
+    transform: translate(-3px, -3px);
+    box-shadow: 9px 9px 0 var(--pink);
+  }
+  .card:focus-visible {
+    outline: 3px solid var(--pink);
+    outline-offset: 3px;
+  }
+
+  /* The live site at a desktop width, scaled to a quarter. */
+  .thumb {
+    position: relative;
+    aspect-ratio: 16 / 10;
+    overflow: hidden;
+    background: var(--navy);
+  }
+  .thumb iframe {
+    position: absolute;
+    inset: 0 auto auto 0;
+    width: 400%;
+    height: 400%;
+    border: 0;
+    transform: scale(0.25);
+    transform-origin: 0 0;
+    pointer-events: none;
+  }
+
+  h2 {
+    margin: 1rem 0.25rem 0;
+    font-size: 1.375rem;
+    font-weight: 800;
+    font-stretch: 85%;
+    line-height: 1.15;
+  }
+  .card p {
+    margin: 0.375rem 0.25rem 0;
+    font-size: 1rem;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .card {
+      transition: none;
+    }
+  }
+</style>
