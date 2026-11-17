@@ -20,7 +20,7 @@ export const projectUrl = (p: SideProject, lang: Lang) =>
 
 export const projects: SideProject[] = [
   {
-    name: { en: "Denominations Compass", pl: "Kompas wyznań", es: "Brújula de denominaciones" },
+    name: { en: "Denominations Compass", pl: "Kompas denominacji", es: "Brújula de denominaciones" },
     description: {
       en: "A quick Christian quiz to find which denomination you fit into most.",
       pl: "Szybki chrześcijański quiz, który pokaże, do którego wyznania pasujesz najbardziej.",
