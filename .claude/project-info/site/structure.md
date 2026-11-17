@@ -24,7 +24,7 @@
 /files/mateusz-muszarski-cv-<locale>.pdf
 /en/rss.xml · /pl/rss.xml · /sitemap.xml (index) · /robots.txt · /llms.txt
 
-dev.muszarski.com/               hidden side-projects hub (apps/dev; noindex but with OG tags for link previews, en only, linked from nowhere) [owner 2026-11-17]; a navy footer with the portfolio's contour shader (copy of footer-field.ts), a muszarski.com link and icon-only GitHub, Discord and EN/PL/ES links; a letter wave on the title (hover or tap) and an arrow chip on each card [owner 2026-11-17]
+dev.muszarski.com/               hidden side-projects hub (apps/dev; noindex but with OG tags for link previews, linked from nowhere; / = en, /pl/, /es/ (es built but no footer button), cards open a project's own /en or /pl when its `locales` list has it) [owner 2026-11-17]; a navy footer with the portfolio's contour shader (copy of footer-field.ts), a muszarski.com link and icon-only GitHub, Discord and EN/PL language buttons; a letter wave on the title (hover or tap) and an arrow chip on each card [owner 2026-11-17]
 ```
 - **Slugs:** `work`, `blog`, `cv`, `my-life`, `privacy` and `terms` stay English in every locale; only blog post
   slugs are per locale [assumption; seo research may change it].
