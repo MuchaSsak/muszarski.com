@@ -20,6 +20,16 @@ export const projectUrl = (p: SideProject, lang: Lang) =>
 
 export const projects: SideProject[] = [
   {
+    // Polish only: every language links to the bare url.
+    name: { en: "Tanie loty", pl: "Tanie loty", es: "Tanie loty" },
+    description: {
+      en: "Searches for last-minute flights. In Polish.",
+      pl: "Wyszukuje loty last minute.",
+      es: "Busca vuelos de última hora. En polaco.",
+    },
+    url: "https://tanie-loty-krolu-zloty.vercel.app/",
+  },
+  {
     name: { en: "Denominations Compass", pl: "Kompas denominacji", es: "Brújula de denominaciones" },
     description: {
       en: "A quick Christian quiz to find which denomination you fit into most.",

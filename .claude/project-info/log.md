@@ -137,3 +137,4 @@
 - 2026-11-17: `apps/dev` = dev.muszarski.com, a hidden noindex hub of side-project cards (live-site iframe thumbnails), its own Vercel project; first card Denominations Compass [owner]. turborepo.md § Layout + § Vercel, structure.md § Sitemap.
 - 2026-11-17: dev.muszarski.com footer (contour shader, muszarski.com, GitHub/Discord/EN/PL/ES icons), title letter wave, card arrow chips [owner]. structure.md § Sitemap.
 - 2026-11-17: dev.muszarski.com in en (/), pl (/pl/), es (/es/, no footer button); footer EN/PL switch the hub, cards follow the project locale (Denominations Compass /en, /pl) [owner]. structure.md § Sitemap.
+- 2026-11-23: dev hub adds Tanie loty (Polish-only last-minute flight search); Denominations Compass thumbnail fixed in its own repo (frame-ancestors allows dev.muszarski.com instead of X-Frame-Options SAMEORIGIN).
