@@ -9,7 +9,6 @@ import "~/styles/chapters.css";
 
 import { t } from "lingui-for-astro/macro";
 
-import ChapterClockful from "~/components/home/chapters/ChapterClockful.astro";
 import ChapterLinkoglot from "~/components/home/chapters/ChapterLinkoglot.astro";
 import ChapterPstrykWeb from "~/components/home/chapters/ChapterPstrykWeb.astro";
 import ChapterSpace from "~/components/home/chapters/ChapterSpace.astro";
@@ -21,7 +20,6 @@ const links = chromeLinks(Astro.locals.locale);
 const CHAPTERS = {
   pstrykweb: ChapterPstrykWeb,
   linkoglot: ChapterLinkoglot,
-  "neoteric-clockful": ChapterClockful,
   "space-portfolio": ChapterSpace,
 } as const;
 const shown = visibleFlagships().filter((project) => project.slug in CHAPTERS);

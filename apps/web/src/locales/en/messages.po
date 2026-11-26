@@ -8,7 +8,7 @@ msgstr ""
 "Language: en\n"
 
 #: src/components/cv/CvWeb.astro:36
-#: src/components/home/Chapters.astro:84
+#: src/components/home/Chapters.astro:82
 #: src/components/home/chapters/ChapterLinkoglot.astro:112
 #: src/components/home/chapters/ChapterLinkoglot.astro:124
 #: src/components/home/chapters/ChapterPstrykWeb.astro:52
@@ -47,7 +47,7 @@ msgstr "{minutes} min read"
 msgid "{name}, home"
 msgstr "{name}, home"
 
-#: src/components/home/Chapters.astro:42
+#: src/components/home/Chapters.astro:40
 msgid "A 3D site for a Luxembourg non-profit that houses young people."
 msgstr "A 3D site for a Luxembourg non-profit that houses young people."
 
@@ -146,8 +146,8 @@ msgstr "All"
 msgid "All posts"
 msgstr "All posts"
 
-#: src/components/home/Chapters.astro:96
-#: src/components/layout/SiteFooter.astro:60
+#: src/components/home/Chapters.astro:94
+#: src/components/layout/SiteFooter.astro:61
 #: src/components/NotFound.astro:47
 #: src/pages/[locale]/contact/sent/index.astro:25
 #: src/pages/[locale]/work/index.astro:184
@@ -162,7 +162,7 @@ msgstr "All topics"
 msgid "Also on"
 msgstr "Also on"
 
-#: src/components/home/Chapters.astro:61
+#: src/components/home/Chapters.astro:59
 msgid "Also shipped"
 msgstr "Also shipped"
 
@@ -174,7 +174,7 @@ msgstr "An internship brief from Neoteric, a Polish software house: a time track
 msgid "analytics"
 msgstr "analytics"
 
-#: src/components/layout/SiteFooter.astro:164
+#: src/components/layout/SiteFooter.astro:169
 msgid "and love"
 msgstr "and love"
 
@@ -226,7 +226,7 @@ msgstr "Back to the home page"
 msgid "Back to the work"
 msgstr "Back to the work"
 
-#: src/components/home/Chapters.astro:36
+#: src/components/home/Chapters.astro:34
 msgid "Balatro, but every card is a real maths exam task."
 msgstr "Balatro, but every card is a real maths exam task."
 
@@ -238,7 +238,7 @@ msgstr "Bespoke websites for local businesses, ordered through one online form."
 msgid "blocked by a hook"
 msgstr "blocked by a hook"
 
-#: src/components/layout/SiteFooter.astro:67
+#: src/components/layout/SiteFooter.astro:68
 #: src/components/layout/SiteHeader.astro:47
 #: src/pages/[locale]/blog/[slug].astro:54
 #: src/pages/[locale]/blog/index.astro:36
@@ -283,7 +283,7 @@ msgstr "Build"
 msgid "builds"
 msgstr "builds"
 
-#: src/components/layout/SiteFooter.astro:160
+#: src/components/layout/SiteFooter.astro:165
 #: src/components/ui/StackList.astro:22
 msgid "Built with"
 msgstr "Built with"
@@ -404,7 +404,7 @@ msgstr "confirm email"
 #: src/components/cv/CvSheet.astro:75
 #: src/components/cv/CvWeb.astro:50
 #: src/components/home/Contact.astro:46
-#: src/components/layout/SiteFooter.astro:101
+#: src/components/layout/SiteFooter.astro:102
 #: src/components/layout/SiteHeader.astro:94
 #: src/components/layout/SiteHeader.astro:121
 #: src/components/NotFound.astro:48
@@ -446,7 +446,7 @@ msgid "Curriculum vitae"
 msgstr "Curriculum vitae"
 
 #: src/components/layout/CvLink.astro:36
-#: src/components/layout/SiteFooter.astro:68
+#: src/components/layout/SiteFooter.astro:69
 #: src/pages/[locale]/cv/index.astro:43
 #: src/pages/[locale]/cv/print/index.astro:24
 msgid "CV"
@@ -522,7 +522,7 @@ msgstr "drop-off points"
 msgid "Education"
 msgstr "Education"
 
-#: src/components/layout/SiteFooter.astro:76
+#: src/components/layout/SiteFooter.astro:77
 msgid "Elsewhere"
 msgstr "Elsewhere"
 
@@ -582,7 +582,7 @@ msgstr "Films"
 msgid "Findings"
 msgstr "Findings"
 
-#: src/components/layout/SiteFooter.astro:105
+#: src/components/layout/SiteFooter.astro:106
 msgid "Footer"
 msgstr "Footer"
 
@@ -693,7 +693,7 @@ msgid "How it earns is designed in from day one."
 msgstr "How it earns is designed in from day one."
 
 #: src/components/home/AiWorkflow.astro:470
-#: src/components/layout/SiteFooter.astro:70
+#: src/components/layout/SiteFooter.astro:71
 msgid "How this site was built"
 msgstr "How this site was built"
 
@@ -836,7 +836,7 @@ msgstr "Launch on desktop"
 msgid "lead"
 msgstr "lead"
 
-#: src/components/layout/SiteFooter.astro:81
+#: src/components/layout/SiteFooter.astro:82
 msgid "Legal"
 msgstr "Legal"
 
@@ -849,7 +849,7 @@ msgstr "Legal · data protection"
 msgid "lessons"
 msgstr "lessons"
 
-#: src/components/layout/SiteFooter.astro:93
+#: src/components/layout/SiteFooter.astro:94
 msgid "Let's talk about what you're building."
 msgstr "Let's talk about what you're building."
 
@@ -917,7 +917,7 @@ msgstr "Main"
 msgid "map"
 msgstr "map"
 
-#: src/components/layout/SiteFooter.astro:158
+#: src/components/layout/SiteFooter.astro:163
 msgid "Marks: Simple Icons (CC0), Playwright (Apache 2.0). Icons: Tabler (MIT). Font: Anybody (SIL OFL)."
 msgstr "Marks: Simple Icons (CC0), Playwright (Apache 2.0). Icons: Tabler (MIT). Font: Anybody (SIL OFL)."
 
@@ -986,7 +986,7 @@ msgstr "Music"
 msgid "My favourite"
 msgstr "My favourite"
 
-#: src/components/layout/SiteFooter.astro:69
+#: src/components/layout/SiteFooter.astro:70
 #: src/components/layout/SiteHeader.astro:120
 #: src/components/life/LifeHero.astro:33
 #: src/pages/[locale]/my-life/index.astro:39
@@ -1100,6 +1100,10 @@ msgstr "Open source"
 #: src/components/home/Sticker.astro:14
 msgid "Open to work"
 msgstr "Open to work"
+
+#: src/components/layout/SiteFooter.astro:141
+msgid "Or secrets..?"
+msgstr "Or secrets..?"
 
 #: src/pages/[locale]/work/index.astro:45
 msgid "Own product"
@@ -1247,7 +1251,7 @@ msgid "Privacy"
 msgstr "Privacy"
 
 #: src/components/home/Contact.astro:146
-#: src/components/layout/SiteFooter.astro:83
+#: src/components/layout/SiteFooter.astro:84
 msgid "Privacy policy"
 msgstr "Privacy policy"
 
@@ -1345,7 +1349,7 @@ msgstr "Review"
 msgid "routing hook"
 msgstr "routing hook"
 
-#: src/components/layout/SiteFooter.astro:71
+#: src/components/layout/SiteFooter.astro:72
 msgid "RSS"
 msgstr "RSS"
 
@@ -1378,7 +1382,7 @@ msgstr "See the work"
 msgid "Selected projects"
 msgstr "Selected projects"
 
-#: src/components/home/Chapters.astro:52
+#: src/components/home/Chapters.astro:50
 msgid "Selected work"
 msgstr "Selected work"
 
@@ -1442,7 +1446,7 @@ msgstr "sign-ups"
 msgid "Since"
 msgstr "Since"
 
-#: src/components/layout/SiteFooter.astro:65
+#: src/components/layout/SiteFooter.astro:66
 msgid "Site"
 msgstr "Site"
 
@@ -1688,7 +1692,7 @@ msgstr "This site's home page as a share card"
 msgid "This Spanish text is a machine-assisted translation pending review."
 msgstr "This Spanish text is a machine-assisted translation pending review."
 
-#: src/components/layout/SiteFooter.astro:176
+#: src/components/layout/SiteFooter.astro:181
 msgid "This Spanish version was translated with AI and has not been reviewed by a native speaker yet."
 msgstr "This Spanish version was translated with AI and has not been reviewed by a native speaker yet."
 
@@ -1817,7 +1821,7 @@ msgstr "Wiki"
 msgid "With sound"
 msgstr "With sound"
 
-#: src/components/layout/SiteFooter.astro:56
+#: src/components/layout/SiteFooter.astro:57
 #: src/components/layout/SiteHeader.astro:41
 #: src/components/work/WorkHero.astro:57
 msgid "Work"

@@ -49,6 +49,7 @@ const PROFILE_ICONS: Record<string, IconName> = {
 };
 const surname = SITE.name.split(" ").at(-1)!;
 const newTab = t`(opens in a new tab)`;
+const secretsHref = `https://dev.muszarski.com/${locale === "en" ? "" : `${locale}/`}`;
 
 const columns = [
   {
@@ -127,13 +128,17 @@ const columns = [
                   <CvLink source="footer" plain />
                 </li>
               ) : "more" in item ? (
-                <li>
+                <li class="f-more-li">
                   <a href={item.href} class="f-more">
                     {item.label.split(" ").slice(0, -1).join(" ")}{" "}
                     <span class="f-last">
                       {item.label.split(" ").at(-1)}
                       <Icon name="tb:arrow-right" class="nudge" />
                     </span>
+                  </a>
+                  {/* An easter egg: hold the pointer on All projects for 2 s (or focus it) and the side projects show up. */}
+                  <a href={secretsHref} class="f-secret" data-umami-event="outbound" data-umami-event-target="dev-hub">
+                    {t`Or secrets..?`}
                   </a>
                 </li>
               ) : (
@@ -286,6 +291,35 @@ const columns = [
   }
   .f-more:is(:hover, :focus-visible) :global(.nudge) {
     transform: translateX(4px);
+  }
+  /* Hidden (and out of the tab order) until the pointer rests on the item for 2 s; focus shows it at once. */
+  .f-more-li {
+    display: grid;
+    justify-items: start;
+  }
+  ul :global(a.f-secret) {
+    min-height: 0;
+    color: var(--accent);
+    font-weight: 700;
+    visibility: hidden;
+    opacity: 0;
+    transform: translateY(-4px);
+    transition:
+      opacity 0.3s var(--ease-out),
+      transform 0.3s var(--ease-out),
+      visibility 0s 0.3s;
+  }
+  .f-more-li:hover :global(a.f-secret) {
+    visibility: visible;
+    opacity: 1;
+    transform: none;
+    transition-delay: 2s;
+  }
+  .f-more-li:focus-within :global(a.f-secret) {
+    visibility: visible;
+    opacity: 1;
+    transform: none;
+    transition-delay: 0s;
   }
   .row {
     display: flex;

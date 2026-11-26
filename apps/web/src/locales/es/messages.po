@@ -9,7 +9,7 @@ msgstr ""
 "X-Review-Status: unreviewed (AI translation)\n"
 
 #: src/components/cv/CvWeb.astro:36
-#: src/components/home/Chapters.astro:84
+#: src/components/home/Chapters.astro:82
 #: src/components/home/chapters/ChapterLinkoglot.astro:112
 #: src/components/home/chapters/ChapterLinkoglot.astro:124
 #: src/components/home/chapters/ChapterPstrykWeb.astro:52
@@ -48,7 +48,7 @@ msgstr "{minutes} min de lectura"
 msgid "{name}, home"
 msgstr "{name}, inicio"
 
-#: src/components/home/Chapters.astro:42
+#: src/components/home/Chapters.astro:40
 msgid "A 3D site for a Luxembourg non-profit that houses young people."
 msgstr "Una web 3D para una ONG de Luxemburgo que da vivienda a jóvenes."
 
@@ -147,8 +147,8 @@ msgstr "Todos"
 msgid "All posts"
 msgstr "Todos los artículos"
 
-#: src/components/home/Chapters.astro:96
-#: src/components/layout/SiteFooter.astro:60
+#: src/components/home/Chapters.astro:94
+#: src/components/layout/SiteFooter.astro:61
 #: src/components/NotFound.astro:47
 #: src/pages/[locale]/contact/sent/index.astro:25
 #: src/pages/[locale]/work/index.astro:184
@@ -163,7 +163,7 @@ msgstr "Todos los temas"
 msgid "Also on"
 msgstr "También en"
 
-#: src/components/home/Chapters.astro:61
+#: src/components/home/Chapters.astro:59
 msgid "Also shipped"
 msgstr "También publiqué"
 
@@ -175,7 +175,7 @@ msgstr "Un encargo de prácticas de Neoteric, una empresa polaca de desarrollo d
 msgid "analytics"
 msgstr "analítica"
 
-#: src/components/layout/SiteFooter.astro:164
+#: src/components/layout/SiteFooter.astro:169
 msgid "and love"
 msgstr "y amor"
 
@@ -227,7 +227,7 @@ msgstr "Volver al inicio"
 msgid "Back to the work"
 msgstr "Volver a los proyectos"
 
-#: src/components/home/Chapters.astro:36
+#: src/components/home/Chapters.astro:34
 msgid "Balatro, but every card is a real maths exam task."
 msgstr "Balatro, pero cada carta es un ejercicio real de un examen de matemáticas."
 
@@ -239,7 +239,7 @@ msgstr "Webs a medida para negocios locales, encargadas con un solo formulario o
 msgid "blocked by a hook"
 msgstr "hook: bloqueado"
 
-#: src/components/layout/SiteFooter.astro:67
+#: src/components/layout/SiteFooter.astro:68
 #: src/components/layout/SiteHeader.astro:47
 #: src/pages/[locale]/blog/[slug].astro:54
 #: src/pages/[locale]/blog/index.astro:36
@@ -284,7 +284,7 @@ msgstr "Desarrollo"
 msgid "builds"
 msgstr "desarrolla"
 
-#: src/components/layout/SiteFooter.astro:160
+#: src/components/layout/SiteFooter.astro:165
 #: src/components/ui/StackList.astro:22
 msgid "Built with"
 msgstr "Hecho con"
@@ -405,7 +405,7 @@ msgstr "confirmar correo"
 #: src/components/cv/CvSheet.astro:75
 #: src/components/cv/CvWeb.astro:50
 #: src/components/home/Contact.astro:46
-#: src/components/layout/SiteFooter.astro:101
+#: src/components/layout/SiteFooter.astro:102
 #: src/components/layout/SiteHeader.astro:94
 #: src/components/layout/SiteHeader.astro:121
 #: src/components/NotFound.astro:48
@@ -447,7 +447,7 @@ msgid "Curriculum vitae"
 msgstr "Currículum vítae"
 
 #: src/components/layout/CvLink.astro:36
-#: src/components/layout/SiteFooter.astro:68
+#: src/components/layout/SiteFooter.astro:69
 #: src/pages/[locale]/cv/index.astro:43
 #: src/pages/[locale]/cv/print/index.astro:24
 msgid "CV"
@@ -523,7 +523,7 @@ msgstr "puntos de abandono"
 msgid "Education"
 msgstr "Formación académica"
 
-#: src/components/layout/SiteFooter.astro:76
+#: src/components/layout/SiteFooter.astro:77
 msgid "Elsewhere"
 msgstr "En la red"
 
@@ -583,7 +583,7 @@ msgstr "Cine"
 msgid "Findings"
 msgstr "Hallazgos"
 
-#: src/components/layout/SiteFooter.astro:105
+#: src/components/layout/SiteFooter.astro:106
 msgid "Footer"
 msgstr "Pie de página"
 
@@ -694,7 +694,7 @@ msgid "How it earns is designed in from day one."
 msgstr "La forma de generar ingresos se diseña desde el primer día."
 
 #: src/components/home/AiWorkflow.astro:470
-#: src/components/layout/SiteFooter.astro:70
+#: src/components/layout/SiteFooter.astro:71
 msgid "How this site was built"
 msgstr "Cómo se hizo esta web"
 
@@ -837,7 +837,7 @@ msgstr "Abrir en el ordenador"
 msgid "lead"
 msgstr "dirijo"
 
-#: src/components/layout/SiteFooter.astro:81
+#: src/components/layout/SiteFooter.astro:82
 msgid "Legal"
 msgstr "Legal"
 
@@ -850,7 +850,7 @@ msgstr "Legal · protección de datos"
 msgid "lessons"
 msgstr "lecciones"
 
-#: src/components/layout/SiteFooter.astro:93
+#: src/components/layout/SiteFooter.astro:94
 msgid "Let's talk about what you're building."
 msgstr "Hablemos de lo que estás creando."
 
@@ -918,7 +918,7 @@ msgstr "Principal"
 msgid "map"
 msgstr "mapa"
 
-#: src/components/layout/SiteFooter.astro:158
+#: src/components/layout/SiteFooter.astro:163
 msgid "Marks: Simple Icons (CC0), Playwright (Apache 2.0). Icons: Tabler (MIT). Font: Anybody (SIL OFL)."
 msgstr "Logotipos: Simple Icons (CC0), Playwright (Apache 2.0). Iconos: Tabler (MIT). Fuente: Anybody (SIL OFL)."
 
@@ -987,7 +987,7 @@ msgstr "Música"
 msgid "My favourite"
 msgstr "Mi favorito"
 
-#: src/components/layout/SiteFooter.astro:69
+#: src/components/layout/SiteFooter.astro:70
 #: src/components/layout/SiteHeader.astro:120
 #: src/components/life/LifeHero.astro:33
 #: src/pages/[locale]/my-life/index.astro:39
@@ -1101,6 +1101,10 @@ msgstr "Código abierto"
 #: src/components/home/Sticker.astro:14
 msgid "Open to work"
 msgstr "Disponible para trabajar"
+
+#: src/components/layout/SiteFooter.astro:141
+msgid "Or secrets..?"
+msgstr "¿O secretos..?"
 
 #: src/pages/[locale]/work/index.astro:45
 msgid "Own product"
@@ -1248,7 +1252,7 @@ msgid "Privacy"
 msgstr "Privacidad"
 
 #: src/components/home/Contact.astro:146
-#: src/components/layout/SiteFooter.astro:83
+#: src/components/layout/SiteFooter.astro:84
 msgid "Privacy policy"
 msgstr "Política de privacidad"
 
@@ -1346,7 +1350,7 @@ msgstr "Revisión"
 msgid "routing hook"
 msgstr "hook de enrutado"
 
-#: src/components/layout/SiteFooter.astro:71
+#: src/components/layout/SiteFooter.astro:72
 msgid "RSS"
 msgstr "RSS"
 
@@ -1379,7 +1383,7 @@ msgstr "Ver proyectos"
 msgid "Selected projects"
 msgstr "Proyectos seleccionados"
 
-#: src/components/home/Chapters.astro:52
+#: src/components/home/Chapters.astro:50
 msgid "Selected work"
 msgstr "Proyectos seleccionados"
 
@@ -1443,7 +1447,7 @@ msgstr "registros"
 msgid "Since"
 msgstr "Desde"
 
-#: src/components/layout/SiteFooter.astro:65
+#: src/components/layout/SiteFooter.astro:66
 msgid "Site"
 msgstr "Sitio"
 
@@ -1689,7 +1693,7 @@ msgstr "La portada de esta web como tarjeta para compartir"
 msgid "This Spanish text is a machine-assisted translation pending review."
 msgstr "Este texto en español es una traducción automática pendiente de revisión."
 
-#: src/components/layout/SiteFooter.astro:176
+#: src/components/layout/SiteFooter.astro:181
 msgid "This Spanish version was translated with AI and has not been reviewed by a native speaker yet."
 msgstr "Esta versión en español se ha traducido con IA y aún no la ha revisado un hablante nativo."
 
@@ -1818,7 +1822,7 @@ msgstr "Wiki"
 msgid "With sound"
 msgstr "Con sonido"
 
-#: src/components/layout/SiteFooter.astro:56
+#: src/components/layout/SiteFooter.astro:57
 #: src/components/layout/SiteHeader.astro:41
 #: src/components/work/WorkHero.astro:57
 msgid "Work"
