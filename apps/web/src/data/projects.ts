@@ -74,8 +74,7 @@ export const PROJECTS: Project[] = [
     year: 2026,
     // Neoteric's OK [owner 2026-10-11].
     rights: "ok",
-    flagship: 3,
-    anchor: "clockful",
+    // Off the home showcase [owner 2026-11-26]: no chapter, so no flagship or anchor.
     line: {
       en: "A role-based time tracker built with AI agents in about 9 days, with 118 automated tests. Code private.",
       pl: "Aplikacja do ewidencji czasu pracy z rolami, zbudowana z agentami AI w około 9 dni, ze 118 testami automatycznymi. Kod prywatny.",

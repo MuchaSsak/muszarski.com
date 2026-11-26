@@ -37,6 +37,7 @@
 - Job terms follow job-board usage, not a literal translation ("inżynier produktu" is a factory role and implies a degree): `i18n.md` § Terminology - 2026-10-08.
 
 ### Code and quality
+- `bun run check` is not done: run `bun run build` before every commit; it checks every in-page link (removing a home chapter left `#clockful` links and broke the Vercel deploy) [user 2026-11-26] - 2026-11-26.
 - A visible label must start the accessible name (WCAG 2.5.3): visually hidden text after the visible text, not a replacing `aria-label` - 2026-10-05.
 - Run `bun run i18n:extract` before a production build: a missing message renders as its id and fitted titles (`a|b`) crash - 2026-10-05.
 - `.still` pauses every animation, freezing delayed entrances on their hidden frame: mark entrances `.rise`/`.enter` and test a stored pause - 2026-10-05.
