@@ -139,3 +139,4 @@
 - 2026-11-17: dev.muszarski.com in en (/), pl (/pl/), es (/es/, no footer button); footer EN/PL switch the hub, cards follow the project locale (Denominations Compass /en, /pl) [owner]. structure.md § Sitemap.
 - 2026-11-23: dev hub adds Tanie loty (Polish-only last-minute flight search); Denominations Compass thumbnail fixed in its own repo (frame-ancestors allows dev.muszarski.com instead of X-Frame-Options SAMEORIGIN).
 - 2026-11-26: home showcase drops the Clockful chapter (owner); footer easter egg: 2 s hover/focus on All projects shows a pink "Or secrets..?" link to dev.muszarski.com.
+- 2026-11-28: HackNation 2026 (Bydgoszcz, 21-22 Nov, 24 h for public administration; owner's certificate) added to the Hackathons credential: CV line + home card item, PDFs reprinted.

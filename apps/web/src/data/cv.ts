@@ -617,9 +617,9 @@ export const CV = {
       // and in a team".
       cv: {
         summary: {
-          en: "HackYeah 2026 in Kraków, Europe's biggest on-site hackathon; Hack4Change 2026 in Gdańsk, 48 hours for the Baltic Sea; Product Challenge 2026: Vibe the Future in Rzeszów.",
-          pl: "HackYeah 2026 w Krakowie, największy stacjonarny hackathon w Europie; Hack4Change 2026 w Gdańsku, 48 h dla Bałtyku; Product Challenge 2026: Vibe the Future w Rzeszowie.",
-          es: "HackYeah 2026 en Cracovia, el mayor hackathon presencial de Europa; Hack4Change 2026 en Gdansk, 48 h por el Báltico; Product Challenge 2026: Vibe the Future en Rzeszów.",
+          en: "HackNation 2026 in Bydgoszcz, 24 hours on public-sector challenges; HackYeah 2026 in Kraków, Europe's biggest on-site hackathon; Hack4Change 2026 in Gdańsk, 48 hours for the Baltic Sea; Product Challenge 2026: Vibe the Future in Rzeszów.",
+          pl: "HackNation 2026 w Bydgoszczy, 24 h nad wyzwaniami administracji publicznej; HackYeah 2026 w Krakowie, największy stacjonarny hackathon w Europie; Hack4Change 2026 w Gdańsku, 48 h dla Bałtyku; Product Challenge 2026: Vibe the Future w Rzeszowie.",
+          es: "HackNation 2026 en Bydgoszcz, 24 h con retos de la administración pública; HackYeah 2026 en Cracovia, el mayor hackathon presencial de Europa; Hack4Change 2026 en Gdansk, 48 h por el Báltico; Product Challenge 2026: Vibe the Future en Rzeszów.",
         },
         gain: {
           en: "Made me better at working under time pressure and in a team.",
@@ -631,6 +631,17 @@ export const CV = {
       // [user 2026-10-07] HackYeah, Hack4Change and Vibe the Future; dates, places and sites from the events' own pages
       // (hackyeah.pl, hack4change.tech + the 2026 sign-up page, vibethefuture.pl), read 2026-10-07. Newest first.
       items: [
+        {
+          // From the owner's certificate of participation [2026-11-28]: 2nd edition, 21-22 Nov 2026, Bydgoszcz, 24 h
+          // on public-administration challenges (Ministry of Digital Affairs / GovTech Polska, City of Bydgoszcz).
+          title: "HackNation 2026",
+          when: {
+            en: "Nov 2026 · Bydgoszcz · 24 hours for public administration",
+            pl: "Lis 2026 · Bydgoszcz · 24 godziny dla administracji publicznej",
+            es: "Nov 2026 · Bydgoszcz · 24 horas para la administración pública",
+          },
+          site: "https://hacknation.pl/",
+        },
         {
           title: "HackYeah 2026",
           when: {
